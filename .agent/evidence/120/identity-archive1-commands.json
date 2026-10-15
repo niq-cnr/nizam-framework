@@ -1,0 +1,77 @@
+[
+  {
+    "name": "reachable",
+    "argv": [
+      "git",
+      "rev-list",
+      "--objects",
+      "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-identity-archive1",
+    "actual_exit": 0,
+    "expected_exit": 0,
+    "stdout": ".agent/evidence/120/identity-archive1-reachable.stdout",
+    "stderr": ".agent/evidence/120/identity-archive1-reachable.stderr"
+  },
+  {
+    "name": "pack",
+    "argv": [
+      "git",
+      "pack-objects",
+      "--stdout",
+      "--window=17",
+      "--depth=17"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-identity-archive1",
+    "actual_exit": 0,
+    "expected_exit": 0,
+    "stdout": ".agent/evidence/120/identity-archive1-pack.stdout",
+    "stderr": ".agent/evidence/120/identity-archive1-pack.stderr"
+  },
+  {
+    "name": "init",
+    "argv": [
+      "git",
+      "init",
+      "--bare",
+      "--quiet",
+      "/home/cnross/.tmp/nizam-feature120-identity-restore1.git"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-identity-archive1",
+    "actual_exit": 0,
+    "expected_exit": 0,
+    "stdout": ".agent/evidence/120/identity-archive1-init.stdout",
+    "stderr": ".agent/evidence/120/identity-archive1-init.stderr"
+  },
+  {
+    "name": "absent-before",
+    "argv": [
+      "git",
+      "-C",
+      "/home/cnross/.tmp/nizam-feature120-identity-restore1.git",
+      "cat-file",
+      "-e",
+      "12806a8b60bc8adcc927159aeccdd45b0dc68008"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-identity-archive1",
+    "actual_exit": 1,
+    "expected_exit": 1,
+    "stdout": ".agent/evidence/120/identity-archive1-absent-before.stdout",
+    "stderr": ".agent/evidence/120/identity-archive1-absent-before.stderr"
+  },
+  {
+    "name": "restore",
+    "argv": [
+      "git",
+      "-C",
+      "/home/cnross/.tmp/nizam-feature120-identity-restore1.git",
+      "index-pack",
+      "--stdin"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-identity-archive1",
+    "actual_exit": 0,
+    "expected_exit": 0,
+    "stdout": ".agent/evidence/120/identity-archive1-restore.stdout",
+    "stderr": ".agent/evidence/120/identity-archive1-restore.stderr"
+  }
+]

@@ -1,0 +1,67 @@
+{
+  "review": "implementation-mode-b",
+  "feature": "121",
+  "feature_id": "121",
+  "contract_id": "121",
+  "reviewer": "/root/modeb121",
+  "attempt": 1,
+  "reviewed_revision": "12466809d26e5cb3891c2db0f57e4fbf7bbebade",
+  "probe_exercised_revision": "f389b18781e2576592ca30c6bd1a1c3dea3fe72a",
+  "approved_contract_sha256": "145efa18ec1e6b2015c5835900afe4dfec6da44af7581dbdf5e3eeecdbdc642e",
+  "source_sha256": "f588ad0282ed80d8f380d4f230a95bbfddc2ad2326bcf1189d9aaac8eabbc6a3",
+  "test_sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Contract121 api.errors: invalid or unsafe OS/path data raises existing AssuranceError with a bounded nonempty diagnostic.",
+      "severity": "high",
+      "location": "tools/workflow_assurance.py:1030; public catch clauses at1122,1181,1198",
+      "evidence": ".agent/evidence/121/modeb1-probe-run.json; modeb1-probe.stdout.txt and modeb1-probe.stderr.txt. Python3.12.3 valid assessment and actual registered detached isolation passed first. Matched independent dispatch then selected an owned self-referential attempt_root symlink. assess_conflict_lanes escaped ordinary RuntimeError from Path.resolve(strict=True), producing the exact intended contract assertion and actual process exit1. Inputs, files/modes and registration remained unchanged; owned fixture cleanup completed.",
+      "required_fix": "Normalize ordinary pathlib symlink-loop RuntimeError through the three new public API boundaries to existing AssuranceError with a bounded diagnostic. Preserve the approved contract, old115-120 APIs/ASTs, frozen independent tests and captured semantic red; independently rerun this exact committed probe after a separately allocated Source rework."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "feature": "121",
+    "feature_id": "121",
+    "summary": "Reject implementation: actual unsafe self-referential path escapes RuntimeError instead of contract-required AssuranceError. No Source, test, contract or lifecycle repair performed."
+  },
+  "scope_measurement": {
+    "base": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb",
+    "measured_revision": "12466809d26e5cb3891c2db0f57e4fbf7bbebade",
+    "whole_feature_budget_counted_lines": 826,
+    "unclassified_lines": 0,
+    "source_and_docs_lines": 194,
+    "source_and_docs_limit": 300,
+    "independent_test_lines": 276,
+    "independent_test_limit": 450,
+    "prior_119_120_actual": 2119,
+    "cumulative_at_reviewed_revision": 2945,
+    "phase_original": 7200,
+    "phase_ceiling": 9360,
+    "boundary": "Unchanged classifier measured the entire121 range, including authorized append-only120 archive and its32-line QA review. This new ModeB verdict and future rework/QA/closeout require later cumulative measurement; no historical actual or allowance was rebased."
+  },
+  "observations": [
+    "Reviewed all174 additive Source lines,276 independent-test lines,20 documentation lines, three API signatures and their authority/current coordination/dependency/counter/conflict/isolation/rollback/preservation/error boundaries against approved contract. The concrete error-normalization defect blocks conformance.",
+    "Static inspection actualexit0 confirms inherited Source function/class ASTs including CLI unchanged, all inherited test symbols except authorized main dispatch unchanged, old case inventories unchanged, no import/dependency additions, installed239 and protected schemas/workflows/prior119/120 artifacts unchanged, and no unauthorized changed paths. Adjacent120 archive additions were explicitly authorized and counted within121.",
+    "Both strict pre-code envelopes, corrected provisional envelope and final executable envelope are present and approved. Root's executable binding records952 verified pin records. Their existing runtime evidence was inspected; no broad42/control-bank repeat or independent QA/lifecycle assertion was made.",
+    "Library trust boundary remains a proposal under a single Orchestrator with immutable selected authority and current snapshots. No scheduler, extra retry budget, new schema, CLI, installed upgrade, runtime/SBCL, phase020,123/full-CI completion or actual Root adoption was added. E-only canary proposal is static planning evidence.",
+    ".ocr skill absent; installed AGF/execution independent ModeB review applies. No OCR eight-phase approval claim. Root retains sole coordination and circuit-counter ownership."
+  ],
+  "evidence_files": [
+    ".agent/evidence/121/modeb1-dispatch.json",
+    ".agent/evidence/121/modeb1-probe.py",
+    ".agent/evidence/121/modeb1-probe-run.json",
+    ".agent/evidence/121/modeb1-probe.stdout.txt",
+    ".agent/evidence/121/modeb1-probe.stderr.txt",
+    ".agent/evidence/121/modeb1-inspect.py",
+    ".agent/evidence/121/modeb1-inspect.stdout.txt",
+    ".agent/evidence/121/modeb1-inspect.stderr.txt",
+    ".agent/evidence/121/modeb1-inspect.exit.txt",
+    ".agent/evidence/121/modeb1-static.json",
+    ".agent/evidence/121/modeb1-budget.stdout.txt",
+    ".agent/evidence/121/modeb1-budget.stderr.txt"
+  ]
+}

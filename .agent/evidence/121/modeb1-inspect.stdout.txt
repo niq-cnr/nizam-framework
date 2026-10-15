@@ -1,0 +1,343 @@
+{
+  "base": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb",
+  "reviewed_revision": "12466809d26e5cb3891c2db0f57e4fbf7bbebade",
+  "inspection_revision": "33fb42e643b5ef8a876da13f743c2ec52c2b07b1",
+  "approved_contract_sha256": "145efa18ec1e6b2015c5835900afe4dfec6da44af7581dbdf5e3eeecdbdc642e",
+  "inherited": {
+    "tools/workflow_assurance.py": {
+      "unchanged_symbols": [
+        "AssuranceError",
+        "_bundle_file",
+        "_bundle_hex",
+        "_bundle_object",
+        "_bundle_proof",
+        "_bundle_string",
+        "_entry_blob",
+        "_entry_pinned",
+        "_receipt_artifact",
+        "_receipt_candidate",
+        "_receipt_contract",
+        "_receipt_gate",
+        "_receipt_operator",
+        "_receipt_policy",
+        "_receipt_prerequisites",
+        "_receipt_producer",
+        "_receipt_ref",
+        "_receipt_schema",
+        "_receipt_text",
+        "assess_repository",
+        "blobs",
+        "canonical",
+        "compare_identity",
+        "convergent_agf_verdict",
+        "git",
+        "json_value",
+        "main",
+        "manifest",
+        "masks",
+        "parse_json",
+        "plan_receipt_transition",
+        "pointers",
+        "regular_file",
+        "relative_path",
+        "require",
+        "sha",
+        "validate_identity",
+        "verify_acceptance_bundle",
+        "verify_authorized_entry",
+        "verify_foundation_ready",
+        "verify_record_update",
+        "verify_stage_receipt"
+      ],
+      "dispatch_exemption": [],
+      "changed": []
+    },
+    "tools/test_workflow_assurance.py": {
+      "unchanged_symbols": [
+        "Fixture",
+        "ReceiptFixture",
+        "agf_advisory",
+        "agf_approve",
+        "agf_array",
+        "agf_block",
+        "agf_call",
+        "agf_fingerprint",
+        "agf_invalid",
+        "agf_ledger",
+        "agf_report",
+        "agf_severity",
+        "bundle_cli_controls",
+        "bundle_isolated_negative",
+        "bundle_mutate",
+        "bundle_rejected",
+        "canonical",
+        "category_drift",
+        "cli_controls",
+        "continuity",
+        "environment_drift",
+        "flatten",
+        "git",
+        "history_edit",
+        "identity_positive",
+        "load_api",
+        "owned_append",
+        "receipt_artifact_integrity",
+        "receipt_candidate",
+        "receipt_double",
+        "receipt_failed",
+        "receipt_ids",
+        "receipt_operator",
+        "receipt_plan",
+        "receipt_prerequisites",
+        "receipt_recovery",
+        "receipt_reject",
+        "receipt_replay",
+        "receipt_setup",
+        "receipt_status",
+        "receipt_unrun",
+        "receipt_verify",
+        "record",
+        "rejected",
+        "require",
+        "run_agf_case",
+        "run_bundle_case",
+        "run_case",
+        "run_entry_case",
+        "run_receipt_case",
+        "sha",
+        "unknown_drift",
+        "unowned"
+      ],
+      "dispatch_exemption": [
+        "main"
+      ],
+      "changed": []
+    }
+  },
+  "unchanged_case_inventories": [
+    "CASES",
+    "BASE_CASES",
+    "BUNDLE_CASES",
+    "PRE_ENTRY_CASES",
+    "ENTRY_CASES",
+    "AGF_CASES",
+    "RECEIPT_CASES"
+  ],
+  "protected": {
+    "unchanged": 1472,
+    "installed_files": 239,
+    "changed": []
+  },
+  "scope": {
+    "changed_path_count": 466,
+    "unauthorized_paths": [],
+    "adjacent_authorized_120_additions": [
+      ".agent/evidence/120/archive-identities.py",
+      ".agent/evidence/120/identity-archive-review1-absent-before.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-absent-before.stdout.txt",
+      ".agent/evidence/120/identity-archive-review1-check.py",
+      ".agent/evidence/120/identity-archive-review1-commands.json",
+      ".agent/evidence/120/identity-archive-review1-dispatch.json",
+      ".agent/evidence/120/identity-archive-review1-empty-inventory.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-empty-inventory.stdout.txt",
+      ".agent/evidence/120/identity-archive-review1-import.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-import.stdout.txt",
+      ".agent/evidence/120/identity-archive-review1-init.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-init.stdout.txt",
+      ".agent/evidence/120/identity-archive-review1-restored-inventory.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-restored-inventory.stdout.txt",
+      ".agent/evidence/120/identity-archive-review1-result.json",
+      ".agent/evidence/120/identity-archive-review1-seal.json",
+      ".agent/evidence/120/identity-archive-review1-wrapper.stderr.txt",
+      ".agent/evidence/120/identity-archive-review1-wrapper.stdout.txt",
+      ".agent/evidence/120/identity-archive1-absent-before.stderr",
+      ".agent/evidence/120/identity-archive1-absent-before.stdout",
+      ".agent/evidence/120/identity-archive1-commands.json",
+      ".agent/evidence/120/identity-archive1-dispatch.json",
+      ".agent/evidence/120/identity-archive1-init.stderr",
+      ".agent/evidence/120/identity-archive1-init.stdout",
+      ".agent/evidence/120/identity-archive1-pack.stderr",
+      ".agent/evidence/120/identity-archive1-pack.stdout",
+      ".agent/evidence/120/identity-archive1-reachable.stderr",
+      ".agent/evidence/120/identity-archive1-reachable.stdout",
+      ".agent/evidence/120/identity-archive1-receipt.json",
+      ".agent/evidence/120/identity-archive1-restore.stderr",
+      ".agent/evidence/120/identity-archive1-restore.stdout",
+      ".agent/evidence/120/identity-archive1-wrapper.json",
+      ".agent/evidence/120/identity-archive1-wrapper.stderr",
+      ".agent/evidence/120/identity-archive1-wrapper.stdout",
+      ".agent/evidence/120/pr101-main-ci.json",
+      ".agent/evidence/120/pr101-merge-receipt.json",
+      ".agent/evidence/120/pr101/description.stderr.txt",
+      ".agent/evidence/120/pr101/description.stdout.txt",
+      ".agent/evidence/120/pr101/final-closeout.stderr.txt",
+      ".agent/evidence/120/pr101/final-closeout.stdout.txt",
+      ".agent/evidence/120/pr101/final-run.stderr.txt",
+      ".agent/evidence/120/pr101/final-run.stdout.txt",
+      ".agent/evidence/120/pr101/head.json",
+      ".agent/evidence/120/pr101/main-ci.stderr.txt",
+      ".agent/evidence/120/pr101/main-ci.stdout.txt",
+      ".agent/evidence/120/pr101/merge-receipt.json",
+      ".agent/evidence/120/pr101/merge-response.stderr.txt",
+      ".agent/evidence/120/pr101/merge-response.stdout.txt",
+      ".agent/evidence/120/pr101/pre-ready.stderr.txt",
+      ".agent/evidence/120/pr101/pre-ready.stdout.txt",
+      ".agent/evidence/120/pr101/premerge.stderr.txt",
+      ".agent/evidence/120/pr101/premerge.stdout.txt",
+      ".agent/evidence/120/pr101/push.stderr.txt",
+      ".agent/evidence/120/pr101/push.stdout.txt",
+      ".agent/evidence/120/pr101/ready.stderr.txt",
+      ".agent/evidence/120/pr101/ready.stdout.txt",
+      ".agent/evidence/120/pr101/results.json",
+      ".agent/evidence/120/pr101/review-threads.stderr.txt",
+      ".agent/evidence/120/pr101/review-threads.stdout.txt",
+      ".agent/evidence/120/retained-identities.pack",
+      ".agent/qa/120-identity-archive-review.json"
+    ]
+  },
+  "gate_envelopes": {
+    ".agent/validator/121-mode-a.json": {
+      "strict_approved": true,
+      "sha256": "686130e37a739f8a64465ac4589d7e7a8ccd958d339e6df72d676517ad78c3cf"
+    },
+    ".agent/qa/121-contract-review.json": {
+      "strict_approved": true,
+      "sha256": "a7cf9945c7410e2323104bffa60bc92fad61aadafebb029661f6adde59dc63b8"
+    },
+    ".agent/qa/121-provisional-bundle-review-rev2.json": {
+      "strict_approved": true,
+      "sha256": "9e37ccb88f80537b736bf1fe2b703538892f5467f653e17972e1d47a9841fe9a"
+    },
+    ".agent/qa/121-executable-bundle-review.json": {
+      "strict_approved": true,
+      "sha256": "ff273360976637e8a3497411d35c5a0a82ec061ed521e98e9b19fbca64826bb5"
+    }
+  },
+  "product_and_tests_lines": {
+    "CHANGELOG.md": 4,
+    "tools/README.md": 16,
+    "tools/test_workflow_assurance.py": 276,
+    "tools/workflow_assurance.py": 174
+  },
+  "product_total": 194,
+  "coordination_summary": {
+    "current_feature": "121",
+    "current_phase": "018-workflow-assurance-controls",
+    "status": "in_progress",
+    "active_contract_id": "121"
+  },
+  "current_counters": {
+    "121-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "121-contract": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "121-mode-a": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "121-contract-review": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "121-acceptance-author": {
+      "attempts": 3,
+      "limit": 3,
+      "result": "corrected provisional bundle submitted",
+      "status": "passed"
+    },
+    "121-provisional-review": {
+      "attempts": 3,
+      "limit": 3,
+      "status": "passed"
+    },
+    "121-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "passed"
+    },
+    "121-executable-controls": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "passed"
+    },
+    "121-ci": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "initial_head_passed_captured"
+    },
+    "121-executable-review": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "passed"
+    },
+    "121-mode-b": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "in_progress"
+    }
+  },
+  "budget_command": {
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/scope-budget-014/measure.py",
+      "--range",
+      "121=f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..12466809d26e5cb3891c2db0f57e4fbf7bbebade",
+      "--files"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature121-modeb1",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "actual_exit": 0,
+    "exercised_revision": "33fb42e643b5ef8a876da13f743c2ec52c2b07b1",
+    "measured_revision": "12466809d26e5cb3891c2db0f57e4fbf7bbebade"
+  }
+}
+== 121: f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..12466809d26e5cb3891c2db0f57e4fbf7bbebade
+   resolved f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..12466809d26e5cb3891c2db0f57e4fbf7bbebade
+   paths=466 binary_paths=4
+   class                       files   lines
+   budget/product                  4     470
+   budget/product-ext              0       0
+   budget/contract                 1      89
+   budget/verdict                  7     256
+   budget/audit-deliverable        0       0
+   budget/planning                 3      11
+   evidence                      450   66702
+   excluded/run_state              1     217
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   4  CHANGELOG.md
+   budget/product                  16  tools/README.md
+   budget/product                 276  tools/test_workflow_assurance.py
+   budget/product                 174  tools/workflow_assurance.py
+   budget/contract                 89  .agent/contracts/121.json
+   budget/verdict                  32  .agent/qa/120-identity-archive-review.json
+   budget/verdict                  22  .agent/qa/121-contract-review.json
+   budget/verdict                  45  .agent/qa/121-executable-bundle-review.json
+   budget/verdict                  28  .agent/qa/121-provisional-bundle-review-rev1.json
+   budget/verdict                  60  .agent/qa/121-provisional-bundle-review-rev2.json
+   budget/verdict                  49  .agent/qa/121-provisional-bundle-review.json
+   budget/verdict                  20  .agent/validator/121-mode-a.json
+   budget/planning                  3  .agent/feature_list_018.json
+   budget/planning                  4  docs/planning/manifest.json
+   budget/planning                  4  docs/planning/phase_018.yaml
+   excluded/run_state             217  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                       60   14619  .agent/evidence/120/
+   evidence                      390   52083  .agent/evidence/121/
+   PRODUCT_LINES=470
+   PROCESS_OVERHEAD_LINES=356  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=826
+   EVIDENCE_LINES=66702
+   EXCLUDED_LINES=217
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=67745  (= budget 826 + evidence 66702 + excluded 217 + unclassified 0)
+

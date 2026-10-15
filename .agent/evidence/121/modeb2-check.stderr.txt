@@ -1,0 +1,19 @@
+fatal: path '.agent/evidence/121/modeb1-probe.py' exists on disk, but not in '12466809d26e5cb3891c2db0f57e4fbf7bbebade'
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature121-modeb2/.agent/evidence/121/modeb2-check.py", line 77, in <module>
+    main()
+  File "/home/cnross/.tmp/nizam-feature121-modeb2/.agent/evidence/121/modeb2-check.py", line 33, in main
+    assert data(OLD, path) == data(REVIEW, path), path
+           ^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-modeb2/.agent/evidence/121/modeb2-check.py", line 24, in <lambda>
+    data = lambda rev, path: git('show', rev + ':' + path)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-modeb2/.agent/evidence/121/modeb2-check.py", line 19, in git
+    return subprocess.check_output(['git', *args], cwd=ROOT)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'show', '12466809d26e5cb3891c2db0f57e4fbf7bbebade:.agent/evidence/121/modeb1-probe.py']' returned non-zero exit status 128.

@@ -1,0 +1,318 @@
+{
+  "reviewer": "/root/review_controls121",
+  "reviewed_revision": "d18203a417fbf82df7335d0f49263db0917fe651",
+  "author_revision": "6178b7ed5798ecb752ea7c01b70798ab3e36a1b7",
+  "author_artifact_pins_verified": 65,
+  "author_capture_count_verified": 27,
+  "author_archive_commands": 12,
+  "author_case_processes": 15,
+  "author_protected_count": 272,
+  "identity_objects": {
+    "source": {
+      "git_oid": "a9e60af2eb148519a0419604c9c200c2a587d530",
+      "sha256": "f588ad0282ed80d8f380d4f230a95bbfddc2ad2326bcf1189d9aaac8eabbc6a3",
+      "size_bytes": 86834,
+      "type": "blob"
+    },
+    "tests": {
+      "git_oid": "7490537881a6c469451962be0ab147acae4a5f41",
+      "sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+      "size_bytes": 97334,
+      "type": "blob"
+    },
+    "helper": {
+      "git_oid": "49743373ede286d2e1d9b53e4d958c6a1bdb67db",
+      "sha256": "d9a3ca009b9aa713b399b637eca5205bfd0cffcb3d1bf5f89a13edee6bb0ad8b",
+      "size_bytes": 11575,
+      "type": "blob"
+    },
+    "independent-lanes": {
+      "git_oid": "2a69be034ba70c50ba360fc87a7601d4962e4afa",
+      "sha256": "0bf6f65342b1e6d82975a31f427605d566e19bf8dd5821e68b225f7440ed80a5",
+      "size_bytes": 86836,
+      "type": "blob"
+    },
+    "shared-state-serialized": {
+      "git_oid": "a8ea0de370261a095f4eec17886eebb122d2f38e",
+      "sha256": "dc7b5a715efcd642e050dad9069695640b45db6e95d1c5de0eb2d0a47ba50d68",
+      "size_bytes": 86824,
+      "type": "blob"
+    },
+    "reject-terminal-spoof": {
+      "git_oid": "74e22c4f1d67447f93df228799e06fabb891e86f",
+      "sha256": "c67edbd0517c0e424fd63a4cb2531519500c323b2b0ed3639143ce66d7a4862e",
+      "size_bytes": 86839,
+      "type": "blob"
+    },
+    "reject-fourth": {
+      "git_oid": "bd57eacd52d5469202e70f37f047c4f8871a5fcd",
+      "sha256": "d010d5589957e424fbdc304fa906e334f447dce7edb3c70b50717ce68f2b0ee8",
+      "size_bytes": 86842,
+      "type": "blob"
+    },
+    "owned-rollback": {
+      "git_oid": "641d6ccdd5c23ed38b12a5c1aded75be393a5ad7",
+      "sha256": "1c60cbc74ac006c5c4917279b9c56d6cc229853ca50bbef667ed9c304136a395",
+      "size_bytes": 86835,
+      "type": "blob"
+    }
+  },
+  "private_source_mutations": [
+    {
+      "case": "independent-lanes",
+      "changes": [
+        {
+          "before": "return {'eligible': not conflicts, 'conflicts': conflicts, 'operation_id': request['operation_id']}",
+          "after": "return {'eligible': bool(conflicts), 'conflicts': conflicts, 'operation_id': request['operation_id']}"
+        }
+      ],
+      "expected_assertion": "AssertionError: POLICY_ASSERTION: independent lanes eligible",
+      "identity": {
+        "git_oid": "2a69be034ba70c50ba360fc87a7601d4962e4afa",
+        "sha256": "0bf6f65342b1e6d82975a31f427605d566e19bf8dd5821e68b225f7440ed80a5",
+        "size_bytes": 86836,
+        "type": "blob"
+      },
+      "author_trace": {
+        "method": "assess_conflict_lanes",
+        "request": "{'operation_id': 'fixture-operation', 'feature_id': '121', 'owner': {'agent_id': 'fixture-agent', 'session_id': 'fixture-session'}, 'agent_role': 'Generator', 'step_key': 'lane-step', 'attempt': 1, 'base_revision': '9654d794a420876dd41869b66bd34d1ed35a3426', 'attempt_root': '/home/cnross/.tmp/nizam121-lanes-cmks3gnf/attempts/owned', 'writes': ['src/a.py'], 'state_fields': ['/work/left']}",
+        "attempt": 1,
+        "authority_approved": true,
+        "result": {
+          "eligible": false,
+          "conflicts": [],
+          "operation_id": "fixture-operation"
+        },
+        "returned": true
+      }
+    },
+    {
+      "case": "shared-state-serialized",
+      "changes": [
+        {
+          "before": "if paths or fields: conflicts.append",
+          "after": "if False: conflicts.append"
+        }
+      ],
+      "expected_assertion": "AssertionError: POLICY_ASSERTION: same file and pointer prefix conflict in lane order",
+      "identity": {
+        "git_oid": "a8ea0de370261a095f4eec17886eebb122d2f38e",
+        "sha256": "dc7b5a715efcd642e050dad9069695640b45db6e95d1c5de0eb2d0a47ba50d68",
+        "size_bytes": 86824,
+        "type": "blob"
+      },
+      "author_trace": {
+        "method": "assess_conflict_lanes",
+        "request": "{'operation_id': 'fixture-operation', 'feature_id': '121', 'owner': {'agent_id': 'fixture-agent', 'session_id': 'fixture-session'}, 'agent_role': 'Generator', 'step_key': 'lane-step', 'attempt': 1, 'base_revision': 'ec0c9ae24bce23cd22bc9201d1296844fb886869', 'attempt_root': '/home/cnross/.tmp/nizam121-lanes-9ds3e_bc/attempts/owned', 'writes': ['src/a.py'], 'state_fields': ['/work/left']}",
+        "attempt": 1,
+        "authority_approved": true,
+        "result": {
+          "eligible": true,
+          "conflicts": [],
+          "operation_id": "fixture-operation"
+        },
+        "returned": true
+      }
+    },
+    {
+      "case": "reject-terminal-spoof",
+      "changes": [
+        {
+          "before": "authority['repository'] == policy['repository'] and authority['approved'] is True, 'lane authority not approved'",
+          "after": "authority['repository'] == policy['repository'] and authority['approved'] in (True, 1), 'lane authority not approved'"
+        }
+      ],
+      "expected_assertion": "AssertionError: POLICY_ASSERTION: lane invalid request rejected: invalid input accepted",
+      "identity": {
+        "git_oid": "74e22c4f1d67447f93df228799e06fabb891e86f",
+        "sha256": "c67edbd0517c0e424fd63a4cb2531519500c323b2b0ed3639143ce66d7a4862e",
+        "size_bytes": 86839,
+        "type": "blob"
+      },
+      "author_trace": {
+        "method": "assess_conflict_lanes",
+        "request": "{'operation_id': 'fixture-operation', 'feature_id': '121', 'owner': {'agent_id': 'fixture-agent', 'session_id': 'fixture-session'}, 'agent_role': 'Generator', 'step_key': 'lane-step', 'attempt': 1, 'base_revision': '8909995569b95de0e85ac2595c863e7469d79f10', 'attempt_root': '/home/cnross/.tmp/nizam121-lanes-iffn9b90/attempts/owned', 'writes': ['src/a.py'], 'state_fields': ['/work/left']}",
+        "attempt": 1,
+        "authority_approved": 1,
+        "result": {
+          "eligible": true,
+          "conflicts": [],
+          "operation_id": "fixture-operation"
+        },
+        "returned": true
+      }
+    },
+    {
+      "case": "reject-fourth",
+      "changes": [
+        {
+          "before": "1 <= request['attempt'] <= 3, 'lane attempt outside max3'",
+          "after": "1 <= request['attempt'] <= 4, 'lane attempt outside max3'"
+        },
+        {
+          "before": "counter['attempts'] == request['attempt'] and",
+          "after": "counter['attempts'] == min(request['attempt'], 3) and"
+        }
+      ],
+      "expected_assertion": "AssertionError: POLICY_ASSERTION: lane invalid request rejected: invalid input accepted",
+      "identity": {
+        "git_oid": "bd57eacd52d5469202e70f37f047c4f8871a5fcd",
+        "sha256": "d010d5589957e424fbdc304fa906e334f447dce7edb3c70b50717ce68f2b0ee8",
+        "size_bytes": 86842,
+        "type": "blob"
+      },
+      "author_trace": {
+        "method": "assess_conflict_lanes",
+        "request": "{'operation_id': 'fixture-operation', 'feature_id': '121', 'owner': {'agent_id': 'fixture-agent', 'session_id': 'fixture-session'}, 'agent_role': 'Generator', 'step_key': 'lane-step', 'attempt': 4, 'base_revision': '4aaa801cbe03f76d0357ed647d80e82a38e956d2', 'attempt_root': '/home/cnross/.tmp/nizam121-lanes-wlccciz6/attempts/owned', 'writes': ['src/a.py'], 'state_fields': ['/work/left']}",
+        "attempt": 4,
+        "authority_approved": true,
+        "result": {
+          "eligible": true,
+          "conflicts": [],
+          "operation_id": "fixture-operation"
+        },
+        "returned": true
+      }
+    },
+    {
+      "case": "owned-rollback",
+      "changes": [
+        {
+          "before": "'attempt_root': request['attempt_root'], 'removed': True}",
+          "after": "'attempt_root': request['attempt_root'], 'removed': False}"
+        }
+      ],
+      "expected_assertion": "AssertionError: POLICY_ASSERTION: owned rollback exact removal result",
+      "identity": {
+        "git_oid": "641d6ccdd5c23ed38b12a5c1aded75be393a5ad7",
+        "sha256": "1c60cbc74ac006c5c4917279b9c56d6cc229853ca50bbef667ed9c304136a395",
+        "size_bytes": 86835,
+        "type": "blob"
+      },
+      "author_trace": {
+        "method": "rollback_owned_attempt",
+        "request": "{'operation_id': 'fixture-operation', 'feature_id': '121', 'owner': {'agent_id': 'fixture-agent', 'session_id': 'fixture-session'}, 'agent_role': 'Generator', 'step_key': 'lane-step', 'attempt': 1, 'base_revision': 'fcbb116432b86eb1130b75cce110f3d13a7f2b06', 'attempt_root': '/home/cnross/.tmp/nizam121-lanes-xuspsbx2/attempts/owned', 'writes': ['src/a.py'], 'state_fields': ['/work/left']}",
+        "attempt": 1,
+        "authority_approved": true,
+        "result": {
+          "operation_id": "fixture-operation",
+          "attempt_root": "/home/cnross/.tmp/nizam121-lanes-xuspsbx2/attempts/owned",
+          "removed": false
+        },
+        "returned": true
+      }
+    }
+  ],
+  "inherited_AST_symbols": {
+    "tools/workflow_assurance.py": [
+      "AssuranceError",
+      "require",
+      "json_value",
+      "canonical",
+      "sha",
+      "parse_json",
+      "pointers",
+      "verify_record_update",
+      "relative_path",
+      "regular_file",
+      "git",
+      "blobs",
+      "manifest",
+      "masks",
+      "assess_repository",
+      "validate_identity",
+      "compare_identity",
+      "_bundle_object",
+      "_bundle_string",
+      "_bundle_hex",
+      "_bundle_file",
+      "_bundle_proof",
+      "verify_acceptance_bundle",
+      "_entry_blob",
+      "_entry_pinned",
+      "verify_authorized_entry",
+      "verify_foundation_ready",
+      "convergent_agf_verdict",
+      "_receipt_text",
+      "_receipt_ref",
+      "_receipt_artifact",
+      "_receipt_schema",
+      "_receipt_gate",
+      "_receipt_producer",
+      "_receipt_policy",
+      "_receipt_candidate",
+      "_receipt_contract",
+      "_receipt_prerequisites",
+      "_receipt_operator",
+      "verify_stage_receipt",
+      "plan_receipt_transition",
+      "main"
+    ],
+    "tools/test_workflow_assurance.py": [
+      "canonical",
+      "sha",
+      "require",
+      "git",
+      "load_api",
+      "rejected",
+      "Fixture",
+      "record",
+      "identity_positive",
+      "cli_controls",
+      "flatten",
+      "category_drift",
+      "environment_drift",
+      "unknown_drift",
+      "continuity",
+      "unowned",
+      "history_edit",
+      "owned_append",
+      "run_case",
+      "bundle_rejected",
+      "bundle_mutate",
+      "bundle_isolated_negative",
+      "run_bundle_case",
+      "bundle_cli_controls",
+      "run_entry_case",
+      "agf_ledger",
+      "agf_severity",
+      "agf_fingerprint",
+      "agf_report",
+      "agf_call",
+      "agf_invalid",
+      "agf_approve",
+      "agf_advisory",
+      "agf_block",
+      "agf_array",
+      "run_agf_case",
+      "receipt_ids",
+      "ReceiptFixture",
+      "receipt_verify",
+      "receipt_reject",
+      "receipt_plan",
+      "receipt_operator",
+      "receipt_artifact_integrity",
+      "receipt_candidate",
+      "receipt_unrun",
+      "receipt_setup",
+      "receipt_status",
+      "receipt_failed",
+      "receipt_prerequisites",
+      "receipt_replay",
+      "receipt_double",
+      "receipt_recovery",
+      "run_receipt_case"
+    ]
+  },
+  "inherited_inventories_preserved": true,
+  "installed239_unchanged": true,
+  "schemas_unchanged": true,
+  "prior_proof_paths_unchanged": 10507,
+  "development_receipt_verified": "70a74be6af16e74ca057a733e4f1f16a7fdd8f8b",
+  "hosted_receipt_verified": {
+    "head": "b8558349bc58bcf75b746cb90e5b8a2de327e08b",
+    "run": 38655158531
+  },
+  "ocr_limitation": "Repository .ocr/skills/SKILL.md absent; installed AGF/execution independent review only; no OCR eight-phase claim.",
+  "scope": "Executable bundle review only, not final QA, evidence-capture or feature closure."
+}

@@ -1029,10 +1029,280 @@ def run_receipt_case(name, api):
         else: os.environ['NIZAM_WA120_FIXTURE'] = previous
 
 
+LANE_CASES = ('independent-lanes', 'shared-state-serialized', 'reject-terminal-spoof', 'reject-fourth', 'owned-rollback')
+
+
+class LaneFixture(ReceiptFixture):
+    """New owned Git graph; every authority/actor label is a synthetic parser fixture."""
+    def __init__(self, parent):
+        self.parent = Path(parent).resolve(); self.root = self.parent / 'coordinator'; self.root.mkdir()
+        self.attempt_parent = self.parent / 'attempts'; self.attempt_parent.mkdir(); self.roots = []
+        git(self.root, 'init', '-q'); git(self.root, 'config', 'user.name', 'Fixture Lanes Only')
+        git(self.root, 'config', 'user.email', 'fixture@example.invalid')
+        self.repository = 'portable/lanes-fixture'; git(self.root, 'remote', 'add', 'origin', self.repository)
+        for name in ('a', 'b', 'staged', 'work'): self.write('src/' + name + '.py', b'# unchanged private base\n')
+        self.write('.gitignore', b'ignored/\n'); self.write('proof/prior.txt', b'original external proof\n')
+        self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'outside sentinel\n'); self.outside.chmod(0o600)
+        self.sibling = self.parent / 'sibling'; self.sibling.mkdir(); (self.sibling / 'sentinel').write_bytes(b'sibling task sentinel\n')
+        for name in ('contract', 'contract_review', 'run_state', 'feature_list'):
+            self.write('schema/' + name + '.schema.json', (ROOT / 'schema' / (name + '.schema.json')).read_bytes())
+        contract = json.loads((ROOT / '.agent/contracts/121.json').read_text()); contract['status'] = 'proposed'
+        contract['approvals'] = dict(validator_mode_a=False, evaluator_contract_review=False)
+        self.write('contract.json', contract); proposed = self.commit('fixture proposed121'); digest = sha(canonical(contract))
+        gate = dict(final_verdict={'approved': True, 'summary': 'synthetic fixture gate'}, issues=[], missing_acceptance_coverage=[], unsupported_claims=[])
+        self.write('proof/mode-a.json', dict(gate, feature='121', reviewed_commit=proposed, contract_sha256=digest, reviewer='fixture-mode-a'))
+        self.write('proof/contract-review.json', dict(gate, review='fixture-only', feature='121', contract_id='121', reviewed_revision=proposed, proposal_sha256=digest, reviewer='fixture-contract-review'))
+        contract['status'] = 'approved'; contract['approvals'] = dict(validator_mode_a=True, evaluator_contract_review=True)
+        contract['approval_evidence'] = dict(mode_a='proof/mode-a.json', contract_review='proof/contract-review.json', proposal_sha256=digest)
+        self.write('contract.json', contract)
+        self.state = dict(repository=self.repository, current_phase='fixture-lanes', current_feature='121', active_contract_id='121', status='in_progress', updated_at='2026-10-14T00:00:00Z',
+            scope_budget=dict(original_estimate_lines=44, total_lines_changed=2, per_feature=[]), circuit_breaker={'lane-step': {'attempts': 1, 'limit': 3}, 'other-step': {'attempts': 1, 'limit': 3}},
+            history=[dict(at='earlier', event='fixture-seed', detail='unchanged prefix')], execution_lanes=[])
+        feature = lambda id, status, dependencies, passes: dict(id=id, name=id, description='fixture feature', status=status, dependencies=dependencies, passes=passes, acceptance_tests=['fixture only'], estimated_lines=1)
+        self.features = dict(phase='fixture-lanes', spec_version='0.1.0', original_estimate_lines=44,
+            features=[feature('predecessor', 'complete', [], True), feature('121', 'in_progress', ['predecessor'], False)])
+        self.write('coordination.json', self.state); self.write('features.json', self.features)
+        self.base = self.commit('fixture approved contract and current coordination'); self.contract_ref = self.ref('contract.json', self.base)
+        self.attempt = self.worktree('owned'); self.other = self.worktree('other')
+        self.request = dict(operation_id='fixture-operation', feature_id='121', owner={'agent_id': 'fixture-agent', 'session_id': 'fixture-session'},
+            agent_role='Generator', step_key='lane-step', attempt=1, base_revision=self.base, attempt_root=str(self.attempt), writes=['src/a.py'], state_fields=['/work/left'])
+        self.policy = dict(repository=self.repository, coordination_ref=self.ref('coordination.json'), feature_list_ref=self.ref('features.json'), authority_ref=None, attempt_parent=str(self.attempt_parent), rollback_ref=None)
+        self.authorize(); self.proof_captures = []; self.git_probe_log = []
+
+    def worktree(self, name, attached=False):
+        path = self.attempt_parent / name
+        git(self.root, 'worktree', 'add', *(['-b', 'fixture-' + name] if attached else ['--detach']), str(path), self.base)
+        self.roots.append(path); return path
+
+    def close(self):
+        for path in self.roots:
+            require(path.parent == self.attempt_parent and path != self.root, 'cleanup only owned registered fixture worktree')
+            if path.exists():
+                if path.name == 'probe-submodule': git(path, 'update-index', '--force-remove', 'owned-gitlink')
+                git(self.root, 'worktree', 'remove', '--force', str(path))
+
+    def inventory_probe(self, kind):
+        path = self.worktree('probe-' + kind); writes = ['src/a.py']; argv = None
+        if kind in ('staged', 'committed', 'unmerged'):
+            (path / 'src/b.py').write_bytes(b'ours undeclared change\n'); git(path, 'add', 'src/b.py')
+            if kind != 'staged': git(path, 'commit', '-qm', 'owned fixture undeclared commit')
+        if kind == 'rename': git(path, 'mv', 'src/a.py', 'src/cross-owner.py')
+        if kind == 'mode': (path / 'src/b.py').chmod((path / 'src/b.py').stat().st_mode ^ 0o111)
+        if kind == 'symlink': (path / 'src/a.py').unlink(); (path / 'src/a.py').symlink_to(path / 'src/b.py')
+        if kind == 'submodule':
+            (path / 'owned-gitlink').mkdir(); writes = ['owned-gitlink']
+            git(path, 'update-index', '--add', '--cacheinfo', '160000', self.base, 'owned-gitlink')
+        if kind == 'unmerged':
+            writes = ['src/b.py']
+            with tempfile.TemporaryDirectory(prefix='lane-conflict-index-', dir=self.parent) as directory:
+                env = {**os.environ, 'GIT_INDEX_FILE': str(Path(directory) / 'index'), 'LC_ALL': 'C'}
+                command = lambda *args: subprocess.check_output(['git', '-C', str(self.root), *args], env=env).decode().strip()
+                command('read-tree', self.base)
+                oid = subprocess.check_output(['git', '-C', str(self.root), 'hash-object', '-w', '--stdin'], input=b'theirs undeclared change\n').decode().strip()
+                command('update-index', '--cacheinfo', '100644', oid, 'src/b.py'); tree = command('write-tree')
+                theirs = subprocess.check_output(['git', '-C', str(self.root), 'commit-tree', tree, '-p', self.base], input=b'Owned fixture conflicting side\n', env=env).decode().strip()
+            argv = ['git', '-C', str(path), 'merge', '--no-edit', theirs]
+            result = subprocess.run(argv, capture_output=True, env={**os.environ, 'LC_ALL': 'C'})
+            self.write('proof/unmerged-setup.stdout', result.stdout); self.write('proof/unmerged-setup.stderr', result.stderr)
+            require(result.returncode == 1 and bool(git(path, 'ls-files', '--unmerged')), 'actual expected Git merge conflict setup')
+            self.git_probe_log.append(dict(argv=argv, actual_exit=result.returncode, stdout_sha256=sha(result.stdout), stderr_sha256=sha(result.stderr), classification='expected fixture merge conflict, not API semantic red'))
+        self.git_probe_log.append(dict(kind=kind, root=str(path), head=git(path, 'rev-parse', 'HEAD'), index=git(path, 'ls-files', '--stage'), status=git(path, 'status', '--porcelain=v1')))
+        return path, writes
+
+    def authorize(self, **changes):
+        self.request = copy.deepcopy(self.request)
+        self.request.update(copy.deepcopy(changes))
+        dispatch = dict(schema_version=1, role='Orchestrator', repository=self.repository, approved=True, contract_ref=self.contract_ref, **copy.deepcopy(self.request))
+        self.policy['authority_ref'] = self.pin('proof/dispatch.json', dispatch)
+
+    def sync(self):
+        self.write('coordination.json', self.state); self.write('features.json', self.features); revision = self.commit('fixture current snapshot')
+        self.policy.update(coordination_ref=self.ref('coordination.json', revision), feature_list_ref=self.ref('features.json', revision))
+
+    def lane(self, name='other', status='running', writes=None, fields=None):
+        return dict(copy.deepcopy(self.request), operation_id=name, step_key='other-step', attempt_root=str(self.other),
+            owner={'agent_id': 'fixture-other-agent', 'session_id': 'fixture-other-session'},
+            writes=['src/b.py'] if writes is None else writes, state_fields=['/work/right'] if fields is None else fields, status=status, terminal_ref=None)
+
+    def proof(self, lane, failure=False):
+        argv = [sys.executable, '-c', "print('synthetic fixture capture assertion'); raise SystemExit(%d)" % (7 if failure else 0)]
+        result = subprocess.run(argv, cwd=self.root, capture_output=True)
+        require(result.returncode == (7 if failure else 0), 'actual fixture proof exit')
+        name = 'failure' if failure else 'release'; self.write('proof/' + name + '.stdout', result.stdout); self.write('proof/' + name + '.stderr', result.stderr)
+        record = {k: copy.deepcopy(lane[k]) for k in ('operation_id', 'feature_id', 'owner', 'attempt', 'base_revision', 'attempt_root')}
+        record.update(schema_version=1, role='Orchestrator', actual_exit=result.returncode, **({'captured': True} if failure else {'released': True}))
+        reference = self.pin('proof/' + name + '.json', record)
+        self.proof_captures.append(dict(argv=argv, cwd=str(self.root), actual_exit=result.returncode, reference=reference,
+            stdout_sha256=sha(result.stdout), stderr_sha256=sha(result.stderr), note='synthetic role/binding fixtures; raw process exit observed'))
+        return reference
+
+    def attempt_write(self, path, data):
+        target = self.attempt / path; target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(data)
+
+    def all_files(self, exclude_attempt=False):
+        result = {}
+        for p in self.parent.rglob('*'):
+            parts = p.relative_to(self.parent).parts
+            if '.git' in parts or (exclude_attempt and (p == self.attempt or self.attempt in p.parents)): continue
+            if p.is_symlink(): result[str(p)] = ('symlink', os.readlink(p))
+            elif p.is_file(): result[str(p)] = (sha(p.read_bytes()), p.stat().st_mode)
+        return result
+
+
+def lane_call(api, f, method='assess_conflict_lanes'):
+    inputs = copy.deepcopy((f.request, f.policy)); files = f.all_files(); registration = git(f.root, 'worktree', 'list', '--porcelain')
+    result = getattr(api, method)(f.root, f.request, policy=f.policy)
+    require((f.request, f.policy) == inputs and f.all_files() == files and git(f.root, 'worktree', 'list', '--porcelain') == registration, 'lane assessment is read-only')
+    require(not receipt_ids(result) & receipt_ids([f.request, f.policy]), 'lane result independent copy')
+    if method == 'assess_conflict_lanes':
+        require(set(result) == {'eligible', 'conflicts', 'operation_id'} and type(result['eligible']) is bool and result['operation_id'] == f.request['operation_id'], 'lane exact assessment shape')
+    else:
+        require(result == dict(operation_id=f.request['operation_id'], attempt=f.request['attempt'], base_revision=f.request['base_revision'], attempt_root=f.request['attempt_root'],
+            head_revision=git(f.attempt, 'rev-parse', 'HEAD'), owned_changes=result['owned_changes']), 'lane exact isolation identity')
+    return result
+
+
+def lane_reject(api, f, method='assess_conflict_lanes'):
+    inputs = repr((f.request, f.policy)); files = f.all_files(); registration = git(f.root, 'worktree', 'list', '--porcelain')
+    rejected(api, lambda: getattr(api, method)(f.root, f.request, policy=f.policy), 'lane invalid request rejected')
+    require(repr((f.request, f.policy)) == inputs and f.all_files() == files and git(f.root, 'worktree', 'list', '--porcelain') == registration, 'lane denial precedes every side effect')
+
+
+def lane_independent(api, f):
+    f.state['execution_lanes'] = [f.lane()]; f.sync()
+    require(lane_call(api, f) == {'eligible': True, 'conflicts': [], 'operation_id': f.request['operation_id']}, 'independent lanes eligible')
+    require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == [], 'real detached base worktree accepted')
+    for field, value in (('status', 'pending'), ('passes', False)):
+        old = copy.deepcopy(f.features); f.features['features'][0][field] = value; f.sync(); lane_reject(api, f); f.features = copy.deepcopy(old); f.sync()
+    old = copy.deepcopy(f.features); f.features['features'][0].update(status='cancelled', passes=False); f.sync(); require(lane_call(api, f)['eligible'] is True, 'cancelled predecessor satisfied')
+    f.features = copy.deepcopy(old); f.features['features'].append(copy.deepcopy(old['features'][0])); f.sync(); lane_reject(api, f); f.features = copy.deepcopy(old); f.sync()
+    f.authorize(writes=['src/a.py', 'src/staged.py', 'src/work.py', 'src/new.py', 'ignored/owned.txt'])
+    f.attempt_write('src/a.py', b'owned committed change\n'); git(f.attempt, 'add', 'src/a.py'); git(f.attempt, 'commit', '-qm', 'owned fixture source change')
+    f.attempt_write('src/staged.py', b'owned staged change\n'); git(f.attempt, 'add', 'src/staged.py')
+    for path in ('src/work.py', 'src/new.py', 'ignored/owned.txt'): f.attempt_write(path, b'owned worktree change\n')
+    require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(f.request['writes']), 'committed staged live untracked ignored ownership')
+    original = copy.deepcopy(f.request)
+    for path in ('unowned.txt', 'ignored/unowned.txt'):
+        f.attempt_write(path, b'keep unowned sentinel\n'); lane_reject(api, f, 'verify_isolated_attempt'); (f.attempt / path).unlink()
+    for kind in ('staged', 'committed', 'rename', 'mode', 'symlink', 'unmerged', 'submodule'):
+        root, writes = f.inventory_probe(kind); f.authorize(attempt_root=str(root), writes=writes)
+        lane_reject(api, f, 'verify_isolated_attempt')
+        f.request = copy.deepcopy(original); f.authorize()
+        require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(original['writes']), 'restored valid isolation after ' + kind)
+    f.authorize(base_revision='0' * 40); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
+    fake = f.attempt_parent / 'unregistered'; fake.mkdir(); f.authorize(attempt_root=str(fake)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
+    attached = f.worktree('attached', True); f.authorize(attempt_root=str(attached)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
+    require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(original['writes']), 'restored isolated owned positive')
+
+
+def lane_shared(api, f):
+    for status in ('reserved', 'running', 'invalidated'):
+        f.state['execution_lanes'] = [f.lane('file-first', status, ['src/a.py'], ['/unrelated']), f.lane('pointer-second', status, ['elsewhere.txt'], ['/work'])]; f.sync()
+        require(lane_call(api, f) == dict(eligible=False, conflicts=['file-first', 'pointer-second'], operation_id=f.request['operation_id']), 'same file and pointer prefix conflict in lane order')
+    for path in ('src', 'src/a.py/child'):
+        f.state['execution_lanes'] = [f.lane(writes=[path], fields=[])]; f.sync(); require(lane_call(api, f)['eligible'] is False, 'file ancestor descendant conflict')
+    f.state['execution_lanes'] = [dict(copy.deepcopy(f.request), status='reserved', terminal_ref=None)]; f.sync()
+    require(lane_call(api, f)['eligible'] is True, 'same operation exact lane ignored')
+    f.state['execution_lanes'][0]['writes'] = ['elsewhere.txt']; f.sync(); lane_reject(api, f)
+    f.state['execution_lanes'] = [f.lane(fields=['/work/leftover'])]; f.sync()
+    require(lane_call(api, f)['eligible'] is True, 'pointer components disjoint, not string prefix')
+    saved = (f.root / 'coordination.json').read_bytes(); f.write('coordination.json', dict(f.state, updated_at='stale')); lane_reject(api, f); f.write('coordination.json', saved)
+    target = f.root / 'features.json'; mode = target.stat().st_mode; target.chmod(mode ^ 0o111); lane_reject(api, f); target.chmod(mode)
+    require(lane_call(api, f)['eligible'] is True, 'restored current snapshot positive')
+    state = copy.deepcopy(f.state); features = copy.deepcopy(f.features)
+    for key, value in (('repository', 'foreign/repo'), ('current_feature', 'foreign'), ('active_contract_id', 'foreign'), ('status', 'complete'), ('current_phase', 'foreign-phase')):
+        f.state = copy.deepcopy(state); f.state[key] = value; f.sync(); lane_reject(api, f)
+        f.state = copy.deepcopy(state); f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored coordination predicate ' + key)
+    f.features = copy.deepcopy(features); f.features['phase'] = 'foreign-phase'; f.sync(); lane_reject(api, f)
+    f.features = copy.deepcopy(features); f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored feature phase binding')
+
+
+def lane_spoof(api, f):
+    original = copy.deepcopy(f.request)
+    for key, value in (('status', 'released'), ('terminal', True), ('approved', True), ('authority_ref', f.policy['authority_ref']),
+        ('owner', {'agent_id': 'spoof', 'session_id': 'spoof'}), ('agent_role', 'Orchestrator')):
+        f.request = copy.deepcopy(original); f.request[key] = value; lane_reject(api, f)
+    f.request = copy.deepcopy(original)
+    for key, value in (('attempt', None), ('writes', ['../escape']), ('writes', ['src/../a.py']), ('writes', ['.git/config']), ('writes', ['src/a.py'] * 2), ('state_fields', ['/']), ('state_fields', ['/bad~escape']), ('state_fields', ['/work', '/work/left'])):
+        f.request = copy.deepcopy(original); f.authorize(**{key: value}); lane_reject(api, f)
+        f.request = copy.deepcopy(original); f.authorize(); require(lane_call(api, f)['eligible'] is True, 'restored bound shape probe ' + key)
+    for value in (None, [], float('nan')):
+        f.request = value; lane_reject(api, f)
+    f.request = copy.deepcopy(original); cycle = []; cycle.append(cycle); f.request['extra'] = cycle; lane_reject(api, f); f.request = copy.deepcopy(original)
+    policy = copy.deepcopy(f.policy)
+    for key, value in (('sha256', 'f' * 64), ('revision', '0' * 40)):
+        f.policy = copy.deepcopy(policy); f.policy['authority_ref'][key] = value; lane_reject(api, f)
+    f.policy = copy.deepcopy(policy); dispatch = json.loads((f.root / 'proof/dispatch.json').read_text())
+    for key, value in (('approved', 1), ('role', 'Generator')):
+        bad = dict(dispatch, **{key: value}); f.policy['authority_ref'] = f.pin('proof/bad-dispatch.json', bad); lane_reject(api, f)
+    f.policy = copy.deepcopy(policy); lane = f.lane(status='released', writes=['src/a.py'])
+    f.state['execution_lanes'] = [lane]; f.sync(); lane_reject(api, f)
+    reference = f.proof(lane); lane['terminal_ref'] = reference; f.sync(); require(lane_call(api, f)['eligible'] is True, 'pinned actual release frees conflicts')
+    record = json.loads((f.root / reference['path']).read_text())
+    for key, value in (('released', 1), ('actual_exit', False), ('operation_id', 'foreign')):
+        lane['terminal_ref'] = f.pin('proof/bad-release.json', dict(record, **{key: value})); f.sync(); lane_reject(api, f)
+    lane['terminal_ref'] = reference; f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored exact release positive')
+
+
+def lane_fourth(api, f):
+    for ordinal in (1, 2, 3):
+        f.state['circuit_breaker']['lane-step']['attempts'] = ordinal; f.sync(); f.authorize(attempt=ordinal)
+        require(lane_call(api, f)['eligible'] is True, 'allocated ordinal accepted: ' + str(ordinal))
+    original = copy.deepcopy(f.request); state = copy.deepcopy(f.state)
+    for ordinal in (4, 0, True, '3', None):
+        f.authorize(attempt=ordinal); lane_reject(api, f)
+    f.request = copy.deepcopy(original); f.authorize()
+    for key, value in (('attempts', 0), ('attempts', 2), ('attempts', True), ('attempts', '3'), ('limit', 4), ('limit', True)):
+        f.state = copy.deepcopy(state); f.state['circuit_breaker']['lane-step'][key] = value; f.sync(); lane_reject(api, f)
+    f.state = copy.deepcopy(state); del f.state['circuit_breaker']['lane-step']; f.sync(); lane_reject(api, f)
+    f.state = copy.deepcopy(state); f.state['circuit_breaker']['lane-step'] = {'attempts': 3, 'limit': 3}; f.sync()
+    require(lane_call(api, f)['eligible'] is True, 'restored original counter allocation accepted')
+
+
+def lane_rollback(api, f):
+    f.attempt_write('src/a.py', b'owned failure change\n'); original = copy.deepcopy(f.request)
+    failure = f.proof(f.request, True); f.policy['rollback_ref'] = failure
+    f.attempt_write('unowned-sentinel', b'unowned inside blocks removal\n'); lane_reject(api, f, 'rollback_owned_attempt'); (f.attempt / 'unowned-sentinel').unlink()
+    policy = copy.deepcopy(f.policy)
+    f.policy['rollback_ref'] = None; lane_reject(api, f, 'rollback_owned_attempt'); f.policy = copy.deepcopy(policy)
+    record = json.loads((f.root / failure['path']).read_text())
+    for key, value in (('captured', 1), ('actual_exit', 0), ('owner', {'agent_id': 'wrong', 'session_id': 'wrong'})):
+        f.policy['rollback_ref'] = f.pin('proof/bad-failure.json', dict(record, **{key: value})); lane_reject(api, f, 'rollback_owned_attempt')
+    f.policy = copy.deepcopy(policy); saved = (f.root / failure['path']).read_bytes(); (f.root / failure['path']).unlink(); lane_reject(api, f, 'rollback_owned_attempt'); f.write(failure['path'], saved)
+    f.request['owner'] = {'agent_id': 'wrong', 'session_id': 'wrong'}; lane_reject(api, f, 'rollback_owned_attempt'); f.request = copy.deepcopy(original)
+    nested = f.attempt / 'nested'; nested.mkdir(); alias = f.attempt_parent / 'alias'; alias.symlink_to(f.attempt, target_is_directory=True)
+    foreign = f.attempt_parent / 'foreign'; git(f.root, 'init', '-q', str(foreign))
+    for changes, parent in (({'attempt_root': str(f.root)}, f.parent), ({'attempt_root': str(f.parent)}, f.parent.parent),
+        ({'attempt_root': str(nested)}, f.attempt_parent), ({'attempt_root': str(alias)}, f.attempt_parent),
+        ({'attempt_root': str(foreign)}, f.attempt_parent), ({'base_revision': '0' * 40}, f.attempt_parent)):
+        f.request = copy.deepcopy(original); f.authorize(**changes); f.policy['attempt_parent'] = str(parent)
+        f.policy['rollback_ref'] = f.proof(f.request, True)
+        lane_reject(api, f, 'rollback_owned_attempt')
+        f.request = copy.deepcopy(original); f.authorize(); f.policy['attempt_parent'] = policy['attempt_parent']
+        f.policy['rollback_ref'] = f.proof(f.request, True)
+        require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == ['src/a.py'], 'restored valid isolation between unsafe rollback probes')
+    alias.unlink(); nested.rmdir()
+    outside = f.all_files(exclude_attempt=True); inputs = copy.deepcopy((f.request, f.policy))
+    result = api.rollback_owned_attempt(f.root, f.request, policy=f.policy)
+    require(result == dict(operation_id=f.request['operation_id'], attempt_root=str(f.attempt), removed=True), 'owned rollback exact removal result')
+    require(not f.attempt.exists() and str(f.attempt) not in git(f.root, 'worktree', 'list', '--porcelain'), 'actual owned worktree absent and unregistered')
+    require(f.all_files(exclude_attempt=True) == outside and (f.request, f.policy) == inputs, 'outside sibling sentinel coordinator prior proof unchanged')
+    require(json.loads((f.root / failure['path']).read_text())['actual_exit'] == 7, 'failure capture remains actual nonzero after rollback')
+
+
+def run_lane_case(name, api):
+    if not all(callable(getattr(api, key, None)) for key in ('assess_conflict_lanes', 'verify_isolated_attempt', 'rollback_owned_attempt')):
+        print('SETUP_ERROR: missing lane APIs', file=sys.stderr); raise SystemExit(2)
+    with tempfile.TemporaryDirectory(prefix='nizam121-lanes-') as parent:
+        f = LaneFixture(parent)
+        try: (lane_independent, lane_shared, lane_spoof, lane_fourth, lane_rollback)[LANE_CASES.index(name)](api, f)
+        finally: f.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
@@ -1067,8 +1337,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES):
-        (run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES):
+        (run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':

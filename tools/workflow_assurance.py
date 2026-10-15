@@ -1025,6 +1025,180 @@ def plan_receipt_transition(repo, state, receipt, *, policy):
         raise AssuranceError('receipt transition failed: ' + str(exc)[:400]) from exc
 
 
+def _lane_path(value):
+    require(type(value) is str and Path(value).is_absolute(), 'lane absolute path required')
+    path = Path(value).resolve(strict=True)
+    require(str(path) == value and path.is_dir(), 'lane noncanonical or symlink directory')
+    return path
+
+
+def _lane_shape(root, request):
+    _bundle_object(request, ('operation_id', 'feature_id', 'owner', 'agent_role', 'step_key', 'attempt',
+        'base_revision', 'attempt_root', 'writes', 'state_fields'), 'lane request')
+    for key in ('operation_id', 'feature_id', 'agent_role', 'step_key'): _receipt_text(request[key], key)
+    _receipt_producer(request['owner'])
+    require(type(request['attempt']) is int and 1 <= request['attempt'] <= 3, 'lane attempt outside max3')
+    _bundle_hex(request['base_revision'], 40, 'lane immutable base')
+    require(git(root, 'rev-parse', '--verify', request['base_revision'] + '^{commit}').decode().strip() == request['base_revision'], 'lane actual base')
+    _lane_path(request['attempt_root'])
+    writes = request['writes']; require(type(writes) is list and writes, 'lane writes required')
+    for path in writes: relative_path(path)
+    require(len(set(writes)) == len(writes), 'lane duplicate writes'); pointers(request['state_fields'])
+
+
+def _lane_file(root, reference, live=False):
+    data = _receipt_artifact(root, reference, live=live)
+    if live:
+        _, executable = _entry_blob(root, reference['revision'], reference['path'])
+        require(bool(regular_file(root, reference['path']).stat().st_mode & 0o111) is executable, 'lane snapshot mode changed')
+    return parse_json(data)
+
+
+def _lane_record(root, reference, request, failure=False):
+    value = _lane_file(root, reference, live=True); flag = 'captured' if failure else 'released'
+    keys = ('operation_id', 'feature_id', 'owner', 'attempt', 'base_revision', 'attempt_root')
+    _bundle_object(value, ('schema_version', 'role', *keys, flag, 'actual_exit'), 'lane evidence')
+    require(type(value['schema_version']) is int and value['schema_version'] == 1 and value['role'] == 'Orchestrator' and
+        value[flag] is True and type(value['actual_exit']) is int and
+        (value['actual_exit'] != 0 if failure else value['actual_exit'] == 0), 'lane evidence not verified')
+    require(all(canonical(value[k]) == canonical(request[k]) for k in keys), 'lane evidence ownership mismatch')
+
+
+def _lane_assessment(repo, request, policy):
+    json_value(request); json_value(policy); root = _lane_path(str(repo))
+    require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'lane coordinator toplevel')
+    _bundle_object(policy, ('repository', 'coordination_ref', 'feature_list_ref', 'authority_ref', 'attempt_parent', 'rollback_ref'), 'lane policy')
+    require(git(root, 'remote', 'get-url', 'origin').decode().strip() == policy['repository'], 'lane actual repository')
+    _lane_shape(root, request); target = _lane_path(request['attempt_root']); parent = _lane_path(policy['attempt_parent'])
+    common = Path(git(root, 'rev-parse', '--path-format=absolute', '--git-common-dir').decode().strip()).resolve(strict=True)
+    require(parent != root and not parent.is_relative_to(root) and not parent.is_relative_to(common), 'lane unsafe attempt parent')
+    require(target != parent and target.is_relative_to(parent) and not any(target.is_relative_to(p) or p.is_relative_to(target)
+        for p in (root, common)), 'lane unsafe attempt root')
+    authority = _lane_file(root, policy['authority_ref'])
+    _bundle_object(authority, (*request, 'schema_version', 'role', 'repository', 'approved', 'contract_ref'), 'lane authority')
+    require(type(authority['schema_version']) is int and authority['schema_version'] == 1 and authority['role'] == 'Orchestrator' and
+        authority['repository'] == policy['repository'] and authority['approved'] is True, 'lane authority not approved')
+    require(all(canonical(authority[k]) == canonical(v) for k, v in request.items()), 'lane request outside dispatch')
+    _receipt_contract(root, _lane_file(root, authority['contract_ref']), request['feature_id'])
+    state = _lane_file(root, policy['coordination_ref'], live=True); features = _lane_file(root, policy['feature_list_ref'], live=True)
+    _receipt_schema(root, state, 'run_state'); _receipt_schema(root, features, 'feature_list')
+    require(state['repository'] == policy['repository'] and state['current_feature'] == request['feature_id'] and
+        state.get('active_contract_id', request['feature_id']) == request['feature_id'] and state['status'] == 'in_progress' and
+        features['phase'] == state['current_phase'], 'lane coordination binding')
+    rows = features['features']; ids = [r['id'] for r in rows]
+    require(len(set(ids)) == len(ids), 'lane duplicate feature'); selected = [r for r in rows if r['id'] == request['feature_id']]
+    require(len(selected) == 1 and selected[0]['status'] == 'in_progress', 'lane selected feature inactive')
+    for dependency in selected[0]['dependencies']:
+        matches = [r for r in rows if r['id'] == dependency]
+        require(len(matches) == 1 and (matches[0]['status'] == 'cancelled' or
+            (matches[0]['status'] == 'complete' and matches[0]['passes'] is True)), 'lane dependency not satisfied')
+    counter = state['circuit_breaker'].get(request['step_key'])
+    require(type(counter) is dict and type(counter.get('attempts')) is int and counter['attempts'] == request['attempt'] and
+        type(counter.get('limit')) is int and counter['limit'] == 3, 'lane counter allocation mismatch')
+    lanes = state.get('execution_lanes'); require(type(lanes) is list, 'lane coordination inventory missing')
+    seen = set(); conflicts = []
+    for lane in lanes:
+        _bundle_object(lane, (*request, 'status', 'terminal_ref'), 'coordinated lane')
+        bound = {k: lane[k] for k in request}; _lane_shape(root, bound)
+        require(lane['operation_id'] not in seen, 'lane duplicate operation'); seen.add(lane['operation_id'])
+        require(lane['status'] in ('reserved', 'running', 'invalidated', 'released'), 'lane invalid status')
+        if lane['status'] == 'released': _lane_record(root, lane['terminal_ref'], bound)
+        else: require(lane['terminal_ref'] is None, 'lane premature terminal proof')
+        if lane['operation_id'] == request['operation_id']:
+            require(canonical(bound) == canonical(request), 'lane conflicting operation identity'); continue
+        if lane['status'] == 'released': continue
+        paths = any(a == b or a.startswith(b + '/') or b.startswith(a + '/') for a in request['writes'] for b in lane['writes'])
+        fields = any(a[:len(b)] == b or b[:len(a)] == a for a in pointers(request['state_fields']) for b in pointers(lane['state_fields']))
+        if paths or fields: conflicts.append(lane['operation_id'])
+    return {'eligible': not conflicts, 'conflicts': conflicts, 'operation_id': request['operation_id']}
+
+
+def assess_conflict_lanes(repo, request, *, policy):
+    """Assess trusted current coordination; this does not reserve a lane."""
+    try:
+        return _lane_assessment(repo, request, policy)
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
+        raise AssuranceError('lane assessment failed: ' + str(exc)[:300]) from exc
+
+
+def _lane_worktrees(root):
+    records = []
+    for record in git(root, 'worktree', 'list', '--porcelain', '-z').split(b'\0\0'):
+        if record:
+            records.append(dict(field.decode().partition(' ')[::2] for field in record.split(b'\0') if field))
+    return records
+
+
+def _lane_inventory(target, base, head):
+    def tree(revision):
+        result = {}
+        for row in git(target, 'ls-tree', '-rz', revision).split(b'\0'):
+            if row:
+                metadata, path = row.split(b'\t', 1); mode, kind, oid = metadata.decode().split(); path = path.decode(); relative_path(path)
+                require(kind == 'blob' and mode in ('100644', '100755'), 'lane unsafe tree entry'); result[path] = (mode, oid)
+        return result
+    original, committed = tree(base), tree(head); staged = {}
+    for row in git(target, 'ls-files', '--stage', '-z').split(b'\0'):
+        if row:
+            metadata, path = row.split(b'\t', 1); mode, oid, stage = metadata.decode().split(); path = path.decode(); relative_path(path)
+            require(stage == '0' and mode in ('100644', '100755') and path not in staged, 'lane unsafe or unmerged index')
+            staged[path] = (mode, oid)
+    others = git(target, 'ls-files', '--others', '--exclude-standard', '-z') + git(target, 'ls-files', '--others', '--ignored', '--exclude-standard', '-z')
+    paths = set(original) | set(committed) | set(staged) | {p.decode() for p in others.split(b'\0') if p}
+    objects = blobs(target, [oid for mapping in (original, committed, staged) for mode, oid in mapping.values()])
+    changes = []
+    for path in sorted(paths):
+        relative_path(path); current = target
+        for part in path.split('/'):
+            current = current / part; require(not current.is_symlink(), 'lane symlink attempt entry')
+        value = None
+        if current.exists():
+            current = regular_file(target, path); value = ('100755' if current.stat().st_mode & 0o111 else '100644', current.read_bytes())
+        versions = [None if path not in m else (m[path][0], objects[m[path][1]]) for m in (original, committed, staged)] + [value]
+        if any(v != versions[0] for v in versions[1:]): changes.append(path)
+    return changes
+
+
+def verify_isolated_attempt(repo, request, *, policy):
+    """Observe a registered detached attempt and every actual changed path."""
+    try:
+        require(assess_conflict_lanes(repo, request, policy=policy)['eligible'], 'lane ownership conflict')
+        root = _lane_path(str(repo)); target = _lane_path(request['attempt_root'])
+        records = [r for r in _lane_worktrees(root) if r.get('worktree') == str(target)]
+        require(len(records) == 1 and 'detached' in records[0] and 'branch' not in records[0], 'lane detached registration required')
+        require(git(target, 'rev-parse', '--show-toplevel').decode().strip() == str(target), 'lane attempt actual toplevel')
+        common = lambda p: git(p, 'rev-parse', '--path-format=absolute', '--git-common-dir').decode().strip()
+        require(common(root) == common(target), 'lane foreign Git repository')
+        head = git(target, 'rev-parse', 'HEAD').decode().strip(); git(target, 'merge-base', '--is-ancestor', request['base_revision'], head)
+        changes = _lane_inventory(target, request['base_revision'], head)
+        require(set(changes) <= set(request['writes']), 'lane unowned attempt changes')
+        return {'operation_id': request['operation_id'], 'attempt': request['attempt'], 'base_revision': request['base_revision'],
+            'attempt_root': str(target), 'head_revision': head, 'owned_changes': changes}
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
+        raise AssuranceError('lane isolation failed: ' + str(exc)[:300]) from exc
+
+
+def rollback_owned_attempt(repo, request, *, policy):
+    """Remove exactly one owned attempt after external failure capture; never terminate processes."""
+    try:
+        first = verify_isolated_attempt(repo, request, policy=policy); root = _lane_path(str(repo))
+        require(policy['rollback_ref'] is not None, 'lane captured failure required')
+        _lane_record(root, policy['rollback_ref'], request, failure=True)
+        require(first == verify_isolated_attempt(repo, request, policy=policy), 'lane attempt changed before rollback')
+        git(root, 'worktree', 'remove', '--force', request['attempt_root'])
+        require(not Path(request['attempt_root']).exists() and not any(r.get('worktree') == request['attempt_root'] for r in _lane_worktrees(root)),
+                'lane rollback removal incomplete')
+        return {'operation_id': request['operation_id'], 'attempt_root': request['attempt_root'], 'removed': True}
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
+        raise AssuranceError('lane rollback failed: ' + str(exc)[:300]) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)

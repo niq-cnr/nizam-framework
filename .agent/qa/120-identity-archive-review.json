@@ -1,0 +1,32 @@
+{
+  "review": "independent-identity-archive-portability",
+  "feature": "120",
+  "feature_id": "120",
+  "contract_id": "120",
+  "actor": "/root/qa119",
+  "attempt": 1,
+  "reviewed_revision": "778fa42290ceeab3097fe4156c82211928b99a69",
+  "exercised_revision": "7d123b218528d0b74af389a20cee9d87069f5e90",
+  "original_seal_revision": "0edf4c64496e145d4b936292d72e6f14827ce845",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "A fresh bare Git database with explicit empty template and scrubbed environment had zero objects, all seventeen sealed IDs missing and no alternate files. Strict index-pack imported only the committed48005-byte archive; final database contained exactly the seventeen expected objects.",
+    "Each restored object independently matched original seal type blob, exact size, content SHA256 and Git blob ID. No original/source object database was linked into the restore database. Temporary restore root was owned, validated and removed after capture.",
+    "All preexisting selected proof/seal/contract/QA/source/test/docs/schema/installed paths from pre-archive faee538 retain identical Git objects, current bytes and executable modes. Original executable seal bytes exactly match0edf4c6; installed inventory remains239. No behavioral suite reran."
+  ],
+  "evidence": [
+    ".agent/evidence/120/identity-archive-review1-check.py",
+    ".agent/evidence/120/identity-archive-review1-wrapper.stdout.txt",
+    ".agent/evidence/120/identity-archive-review1-wrapper.stderr.txt",
+    ".agent/evidence/120/identity-archive-review1-commands.json",
+    ".agent/evidence/120/identity-archive-review1-result.json",
+    ".agent/evidence/120/identity-archive-review1-seal.json"
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Committed archive independently restores all17 original sealed identity blobs into an empty no-alternate object database with exact type/size/SHA256/Git identities; prior evidence and protected product files remain unchanged."
+  },
+  "boundary": "Append-only evidence portability review only. Existing behavioral results retain original exercised revisions; archive restoration is not a behavioral rerun or new feature result. No lifecycle/state/source/test/schema/installed repair or external authenticity claim."
+}

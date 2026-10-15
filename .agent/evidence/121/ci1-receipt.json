@@ -1,0 +1,96 @@
+{
+  "role": "Root",
+  "passed": true,
+  "default42_passed": true,
+  "pr": 102,
+  "head": "b8558349bc58bcf75b746cb90e5b8a2de327e08b",
+  "compliance_run": 38655158531,
+  "closeout_run": 38655158402,
+  "job": 116163055103,
+  "checkout": "6f4c39f1cf286e121f0ea61555c853ca229fcf7e",
+  "protected_bindings_revision": "b8558349bc58bcf75b746cb90e5b8a2de327e08b",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+  "actual_exit": 0,
+  "exit_basis": "Successful hosted single-command step; immutable workflow has no continue-on-error.",
+  "all42_ordered": [
+    "identity-positive",
+    "invalidate-source",
+    "invalidate-contract",
+    "invalidate-tests",
+    "invalidate-tool",
+    "invalidate-environment",
+    "invalidate-unknown",
+    "record-continuity",
+    "reject-unowned-field",
+    "reject-history-edit",
+    "allow-owned-append",
+    "reject-self-review",
+    "reject-seal-change",
+    "reject-missing-red",
+    "reject-setup-as-red",
+    "independent-handoff",
+    "accepted-entry",
+    "reject-foreign-repo",
+    "reject-stale-pin",
+    "reject-role-write",
+    "approve-empty",
+    "advisory-visible",
+    "block-carried",
+    "reject-issues",
+    "reject-missing-coverage",
+    "reject-unsupported",
+    "reject-missing-operator",
+    "reject-wrong-candidate",
+    "reject-unrun",
+    "reject-setup",
+    "reject-pending",
+    "reject-running",
+    "reject-failed",
+    "reject-invalidated",
+    "idempotent-replay",
+    "reject-double-advance",
+    "recover-missing-receipt",
+    "independent-lanes",
+    "shared-state-serialized",
+    "reject-terminal-spoof",
+    "reject-fourth",
+    "owned-rollback"
+  ],
+  "new5": [
+    "independent-lanes",
+    "shared-state-serialized",
+    "reject-terminal-spoof",
+    "reject-fourth",
+    "owned-rollback"
+  ],
+  "source_bindings": {
+    "tools/workflow_assurance.py": {
+      "sha256": "f588ad0282ed80d8f380d4f230a95bbfddc2ad2326bcf1189d9aaac8eabbc6a3",
+      "git_blob": "a9e60af2eb148519a0419604c9c200c2a587d530"
+    },
+    "tools/test_workflow_assurance.py": {
+      "sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+      "git_blob": "7490537881a6c469451962be0ab147acae4a5f41"
+    },
+    "tools/convergent_review.py": {
+      "sha256": "eb4d47be8d91f85779e97c1370f34aa7f4560bec68f9ffce033ae979e4238ea2",
+      "git_blob": "612b05ae75e91060e796dffd68acefd37e8b66a1"
+    },
+    "tools/README.md": {
+      "sha256": "4ab34cf7e268125084d63b658a53c956fecd4b586eefb0bc06b36dd3bf91bfea",
+      "git_blob": "26535e71c643feb1e7fbd7e2064b74c0d40dc40c"
+    },
+    "CHANGELOG.md": {
+      "sha256": "01a6a84dbcd881ac056ad589529296855c092a6eda3e2970db5492fb94f7eb77",
+      "git_blob": "79204b2a35b4cae42bd680ae31c6a3ae8c863ad7"
+    },
+    ".github/workflows/compliance.yml": {
+      "sha256": "aeb0d4f937a2b45ba929f43118b4dbc7dde64b690c26bca97dc41d419c29a217",
+      "git_blob": "43bbca26dbe6da73e7384cd08b25dc0d8c4cb0d3"
+    }
+  },
+  "raw_log": ".agent/evidence/121/ci1-job-log.stdout.txt",
+  "raw_log_sha256": "bce76694a2c63a16fd7f8d3147d6af2ce7126184b1862992eedc6fdced317c52",
+  "failed_jobs": [],
+  "boundary": "Observed existing hosted default42 only; no feature123 controls-ready, identical-environment or comparative claim."
+}

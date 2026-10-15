@@ -1,0 +1,39 @@
+{
+  "feature": "121",
+  "feature_id": "121",
+  "contract_id": "121",
+  "reviewer": "/root/qa121",
+  "attempt": 2,
+  "qa_pass": true,
+  "verdict": "pass",
+  "executed_at": "2026-10-15T00:37:02.643449+00:00",
+  "checks_run": 5,
+  "checks_passed": 5,
+  "checks": [
+    {"command":"PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case independent-lanes","exit_code":0,"evidence":".agent/evidence/121/qa1-contract1.json","evidence_revision":"1172435f54d3825134d461950dea6e56f6469fa0"},
+    {"command":"PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case shared-state-serialized","exit_code":0,"evidence":".agent/evidence/121/qa1-contract2.json","evidence_revision":"1172435f54d3825134d461950dea6e56f6469fa0"},
+    {"command":"PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-terminal-spoof","exit_code":0,"evidence":".agent/evidence/121/qa1-contract3.json","evidence_revision":"1172435f54d3825134d461950dea6e56f6469fa0"},
+    {"command":"PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-fourth","exit_code":0,"evidence":".agent/evidence/121/qa1-contract4.json","evidence_revision":"1172435f54d3825134d461950dea6e56f6469fa0"},
+    {"command":"PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case owned-rollback","exit_code":0,"evidence":".agent/evidence/121/qa1-contract5.json","evidence_revision":"1172435f54d3825134d461950dea6e56f6469fa0"}
+  ],
+  "adversarial": {"performed":true,"executions":1},
+  "adversarial_check": {"description":"Locked owned worktree: actual Git removal exit128 becomes AssuranceError; worktree, inputs, registration, outside sentinel and failed proof remain unchanged.","result":"pass","evidence":".agent/evidence/121-qa-adversarial.txt"},
+  "evidence_files": [
+    ".agent/evidence/121/qa1-partial-summary.json",
+    ".agent/evidence/121/qa1-partial-seal.json",
+    ".agent/evidence/121/qa2-preflight.json",
+    ".agent/evidence/121/qa2-pending-summary.json",
+    ".agent/evidence/121/qa2-final-seal.json",
+    ".agent/evidence/121-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "feature": "121",
+    "feature_id": "121",
+    "summary": "Five contract checks pass; ordered default42, historical118, expected current stale1 and both compliance modes pass. Exactly one own additional check passes. QA1 capture-wrapper failure1 remains preserved; QA2 completed only pending work."
+  }
+}

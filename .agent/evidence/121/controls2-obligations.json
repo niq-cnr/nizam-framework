@@ -1,0 +1,92 @@
+{
+  "author": "/root/controls121",
+  "role": "independent Evaluator control author",
+  "stage": "prepared; no cases or archive-restoration runtime executed",
+  "attempt": 2,
+  "preparation_revision": "c403405259ad7c3eb27b485508e0c8c7d868ed49",
+  "contract_sha256": "145efa18ec1e6b2015c5835900afe4dfec6da44af7581dbdf5e3eeecdbdc642e",
+  "source_sha256": "f588ad0282ed80d8f380d4f230a95bbfddc2ad2326bcf1189d9aaac8eabbc6a3",
+  "test_sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+  "handoff": ".agent/evidence/121/controls2-dispatch.json",
+  "ownership": "Only .agent/evidence/121/controls2-*; no Source, tests, schema, gates, QA or lifecycle writes",
+  "controls": [
+    {
+      "case": "independent-lanes",
+      "changes": [
+        {
+          "before": "return {'eligible': not conflicts, 'conflicts': conflicts, 'operation_id': request['operation_id']}",
+          "after": "return {'eligible': bool(conflicts), 'conflicts': conflicts, 'operation_id': request['operation_id']}"
+        }
+      ],
+      "intended_assertion": "AssertionError: POLICY_ASSERTION: independent lanes eligible",
+      "expected_negative_exit": 1,
+      "expected_positive_exit": 0,
+      "expected_restored_exit": 0
+    },
+    {
+      "case": "shared-state-serialized",
+      "changes": [
+        {
+          "before": "if paths or fields: conflicts.append",
+          "after": "if False: conflicts.append"
+        }
+      ],
+      "intended_assertion": "AssertionError: POLICY_ASSERTION: same file and pointer prefix conflict in lane order",
+      "expected_negative_exit": 1,
+      "expected_positive_exit": 0,
+      "expected_restored_exit": 0
+    },
+    {
+      "case": "reject-terminal-spoof",
+      "changes": [
+        {
+          "before": "authority['repository'] == policy['repository'] and authority['approved'] is True, 'lane authority not approved'",
+          "after": "authority['repository'] == policy['repository'] and authority['approved'] in (True, 1), 'lane authority not approved'"
+        }
+      ],
+      "intended_assertion": "AssertionError: POLICY_ASSERTION: lane invalid request rejected: invalid input accepted",
+      "expected_negative_exit": 1,
+      "expected_positive_exit": 0,
+      "expected_restored_exit": 0
+    },
+    {
+      "case": "reject-fourth",
+      "changes": [
+        {
+          "before": "1 <= request['attempt'] <= 3, 'lane attempt outside max3'",
+          "after": "1 <= request['attempt'] <= 4, 'lane attempt outside max3'"
+        },
+        {
+          "before": "counter['attempts'] == request['attempt'] and",
+          "after": "counter['attempts'] == min(request['attempt'], 3) and"
+        }
+      ],
+      "intended_assertion": "AssertionError: POLICY_ASSERTION: lane invalid request rejected: invalid input accepted",
+      "expected_negative_exit": 1,
+      "expected_positive_exit": 0,
+      "expected_restored_exit": 0
+    },
+    {
+      "case": "owned-rollback",
+      "changes": [
+        {
+          "before": "'attempt_root': request['attempt_root'], 'removed': True}",
+          "after": "'attempt_root': request['attempt_root'], 'removed': False}"
+        }
+      ],
+      "intended_assertion": "AssertionError: POLICY_ASSERTION: owned rollback exact removal result",
+      "expected_negative_exit": 1,
+      "expected_positive_exit": 0,
+      "expected_restored_exit": 0
+    }
+  ],
+  "execution": "STOP after commit. Root explicit release must bind committed Source and frozen tests after distinct provisional3 approval and development. Then PYTHONDONTWRITEBYTECODE=1 LC_ALL=C python3 .agent/evidence/121/controls2-run.py --release-revision <Root-released40hex> --run-id <unused-id>",
+  "runtime_count": "Exactly five actual positive, private-mutant semantic-negative, restored case triplets, 15 case processes. Additional bounded Git archive commands independently restore every retained identity in a new empty bare ODB without alternates or source ODB mounting. No old37/default42 rerun.",
+  "oracle": "Frozen selectors and assertions unchanged. Negative calls actual frozen run_lane_case and actual mutated public APIs via tracing wrappers. Require actual exit1, exactly the intended POLICY_ASSERTION line, genuine registered fixture creation and final API return matching the chosen defect. Unknown selector, absent API, Git/setup or another assertion cannot satisfy this oracle.",
+  "retention": "Eight exact Source/test/helper/mutant blobs live in committed controls2-identities.pack. Manifest records SHA256/GitOID/size/type. Runtime checks new empty ODB, imports pack, inventories exact object set and verifies every restored blob identity. Each capture records argv/cwd/environment/revision/actual exit/output hashes and paths; protected files/schema/installed payload snapshot must remain unchanged.",
+  "review": "Prepared helper requires distinct executable review after actual run; author issues no self gate, QA or completion verdict.",
+  "limit": 3,
+  "failure_revision": "7965eb67bbbe7a8b2fff42046c4b831b82b20c44",
+  "strategy": "Type/interface analysis: exact five known case names combined with positive/restored produce the only10 PASS labels. Every archive or unknown label is outside that map; no suffix-only classification.",
+  "static_preflight": ".agent/evidence/121/controls2-static-preflight.json"
+}

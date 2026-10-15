@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature121-controls1-focused/.agent/evidence/121/controls1-run.py", line 132, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-controls1-focused/.agent/evidence/121/controls1-run.py", line 110, in main
+    rows = archive('archive-restored', 'cat-file', '--batch-all-objects', '--batch-check').decode().splitlines()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-controls1-focused/.agent/evidence/121/controls1-run.py", line 106, in archive
+    def archive(label, *argv, data=None): return capture(label, ['git', '--git-dir', str(bare), *argv], 0, cwd=private, env=env, data=data)
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-controls1-focused/.agent/evidence/121/controls1-run.py", line 99, in capture
+    elif label.endswith(('-positive', '-restored')): assert result.stdout.decode().splitlines() == ['PASS ' + label.rsplit('-', 1)[0]]
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

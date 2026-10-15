@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature121-qa1/.agent/evidence/121/qa1-helper.py", line 114, in <module>
+    if __name__=='__main__': globals()[sys.argv[1]]()
+                             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature121-qa1/.agent/evidence/121/qa1-helper.py", line 79, in mandatory
+    require('source' in (out+err).lower() and ('stale' in (out+err).lower() or 'changed' in (out+err).lower()), 'expected stale-source diagnostic')
+  File "/home/cnross/.tmp/nizam-feature121-qa1/.agent/evidence/121/qa1-helper.py", line 15, in require
+    if not value: raise AssertionError(message)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: expected stale-source diagnostic

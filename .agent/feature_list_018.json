@@ -1,10 +1,14 @@
 {
   "phase": "018-workflow-assurance-controls",
-  "spec_version": "0.1.3",
+  "spec_version": "0.1.4",
   "phase_status": "in_progress",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
-  "budget_categories": {"product": 1800, "tests": 2050, "process": 3350},
+  "budget_categories": {
+    "product": 1800,
+    "tests": 2050,
+    "process": 3350
+  },
   "features": [
     {
       "id": "119",
@@ -14,7 +18,11 @@
       "passes": true,
       "dependencies": [],
       "estimated_lines": 1000,
-      "budget_categories": {"product": 200, "tests": 300, "process": 500},
+      "budget_categories": {
+        "product": 200,
+        "tests": 300,
+        "process": 500
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case approve-empty",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case advisory-visible",
@@ -23,7 +31,10 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ],
       "stage": "captured",
       "evidence_ref": ".agent/evidence/119/evidence-capture.json",
       "contract_ref": ".agent/contracts/119.json",
@@ -36,9 +47,15 @@
       "description": "Reuse existing validators/schemas and coordination state; distinguish pending/running/passed/failed/invalidated, require operator decisions and actual exits; reject missing/wrong receipts and double advance.",
       "status": "complete",
       "passes": true,
-      "dependencies": ["119"],
+      "dependencies": [
+        "119"
+      ],
       "estimated_lines": 2750,
-      "budget_categories": {"product": 800, "tests": 700, "process": 1250},
+      "budget_categories": {
+        "product": 800,
+        "tests": 700,
+        "process": 1250
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-operator",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-wrong-candidate",
@@ -52,7 +69,10 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-double-advance",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case recover-missing-receipt"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ],
       "stage": "captured",
       "evidence_ref": ".agent/evidence/120/evidence-capture.json",
       "contract_ref": ".agent/contracts/120.json",
@@ -63,11 +83,18 @@
       "id": "121",
       "name": "Conflict lanes, isolated retries and owned rollback",
       "description": "Dependency-eligible independent work passes; shared file/state ownership serializes; reject terminal/authority spoof and fourth attempts; rollback preserves unrelated sentinel and prior proof.",
-      "status": "pending",
-      "passes": false,
-      "dependencies": ["120"],
+      "status": "complete",
+      "passes": true,
+      "stage": "captured",
+      "dependencies": [
+        "120"
+      ],
       "estimated_lines": 1300,
-      "budget_categories": {"product": 300, "tests": 450, "process": 550},
+      "budget_categories": {
+        "product": 300,
+        "tests": 450,
+        "process": 550
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case independent-lanes",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case shared-state-serialized",
@@ -75,7 +102,14 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-fourth",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case owned-rollback"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ],
+      "evidence_ref": ".agent/evidence/121/evidence-capture.json",
+      "contract_ref": ".agent/contracts/121.json",
+      "qa_ref": ".agent/qa/121.json",
+      "completed_at": "2026-10-15T00:38:57.890513+00:00"
     },
     {
       "id": "122",
@@ -83,16 +117,26 @@
       "description": "Infrastructure and semantic failures remain failures; no cause relabeling or budget reset across process/agent/generation/stage; current max3 is unchanged.",
       "status": "pending",
       "passes": false,
-      "dependencies": ["121"],
+      "dependencies": [
+        "121"
+      ],
       "estimated_lines": 950,
-      "budget_categories": {"product": 200, "tests": 250, "process": 500},
+      "budget_categories": {
+        "product": 200,
+        "tests": 250,
+        "process": 500
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case infrastructure-failed",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case semantic-failed",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-cause-relabel",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case counter-continuity"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py", "methodology/03_circuit_breaker.md"]
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py",
+        "methodology/03_circuit_breaker.md"
+      ]
     },
     {
       "id": "123",
@@ -100,9 +144,15 @@
       "description": "Prove A11/A10 on the same actual candidate inside an existing CI job; retain actual checkout/source and receipts; close after independent QA/capture, no new WA job or gate reduction.",
       "status": "pending",
       "passes": false,
-      "dependencies": ["122"],
+      "dependencies": [
+        "122"
+      ],
       "estimated_lines": 1200,
-      "budget_categories": {"product": 300, "tests": 350, "process": 550},
+      "budget_categories": {
+        "product": 300,
+        "tests": 350,
+        "process": 550
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case ci-candidate-bound",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case ci-blocker-rejected",
@@ -110,14 +160,112 @@
         "bash tools/validate.sh",
         "bash tools/validate.sh --payload"
       ],
-      "future_output_targets": [".github/workflows/compliance.yml", "tools/fixtures_self_test.sh", ".agent/evidence/123/"]
+      "future_output_targets": [
+        ".github/workflows/compliance.yml",
+        "tools/fixtures_self_test.sh",
+        ".agent/evidence/123/"
+      ]
     }
   ],
-  "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
-  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["118"], "evidence": [".agent/evidence/118/evidence-capture.json"], "authority": "Captured118 foundation; actual independent QA/evidence capture receipt, retaining its exercised revision."}, {"phase": "016-runtime-controller-core", "requires": ["127"], "evidence": [".agent/evidence/127/evidence-capture.json"], "authority": "Captured core-semantic127 only; actual independent QA/evidence capture receipt. Neither128, full016 closure nor full-CI131 is an added prerequisite."}],
-  "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
-  "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Root applies standing operator authorization to unchanged119-123 scope7200/9360 in .agent/evidence/phase018-preflight/activation-authority.json. Actual118/127 capture receipts are bound above; successful postmerge CI is .agent/evidence/128/pr99-main-ci.json. Independent activation review and Root lifecycle promotion remain required; no implementation approval is granted."],
+  "future_interfaces": [
+    {
+      "path": "tools/test_workflow_assurance.py",
+      "owner": "115"
+    },
+    {
+      "path": "tools/validate.sh",
+      "owner": "115",
+      "availability": "existing-reused"
+    }
+  ],
+  "cross_phase_prerequisites": [
+    {
+      "phase": "017-workflow-assurance-foundation",
+      "requires": [
+        "118"
+      ],
+      "evidence": [
+        ".agent/evidence/118/evidence-capture.json"
+      ],
+      "authority": "Captured118 foundation; actual independent QA/evidence capture receipt, retaining its exercised revision."
+    },
+    {
+      "phase": "016-runtime-controller-core",
+      "requires": [
+        "127"
+      ],
+      "evidence": [
+        ".agent/evidence/127/evidence-capture.json"
+      ],
+      "authority": "Captured core-semantic127 only; actual independent QA/evidence capture receipt. Neither128, full016 closure nor full-CI131 is an added prerequisite."
+    }
+  ],
+  "shared_file_lanes": [
+    {
+      "path": "tools/test_workflow_assurance.py",
+      "owners": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ],
+      "order": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ]
+    },
+    {
+      "path": "tools/workflow_assurance.py",
+      "owners": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ],
+      "order": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ]
+    }
+  ],
+  "existing_inputs": [
+    "Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."
+  ],
+  "activation_prerequisites": [
+    "Root applies standing operator authorization to unchanged119-123 scope7200/9360 in .agent/evidence/phase018-preflight/activation-authority.json. Actual118/127 capture receipts are bound above; successful postmerge CI is .agent/evidence/128/pr99-main-ci.json. Independent activation review and Root lifecycle promotion remain required; no implementation approval is granted."
+  ],
   "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }

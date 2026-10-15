@@ -1,0 +1,45 @@
+{
+  "review": "final-executable-bundle",
+  "feature": "121",
+  "feature_id": "121",
+  "contract_id": "121",
+  "reviewer": "/root/review_controls121",
+  "attempt": 2,
+  "limit": 3,
+  "reviewed_revision": "849e29c7fa8ca1d711acfb58bd953ce3e200fbe2",
+  "author_revision": "6178b7ed5798ecb752ea7c01b70798ab3e36a1b7",
+  "own_runtime_artifact_revision": "b3d416a57fd9ec7b273ca776f2b625c035751faf",
+  "own_runtime_exercised_revision": "d18203a417fbf82df7335d0f49263db0917fe651",
+  "source_sha256": "f588ad0282ed80d8f380d4f230a95bbfddc2ad2326bcf1189d9aaac8eabbc6a3",
+  "test_sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+  "final_verdict": {
+    "approved": true,
+    "feature": "121",
+    "feature_id": "121",
+    "summary": "Approve frozen executable acceptance bundle: five unchanged selectors independently passed positive/intended-semantic-negative/restored controls, eight exact identities restored, author provenance and protected artifacts verified with normalized historical mode checks."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/121/executable-review1-static-proof.json",
+    ".agent/evidence/121/controls2-author-seal.json",
+    ".agent/evidence/121/controls2-reviewer-wrapper.json",
+    ".agent/evidence/121/controls2-reviewer-result.json",
+    ".agent/evidence/121/executable-review1-postrun-failure.json",
+    ".agent/evidence/121/executable-review2-dispatch.json",
+    ".agent/evidence/121/executable-review2-check.py",
+    ".agent/evidence/121/executable-review2-verifier-wrapper.json",
+    ".agent/evidence/121/executable-review2-verifier.stdout.txt",
+    ".agent/evidence/121/executable-review2-verifier.stderr.txt",
+    ".agent/evidence/121/executable-review2-seal.json"
+  ],
+  "observations": [
+    "Independent runtime executed all27 commands at d18203a417fbf82df7335d0f49263db0917fe651 with actual wrapper exit0: twelve archive commands and five actual0-1-0 case triplets. Recovery reuses immutable runtime proof without a case, inherited37, or default42 rerun.",
+    "First review stopped on an actual-exit1 auxiliary verifier comparing full filesystem permissions to normalized Git mode. Original failure/raw and inline-body provenance limitation remain preserved; no approval was issued by that failed review.",
+    "Historical blob hashes and executable booleans bind Git revisions. Complete filesystem permissions are supported by each recorded before/after snapshot equality; Git does not attest group-write or other non-executable permission bits.",
+    "Frozen helper author label identifies /root/controls121; execution attribution comes from independent reviewer wrapper/run-id/owned root, without authentication claims.",
+    ".ocr/skills/SKILL.md absent. Installed AGF/execution independent review applies; no OCR Gate1 or eight-phase approval claim.",
+    "This approves the executable acceptance bundle only. Mode B, fresh QA, evidence-capture gate and feature closure remain subsequent independent gates."
+  ]
+}

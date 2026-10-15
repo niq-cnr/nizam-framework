@@ -1,0 +1,24 @@
+{
+  "reviewer": "/root/review_controls121",
+  "stage": "post-runtime read-only historical snapshot verifier",
+  "argv": [
+    "python3",
+    "-"
+  ],
+  "command_environment_prefix": "PYTHONDONTWRITEBYTECODE=1 LC_ALL=C",
+  "cwd": "/home/cnross/.tmp/nizam-feature121-executable-review1",
+  "exercised_revision": "d18203a417fbf82df7335d0f49263db0917fe651",
+  "actual_exit": 1,
+  "stdout": ".agent/evidence/121/executable-review1-postrun-failure.stdout.txt",
+  "stderr": ".agent/evidence/121/executable-review1-postrun-failure.stderr.txt",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "2c013eb3e292c59be862c3f77b0b978554822118646fd9021dcdc29c812eefa8",
+  "failing_check": "sha(git show author.exercised_revision:path) == author_result.protected_before[path].sha256 and int(git ls-tree mode[-3:],8) == author_result.protected_before[path].mode",
+  "path": ".agent/contracts/121.json",
+  "historical_revision": "d7d6a964792aa6a59e13d7af5b71d14b83b62b4f",
+  "stdin_provenance_limitation": "Verifier body executed as inline tool command; full command body remains in tool transcript, not frozen as a committed helper. Raw traceback transcribed exactly from actual completed command output.",
+  "preserved_successful_runtime": ".agent/evidence/121/controls2-reviewer-wrapper.json",
+  "frozen_helper": ".agent/evidence/121/controls2-run.py",
+  "frozen_helper_sha256": "d9a3ca009b9aa713b399b637eca5205bfd0cffcb3d1bf5f89a13edee6bb0ad8b",
+  "action": "Stopped immediately. No correction/retry, further verifier, findings, approval verdict, final seal, Mode B, QA or closure claim."
+}
