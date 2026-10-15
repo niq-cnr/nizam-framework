@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.32.0
+version: 0.33.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.33.0"
+    date: "2026-10-15"
+    summary: "Document per-call receipt input batching and four independent synthetic controls."
   - version: "0.32.0"
     date: "2026-10-15"
     summary: "Document selected capable CI proof and read-only controls readiness."
@@ -206,6 +209,18 @@ with consistently bound authority spelling; the APIs perform no alias normalizat
 Existing Root records use differing spellings and require explicitly reviewed
 compatibility or migration before live adoption; aligned synthetic fixtures prove
 library behavior only.
+
+Receipt candidate validation batches immutable inputs by exact revision and literal
+path, then reads their validated blobs through the existing Git batch helper.
+The observations live for one call; current files, modes and environment are read
+afresh. Ownership rules, origin and ancestry checks retain their existing meaning.
+`python3 tools/test_receipt_candidate_batching.py` runs four independent synthetic
+checks in order; `--check` selects `real-git-count-reduction`, `semantic-equivalence`,
+`fresh-mutations` or `literal-paths-and-modes`. The fixture shell suite invokes all
+four and retains its existing 166 fixture-file denominator and 48 Workflow Assurance
+cases. These checks establish real Git launch reduction, not a wall-time speedup
+or hosted qualification. Changed protected Source makes feature 123's existing
+current-readiness proof historical; this maintenance does not rebind that proof.
 
 ## Convergent findings to AGF verdict — feature 119
 

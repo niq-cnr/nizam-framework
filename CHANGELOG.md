@@ -9,6 +9,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Receipt input batching (feature 133).** Batch immutable candidate Git inputs
+  per call while preserving exact revision/path, bytes/mode and ownership checks,
+  fresh physical observations and existing trust boundaries. Four independent
+  synthetic controls cover real Git launch reduction and retained semantics;
+  historical feature 123 proof remains bound to its assessed Source.
+
 - **Capable CI controls (feature 123).** Added selected two-pass A11/A10 dogfood
   in the existing capable job and read-only observation of immutable hosted
   proof, with explicit deterministic and synthetic evidence boundaries.
