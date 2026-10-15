@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.6
+version: 0.65.7
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.7"
+    date: "2026-10-15"
+    summary: "Record captured121, separate QA/hosted proof and pending PR102 closeout; preserve historical snapshots and original budgets."
   - version: "0.65.6"
     date: "2026-10-14"
     summary: "Record captured120 receipt library and separate live-adoption boundary; retain pending121–123, budgets and historical bodies."
@@ -224,6 +227,16 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Current position — captured 121, 2026-10-15
+
+Feature 121 is [captured complete](../../.agent/evidence/121/evidence-capture.json) and [canonically closed](../../.agent/evidence/121/closure.json): dependency/conflict lanes, isolated attempts and owned rollback. Source SHA-256 `1d97f06f…` and test `c94a59e1…` passed strict pre-code, provisional/executable controls, Mode B and fresh QA before Root capture.
+[QA attempt 2](../../.agent/qa/121.json) retained eight completed results and ran only the two pending compliance commands plus its first additional check. Aggregate proof covers five exact selectors/default42 and immutable 118 exit 0/current stale exit 1; both compliance modes exited 0. QA1’s helper diagnostic failure exit 1 remains preserved.
+Exactly one additional locked-Git-manager failure check ran once, exit 0; nested Git exit 128 remains a failure, preserving the worktree, inputs, sentinel and prior proof. [Hosted CI](../../.agent/evidence/121/ci2-receipt.json) separately passed default42 on these Source/test bytes: compliance 38658543127 and closeout 38658543139 succeeded.
+[PR 101 merged](../../.agent/evidence/120/pr101-merge-receipt.json) at `f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb`; [main CI 38613899275](../../.agent/evidence/120/pr101-main-ci.json) passed all five jobs. [PR 102](https://github.com/niq-cnr/nizam-framework/pull/102) remains draft/unmerged; final exact-head CI, merge and main CI are pending.
+[Phase 018](phase_018.yaml) stays active; **122 is next after PR 102 merge/main CI**, with 122–123 pending. Root owns final whole feature 121 measurement; this refresh counts once against unchanged **7,200/9,360**, without a rebaseline or treating an intermediate snapshot as final.
+Prior 119/120 proof, archived 016 **5,179** (original **5,650/7,345**), 017 **5,203/7,020**, installed **v1.5.0** and DAG **017 → 016 → 018 → 020 → 019** remain unchanged; 018 requires **127 only**. The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned API fixtures do not establish live Root adoption.
+The balanced proposal remains unmeasured and static canary rev2 remains preparation only. This position establishes no controls-ready for 123, full runtime, canary execution, comparison/superiority, release/install change or new-phase approval. All earlier “Current” sections below are preserved historical snapshots.
 
 ## Current position — captured 119–120, 2026-10-14
 

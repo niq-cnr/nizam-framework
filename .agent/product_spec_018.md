@@ -2,10 +2,13 @@
 id: nizam-phase018-product-spec
 title: "Phase 018 — Workflow Assurance — Controls"
 description: "Bounded WA control plan, recorded authorization and future independent acceptance gates."
-version: 0.1.3
+version: 0.1.4
 status: active
 authoritative_source: .agent/product_spec_018.md
 change_log:
+  - version: "0.1.4"
+    date: "2026-10-15"
+    summary: "Record captured121 and pending122–123; preserve requirements, independent gates, live-adoption boundary and original budget."
   - version: "0.1.3"
     date: "2026-10-14"
     summary: "Record captured120 aligned-record receipt APIs; preserve pending121–123 and unapplied live-binding migration, requirements and budgets."
@@ -23,7 +26,7 @@ change_log:
 # Phase 018 plan
 
 NIP-0004 accepted scope and six operator selections are inputs. [Root’s authority receipt](evidence/phase018-preflight/activation-authority.json) applies standing operator logical-next-steps authorization to existing features 119–123 and the unchanged 7,200/9,360 estimate/ceiling under H-PHASE-018; it does not assert a new numeric user quote or rely on earlier 017/016 approvals.
-[Independent activation and Root promotion](evidence/phase018-preflight/activation-result.json) made phase018 active. [Feature119](evidence/119/evidence-capture.json) and [feature120](evidence/120/evidence-capture.json) are captured complete; 121–123 remain pending. This planning document grants no implementation approval: each later contract still requires both pre-code gates and reviewed independent acceptance.
+[Independent activation and Root promotion](evidence/phase018-preflight/activation-result.json) made phase018 active. [Feature119](evidence/119/evidence-capture.json), [feature120](evidence/120/evidence-capture.json) and [feature121](evidence/121/evidence-capture.json) are captured complete; 122–123 remain pending. Feature 122 follows PR 102 merge and successful main CI; each later contract still requires both pre-code gates and reviewed independent acceptance.
 [Foundation 118](evidence/118/evidence-capture.json) and [controller semantics 127](evidence/127/evidence-capture.json) are captured prerequisites; 128, full phase-016 closure and later 131 are not added prerequisites. [Postmerge main CI](evidence/128/pr99-main-ci.json) passed all five jobs on PR 99 merge `fcd0584`; this integration proof does not execute future 119–123 acceptance.
 Records for phases 015 and 014, installed v1.5.0, release versions and Open debts NDEBT-040/NDEBT-034 remain unchanged. Local adoption covers niq-cnr/nizam-framework only; planning is not activation.
 
@@ -53,8 +56,8 @@ inputs, not new-list dependencies. Local adoption asserts no external ecosystem.
 
 ## Acceptance position and independent ownership
 
-Feature119’s six selectors and feature120’s eleven selectors/default37 have captured QA/hosted evidence; 121–123 commands remain future acceptance obligations.
-The runner retains captured foundation118 proof at its immutable revision; changed119/120 candidates correctly reject stale118 receipts. Aligned120 API proof does not establish live Root adoption: [repository-binding migration](evidence/120/repository-binding-decision-proposal.json) remains unapplied. Later control selectors remain obligations of later contracts.
+Feature119’s six selectors and feature120’s eleven selectors/default37 retain captured evidence. [Feature 121 QA](qa/121.json) passed five selectors/default42, immutable 118 exit 0/current stale exit 1, both compliance modes and one additional locked-Git failure check; hosted default42 is [separate proof](evidence/121/ci2-receipt.json). Features 122–123 remain future acceptance obligations.
+Feature 121’s [canonical closure](evidence/121/closure.json) follows strict pre-code, provisional/executable bundle, Mode B, fresh QA and Root capture gates. Root still owns final whole feature 121 measurement within unchanged 7,200/9,360; intermediate scope snapshots are not final usage. Aligned API fixtures do not establish live Root adoption: [repository-binding migration](evidence/120/repository-binding-decision-proposal.json) remains unapplied.
 Its --case NAME tests exactly the named invariant; --check foundation-ready,
 controls-ready or profiles-ready verifies that stage's candidate-bound receipts.
 Unknown cases/checks, setup failures and missing proof exit nonzero. Existing
