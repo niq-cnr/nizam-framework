@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import selectors
 import stat
 import subprocess
 import sys
@@ -64,8 +65,63 @@ def api_module():
     return workflow_assurance
 
 
-def command(argv,cwd):
-    return subprocess.run([str(x) for x in argv],cwd=cwd,capture_output=True,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+OUTPUT_LIMIT = 2*1024*1024
+
+
+class OutputLimitExceeded(RuntimeError):
+    def __init__(self, process, cwd):
+        self.process=process;self.cwd=str(cwd)
+        super().__init__('child output exceeds approved bound; actual exit '+str(process.returncode))
+
+
+def command(argv,cwd,input=None):
+    """Keep exact successful streams; reject overflow without whole-stream allocation."""
+    argv=[str(x) for x in argv]
+    process=subprocess.Popen(argv,cwd=cwd,stdin=subprocess.PIPE if input is not None else None,
+        stdout=subprocess.PIPE,stderr=subprocess.PIPE,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+    streams={'stdout':bytearray(),'stderr':bytearray()};observed={'stdout':0,'stderr':0}
+    complete={'stdout':False,'stderr':False};overflow=None;terminated=False
+    pending=memoryview(input) if input is not None else None
+    selector=selectors.DefaultSelector()
+    for name,stream in [('stdout',process.stdout),('stderr',process.stderr)]:
+        os.set_blocking(stream.fileno(),False);selector.register(stream,selectors.EVENT_READ,name)
+    if pending is not None:
+        os.set_blocking(process.stdin.fileno(),False)
+        if pending:selector.register(process.stdin,selectors.EVENT_WRITE,'stdin')
+        else:process.stdin.close()
+    try:
+        while selector.get_map() and overflow is None:
+            for key,_ in selector.select():
+                if key.data=='stdin':
+                    try:written=os.write(key.fd,pending[:65536]);pending=pending[written:]
+                    except BrokenPipeError:pending=pending[len(pending):]
+                    if not pending:selector.unregister(key.fileobj);key.fileobj.close()
+                    continue
+                name=key.data;remaining=OUTPUT_LIMIT-len(streams[name])
+                chunk=os.read(key.fd,min(65536,remaining+1))
+                if not chunk:
+                    complete[name]=True;selector.unregister(key.fileobj);key.fileobj.close();continue
+                observed[name]+=len(chunk)
+                streams[name].extend(chunk[:remaining])
+                if len(chunk)>remaining:
+                    overflow=name
+                    if process.poll() is None:process.kill();terminated=True
+                    break
+        # On overflow these are explicitly partial prefixes, never success proof.
+        actual_exit=process.wait()
+    except BaseException:
+        if process.poll() is None:process.kill()
+        process.wait();raise
+    finally:
+        for key in list(selector.get_map().values()):key.fileobj.close()
+        selector.close()
+    result=subprocess.CompletedProcess(argv,actual_exit,bytes(streams['stdout']),bytes(streams['stderr']))
+    if overflow is not None:
+        result.output_limit=dict(limit_bytes=OUTPUT_LIMIT,exceeded_stream=overflow,observed_bytes=observed,
+            retained_bytes={k:len(v) for k,v in streams.items()},streams_complete=complete,
+            terminated_owned_child=terminated,unobserved_tail=True)
+        raise OutputLimitExceeded(result,cwd)
+    return result
 
 
 def checked(argv,cwd):
@@ -87,10 +143,48 @@ def reference(root,path,revision=None):
     return dict(path=path,revision=revision,sha256=hashlib.sha256(raw).hexdigest())
 
 
+def bounded_encoded(value):
+    """Measure UTF8/escaping in bounded chunks before allocating canonical JSON."""
+    size=1;ancestors=set()
+    def add(amount):
+        nonlocal size
+        size+=amount
+        if size>OUTPUT_LIMIT:raise RuntimeError('experiment JSON payload exceeds approved bound')
+    def string(text):
+        add(2)
+        for index in range(0,len(text),16384):
+            add(len(json.dumps(text[index:index+16384],ensure_ascii=False)[1:-1].encode('utf8')))
+    def visit(item):
+        if isinstance(item,str):string(item)
+        elif isinstance(item,(list,tuple,dict)):
+            if id(item) in ancestors:raise ValueError('Circular reference detected')
+            ancestors.add(id(item));add(2+max(0,len(item)-1))
+            if isinstance(item,dict):
+                for key,child in item.items():
+                    if isinstance(key,str):string(key)
+                    elif key is None:string('null')
+                    elif key is True:string('true')
+                    elif key is False:string('false')
+                    elif isinstance(key,(int,float)):string(json.dumps(key,allow_nan=False))
+                    else:raise TypeError('unsupported JSON key')
+                    add(1);visit(child)
+            else:
+                for child in item:visit(child)
+            ancestors.remove(id(item))
+        else:add(len(json.dumps(item,ensure_ascii=False,allow_nan=False).encode('utf8')))
+    visit(value)
+    raw=encoded(value)
+    if len(raw)!=size:raise RuntimeError('JSON serialization size changed after bounded preflight')
+    return raw
+
+
 def put(root,path,value):
     target=root/path;target.parent.mkdir(parents=True,exist_ok=True)
     if target.exists():raise RuntimeError('experiment output already exists: '+path)
-    raw=value if type(value) is bytes else encoded(value)
+    if type(value) is bytes:
+        if len(value)>OUTPUT_LIMIT:raise RuntimeError('experiment payload exceeds approved bound')
+        raw=value
+    else:raw=bounded_encoded(value)
     target.write_bytes(raw)
     return target
 
@@ -149,18 +243,17 @@ def failed_child(output, label, argv, cwd, process):
     """Keep exact bounded child streams and its actual execution frame on failure."""
     record=dict(argv=[str(x) for x in argv],cwd=str(cwd),revision=git(cwd,'rev-parse','HEAD'),
         actual_exit=process.returncode,stdout=label+'-failure.stdout',stderr=label+'-failure.stderr')
+    if hasattr(process,'output_limit'):record['output_limit']=process.output_limit
     for key,raw in [('stdout',process.stdout),('stderr',process.stderr)]:
-        if len(raw)>2*1024*1024:
-            record[key]=None
-            record[key+'_unretained_reason']='actual child stream exceeds approved 2MiB payload bound; owned scratch retained'
-            record[key+'_bytes']=len(raw)
-            record[key+'_sha256']=hashlib.sha256(raw).hexdigest()
-        else:(output/record[key]).write_bytes(raw)
+        if len(raw)>OUTPUT_LIMIT:raise RuntimeError('failure collector violated admitted stream bound')
+        (output/record[key]).write_bytes(raw)
     (output/(label+'-failure.json')).write_bytes(encoded(record))
 
 
 def stage_command(output, label, argv, cwd):
-    process=command(argv,cwd)
+    try:process=command(argv,cwd)
+    except OutputLimitExceeded as exc:
+        failed_child(output,label,argv,cwd,exc.process);raise
     if process.returncode:failed_child(output,label,argv,cwd,process)
     return process
 
@@ -169,8 +262,11 @@ class OperationTee:
     """Observe text actually forwarded to this command's operation stream."""
     def __init__(self, stream):self.stream=stream;self.observed=io.BytesIO()
     def write(self, text):
+        size=0
+        for index in range(0,len(text),16384):
+            size+=len(text[index:index+16384].encode('utf8'))
+            if self.observed.tell()+size>OUTPUT_LIMIT:raise RuntimeError('A10 operation stream exceeds approved bound')
         raw=text.encode('utf8')
-        if self.observed.tell()+len(raw)>2*1024*1024:raise RuntimeError('A10 operation stream exceeds approved bound')
         self.stream.write(text);self.stream.flush();self.observed.write(raw)
         return len(text)
     def flush(self):self.stream.flush()
@@ -279,8 +375,7 @@ def run_verify(root,output,selection_ref,selection,checkout,outer_argv,scratch):
     tip,pack=proof.bundle_header(raw,selection['source_commit'])
     bundle=output.parent/(output.name+'-capture.bundle');bundle.write_bytes(raw)
     argv=['git','-C',str(experiment),'index-pack','--strict','--fix-thin','--stdin']
-    process=subprocess.run(argv,cwd=experiment,input=pack,capture_output=True,
-        env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+    process=command(argv,experiment,input=pack)
     import_process=process
     if process.returncode:
         failed_child(output,'capture-index-pack',argv,experiment,process)
@@ -330,7 +425,7 @@ def run_verify(root,output,selection_ref,selection,checkout,outer_argv,scratch):
             result=dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
             if [advance['action'],noop['action'],republish['action'],rerun['action']]!=['advance','noop','republish','rerun-required']:raise RuntimeError('actual A10 transition actions')
             # These are emitted operation bytes, before O/C and the final I envelope.
-            sys.stdout.write(encoded(result).decode('utf8'));sys.stdout.flush()
+            sys.stdout.write(bounded_encoded(result).decode('utf8'));sys.stdout.flush()
     except Exception:
         failed=subprocess.CompletedProcess(outer_argv,1,stdout.raw(),stderr.raw())
         failed_child(output,'a10-operation',outer_argv,root,failed)
@@ -378,6 +473,7 @@ def main():
         succeeded=True
         return 0
     except Exception as exc:
+        if isinstance(exc,OutputLimitExceeded):failed_child(output,'output-limit',exc.process.args,exc.cwd,exc.process)
         (output/'failure.txt').write_text(type(exc).__name__+': '+str(exc)+'\nowned scratch retained: '+str(scratch)+'\n')
         raise
     finally:
