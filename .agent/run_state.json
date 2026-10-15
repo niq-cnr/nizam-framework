@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T18:14:35.034837+00:00",
+  "updated_at": "2026-10-15T18:37:05.257123+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1848,21 +1848,55 @@
     "123-controls-readiness": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "admitted",
       "owner": "/root/final_seal123",
       "release": ".agent/evidence/123/root-readiness-and-final-seal1-release.json",
       "policy_ref": {
         "path": ".agent/evidence/123/controls-policy.json",
         "revision": "a8b7b902177edc8f7aead70c74bdcb574714c727",
         "sha256": "cc1ee6cde9faa0f6aaaab3cf2647fb509c04c8644fdca37fea9347e1ba52b53e"
+      },
+      "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+      "verdict_ref": {
+        "path": ".agent/qa/123-final-executable-seal1.json",
+        "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+        "sha256": "4617136ca05064bc99458ef6e0000566a4282e3b06b785751e7cdb25a2886c79"
+      },
+      "report_ref": {
+        "path": ".agent/evidence/123/final-executable-seal1-report.json",
+        "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+        "sha256": "a0604f3ad3f05aa6553003e7aa0a02edc9e1ad1ec7338f4957100ca431512a11"
       }
     },
     "123-final-executable-seal": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-held-on-readiness",
+      "status": "admitted",
       "owner": "/root/final_seal123",
-      "release": ".agent/evidence/123/root-readiness-and-final-seal1-release.json"
+      "release": ".agent/evidence/123/root-readiness-and-final-seal1-release.json",
+      "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+      "verdict_ref": {
+        "path": ".agent/qa/123-final-executable-seal1.json",
+        "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+        "sha256": "4617136ca05064bc99458ef6e0000566a4282e3b06b785751e7cdb25a2886c79"
+      },
+      "report_ref": {
+        "path": ".agent/evidence/123/final-executable-seal1-report.json",
+        "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+        "sha256": "a0604f3ad3f05aa6553003e7aa0a02edc9e1ad1ec7338f4957100ca431512a11"
+      }
+    },
+    "123-mode-b": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released",
+      "owner": "/root/modeb123",
+      "release": ".agent/evidence/123/root-modeb1-release.json",
+      "final_seal_ref": {
+        "path": ".agent/qa/123-final-executable-seal1.json",
+        "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
+        "sha256": "4617136ca05064bc99458ef6e0000566a4282e3b06b785751e7cdb25a2886c79"
+      }
     }
   },
   "history": [
@@ -7901,7 +7935,7 @@
       }
     ]
   },
-  "last_action": "Actual two-pass HostedReview admitted, finalRootpolicy committed; literalreadiness0/1/0 and independent finalseal1 released, ModeB/freshQA/closure held.",
+  "last_action": "Actual readiness0/1/0 and independent final executable seal admitted; independent Mode B1 released. FreshQA and closure held.",
   "completed_contract_ids": [
     "099",
     "103",
