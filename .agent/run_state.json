@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T01:30:17.904592+00:00",
+  "updated_at": "2026-10-15T01:36:40.230364+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1399,12 +1399,12 @@
     "122-author": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "passed"
     },
     "122-provisional-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "preparing"
+      "status": "dispatched"
     }
   },
   "history": [
@@ -6204,6 +6204,12 @@
       "event": "122-provisional-review-preparation",
       "detail": "Distinct reviewer may inspect approvedcontract/inheritedinterfaces inparallel withauthor; no verdict or Source until Root supplies immutable authoredtestfreeze. Sameattempt1/newownedroot, no behavioralexecution.",
       "evidence": ".agent/evidence/122/provisional1-dispatch.json"
+    },
+    {
+      "at": "2026-10-15T01:36:40.230364+00:00",
+      "event": "122-author-freeze-provisional-release",
+      "detail": "Rootverifiedall authorfrozenartifactrefs, fixture-static0 and fouractualSETUP2 records; testdf2bcd/interface147be0 immutable. No intendedsemanticred claimed. Distinctpreparedreviewer now actualreview beforeSource.",
+      "evidence": ".agent/evidence/122/author-root-binding.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6736,7 +6742,7 @@
       }
     ]
   },
-  "last_action": "122 sameproposal dualprecode approved; contractpromoted. Independent4case authoring next, Source withheld until distinctprovisionalreview.",
+  "last_action": "122 independentacceptancefreeze authored239changedlines; fixtures0/newcasesmissingAPI2 only. Distinctprovisionalreview next, noSourceapproval.",
   "completed_contract_ids": [
     "099",
     "103",
