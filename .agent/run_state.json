@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T01:03:06.870219+00:00",
+  "updated_at": "2026-10-15T01:17:49.430636+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1379,19 +1379,20 @@
       "status": "passed"
     },
     "122-contract": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "proposed"
+      "status": "dispatched",
+      "strategy": "type/interface analysis"
     },
     "122-mode-a": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "rejected"
     },
     "122-contract-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "rejected"
     }
   },
   "history": [
@@ -6167,6 +6168,12 @@
       "at": "2026-10-15T01:08:24.770198+00:00",
       "event": "122-dual-independent-precode-dispatch",
       "detail": "71line proposedcontract2755c6 atca3f391 merged, staticchecks0/noSource/APIbehavior. IndependentModeA andcontractreview inspectsameimmutableproposal inparallel; Sourcewithheld untilbothstrictandseparateprovisional. Existing950/7200/9360 and prior3364 unchanged."
+    },
+    {
+      "at": "2026-10-15T01:17:49.430636+00:00",
+      "event": "122-precode1-rejected-contract2-dispatch",
+      "detail": "Both independent verdicts reject owned execution_lanes list through unchanged verify_record_update. Contract2 must clarify compatible continuity, absent/present lanes and valid transitions. Static reviewer wrapper1 retained, not Source/red evidence.950/phase7200/9360 unchanged.",
+      "evidence": ".agent/evidence/122/precode1-root-decision.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6699,7 +6706,7 @@
       }
     ]
   },
-  "last_action": "121merged3ee2b39/mainCIall5success.122selected for bounded contractproposal within950/originalphase7200/9360; no122implementation approval.123pending.",
+  "last_action": "122 bothprecode gates rejected inheritedhelper/list mismatch; contract2 type/interface analysis dispatched, noSourceapproval.",
   "completed_contract_ids": [
     "099",
     "103",
