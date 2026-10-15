@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T18:37:05.257123+00:00",
+  "updated_at": "2026-10-15T19:10:21.516185+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1889,13 +1889,36 @@
     "123-mode-b": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "admitted",
       "owner": "/root/modeb123",
       "release": ".agent/evidence/123/root-modeb1-release.json",
       "final_seal_ref": {
         "path": ".agent/qa/123-final-executable-seal1.json",
         "revision": "49c35ca9ce43ea3cab9e5c6b26cd305277189697",
         "sha256": "4617136ca05064bc99458ef6e0000566a4282e3b06b785751e7cdb25a2886c79"
+      },
+      "revision": "f301a2d819498a7af297b164379f7c16de720787",
+      "verdict_ref": {
+        "path": ".agent/validator/123-mode-b.json",
+        "revision": "f301a2d819498a7af297b164379f7c16de720787",
+        "sha256": "64ca918f4fdbf0d73e20c1b5648dcf3f3162ddec4014103cfafcbaf2e14a07bf"
+      },
+      "report_ref": {
+        "path": ".agent/evidence/123/modeb1-report.json",
+        "revision": "f301a2d819498a7af297b164379f7c16de720787",
+        "sha256": "c2dd1d78615d7b0fcdd7c38811dedcb010cdf5ac8ae36adcffdded646a578a21"
+      }
+    },
+    "123-fresh-qa": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released",
+      "owner": "/root/fresh_qa123",
+      "release": ".agent/evidence/123/root-fresh-qa1-release.json",
+      "mode_b_ref": {
+        "path": ".agent/validator/123-mode-b.json",
+        "revision": "f301a2d819498a7af297b164379f7c16de720787",
+        "sha256": "64ca918f4fdbf0d73e20c1b5648dcf3f3162ddec4014103cfafcbaf2e14a07bf"
       }
     }
   },
@@ -7935,7 +7958,7 @@
       }
     ]
   },
-  "last_action": "Actual readiness0/1/0 and independent final executable seal admitted; independent Mode B1 released. FreshQA and closure held.",
+  "last_action": "Strict independent Mode B admitted; freshQA1 released under frozen plan/driver with three parallel long lanes. Rootcapture/closure still held.",
   "completed_contract_ids": [
     "099",
     "103",
