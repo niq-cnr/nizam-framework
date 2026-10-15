@@ -9,6 +9,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Capable CI controls (feature 123).** Added selected two-pass A11/A10 dogfood
+  in the existing capable job and read-only observation of immutable hosted
+  proof, with explicit deterministic and synthetic evidence boundaries.
+
 - **Evidence-based cause routing (feature 122).** Added a read-only failure route
   bound to selected classification, actual captures and continuous counters.
   Infrastructure and semantic outcomes remain failed within the existing max3.

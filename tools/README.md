@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.31.0
+version: 0.32.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.32.0"
+    date: "2026-10-15"
+    summary: "Document selected capable CI proof and read-only controls readiness."
   - version: "0.31.0"
     date: "2026-10-15"
     summary: "Document read-only evidence-based failure routing and unchanged attempt budgets."
@@ -497,3 +500,21 @@ assessed repository when using the separate identity commands.
 PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py entry --repo . --entry "$WA_ENTRY_FILE"
 ```
 
+
+## Candidate-bound control proof
+
+`workflow_assurance_ci.py` composes the existing observation sandbox, convergence
+and receipt APIs in the existing `convergent_review` job. Root selects capture
+inputs first, then independently selects immutable captures for the matching
+runtime verify pass. Experiment output commits and bounded bundles keep the
+assessed source anchor distinct from each actual checkout and output revision.
+The observer checks changed workflow `continue-on-error` lines; its three enforced
+executions are bounded deterministic dogfood. Synthetic parser fixtures remain
+separate from actual hosted command, trial and artifact evidence.
+
+`verify_controls_ready(repo, evidence, *, policy)` observes Root-selected completed
+hosted proof without running historical receipt commands or comparing that
+runtime with the local interpreter. `--check controls-ready` retains the same
+boundary. Strict review, QA, evidence capture and canonical closure remain
+separate gates. The experiment configures its own selected Git transport; live
+Root binding migration and the installed payload remain unchanged.
