@@ -1,0 +1,179 @@
+{
+  "id": "123-gh-collector-repair1-execution",
+  "role": "Root Orchestrator operational release; no source or gate verdict authorship",
+  "created_at": "2026-10-15T17:12:20.026706+00:00",
+  "basis": "Standing user authority for self improvements and corrected recovery; strict independent static approval45097a4 verified and normally merged. Same external repair1/3, no product Source retry or CI rerun.",
+  "parent_revision": "4a62cb31167cc41f39c815165ccafac5bfae290f",
+  "owner": "/root/runtime_readiness020",
+  "preparation_revision": "d9c0c43ea3986a3961d99e6b38b7fa893d922b9d",
+  "static_review_revision": "45097a4a70732f5201276600395e68b5024a5a28",
+  "build_root": "/home/cnross/.tmp/nizam-gh-collector-repair1-build",
+  "paths": {
+    "sdk": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk",
+    "baseline": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/baseline",
+    "patched": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+    "binary": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/bin/gh",
+    "raw_capture": ".agent/evidence/123/gh-collector-repair1-execution"
+  },
+  "source": {
+    "upstream_owned_clone": "/home/cnross/.tmp/nizam-gh-collector-repair1-upstream",
+    "baseline": "a2e23a2169337fd70482f92554950092f16005ca",
+    "patched": "cd2c12e67730bc7bdd8a7e3c6122efdc2719113d",
+    "scope": "Only reviewed view.go delta plus identical frozen test copy in each separately owned source context; retain actual Git cleanliness/modified identity. No framework edits."
+  },
+  "sdk_download": {
+    "url": "https://go.dev/dl/go1.24.5.linux-amd64.tar.gz",
+    "destination": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/go1.24.5.linux-amd64.tar.gz",
+    "size": 78563580,
+    "sha256": "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc",
+    "timeout_seconds": 120,
+    "max_redirects": 3,
+    "allowed_https_hosts": [
+      "go.dev",
+      "dl.google.com"
+    ],
+    "retries": 0,
+    "rules": "No credentials; exclusive no-follow owned file, verify exact size/hash before archive parsing. Capture redirect chain, actual command/wrapper argv and all outcomes."
+  },
+  "extraction": {
+    "seconds": 120,
+    "max_entries": 30000,
+    "max_total_bytes": 1073741824,
+    "max_file_bytes": 268435456,
+    "max_path_bytes": 4096,
+    "rules": "Only regular files/directories under go/. Reject absolute/drive/backslash/traversal/NUL/duplicates/links/special/sparse/unreviewed metadata. Recheck private parents, exclusive no-follow writes. Normalize dirs0700, files0600 or0700 if any executable archive intent; no owner/setid/sticky/group/world permission. Freeze full exact member bytes/hash/original and effective modes inventory before running Go."
+  },
+  "environment": {
+    "PATH": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin:/usr/bin:/bin",
+    "HOME": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/home",
+    "TMPDIR": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/tmp",
+    "GOCACHE": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/gocache",
+    "GOMODCACHE": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/gomodcache",
+    "GOPATH": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/gopath",
+    "GOENV": "off",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "https://proxy.golang.org",
+    "GOSUMDB": "sum.golang.org",
+    "GOFLAGS": "-mod=readonly -p=2",
+    "CGO_ENABLED": "0",
+    "GOOS": "linux",
+    "GOARCH": "amd64",
+    "GOMAXPROCS": "2",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "commands": [
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "version"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "mod",
+        "download",
+        "-json"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/baseline",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "test",
+        "./pkg/cmd/run/view",
+        "-run",
+        "^TestWA123CollectorRepair",
+        "-count=1",
+        "-timeout=120s"
+      ],
+      "seconds": 600,
+      "expected_exit": 1
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "test",
+        "./pkg/cmd/run/view",
+        "-run",
+        "^TestWA123CollectorRepair",
+        "-count=1",
+        "-timeout=120s"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-ldflags",
+        "-X github.com/cli/cli/v2/internal/build.Version=2.76.2+nizam-logfix.1",
+        "-o",
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/bin/gh",
+        "./cmd/gh"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/bin/gh",
+        "--version"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/sdk/go/bin/go",
+        "version",
+        "-m",
+        "/home/cnross/.tmp/nizam-gh-collector-repair1-build/bin/gh"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    }
+  ],
+  "offline_transition": "After normal checksum verification AND go mod verify, freeze full downloaded module/cache manifest and unchanged go.mod/sum hashes. Then GOPROXY=off/GOSUMDB=off for tests/build; downloaded module content must remain pinned; build cache is separately mutable. No get/tidy/upgrade/direct fallback.",
+  "bounds": "Each command stdout and stderr separately max8MiB, each cache4GiB. Finite wrapper captures actual argv/cwd/source/env/time/PID/exit/hash/bytes and ownership/preservation. No retries; stop first unexpected result, never treat compile/setup failure as baseline red. Preserve failed output and notify Root.",
+  "test_pin": {
+    "revision": "f45c2ed0ba0f5ba3482b922fb8bbf6c046ac3fd0",
+    "path": ".agent/evidence/123/gh-collector-repair1-regression_test.go",
+    "sha256": "75f068aee1d27fe1969467c74f11845947222cf905a50391e5ea60f51ec00120",
+    "destination": "pkg/cmd/run/view/wa123_collector_repair_test.go"
+  },
+  "baseline_assertion": "Expected original actual1 only from all five named defect test failures, with ordinary/empty four leafcases passing. Repaired actual0 all six tests/ten leafcases. No assertion edits or test retries. Literal frozen argv need not add verbose flag; retain raw output and independently inspect coverage.",
+  "retention": "Commit all factual raw receipts/index plus authored finite control helper/qualification report to own Nizam clone; return commit/branch/path. SDK, caches, tool and external source stay private outside product. Full module+SDK inventory can be retained as raw facts. No Generator passing gate verdict.",
+  "accounting": "Authored operational helpers, external patch delta, tests, maintained plans/reviews count honestly once in whole123; no interim scope measure/rebaseline/free allowance.",
+  "held": "No genuine log or five-fetch transport yet; independent binary qualification acceptance and separate Root transport2 release required. No global gh install, current selection push, Source/contract/parser/helper/.nizam changes, product gates or final approval."
+}
