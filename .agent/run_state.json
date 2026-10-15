@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T12:44:44.653615+00:00",
+  "updated_at": "2026-10-15T12:56:59.277625+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1702,11 +1702,13 @@
     "123-development-private-controls": {
       "attempts": 2,
       "limit": 3,
-      "status": "renewed-full-private-controls2-released",
+      "status": "renewed-blocker0-1-passed-candidate-running-restoration-pending",
       "strategy": "Same immutable authorhelper against newlyreviewedSource9886/test06eba; fullpositive then exactintendednegative eachlane alongsideactualcapture2",
       "release": ".agent/evidence/123/root-renewed-private-controls2-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
-      "completed_lanes": [],
+      "completed_lanes": [
+        "blocker"
+      ],
       "prior_controls1": {
         "attempts": 1,
         "limit": 3,
@@ -1717,7 +1719,8 @@
         ],
         "blocker_evidence": ".agent/evidence/123/root-source3-blocker-controls1-admission.json",
         "candidate_evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
-      }
+      },
+      "blocker_evidence": ".agent/evidence/123/root-renewed-blocker-controls2-admission.json"
     },
     "123-capture-input-preflight": {
       "attempts": 2,
@@ -7131,6 +7134,12 @@
       "event": "123-ci-capture2-published-observed-merge-retained",
       "detail": "Actualpush/bodyedit0; compliance38736608742 head6b7 inprogress, actual5jobIDs observed,3success. ActualmergeRefb843 parentsmain/P2 treeP2 retained; checkoutcorroboration andactualproducerproof pending.",
       "evidence": ".agent/evidence/123/root-ci-capture2-publication-admission.json"
+    },
+    {
+      "at": "2026-10-15T12:56:59.277625+00:00",
+      "event": "123-renewed-blocker-controls2-admitted-live-candidate-ci",
+      "detail": "Actualblocker0/196.255s thenexactsemantic1/26.699s,preservation13104/239 independentlyconfirmed. Candidate/hostedpending; Source3API/test06immutable, no restored/producer/finalgateverdict. Futureperformance/QAplacement adviceintakenwithoutscope/gatechange.",
+      "evidence": ".agent/evidence/123/root-renewed-blocker-controls2-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7692,7 +7701,7 @@
       }
     ]
   },
-  "last_action": "123 renewedcontrols2 andactualcapture2 run38736608742/attempt1 live; actualPRmerge b843 retained ordinaryancestry,3jobsobservedsuccess but producer/fullfixture outcomespending; no furtherpushwhilelive.",
+  "last_action": "123 renewedblocker2 full0/intendednegative1 admitted; newcandidatepositive and actualCI38736608742 stillrunning immutableSource9886. No newpush/retry/futurepasses; verifyallocation remains0.",
   "completed_contract_ids": [
     "099",
     "103",
