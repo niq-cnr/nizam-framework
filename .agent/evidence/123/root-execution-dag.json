@@ -1,0 +1,139 @@
+{
+  "role": "Root Orchestrator",
+  "feature": "123",
+  "status": "coordination plan; subject to actual independently approved contract; no gate or Source approval",
+  "at": "2026-10-15T05:12:56.154603+00:00",
+  "current_release": "5b4251e5f727796ebadac21d3298dbaa6f45225d",
+  "dependency_admission": ".agent/evidence/123/source-prerequisite.json",
+  "vertices": [
+    {
+      "id": "contract",
+      "owner": "Generator",
+      "state": "in_progress"
+    },
+    {
+      "id": "mode-a",
+      "owner": "independent Validator",
+      "state": "prepared",
+      "after": [
+        "contract"
+      ]
+    },
+    {
+      "id": "contract-review",
+      "owner": "independent Evaluator",
+      "state": "prepared",
+      "after": [
+        "contract"
+      ]
+    },
+    {
+      "id": "contract-approval",
+      "owner": "Root",
+      "state": "pending",
+      "after": [
+        "mode-a",
+        "contract-review"
+      ]
+    },
+    {
+      "id": "concrete-test-freeze",
+      "owner": "independent test author",
+      "state": "pending",
+      "after": [
+        "contract-approval"
+      ]
+    },
+    {
+      "id": "provisional-bundle-review",
+      "owner": "distinct acceptance reviewer",
+      "state": "pending",
+      "after": [
+        "concrete-test-freeze"
+      ]
+    },
+    {
+      "id": "initial-source-commit-and-development",
+      "owner": "Generator",
+      "state": "pending",
+      "after": [
+        "provisional-bundle-review"
+      ]
+    },
+    {
+      "id": "actual-controls-and-independent-executable-review",
+      "owner": "author then distinct reviewer",
+      "state": "pending",
+      "after": [
+        "initial-source-commit-and-development"
+      ]
+    },
+    {
+      "id": "hosted-candidate-proof",
+      "owner": "existing capable CI job; Root captures",
+      "state": "pending",
+      "after": [
+        "initial-source-commit-and-development"
+      ]
+    },
+    {
+      "id": "mode-b",
+      "owner": "independent Validator",
+      "state": "pending",
+      "after": [
+        "actual-controls-and-independent-executable-review",
+        "hosted-candidate-proof"
+      ]
+    },
+    {
+      "id": "fresh-qa",
+      "owner": "Evaluator distinct from developer/test author/bundle reviewer",
+      "state": "pending",
+      "after": [
+        "mode-b"
+      ]
+    },
+    {
+      "id": "evidence-admission-and-canonical-closure",
+      "owner": "Root",
+      "state": "pending",
+      "after": [
+        "fresh-qa",
+        "hosted-candidate-proof"
+      ]
+    },
+    {
+      "id": "current-docs-and-independent-review",
+      "owner": "Planner then independent reviewer if contract declares these paths",
+      "state": "pending",
+      "after": [
+        "evidence-admission-and-canonical-closure"
+      ]
+    },
+    {
+      "id": "final-compliance-whole-scope-and-exact-head-ci",
+      "owner": "Root transport; existing CI",
+      "state": "pending",
+      "after": [
+        "current-docs-and-independent-review"
+      ]
+    },
+    {
+      "id": "clean-pr-merge-and-actual-main-ci",
+      "owner": "Root under standing operator authority",
+      "state": "pending",
+      "after": [
+        "final-compliance-whole-scope-and-exact-head-ci"
+      ]
+    }
+  ],
+  "parallelism": "Both pre-code gates inspect identical committed proposal in parallel. Hosted CI may overlap executable review only if approved contract permits; final QA strictly follows ModeB. Shared Source/test/state ownership serializes. No speculative Source or dependent phase activation.",
+  "invariants": [
+    "Only Root owns counters/lifecycle/history and selects trusted experiment policy.",
+    "Actual CI commands/captures and candidate bindings must be distinguished from synthetic selectors.",
+    "Missing API/setup/infrastructure failures never count as intended semantic red.",
+    "Every rejection is retained; no weakened assertions or silent budget/counter reset.",
+    "Whole123 measured once from actual PR103 merge; original7200/9360 and prior4303 unchanged.",
+    "Installed239 and live Root binding/migration remain unchanged; no runtime/benchmark/release claims."
+  ]
+}
