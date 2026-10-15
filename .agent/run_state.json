@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T17:33:02.357062+00:00",
+  "updated_at": "2026-10-15T17:49:18.373696+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1794,18 +1794,21 @@
       "verdict_path": ".agent/evidence/123/capture2-inspection1-verdict.json"
     },
     "123-verify-proof-transport": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "failed-incomplete-external-cli-log",
+      "status": "recovery-released",
       "fetch_revision": "8e8039dfa638d63fdb3b1cce2572c56955516aeb",
       "normalization_revision": "fc657d77bc61a56eb79f32b67acb18e5a69160f2",
       "operation_attempt": 1,
-      "run_id": 38754141468
+      "run_id": 38754141468,
+      "recovery_release": ".agent/evidence/123/root-verify1-transport-recovery2-release.json",
+      "prior_fetch_revision": "8e8039dfa638d63fdb3b1cce2572c56955516aeb",
+      "prior_normalization_revision": "fc657d77bc61a56eb79f32b67acb18e5a69160f2"
     },
     "123-external-gh-collector-repair": {
       "attempts": 2,
       "limit": 3,
-      "status": "correction-execution-released",
+      "status": "qualified-private-binary-admitted",
       "release": ".agent/evidence/123/root-gh-collector-repair1-preparation-release.json",
       "owner": "/root/runtime_readiness020",
       "strategy": "Repair the genuine upstream bounded line reader after independent cause confirmation; preserve protocol and all failed raw captures.",
@@ -1813,7 +1816,9 @@
       "static_review_revision": "45097a4a70732f5201276600395e68b5024a5a28",
       "prior_execution_failure_revision": "6197d046e750079d5317783855bae105c8e4a822",
       "correction_release": ".agent/evidence/123/root-gh-collector-repair2-preparation-release.json",
-      "correction_static_review_revision": "985c378d4ab0864bed5a646db29252a95bc3d2e6"
+      "correction_static_review_revision": "985c378d4ab0864bed5a646db29252a95bc3d2e6",
+      "qualification_revision": "43b7e5a03333a23979997db41918bfe4b81e2b82",
+      "actual_facts_revision": "d517443c5000564304c89ba17d427c33aa647eb5"
     }
   },
   "history": [
@@ -7852,7 +7857,7 @@
       }
     ]
   },
-  "last_action": "Strictly admitted exact-two SDK PAX correction and released private qualification2; same framework Source and completed CI, real transport and final gates still held.",
+  "last_action": "Admitted qualified private collector; released complete five-fetch recovery2 on original CIrun/producer1, no CI rerun and all final framework gates held.",
   "completed_contract_ids": [
     "099",
     "103",
