@@ -21,6 +21,7 @@ with tempfile.TemporaryDirectory(prefix='nizam122-qa1-duplicate-authority-') as 
             result = api.route_failed_attempt(f.root, f.request, policy=f.policy)
         except api.AssuranceError as exc:
             assert deny and 0 < len(str(exc)) <= 1000, str(exc)
+            assert 'duplicate JSON key: approved' in str(exc), str(exc)
             print('EXPECTED_REJECTION ' + str(exc))
             result = None
         else:

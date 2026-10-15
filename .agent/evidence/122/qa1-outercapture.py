@@ -29,7 +29,7 @@ def file_pin(path, revision):
     mode = tree.split()[0]
     return {'path':path,'sha256':sha(raw),'full_fs_mode':s.st_mode,'git_revision':revision,'git_tree_entry':tree,'matches_git_bytes':raw==committed,'matches_git_exec':bool(s.st_mode & 0o111)==(mode=='100755')}
 def own_pins(revision):
-    return [file_pin('.agent/evidence/122/'+name,revision if name=='qa1-outercapture.py' else PREPARATION) for name in NAMES]
+    return [file_pin('.agent/evidence/122/'+name,revision if name in ('qa1-adversarial.py','qa1-outercapture.py') else PREPARATION) for name in NAMES]
 def selected_pins(revision):
     names = ['tools/workflow_assurance.py','tools/test_workflow_assurance.py','.agent/contracts/122.json','.agent/run_state.json','schema/contract.schema.json','schema/contract_review.schema.json','schema/qa_verdict.schema.json','schema/run_state.schema.json','.nizam/NIZAM.json']
     return [file_pin(path,revision) for path in names]
@@ -50,7 +50,7 @@ own_before=own_pins(a.revision); selected_before=selected_pins(a.revision); inst
 assert all(row['matches_git_bytes'] and row['matches_git_exec'] for row in own_before+selected_before)
 outer_argv=[part.decode() for part in Path('/proc/self/cmdline').read_bytes().split(b'\0') if part]
 argv=['python3','.agent/evidence/122/qa1-capture.py',*sys.argv[1:]]
-write('before.json',{'revision':a.revision,'argv':outer_argv,'cwd':str(ROOT),'environment':environment,'runner_argv':argv,'own_pins':own_before,'selected_pins':selected_before,'installed':installed_before,'original_preparation_revision':PREPARATION})
+write('before.json',{'revision':a.revision,'argv':outer_argv,'cwd':str(ROOT),'environment':environment,'runner_argv':argv,'own_pins':own_before,'selected_pins':selected_before,'installed':installed_before,'original_preparation_revision':PREPARATION,'current_release_overlays':['qa1-adversarial.py','qa1-outercapture.py']})
 started=time.time()
 result=subprocess.run(argv,cwd=ROOT,env=environment,capture_output=True)
 for name,raw in [('stdout',result.stdout),('stderr',result.stderr)]:
