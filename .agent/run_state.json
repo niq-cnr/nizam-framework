@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T19:24:39.293729+00:00",
+  "updated_at": "2026-10-15T20:10:29.798457+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1912,7 +1912,7 @@
     "123-fresh-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "running",
+      "status": "admitted",
       "owner": "/root/fresh_qa123",
       "release": ".agent/evidence/123/root-fresh-qa1-release.json",
       "mode_b_ref": {
@@ -1947,7 +1947,7 @@
         }
       ],
       "extra_setup_release": ".agent/evidence/123/root-fresh-qa-extra2-setup-recovery-release.json",
-      "final_verdict_held_on": "Final static report serialization only; all ten logical behavior outcomes complete.",
+      "final_verdict_held_on": null,
       "completed_core_expected_outcomes": {
         "blocker": 0,
         "readiness": 0,
@@ -1957,7 +1957,13 @@
         "current_stale118": 1,
         "same_extra_corrected_setup2": 0
       },
-      "completed_evidence_revision": "6896da8f9b584fb7c6635bada2495b2da2088dae"
+      "completed_evidence_revision": "6896da8f9b584fb7c6635bada2495b2da2088dae",
+      "revision": "6046ad7ea084703c82b512697f520868b161d09f",
+      "verdict_ref": {
+        "path": ".agent/qa/123.json",
+        "revision": "6046ad7ea084703c82b512697f520868b161d09f",
+        "sha256": "8e1aea3f193b2d051bf99116efcb97fd862a938beeb602462f78784536a21dae"
+      }
     },
     "123-fresh-qa-extra-setup": {
       "attempts": 2,
@@ -1989,13 +1995,25 @@
       }
     },
     "123-fresh-qa-static-admission": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "attempt2-released",
+      "status": "admitted",
       "owner": "/root/fresh_qa123",
       "base": "1ec3b5a8082430d3610e686da8d89abe304b9724",
       "attempt1_actual_exit": 1,
-      "release": ".agent/evidence/123/root-fresh-qa-static2-disposition.json"
+      "release": ".agent/evidence/123/root-fresh-qa-static2-disposition.json",
+      "actual_exits": [
+        1,
+        0
+      ],
+      "revision": "6046ad7ea084703c82b512697f520868b161d09f"
+    },
+    "123-evidence-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released",
+      "owner": "Root Orchestrator",
+      "release": ".agent/evidence/123/root-capture1-release.json"
     }
   },
   "history": [
@@ -7473,6 +7491,11 @@
       "event": "123-verify1-cli-truncation-diagnosed-external-repair1-preparation-released",
       "detail": "All five verify jobs passed; genuine CLI log collector defect confirmed. Bounded external-tool repair preparation released; product proof gates remain held.",
       "evidence": ".agent/evidence/123/root-gh-collector-repair1-preparation-release.json"
+    },
+    {
+      "at": "2026-10-15T20:10:29.798457+00:00",
+      "event": "123-fresh-qa-admitted-root-capture-released",
+      "detail": "All9 mandatoryexpected+1extra;11behaviorattempts including retainedsetupfailure;2staticadmissions1/0. Root strictparse/323indexedhashes admitted. Isolated Root capture only; no lifecycle closure yet."
     }
   ],
   "phase_001_scope_budget_final": {
