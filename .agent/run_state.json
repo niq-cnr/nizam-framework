@@ -2157,9 +2157,9 @@
       "prepared_branch": "plan/balanced-comparison-prepared"
     },
     "133-fresh-qa": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "stopped-c11-review-record-schema",
+      "status": "released-targeted-metadata-recovery",
       "owner": "/root/qa133",
       "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
       "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
@@ -2197,7 +2197,55 @@
       "actual_failed_command": 7,
       "actual_exit": 1,
       "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json",
-      "long_commands_disposition": "Preserve already-live5/6 atcb5; no cancellation or restart. Additional8/extra unexecuted."
+      "long_commands_disposition": "Preserve already-live5/6 atcb5; no cancellation or restart. Additional8/extra unexecuted.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "stopped-c11-review-record-schema",
+          "owner": "/root/qa133",
+          "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
+          "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+          "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+          "scope": "All8 exact contract commands, each actual0/full preservation, plus exactlyONE independent large valid realGit readset beyond OSargv limit, late-chunk defect/recovery. Earlier planned hook probe never executed and replaced before release. Long5/6 independentseparateGitclones samefrozenrevision mayparallel; otherchecksserialperclone. No automaticretries/testrepair/Sourceedits.",
+          "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+          "timeout_seconds": {
+            "focused": 1200,
+            "compliance": 1800,
+            "full48": 10800,
+            "fixture": 10800,
+            "one_extra": 1800
+          },
+          "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+          "long_commands": [
+            {
+              "command_number": 5,
+              "child_pid": 990977,
+              "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/default48/check-5.started.json",
+              "argv": [
+                "python3",
+                "tools/test_workflow_assurance.py"
+              ]
+            },
+            {
+              "command_number": 6,
+              "child_pid": 991647,
+              "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/fixtures/check-6.started.json",
+              "argv": [
+                "bash",
+                "tools/fixtures_self_test.sh"
+              ]
+            }
+          ],
+          "actual_failed_command": 7,
+          "actual_exit": 1,
+          "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json",
+          "long_commands_disposition": "Preserve already-live5/6 atcb5; no cancellation or restart. Additional8/extra unexecuted."
+        }
+      ],
+      "strategy": "Structural schema/artifact-boundary recovery: preserve actual product checks1-6 at cb5 (long5/6 remain live), rerun only failed compliance7 and unexecuted8 plus first/only extra at new repaired-metadata revision. Whole Source/tests/hook/contract byte-identical. Original failure and every actual revision remain; new exact-headCI still required.",
+      "partial_failure_revision": "9a0272d309690c2e1e18134d2302c6935ece7f87",
+      "record_repair_revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61"
     },
     "comparative-design-review": {
       "attempts": 1,
@@ -2212,9 +2260,11 @@
     "133-bundle-record-repair": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "schema-complete-admitted",
       "owner": "/root/validator133",
-      "scope": "Only add required feature133 and final_verdict.summary to own original133-bundle-review1.json; schema-complete record, preserve load-bearing four verdict fields/evidence/frozen reviewed bundle. Root+installed contract_review schemas actual0. No Source/assertion/contract/installed/oldraw change. Preserve originalca6b bytes by immutable Ref."
+      "scope": "Only add required feature133 and final_verdict.summary to own original133-bundle-review1.json; schema-complete record, preserve load-bearing four verdict fields/evidence/frozen reviewed bundle. Root+installed contract_review schemas actual0. No Source/assertion/contract/installed/oldraw change. Preserve originalca6b bytes by immutable Ref.",
+      "revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61",
+      "record_sha256": "b96bbbcff17edafa73959812db5b76b900d73e38e60df130baba5b7262d12737"
     }
   },
   "history": [
@@ -7837,6 +7887,11 @@
       "at": "2026-10-15T23:32:57.087827+00:00",
       "event": "133-fresh-qa1-c11-failure-bundle-record-repair1-released",
       "detail": "Actualcheck7exit1/full14553+239preserved; C11 requiresfeature in own bundle-review QA record, schema also requires final_verdict.summary. Independentfocused1-4pass; long5/6confirmedlive,8andoneextra unexecuted. Release independent Validator metadata-only repair1, not Sourceimplementation3, no gate bypass/thresholdchange. OriginalQAraw/ca6bverdictpreserved; Root will release targetedcompliance recovery only after exactschemafixverified, keeping all real revision bindings."
+    },
+    {
+      "at": "2026-10-15T23:35:56.318971+00:00",
+      "event": "133-record-schema-repair-admitted-targeted-qa2-released",
+      "detail": "Root verified negative9a067/all35rawhashes and exactb8e5 twofield metadata repair, root+installedschema0. Diff fromcb5 contains onlyRootstate/roleevidence/twoQA records; product/frozenrunner/hook/oldtests/approvedcontract byte-identical. Original ca6b approval and failed QA1 remain immutable. Under delegated strategic recovery, revise Root one-context preference to honestlyboundtwo contexts: retain1-6 actualcb5, only7/8/oneextra newmetadata context, no healthy cancellation/broad rerun/Source3 or waived gate. FinalQA must separately report selectedeight outcomes, allactualattempts inclfailed7 and per-command revisions; no allsamehead claim. ExactnewPRCI/merge/main gates unchanged."
     }
   ],
   "phase_001_scope_budget_final": {
