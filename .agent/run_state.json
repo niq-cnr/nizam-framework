@@ -2194,10 +2194,7 @@
           ]
         }
       ],
-      "actual_failed_command": 7,
-      "actual_exit": 1,
-      "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json",
-      "long_commands_disposition": "Preserve already-live5/6 atcb5; no cancellation or restart. Additional8/extra unexecuted.",
+      "long_commands_disposition": "Original5/6 remain running atcb5; repaired7/8 and exactlyoneextra completed0 atb225. Preserve all per-command contexts and original failure, no restart or further extra.",
       "prior_attempts": [
         {
           "attempts": 1,
@@ -2267,7 +2264,13 @@
       "additional_adversarial_checks_executed": 1,
       "additional_adversarial_actual_exit": 0,
       "recovery_evidence_revision": "cc033afd95fc16202a2d0881aff27dd8d7b19173",
-      "recovery_evidence_index_sha256": "43bb5466d74e7f300cafa8184dae6a92805d3ba68ac16e7b235f7e6d76c4790f"
+      "recovery_evidence_index_sha256": "43bb5466d74e7f300cafa8184dae6a92805d3ba68ac16e7b235f7e6d76c4790f",
+      "original_failure": {
+        "actual_failed_command": 7,
+        "actual_exit": 1,
+        "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json"
+      },
+      "latest_execution_revision": "b225e55182ceee05bbc482badb61499f1a395cac"
     },
     "comparative-design-review": {
       "attempts": 1,
@@ -7924,6 +7927,11 @@
       "at": "2026-10-15T23:42:45.838348+00:00",
       "event": "123-main-observer-network-timeout-corrected-same-run-live",
       "detail": "Correction to preceding48e513e3 history: ps listed onlyQA PIDs990977/991647; its omitted891381 was incorrectly labelled live. Actual retained watch.execution.json shows observerexit1 at23:29:17, TCP readtimeout (not capture timeout or workflow failure). Direct status4 actual0 at same run38817712498/headc8 confirms in_progress/fourjobssuccess/fixturepending. No CI restart/rerun/cancel or newwatch; continue authoritative API observation of same run. Original failedobserver streams/frame hashes independentlyverified and preserved outside at /home/cnross/.tmp/nizam-feature123-main-integration1 for final import."
+    },
+    {
+      "at": "2026-10-15T23:45:14.723123+00:00",
+      "event": "133-qa-coordination-recovery-fields-normalized",
+      "detail": "Read current counter revealed inherited QA1 actual_exit1 and 8/extra-unexecuted text alongside current successful recovery. Moved original failure fields intact under original_failure (also retained in prior_attempts/raw9a), and corrected current disposition to actual6selected0/oneextra0/two live suites. No result changed, new command, counter reset or QA approval."
     }
   ],
   "phase_001_scope_budget_final": {
