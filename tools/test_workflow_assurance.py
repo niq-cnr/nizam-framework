@@ -1299,10 +1299,243 @@ def run_lane_case(name, api):
         finally: f.close()
 
 
+FAILURE_CASES = ('infrastructure-failed', 'semantic-failed', 'reject-cause-relabel', 'counter-continuity')
+
+
+class FailureFixture(ReceiptFixture):
+    """Selected Root authority and producer labels are synthetic, never authentication."""
+    def __init__(self, api, parent, cause='infrastructure', attempt=1, lanes=None, timestamp=True):
+        super().__init__(api, parent)
+        self.parent = Path(parent); self.serial = 0
+        self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'outside unchanged\n'); self.outside.chmod(0o600)
+        self.write('proof/prior-proof.txt', b'earlier proof stays unchanged\n')
+        contract = json.loads((ROOT / '.agent/contracts/122.json').read_text())
+        contract.update(status='proposed', approvals=dict(validator_mode_a=False, evaluator_contract_review=False)); contract.pop('approval_evidence', None)
+        self.write('contract.json', contract); proposed = self.commit('synthetic proposed122 contract'); digest = sha(canonical(contract))
+        self.write('proof/122-mode-a.json', dict(self.gate, feature='122', reviewed_commit=proposed, contract_sha256=digest, reviewer='synthetic-mode-a'))
+        self.write('proof/122-review.json', dict(self.gate, review='synthetic-only', feature='122', contract_id='122', reviewed_revision=proposed, proposal_sha256=digest, reviewer='synthetic-review'))
+        contract.update(status='approved', approvals=dict(validator_mode_a=True, evaluator_contract_review=True),
+            approval_evidence=dict(mode_a='proof/122-mode-a.json', contract_review='proof/122-review.json', proposal_sha256=digest))
+        self.write('contract.json', contract); revision = self.commit('synthetic approved122 contract and independent parser gates')
+        self.contract = self.ref('contract.json', revision)
+        self.state.update(current_feature='122', active_contract_id='122', status='in_progress',
+            circuit_breaker={'failure-step': {'attempts': attempt, 'limit': 3}, 'other': {'attempts': 2, 'limit': 3}})
+        if lanes is not None: self.state['execution_lanes'] = copy.deepcopy(lanes)
+        if not timestamp: del self.state['updated_at']
+        self.current(); self.anchor = copy.deepcopy(self.policy['coordination_ref'])
+        revision = self.commit('synthetic protected122 candidate')
+        self.candidate = api.assess_repository(self.root, revision, self.inputs, ['NIZAM_WA120_FIXTURE'], {'contract.json': ['/status']})
+        self.request = dict(operation_id='fixture-failure122', contract_id='122', feature_id='122', step_key='failure-step', attempt=attempt, stage='source-ready', cause=cause)
+        self.capture = self.failed_capture(cause)
+        self.evidence = dict(schema_version=1, kind=cause, reason='Synthetic independently selected classification of the observed failed wrapper.', capture_ref=None, verdict_ref=None)
+        if cause == 'semantic':
+            verdict = dict(copy.deepcopy(self.gate), review='synthetic rejection', feature='122'); verdict['final_verdict']['approved'] = False
+            self.evidence['verdict_ref'] = self.pin_new('verdict', verdict)
+        self.authority = dict(schema_version=1, role='Orchestrator', repository=self.repository, approved=True,
+            contract_ref=self.contract, coordination_ref=self.anchor, candidate=self.candidate, producer=self.producer)
+        self.bind()
+
+    def pin_new(self, label, value):
+        self.serial += 1
+        return self.pin('proof/failure-%d-%s.json' % (self.serial, label), value)
+
+    def current(self):
+        self.write('coordination122.json', self.state)
+        reference = self.ref('coordination122.json', self.commit('synthetic current122 coordination'))
+        self.policy = dict(repository=self.repository, coordination_ref=reference, authority_ref=None)
+
+    def failed_capture(self, cause):
+        revision = git(self.root, 'rev-parse', 'HEAD')
+        # An expected inner negative succeeds; the outer wrapper still actually exits7.
+        code = "import subprocess,sys; p=subprocess.run([sys.executable,'-c','raise SystemExit(9)']); assert p.returncode==9; print('PASS inner expected negative; outer failed'); sys.exit(7)"
+        argv = [sys.executable, '-c', code]; result = subprocess.run(argv, cwd=self.root, capture_output=True, env=os.environ)
+        require(result.returncode == 7, 'actual failed outer capture7')
+        self.write('proof/failed.stdout', result.stdout); self.write('proof/failed.stderr', result.stderr)
+        output_revision = self.commit('actual failed outer122 output')
+        return dict(schema_version=1, argv=argv, cwd=str(self.root), revision=revision, candidate_sha256=sha(canonical(self.candidate)),
+            environment=copy.deepcopy(self.candidate['environment']), producer=copy.deepcopy(self.producer), executed=True,
+            outcome=cause + '-failed', exit_code=result.returncode, stdout=self.ref('proof/failed.stdout', output_revision), stderr=self.ref('proof/failed.stderr', output_revision))
+
+    def bind(self):
+        capture_ref = self.pin_new('capture', self.capture); self.evidence['capture_ref'] = capture_ref
+        self.authority.update(copy.deepcopy(self.request), capture_ref=capture_ref, evidence_ref=self.pin_new('evidence', self.evidence))
+        self.policy['authority_ref'] = self.pin_new('authority', self.authority)
+
+    def files(self):
+        return {str(p.relative_to(self.parent)): (p.lstat().st_mode, os.readlink(p) if p.is_symlink() else sha(p.read_bytes()) if p.is_file() else 'directory')
+            for p in self.parent.rglob('*')}
+
+
+def failure_call(api, f, deny=False):
+    inputs = repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)); files = f.files()
+    try:
+        result = api.route_failed_attempt(f.root, f.request, policy=f.policy)
+    except api.AssuranceError as exc:
+        require(deny and 0 < len(str(exc)) <= 1000, 'failure rejection is bounded AssuranceError')
+        result = None
+    else:
+        require(not deny, 'invalid failure routing input accepted')
+        q = f.request; attempt = q['attempt']
+        expected = dict(q, outcome='failed', route='halt' if attempt == 3 else q['cause'] + ('-diagnosis' if q['cause'] == 'infrastructure' else '-repair'),
+            attempts_used=attempt, limit=3, remaining=3-attempt, capture_ref=f.authority['capture_ref'])
+        require(type(result) is dict and result == expected and all(type(result[k]) is int for k in ('attempt','attempts_used','limit','remaining')), 'exact failed routing result and integer counts')
+        require(not receipt_ids(result) & receipt_ids([f.request, f.policy, f.state, f.authority, f.capture, f.evidence]), 'failure result never aliases any input')
+        result['capture_ref']['path'] = 'returned-copy-only'
+    require(inputs == repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)) and files == f.files(), 'failure routing preserves full modes/bytes, counters, histories, prior proof and outside sentinel')
+
+
+def failure_probe(api, f, target, field, value, bound=False):
+    saved = copy.deepcopy((f.request, f.policy, f.state, f.authority, f.capture, f.evidence))
+    getattr(f, target)[field] = value
+    if bound: f.bind()
+    if target == 'state':
+        authority_ref = f.policy['authority_ref']; f.current(); f.policy['authority_ref'] = authority_ref
+    failure_call(api, f, True)
+    f.request, f.policy, f.state, f.authority, f.capture, f.evidence = saved
+    f.write('coordination122.json', f.state)
+    failure_call(api, f)
+
+
+def failure_pinned(api, f, target, value):
+    saved = copy.deepcopy((f.authority, f.policy))
+    if target == 'authority': f.policy['authority_ref'] = f.pin_new('bad-authority', value)
+    else:
+        f.authority[target + '_ref'] = f.pin_new('bad-' + target, value)
+        f.policy['authority_ref'] = f.pin_new('bad-binding', f.authority)
+    failure_call(api, f, True)
+    f.authority, f.policy = saved; failure_call(api, f)
+
+
+def failure_infrastructure(api, f):
+    failure_call(api, f)
+    if f.request['attempt'] != 1: return
+    for field, values in {'executed': [False, 1, None], 'exit_code': [0, True, '7', None],
+            'outcome': ['success', 'semantic-negative', 'pending', 'running', 'semantic-failed'],
+            'schema_version': [True, '1', 2], 'argv': [[], ['']], 'cwd': ['', None],
+            'candidate_sha256': ['f'*64], 'producer': [{'agent_id': 'different', 'session_id': 'other'}],
+            'environment': [{}], 'revision': ['0'*40]}.items():
+        for value in values: failure_probe(api, f, 'capture', field, value, True)
+    for field, values in {'reason': ['', 'x'*401, None], 'schema_version': [True, 2], 'verdict_ref': [f.contract]}.items():
+        for value in values: failure_probe(api, f, 'evidence', field, value, True)
+    target = f.root / f.capture['stdout']['path']; raw = target.read_bytes(); mode = target.stat().st_mode
+    for mutation in ('bytes', 'mode', 'symlink', 'missing'):
+        if mutation == 'bytes': target.write_bytes(raw + b'changed')
+        elif mutation == 'mode': target.chmod(mode ^ 0o111)
+        elif mutation == 'symlink': target.unlink(); target.symlink_to(f.outside)
+        else: target.unlink()
+        failure_call(api, f, True)
+        if target.is_symlink(): target.unlink()
+        target.write_bytes(raw); target.chmod(mode); failure_call(api, f)
+
+
+def failure_semantic(api, f):
+    failure_call(api, f)
+    if f.request['attempt'] != 1: return
+    for value in (None, f.contract): failure_probe(api, f, 'evidence', 'verdict_ref', value, True)
+    for approved, arrays in ((True, []), (False, []), (True, ['blocking fixture finding'])):
+        for family in ('contract_review', 'qa_verdict'):
+            verdict = dict(copy.deepcopy(f.gate), feature_id='122', feature='122', review='synthetic review')
+            verdict['final_verdict']['approved'] = approved; verdict['issues'] = arrays
+            if family == 'qa_verdict': verdict.update(qa_pass=False, checks_run=1, checks_passed=0, adversarial={'performed': True}, evidence_files=[], required_fixes=[])
+            reference = f.pin_new('semantic-' + family, verdict)
+            if approved and not arrays: failure_probe(api, f, 'evidence', 'verdict_ref', reference, True)
+            else:
+                saved = copy.deepcopy((f.evidence, f.authority, f.policy)); f.evidence['verdict_ref'] = reference; f.bind(); failure_call(api, f)
+                f.evidence, f.authority, f.policy = saved
+    malformed = dict(f.gate, final_verdict={'approved': 'false', 'summary': 'wrong type'})
+    failure_probe(api, f, 'evidence', 'verdict_ref', f.pin_new('invalid-verdict', malformed), True)
+    failure_probe(api, f, 'capture', 'outcome', 'success', True)
+    failure_call(api, f)
+
+
+def failure_relabel(api, f):
+    failure_call(api, f)
+    opposite = 'semantic' if f.request['cause'] == 'infrastructure' else 'infrastructure'
+    for target, fields in {'request': {'cause': [opposite, 'success', 'probe', None], 'attempt': [0, 4, True, '1', None],
+            'authority_ref': [f.policy['authority_ref']], 'capture_ref': [f.authority['capture_ref']], 'producer': [f.producer], 'budget': [99], 'success': [True]},
+            'policy': {'repository': ['wrong/repository'], 'extra': [True]},
+            'authority': {'role': ['Generator'], 'approved': [False, 1], 'schema_version': [True, 2], 'extra': [0],
+                'candidate': [dict(f.candidate, source_commit='0'*40)], 'producer': [{'agent_id':'', 'session_id':'fixture'}]},
+            'evidence': {'kind': [opposite, 'probe'], 'extra': [False]}}.items():
+        for field, values in fields.items():
+            for value in values: failure_probe(api, f, target, field, value, target in ('authority', 'evidence'))
+    for field in ('operation_id', 'contract_id', 'feature_id', 'step_key', 'stage', 'cause', 'attempt'):
+        saved = f.request.pop(field); failure_call(api, f, True); f.request[field] = saved; failure_call(api, f)
+    for field in ('authority_ref', 'coordination_ref'):
+        for key, value in (('path', '../outside-sentinel'), ('path', '/tmp/unsafe'), ('sha256', '0'*64), ('revision', 'HEAD'), ('revision', '0'*40), ('extra', 1)):
+            reference = dict(f.policy[field]); reference[key] = value; failure_probe(api, f, 'policy', field, reference)
+        failure_probe(api, f, 'policy', field, f.nonregular_artifact(f.policy[field]))
+    cycle = []; cycle.append(cycle)
+    for value in (float('nan'), float('inf'), cycle): failure_probe(api, f, 'request', 'extra', value)
+    for target in ('request', 'policy'):
+        original = copy.deepcopy(getattr(f, target))
+        for value in (None, True, [], 'invalid-root'):
+            setattr(f, target, value); failure_call(api, f, True); setattr(f, target, copy.deepcopy(original)); failure_call(api, f)
+    saved = copy.deepcopy(f.policy); f.policy['authority_ref'] = None; failure_call(api, f, True); f.policy = saved
+    for target in ('authority', 'capture', 'evidence'):
+        original = copy.deepcopy(getattr(f, target))
+        for key in original:
+            value = copy.deepcopy(original); del value[key]; failure_pinned(api, f, target, value)
+        value = dict(original, unknown=True); failure_pinned(api, f, target, value)
+    failure_pinned(api, f, 'evidence', dict(f.evidence, capture_ref=f.contract))
+    for field in ('coordination_ref', 'authority_ref', 'repository'):
+        value = f.policy.pop(field); failure_call(api, f, True); f.policy[field] = value; failure_call(api, f)
+    for path in ('src/code.py', 'contract.json'):
+        target = f.root / path; raw = target.read_bytes(); mode = target.stat().st_mode
+        target.write_bytes(raw + b' changed'); failure_call(api, f, True); target.write_bytes(raw); failure_call(api, f)
+        target.chmod(mode ^ 0o111); failure_call(api, f, True); target.chmod(mode); failure_call(api, f)
+    failure_call(api, f)
+
+
+def failure_continuity(api, f):
+    failure_call(api, f)
+    original = copy.deepcopy(f.state)
+    f.state['history'].append(dict(at='later', event='handoff', detail='synthetic agent/session/generation handoff preserves allocated identity'))
+    if 'updated_at' in f.state: f.state['updated_at'] = '2026-10-15T03:00:00Z'
+    authority_ref = f.policy['authority_ref']; f.current(); f.policy['authority_ref'] = authority_ref; failure_call(api, f)
+    for field, values in {'circuit_breaker': [dict(f.state['circuit_breaker'], **{'failure-step': {'attempts': a, 'limit': limit}}) for a, limit in ((0,3),(1,4),(True,3),(4,3))],
+            'scope_budget': [dict(f.state['scope_budget'], total_lines_changed=0)], 'authority': [{'fixture': ['renamed']}],
+            'current_phase': ['renamed-phase'], 'current_feature': ['123'], 'active_contract_id': ['123'], 'status': ['complete'],
+            'history': [[], [dict(original['history'][0], detail='rewritten')]], 'updated_at': [None, 1],
+            'execution_lanes': [[], [{'changed': True}]], 'process_id': ['new-authority']}.items():
+        for value in values:
+            if field == 'execution_lanes' and field in f.state and value == f.state[field]: continue
+            failure_probe(api, f, 'state', field, value)
+    if 'execution_lanes' in f.state:
+        saved_policy = copy.deepcopy(f.policy); saved = f.state.pop('execution_lanes'); authority_ref = f.policy['authority_ref']; f.current(); f.policy['authority_ref'] = authority_ref
+        failure_call(api, f, True); f.state['execution_lanes'] = saved; f.write('coordination122.json', f.state); f.policy = saved_policy; failure_call(api, f)
+        for value in (list(reversed(saved)), [dict(saved[0], operation_id='renamed'), *saved[1:]]): failure_probe(api, f, 'state', 'execution_lanes', value)
+    for field in ('operation_id', 'step_key', 'stage', 'contract_id', 'feature_id'):
+        failure_probe(api, f, 'request', field, 'renamed-after-handoff')
+    saved = copy.deepcopy((f.state, f.policy, f.authority)); del f.state['updated_at']; f.current()
+    f.authority['coordination_ref'] = copy.deepcopy(f.policy['coordination_ref']); f.policy['authority_ref'] = f.pin_new('schema-invalid-anchor', f.authority)
+    failure_call(api, f, True)  # Current shipped schema requires updated_at even when both snapshots omit it.
+    f.state, f.policy, f.authority = saved; f.write('coordination122.json', f.state)
+    failure_call(api, f)
+
+
+def run_failure_case(name, api):
+    if not callable(getattr(api, 'route_failed_attempt', None)):
+        print('SETUP_ERROR: missing route_failed_attempt API; not intended behavioral red', file=sys.stderr); raise SystemExit(2)
+    previous = os.environ.get('NIZAM_WA120_FIXTURE'); os.environ['NIZAM_WA120_FIXTURE'] = 'observed'
+    try:
+        configurations = [(1, None, 'semantic' if name == 'semantic-failed' else 'infrastructure')]
+        if name in ('infrastructure-failed', 'semantic-failed'): configurations += [(a, None, configurations[0][2]) for a in (2,3)]
+        if name == 'reject-cause-relabel': configurations += [(1, None, 'semantic')]
+        if name == 'counter-continuity': configurations = [(a, lanes, 'infrastructure') for a in (1,2,3) for lanes in (None, [{'operation_id':'other-a'}, {'operation_id':'other-b'}])]
+        for attempt, lanes, cause in configurations:
+            with tempfile.TemporaryDirectory(prefix='nizam122-failure-') as parent:
+                f = FailureFixture(api, parent, cause, attempt, lanes)
+                (failure_infrastructure if name == 'infrastructure-failed' else failure_semantic if name == 'semantic-failed' else failure_relabel if name == 'reject-cause-relabel' else failure_continuity)(api, f)
+    finally:
+        if previous is None: os.environ.pop('NIZAM_WA120_FIXTURE', None)
+        else: os.environ['NIZAM_WA120_FIXTURE'] = previous
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
@@ -1337,8 +1570,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES):
-        (run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES):
+        (run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':

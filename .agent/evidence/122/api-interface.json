@@ -1,0 +1,145 @@
+{
+  "feature_id": "122",
+  "author": "independent Evaluator author1",
+  "status": "frozen for distinct provisional review; no Source behavior claim",
+  "base_revision": "d9dd92db6ae7b4b6aaa5fc7c99060e6bfbb2752a",
+  "contract_sha256": "13dc45d0daf41fc9af4828ec0b84b1a05ded39f51b2e1fc5b903831e557d42c5",
+  "test_path": "tools/test_workflow_assurance.py",
+  "test_sha256": "df2bcdeab0e9e6480b6732c149ecd510b942333c663d26322ef4307bc2e10579",
+  "signature": "route_failed_attempt(repo, request, *, policy) -> dict; additive private helpers permitted; no new CLI",
+  "request_keys": [
+    "operation_id",
+    "contract_id",
+    "feature_id",
+    "step_key",
+    "attempt",
+    "stage",
+    "cause"
+  ],
+  "policy_keys": [
+    "repository",
+    "coordination_ref",
+    "authority_ref"
+  ],
+  "authority_keys": [
+    "schema_version",
+    "role",
+    "repository",
+    "approved",
+    "contract_ref",
+    "coordination_ref",
+    "candidate",
+    "producer",
+    "capture_ref",
+    "evidence_ref",
+    "operation_id",
+    "contract_id",
+    "feature_id",
+    "step_key",
+    "attempt",
+    "stage",
+    "cause"
+  ],
+  "capture_keys": [
+    "schema_version",
+    "argv",
+    "cwd",
+    "revision",
+    "candidate_sha256",
+    "environment",
+    "producer",
+    "executed",
+    "outcome",
+    "exit_code",
+    "stdout",
+    "stderr"
+  ],
+  "evidence_keys": [
+    "schema_version",
+    "kind",
+    "reason",
+    "capture_ref",
+    "verdict_ref"
+  ],
+  "result_keys": [
+    "operation_id",
+    "contract_id",
+    "feature_id",
+    "step_key",
+    "attempt",
+    "stage",
+    "cause",
+    "outcome",
+    "route",
+    "attempts_used",
+    "limit",
+    "remaining",
+    "capture_ref"
+  ],
+  "reference_keys": [
+    "path",
+    "sha256",
+    "revision"
+  ],
+  "producer_keys": [
+    "agent_id",
+    "session_id"
+  ],
+  "profiles": {
+    "signature": "route_failed_attempt(repo, request, *, policy) -> dict; additive private helpers permitted; no new CLI",
+    "execution": "Read-only local Git/files/JSON checks, no command execution beyond existing Git inspection; no retry, state write, reservation, process launch, cleanup or network. Reuse AssuranceError, finite exact JSON/canonical/SHA, regular_file, typed immutable _receipt_artifact/_lane_file, _receipt_candidate, _receipt_contract, existing schema validators and verify_record_update. Do not modify existing helpers/engines.",
+    "request": "Exact keys operation_id,contract_id,feature_id,step_key,attempt,stage,cause. IDs/stage nonempty strings; contract_id==feature_id; attempt exact int1..3 (never bool); cause exactly infrastructure or semantic. No request-selected authority/capture, budget, producer, success, probe or counter overrides.",
+    "policy": "Exact keys repository,coordination_ref,authority_ref. Repository equals actual origin. Refs use existing exact path/sha256/revision immutable type, artifact-containing commit, regular files and current bytes/modes for current coordination. Caller outside API must independently select this trusted policy, never derive it from the request.",
+    "authority": "Immutable authority_ref JSON exact keys schema_version,role,repository,approved,contract_ref,coordination_ref,candidate,producer,capture_ref,evidence_ref plus all request keys. Version exact int1, role Orchestrator, approved exactTrue, repository matches policy, request values match exactly. Existing approved contract with both pre-code approvals matches feature. Existing assessed candidate and producer shapes validated; candidate actual repository/inputs/environment/exercised revision checked using existing validators. Authority coordination_ref anchors the allocated attempt before handoff; current coordination_ref is independently selected live snapshot.",
+    "continuity": "Validate anchor/current run_state schemas, selected repository/current_feature/active_contract_id(if present)/in_progress and same current_phase. Require history lists in both. execution_lanes must be absent in both, or present in both as canonically identical lists; add/remove/reorder/content transitions reject in this read-only routing assessment. Compare the original full anchor/current records using unchanged verify_record_update with /history only, adding /updated_at only when that existing anchor field is a string and current retains a string; if absent in anchor it must remain absent. History remains exact prefix; no list-valued owned pointer or absent owned pointer is passed. All counters, budget, operator and other values unchanged. Selected step counter has exact integer attempts==request.attempt and limit==3 in both snapshots. Authority remains stable across process/agent/session/generation/stage boundaries; a renamed stage/operation/step/contract cannot escape its pinned identity. New independent steps require separately selected Root authority; API cannot establish that authority itself.",
+    "capture": "capture_ref is actual wrapper capture JSON with existing receipt-capture exact keys schema_version,argv,cwd,revision,candidate_sha256,environment,producer,executed,outcome,exit_code,stdout,stderr. Version exact int1; nonempty argv strings/cwd; executed exactTrue; exit_code exact nonzero int; outcome exactly infrastructure-failed or semantic-failed matching authority.cause. Candidate digest/environment/producer match authority; revision is actual committed candidate or allowed protected-input descendant. Output refs verify committed and current bytes/modes, decode UTF8; never guess stdout markers or infer cause from substrings. Existing output is inspected as evidence without executing it.",
+    "evidence_profile": "evidence_ref selects independently classified JSON exact keys schema_version,kind,reason,capture_ref,verdict_ref. Version exact int1; kind equals authority.cause; reason bounded nonempty string1..400; capture_ref exactly matches authority capture_ref. Infrastructure verdict_ref must be null; semantic verdict_ref must be immutable typed reference to schema-valid contract_review or qa_verdict, with final_verdict.approved false OR at least one nonempty issues/missing_acceptance_coverage/unsupported_claims array. Explicitly reject a passing semantic verdict and capture/profile/cause mismatch. The selected classification attestation binds actual failed capture; it is not an automatically inferred universal failure taxonomy.",
+    "result": "Return exactly operation_id,contract_id,feature_id,step_key,attempt,stage,cause,outcome,route,attempts_used,limit,remaining,capture_ref. Preserve bound identity/cause/ref; outcome always failed, attempts_used=attempt, limit=3, remaining=3-attempt. For attempts1/2 route infrastructure-diagnosis or semantic-repair by cause; for attempt3 route halt for either cause. This proposes diagnostic destination, never allocates a next attempt or changes the existing strategy ladder/halt duties. Returned values do not alias inputs.",
+    "errors_and_boundary": "Invalid/missing/stale/unknown/ambiguous/nonfinite/cyclic/unsafe/mismatched data, bool counts, reset/limit override, zero exit or unrun/pending/running/success/probe evidence raises AssuranceError with nonempty bounded diagnostic, no success result/input/files/state mutation. Integrity/hash/producer labels and schema validity do not authenticate classification, human consent or factual truth; independent Root selection and evidence review remain required. Current Root legacy-binding migration remains unapplied; aligned fixture proof is not actual Root adoption. A nested expected nonzero negative can yield a successful outer acceptance command; a failed outer wrapper remains failed and cannot be relabeled successful or a probe."
+  },
+  "selectors": [
+    "infrastructure-failed",
+    "semantic-failed",
+    "reject-cause-relabel",
+    "counter-continuity"
+  ],
+  "default_count": 46,
+  "inherited_count": 42,
+  "obligation_matrix": {
+    "infrastructure-failed": [
+      "actual committed outer exit7, inner expected9",
+      "attempts1/2 diagnosis,3 halt",
+      "exact failed result/count types/no aliases",
+      "executed/exit/outcome/version/argv/cwd/candidate/producer/environment/revision rejects",
+      "reason/version/non-null infrastructure verdict rejects",
+      "current output bytes/full modes/symlink/missing rejects",
+      "restored positives and full parent/Git/prior-proof/outside sentinel snapshot"
+    ],
+    "semantic-failed": [
+      "actual outer exit7 remains failed despite inner expected negative success",
+      "attempts1/2 repair,3 halt",
+      "rejecting contract_review and qa_verdict schema families; approved false or blocking array",
+      "passing/missing/wrong-schema/wrong-type verdict rejects",
+      "success relabel rejects and positives restore"
+    ],
+    "reject-cause-relabel": [
+      "both classification directions; fixture Root chosen outside request",
+      "exact request/policy/authority/capture/evidence keys, missing and extra reject",
+      "bool/string/null/root types, cycle/nonfinite, unsafe refs, stale hashes, invalid commits, historical nonregular mode",
+      "request authority/capture/producer/budget/success override rejects",
+      "selected identity and actual candidate/environment/producer bound; current source/contract bytes/modes drift reject",
+      "profile capture mismatch rejects; restore classification exactly"
+    ],
+    "counter-continuity": [
+      "six schema-valid positives: attempts1/2/3 with lanes absent both or identical ordered lists both",
+      "history append and existing string updated_at handoff allowed",
+      "lane add/remove/reorder/content mutations reject",
+      "step/contract/feature/operation/stage renames reject",
+      "counter reset/change/bool/fourth/limit override/budget/operator-unowned-state changes reject",
+      "history prefix cannot rewrite/truncate",
+      "updated_at missing-both is schema rejection because shipped schema requires it; API conditional absent-field rule remains frozen"
+    ]
+  },
+  "trust_boundary": "All Root labels, classification attestations, independent parser gates and producer labels are explicitly synthetic fixtures. Actual subprocess exit/output and Git objects are observed; no authentication, real Root adoption or universal cause taxonomy is established.",
+  "controls": "Later distinct reviewer must run each frozen case actual positive/private intended semantic negative/restored positive against committed Source and seal exact bytes before Mode B. Missing API setup is never intended red."
+}
