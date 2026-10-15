@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T15:26:14.059716+00:00",
+  "updated_at": "2026-10-15T16:02:44.120043+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1636,7 +1636,8 @@
       "actual_checkout_corroboration": "pending-completed-job-log",
       "job_id": 116487976586,
       "observed_artifact_id": 11984023820,
-      "active_stage_conclusion": "success"
+      "active_stage_conclusion": "success",
+      "observation_disposition": ".agent/evidence/123/root-verify1-watch-interruption-disposition.json"
     },
     "123-ci-final-integration": {
       "attempts": 0,
@@ -7248,6 +7249,12 @@
       "event": "123-ci-verify1-active-job-success-artifact-observed",
       "detail": "Actual verify1 active assurance job completed success and artifact observed; aggregate fixture job still pending, no completed Host or A10 payload inspection yet.",
       "evidence": ".agent/evidence/123/verify1-completed-stage-observation/job.stdout"
+    },
+    {
+      "at": "2026-10-15T16:02:44.120043+00:00",
+      "event": "123-ci-verify1-observer-timeout-same-run-confirmed-live",
+      "detail": "Reconnect observation only to same immutable runID in unique watch2 evidenceprefix. Retain originalwatch stdout298422B/SHAf02d56 andstderr207B/SHAfc7a08/executionactual1 intact. No CI cancellation, GitHubrerun, Source/helper change, headpush, secondverify allocation or approval inference. All hostedresult/finalgates stillheld.",
+      "evidence": ".agent/evidence/123/root-verify1-watch-interruption-disposition.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7809,7 +7816,7 @@
       }
     ]
   },
-  "last_action": "Actual verify1 active assurance job completed success and artifact observed; aggregate fixture job still pending, no completed Host or A10 payload inspection yet.",
+  "last_action": "Same verify1 run confirmed live after watch HTTPS timeout; reconnect observation only.",
   "completed_contract_ids": [
     "099",
     "103",
