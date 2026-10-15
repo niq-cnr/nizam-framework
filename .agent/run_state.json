@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T10:51:14.745948+00:00",
+  "updated_at": "2026-10-15T10:53:37.660391+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1623,8 +1623,10 @@
     "123-capture-input-preflight": {
       "attempts": 1,
       "limit": 3,
-      "status": "engineering-probe-released",
-      "strategy": "Actual exact Root-selected historic inputs and packet constructibility on clean frozenSourceS, before any remote publication"
+      "status": "passed-engineering-constructibility",
+      "strategy": "Actual exact Root-selected historic inputs and packet constructibility on clean frozenSourceS, before any remote publication",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json"
     }
   },
   "history": [
@@ -6910,6 +6912,12 @@
       "event": "123-capture-input-preflight1-release",
       "detail": "Frozen565b helper external to clean059f checks exactprep2Ref/537inputs/fourhistoricgates/authority/shadow and actualpacket<=2MiB,180s; preservation mandatory. Engineering-only, no hostedcandidate or gateapproval.",
       "evidence": ".agent/evidence/123/root-capture-input-preflight1-release.json"
+    },
+    {
+      "at": "2026-10-15T10:53:37.660391+00:00",
+      "event": "123-capture-input-preflight1-admission",
+      "detail": "Actual0/6.124s, unchanged115assessment/newselectedparsers+realpacketbuilder,1,824,875bytes exactstaticforecast,13001tracked+239installedpreserved. Engineering-onlylocalidentity; hostedinputpreparationcleared, fullcandidate0/negative1stillpendingbeforepublication.",
+      "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7471,7 +7479,7 @@
       }
     ]
   },
-  "last_action": "123 bounded preparation2 engineering probe1 released on clean059f; candidate fullpositive running, blocker0/1 admitted; hostedcounter0 and gates unchanged.",
+  "last_action": "123 preparation2 actual engineering constructibility0 admitted: packet1,824,875bytes/all537inputs/fourgates/13001preserved. Fullcandidate positive running; blocker0/1 admitted; hostedcounter0.",
   "completed_contract_ids": [
     "099",
     "103",
