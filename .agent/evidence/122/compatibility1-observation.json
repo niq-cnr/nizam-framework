@@ -1,0 +1,116 @@
+{
+  "role": "independent compatibility inspector",
+  "final_gate_approval": false,
+  "fixture_parent": "/home/cnross/.tmp/nizam122-compatibility1-b8879bwi",
+  "authority": "synthetic selected Root authority, not real operator consent",
+  "expected_outer_exit": 0,
+  "baseline_passed": true,
+  "legacy_schema_valid": true,
+  "lookup_diagnostic": {
+    "actual_exit": 1,
+    "reason": "Initial read-only cat used nonexistent .agent/evidence/feature-122 path; corrected to indexed .agent/evidence/122 before behavior execution. No behavior retry."
+  },
+  "legacy_verdict": {
+    "feature_id": "122",
+    "verdict": "fail",
+    "executed_at": "2026-10-15T00:00:00Z",
+    "checks": [
+      {
+        "command": "/usr/bin/python3 -c import subprocess,sys; p=subprocess.run([sys.executable,'-c','raise SystemExit(9)']); assert p.returncode==9; print('PASS inner expected negative; outer failed'); sys.exit(7)",
+        "exit_code": 7,
+        "evidence": "proof/failed.stdout"
+      }
+    ],
+    "required_fixes": [
+      "Repair the independently classified semantic failure."
+    ],
+    "issues": [
+      {
+        "criterion": "Observed failed wrapper requires semantic repair",
+        "evidence": "proof/failed.stdout"
+      }
+    ]
+  },
+  "fixture_revision": "4b5874806f466b808059dfa88899e25a1dc66d20",
+  "policy": {
+    "repository": "niq-cnr/nizam-framework",
+    "coordination_ref": {
+      "path": "coordination122.json",
+      "sha256": "6aa95d9d3135063bb3c33731d0da5fc0f13c0c9bc7cb660a8076e674d97f5bea",
+      "revision": "49128a8eb7455db6ae5d8dd1ffee95dcfa901cd4"
+    },
+    "authority_ref": {
+      "path": "proof/failure-8-authority.json",
+      "sha256": "42c940440a05c94eaf5adb0641ee0b82f90ed50f7d40cd78dedb0b540678b2d0",
+      "revision": "4b5874806f466b808059dfa88899e25a1dc66d20"
+    }
+  },
+  "request": {
+    "operation_id": "fixture-failure122",
+    "contract_id": "122",
+    "feature_id": "122",
+    "step_key": "failure-step",
+    "attempt": 1,
+    "stage": "source-ready",
+    "cause": "semantic"
+  },
+  "capture": {
+    "schema_version": 1,
+    "argv": [
+      "/usr/bin/python3",
+      "-c",
+      "import subprocess,sys; p=subprocess.run([sys.executable,'-c','raise SystemExit(9)']); assert p.returncode==9; print('PASS inner expected negative; outer failed'); sys.exit(7)"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam122-compatibility1-b8879bwi/receipt",
+    "revision": "49128a8eb7455db6ae5d8dd1ffee95dcfa901cd4",
+    "candidate_sha256": "b5950d22c64ef81d11939249320a3ec8cee4a49430d1318573f245e43397edf7",
+    "environment": {
+      "runtime": {
+        "implementation": "CPython",
+        "version": "3.12.3",
+        "system": "Linux",
+        "machine": "x86_64"
+      },
+      "variables": {
+        "NIZAM_WA120_FIXTURE": "observed"
+      }
+    },
+    "producer": {
+      "agent_id": "fixture-only-capture-producer",
+      "session_id": "fixture-only-session"
+    },
+    "executed": true,
+    "outcome": "semantic-failed",
+    "exit_code": 7,
+    "stdout": {
+      "path": "proof/failed.stdout",
+      "sha256": "385e6671a47d1a295cc9e5f5b9ccbeb66c3216bcb36123481518dc1133143f8d",
+      "revision": "543b851fbf324879b94270de2374ce31b7ce531a"
+    },
+    "stderr": {
+      "path": "proof/failed.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "revision": "543b851fbf324879b94270de2374ce31b7ce531a"
+    }
+  },
+  "evidence": {
+    "schema_version": 1,
+    "kind": "semantic",
+    "reason": "Synthetic independently selected classification of the observed failed wrapper.",
+    "capture_ref": {
+      "path": "proof/failure-6-capture.json",
+      "sha256": "0b79e907574dae32d073458e5f3a6003435868dc4e42a540a76923a1630133fc",
+      "revision": "c49f345d8ed865da3bdc7a7c25ddc51b81fea8e9"
+    },
+    "verdict_ref": {
+      "path": "proof/failure-5-legacy-qa-verdict.json",
+      "sha256": "bd80b4a697bc3224f20221fe26d521f6d3432da9e8eefc075cfcf7eed95f49da",
+      "revision": "b14d9f0d7f4abdd8bea1ac420560def86b893a6c"
+    }
+  },
+  "fixture_preserved": true,
+  "status": "failed",
+  "error_type": "AssuranceError",
+  "diagnostic": "failure routing invalid: failure semantic verdict shape",
+  "protected_preserved": true
+}

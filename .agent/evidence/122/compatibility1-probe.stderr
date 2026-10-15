@@ -1,0 +1,36 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1296, in route_failed_attempt
+    _failure_rejection(root, evidence['verdict_ref'])
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1233, in _failure_rejection
+    require(type(verdict.get('final_verdict')) is dict and
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 27, in require
+    raise AssuranceError(message)
+assurance_under_test.AssuranceError: failure semantic verdict shape
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/.agent/evidence/122/compatibility1-probe.py", line 66, in <module>
+    result = api.route_failed_attempt(f.root, f.request, policy=f.policy)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1302, in route_failed_attempt
+    raise AssuranceError('failure routing invalid: ' + str(exc)[:800]) from exc
+assurance_under_test.AssuranceError: failure routing invalid: failure semantic verdict shape
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1296, in route_failed_attempt
+    _failure_rejection(root, evidence['verdict_ref'])
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1233, in _failure_rejection
+    require(type(verdict.get('final_verdict')) is dict and
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 27, in require
+    raise AssuranceError(message)
+assurance_under_test.AssuranceError: failure semantic verdict shape
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/.agent/evidence/122/compatibility1-probe.py", line 66, in <module>
+    result = api.route_failed_attempt(f.root, f.request, policy=f.policy)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature122-compatibility1/tools/workflow_assurance.py", line 1302, in route_failed_attempt
+    raise AssuranceError('failure routing invalid: ' + str(exc)[:800]) from exc
+assurance_under_test.AssuranceError: failure routing invalid: failure semantic verdict shape
