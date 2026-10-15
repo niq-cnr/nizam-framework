@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature122-provisional-review1/.agent/evidence/122/provisional1-static.py", line 29, in <module>
+    inventories = {n.targets[0].id:ast.literal_eval(n.value) for n in new.body if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name) and n.targets[0].id in ('CASES','AGF_CASES','RECEIPT_CASES','LANE_CASES','FAILURE_CASES')}
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ast.py", line 112, in literal_eval
+    return _convert(node_or_string)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ast.py", line 104, in _convert
+    left = _convert_signed_num(node.left)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ast.py", line 85, in _convert_signed_num
+    return _convert_num(node)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ast.py", line 76, in _convert_num
+    _raise_malformed_node(node)
+  File "/usr/lib/python3.12/ast.py", line 73, in _raise_malformed_node
+    raise ValueError(msg + f': {node!r}')
+ValueError: malformed node or string on line 327: <ast.Name object at 0x742e64d30d90>

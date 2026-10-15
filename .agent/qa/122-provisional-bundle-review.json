@@ -1,0 +1,22 @@
+{
+  "feature_id": "122",
+  "role": "Evaluator_reviewer",
+  "stage": "provisional pre-Source static bundle review",
+  "qa_pass": false,
+  "checks_run": 0,
+  "checks_passed": 0,
+  "adversarial": {"performed": false, "reason": "Executable review and fresh QA remain later gates; no behavior commands authorized here."},
+  "reviewed_revision": "933b1335f877c728c98c87338c78757743223fc1",
+  "author_freeze_revision": "cbeff8cfd1503766b1cab22e18efed7d23cbf80b",
+  "proof_revision": "96af76be00d3d7ec117099a5f9a6e3cf9a8d326e",
+  "reviewed_test_sha256": "df2bcdeab0e9e6480b6732c149ecd510b942333c663d26322ef4307bc2e10579",
+  "approved_contract_sha256": "13dc45d0daf41fc9af4828ec0b84b1a05ded39f51b2e1fc5b903831e557d42c5",
+  "interface_sha256": "147be0bb59f320cbb98d96e47cf04ae62a519f81288a750ce08c879a8e1e8538",
+  "evidence_files": [".agent/evidence/122/provisional1-static2.stdout", ".agent/evidence/122/provisional1-static2.stderr", ".agent/evidence/122/provisional1-static2.execution.json", ".agent/evidence/122/provisional1-preflight.json", ".agent/evidence/122/provisional1-static.execution.json"],
+  "issues": ["Frozen acceptance does not detect omission of output UTF8 decoding: the sole output byte mutation leaves a stale digest, and stderr is never independently varied.", "Cycle/nonfinite inputs are only placed in an unknown request.extra key, so unrelated exact-key rejection satisfies those probes.", "failure_semantic's approvedTrue/nonempty-issues intended positive uses a string issue in the contract_review family, whose schema requires object items; a correct schema-validating API must reject it."],
+  "missing_acceptance_coverage": ["Contract capture requirement to decode both committed output streams as UTF8 with intact immutable/current bindings.", "Malformed-value rejection on an otherwise exact-key request, independent of unknown-field rejection."],
+  "unsupported_claims": [],
+  "required_fixes": ["Author must add committed, correctly pinned invalid-UTF8 output negatives for stdout and stderr, plus restored valid positives; exercise independent stream bindings rather than only stale-hash drift.", "Author must place nonfinite/cyclic values in existing request fields while retaining the exact key set, preserving input/state evidence and restored positives; any contract-compliant exact-type rejection is valid.", "Author must use a schema-valid object issue for the contract_review nonempty-array positive and statically validate both semantic families and intended outcomes before refreezing."],
+  "final_verdict": {"approved": false, "summary": "Reject frozen provisional bundle for two coverage gaps and one schema-driven false-fail. Inherited42 preservation and initial fixture setup are sound; no Source approval."},
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
