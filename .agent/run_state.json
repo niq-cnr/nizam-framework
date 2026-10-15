@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T11:14:14.414453+00:00",
+  "updated_at": "2026-10-15T11:24:48.741843+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1556,7 +1556,7 @@
     "123-ci-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "actual-hosted-run-in-progress",
+      "status": "failed-fixture-setup-before-producer",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-capture1-release.json",
       "head_sha": "e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8",
@@ -1566,7 +1566,10 @@
       "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4",
       "job_id": 116390018603,
       "retained_observed_pr_merge_revision": "a20f05e7845c3c231770215644216603389e4dd4",
-      "retention_merge_revision": "548b11cbd27c5c9eae8c02e2c5738558c0811480"
+      "retention_merge_revision": "548b11cbd27c5c9eae8c02e2c5738558c0811480",
+      "run_conclusion": "failure",
+      "producer_executed": false,
+      "failure_evidence": ".agent/evidence/123/root-ci-capture1-failure-admission.json"
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -1598,7 +1601,7 @@
     "123-source": {
       "attempts": 3,
       "limit": 3,
-      "status": "source3-complete-full-private-positive-negative-controls-passed",
+      "status": "source3-local-controls-passed-hosted-fixture-recovery-required",
       "strategy": "Architectural error-context audit of all new Ref/AGF boundaries, independently reviewed and confirmed by focused current-code baseline; final Source attempt.",
       "prior_actual_exit": 1
     },
@@ -6959,6 +6962,12 @@
       "event": "123-ci-capture1-job-and-checkout-retention",
       "detail": "Actual5jobs response identifiesselectedconvergentjob116390018603 in_progress withboundary/isolation success; validate/e2e/selfgovernance complete0metadata. ActualPRmergea20f fetched0 andnormalmerged0 at548b withsamepublishedtree/all537protectedGitentries; actualproducerInvocation remainspending.",
       "evidence": ".agent/evidence/123/root-ci-capture1-checkout-retention.execution.json"
+    },
+    {
+      "at": "2026-10-15T11:24:48.741843+00:00",
+      "event": "123-ci-capture1-failure-admission",
+      "detail": "Actualrun38725446673/attempt1 completedfailure, bothfixturestepsconstructorSETUP, other3jobssuccess; actualcheckouta20f/runtime3.14.8 fromrawlogs. AmbientHEAD^=main pullsbinarygzip into syntheticpacket; SourceSlocalpasses retained butnoactualcapture/restorationproof. Architectureanalysisbeforeanyrepair/retry; limitsunchanged.",
+      "evidence": ".agent/evidence/123/root-ci-capture1-failure-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7520,7 +7529,7 @@
       }
     ]
   },
-  "last_action": "123 capture1 actualrun38725446673/job116390018603 active: threejobs passed; convergent boundary/isolation stepspassed, fixtures running. ObservedPRmergea20f durablyretained viaordinarylocal548b ancestry; all537Gitinputs matchS. No newpush/proofsuccess.",
+  "last_action": "123 actualhostedcapture1 terminalfailure admitted: bothfixture constructors reject validbinaryevidence inambientPRmerge delta; actualcapture/uploadskipped. Readonlyarchitecturalfixture recovery proposals pending; allSource/test/counters preserved, no retryauthorized.",
   "completed_contract_ids": [
     "099",
     "103",
