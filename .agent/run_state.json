@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T09:34:47.083051+00:00",
+  "updated_at": "2026-10-15T09:35:18.630969+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1597,6 +1597,11 @@
       "limit": 3,
       "status": "passed",
       "strategy": "Independent bounded helper checks against exact complete committed producer before hosted use"
+    },
+    "123-development-compliance": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released"
     }
   },
   "history": [
@@ -6804,6 +6809,12 @@
       "event": "123-producer-focused1-actual-pass-admission",
       "detail": "Actual8/8, outer0,0.214288s,246inputs preserved at66541 against7ab. Overflowchildren actual-9/boundedstreams; escapedJSON preallocation refusal. Developmentonly; originalSource2 and later mandatory/hosted/final gates pending.",
       "evidence": ".agent/evidence/123/root-producer-focused1-admission.json"
+    },
+    {
+      "at": "2026-10-15T09:35:18.630969+00:00",
+      "event": "123-development-compliance1-release",
+      "detail": "Two independent exact contract compliance commands released in producer-owned tree at finalcollector7ab; originalSource2 verifier remains immutable. Stop on first failure; no new source attempt or finalQA claim.",
+      "evidence": ".agent/evidence/123/root-development-compliance1-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7365,7 +7376,7 @@
       }
     ]
   },
-  "last_action": "123 independent bounded producer focused checks passed8/8 and admitted; original frozen Source2 verifier continues.",
+  "last_action": "123 focused producer8/8 passed; development repository/payload compliance released alongside immutable verifier.",
   "completed_contract_ids": [
     "099",
     "103",
