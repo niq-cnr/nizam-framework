@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T04:20:21.454769+00:00",
+  "updated_at": "2026-10-15T04:39:13.903722+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1459,7 +1459,7 @@
     "122-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "passed"
     },
     "122-ci-diagnosis": {
       "attempts": 2,
@@ -1488,6 +1488,11 @@
       "attempts": 1,
       "limit": 3,
       "status": "read-only-preparation-awaiting-capture"
+    },
+    "122-evidence-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "prepared"
     }
   },
   "history": [
@@ -6515,6 +6520,12 @@
       "event": "122-strict-modeb-first-freshqa-release",
       "detail": "Parsed schema-valid strictModeB1 d320642; verified5immutableevidencerefs and3finalreadonlyactual0/rawhashes plusSourcefff/test800b/contract13dc. CurrentQA refinement requires duplicate-key diagnostic, no extra behavior sofar. FirstQA1 nowreleased9mandatory+1owncheck underfrozenhelpers, historical8accheckoutready. No completion untilactualQAandRootcapture.",
       "evidence": ".agent/evidence/122/qa1-release.json"
+    },
+    {
+      "at": "2026-10-15T04:39:13.903722+00:00",
+      "event": "122-evidence-capture1-prepared",
+      "detail": "Fresh QA strict handoff3833c9b received; freeze Root readonly admission helper, use new owned root; no lifecycle completion yet. Two incidental readonly JSON shape lookup errors changed no files or behavior.",
+      "evidence": ".agent/evidence/122/root-capture1.py"
     }
   ],
   "phase_001_scope_budget_final": {
