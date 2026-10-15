@@ -2157,7 +2157,7 @@
     "133-fresh-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "running",
       "owner": "/root/qa133",
       "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
       "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
@@ -2170,7 +2170,36 @@
         "full48": 10800,
         "fixture": 10800,
         "one_extra": 1800
-      }
+      },
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "long_commands": [
+        {
+          "command_number": 5,
+          "child_pid": 990977,
+          "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/default48/check-5.started.json",
+          "argv": [
+            "python3",
+            "tools/test_workflow_assurance.py"
+          ]
+        },
+        {
+          "command_number": 6,
+          "child_pid": 991647,
+          "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/fixtures/check-6.started.json",
+          "argv": [
+            "bash",
+            "tools/fixtures_self_test.sh"
+          ]
+        }
+      ]
+    },
+    "comparative-design-review": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-planning-only",
+      "owner": "/root/validator133",
+      "proposal_revision": "8123a34215ec04956cc37d61094a9d5d3bab8a38",
+      "scope": "Independent static planning/factual review of149line held futurecomparison delta; no integration into133 or benchmark/phase/resource approval. Review/evidence maintainedcost futurecomparison separately."
     }
   },
   "history": [
@@ -7778,6 +7807,11 @@
       "at": "2026-10-15T23:23:18.335516+00:00",
       "event": "133-modeb2-admitted-fresh-qa1-released",
       "detail": "Strictindependent03f96db1 approval with threeemptyarrays; exactSource6d/contract and all5statichashes/actual0 verified. Release8mandatory0 andexactlyonefreshlargevaildinput extra; no actualstressresult or QApass yet. Independent two long suites mayparallel on isolated same-revision clones. Oldmain38817712498 stillmustpass before newintegration; no cancel/rerun."
+    },
+    {
+      "at": "2026-10-15T23:24:34.453333+00:00",
+      "event": "133-fresh-qa1-live-independent-clones-and-future-plan-review",
+      "detail": "Actual started records and liveps bind cb5aa36d long5 PID990977/long6 PID991647; sameSource but independentGitclones/outsidecaptures. Observationtimeoutnevermeansrestart. Futurecomparisonproposal8123 separate planning-only accuracyreview1 released whileQA runs; no Source/gate/budget change or modeltaskexecution."
     }
   ],
   "phase_001_scope_budget_final": {
