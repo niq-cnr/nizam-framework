@@ -1426,17 +1426,24 @@ def failure_infrastructure(api, f):
         failure_call(api, f, True)
         if target.is_symlink(): target.unlink()
         target.write_bytes(raw); target.chmod(mode); failure_call(api, f)
+    for stream in ('stdout', 'stderr'):
+        failure_probe(api, f, 'capture', stream, f.pin_new('invalid-utf8-' + stream, b'\xff'), True)
+
+
+def failure_verdict(f, family, approved, issues):
+    verdict = dict(copy.deepcopy(f.gate), feature_id='122', feature='122', review='synthetic review')
+    verdict['final_verdict']['approved'] = approved; verdict['issues'] = copy.deepcopy(issues)
+    if family == 'qa_verdict': verdict.update(qa_pass=False, checks_run=1, checks_passed=0, adversarial={'performed': True}, evidence_files=[], required_fixes=[])
+    return verdict
 
 
 def failure_semantic(api, f):
     failure_call(api, f)
     if f.request['attempt'] != 1: return
     for value in (None, f.contract): failure_probe(api, f, 'evidence', 'verdict_ref', value, True)
-    for approved, arrays in ((True, []), (False, []), (True, ['blocking fixture finding'])):
+    for approved, arrays in ((True, []), (False, []), (True, [{'criterion': 'blocking synthetic fixture finding'}])):
         for family in ('contract_review', 'qa_verdict'):
-            verdict = dict(copy.deepcopy(f.gate), feature_id='122', feature='122', review='synthetic review')
-            verdict['final_verdict']['approved'] = approved; verdict['issues'] = arrays
-            if family == 'qa_verdict': verdict.update(qa_pass=False, checks_run=1, checks_passed=0, adversarial={'performed': True}, evidence_files=[], required_fixes=[])
+            verdict = failure_verdict(f, family, approved, arrays)
             reference = f.pin_new('semantic-' + family, verdict)
             if approved and not arrays: failure_probe(api, f, 'evidence', 'verdict_ref', reference, True)
             else:
@@ -1466,7 +1473,7 @@ def failure_relabel(api, f):
             reference = dict(f.policy[field]); reference[key] = value; failure_probe(api, f, 'policy', field, reference)
         failure_probe(api, f, 'policy', field, f.nonregular_artifact(f.policy[field]))
     cycle = []; cycle.append(cycle)
-    for value in (float('nan'), float('inf'), cycle): failure_probe(api, f, 'request', 'extra', value)
+    for value in (float('nan'), float('inf'), cycle): failure_probe(api, f, 'request', 'attempt', value)
     for target in ('request', 'policy'):
         original = copy.deepcopy(getattr(f, target))
         for value in (None, True, [], 'invalid-root'):
