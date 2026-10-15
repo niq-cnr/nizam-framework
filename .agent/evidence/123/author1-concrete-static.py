@@ -69,11 +69,16 @@ for path in ('tools/workflow_assurance.py','tools/test_workflow_assurance.py'):
 for path in ('.agent/evidence/123/author1-concrete-static.py','.agent/evidence/123/author1-controls.py'):
     compile((ROOT/path).read_bytes(),str(ROOT/path),'exec')
 rows=[row for row in git('ls-tree','-rz',BASE,'--','.nizam').split(b'\0') if row]
+mode_baseline=Path('/home/cnross/workspace02/nizam-framework');full_modes=[]
 for row in rows:
     header,path=row.split(b'\t');mode,kind,blob=header.split();target=ROOT/path.decode()
     assert kind==b'blob' and mode in (b'100644',b'100755') and target.is_file() and not target.is_symlink()
     assert target.stat().st_nlink==1 and target.read_bytes()==git('cat-file','blob',blob.decode()),'installed bytes/type changed'
-    assert stat.S_IMODE(target.stat().st_mode)==(0o755 if mode==b'100755' else 0o644),'installed full mode changed'
+    original=mode_baseline/path.decode()
+    assert original.read_bytes()==target.read_bytes() and not original.is_symlink(),'installed external baseline changed'
+    assert stat.S_IMODE(target.stat().st_mode)==stat.S_IMODE(original.stat().st_mode),'installed full mode changed'
+    assert bool(target.stat().st_mode&0o111)==(mode==b'100755'),'installed Git executable mode changed'
+    full_modes.append((path.decode(),stat.S_IMODE(target.stat().st_mode)))
 assert len(rows)==239
 allowed=('tools/test_workflow_assurance.py','.agent/evidence/123/api-interface.json','.agent/evidence/123/author1-concrete-', '.agent/evidence/123/author1-controls.py')
 changed=git('diff','--name-only',BASE).decode().splitlines()+git('ls-files','--others','--exclude-standard').decode().splitlines()
@@ -81,4 +86,6 @@ assert all(any(p==a or (a.endswith('-') and p.startswith(a)) for a in allowed) f
 for path in ('.agent/run_state.json','.agent/feature_list_018.json','docs/planning/phase_018.yaml'):
     assert (ROOT/path).read_bytes()==git('show',BASE+':'+path),'coordination changed'
 print(json.dumps({'static_only':True,'revision':git('rev-parse','HEAD').decode().strip(),'contract_revision':'452a5a5f748b5234ce1da3ad765b0da8f622cb53',
-    'proof':proof,'inherited_cases':46,'default_cases':48,'installed_regular_files':239,'preservation_anchor':PRESERVED,'changed_paths':changed},sort_keys=True))
+    'proof':proof,'inherited_cases':46,'default_cases':48,'installed_regular_files':239,
+    'installed_full_modes_sha256':hashlib.sha256(json.dumps(full_modes,separators=(',',':')).encode()).hexdigest(),
+    'installed_full_mode_baseline':str(mode_baseline),'preservation_anchor':PRESERVED,'changed_paths':changed},sort_keys=True))
