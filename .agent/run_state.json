@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T14:29:43.706933+00:00",
+  "updated_at": "2026-10-15T14:44:25.362385+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1572,7 +1572,7 @@
     "123-ci-capture": {
       "attempts": 2,
       "limit": 3,
-      "status": "capture2-normalized-independent-inspection-released",
+      "status": "capture2-success-independently-inspected",
       "strategy": "Reviewedconstructorportabilityrepair/newrealpacketbase andSource9886; allrenewal/preflight gates passed before newactualhosteddispatch",
       "release": ".agent/evidence/123/root-ci-capture2-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1616,10 +1616,18 @@
       "metadata_revision": "bf608008f0fd203d7875ec82af0a0349f382ba4b"
     },
     "123-ci-verify": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3,
-      "status": "predeclared-not-dispatched",
-      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
+      "status": "released-not-yet-published",
+      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
+      "release": ".agent/evidence/123/root-ci-verify1-release.json",
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "producer": {
+        "agent_id": "wa123-capable-ci",
+        "session_id": "123-ci-verify-attempt1"
+      },
+      "pull_request": 104,
+      "selection_preparation_revision": "257b40f0f4e755f4258781495cf9cb4d8f1b9bfe"
     },
     "123-ci-final-integration": {
       "attempts": 0,
@@ -1760,10 +1768,12 @@
     "123-capture-provenance-inspection": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "approved-capture-only",
       "release": ".agent/evidence/123/root-capture2-independent-inspection1-release.json",
       "capture_operation_attempt": 2,
-      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb"
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "verdict_revision": "915cdf060250e3f93b551b30d77d4b323103734e",
+      "verdict_path": ".agent/evidence/123/capture2-inspection1-verdict.json"
     }
   },
   "history": [
@@ -7193,6 +7203,12 @@
       "event": "123-capture2-transport-normalized-independent-inspection1-released",
       "detail": "Actualfivefetch0+extract0+metadata0 hashes/commitboundaries independentlychecked. RootnormalHost11fields materializedafterY; no policy/receipt/verify. Fullindependent actualprovenance/threeenforcedtrials/outputclosure inspection requiredbeforefirstverify.",
       "evidence": ".agent/evidence/123/root-capture2-independent-inspection1-release.json"
+    },
+    {
+      "at": "2026-10-15T14:44:25.362385+00:00",
+      "event": "123-capture2-inspected-acyclic-a10-firstverify-released",
+      "detail": "Strict four-field independent captureinspection approved with all44 indexedraw hashes verified. Actualcandidate/map selected from imported Gitobjects; operator72384->receipt8b48->policye6f20->selection257b committed in order. Verifycounter0->1; Source9886/protected537/installed239 unchanged. Finalgates remainpending.",
+      "evidence": ".agent/evidence/123/root-ci-verify1-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7754,7 +7770,7 @@
       }
     ]
   },
-  "last_action": "123 actualcapture2 rawfivefetch0/extract0/metadata0 committedF3e622/T5dc455/Ybf608; actualSource9886/C2b843/runtimeCPython3.14.8 observed. RootcaptureHost materializedafterY; separate independentcaptureinspection1 released, not yetapproved. Verifycounter0.",
+  "last_action": "Actual capture2 inspection approved; acyclic Root operator/receipt/policy committed; first verify selection pinned and dispatch released.",
   "completed_contract_ids": [
     "099",
     "103",
