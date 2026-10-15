@@ -1590,7 +1590,7 @@ class ControlsFixture(FailureFixture):
 
     def __init__(self, api, parent, defect=None, seed=None):
         self.api = api; self.parent = Path(parent); self.root = self.parent / 'root'
-        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False
+        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name
         source_profile=bool(defect and defect['site']=='source-contract')
         if seed and not source_profile:
             self.root=seed.root;self.source=seed.source
@@ -1619,6 +1619,8 @@ class ControlsFixture(FailureFixture):
         self.inputs = dict(source=['tools/workflow_assurance.py'], contracts=['.agent/contracts/123.json'],
             tests=['tools/test_workflow_assurance.py'], tools=tool_paths, unknown_dependencies=[])
         self.candidate = copy.deepcopy(seed.candidate) if seed and not source_profile else api.assess_repository(self.root, self.source, self.inputs, ['PYTHONDONTWRITEBYTECODE'], {})
+        api.validate_identity(self.candidate)
+        require(git(self.root,'rev-parse',self.source+'^{tree}')==self.candidate['source_tree'],'reused actual Source tree identity')
         for category in ('source','tests','tools','contracts'):
             for entry in self.candidate['assessed_inputs'][category]:
                 target=self.root/entry['path'];require(sha(target.read_bytes())==entry['sha256'] and bool(target.stat().st_mode&0o111)==entry['executable'],'immutable seed protected bytes/mode stable')
@@ -1687,6 +1689,7 @@ class ControlsFixture(FailureFixture):
         self.receipt.update(status='passed',contract_ref=self.contract,operator_ref=self.a10_policy['operator'],verdict=gate,
             checks=[dict(argv=self.map_capture['argv'],executed=True,outcome='success',exit_code=0,
                 stdout=self.map_capture['stdout'],stderr=self.map_capture['stderr'],capture=self.map_capture_ref)])
+        self.receipt=self.value('receipt-body',self.receipt)
         self.receipt_ref = self.put('receipt',self.receipt)
         self.a10_policy['recovery'] = self.receipt_ref
         self.policy_ref = self.put('a10-policy',self.a10_policy)
@@ -1711,6 +1714,10 @@ class ControlsFixture(FailureFixture):
             computation_receipt.update(contract_ref=self.good_contract,prerequisites=good_prerequisites)
             computation_policy['recovery']=self.put('computation-receipt',computation_receipt)
             self.synthetic_projection=True
+        if defect and defect['site']=='receipt-body':
+            computation_receipt['status']='passed'
+            computation_policy['recovery']=self.put('computation-receipt',computation_receipt)
+            self.synthetic_projection=True
         verified = api.verify_stage_receipt(self.exp,computation_receipt,policy=computation_policy)
         advance = api.plan_receipt_transition(self.exp,self.shadow,computation_receipt,policy=computation_policy)
         noop = api.plan_receipt_transition(self.exp,advance['state'],computation_receipt,policy=computation_policy)
@@ -1721,7 +1728,7 @@ class ControlsFixture(FailureFixture):
         conflicting = copy.deepcopy(advance['state']); conflicting['history'].append(copy.deepcopy(conflicting['history'][-1]))
         rejected(api,lambda:api.plan_receipt_transition(self.exp,conflicting,computation_receipt,policy=computation_policy),'actual duplicate conflict exercise')
         self.a10_result = dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
-        if source_profile:
+        if self.synthetic_projection:
             old_digest=sha(canonical(computation_receipt));new_digest=sha(canonical(self.receipt))
             def project(value):
                 if value==computation_receipt:return copy.deepcopy(self.receipt)
@@ -1733,14 +1740,14 @@ class ControlsFixture(FailureFixture):
         require([advance['action'],noop['action'],republish['action'],rerun['action']] == ['advance','noop','republish','rerun-required'],'actual four A10 actions')
         execution = git(self.exp,'rev-parse','HEAD')
         self.exp_write('verify/result.json',self.a10_result); self.exp_write('verify/stdout',self.payloads['verify/result.json']); self.exp_write('verify/stderr',b'')
-        outputs = self.exp_commit('SYNTHETIC actual local A10 results; not hosted')
+        outputs = self.exp_commit('SYNTHETIC A10 parser results'+(' with invalid-binding projection' if self.synthetic_projection else ' from actual local APIs')+'; not hosted')
         result_ref = self.exp_ref('verify/result.json',outputs)
         capture = self.capture([sys.executable,'tools/workflow_assurance_ci.py','verify','--selection','.agent/evidence/123/selection.json',
             '--output',str(self.parent/'wa123-verify')],execution,self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs))
         self.exp_write('verify/capture.json',capture); tip=self.exp_commit('SYNTHETIC verify capture representation')
         a10_capture_ref=self.exp_ref('verify/capture.json',tip)
         verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
-        git(self.root,'checkout',tip,'--',CONTROL_PREFIX)
+        git(self.root,'checkout',tip,'--',CONTROL_PREFIX);self.materialized_tip=tip
         self.commit('SYNTHETIC materialized immutable experiment outputs')
         self.evidence = dict(schema_version=1,candidate=self.candidate,checkout=self.checkout,
             capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evaluation_ref=self.evaluation_ref,
@@ -1773,7 +1780,7 @@ class ControlsFixture(FailureFixture):
         return result
 
     def put(self,label,value):
-        self.serial += 1; path='.agent/evidence/123/synthetic-root/%04d-%s' % (self.serial,label)
+        self.serial += 1; path='.agent/evidence/123/synthetic-root/%s/%04d-%s' % (self.namespace,self.serial,label)
         value=self.value(label,value); data=value if type(value) is bytes else canonical(value)+b'\n'
         self.write(path,data); reference=self.ref(path,self.commit('SYNTHETIC parser record '+label))
         self.nodes[label]=reference; self.originals[label]=copy.deepcopy(value); return reference
@@ -1884,7 +1891,7 @@ class ControlsFixture(FailureFixture):
         archive_bytes=self.value(mode+'-archive-bytes',archive.getvalue());archive_ref=self.put(mode+'-archive',archive_bytes)
         run=101 if mode=='capture' else 102;job=run+100;artifact=run+200
         artifact_name='wa123-'+mode+'-'+producer['session_id']
-        run_json=dict(id=run,run_attempt=1,name='compliance',event='push',head_sha=self.source,status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY))
+        run_json=dict(id=run,run_attempt=1,name='compliance',event='push',head_sha=self.source,status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY),unconsumed_fixture='SYNTHETIC ignored external field')
         names=['validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'];jobs=[]
         for index,name in enumerate(names):
             steps=[dict(number=1,name='WA123 '+mode,status='completed',conclusion='success'),
@@ -1892,7 +1899,7 @@ class ControlsFixture(FailureFixture):
                 dict(number=3,name='Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py',status='completed',conclusion='success'),
                 dict(number=4,name='Run required isolation suite',status='completed',conclusion='success')] if name=='convergent_review' else []
             jobs.append(dict(id=job if name=='convergent_review' else job+10+index,run_id=run,run_attempt=1,name=name,status='completed',conclusion='success',head_sha=self.source,steps=steps))
-        raw_jobs=dict(total_count=5,jobs=jobs);artifacts=dict(total_count=1,artifacts=[dict(id=artifact,name=artifact_name,expired=False,size_in_bytes=len(archive_bytes))])
+        raw_jobs=dict(total_count=5,jobs=jobs,unconsumed_fixture='SYNTHETIC ignored');artifacts=dict(total_count=1,artifacts=[dict(id=artifact,name=artifact_name,expired=False,size_in_bytes=len(archive_bytes),unconsumed_fixture='SYNTHETIC ignored')])
         log=b'SYNTHETIC parser log only\tWA123_INVOCATION='+raw_inv
         args=[['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/'+str(run)],
             ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/%d/attempts/1/jobs?per_page=100'%run],
@@ -1951,6 +1958,22 @@ class ControlsFixture(FailureFixture):
             if mode=='verify':
                 require(bundle==self.raw(self.evidence['pack_ref']),'fixture selected pack/archive bytes coherent')
                 require(manifest['inventory']==self.evidence['inventory'],'fixture selected inventory coherent')
+        result=json.loads(self.payloads['verify/result.json']);expected_receipt=self.read(self.receipt_ref)
+        require(result['receipt']==expected_receipt,'fixture actual/projected result receipt equals selected immutable receipt')
+        for key in ('advance','noop','republish'):
+            require(result[key]['receipt']==expected_receipt,'fixture transition receipt projection coherent')
+        require(result['rerun_required']['receipt'] is None,'fixture missing-recovery has no receipt')
+        for key in ('republish','rerun_required'):
+            require(result[key]['state']==self.shadow,'fixture recovery leaves selected initial state unchanged')
+        require(result['advance']['state']==result['noop']['state'],'fixture identical replay state retained')
+        event=result['advance']['state']['history'][-1];digest=sha(canonical(expected_receipt))
+        require(event['receipt_sha256']==digest and event['candidate_sha256']==sha(canonical(self.candidate)),'fixture projected receipt/candidate event digests coherent')
+        require(event['operation_id']==self.a10_policy['operation_id'] and event['feature_id']=='123' and event['stage']=='source-ready','fixture projected event operation binding coherent')
+        require(event['detail'].endswith('('+digest+')'),'fixture projected event detail digest coherent')
+        before=copy.deepcopy(self.shadow);after=copy.deepcopy(result['advance']['state'])
+        require(after['history'][:-1]==before['history'] and after['status']==self.a10_policy['to_status'] and after['updated_at']==self.a10_policy['at'],'fixture projected owned transition fields coherent')
+        for key in ('history','status','updated_at'):after.pop(key);before.pop(key)
+        require(after==before,'fixture unowned shadow fields coherent')
         for row in self.evidence['inventory']:
             ref={k:row[k] for k in ('path','revision','sha256')}
             require(sha(self.raw(ref))==row['sha256'],'fixture inventory bytes coherent')
@@ -1991,6 +2014,33 @@ def controls_call(api,f,deny=False):
         require(controls_snapshot(f)==files,'controls repository, proof, full modes, origin refs and outside sentinel unchanged')
 
 
+
+def controls_foreign_observer(api,f):
+    """Selected historical Env is independent of the observer's local runtime."""
+    originals={name:getattr(api.platform,name) for name in ('python_implementation','python_version','system','machine')}
+    historical={name:getattr(api,name) for name in ('verify_stage_receipt','plan_receipt_transition','assess_repository')}
+    captured=copy.deepcopy(f.candidate['environment']);process=subprocess.Popen
+    def observe_process(argv,*args,**kwargs):
+        tokens=list(argv) if isinstance(argv,(list,tuple)) else [str(argv)]
+        if tokens and Path(tokens[0]).name!='git':
+            require(not any(name in ' '.join(map(str,tokens)) for name in ('workflow_assurance_ci.py','evaluate_convergent_review_prompt.py','linux_trial_sandbox.sh','isolated_trial_adapter.py','unshare')),'observation launched runner/evaluator/namespace')
+        return process(argv,*args,**kwargs)
+    def forbidden(*args,**kwargs):raise AssertionError('POLICY_ASSERTION: observer reexecuted historical A10/assessment')
+    try:
+        subprocess.Popen=observe_process
+        for name in originals:setattr(api.platform,name,lambda n=name:'SYNTHETIC-local-observer-'+n)
+        for name in historical:setattr(api,name,forbidden)
+        require(captured['runtime']['version']!=api.platform.python_version(),'observer runtime discrimination is real')
+        controls_call(api,f)
+        print('PASS SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged')
+    finally:
+        subprocess.Popen=process
+        for name,value in originals.items():setattr(api.platform,name,value)
+        for name,value in historical.items():setattr(api,name,value)
+    require(f.candidate['environment']==captured,'historical selected environment unchanged')
+    controls_call(api,f)
+
+
 def controls_prior(f,severity):
     """Actual convergence of an explicitly synthetic prior packet at selected base."""
     cr=load_api(ROOT/'tools/convergent_review.py');directory=ROOT/'tools/fixtures/convergent_review/02-consensus-blocker'
@@ -2008,9 +2058,11 @@ def controls_prior(f,severity):
 def controls_variant(api,positive,defect):
     """Fresh graph: inject once before downstream commitments; restore chosen good graph."""
     with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-variant-') as parent:
-        bad=ControlsFixture(api,parent,defect,seed=positive)
+        bad=controls_construct(api,parent,defect,seed=positive)
         try:controls_call(api,bad,True)
         finally:git(bad.root,'worktree','remove','--force',str(bad.exp))
+    git(positive.root,'restore','--source='+positive.materialized_tip,'--staged','--worktree','--',CONTROL_PREFIX)
+    positive.commit('SYNTHETIC restored original positive materialization')
     controls_call(api,positive)
     print('RESTORED '+defect['name'])
 
@@ -2042,20 +2094,33 @@ def controls_zip_symlink(raw):
     return controls_zip(raw,change)
 
 
-def controls_intermediate_bundle(f,hidden=False):
+def controls_intermediate_bundle(f,hidden=False,mode_only=False):
     """Actual Git objects: scope escape, or protected drift restored before tip."""
-    tip=git(f.exp,'rev-parse','HEAD'); source_path='tools/workflow_assurance.py' if hidden else 'SYNTHETIC-out-of-scope.txt'
+    tip=git(f.exp,'rev-parse','HEAD'); source_path='tools/workflow_assurance.py' if hidden or mode_only else 'SYNTHETIC-out-of-scope.txt'
     blob=subprocess.check_output(['git','-C',str(f.exp),'hash-object','-w','--stdin'],input=b'SYNTHETIC forbidden intermediate bytes\n').decode().strip()
     with tempfile.TemporaryDirectory(prefix='SYNTHETIC-index-',dir=f.parent) as name:
         env={**os.environ,'GIT_INDEX_FILE':str(Path(name)/'index')}
         def index(*args):return subprocess.check_output(['git','-C',str(f.exp),*args],env=env).decode().strip()
-        index('read-tree',tip);index('update-index','--add','--cacheinfo','100644',blob,source_path)
+        mode='100644'
+        if mode_only:
+            original_mode,kind,blob=git(f.exp,'ls-tree',tip,'--',source_path).split()[:3]
+            mode='100644' if original_mode=='100755' else '100755'
+        index('read-tree',tip);index('update-index','--add','--cacheinfo',mode,blob,source_path)
         tree=index('write-tree'); bad=git(f.exp,'commit-tree',tree,'-p',tip,'-m','SYNTHETIC forbidden intermediate')
         if hidden:bad=git(f.exp,'commit-tree',git(f.exp,'rev-parse',tip+'^{tree}'),'-p',bad,'-m','SYNTHETIC restore protected tip')
         path=Path(name)/'bad.bundle';git(f.exp,'update-ref','refs/wa123/proof',bad)
         try:git(f.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+f.source);raw=path.read_bytes()
         finally:git(f.exp,'update-ref','refs/wa123/proof',tip)
     return raw,dict(output_tip=bad,inventory=f.inventory(bad))
+
+
+def controls_unknown_object(raw,f):
+    """Valid Git pack carrying one actual unreferenced object beyond declared graph."""
+    tip=git(f.exp,'rev-parse','HEAD')
+    extra=subprocess.check_output(['git','-C',str(f.exp),'hash-object','-w','--stdin'],input=b'SYNTHETIC undeclared unreachable object\n').decode().strip()
+    objects=git(f.exp,'rev-list','--objects','--no-object-names',f.source+'..'+tip).splitlines()
+    packed=subprocess.check_output(['git','-C',str(f.exp),'pack-objects','--stdout'],input=('\n'.join(objects+[extra])+'\n').encode())
+    return raw.split(b'\n\n',1)[0]+b'\n\n'+packed
 
 
 def controls_observer(f):
@@ -2087,6 +2152,8 @@ def controls_observer(f):
         for value in ('true','"false"','FALSE','${{ success() }}','',"'false'"):
             content='jobs:\n  check:\n    continue-on-error: '+value+'\n'
             exercise('# base\n',content,path,[3]);exercise('# base\n','jobs:\n  check:\n    continue-on-error: false\n',path,[])
+        exercise('# base\n','jobs:\n  a:\n    continue-on-error: true\n  b:\n    continue-on-error: \"false\"\n',path,[3,5])
+        exercise('# base\n','jobs:\n  a:\n    continue-on-error: false\n  b:\n    continue-on-error: false\n',path,[])
         for content in ('# continue-on-error: true\n','continue-on-error: false # allowed literal false\n'):
             exercise('# base\n',content,path,[])
         exercise('continue-on-error: true\n# old\n','continue-on-error: true\n# changed only\n',path,[])
@@ -2104,7 +2171,8 @@ def controls_defects(blockers=False):
         rows += [row('wrong-'+key,'verify/result.json',lambda v,f,k=key:v[k].update(action='noop' if k=='advance' else 'advance'),
             r'A10|transition|action|receipt') for key in ('advance','noop','republish','rerun_required')]
         rows += [row('unexercised-conflict','verify/result.json',lambda v,f:v.update(conflict_rejected=False),r'A10|conflict|receipt|result'),
-            row('recovery-policy-removed','a10-policy',lambda v,f:v.update(recovery=None),r'A10|policy|recovery|receipt|transition')]
+            row('recovery-policy-removed','a10-policy',lambda v,f:v.update(recovery=None),r'A10|policy|recovery|receipt|transition'),
+            row('failed-receipt','receipt-body',lambda v,f:v.update(status='failed'),r'A10|receipt|passed|status')]
         return rows
     rows=[]
     for site in ('capability.json','evaluation/prompt-evaluation.json','verify/capture.json','verify/result.json','capture-metadata','verify-metadata',
@@ -2126,6 +2194,7 @@ def controls_defects(blockers=False):
         row('evidence-unknown','evidence-body',lambda v,f:v.update(unselected_policy={}),r'keys|closed|object|fields'),
         row('policy-unknown','policy',lambda v,f:v.update(unknown=True),r'keys|closed|object|fields|policy'),
         row('policy-bool-version','policy',lambda v,f:v.update(schema_version=True),r'version|integer|type|policy'),
+        row('Root-selection-substitution','policy',lambda v,f:v.update(selection_ref=f.capture_selection),r'policy|selection|mode|verify|binding'),
         row('approval-metadata-missing','source-contract',lambda v,f:v.pop('approval_evidence'),r'approval|proposal|contract|prerequisite|metadata'),
         row('approval-proposal-stale','source-contract',lambda v,f:v['approval_evidence'].update(proposal_sha256='0'*64),r'approval|proposal|contract|prerequisite|metadata'),
         row('approval-gate-link-stale','source-contract',lambda v,f:v['approval_evidence'].update(mode_a=v['approval_evidence']['contract_review']),r'approval|proposal|contract|prerequisite|metadata')]
@@ -2141,18 +2210,30 @@ def controls_defects(blockers=False):
         for key in ('packet_ref','prompt_ref','output_ref','stdout_ref','stderr_ref','boundary_ref'):
             rows.append(row('trial%d-%s-digest'%(number+1,key),'evidence-body',
                 lambda v,f,n=number,k=key:v['trial_provenance'][n][k].update(sha256='0'*64),r'trial|provenance|ref|artifact|digest|boundary|packet|prompt|output'))
+        for key in ('packet_ref','prompt_ref','output_ref'):
+            rows.append(row('trial%d-%s-valid-swap'%(number+1,key),'evidence-body',
+                lambda v,f,n=number,k=key:v['trial_provenance'][n].update({k:copy.deepcopy(v['trial_provenance'][(n+1)%3][k])}),r'trial|provenance|packet|prompt|output|path|receipt|digest|binding'))
         for key,replacement in (('runner_ref','evaluator_ref'),('adapter_ref','runner_ref'),('evaluator_ref','adapter_ref')):
             rows.append(row('trial%d-%s-substitution'%(number+1,key),'evidence-body',
                 lambda v,f,n=number,k=key,r=replacement:v['trial_provenance'][n].update({k:f.selection[r]}),r'trial|provenance|runner|adapter|evaluator|selected|binding'))
     for mode in ('capture','verify'):
-        rows += [row(mode+'-raw-run-bool',mode+'-run',lambda v,f:v.update(id=True),r'run|integer|metadata|type'),
+        rows += [row(mode+'-raw-run-missing',mode+'-run',lambda v,f:v.pop('conclusion'),r'run|required|field|missing|conclusion|metadata'),
+            row(mode+'-raw-run-wrong-id',mode+'-run',lambda v,f:v.update(id=v['id']+500),r'run|id|binding|metadata'),
+            row(mode+'-raw-head-mismatch',mode+'-run',lambda v,f:v.update(head_sha='0'*40),r'head|source|checkout|metadata|binding'),
+            row(mode+'-raw-run-bool',mode+'-run',lambda v,f:v.update(id=True),r'run|integer|metadata|type'),
             row(mode+'-raw-run-unfinished',mode+'-run',lambda v,f:v.update(status='in_progress'),r'run|completed|status|metadata'),
             row(mode+'-missing-job-page',mode+'-jobs',lambda v,f:v.update(total_count=4),r'jobs|count|page|five|metadata'),
             row(mode+'-failed-active-step',mode+'-jobs',lambda v,f:v['jobs'][3]['steps'][0].update(conclusion='failure'),r'step|job|success|conclusion|metadata'),
             row(mode+'-expired-artifact',mode+'-artifacts',lambda v,f:v['artifacts'][0].update(expired=True),r'artifact|expired|metadata'),
-            row(mode+'-fetch-nonzero',mode+'-fetch-run',lambda v,f:v.update(actual_exit=7),r'fetch|exit|command|metadata')]
-    rows += [row('missing-log-marker','verify-job-log',lambda v,f:v.replace(b'WA123_INVOCATION=',b'UNSELECTED='),r'log|marker|invocation',waiver='log-marker'),
+            row(mode+'-fetch-nonzero',mode+'-fetch-run',lambda v,f:v.update(actual_exit=7),r'fetch|exit|command|metadata'),
+            row(mode+'-fetch-bool-exit',mode+'-fetch-run',lambda v,f:v.update(actual_exit=True),r'fetch|exit|integer|type|metadata')]
+    for kind in ('mode-a','contract-review','approved-contract','provisional-bundle'):
+        rows.append(row('missing-gate-'+kind,'selection-capture',lambda v,f,k=kind:v.update(prerequisites=[e for e in v['prerequisites'] if e['kind']!=k]),r'prerequisite|approval|gate|contract|selection|binding'))
+    rows += [row('hosted-review-not-approved','hosted-review',lambda v,f:v['final_verdict'].update(approved=False),r'review|verdict|approved|gate'),
+        row('hosted-review-blocking','hosted-review',lambda v,f:v['issues'].append({'SYNTHETIC':'blocked'}),r'review|issues|gate|blocking|verdict'),
+        row('missing-log-marker','verify-job-log',lambda v,f:v.replace(b'WA123_INVOCATION=',b'UNSELECTED='),r'log|marker|invocation',waiver='log-marker'),
         row('duplicate-log-marker','verify-job-log',lambda v,f:v+v,r'log|marker|invocation',waiver='log-marker'),
+        row('substituted-log-marker','verify-job-log',lambda v,f:v.replace(b'\"actual_exit\":0',b'\"actual_exit\":7'),r'log|marker|invocation|exit',waiver='log-marker'),
         row('archive-declared-size','verify-artifacts',lambda v,f:v['artifacts'][0].update(size_in_bytes=v['artifacts'][0]['size_in_bytes']+1),r'artifact|archive|size|length',waiver='archive-size'),
         row('archive-hash','verify-host',lambda v,f:v.update(artifact_sha256='0'*64),r'archive|artifact|hash|digest',waiver='archive-hash'),
         row('invocation-extra','verify-invocation-body',lambda v,f:v.update(unknown=True),r'keys|closed|object|fields|invocation'),
@@ -2163,18 +2244,21 @@ def controls_defects(blockers=False):
         ('extra-ref',lambda b,f:b.replace(b' refs/wa123/proof\n',b' refs/wa123/proof\n'+f.source.encode()+b' refs/extra\n',1))):
         rows.append(row('bundle-'+name,'verify-bundle-bytes',change,r'bundle|pack|prerequisite|base|header|trailing|ref'))
     rows += [row('out-of-scope-pack','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,False),r'scope|prefix|path|protected|inventory|add.only'),
-        row('restored-tip-hides-source-edit','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,True),r'scope|prefix|path|protected|intermediate|add.only')]
+        row('restored-tip-hides-source-edit','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,True),r'scope|prefix|path|protected|intermediate|add.only'),
+        row('protected-mode-in-pack','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,mode_only=True),r'scope|prefix|path|protected|mode|add.only'),
+        row('unreferenced-pack-object','verify-bundle-bytes',controls_unknown_object,r'pack|object|inventory|unreach|undeclared')]
     zip_changes=[('duplicate',lambda entries:entries+entries[:1]),('extra',lambda entries:entries+[('extra.txt',b'extra')]),
-        ('traversal',lambda entries:[('../escape',entries[0][1])]+entries[1:])]
+        ('traversal',lambda entries:[('../escape',entries[0][1])]+entries[1:]),
+        ('manifest-mismatch',lambda entries:[entries[0],(entries[1][0],canonical(dict(json.loads(entries[1][1]),bundle_sha256='0'*64))+b'\n'),entries[2]])]
     for name,change in zip_changes:
-        rows.append(row('zip-'+name,'verify-archive-bytes',lambda raw,f,c=change:controls_zip(raw,c),r'ZIP|zip|entry|archive|duplicate|path|travers',waiver='archive-structure'))
+        rows.append(row('zip-'+name,'verify-archive-bytes',lambda raw,f,c=change:controls_zip(raw,c),r'ZIP|zip|entry|archive|duplicate|path|travers|manifest|hash|digest',waiver='archive-structure'))
     rows += [row('zip-symlink','verify-archive-bytes',lambda raw,f:controls_zip_symlink(raw),r'ZIP|zip|entry|regular|symlink|mode',waiver='archive-structure'),
         row('zip-entry-bound','verify-archive-bytes',lambda raw,f:controls_zip_size(raw,21*1024*1024),r'size|bound|limit|large|exceed',waiver='archive-structure'),
         row('zip-archive-bound','verify-archive-bytes',lambda raw,f:b'0'*(32*1024*1024+1)+raw,r'size|bound|limit|large|exceed',waiver='archive-structure')]
     # Claimed commitment loops are deliberately invalid immutable Refs, not hash fixed points.
-    for name,change in (('future',lambda r,f:r.update(revision=f.source)),('dangling',lambda r,f:r.update(revision='0'*40)),
-        ('self',lambda r,f:r.update(path=f.nodes['selection-capture']['path'],revision=f.nodes['selection-capture']['revision'],sha256='0'*64)),
-        ('loop',lambda r,f:r.update(path=f.nodes['selection-verify']['path'],revision=f.nodes['selection-verify']['revision'],sha256='0'*64))):
+    for name,change in (('future',lambda r,f:r.update(revision=f.nodes['selection-verify']['revision'])),('dangling',lambda r,f:r.update(revision='0'*40)),
+        ('self',lambda r,f:r.update(path='.agent/evidence/123/synthetic-root/%s/%04d-evidence'%(f.namespace,f.serial+1),revision=git(f.root,'rev-parse','HEAD'),sha256='0'*64)),
+        ('loop',lambda r,f:r.update(path='.agent/evidence/123/synthetic-root/%s/%04d-hosted-review'%(f.namespace,f.serial+2),revision=git(f.root,'rev-parse','HEAD'),sha256='0'*64))):
         rows.append(row('claimed-ref-'+name,'evidence-body',lambda v,f,c=change:c(v['trial_provenance'][0]['evaluation_receipt_ref'],f),r'ref|artifact|commit|digest|path|order|evaluation|trial'))
     return rows
 
@@ -2182,7 +2266,16 @@ def controls_defects(blockers=False):
 def controls_candidate(api,f):
     controls_call(api,f)
     controls_foreign_observer(api,f)
-    for defect in controls_defects():controls_variant(api,f,defect)
+    for defect in sorted(controls_defects(),key=lambda row:row['name']!='replay-valid-missing-trials'):controls_variant(api,f,defect)
+    saved=copy.deepcopy(f.policy)
+    for label,value in (('nonfinite',float('nan')),('cycle',None)):
+        f.defect=dict(name='policy-'+label,site='in-memory-JSON',cause=r'finite|cycle|JSON|json|serializ')
+        try:
+            f.policy['unknown']=value
+            if label=='cycle':f.policy['unknown']=f.policy
+            controls_call(api,f,True)
+        finally:f.policy=copy.deepcopy(saved);f.defect=None
+        controls_call(api,f)
     protected=[f.candidate['assessed_inputs'][key][0]['path'] for key in ('source','tests','tools','contracts')]
     protected+=['.github/workflows/compliance.yml','schema/contract.schema.json','tools/workflow_assurance_ci.py','tools/verify_lib.sh']
     for path in dict.fromkeys(protected):
@@ -2193,6 +2286,16 @@ def controls_candidate(api,f):
             target.write_bytes(data);target.chmod(mode^0o111);controls_call(api,f,True)
         finally:target.write_bytes(data);target.chmod(mode);f.defect=None
         controls_call(api,f)
+    target=f.root/f.candidate['assessed_inputs']['source'][0]['path'];raw=target.read_bytes();mode=target.stat().st_mode;alias=f.parent/'SYNTHETIC-hardlink'
+    f.defect=dict(name='current-protected-input-hardlink',site='materialized-current-input',cause=r'link|regular|artifact|file|input')
+    try:
+        os.link(target,alias);require(target.stat().st_nlink==2,'actual selected artifact hardlink control')
+        controls_call(api,f,True)
+    finally:
+        if alias.exists():alias.unlink()
+        require(target.read_bytes()==raw and target.stat().st_mode==mode and target.stat().st_nlink==1,'selected artifact bytes/full modes/link count restore')
+        f.defect=None
+    controls_call(api,f)
     controls_observer(f)
 
 
@@ -2201,11 +2304,18 @@ def controls_blockers(api,f):
     for defect in controls_defects(True):controls_variant(api,f,defect)
 
 
+def controls_construct(api,parent,defect=None,seed=None):
+    try:return ControlsFixture(api,parent,defect,seed)
+    except Exception as exc:
+        print('SETUP_ERROR: synthetic graph constructor '+type(exc).__name__+': '+str(exc),file=sys.stderr)
+        raise SystemExit(2) from exc
+
+
 def run_controls_case(name,api):
     if not callable(getattr(api,'verify_controls_ready',None)):
         print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
     with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-parser-') as parent:
-        f=ControlsFixture(api,parent)
+        f=controls_construct(api,parent)
         (controls_candidate if name=='ci-candidate-bound' else controls_blockers)(api,f)
 
 
@@ -2231,8 +2341,24 @@ def run_controls_ready(api):
         git(scratch,'fetch','--no-tags','--no-write-fetch-head',str(bundle),'refs/wa123/proof:refs/wa123/import-verify')
         result=api.verify_controls_ready(scratch,evidence,policy=policy)
         negative=copy.deepcopy(evidence);negative['trial_provenance']=[]
-        rejected(api,lambda:api.verify_controls_ready(scratch,negative,policy=policy),
-            'SYNTHETIC missing-trial mutation of actual selected replay-valid proof')
+        synthetic_policy=copy.deepcopy(policy)
+        synthetic_review=api.parse_json(api._receipt_artifact(scratch,policy['hosted_review_ref']))
+        git(scratch,'config','user.name','SYNTHETIC123 private observation control')
+        git(scratch,'config','user.email','synthetic123@example.invalid')
+        git(scratch,'config','gc.auto','0');git(scratch,'config','maintenance.auto','false')
+        def commit_control(label,value):
+            path='.agent/evidence/123/synthetic-observation-'+label+'.json';raw=canonical(value)+b'\n'
+            target=scratch/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
+            git(scratch,'add','--',path);git(scratch,'commit','--quiet','-m','SYNTHETIC observation control '+label)
+            return dict(path=path,revision=git(scratch,'rev-parse','HEAD'),sha256=sha(raw))
+        synthetic_policy['evidence_ref']=commit_control('missing-trials',negative)
+        synthetic_review['evidence_ref']=synthetic_policy['evidence_ref']
+        synthetic_policy['hosted_review_ref']=commit_control('review-ref-binding',synthetic_review)
+        try:api.verify_controls_ready(scratch,negative,policy=synthetic_policy)
+        except api.AssuranceError as exc:
+            require(re.search(r'trial|provenance|three|length',str(exc),re.I) is not None,'readiness missing-trial cause: '+str(exc))
+            print('EXPECTED_REJECTION SYNTHETIC selected missing-trial observation: '+str(exc))
+        else:require(False,'synthetic invalid controls proof accepted: readiness missing trials')
         require(api.verify_controls_ready(scratch,evidence,policy=policy)==result,'actual selected hosted proof restores after synthetic discrimination')
     require((policy,evidence)==before and git(ROOT,'status','--porcelain','--untracked-files=all')==status,'actual hosted observation inputs and real checkout unchanged')
     require(result==dict(schema_version=1,feature_id='123',source_commit=evidence['candidate']['source_commit'],checkout_sha=evidence['checkout']['sha'],
