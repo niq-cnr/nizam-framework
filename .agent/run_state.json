@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-15T00:38:57.890513+00:00",
+  "updated_at": "2026-10-15T00:49:41.457178+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -6121,6 +6121,12 @@
       "at": "2026-10-15T00:49:40.392351+00:00",
       "event": "121-final-scope-and-CI3-dispatch",
       "detail": "Strictindependentdocsreviewpassed; Rootseparatefinalvalidation actualbothcompliance0+maintaineddiff0/currentprotectedpreserved. Finalwhole121measure now includesclosure/docs/QA thenfinalpushCI3 exacthead; no furtherproductchanges or budgetreset."
+    },
+    {
+      "at": "2026-10-15T00:49:41.457178+00:00",
+      "event": "121-final-scope-capture",
+      "detail": "Whole121=1245/1300; phase=3364/9360; process actual=775 versus original550 estimate, no category estimate or total allowance changed. Prior119722/1201397 and archived0165179/0175203 preserved.",
+      "evidence": ".agent/evidence/121/scope-measurement-final.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6295,9 +6301,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 2119,
-    "evidence_lines_total": 60575,
-    "excluded_lines_total": 715,
+    "total_lines_changed": 3364,
+    "evidence_lines_total": 275921,
+    "excluded_lines_total": 1051,
     "per_feature": [
       {
         "id": "119",
@@ -6347,6 +6353,39 @@
         "measurement_revision": "2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
         "capture_revision": "62cad89939a26d4608df543e4d84c2fa09699049",
         "merge_revision": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb"
+      },
+      {
+        "id": "121",
+        "estimated": 1300,
+        "actual": 1245,
+        "product_lines": 470,
+        "source_lines": 194,
+        "independent_test_lines": 276,
+        "process_overhead_lines": 775,
+        "evidence_lines": 215346,
+        "excluded_lines": 336,
+        "range": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..3846826ff3feace78d2866eb58433c8c65c425b2",
+        "evidence": ".agent/evidence/121/scope-measurement-final.txt",
+        "measurement_status": "final whole121 before PR102, appended once",
+        "measurement_revision": "3846826ff3feace78d2866eb58433c8c65c425b2",
+        "capture_revision": "8e3189afe71a4377f5231aa09d35ceca79bdb798",
+        "baseline": {
+          "prior_features": [
+            "119",
+            "120"
+          ],
+          "rolling_average": 1059.5,
+          "three_times_threshold": 3178.5,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "category_estimates_unchanged": {
+          "source_and_docs": 300,
+          "tests": 450,
+          "process": 550
+        },
+        "process_variance_from_estimate": 225,
+        "note": "Whole121 once from actualPR101merge, including all gates/recoveries, adjacent append-only120archive review, Source/docs194, tests276, QA/capture/closure/current planning. Original1300 total and category estimates retained; no new allowance or prior119/120/016/017 rebaseline. Raw evidence and run_state use unchanged classifier exclusions."
       }
     ],
     "phase_level_items": [],
@@ -6362,7 +6401,7 @@
     "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
     "authorization_revision": "51f4380",
     "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
-    "last_measured_at": "2026-10-14T18:12:02.213744+00:00",
+    "last_measured_at": "2026-10-15T00:49:41.457178+00:00",
     "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6",
     "feature121_measurement_base": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb"
   },
@@ -6619,7 +6658,7 @@
       }
     ]
   },
-  "last_action": "121 captured complete; final PR102 checks/merge and mainCI precede122 selection.122-123 pending; installedv1.5.0 unchanged.",
+  "last_action": "121 captured, current planning refreshed and whole-feature scope measured; exact-final-head PR102 CI/authorized clean merge remain.122-123 pending.",
   "completed_contract_ids": [
     "099",
     "103",
