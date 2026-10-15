@@ -97,6 +97,7 @@ class Recorder:
         self.deadline = deadline
         self.serial = 0
         self.revisions = {}
+        self.outcomes = []
 
     def command(self, argv, cwd, label, env=None):
         self.serial += 1
@@ -104,46 +105,90 @@ class Recorder:
         start = time.monotonic()
         start_at = datetime.now(timezone.utc).isoformat()
         reserve = 60 if label in PHASES else 0
-        timeout = min(PHASE_SECONDS, self.deadline - start - reserve)
+        timeout = min(PHASE_SECONDS, self.deadline - start - reserve - 2)
         check(timeout > 0, 'whole operation 1800s bound exhausted')
         process = subprocess.Popen(argv, cwd=cwd, env=env, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, start_new_session=True)
         paths = {name: Path(str(stem) + '.' + name) for name in ('stdout', 'stderr')}
         counts = dict(stdout=0, stderr=0)
+        eof = set()
         exceeded = None
+        cleanup_deadline = None
+        interrupted = None
+
+        def stop(reason):
+            nonlocal exceeded, cleanup_deadline
+            if cleanup_deadline is None:
+                exceeded = reason
+                cleanup_deadline = min(time.monotonic()+2, self.deadline)
+                # The process-group may survive its direct child and hold pipes open.
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+
         with paths['stdout'].open('xb') as out, paths['stderr'].open('xb') as err:
             handles = dict(stdout=out, stderr=err)
             with selectors.DefaultSelector() as selector:
                 selector.register(process.stdout, selectors.EVENT_READ, 'stdout')
                 selector.register(process.stderr, selectors.EVENT_READ, 'stderr')
-                while selector.get_map():
-                    if time.monotonic() - start >= timeout and exceeded is None:
-                        exceeded = 'timeout'
-                    if exceeded is not None and process.poll() is None:
-                        os.killpg(process.pid, signal.SIGKILL)
-                    for key, _ in selector.select(timeout=0.1):
-                        name = key.data
-                        # At most one byte beyond the limit is observed, never retained.
-                        block = os.read(key.fileobj.fileno(), min(65536, max(1, STREAM_LIMIT - counts[name] + 1)))
-                        if not block:
-                            selector.unregister(key.fileobj)
-                            key.fileobj.close()
-                            continue
-                        available = max(0, STREAM_LIMIT - counts[name])
-                        handles[name].write(block[:available])
-                        counts[name] += len(block)
-                        if counts[name] > STREAM_LIMIT:
-                            exceeded = name + '-oversize'
-        actual_exit = process.wait()
+                try:
+                    while selector.get_map():
+                        if time.monotonic() - start >= timeout:
+                            stop('timeout')
+                        if cleanup_deadline is not None and time.monotonic() >= cleanup_deadline:
+                            break
+                        drain_wait = 0.1 if cleanup_deadline is None else min(0.1,max(0,cleanup_deadline-time.monotonic()))
+                        for key, _ in selector.select(timeout=drain_wait):
+                            name = key.data
+                            block = os.read(key.fileobj.fileno(), min(65536, max(1, STREAM_LIMIT - counts[name] + 1)))
+                            if not block:
+                                eof.add(name)
+                                selector.unregister(key.fileobj)
+                                key.fileobj.close()
+                                continue
+                            available = max(0, STREAM_LIMIT - counts[name])
+                            handles[name].write(block[:available])
+                            counts[name] += len(block)
+                            if counts[name] > STREAM_LIMIT:
+                                stop(name+'-oversize')
+                except BaseException as exc:
+                    interrupted = exc
+                    stop('interrupted: '+type(exc).__name__)
+                finally:
+                    # Unclosed descendant pipes are explicitly incomplete, never awaited forever.
+                    for key in list(selector.get_map().values()):
+                        selector.unregister(key.fileobj)
+                        key.fileobj.close()
+        try:
+            actual_exit = process.wait(timeout=max(0, (cleanup_deadline if cleanup_deadline is not None
+                else min(start+timeout,self.deadline))-time.monotonic()))
+        except subprocess.TimeoutExpired:
+            stop('timeout')
+            try:
+                actual_exit = process.wait(timeout=max(0,cleanup_deadline-time.monotonic()))
+            except subprocess.TimeoutExpired:
+                actual_exit = None  # No fabricated exit when the killed child is not reaped in bound.
+        except BaseException as exc:
+            interrupted = exc
+            stop('interrupted: '+type(exc).__name__)
+            try:
+                actual_exit = process.wait(timeout=max(0,cleanup_deadline-time.monotonic()))
+            except subprocess.TimeoutExpired:
+                actual_exit = None
         record = dict(argv=argv, cwd=str(cwd), environment={'PYTHONDONTWRITEBYTECODE': '1'},
             actual_exit=actual_exit, start_at=start_at, finish_at=datetime.now(timezone.utc).isoformat(),
             exercised_revision=self.revisions.get(str(cwd)), input_sha256={**PINS,'tools/test_workflow_assurance.py':TEST_SHA256},
             elapsed_seconds=time.monotonic()-start,
             effective_timeout_seconds=timeout, stop_reason=exceeded,
             streams={name:dict(path=str(path), retained_bytes=path.stat().st_size,
-                observed_bytes=counts[name], sha256=file_sha(path), complete=counts[name] <= STREAM_LIMIT)
+                observed_bytes=counts[name], sha256=file_sha(path), complete=name in eof and counts[name] <= STREAM_LIMIT)
                 for name, path in paths.items()})
+        self.outcomes.append(dict(label=label,actual_exit=actual_exit,stop_reason=exceeded,
+            execution_path=str(stem)+'.execution.json'))
         Path(str(stem)+'.execution.json').write_bytes(canonical(record))
+        if interrupted is not None:
+            raise interrupted
         check(exceeded is None and actual_exit == 0, 'first unexpected child failure: ' + label)
         return paths['stdout'].read_bytes()
 
@@ -188,8 +233,13 @@ def main():
     args.output.mkdir()
     started = time.monotonic()
     recorder = Recorder(args.output, started + TOTAL_SECONDS)
+    def interrupt(signum, _frame):
+        raise InterruptedError('engineering driver received signal '+str(signum))
+    signal.signal(signal.SIGTERM,interrupt)
+    signal.signal(signal.SIGINT,interrupt)
     snapshots = {}
     result = 1
+    failure = None
     try:
         for name in ('K', 'M'):
             recorder.command(['git','clone','--quiet','--shared','--no-checkout',str(args.repository),str(args.workspace/name)], args.workspace, 'clone-'+name)
@@ -222,7 +272,8 @@ def main():
                 '--scratch',str(args.workspace/('fixture-'+phase))], repo, phase,
                 {**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
         result = 0
-    except Exception:
+    except (Exception, KeyboardInterrupt) as exc:
+        failure = type(exc).__name__+': '+str(exc)
         traceback.print_exc()
     finally:
         preservation = {}
@@ -234,9 +285,10 @@ def main():
                 preservation[name] = dict(equal=same,tracked_paths=len(before['rows']),installed_regular_files=before['installed_regular_files'],
                     before_sha256=sha(canonical(before)),after_sha256=sha(canonical(after)))
                 if not same: result = 1
-            except Exception:
+            except (Exception, KeyboardInterrupt):
                 traceback.print_exc();result = 1
-        (args.output/'summary.json').write_bytes(canonical(dict(actual_exit=result,preservation=preservation,
+        (args.output/'summary.json').write_bytes(canonical(dict(actual_exit=result,failure=failure,
+            command_outcomes=recorder.outcomes,preservation=preservation,
             elapsed_seconds=time.monotonic()-started,full_bank=False,hosted_proof=False,gate_verdict=False)))
     return result
 
