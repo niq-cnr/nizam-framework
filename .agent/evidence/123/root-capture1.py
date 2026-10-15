@@ -262,3 +262,27 @@ def admit_fresh_qa():
                 additional_adversarial_checks=1, actual_process_attempts=len(results)+1,
                 retained_failed_setup_attempts=1, commands=results,
                 qa_declared_checks_run=qa['checks_run'], qa_declared_checks_passed=qa['checks_passed'])
+
+
+def main():
+    inputs = admit_completed_inputs()
+    fresh = admit_fresh_qa()
+    captured = index(E/'fresh-qa1/capture-index.json')
+    qa = read('.agent/qa/123.json')
+    report = read(E/'fresh-qa1/results.json')
+    assert (report['logical_planned_checks'], report['mandatory_commands'],
+            report['acceptance_process_attempts'],
+            report['mandatory_expected_outcomes_satisfied']) == (10, 9, 11, 9)
+    assert len(report['results']) == 11
+    assert (qa['checks_run'], qa['checks_passed']) == (9, 8)
+    assert len(qa['checks']) == 9 and all(
+        row['exit_code'] == row['expected_exit'] for row in qa['checks'])
+    print(json.dumps(dict(role='Root Orchestrator', feature_id='123',
+                         stage='evidence-capture', actual_inputs=inputs,
+                         fresh_qa=fresh, fresh_capture_index=captured,
+                         approved_contract_preserved=True,
+                         lifecycle_written=False), sort_keys=True))
+
+
+if __name__ == '__main__':
+    main()
