@@ -1,20 +1,20 @@
 {
   "role": "Root Orchestrator",
   "feature": "123",
-  "status": "coordination plan; subject to actual independently approved contract; no gate or Source approval",
-  "at": "2026-10-15T05:12:56.154603+00:00",
+  "status": "coordination projection of approved contract64afcf8d; no independent authority or gate verdict",
+  "at": "2026-10-15T06:08:20.545744+00:00",
   "current_release": "5b4251e5f727796ebadac21d3298dbaa6f45225d",
   "dependency_admission": ".agent/evidence/123/source-prerequisite.json",
   "vertices": [
     {
       "id": "contract",
       "owner": "Generator",
-      "state": "in_progress"
+      "state": "passed"
     },
     {
       "id": "mode-a",
       "owner": "independent Validator",
-      "state": "prepared",
+      "state": "passed",
       "after": [
         "contract"
       ]
@@ -22,7 +22,7 @@
     {
       "id": "contract-review",
       "owner": "independent Evaluator",
-      "state": "prepared",
+      "state": "passed",
       "after": [
         "contract"
       ]
@@ -30,7 +30,7 @@
     {
       "id": "contract-approval",
       "owner": "Root",
-      "state": "pending",
+      "state": "passed",
       "after": [
         "mode-a",
         "contract-review"
@@ -39,7 +39,7 @@
     {
       "id": "concrete-test-freeze",
       "owner": "independent test author",
-      "state": "pending",
+      "state": "released",
       "after": [
         "contract-approval"
       ]
@@ -61,19 +61,52 @@
       ]
     },
     {
-      "id": "actual-controls-and-independent-executable-review",
-      "owner": "author then distinct reviewer",
+      "id": "local-synthetic-development-controls",
+      "owner": "independent author/reviewer",
       "state": "pending",
       "after": [
         "initial-source-commit-and-development"
       ]
     },
     {
-      "id": "hosted-candidate-proof",
-      "owner": "existing capable CI job; Root captures",
+      "id": "hosted-capture",
+      "owner": "existing capable CI job; Root preselects exact source/runtime/runner inputs",
       "state": "pending",
       "after": [
         "initial-source-commit-and-development"
+      ]
+    },
+    {
+      "id": "root-capture-selection",
+      "owner": "Root actual raw transport inspection and immutable selection",
+      "state": "pending",
+      "after": [
+        "hosted-capture"
+      ]
+    },
+    {
+      "id": "hosted-verify",
+      "owner": "existing capable CI job; same protected candidate/runtime",
+      "state": "pending",
+      "after": [
+        "root-capture-selection"
+      ]
+    },
+    {
+      "id": "hosted-provenance-review",
+      "owner": "distinct independent reviewer",
+      "state": "pending",
+      "after": [
+        "hosted-verify"
+      ]
+    },
+    {
+      "id": "final-executable-seal",
+      "owner": "distinct acceptance reviewer",
+      "state": "pending",
+      "after": [
+        "hosted-provenance-review",
+        "local-synthetic-development-controls"
       ]
     },
     {
@@ -81,8 +114,7 @@
       "owner": "independent Validator",
       "state": "pending",
       "after": [
-        "actual-controls-and-independent-executable-review",
-        "hosted-candidate-proof"
+        "final-executable-seal"
       ]
     },
     {
@@ -99,7 +131,7 @@
       "state": "pending",
       "after": [
         "fresh-qa",
-        "hosted-candidate-proof"
+        "hosted-provenance-review"
       ]
     },
     {
@@ -127,7 +159,7 @@
       ]
     }
   ],
-  "parallelism": "Both pre-code gates inspect identical committed proposal in parallel. Hosted CI may overlap executable review only if approved contract permits; final QA strictly follows ModeB. Shared Source/test/state ownership serializes. No speculative Source or dependent phase activation.",
+  "parallelism": "Pre-code gates completed in parallel. Concrete authoring may overlap readonly reviewer preparation. Hosted capture precedes Root selection then hosted verify then independent provenance review and final executable seal; final QA strictly after ModeB. No speculative Source or dependent phase activation.",
   "invariants": [
     "Only Root owns counters/lifecycle/history and selects trusted experiment policy.",
     "Actual CI commands/captures and candidate bindings must be distinguished from synthetic selectors.",
@@ -135,5 +167,10 @@
     "Every rejection is retained; no weakened assertions or silent budget/counter reset.",
     "Whole123 measured once from actual PR103 merge; original7200/9360 and prior4303 unchanged.",
     "Installed239 and live Root binding/migration remain unchanged; no runtime/benchmark/release claims."
-  ]
+  ],
+  "approved_contract_ref": {
+    "path": ".agent/contracts/123.json",
+    "revision": "452a5a5f748b5234ce1da3ad765b0da8f622cb53",
+    "sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5"
+  }
 }
