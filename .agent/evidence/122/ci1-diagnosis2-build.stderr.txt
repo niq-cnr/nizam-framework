@@ -1,0 +1,18 @@
+COMMAND ["git", "init", "-q", "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/source"]
+COMMAND ["git", "remote", "add", "origin", "https://github.com/git/git.git"]
+COMMAND ["git", "fetch", "--depth=1", "origin", "e9019fcafe0040228b8631c30f97ae1adb61bcdc"]
+From https://github.com/git/git
+ * branch            e9019fcafe0040228b8631c30f97ae1adb61bcdc -> FETCH_HEAD
+COMMAND ["git", "checkout", "--detach", "e9019fcafe0040228b8631c30f97ae1adb61bcdc"]
+HEAD is now at e9019fc Git 2.55
+COMMAND ["make", "-j2", "NO_GETTEXT=YesPlease", "NO_TCLTK=YesPlease", "NO_CURL=YesPlease", "NO_EXPAT=YesPlease", "NO_OPENSSL=YesPlease", "prefix=/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install", "all"]
+GIT_VERSION=2.55.0
+    * new build flags
+    * new link flags
+    * new prefix flags
+    * new script parameters
+    * new perl-specific parameters
+warning: failed to connect to jobserver from environment variable `MAKEFLAGS=" -j2 --jobserver-auth=3,4 -- prefix=/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install NO_OPENSSL=YesPlease NO_EXPAT=YesPlease NO_CURL=YesPlease NO_TCLTK=YesPlease NO_GETTEXT=YesPlease"`: cannot open file descriptor 3 from the jobserver environment variable value: Bad file descriptor (os error 9)
+    * new test suites
+COMMAND ["make", "NO_GETTEXT=YesPlease", "NO_TCLTK=YesPlease", "NO_CURL=YesPlease", "NO_EXPAT=YesPlease", "NO_OPENSSL=YesPlease", "prefix=/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install", "install"]
+COMMAND ["/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin/git", "--version"]
