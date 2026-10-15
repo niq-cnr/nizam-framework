@@ -1119,7 +1119,7 @@ def assess_conflict_lanes(repo, request, *, policy):
         return _lane_assessment(repo, request, policy)
     except AssuranceError:
         raise
-    except (OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
         raise AssuranceError('lane assessment failed: ' + str(exc)[:300]) from exc
 
 
@@ -1178,7 +1178,7 @@ def verify_isolated_attempt(repo, request, *, policy):
             'attempt_root': str(target), 'head_revision': head, 'owned_changes': changes}
     except AssuranceError:
         raise
-    except (OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
         raise AssuranceError('lane isolation failed: ' + str(exc)[:300]) from exc
 
 
@@ -1195,7 +1195,7 @@ def rollback_owned_attempt(repo, request, *, policy):
         return {'operation_id': request['operation_id'], 'attempt_root': request['attempt_root'], 'removed': True}
     except AssuranceError:
         raise
-    except (OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
         raise AssuranceError('lane rollback failed: ' + str(exc)[:300]) from exc
 
 
