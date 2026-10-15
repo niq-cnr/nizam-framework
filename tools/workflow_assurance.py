@@ -1317,7 +1317,8 @@ class _ControlsProof:
         self.root = Path(repo).resolve(strict=True)
         require(git(self.root, 'rev-parse', '--show-toplevel').decode().strip() == str(self.root), 'controls repository toplevel')
         require(git(self.root, 'remote', 'get-url', 'origin').decode().strip() == _WA123_ORIGIN, 'controls repository origin')
-        self.cache = {}; self.bundle_cache = {}
+        self.cache = {}; self.bundle_cache = {}; self.commits = set(); self.entries = {}
+        self.transport = None; self.observed_outputs = set()
 
     def obj(self, value, keys, label):
         _bundle_object(value, tuple(keys.split()), label + ' closed keys')
@@ -1337,29 +1338,81 @@ class _ControlsProof:
     def same(self, left, right, label):
         require(canonical(left) == canonical(right), label + ' binding mismatch')
 
+    def exact_commit(self, revision):
+        _bundle_hex(revision, 40, 'controls immutable revision')
+        if revision not in self.commits:
+            require(git(self.root, 'rev-parse', '--verify', revision+'^{commit}').decode().strip()==revision,
+                    'controls exact commit')
+            self.commits.add(revision)
+
+    def entry(self, revision, path):
+        self.exact_commit(revision); relative_path(path)
+        key=(revision,path)
+        if key not in self.entries:
+            rows=git(self.root,'--literal-pathspecs','ls-tree','-z',revision,'--',path).split(b'\0')
+            require(len(rows)==2 and rows[1]==b'', 'missing controls Git input: '+path)
+            metadata,name=rows[0].split(b'\t',1);mode,kind,oid=metadata.decode().split()
+            require(name.decode()==path and kind=='blob' and mode in ('100644','100755'), 'unsafe controls Git input')
+            size=int(git(self.root,'cat-file','-s',oid).decode())
+            require(size>=0,'controls blob size')
+            self.entries[key]=(oid,mode,size)
+        return self.entries[key]
+
+    def transported(self, revision, path):
+        if not path.startswith(_WA123_PREFIX):return
+        self.observed_outputs.add((revision,path))
+        if self.transport is None:return
+        lineage,inventory=self.transport
+        require(revision in lineage and path in inventory,'experiment ref outside selected transported lineage/inventory')
+        oid,mode,_=self.entry(revision,path);row=inventory[path]
+        require(oid==row['git_blob'] and mode==row['git_mode'],'transported ref blob/mode binding')
+        data=self.cache.get((revision,path))
+        if data is not None:require(sha(data)==row['sha256'],'transported ref digest binding')
+
+    def bind_transport(self, source, tip, inventory):
+        lineage=set(git(self.root,'rev-list',source+'..'+tip).decode().splitlines())
+        by_path={row['path']:row for row in inventory}
+        require(len(by_path)==len(inventory),'transported duplicate path inventory')
+        self.transport=(lineage,by_path)
+        for revision,path in tuple(self.observed_outputs):self.transported(revision,path)
+
     def raw(self, ref, label='artifact', maximum=2*1024*1024):
-        _receipt_ref(self.root, ref)
-        key = (ref['revision'], ref['path'], ref['sha256'])
-        # Check the actual current component chain/link count even with cached Git bytes.
-        current = self.root / ref['path']
-        if current.exists() or current.is_symlink():
-            target = regular_file(self.root, ref['path'])
-            require(target.stat().st_nlink == 1, label + ' current artifact hardlink')
-        if key not in self.cache:
-            data, _ = _entry_blob(self.root, ref['revision'], ref['path'])
-            require(sha(data) == ref['sha256'], label + ' artifact ref digest')
-            self.cache[key] = data
-        data = self.cache[key]
-        require(len(data) <= maximum, label + ' size bound exceeded')
+        _bundle_object(ref,('path','sha256','revision'),'controls artifact reference')
+        relative_path(ref['path']);_bundle_hex(ref['sha256'],64,'controls artifact digest')
+        # Physical state is deliberately fresh, even when immutable Git data is cached.
+        current=self.root
+        parts=ref['path'].split('/')
+        for index,part in enumerate(parts):
+            current=current/part
+            try:physical=current.lstat()
+            except FileNotFoundError:break
+            require(not stat.S_ISLNK(physical.st_mode),label+' current artifact component symlink')
+            if index<len(parts)-1:require(stat.S_ISDIR(physical.st_mode),label+' current artifact parent mode')
+            else:require(stat.S_ISREG(physical.st_mode) and physical.st_nlink==1,label+' current artifact regular mode/hardlink')
+        data,_=self.at(ref['revision'],ref['path'],maximum)
+        require(sha(data)==ref['sha256'],label+' artifact ref digest')
         return data
 
+    def output_ref(self, ref, label):
+        require(type(ref) is dict and type(ref.get('path')) is str and ref['path'].startswith(_WA123_PREFIX),
+                label+' transported experiment output path')
+        return self.raw(ref,label)
+
     def value(self, ref, label, canonical_bytes=True):
-        raw = self.raw(ref, label); value = parse_json(raw)
-        if canonical_bytes: require(raw == canonical(value) + b'\n', label + ' canonical JSON')
+        raw=self.raw(ref,label);value=parse_json(raw)
+        if canonical_bytes:require(raw==canonical(value)+b'\n',label+' canonical JSON')
         return value
 
-    def at(self, revision, path):
-        return _entry_blob(self.root, revision, path)
+    def at(self, revision, path, maximum=2*1024*1024):
+        oid,mode,size=self.entry(revision,path)
+        require(size<=maximum,'controls artifact size bound exceeded before blob read')
+        key=(revision,path)
+        if key not in self.cache:
+            data=git(self.root,'cat-file','blob',oid)
+            require(len(data)==size,'controls blob observed size')
+            self.cache[key]=data
+        self.transported(revision,path)
+        return self.cache[key],mode=='100755'
 
     def environment(self, env):
         self.obj(env, 'runtime variables', 'environment')
@@ -1491,19 +1544,28 @@ class _ControlsProof:
         require(value['executed'] is True and type(value['exit_code']) is int and value['exit_code']==0 and value['outcome']=='success',label+' capture executed exit outcome')
         self.same(value['producer'],producer,label+' capture producer');self.same(value['environment'],candidate['environment'],label+' capture environment')
         require(value['candidate_sha256']==sha(canonical(candidate)),label+' capture candidate digest')
-        self.raw(value['stdout'],label+' capture stdout').decode('utf8');self.raw(value['stderr'],label+' capture stderr').decode('utf8')
+        self.output_ref(value['stdout'],label+' capture stdout').decode('utf8');self.output_ref(value['stderr'],label+' capture stderr').decode('utf8')
         return value
+
+    def bundle_header(self, raw, source):
+        _bundle_hex(source,40,'bundle source')
+        require(type(raw) is bytes and len(raw)<=16*1024*1024,'bundle size limit')
+        header,sep,pack=raw.partition(b'\n\n');lines=header.split(b'\n')
+        require(sep and len(lines)==3 and lines[0]==b'# v2 git bundle','bundle v2 header/ref count')
+        prefix=('-'+source+' ').encode()
+        require(lines[1].startswith(prefix),'bundle prerequisite base')
+        diagnostic=lines[1][len(prefix):].decode('utf8')
+        require(diagnostic and all(ord(c)>=32 and ord(c)!=127 for c in diagnostic),'bundle prerequisite diagnostic')
+        match=re.fullmatch(rb'([0-9a-f]{40}) refs/wa123/proof',lines[2])
+        require(match is not None,'bundle advertised ref')
+        return match[1].decode(),pack
 
     def pack(self, raw, source):
         import zlib
         key=(sha(raw),source)
         if key in self.bundle_cache:return self.bundle_cache[key]
-        require(len(raw)<=16*1024*1024,'bundle size limit')
-        header,sep,pack=raw.partition(b'\n\n'); lines=header.split(b'\n')
-        require(sep and len(lines)==3 and lines[0]==b'# v2 git bundle','bundle v2 header/ref count')
-        require(lines[1].startswith(('-'+source+' ').encode()) and len(lines[1])>42,'bundle prerequisite base')
-        match=re.fullmatch(rb'([0-9a-f]{40}) refs/wa123/proof',lines[2]);require(match is not None,'bundle advertised ref')
-        tip=match[1].decode();require(pack[:4]==b'PACK' and len(pack)>=32,'pack header truncated')
+        tip,pack=self.bundle_header(raw,source)
+        require(pack[:4]==b'PACK' and len(pack)>=32,'pack header truncated')
         require(int.from_bytes(pack[4:8],'big') in (2,3),'pack version')
         count=int.from_bytes(pack[8:12],'big');require(count<=100000,'pack object count bound')
         offset=12; entries={}; resolved={}; by_oid={}
@@ -1533,7 +1595,8 @@ class _ControlsProof:
                     byte=data[cursor];cursor+=1;result|=(byte&127)<<shift;shift+=7
                     if not byte&128:return result
                     require(shift<=63,'pack delta varint')
-            require(number()==len(base),'pack delta base size');length=number();out=bytearray()
+            require(number()==len(base),'pack delta base size');length=number()
+            require(length<=20*1024*1024,'pack delta declared output bound');out=bytearray()
             while cursor<len(data):
                 op=data[cursor];cursor+=1
                 if op&128:
@@ -1542,9 +1605,12 @@ class _ControlsProof:
                         if op&(1<<bit):at|=data[cursor]<<(8*bit);cursor+=1
                     for bit in range(3):
                         if op&(16<<bit):length_copy|=data[cursor]<<(8*bit);cursor+=1
-                    length_copy=length_copy or 65536;require(at+length_copy<=len(base),'pack delta copy');out.extend(base[at:at+length_copy])
+                    length_copy=length_copy or 65536
+                    require(at+length_copy<=len(base) and len(out)+length_copy<=length,'pack delta copy/output bound')
+                    out.extend(base[at:at+length_copy])
                 else:
-                    require(op>0 and cursor+op<=len(data),'pack delta literal');out.extend(data[cursor:cursor+op]);cursor+=op
+                    require(op>0 and cursor+op<=len(data) and len(out)+op<=length,'pack delta literal/output bound')
+                    out.extend(data[cursor:cursor+op]);cursor+=op
                 require(len(out)<=20*1024*1024,'pack delta output bound')
             require(len(out)==length,'pack delta result size');return bytes(out)
         types={1:'commit',2:'tree',3:'blob',4:'tag'}
@@ -1562,7 +1628,9 @@ class _ControlsProof:
                         if base in by_oid:otype,parent=by_oid[base]
                         else:
                             try:
-                                otype=git(self.root,'cat-file','-t',base).decode().strip();parent=git(self.root,'cat-file',otype,base)
+                                otype=git(self.root,'cat-file','-t',base).decode().strip()
+                                require(int(git(self.root,'cat-file','-s',base).decode())<=20*1024*1024,'pack external delta base size bound')
+                                parent=git(self.root,'cat-file',otype,base)
                             except AssuranceError:continue
                     body=delta(parent,data)
                 oid=hashlib.sha1((otype+' '+str(len(body))+'\0').encode()+body).hexdigest()
@@ -1671,6 +1739,9 @@ class _ControlsProof:
         for name in ('WA123 '+mode,'Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py','Run required isolation suite'):
             matches=[s for s in selected_job['steps'] if s['name']==name]
             require(len(matches)==1 and matches[0]['status']=='completed' and matches[0]['conclusion']=='success','required job step success: '+name)
+        inactive='WA123 '+('verify' if mode=='capture' else 'capture')
+        skipped=[s for s in selected_job['steps'] if s['name']==inactive]
+        require(len(skipped)==1 and skipped[0]['status']=='completed' and skipped[0]['conclusion']=='skipped','inactive job stage skipped: '+inactive)
         require(type(artifacts) is dict and type(artifacts.get('total_count')) is int and 1<=artifacts['total_count']<=100 and type(artifacts.get('artifacts')) is list and len(artifacts['artifacts'])==artifacts['total_count'],'artifact pagination/count')
         ids=set();matches=[]
         for artifact in artifacts['artifacts']:
@@ -1729,6 +1800,7 @@ class _ControlsProof:
                 require(row[key]['path'].endswith('/trial-'+str(number)+'/'+suffix),'trial provenance path binding '+key)
             require(self.raw(row['packet_ref'],'trial packet')==cr.canonical_json_bytes(packet) and self.raw(row['output_ref'],'trial output')==trial_raw[number],'trial retained packet/output bytes')
             require(receipt['trial_digest']==row['output_ref']['sha256'] and receipt['prompt_digest']==row['prompt_ref']['sha256'],'trial output/prompt receipt digest')
+            for key in ('packet_ref','prompt_ref','output_ref','stdout_ref','stderr_ref','evaluation_receipt_ref'):self.output_ref(row[key],'trial '+key)
             self.raw(row['stdout_ref'],'trial stdout').decode();self.raw(row['stderr_ref'],'trial stderr').decode()
             argv=row['invocation'];require(type(argv) is list and len(argv) in (15,17),'trial adapter invocation argv')
             require(argv[1]=='--root' and argv[3]=='--runner' and argv[5]=='--' and argv[6]==argv[4] and argv[7]=='--prompt' and argv[9]=='--packet' and argv[11]=='--trial-number' and argv[12]==str(number) and argv[13]=='--output','trial adapter invocation structure')
@@ -1759,7 +1831,7 @@ class _ControlsProof:
             require(type(process['argv']) is list and len(process['argv'])==2 and Path(process['argv'][0]).is_absolute() and process['argv'][1]==path,'capability '+key+' argv')
             require(type(process['cwd']) is str and Path(process['cwd']).is_absolute(),'capability process cwd')
             git(self.root,'merge-base','--is-ancestor',candidate['source_commit'],process['revision'])
-            stdout=self.raw(process['stdout'],'capability '+key+' stdout').decode();self.raw(process['stderr'],'capability stderr').decode()
+            stdout=self.output_ref(process['stdout'],'capability '+key+' stdout').decode();self.output_ref(process['stderr'],'capability stderr').decode()
             if key=='boundary':require(stdout.splitlines().count('SANDBOX BOUNDARIES PASS: intact 0; isolated omission controls 40/41/42; unexpected execution errors rejected')==1,'capability boundary diagnostic')
         return value
 
@@ -1827,6 +1899,8 @@ class _ControlsProof:
         self.obj(evidence,'schema_version candidate checkout capture_selection_ref verify_selection_ref evaluation_ref replay_ref trial_provenance a11_capture_ref a11_result_ref a10_receipt_ref a10_result_ref a10_capture_ref capability_ref capture_host verify_host pack_ref inventory','controls evidence')
         self.version(evidence['schema_version'],'controls evidence')
         self.same(evidence,self.value(policy['evidence_ref'],'selected evidence'),'controls selected evidence')
+        for key in ('evaluation_ref','replay_ref','a11_capture_ref','a11_result_ref','a10_result_ref','a10_capture_ref','capability_ref'):
+            self.output_ref(evidence[key],key)
         self.same(policy['selection_ref'],evidence['verify_selection_ref'],'controls policy verify selection')
         capture_selection=self.selection(evidence['capture_selection_ref'],'capture');selection=self.selection(evidence['verify_selection_ref'],'verify')
         for key in capture_selection:
@@ -1836,6 +1910,7 @@ class _ControlsProof:
         self.prerequisites(capture_selection,candidate);self.authority(capture_selection);self.shadow(capture_selection)
         capture_inv,capture_bundle,capture_inventory=self.host(evidence['capture_host'],'capture',evidence['capture_selection_ref'],capture_selection,candidate)
         verify_inv,verify_bundle,verify_inventory=self.host(evidence['verify_host'],'verify',evidence['verify_selection_ref'],selection,candidate)
+        self.bind_transport(candidate['source_commit'],verify_inv['output_tip'],verify_inventory)
         self.same(evidence['checkout'],capture_inv['checkout'],'Evidence capture checkout')
         require(self.raw(selection['capture_pack_ref'],'capture bundle',16*1024*1024)==capture_bundle,'selected capture bundle bytes')
         require(self.raw(evidence['pack_ref'],'verify bundle',16*1024*1024)==verify_bundle,'selected final pack bytes')
@@ -1843,6 +1918,7 @@ class _ControlsProof:
         git(self.root,'merge-base','--is-ancestor',capture_inv['output_tip'],verify_inv['output_tip'])
         self.same(capture_inv['environment'],verify_inv['environment'],'capture/verify environment')
         self.same(capture_inv['result_refs'],[next(r for r in capture_inv['result_refs'] if r['path'].endswith('/candidate.json')),evidence['capability_ref'],evidence['evaluation_ref'],evidence['replay_ref'],evidence['a11_result_ref'],evidence['a11_capture_ref']],'capture invocation result refs')
+        self.output_ref(capture_inv['result_refs'][0],'candidate artifact')
         self.same(self.value(capture_inv['result_refs'][0],'candidate artifact'),candidate,'capture candidate artifact')
         self.same(verify_inv['result_refs'],[evidence['a10_receipt_ref'],evidence['a10_result_ref'],evidence['a10_capture_ref']],'verify invocation result refs')
         self.capability(evidence,capture_selection,candidate);self.replay(evidence,capture_selection)

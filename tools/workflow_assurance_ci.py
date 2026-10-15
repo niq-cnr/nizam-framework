@@ -6,6 +6,8 @@ Root independently selects transported captures before the verification pass.
 """
 import argparse
 import difflib
+import contextlib
+import io
 import hashlib
 import json
 import os
@@ -78,7 +80,10 @@ def git(root,*args):
 
 def reference(root,path,revision=None):
     revision=revision or git(root,'rev-parse','HEAD')
+    size=int(checked(['git','-C',str(root),'cat-file','-s',revision+':'+path],root))
+    if size>2*1024*1024:raise RuntimeError('referenced payload exceeds approved size bound')
     raw=checked(['git','-C',str(root),'show',revision+':'+path],root)
+    if len(raw)!=size:raise RuntimeError('referenced payload observed size differs')
     return dict(path=path,revision=revision,sha256=hashlib.sha256(raw).hexdigest())
 
 
@@ -127,6 +132,7 @@ def bundle_outputs(root,output,selection_ref,selection,checkout,candidate,result
     wa=api_module();tip=git(root,'rev-parse','HEAD');git(root,'update-ref','refs/wa123/proof',tip)
     bundle=output/'proof.bundle'
     checked(['git','-C',str(root),'bundle','create','--version=2',str(bundle),'refs/wa123/proof','^'+selection['source_commit']],root)
+    if bundle.stat().st_size>16*1024*1024:raise RuntimeError('produced bundle exceeds approved bound')
     raw=bundle.read_bytes();manifest=dict(schema_version=1,mode=selection['mode'],source_commit=selection['source_commit'],
         output_tip=tip,bundle_sha256=wa.sha(raw),bundle_size=len(raw),inventory=inventory(root,selection['source_commit'],tip))
     # The same read-only strict parser checks the produced object set before upload.
@@ -139,8 +145,40 @@ def bundle_outputs(root,output,selection_ref,selection,checkout,candidate,result
     print('WA123_INVOCATION='+encoded(invocation).decode().rstrip('\n'))
 
 
-def prepare(root,output,selection,checkout):
-    wa=api_module();scratch=Path(tempfile.mkdtemp(prefix='wa123-experiment-',dir=output.parent))
+def failed_child(output, label, argv, cwd, process):
+    """Keep exact bounded child streams and its actual execution frame on failure."""
+    record=dict(argv=[str(x) for x in argv],cwd=str(cwd),revision=git(cwd,'rev-parse','HEAD'),
+        actual_exit=process.returncode,stdout=label+'-failure.stdout',stderr=label+'-failure.stderr')
+    for key,raw in [('stdout',process.stdout),('stderr',process.stderr)]:
+        if len(raw)>2*1024*1024:
+            record[key]=None
+            record[key+'_unretained_reason']='actual child stream exceeds approved 2MiB payload bound; owned scratch retained'
+            record[key+'_bytes']=len(raw)
+            record[key+'_sha256']=hashlib.sha256(raw).hexdigest()
+        else:(output/record[key]).write_bytes(raw)
+    (output/(label+'-failure.json')).write_bytes(encoded(record))
+
+
+def stage_command(output, label, argv, cwd):
+    process=command(argv,cwd)
+    if process.returncode:failed_child(output,label,argv,cwd,process)
+    return process
+
+
+class OperationTee:
+    """Observe text actually forwarded to this command's operation stream."""
+    def __init__(self, stream):self.stream=stream;self.observed=io.BytesIO()
+    def write(self, text):
+        raw=text.encode('utf8')
+        if self.observed.tell()+len(raw)>2*1024*1024:raise RuntimeError('A10 operation stream exceeds approved bound')
+        self.stream.write(text);self.stream.flush();self.observed.write(raw)
+        return len(text)
+    def flush(self):self.stream.flush()
+    def raw(self):return self.observed.getvalue()
+
+
+def prepare(root,output,selection,checkout,scratch):
+    wa=api_module()
     experiment=scratch/'repo'
     checked(['git','clone','--quiet','--shared','--no-checkout',str(root),str(experiment)],root)
     setup=[]
@@ -163,7 +201,7 @@ def run_map(args):
     root=Path.cwd();selection=wa.parse_json(Path(args.selection).read_bytes());evaluation=Path(args.evaluation)
     cr.verify_replay_directory(evaluation/'review/replay.json')
     ledger=wa.parse_json((evaluation/'review/ledger.json').read_bytes())
-    report=wa.parse_json(wa._receipt_artifact(root,selection['report_ref']))
+    report=wa.parse_json(wa._ControlsProof(root).raw(selection['report_ref'],'selected independent input report'))
     result=wa.convergent_agf_verdict(ledger,report,expected_repository=selection['review_repository'],expected_head_sha=selection['source_commit'])
     wa._receipt_gate(result)
     Path(args.output).parent.mkdir(parents=True,exist_ok=True)
@@ -172,33 +210,34 @@ def run_map(args):
     return 0
 
 
-def run_capture(root,output,selection_ref,selection,checkout,outer_argv):
-    wa=api_module();experiment,candidate,scratch=prepare(root,output,selection,checkout)
+def run_capture(root,output,selection_ref,selection,checkout,outer_argv,scratch):
+    wa=api_module();experiment,candidate,scratch=prepare(root,output,selection,checkout,scratch)
     proof=wa._ControlsProof(experiment);proof.selection(selection_ref,'capture');proof.identity(candidate,selection['inputs'])
     proof.checkout(checkout,selection_ref,candidate);proof.prerequisites(selection,candidate);proof.authority(selection);proof.shadow(selection)
     put(experiment,PREFIX+'candidate.json',candidate)
     process_rows={}
     for label,path in [('boundary','.github/scripts/test_sandbox_boundaries.py'),('isolation','tools/test_convergent_review.py')]:
-        argv=[sys.executable,path];revision=git(experiment,'rev-parse','HEAD');process=command(argv,experiment)
+        argv=[sys.executable,path];revision=git(experiment,'rev-parse','HEAD');process=stage_command(output,label,argv,experiment)
         put(experiment,PREFIX+label+'/stdout',process.stdout);put(experiment,PREFIX+label+'/stderr',process.stderr)
         if process.returncode:
-            (output/(label+'-failure.stdout')).write_bytes(process.stdout);(output/(label+'-failure.stderr')).write_bytes(process.stderr)
             raise RuntimeError('actual '+label+' failed exit '+str(process.returncode))
         process_rows[label]=(argv,revision)
     evaluation=experiment/(PREFIX+'evaluation/run');packet=evaluation.parent/'packet.json';packet.parent.mkdir(parents=True,exist_ok=True)
-    checked([sys.executable,'tools/convergent_review.py','build-packet','--repo',str(experiment),'--repository',REPOSITORY,
-        '--review-id','wa123-controls','--mode','ordinary','--base',selection['packet_base'],'--head',selection['source_commit'],'--output',str(packet)],experiment)
+    build_argv=[sys.executable,'tools/convergent_review.py','build-packet','--repo',str(experiment),'--repository',REPOSITORY,
+        '--review-id','wa123-controls','--mode','ordinary','--base',selection['packet_base'],'--head',selection['source_commit'],'--output',str(packet)]
+    built=stage_command(output,'build-packet',build_argv,experiment)
+    if built.returncode:raise RuntimeError('actual packet construction failed exit '+str(built.returncode))
     prompt=experiment/'templates/convergent-review-prompt.md';runner=experiment/'tools/workflow_assurance_ci.py';adapter=experiment/'tools/linux_trial_sandbox.sh'
     argv=[sys.executable,'tools/evaluate_convergent_review_prompt.py','--packet',str(packet),'--prompt-template',str(prompt),
         '--runner',str(runner),'--isolation-adapter',str(adapter),'--output-dir',str(evaluation),'--timeout-seconds','120']
     if selection['prior_ledger'] is not None:
-        prior=evaluation.parent/'prior-ledger.json';prior.write_bytes(wa._receipt_artifact(experiment,selection['prior_ledger']));argv+=['--prior-ledger',str(prior)]
-    process=command(argv,experiment)
+        prior=evaluation.parent/'prior-ledger.json';prior.write_bytes(proof.raw(selection['prior_ledger'],'selected prior ledger'));argv+=['--prior-ledger',str(prior)]
+    process=stage_command(output,'evaluator',argv,experiment)
     put(experiment,PREFIX+'evaluation/stdout',process.stdout);put(experiment,PREFIX+'evaluation/stderr',process.stderr)
     if process.returncode:raise RuntimeError('actual enforced three-trial evaluator failed exit '+str(process.returncode)+': '+process.stderr.decode(errors='replace')[:600])
     mapped=experiment/(PREFIX+'map/result.json')
     argv=[sys.executable,'tools/workflow_assurance_ci.py','map','--selection',PREFIX+'inputs/selection-capture.json','--evaluation',str(evaluation),'--output',str(mapped)]
-    revision=git(experiment,'rev-parse','HEAD');process=command(argv,experiment)
+    revision=git(experiment,'rev-parse','HEAD');process=stage_command(output,'map',argv,experiment)
     put(experiment,PREFIX+'map/stdout',process.stdout);put(experiment,PREFIX+'map/stderr',process.stderr)
     if process.returncode:raise RuntimeError('actual A11 map rejected exit '+str(process.returncode))
     outputs=commit(experiment,'WA123 actual capability/evaluator/map outputs')
@@ -232,35 +271,72 @@ def run_capture(root,output,selection_ref,selection,checkout,outer_argv):
     return scratch
 
 
-def run_verify(root,output,selection_ref,selection,checkout,outer_argv):
-    wa=api_module();experiment,candidate,scratch=prepare(root,output,selection,checkout)
+def run_verify(root,output,selection_ref,selection,checkout,outer_argv,scratch):
+    wa=api_module();experiment,candidate,scratch=prepare(root,output,selection,checkout,scratch)
     proof=wa._ControlsProof(experiment);proof.selection(selection_ref,'verify');proof.identity(candidate,selection['inputs']);proof.checkout(checkout,selection_ref,candidate)
-    # Existing output branch is imported separately from immutable Root C/V history.
-    bundle=output.parent/(output.name+'-capture.bundle');bundle.write_bytes(wa._receipt_artifact(root,selection['capture_pack_ref']))
+    # Pinned raw transport is bounded and hashed before any owned object import.
+    raw=proof.raw(selection['capture_pack_ref'],'selected capture bundle',16*1024*1024)
+    tip,pack=proof.bundle_header(raw,selection['source_commit'])
+    bundle=output.parent/(output.name+'-capture.bundle');bundle.write_bytes(raw)
+    argv=['git','-C',str(experiment),'index-pack','--strict','--fix-thin','--stdin']
+    process=subprocess.run(argv,cwd=experiment,input=pack,capture_output=True,
+        env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+    import_process=process
+    if process.returncode:
+        failed_child(output,'capture-index-pack',argv,experiment,process)
+        raise RuntimeError('strict selected capture index-pack failed exit '+str(process.returncode))
     checked(['git','-C',str(experiment),'bundle','verify',str(bundle)],experiment)
     git(experiment,'fetch','--no-tags','--no-write-fetch-head',str(bundle),'refs/wa123/proof:refs/wa123/import-capture')
+    if git(experiment,'rev-parse','refs/wa123/import-capture')!=tip:raise RuntimeError('imported capture advertised tip differs')
+    imported,rows=proof.pack(raw,selection['source_commit'])
+    if imported!=tip:raise RuntimeError('validated capture tip differs')
+    # Root checked the adjacent manifest/Host before selecting this raw Ref.
+    # Recompute every blob/mode/parent/protected boundary from these exact bytes.
+    proof.bind_transport(selection['source_commit'],tip,rows)
     git(experiment,'checkout','--quiet','--detach','refs/wa123/import-capture')
     put(experiment,PREFIX+'inputs/selection-verify.json',selection)
-    policy=wa.parse_json(wa._receipt_artifact(root,selection['a10_policy_ref']))
-    receipt=wa.parse_json(wa._receipt_artifact(root,policy['recovery']))
+    put(experiment,PREFIX+'verify/import.stdout',import_process.stdout)
+    put(experiment,PREFIX+'verify/import.stderr',import_process.stderr)
+    put(experiment,PREFIX+'verify/import.json',dict(argv=argv,cwd=str(experiment),revision=selection['source_commit'],actual_exit=import_process.returncode,
+        selected_pack_ref=selection['capture_pack_ref'],advertised_tip=tip,inventory=rows))
+    policy=wa.parse_json(proof.raw(selection['a10_policy_ref'],'selected A10 policy'))
+    receipt=wa.parse_json(proof.raw(policy['recovery'],'selected A10 recovery receipt'))
     put(experiment,PREFIX+'inputs/policy-verify.json',policy);put(experiment,PREFIX+'inputs/receipt-verify.json',receipt)
     commit(experiment,'WA123 independently selected verification inputs')
-    verified=wa.verify_stage_receipt(experiment,receipt,policy=policy)
-    state=wa.parse_json(wa._receipt_artifact(root,selection['shadow_state_ref']))
-    advance=wa.plan_receipt_transition(experiment,state,receipt,policy=policy)
-    noop=wa.plan_receipt_transition(experiment,advance['state'],receipt,policy=policy)
-    republish=wa.plan_receipt_transition(experiment,state,None,policy=policy)
-    import copy
-    absent=copy.deepcopy(policy);absent['recovery']['path']+='.missing-wa123'
-    if git(experiment,'ls-tree',absent['recovery']['revision'],'--',absent['recovery']['path']):raise RuntimeError('selected missing recovery path exists')
-    rerun=wa.plan_receipt_transition(experiment,state,None,policy=absent)
-    conflicting=copy.deepcopy(advance['state']);conflicting['history'].append(copy.deepcopy(conflicting['history'][-1]))
-    try:wa.plan_receipt_transition(experiment,conflicting,receipt,policy=policy)
-    except wa.AssuranceError:pass
-    else:raise RuntimeError('actual A10 duplicate advancement accepted')
-    result=dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
-    if [advance['action'],noop['action'],republish['action'],rerun['action']]!=['advance','noop','republish','rerun-required']:raise RuntimeError('actual A10 transition actions')
-    put(experiment,PREFIX+'verify/result.json',result);put(experiment,PREFIX+'verify/stdout',encoded(result));put(experiment,PREFIX+'verify/stderr',b'')
+    def selected_outputs(value):
+        if type(value) is dict:
+            if set(value)=={'path','revision','sha256'} and value['path'].startswith(PREFIX):proof.raw(value,'selected imported capture output')
+            else:
+                for item in value.values():selected_outputs(item)
+        elif type(value) is list:
+            for item in value:selected_outputs(item)
+    selected_outputs(policy);selected_outputs(receipt)
+    stdout=OperationTee(sys.stdout);stderr=OperationTee(sys.stderr)
+    try:
+        with contextlib.redirect_stdout(stdout),contextlib.redirect_stderr(stderr):
+            verified=wa.verify_stage_receipt(experiment,receipt,policy=policy)
+            state=wa.parse_json(proof.raw(selection['shadow_state_ref'],'selected shadow state'))
+            advance=wa.plan_receipt_transition(experiment,state,receipt,policy=policy)
+            noop=wa.plan_receipt_transition(experiment,advance['state'],receipt,policy=policy)
+            republish=wa.plan_receipt_transition(experiment,state,None,policy=policy)
+            import copy
+            absent=copy.deepcopy(policy);absent['recovery']['path']+='.missing-wa123'
+            if git(experiment,'ls-tree',absent['recovery']['revision'],'--',absent['recovery']['path']):raise RuntimeError('selected missing recovery path exists')
+            rerun=wa.plan_receipt_transition(experiment,state,None,policy=absent)
+            conflicting=copy.deepcopy(advance['state']);conflicting['history'].append(copy.deepcopy(conflicting['history'][-1]))
+            try:wa.plan_receipt_transition(experiment,conflicting,receipt,policy=policy)
+            except wa.AssuranceError:pass
+            else:raise RuntimeError('actual A10 duplicate advancement accepted')
+            result=dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
+            if [advance['action'],noop['action'],republish['action'],rerun['action']]!=['advance','noop','republish','rerun-required']:raise RuntimeError('actual A10 transition actions')
+            # These are emitted operation bytes, before O/C and the final I envelope.
+            sys.stdout.write(encoded(result).decode('utf8'));sys.stdout.flush()
+    except Exception:
+        failed=subprocess.CompletedProcess(outer_argv,1,stdout.raw(),stderr.raw())
+        failed_child(output,'a10-operation',outer_argv,root,failed)
+        raise
+    put(experiment,PREFIX+'verify/result.json',result)
+    put(experiment,PREFIX+'verify/stdout',stdout.raw());put(experiment,PREFIX+'verify/stderr',stderr.raw())
     outputs=commit(experiment,'WA123 actual matching-runtime A10 results')
     capture=capture_record(candidate,selection['producer'],outer_argv,root,checkout['sha'],reference(experiment,PREFIX+'verify/stdout',outputs),reference(experiment,PREFIX+'verify/stderr',outputs))
     put(experiment,PREFIX+'verify/capture.json',capture);tip=commit(experiment,'WA123 actual verification wrapper capture')
@@ -286,22 +362,26 @@ def main():
     output.mkdir(parents=True)
     checkout=current_checkout(root)
     if args.selection!=SELECTION:raise RuntimeError('only fixed independently selected Root input permitted')
-    wa=api_module();raw=Path(args.selection).read_bytes();selection=wa.parse_json(raw)
+    wa=api_module();selected_path=Path(args.selection)
+    if selected_path.stat().st_size>2*1024*1024:raise RuntimeError('selected stage input exceeds approved size bound')
+    raw=selected_path.read_bytes();selection=wa.parse_json(raw)
     if raw!=encoded(selection) or selection['mode']!=args.mode:raise RuntimeError('canonical selected stage input required')
     selection_ref=reference(root,SELECTION,checkout['sha'])
+    if hashlib.sha256(raw).hexdigest()!=selection_ref['sha256']:raise RuntimeError('actual fixed selected input differs from immutable checkout bytes')
     outer_argv=[sys.executable,'tools/workflow_assurance_ci.py',args.mode,'--selection',SELECTION,'--output',str(output)]
     # Policy-producing ownership stays outside this process. Only selected bytes
     # and actual runtime/commands are emitted; Root reviews before selection.
-    scratch=None
+    scratch=Path(tempfile.mkdtemp(prefix='wa123-experiment-',dir=output.parent));succeeded=False
     try:
         function=run_capture if args.mode=='capture' else run_verify
-        scratch=function(root,output,selection_ref,selection,checkout,outer_argv)
+        function(root,output,selection_ref,selection,checkout,outer_argv,scratch)
+        succeeded=True
         return 0
     except Exception as exc:
-        (output/'failure.txt').write_text(type(exc).__name__+': '+str(exc)+'\n')
+        (output/'failure.txt').write_text(type(exc).__name__+': '+str(exc)+'\nowned scratch retained: '+str(scratch)+'\n')
         raise
     finally:
-        if scratch is not None:
+        if succeeded:
             import shutil
             if scratch.parent!=output.parent or not scratch.name.startswith('wa123-experiment-'):raise RuntimeError('unowned cleanup refused')
             shutil.rmtree(scratch)
