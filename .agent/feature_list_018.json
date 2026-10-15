@@ -1,7 +1,7 @@
 {
   "phase": "018-workflow-assurance-controls",
   "spec_version": "0.1.5",
-  "phase_status": "in_progress",
+  "phase_status": "complete",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
   "budget_categories": {
@@ -147,8 +147,8 @@
       "id": "123",
       "name": "Capable CI, control dogfood and close",
       "description": "Prove A11/A10 on the same actual candidate inside an existing CI job; retain actual checkout/source and receipts; close after independent QA/capture, no new WA job or gate reduction.",
-      "status": "in_progress",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": [
         "122"
       ],
@@ -170,7 +170,11 @@
         "tools/fixtures_self_test.sh",
         ".agent/evidence/123/"
       ],
-      "stage": "repaired-source-local-verification"
+      "stage": "captured",
+      "evidence_ref": ".agent/evidence/123/evidence-capture.json",
+      "contract_ref": ".agent/contracts/123.json",
+      "qa_ref": ".agent/qa/123.json",
+      "completed_at": "2026-10-15T20:12:14.233391+00:00"
     }
   ],
   "future_interfaces": [
