@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "018-workflow-assurance-controls",
-  "current_feature": "122",
+  "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T05:03:00.945297+00:00",
+  "updated_at": "2026-10-15T05:05:06.074619+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1443,7 +1443,7 @@
     "122-ci": {
       "attempts": 3,
       "limit": 3,
-      "status": "final-exact-head-passed-captured-and-merged-awaiting-main",
+      "status": "final-exact-head-passed-captured-and-merged",
       "strategy": "finished lifecycle/docs; unchanged reviewed Source/test; final exact-head verification"
     },
     "122-executable-review": {
@@ -1517,7 +1517,17 @@
     "122-main-ci-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "prepared-awaiting-main-success"
+      "status": "passed"
+    },
+    "123-selection": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "passed"
+    },
+    "123-contract": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "prepared"
     }
   },
   "history": [
@@ -6569,6 +6579,12 @@
       "event": "122-final-scope-once-and-final-head-release",
       "detail": "Final whole122939 =Source/docs153+tests279+process507 (estimate950; process estimate500 exceeded7). Original7200/9360; prior3364\u21924303 once. Raw401152 retained at measurement revision092a305, including42adjacent121 files; post-head transport adds raw only. Bothcompliance/maintaineddiff0;12714protected entries unchanged. CI3 finalhead allocated, no Source/test changes.",
       "evidence": ".agent/evidence/122/scope-budget-row-final.json"
+    },
+    {
+      "at": "2026-10-15T05:05:06.074619+00:00",
+      "event": "123-selected-after-122-merge-main-ci",
+      "detail": "PR103actualmerge79811ef mainCI38684142214 all5 success captured019398f; finalPRCI38683569155+38683569228 all6, exactdefault46/checkout5102db verified. Canonical123IN_PROGRESS4726e91 before derived records. Sole remaining018feature123 estimate1200; exact28add-only prior122E artifacts bound at019398f, rawcounted notscopeexception. Bothprecode approvals and independent tests/bundles stillrequired before Source.",
+      "evidence": ".agent/evidence/123/source-prerequisite.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7058,7 +7074,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "122",
+  "active_contract_id": "123",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -7130,7 +7146,7 @@
       }
     ]
   },
-  "last_action": "PR103 merged79811ef after all6 exact-head checks; mainCI38684142214 pending,123 remains pending.",
+  "last_action": "122 fully integrated; select123 contract preparation only after canonical4726e91. Original7200/9360, actual4303 unchanged.",
   "completed_contract_ids": [
     "099",
     "103",
