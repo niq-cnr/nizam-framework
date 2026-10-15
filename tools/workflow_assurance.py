@@ -1341,8 +1341,11 @@ class _ControlsProof:
     def exact_commit(self, revision):
         _bundle_hex(revision, 40, 'controls immutable revision')
         if revision not in self.commits:
-            require(git(self.root, 'rev-parse', '--verify', revision+'^{commit}').decode().strip()==revision,
-                    'controls exact commit')
+            try:
+                observed=git(self.root, 'rev-parse', '--verify', revision+'^{commit}').decode().strip()
+            except AssuranceError as exc:
+                raise AssuranceError('controls artifact ref commit unavailable '+revision+': '+str(exc)[:600]) from exc
+            require(observed==revision, 'controls exact commit')
             self.commits.add(revision)
 
     def entry(self, revision, path):
@@ -1350,7 +1353,7 @@ class _ControlsProof:
         key=(revision,path)
         if key not in self.entries:
             rows=git(self.root,'--literal-pathspecs','ls-tree','-z',revision,'--',path).split(b'\0')
-            require(len(rows)==2 and rows[1]==b'', 'missing controls Git input: '+path)
+            require(len(rows)==2 and rows[1]==b'', 'missing controls artifact path: '+path)
             metadata,name=rows[0].split(b'\t',1);mode,kind,oid=metadata.decode().split()
             require(name.decode()==path and kind=='blob' and mode in ('100644','100755'), 'unsafe controls Git input')
             size=int(git(self.root,'cat-file','-s',oid).decode())
@@ -1815,7 +1818,10 @@ class _ControlsProof:
         self.obj(report['final_verdict'],'approved','report verdict')
         require(type(report['final_verdict']['approved']) is bool and all(type(report[k]) is list for k in ('issues','missing_acceptance_coverage','unsupported_claims','required_fixes')),'report boolean/array types')
         mapped=convergent_agf_verdict(ledger,report,expected_repository=_WA123_REPOSITORY,expected_head_sha=selection['source_commit'])
-        _receipt_gate(mapped)
+        try:
+            _receipt_gate(mapped)
+        except AssuranceError as exc:
+            raise AssuranceError('A11 AGF report/ledger approval failure: '+str(exc)[:600]) from exc
         self.same(mapped,self.value(evidence['a11_result_ref'],'A11 mapped result'),'A11 report/ledger result')
         return mapped
 
