@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T11:11:13.762776+00:00",
+  "updated_at": "2026-10-15T11:12:26.874313+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1556,11 +1556,14 @@
     "123-ci-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "published-awaiting-actual-hosted-result",
+      "status": "actual-hosted-run-in-progress",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-capture1-release.json",
       "head_sha": "e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8",
-      "pull_request": 104
+      "pull_request": 104,
+      "run_id": 38725446673,
+      "run_attempt": 1,
+      "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4"
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -6941,6 +6944,12 @@
       "event": "123-ci-capture1-own-pr-publication",
       "detail": "Actualgitpush0 then ghprcreate0 createown draftPR104 at publishedhead e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8. Realcapture operation selectedbeforepublication; run/attempt/job/artifactIDs awaitactualobservations. Do notpushnewhead whilecapture runs.",
       "evidence": ".agent/evidence/123/root-ci-capture1-pr-create.execution.json"
+    },
+    {
+      "at": "2026-10-15T11:12:26.874313+00:00",
+      "event": "123-ci-capture1-actual-run-observed",
+      "detail": "ActualREST0 PR104 confirmsdraft/open head e4db andPRmergea20f; actualworkflowlist0 yields uniquecompliance pull_request run38725446673/attempt1 in_progress. Actualjobcheckout/runtime/trials/archive/successremainpending.",
+      "evidence": ".agent/evidence/123/root-ci-capture1-initial-runs.execution.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7502,7 +7511,7 @@
       }
     ]
   },
-  "last_action": "123 capture1 branch published at immutablee4db and actual draftPR104 created; awaiting actualCIrun/attempt/jobs. Bothlocal0/1lanes andinputprobe passed; no hostedproof/success claim.",
+  "last_action": "123 actual hostedcapture run38725446673/attempt1 in_progress for own draftPR104/e4dbhead; actualPRmergea20f observed, jobcheckout/outputs pending. Do notpushnewhead whilecaptureactive.",
   "completed_contract_ids": [
     "099",
     "103",
