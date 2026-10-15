@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:17:59.687447+00:00",
+  "updated_at": "2026-10-15T03:21:16.936745+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1460,7 +1460,7 @@
     "122-ci-diagnosis": {
       "attempts": 2,
       "limit": 3,
-      "status": "preparing-exact-hosted-git-diagnostic",
+      "status": "dispatched-once-exact-git",
       "strategy": "type/interface analysis; match observed Git2.55 without induced configuration"
     }
   },
@@ -6399,6 +6399,12 @@
       "event": "122-ci-diagnosis2-preparation",
       "detail": "InducedGit2.43autoGC1diagnostic failedteardown withactivehousekeeping, notexacthostedcause. Preserveonce-onlyfailure. Newownedroot2 atc70d59c andisolatedpublicGit2.55buildpin e9019fcafe0040228b8631c30f97ae1adb61bcdc authorizedforpreparation; no systeminstall/globalconfig. Unchangedsemanticselectoronceonly afterRootfreeze release, noinjectedGCconfig/assertionchanges.",
       "evidence": ".agent/evidence/122/ci1-failure-capture.json"
+    },
+    {
+      "at": "2026-10-15T03:21:16.936745+00:00",
+      "event": "122-ci-diagnosis2-release",
+      "detail": "VerifiedfrozenobserverandrunnerSHA plusofficialGit2.55buildbinarySHA. Exactlyoneunchangedsemanticselectorwithsnapshotobserver andtracebackchain authorizedinownedroot2; noGCconfiginjection/Source/tests edits orhostedsuccessclaim.",
+      "evidence": ".agent/evidence/122/ci1-diagnosis2-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
