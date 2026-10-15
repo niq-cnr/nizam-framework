@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T11:09:43.179686+00:00",
+  "updated_at": "2026-10-15T11:11:13.762776+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1556,9 +1556,11 @@
     "123-ci-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-before-own-pr-publication",
+      "status": "published-awaiting-actual-hosted-result",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
-      "release": ".agent/evidence/123/root-ci-capture1-release.json"
+      "release": ".agent/evidence/123/root-ci-capture1-release.json",
+      "head_sha": "e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8",
+      "pull_request": 104
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -6933,6 +6935,12 @@
       "event": "123-ci-capture1-release",
       "detail": "Allocate firstcaptureproducer beforedispatch; exactprep2 bytes copiedfixedCLIpath afterall537currentprotectedbytes/modesverified. Actualcandidateandblocker0/1 admitted. Own draftPRpublicationauthorized; no futureGitHubIDs/successclaimed.",
       "evidence": ".agent/evidence/123/root-ci-capture1-release.json"
+    },
+    {
+      "at": "2026-10-15T11:11:13.762776+00:00",
+      "event": "123-ci-capture1-own-pr-publication",
+      "detail": "Actualgitpush0 then ghprcreate0 createown draftPR104 at publishedhead e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8. Realcapture operation selectedbeforepublication; run/attempt/job/artifactIDs awaitactualobservations. Do notpushnewhead whilecapture runs.",
+      "evidence": ".agent/evidence/123/root-ci-capture1-pr-create.execution.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7494,7 +7502,7 @@
       }
     ]
   },
-  "last_action": "123 hostedcapture1 released after actualbothprivate0/1 andinputprobe0; fixedselectionexactprep2 committedbeforeownPRpublication. ActualhostedIDs/runtime/successpending; no Sourcechange.",
+  "last_action": "123 capture1 branch published at immutablee4db and actual draftPR104 created; awaiting actualCIrun/attempt/jobs. Bothlocal0/1lanes andinputprobe passed; no hostedproof/success claim.",
   "completed_contract_ids": [
     "099",
     "103",
