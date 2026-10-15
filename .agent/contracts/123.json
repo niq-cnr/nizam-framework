@@ -2,7 +2,7 @@
   "contract_id": "123",
   "feature_id": "123",
   "name": "Capable CI, control dogfood and close",
-  "status": "proposed",
+  "status": "approved",
   "spec_ref": ".agent/product_spec_018.md",
   "scope": {
     "files_create": [{"path": ".agent/contracts/123.json", "purpose": "Generator proposal; Root alone promotes lifecycle after both independent pre-code approvals."}, {"path": "tools/workflow_assurance_ci.py", "purpose": "Generator-owned bounded actual-candidate A11/A10 dogfood runner and compact artifact transport; additive reuse, no scheduler or authority."}, {"path": ".agent/evidence/123/*", "purpose": "Role-owned frozen API/test obligations, independent controls, Root-selected experiment policy, minimal immutable proof pack, actual captures, hosted receipts, preservation, measurement and capture evidence."}, {"path": ".agent/validator/123-*.json", "purpose": "Independent Mode A/Mode B verdicts."}, {"path": ".agent/qa/123*.json", "purpose": "Independent contract review, provisional and executable bundle reviews, fresh QA verdict."}, {"path": ".agent/evidence/123-qa-adversarial.txt", "purpose": "Exactly one independently selected additional fresh-QA adversarial check."}],
@@ -72,10 +72,12 @@
   "evidence_dir": ".agent/evidence/123/",
   "evidence_convention": "Role-owned compact stdout/stderr and execution JSON record exact argv/cwd/environment/actual exit/exercised revision plus Source/test/contract Git objects and digests. Typed refs name actual artifact-containing commits; immutable bundle inventory enables offline import. Generator revision3 preparation uses contract3-* only. Preserve all failed runs; no repeated giant snapshots. Fresh extra check uses .agent/evidence/123-qa-adversarial.txt. Revision2 uses contract2-* only; contract1 and both rejected verdicts remain immutable history. Revision3 retains both historically approved proposal2 gates and author-input hold; this newly found completeness gap does not rewrite them as rejections.",
   "approvals": {
-    "validator_mode_a": false,
-    "evaluator_contract_review": false,
-    "revisions": 2
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2,
+    "approved_at": "2026-10-15T06:07:51.194975+00:00"
   },
+  "approval_evidence": {"mode_a": ".agent/validator/123-mode-a-rev2.json", "contract_review": ".agent/qa/123-contract-review-rev2.json", "proposal_sha256": "cc441e823e3dcf430228527d938ad0aa5944e5181f7a5a8a6181774b37cb1f74", "proposal_revision": "d089cdeeb0bcbbb4eaa9b7e1b7afb669421d2490"},
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "protocol": {
     "notation": "Every record below is closed: exactly its listed keys, all required. No unknown keys, aliases, duplicate JSON keys, nonfinite/cyclic values, bool-as-int, unsafe/nonregular/symlink/hardlink artifact paths. S=nonempty UTF8 string1..1024; H40/H64=lowercase exact hex40/64; I=exact JSON integer; B=exact boolean; Ref={path:safe relative S,sha256:H64,revision:H40}, checked regular Git blob100644/100755 at actual artifact-containing commit and separately materialized bytes/mode in an owned revision-specific scratch root; multiple historical versions of one path do not require one mutable checkout to equal both. Existing shapes are reused whole with their current exact validation; new records cannot add fields to them. Lists are ordered and duplicates rejected unless explicitly stated. New JSON payloads are canonical UTF8 JSON with sorted keys, compact separators, Unicode directly encoded and exactly one trailing LF; hashes of Refs cover exact bytes. Use existing parse_json/canonical plus LF for these records; existing convergent artifacts retain their own current canonical_json_bytes format. T=ISO8601 UTC string ending Z, A=absolute normalized non-symlink path. JSON is the finite JSON domain; every list element type is explicit below. Reject hard links (nlink!=1) for materialized inputs/outputs; raw Git blobs are validated by mode/kind. External GitHub JSON alone has the explicit open-field policy below. No normalizer may create an observed fact absent from raw evidence.",
