@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T02:08:30.448463+00:00",
+  "updated_at": "2026-10-15T02:15:03.335758+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1405,7 +1405,7 @@
     "122-provisional-review": {
       "attempts": 3,
       "limit": 3,
-      "status": "dispatched",
+      "status": "passed",
       "strategy": "architectural review of schema-union acceptance"
     },
     "122-provisional2-inspection": {
@@ -1415,9 +1415,10 @@
       "strategy": "type/interface analysis"
     },
     "122-implementation": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "semantic-failed"
+      "status": "dispatched",
+      "strategy": "type/interface analysis of supported verdict schema union"
     },
     "122-controls": {
       "attempts": 1,
@@ -1425,9 +1426,10 @@
       "status": "preparing"
     },
     "122-compatibility-inspection": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "failed-semantic"
+      "status": "dispatched",
+      "strategy": "same behavioral legacy fixture after Source repair; new output prefix only"
     }
   },
   "history": [
@@ -6287,6 +6289,12 @@
       "event": "122-author3-freeze-provisional3-release",
       "detail": "Rootverifiedallauthor3immutable refs and recordedrefprotectedpins; static0/newsemanticcasefailed1reallegacyFalse rejection, preserved12203. Test/interface renewed; Source2notyetapproved. Source1old46pass andtwo genuinefailedlegacycommands remainhistoricaltruth.",
       "evidence": ".agent/evidence/122/author3-root-binding.json"
+    },
+    {
+      "at": "2026-10-15T02:15:03.335758+00:00",
+      "event": "122-source2-release",
+      "detail": "Strictindependent66a9f38 testregressionapproval/current5pins verified. GenuineSourcee4d failures6267171/author3case1 precede typedoptionallegacy-shape repair; no frozenassertionweakening. Source2initialcommit beforeonecompatibilitybehaviorcopy(newEprefixonly) anddefault46. Counter2/max3, oldproof preserved; finalcontrols/seal/ModeB/freshQA/capture stillrequired.",
+      "evidence": ".agent/evidence/122/source2-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6819,7 +6827,7 @@
       }
     ]
   },
-  "last_action": "122 author3 schema-unionregression frozen e251/sourcee4d actualsemanticcase1, static0; independentprovisional3next beforeminimalSource2repair.",
+  "last_action": "122 strictprovisional3passed; Source2minimal _failure_rejection repair releasedinnewownedroot after genuine schema-unionred. Updated46+samelegacyprobe onceeach, controlsstillheld.",
   "completed_contract_ids": [
     "099",
     "103",
