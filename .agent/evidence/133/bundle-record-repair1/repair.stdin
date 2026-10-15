@@ -1,0 +1,21 @@
+import hashlib,json,subprocess,jsonschema
+from pathlib import Path
+root=Path.cwd(); path='.agent/qa/133-bundle-review1.json'; original='ca6b6bd70a5ef88be710b62e8e3ebd32eca7971c'; sha=lambda b:hashlib.sha256(b).hexdigest()
+old_raw=subprocess.check_output(['git','show',original+':'+path]); assert sha(old_raw)=='140c95fdd00e0111435c1fa905e3d50ac806d385f85fe3c3e4ca99ba1e137759'
+old=json.loads(old_raw); new_raw=(root/path).read_bytes(); new=json.loads(new_raw); restored=json.loads(new_raw)
+assert restored.pop('feature')=='133'; assert restored['final_verdict'].pop('summary'); assert restored==old
+assert new['final_verdict']['approved'] is True and all(new[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
+for schema_path in ('schema/contract_review.schema.json','.nizam/schema/contract_review.schema.json'):
+ raw=(root/schema_path).read_bytes(); schema=json.loads(raw); jsonschema.Draft202012Validator(schema).validate(new)
+ errors=list(jsonschema.Draft202012Validator(schema).iter_errors(old)); assert {tuple(e.absolute_path) for e in errors}=={(),('final_verdict',)}
+ print(json.dumps(dict(schema=schema_path,sha256=sha(raw),repaired_schema_valid=True,original_missing_feature_and_summary=True),sort_keys=True))
+routes={'contract_review':0,'qa_verdict':0,'skip':0}
+for p in sorted((root/'.agent/qa').glob('*.json')):
+ doc=json.loads(p.read_bytes()); family='contract_review' if 'review' in doc else 'qa_verdict' if 'qa_pass' in doc or 'verdict' in doc else 'skip'; routes[family]+=1
+ if family!='skip': jsonschema.Draft202012Validator(json.loads((root/f'schema/{family}.schema.json').read_text())).validate(doc)
+for name,digest in [('tools/workflow_assurance.py','5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d'),('tools/test_receipt_candidate_batching.py','b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024'),('tools/fixtures_self_test.sh','098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e'),('.agent/contracts/133.json','af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899')]: assert sha((root/name).read_bytes())==digest
+assert sha(subprocess.check_output(['git','show',new['reviewed_revision']+':tools/workflow_assurance.py']))==new['bundle']['unchanged_api']
+assert all(sha((root/p).read_bytes())==digest for p,digest in new['static_evidence']['artifacts'].items())
+assert subprocess.check_output(['git','diff','--name-only']).decode().splitlines()==[path]
+assert not subprocess.check_output(['git','diff','--','.nizam','.agent/run_state.json']) and not subprocess.check_output(['git','ls-files','--others','-z','--','.nizam'])
+print(json.dumps(dict(original_revision=original,original_sha256=sha(old_raw),repaired_sha256=sha(new_raw),only_added_json_paths=['/feature','/final_verdict/summary'],all_other_original_fields_equal=True,existing_qa_routes_schema_valid=routes,current_product_and_frozen_inputs_and_original_raw_unchanged=True,historical_api_binding_verified=True,static_only=True,post_code_qa_pass_claimed=False),sort_keys=True))
