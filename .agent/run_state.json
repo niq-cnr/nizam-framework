@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T04:39:13.903722+00:00",
+  "updated_at": "2026-10-15T04:39:46.499180+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1492,7 +1492,12 @@
     "122-evidence-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "prepared"
+      "status": "passed"
+    },
+    "122-closure": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "passed"
     }
   },
   "history": [
@@ -6526,6 +6531,12 @@
       "event": "122-evidence-capture1-prepared",
       "detail": "Fresh QA strict handoff3833c9b received; freeze Root readonly admission helper, use new owned root; no lifecycle completion yet. Two incidental readonly JSON shape lookup errors changed no files or behavior.",
       "evidence": ".agent/evidence/122/root-capture1.py"
+    },
+    {
+      "at": "2026-10-15T04:39:46.499180+00:00",
+      "event": "122-captured-canonical-first-closure",
+      "detail": "Root admission54d5125 actual0; canonical phase step completed f4dba5e first, then derived contract/list/state/manifest. Approved13dc bytes preserved at admission ref.9mandatory+1own check/exact46, 54 QA refs and17bundle refs/8objects verified. Final122 measurement pending; no row appended yet.",
+      "evidence": ".agent/evidence/122/closure.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7058,7 +7069,7 @@
       }
     ]
   },
-  "last_action": "Strict ModeB1 approved; release first fresh QA9 mandatory plus exactly1 additional duplicate-key cause check.",
+  "last_action": "Feature122 captured and canonical completion recorded first; final docs, whole-scope measurement and PR103 integration pending;123 remains pending.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -7083,7 +7094,8 @@
     "128",
     "119",
     "120",
-    "121"
+    "121",
+    "122"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
