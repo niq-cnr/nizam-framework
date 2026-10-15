@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T05:14:56.830813+00:00",
+  "updated_at": "2026-10-15T05:18:28.839093+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1525,19 +1525,20 @@
       "status": "passed"
     },
     "123-contract": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "proposed"
+      "status": "prepared-revision",
+      "strategy": "type/interface and execution provenance analysis; exact schemas and independent capture selection before Source"
     },
     "123-mode-a": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "rejected-awaiting-revision"
     },
     "123-contract-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "rejected-awaiting-revision"
     }
   },
   "history": [
@@ -6601,6 +6602,12 @@
       "event": "123-proposal1-dual-gate-release",
       "detail": "Generator0f7433ac contractSHA00e2b4ec root+installedschema0; ownstaticproof0. Bothgates inspect identicalproposedbytes inindependentownedroots; Source/test remainfff790/800b59, inherited46. Noauthority/Source/testbundle approved yet.",
       "evidence": ".agent/evidence/123/contract1-static.execution.json"
+    },
+    {
+      "at": "2026-10-15T05:18:28.839093+00:00",
+      "event": "123-proposal1-rejected-route-revision2",
+      "detail": "Strictrejections ModeAf2c4542 (2highissues) and independentreviewa70bca6 (1highissue), root+installedschema0. Fixclosedpublicprotocol/commands+Rootselectionandrealpertrialenforcedprovenance. Also preserveknownlocalnamespacefailure; nohostpolicy/modelauthorization inferred. Originalcontract00e2b4ec andbothfailuresretained; newownedcontract2root, noSource/tests.",
+      "evidence": ".agent/evidence/123/contract1-rejection-routing.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7162,7 +7169,7 @@
       }
     ]
   },
-  "last_action": "123 proposedcontract00e2b4ec ready for both independent pre-code gates; noimplementation approval.",
+  "last_action": "123 proposal1 rejected by bothgates; boundedGeneratorrevision2 prepared, noSource/tests authorized.",
   "completed_contract_ids": [
     "099",
     "103",
