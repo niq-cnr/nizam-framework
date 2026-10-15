@@ -16,7 +16,10 @@
       "revision": "444fcf311b4199078336752085d9d074543ad834",
       "actual_exit": 0,
       "stdout": ".agent/evidence/123/official-upload-action-release.stdout.json",
-      "stderr": ".agent/evidence/123/official-upload-action-release.stderr.txt"
+      "stderr": ".agent/evidence/123/official-upload-action-release.stderr.txt",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
     },
     {
       "argv": [
@@ -28,7 +31,10 @@
       "revision": "444fcf311b4199078336752085d9d074543ad834",
       "actual_exit": 0,
       "stdout": ".agent/evidence/123/official-upload-action-tag.stdout.json",
-      "stderr": ".agent/evidence/123/official-upload-action-tag.stderr.txt"
+      "stderr": ".agent/evidence/123/official-upload-action-tag.stderr.txt",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
     },
     {
       "argv": [
@@ -40,8 +46,17 @@
       "revision": "444fcf311b4199078336752085d9d074543ad834",
       "actual_exit": 0,
       "stdout": ".agent/evidence/123/official-upload-action-manifest.stdout.json",
-      "stderr": ".agent/evidence/123/official-upload-action-manifest.stderr.txt"
+      "stderr": ".agent/evidence/123/official-upload-action-manifest.stderr.txt",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
     }
   ],
-  "boundary": "Primary official metadata only. No Action execution, workflow edit, selected feature policy, hosted assurance proof or compatibility verdict."
+  "boundary": "Primary official metadata only. No Action execution, workflow edit, selected feature policy, hosted assurance proof or compatibility verdict.",
+  "action_manifest_sha256": "c5979822866a72362e609844b6ebe77d4b7e759af68cc1c2c425dcf51481fab4",
+  "manifest_observation": {
+    "runs_using": "node24",
+    "archive_default": "true",
+    "boundary": "Observed pinned official action.yml; no compatibility/execution verdict."
+  }
 }
