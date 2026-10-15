@@ -80,7 +80,7 @@ def main():
             observed |= isinstance(value, dict) and 'files' in value and ('capture' in p.name or 'inventory' in p.name)
             observed |= isinstance(value, dict) and 'physical_before' in value and 'physical_after' in value
             if not observed:
-                kind, charge = 'authored decision/report; entire mixed document conservatively charged', lines
+                kind, charge = 'conservative process charge for non-frame JSON; includes decisions and quoted/derived facts', lines
         elif '.stdin' in p.name and not raw.startswith(b'PACK'):
             try:
                 ast.parse(raw)
@@ -97,6 +97,8 @@ def main():
         rows.append(dict(path=path, sha256=sha(raw), frozen_evidence_lines=lines,
                          authored_process_overlay=charge, attribution=kind))
     overlay = sum(r['authored_process_overlay'] for r in rows)
+    source_only = sum(r['authored_process_overlay'] for r in rows
+                      if r['attribution'].startswith(('maintained source', 'retained inline authored source', 'external CLI authored delta')))
     frozen = total('BUDGET_COUNTED_LINES')
     actual = frozen + overlay
     prior = 4303
@@ -108,6 +110,9 @@ def main():
                   frozen_evidence_lines=total('EVIDENCE_LINES'),
                   frozen_excluded_lines=total('EXCLUDED_LINES'),
                   authored_process_overlay=overlay, actual_conservative=actual,
+                  authored_source_only_overlay=source_only,
+                  phase_source_only_lower_bound=prior+frozen+source_only,
+                  source_only_ceiling_exceeded=prior+frozen+source_only > 9360,
                   prior_completed_total=prior, phase_total_conservative=prior+actual,
                   original_phase_estimate=7200, phase_ceiling=9360,
                   ceiling_exceeded=prior+actual > 9360,
