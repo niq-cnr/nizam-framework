@@ -2038,9 +2038,19 @@
     "133-contract": {
       "attempts": 1,
       "limit": 3,
-      "status": "proposal-released",
+      "status": "approved",
       "plan_revision": "29bfc9aa4aab5e58641bf7ff9d9b80b9fd2378a5",
-      "scope": "Contract proposal only; no implementation before activation, dual approval and clean PR104 merge."
+      "scope": "Contract proposal only; no implementation before activation, dual approval and clean PR104 merge.",
+      "gate_refs": {
+        ".agent/validator/133-mode-a.json": {
+          "revision": "2673b12ee0933a157a3eee00222d67788459508b",
+          "sha256": "dfaf54e99e9d72713c57cc4900e4f7a3c6e4c6ac3bf0e02f930e3deaf8160af2"
+        },
+        ".agent/qa/133-contract-review.json": {
+          "revision": "a6842b5f073ae30f3dad6f225f63a787eb674625",
+          "sha256": "3089658ca6912db004f5543ccd7ec504e0b6dac2088710ed02e505a79a19dbc5"
+        }
+      }
     }
   },
   "history": [
@@ -7568,6 +7578,11 @@
       "at": "2026-10-15T21:54:37.056498+00:00",
       "event": "133-contract-proposal1-released",
       "detail": "Planner pair schema/DAG/profile-reference checks actual0; independent planning accuracy review pending. Generator may propose bounded133 contract, incorporating review findings before approval. Planner-to-Generator role change explicitly disclosed; independent ModeA/Evaluator gates remain. Current phase018 complete, no active feature/contract or allowance change; current PR104 frozen599d."
+    },
+    {
+      "at": "2026-10-15T22:07:52.623114+00:00",
+      "event": "133-contract-approved",
+      "detail": "Both independent pre-code JSON gates strict-approved with empty arrays at exact proposal d1503834/SHA9d912e25, schemas and immutable verdict bindings independently verified. Contract133 promoted; phase021 remains proposed and budget unallocated. No active feature/contract or Source implementation release; await clean PR104 merge before activation and independent frozen bundle/red control."
     }
   ],
   "phase_001_scope_budget_final": {
