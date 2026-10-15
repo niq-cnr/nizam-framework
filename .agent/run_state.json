@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T06:08:20.545744+00:00",
+  "updated_at": "2026-10-15T06:18:11.209428+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1551,6 +1551,24 @@
       "attempts": 1,
       "limit": 3,
       "status": "passed"
+    },
+    "123-ci-capture": {
+      "attempts": 0,
+      "limit": 3,
+      "status": "predeclared-not-dispatched",
+      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
+    },
+    "123-ci-verify": {
+      "attempts": 0,
+      "limit": 3,
+      "status": "predeclared-not-dispatched",
+      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
+    },
+    "123-ci-final-integration": {
+      "attempts": 0,
+      "limit": 3,
+      "status": "predeclared-not-dispatched",
+      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
     }
   },
   "history": [
@@ -6662,6 +6680,12 @@
       "event": "123-contract3-approved-concrete-author1-release",
       "detail": "Both strictgate3 approvals and constructibility audit admitted. Root publisher actual0 at453b391f, approved artifact452a5a5f / SHA64afcf8d includes actual proposal/gate metadata. Preserved compact113 lines and all requirements; no Source/test behavior. First concrete author attempt remains1, prior readonly hold/prep retained. Distinct provisional review precedes Source.",
       "evidence": ".agent/evidence/123/contract-approval.json"
+    },
+    {
+      "at": "2026-10-15T06:18:11.209428+00:00",
+      "event": "123-hosted-step-counter-predeclaration",
+      "detail": "Separate capture, verify and final-integration operations predeclared attempts0/max3 before any dispatch. No failed operation may be renamed/reset. Source candidate and real producer/runtime bindings selected only after concrete provisional approval and Source.",
+      "evidence": ".agent/evidence/123/root-hosted-preparation.json"
     }
   ],
   "phase_001_scope_budget_final": {
