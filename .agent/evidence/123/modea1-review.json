@@ -1,0 +1,154 @@
+{
+  "role": "independent Validator ModeA",
+  "feature": "123",
+  "agent": "/root/modea123",
+  "reviewed_commit": "f8aa61318853aaddac40bb73d066514b7b5d10db",
+  "proposal_artifact_commit": "0f7433acfbab07fd482005ad6a0d84d36859630f",
+  "proposal_sha256": "00e2b4ec4e6d5e7de35dd977545b57fc477f827ee93c378ce0d4625d1ee0db3f",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "f8aa61318853aaddac40bb73d066514b7b5d10db\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        ".agent/contracts/123.json"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "0f7433acfbab07fd482005ad6a0d84d36859630f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "5b4251e5f727796ebadac21d3298dbaa6f45225d",
+        "HEAD",
+        "--name-only"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": ".agent/contracts/123.json\n.agent/evidence/123/contract-review1-readiness.json\n.agent/evidence/123/contract1-diff-check.stderr.txt\n.agent/evidence/123/contract1-diff-check.stdout.txt\n.agent/evidence/123/contract1-numstat.stderr.txt\n.agent/evidence/123/contract1-numstat.stdout.txt\n.agent/evidence/123/contract1-ownership.stderr.txt\n.agent/evidence/123/contract1-ownership.stdout.txt\n.agent/evidence/123/contract1-preparation.json\n.agent/evidence/123/contract1-static.execution.json\n.agent/evidence/123/contract1-static.py\n.agent/evidence/123/contract1-static.stderr.txt\n.agent/evidence/123/contract1-static.stdout.txt\n.agent/evidence/123/root-execution-dag.json\n.agent/run_state.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "import hashlib,json\nfrom pathlib import Path\nimport jsonschema\np=Path(\".agent/contracts/123.json\"); raw=p.read_bytes(); c=json.loads(raw)\nassert hashlib.sha256(raw).hexdigest()==\"00e2b4ec4e6d5e7de35dd977545b57fc477f827ee93c378ce0d4625d1ee0db3f\"\nfor s in [\"schema/contract.schema.json\",\".nizam/schema/contract.schema.json\"]: jsonschema.validate(c,json.loads(Path(s).read_text()))\nprint(\"proposal SHA256 and root/installed schemas verified\")\nfor k in [\"inputs\",\"a10\",\"capture\",\"result\",\"local_hosted\"]: print(k+\": \"+c[\"api\"][k])\n"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "proposal SHA256 and root/installed schemas verified\ninputs: policy is independently Root-selected experiment configuration, never inferred from evidence or caller success labels. It binds schema_version1, actual repository origin, feature123, immutable source candidate identity, approved contract/proposal digest, actual dual pre-code/provisional references, selected ledger/report references, A10 policy/state references and exact required commands. evidence binds schema_version1, candidate, actual checkout, producer, runtime/environment, actual A11/A10 captures, their immutable artifact-containing refs and compact pack inventory. Concrete exact-key shapes and return fields are frozen by independent author and provisional reviewer before Source; no arbitrary extra authority/skip/passed fields. IDs/digests/commits and exact integers/booleans use existing validators.\na10: Run existing verify_stage_receipt on an experiment-only source-ready receipt using the actual approved123 contract, actual independent pre-code/provisional facts, same candidate/runtime and captures of real A11/check execution. Use independently selected existing Root policy/application semantics and original standing authority, with an explicit reviewed experiment materialization binding actual origin https://github.com/niq-cnr/nizam-framework.git and exact authorized scope. This materialization neither infers new consent nor edits live authority; a mismatch blocks. Use aligned isolated shadow coordination only, explicitly labeled dogfood; plan_receipt_transition must propose one advance, identical replay noop, conflict rejection, and missing-receipt republish/rerun behavior without live state mutation. No self-issued Mode B/QA/capture/future completion prerequisites; source-ready requires only facts already true.\ncapture: Runner starts an owned detached experiment worktree at the selected immutable source anchor, retaining actual origin and current hosted runtime. Assess clean anchor there before creating proof. Copy only independently pinned record inputs from actual checkout, verify protected candidate equality, then execute commands and retain argv/cwd/exercised revision/environment/producer/actual exit/stdout/stderr. Commit only experiment inputs/outputs as output-record descendants in this owned worktree so every typed ref names a real artifact-containing commit. Capture revision is actual execution revision, distinct from later output commit. Never modify real checkout, live run_state, installed payload or existing evidence. Keep failure exits and outputs; no success relabel/probe exception.\nresult: Return a deep-copied validated readiness record binding candidate, checkout, A11 rejection/approval facts, A10 verified receipt/transition digest and captures. Readiness requires actual A11 strict approve with empty blocking arrays plus verified successful A10 command coverage and replay invariants; any rejection raises AssuranceError/nonzero, never a passing label. Function itself runs no commands beyond existing Git/file validation and writes no state. It revalidates existing A10 APIs in the captured matching runtime; a different runtime cannot be silently substituted.\nlocal_hosted: controls-ready dispatch performs a fresh actual local exercise through the same runner/configuration and then verification, so fresh QA does not impersonate a historical hosted environment. CI performs its own fresh exercise/check within convergent_review, retaining observed isolation/sandbox/environment output. Offline independent review imports hosted pack and validates committed refs, protected inputs, actual captures and hosted run/job/step/artifact binding; it does not claim to rerun historical commands under a different runtime. Fresh same-environment hosted execution plus independent transport/replay review is mandatory before capture.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "import json\nfrom pathlib import Path\nimport jsonschema\nv=json.loads(Path(\".agent/validator/123-mode-a.json\").read_text())\nfor s in [\"schema/contract_review.schema.json\",\".nizam/schema/contract_review.schema.json\"]: jsonschema.validate(v,json.loads(Path(s).read_text()))\nassert v[\"final_verdict\"][\"approved\"] is False and len(v[\"issues\"])==2 and v[\"missing_acceptance_coverage\"]==v[\"unsupported_claims\"]==[]\nassert len(Path(\".agent/validator/123-mode-a.json\").read_text().splitlines())<=25\nprint(\"Both schemas and strict rejection parsed; two blocking issues; 13 lines\")\n"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "Both schemas and strict rejection parsed; two blocking issues; 13 lines\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "?? .agent/evidence/123/modea1-readiness.json\n?? .agent/evidence/123/modea1-review.json\n?? .agent/validator/123-mode-a.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "HEAD",
+        "--",
+        ".agent/run_state.json",
+        ".nizam"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "existing_receipt_static_anchors": [
+    {
+      "line": 768,
+      "text": "def _receipt_artifact(root, reference, live=False):"
+    },
+    {
+      "line": 813,
+      "text": "def _receipt_candidate(root, candidate, revision=None):"
+    },
+    {
+      "line": 830,
+      "text": "'receipt protected current input changed')"
+    },
+    {
+      "line": 845,
+      "text": "require(canonical(environment) == canonical(candidate['environment']), 'receipt observed environment changed')"
+    },
+    {
+      "line": 961,
+      "text": "require(canonical(check['capture']) == canonical(command['capture']), 'receipt independent capture pin')"
+    },
+    {
+      "line": 962,
+      "text": "capture = parse_json(_receipt_artifact(root, command['capture']))"
+    },
+    {
+      "line": 970,
+      "text": "_receipt_candidate(root, policy['candidate'], capture['revision'])"
+    }
+  ],
+  "analysis": {
+    "schema_gap": "Contract api.inputs explicitly defers exact-key shapes; api.result defers exact return fields. Public policy/evidence schema, subordinate reference binding and return contract are undefined at this approval gate. Later test-author/provisional review can select a different public protocol without renewed Loop1 approval.",
+    "capture_order_gap": "Existing120 capture references are immutable path/sha256/revision tuples and must already contain actual captured output and command records. Contract promises Root-independent policy selection and one fresh hosted runner but supplies no concrete producer/selection/commit order or command argv for deriving and freezing capture refs after actual command execution without letting evidence select expectations. It also leaves whether controls-ready is an A10-covered command unresolved although that command itself invokes this runner.",
+    "not_claimed": "These are contract incompleteness findings, not demonstrated runtime failures or claims that a sound implementation is impossible."
+  },
+  "boundary": "Only read-only static Git/file/schema observations. No Source/API/test/acceptance/CI/compliance execution or repair; no state/counter/install writes."
+}

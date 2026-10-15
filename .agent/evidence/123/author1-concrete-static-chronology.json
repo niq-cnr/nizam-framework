@@ -1,0 +1,14 @@
+{
+  "feature_id": "123",
+  "role": "independent Evaluator author1",
+  "root": "/home/cnross/.tmp/nizam-feature123-author-concrete1",
+  "initial_concrete_code_revision": "124e0cc52919cedc3e9a4196dbf39c025c9e4ef6",
+  "static1": {"actual_exit": 1, "exercised_revision": "124e0cc52919cedc3e9a4196dbf39c025c9e4ef6", "execution": ".agent/evidence/123/author1-concrete-static.execution.json", "cause": "Static checker equated Git modes100644/100755 to full filesystem permissions0644/0755; both originalRoot and owned checkout use0664/0775. No installed payload drift was observed."},
+  "retained_failure_and_correction_revision": "cebc9e1cd1ff091fb8ad97d7bb3aa989cdba5a29",
+  "correction": "Full filesystem modes compare to the original unchanged Root installed239 path baseline; both sides retain identical pinned bytes and the Git executable-mode check remains. This corrects expected baseline selection, without changing tests, Source or installed files.",
+  "static2": {"actual_exit": 0, "exercised_revision": "cebc9e1cd1ff091fb8ad97d7bb3aa989cdba5a29", "execution": ".agent/evidence/123/author1-concrete-static2.execution.json", "same_owned_root": true},
+  "chronology": "Author committed initial code, ran static1, retained its raw failure and committed correction, then executed static2 in the same author1 root. Root's request to pause and allocate isolated retry arrived after that actual second execution. Author disclosed the chronology immediately and paused. Root instructed preservation rather than rerunning to create an appearance of isolation.",
+  "deviation": "Static2 was not isolated in a new attempt root or preallocated by Root. Do not represent it as isolated retry2. Root alone records checker counters1→2/max3 and its disposition. Concreteauthor1 lifecycle/counter ownership stays Root's.",
+  "verified_static_observations": "Static2 confirms unchanged74 inherited test definitions/55 Source definitions, inherited46 and ordered default48, inherited main after additive-dispatch projection, approved64af contract/root+installed schemas and installed239 exact bytes/full modes. Test SHA25624bd0baf3e6fe61c1a1dc76828e7862495d1f20077427f8ca2c8feb8acae8bb5; installed full-mode inventory SHA256a107e034d2618b1722d5aa758ced2136eacdbafb22019a65bbef7120986ddbc4.",
+  "execution_boundary": "Both were static JSON/schema/AST/compile-in-memory helpers only. No Source/test module import, constructor/API/acceptance/default-bank/observer/control/readiness/CI/compliance/namespace/model behavior ran. No semantic red or passing QA claimed. Further checker/API/behavior execution is paused pending Root release."
+}

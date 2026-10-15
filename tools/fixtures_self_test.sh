@@ -1145,6 +1145,17 @@ if [ -n "${phantom}" ]; then
   fail=1
 fi
 
+# Feature123 parser selectors are synthetic controls; actual hosted readiness is
+# separately selected and observed after the two capable-job passes.
+for controls_case in ci-candidate-bound ci-blocker-rejected; do
+  if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case "${controls_case}"; then
+    echo "OK   workflow-assurance ${controls_case}"
+  else
+    echo "FAIL workflow-assurance ${controls_case}"
+    fail=1
+  fi
+done
+
 total=${#ondisk[@]}
 accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
 echo "---"
