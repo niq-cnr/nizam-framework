@@ -1,0 +1,27 @@
+import ast,errno,hashlib,json,os,subprocess
+from pathlib import Path
+root=Path.cwd(); base='84a1e19a'; product='12532d6c814b2d9c1ad5f250cc5eb0c471eccf4c'; sha=lambda b:hashlib.sha256(b).hexdigest()
+assert set(subprocess.check_output(['git','diff','--name-only',base,product]).decode().splitlines())=={'tools/workflow_assurance.py','tools/README.md','CHANGELOG.md'}
+old=ast.parse(subprocess.check_output(['git','show',base+':tools/workflow_assurance.py'])); new=ast.parse((root/'tools/workflow_assurance.py').read_bytes())
+for tree in (old,new): next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='_receipt_candidate').body=[]
+assert ast.dump(old,include_attributes=False)==ast.dump(new,include_attributes=False)
+assert sha((root/'tools/test_receipt_candidate_batching.py').read_bytes())=='b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024'
+assert sha((root/'tools/fixtures_self_test.sh').read_bytes())=='098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e'
+assert sha((root/'.agent/contracts/133.json').read_bytes())=='af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899'
+index=root/'.agent/evidence/133/implementation1/capture-index.sha256'; rows=index.read_text().splitlines()
+for line in rows:
+ digest,name=line.split('  ',1); assert sha((index.parent/name).read_bytes())==digest
+assert len(rows)==30
+for i in range(1,5):
+ frame=json.loads((index.parent/f'check-{i}.execution.json').read_text()); assert frame['actual_exit']==0 and frame['exercised_revision']==product and not frame['timed_out']
+assert not subprocess.check_output(['git','diff',base,product,'--','.nizam','.github','tools/test_workflow_assurance.py','tools/test_receipt_candidate_batching.py','tools/fixtures_self_test.sh'])
+limit=os.sysconf('SC_ARG_MAX'); paths=['src/'+str(i).zfill(6)+'-'+('a'*100)+'.txt' for i in range(40000)]; argv=['git','--version',*paths]; size=sum(len(os.fsencode(a))+1 for a in argv)
+assert size>limit and max(map(len,paths))<255
+try:
+ process=subprocess.Popen(argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+except OSError as exc:
+ assert exc.errno==errno.E2BIG
+ print(json.dumps(dict(os_transport_probe_only=True,product_imported=False,fixture_or_acceptance_executed=False,arg_max=limit,path_count=len(paths),literal_path_argument_bytes=size,maximum_single_path_bytes=max(map(len,paths)),actual_os_errno=exc.errno,diagnostic=exc.strerror,git_child_pid=None,meaning='OS refused aggregate argv before Git starts; no product execution outcome asserted'),sort_keys=True))
+else:
+ process.communicate(); raise AssertionError('expected aggregate argv transport refusal was absent')
+print(json.dumps(dict(masked_module_ast_identical=True,product_scope_files=3,frozen_inputs_unchanged=True,retained_generator_index_files=len(rows),retained_four_actual_exits=0,installed_workflow_oldtests_unchanged=True),sort_keys=True))
