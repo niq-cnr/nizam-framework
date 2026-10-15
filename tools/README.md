@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.30.0
+version: 0.31.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.31.0"
+    date: "2026-10-15"
+    summary: "Document read-only evidence-based failure routing and unchanged attempt budgets."
   - version: "0.30.0"
     date: "2026-10-14"
     summary: "Document conflict assessments, isolated attempts and captured owned rollback."
@@ -211,6 +214,24 @@ findings remain advisory. Approval requires exact boolean true, empty blocking
 arrays and ledger approval. Existing blockers remain intact; malformed inputs
 raise `AssuranceError`. This pure API neither authenticates provenance nor advances
 workflow state. The default runner executes all twenty original and six new cases.
+
+## Evidence-based failure routing — feature 122
+
+`route_failed_attempt(repo, request, *, policy)` reads independently selected
+immutable authority, classification, capture and coordination references. It
+returns a failed infrastructure-diagnosis or semantic-repair proposal for allocated
+attempts one and two, or halt for attempt three. It preserves counters and the
+history prefix, accepting optional lane inventories only when identical.
+Semantic classification requires a schema-valid rejecting verdict; both causes
+require an actual nonzero outer wrapper capture, pinned output bytes/modes and
+candidate/environment bindings. Expected inner negatives do not clear outer
+failure. Missing, stale or relabeled proof raises `AssuranceError`.
+
+This API writes no state and authorizes no retry. Producer labels and hashes
+establish binding, not authentication or factual truth; the Orchestrator owns
+policy selection and counters. Fixture authority is synthetic. Root repository
+binding migration remains unapplied. Four selectors extend the default to 46;
+full controls readiness remains a separate feature123 obligation.
 
 ## Foundation readiness — feature 118
 
