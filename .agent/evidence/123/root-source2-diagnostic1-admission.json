@@ -1,0 +1,39 @@
+{
+  "role": "Root Orchestrator",
+  "feature_id": "123",
+  "at": "2026-10-15T10:02:29.184227+00:00",
+  "refs": [
+    {
+      "path": ".agent/evidence/123/source2-diagnostic1.execution.json",
+      "revision": "4c62809900b4a1c5e6a95d70a656906bdfbaa2b4",
+      "sha256": "7f8650c101bf12d59d71e35fc1e95c9117f7548bf0a6b13450dc681395f0844d"
+    },
+    {
+      "path": ".agent/evidence/123/source2-diagnostic1.stdout.txt",
+      "revision": "4c62809900b4a1c5e6a95d70a656906bdfbaa2b4",
+      "sha256": "3898659115e3cdad5e98c03779ba97f2aaf87facee8adbd36480572ae68a0172"
+    },
+    {
+      "path": ".agent/evidence/123/source2-diagnostic1.stderr.txt",
+      "revision": "4c62809900b4a1c5e6a95d70a656906bdfbaa2b4",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "actual_exit": 1,
+  "elapsed_seconds": 342.16986014007125,
+  "diagnostic_mismatch_names": [
+    "carried-blocker",
+    "carried-important",
+    "claimed-ref-dangling",
+    "incoming-issues",
+    "incoming-missing_acceptance_coverage",
+    "incoming-unsupported_claims"
+  ],
+  "genuine_restorations_after_mismatch": 6,
+  "other_selected_variant_passes": 10,
+  "frozen_candidate_tail_passed": true,
+  "preserved_tracked_inputs": 12990,
+  "installed_regular_files": 239,
+  "classification": "Completed partial diagnosis with actual failures retained, not whole selector pass or intended mutation red. Six cause-message mismatches at two semantic boundaries; all other selected assertions/restorations passed. No setup/unexpected stop.",
+  "next": "Final architectural Source3 repair at the identified local boundaries, then same frozen partial helper and complete required final coverage."
+}

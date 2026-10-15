@@ -1,0 +1,24 @@
+{
+  "role": "Root Orchestrator",
+  "feature_id": "123",
+  "observed_at": "2026-10-15T08:02:30.939884+00:00",
+  "revision": "61f55a2f9677339c513cd0d4dd0a70ccef467e82",
+  "cwd": "/home/cnross/workspace02/nizam-framework",
+  "argv": [
+    "gh",
+    "pr",
+    "list",
+    "--repo",
+    "niq-cnr/nizam-framework",
+    "--state",
+    "open",
+    "--json",
+    "number,title,isDraft,headRefName,baseRefName,statusCheckRollup",
+    "--limit",
+    "30"
+  ],
+  "actual_exit": 1,
+  "output": "Post \"https://api.github.com/graphql\": dial tcp 20.233.83.146:443: connect: connection refused\n",
+  "capture_kind": "Exact command/result transcribed from actual exec tool result; no success claimed.",
+  "boundary": "One read-only PR-list request failed before any hosted dispatch or remote mutation. No retry performed, no persistent connectivity claim. Offline final author/review preparation continues; actual hosted capture/verify still require real external calls."
+}

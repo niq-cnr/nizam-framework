@@ -1,0 +1,94 @@
+PASS SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged
+EXPECTED_REJECTION {"diagnostic": "three trial provenance length/order", "name": "replay-valid-missing-trials", "site": "evidence-body"}
+RESTORED replay-valid-missing-trials
+EXPECTED_REJECTION {"diagnostic": "invalid closed capability closed keys", "name": "unknown-capability.json", "site": "capability.json"}
+RESTORED unknown-capability.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed evaluation receipt closed keys", "name": "unknown-evaluation/prompt-evaluation.json", "site": "evaluation/prompt-evaluation.json"}
+RESTORED unknown-evaluation/prompt-evaluation.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed A10 capture closed keys", "name": "unknown-verify/capture.json", "site": "verify/capture.json"}
+RESTORED unknown-verify/capture.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed A10 result closed keys", "name": "unknown-verify/result.json", "site": "verify/result.json"}
+RESTORED unknown-verify/result.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed capture metadata closed keys", "name": "unknown-capture-metadata", "site": "capture-metadata"}
+RESTORED unknown-capture-metadata
+EXPECTED_REJECTION {"diagnostic": "invalid closed verify metadata closed keys", "name": "unknown-verify-metadata", "site": "verify-metadata"}
+RESTORED unknown-verify-metadata
+EXPECTED_REJECTION {"diagnostic": "invalid closed capture selection closed keys", "name": "unknown-selection-capture", "site": "selection-capture"}
+RESTORED unknown-selection-capture
+EXPECTED_REJECTION {"diagnostic": "invalid closed verify selection closed keys", "name": "unknown-selection-verify", "site": "selection-verify"}
+RESTORED unknown-selection-verify
+EXPECTED_REJECTION {"diagnostic": "invalid closed hosted review closed keys", "name": "unknown-hosted-review", "site": "hosted-review"}
+RESTORED unknown-hosted-review
+EXPECTED_REJECTION {"diagnostic": "invalid closed authority closed keys", "name": "unknown-authority", "site": "authority"}
+RESTORED unknown-authority
+EXPECTED_REJECTION {"diagnostic": "invalid closed shadow closed keys", "name": "unknown-shadow", "site": "shadow"}
+RESTORED unknown-shadow
+EXPECTED_REJECTION {"diagnostic": "invalid closed receipt policy", "name": "unknown-a10-policy", "site": "a10-policy"}
+RESTORED unknown-a10-policy
+EXPECTED_REJECTION {"diagnostic": "invalid closed capability closed keys", "name": "missing-version-capability.json", "site": "capability.json"}
+RESTORED missing-version-capability.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed evaluation receipt closed keys", "name": "missing-version-evaluation/prompt-evaluation.json", "site": "evaluation/prompt-evaluation.json"}
+RESTORED missing-version-evaluation/prompt-evaluation.json
+EXPECTED_REJECTION {"diagnostic": "invalid closed A10 capture closed keys", "name": "missing-version-verify/capture.json", "site": "verify/capture.json"}
+RESTORED missing-version-verify/capture.json
+EXPECTED_REJECTION {"diagnostic": "capability version integer1", "name": "bool-version", "site": "capability.json"}
+RESTORED bool-version
+EXPECTED_REJECTION {"diagnostic": "invalid JSON: duplicate JSON key: schema_version", "name": "duplicate-key", "site": "capability.json"}
+RESTORED duplicate-key
+EXPECTED_REJECTION {"diagnostic": "invalid JSON: nonfinite JSON number: NaN", "name": "nonfinite-bytes", "site": "capability.json"}
+RESTORED nonfinite-bytes
+EXPECTED_REJECTION {"diagnostic": "capability boundary diagnostic", "name": "generic-boundary-label", "site": "boundary/stdout"}
+RESTORED generic-boundary-label
+EXPECTED_REJECTION {"diagnostic": "capability boundary process exit", "name": "boundary-unsupported", "site": "capability.json"}
+RESTORED boundary-unsupported
+EXPECTED_REJECTION {"diagnostic": "invalid closed capability boundary process closed keys", "name": "boundary-process-extra", "site": "capability.json"}
+RESTORED boundary-process-extra
+EXPECTED_REJECTION {"diagnostic": "capability environment/runtime binding mismatch", "name": "capability-runtime-drift", "site": "capability.json"}
+RESTORED capability-runtime-drift
+EXPECTED_REJECTION {"diagnostic": "producer session allocation attempt", "name": "fourth-capture-producer", "site": "capture-producer"}
+RESTORED fourth-capture-producer
+EXPECTED_REJECTION {"diagnostic": "trial receipt number/exit integer", "name": "bool-trial-exit", "site": "evaluation/prompt-evaluation.json"}
+RESTORED bool-trial-exit
+EXPECTED_REJECTION {"diagnostic": "trial adapter/packet digest", "name": "trial-adapter-substitution", "site": "evaluation/prompt-evaluation.json"}
+RESTORED trial-adapter-substitution
+EXPECTED_REJECTION {"diagnostic": "invalid closed controls evidence closed keys", "name": "evidence-unknown", "site": "evidence-body"}
+RESTORED evidence-unknown
+EXPECTED_REJECTION {"diagnostic": "invalid closed controls policy closed keys", "name": "policy-unknown", "site": "policy"}
+RESTORED policy-unknown
+EXPECTED_REJECTION {"diagnostic": "controls policy version integer1", "name": "policy-bool-version", "site": "policy"}
+RESTORED policy-bool-version
+EXPECTED_REJECTION {"diagnostic": "controls policy verify selection binding mismatch", "name": "Root-selection-substitution", "site": "policy"}
+RESTORED Root-selection-substitution
+EXPECTED_REJECTION {"diagnostic": "invalid closed approval metadata closed keys", "name": "approval-metadata-missing", "site": "source-contract"}
+RESTORED approval-metadata-missing
+EXPECTED_REJECTION {"diagnostic": "approval proposal digest binding", "name": "approval-proposal-stale", "site": "source-contract"}
+RESTORED approval-proposal-stale
+EXPECTED_REJECTION {"diagnostic": "ModeA approval prerequisite binding", "name": "approval-gate-link-stale", "site": "source-contract"}
+RESTORED approval-gate-link-stale
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-executed-False", "site": "verify/capture.json"}
+RESTORED capture-executed-False
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-exit_code-True", "site": "verify/capture.json"}
+RESTORED capture-exit_code-True
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-exit_code-7", "site": "verify/capture.json"}
+RESTORED capture-exit_code-7
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-outcome-pending", "site": "verify/capture.json"}
+RESTORED capture-outcome-pending
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-outcome-running", "site": "verify/capture.json"}
+RESTORED capture-outcome-running
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-outcome-failed", "site": "verify/capture.json"}
+RESTORED capture-outcome-failed
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-outcome-invalidated", "site": "verify/capture.json"}
+RESTORED capture-outcome-invalidated
+EXPECTED_REJECTION {"diagnostic": "A10 capture executed exit outcome", "name": "capture-outcome-setup-error", "site": "verify/capture.json"}
+RESTORED capture-outcome-setup-error
+EXPECTED_REJECTION {"diagnostic": "A10 capture cwd/revision verify invocation checkout binding", "name": "a10-capture-wrong-cwd", "site": "verify/capture.json"}
+RESTORED a10-capture-wrong-cwd
+EXPECTED_REJECTION {"diagnostic": "A10 capture cwd/revision verify invocation checkout binding", "name": "a10-capture-preselection-revision", "site": "verify/capture.json"}
+RESTORED a10-capture-preselection-revision
+EXPECTED_REJECTION {"diagnostic": "A10 capture producer binding mismatch", "name": "capture-forged-producer", "site": "verify/capture.json"}
+RESTORED capture-forged-producer
+EXPECTED_REJECTION {"diagnostic": "identity digest mismatch", "name": "evidence-candidate-source_commit", "site": "evidence-body"}
+RESTORED evidence-candidate-source_commit
+EXPECTED_REJECTION {"diagnostic": "identity digest mismatch", "name": "evidence-candidate-source_tree", "site": "evidence-body"}
+RESTORED evidence-candidate-source_tree
+EXPECTED_REJECTION {"diagnostic": "Evidence capture checkout binding mismatch", "name": "evidence-checkout", "site": "evidence-body"}

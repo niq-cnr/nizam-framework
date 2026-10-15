@@ -1,0 +1,13 @@
+{
+  "role": "Root Orchestrator",
+  "feature": "123",
+  "decision": "Keep the approved123 contract bytes immutable through feature/phase canonical closure: the contract is a protected candidate input. Completion is recorded in phase018, feature_list018, manifest and Root state after capture; no contract-status byte rewrite is required by installed execution or approved123 closure order. Any actual protected input change invalidates hosted proof and requires bounded reentry.",
+  "basis": [
+    ".agent/contracts/123.json:api.candidate protects approved123 contract and requires final candidate equality",
+    ".agent/contracts/123.json:gate_sequence final clause lists canonical phase then derived run_state/feature_list/manifest",
+    ".nizam/methodology/01_execution.md:Loop1 approves contract; final lifecycle advancement is feature completion, with no required contract-byte rewrite",
+    "tools/verify_lib.sh:vlib_feature_list_lifecycle reads feature completion and QA/evidence without requiring complete contract status"
+  ],
+  "boundary": "This preserves existing approved obligations and truthful lifecycle; it is no new acceptance rule, scope expansion or gate approval. Final ModeB and freshQA still required.",
+  "incidental_readonly_lookup": "rg also queried nonexistent tools/check_feature_lifecycle.py before actual helper was located in tools/verify_lib.sh. No behavior/API execution occurred."
+}

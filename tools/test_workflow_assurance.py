@@ -1572,17 +1572,870 @@ def run_failure_case(name, api):
         else: os.environ['NIZAM_WA120_FIXTURE'] = previous
 
 
+CONTROL_CASES = ('ci-candidate-bound', 'ci-blocker-rejected')
+CONTROL_ORIGIN = 'https://github.com/niq-cnr/nizam-framework.git'
+CONTROL_REPOSITORY = 'niq-cnr/nizam-framework'
+CONTROL_PREFIX = '.agent/evidence/123/experiment/'
+CONTROL_APPROVAL = '452a5a5f748b5234ce1da3ad765b0da8f622cb53'
+
+
+class ControlsFixture(FailureFixture):
+    """SYNTHETIC parser proof, never an attestation of hosted execution or consent.
+
+    Real Git objects, current convergence and A10 APIs are exercised locally. The
+    REST/log/namespace/evaluator attestations below are synthetic discrimination
+    inputs. Only the separately selected hosted proof can satisfy controls-ready.
+    """
+    commit = FailureFixture.commit  # Disable maintenance before our first commit.
+
+    def __init__(self, api, parent, defect=None, seed=None):
+        self.api = api; self.parent = Path(parent); self.root = self.parent / 'root'
+        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name; self.checkouts={}
+        source_profile=bool(defect and defect['site']=='source-contract')
+        if seed and not source_profile:
+            self.root=seed.root;self.source=seed.source
+            require(git(self.root,'remote','get-url','origin')==CONTROL_ORIGIN,'seed actual origin stable')
+            git(self.root,'merge-base','--is-ancestor',self.source,'HEAD')
+            for path in seed.source_paths:require((self.root/path).is_file() and not (self.root/path).is_symlink(),'seed complete Source remains materialized')
+        else:
+            subprocess.check_call(['git', 'clone', '--quiet', '--shared', '--no-checkout', str(ROOT), str(self.root)])
+            git(self.root, 'config', 'user.name', 'SYNTHETIC123 Independent Parser Fixture')
+            git(self.root, 'config', 'user.email', 'synthetic123@example.invalid')
+            git(self.root, 'remote', 'set-url', 'origin', CONTROL_ORIGIN)
+            git(self.root, 'checkout', '--quiet', '--detach', git(ROOT, 'rev-parse', 'HEAD'))
+            self.source = git(self.root, 'rev-parse', 'HEAD')
+            if source_profile:
+                value=self.value('source-contract',json.loads((self.root/'.agent/contracts/123.json').read_bytes()))
+                self.write('.agent/contracts/123.json',canonical(value)+b'\n');self.source=self.commit('SYNTHETIC invalid contract metadata candidate')
+        self.source_paths=git(self.root,'ls-tree','-r','--name-only',self.source).splitlines()
+        self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'SYNTHETIC outside unchanged\n'); self.outside.chmod(0o600)
+        tool_paths = ['tools/workflow_assurance_ci.py', 'tools/convergent_review.py',
+            'tools/evaluate_convergent_review_prompt.py', 'tools/linux_trial_sandbox.sh',
+            'tools/isolated_trial_adapter.py', 'tools/verify_lib.sh',
+            '.github/workflows/compliance.yml', 'tools/fixtures_self_test.sh',
+            '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
+            'templates/convergent-review-prompt.md']
+        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
+        self.inputs = dict(source=['tools/workflow_assurance.py'], contracts=['.agent/contracts/123.json'],
+            tests=['tools/test_workflow_assurance.py'], tools=tool_paths, unknown_dependencies=[])
+        self.candidate = copy.deepcopy(seed.candidate) if seed and not source_profile else api.assess_repository(self.root, self.source, self.inputs, ['PYTHONDONTWRITEBYTECODE'], {})
+        api.validate_identity(self.candidate)
+        require(git(self.root,'rev-parse',self.source+'^{tree}')==self.candidate['source_tree'],'reused actual Source tree identity')
+        for category in ('source','tests','tools','contracts'):
+            for entry in self.candidate['assessed_inputs'][category]:
+                target=self.root/entry['path'];require(sha(target.read_bytes())==entry['sha256'] and bool(target.stat().st_mode&0o111)==entry['executable'],'immutable seed protected bytes/mode stable')
+        self.good_contract=self.ref('.agent/contracts/123.json',CONTROL_APPROVAL)
+        self.contract = self.ref('.agent/contracts/123.json', self.source if source_profile else CONTROL_APPROVAL)
+        approved = self.read(self.good_contract); ae = approved['approval_evidence']
+        self.prerequisites = []
+        for kind, key, field in (('mode-a', 'mode_a', 'reviewed_commit'), ('contract-review', 'contract_review', 'reviewed_revision')):
+            artifact=self.ref(ae[key],self.source); actual=self.read(artifact)
+            self.prerequisites.append(dict(kind=kind, artifact=artifact, feature_id='123',
+                assessed_revision=actual[field], contract_sha256=ae['proposal_sha256']))
+        self.prerequisites.append(dict(kind='approved-contract', artifact=self.contract, feature_id='123',
+            assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
+        gate = dict(final_verdict=dict(approved=True), issues=[], missing_acceptance_coverage=[], unsupported_claims=[])
+        provisional = dict(gate, feature_id='123', reviewed_revision=self.contract['revision'],
+            approved_contract_sha256=self.contract['sha256'], reviewer='SYNTHETIC-provisional-parser-only')
+        provisional_ref = self.put('provisional', provisional)
+        self.prerequisites.append(dict(kind='provisional-bundle', artifact=provisional_ref, feature_id='123',
+            assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
+        origin_ref = self.ref('.agent/evidence/phase018-preflight/activation-authority.json', self.source)
+        original = self.read(origin_ref); scope = {k: original['scope'][k] for k in ('phase','features','original_estimate_lines','ceiling_130pct')}
+        authority = dict(schema_version=1, role='Root', purpose='experiment-only', repository=CONTROL_ORIGIN,
+            **{k: original[k] for k in ('owner','gate','operator_instruction_verbatim')}, scope=scope,
+            source_authority_ref=origin_ref, mapping=dict(repository_origin=CONTROL_ORIGIN, review_repository=CONTROL_REPOSITORY))
+        authority_ref = self.put('authority', authority)
+        self.shadow = dict(repository=CONTROL_ORIGIN, current_phase='018-workflow-assurance-controls', current_feature='123',
+            status='experiment-pending', updated_at='2026-10-15T00:00:00Z',
+            scope_budget=dict(original_estimate_lines=7200,total_lines_changed=4303,per_feature=[]),
+            circuit_breaker={},history=[],purpose='experiment-only')
+        report = dict(gate, required_fixes=[])
+        self.capture_producer = self.value('capture-producer',dict(agent_id='wa123-capable-ci', session_id='123-ci-capture-attempt1'))
+        self.verify_producer = self.value('verify-producer',dict(agent_id='wa123-capable-ci', session_id='123-ci-verify-attempt1'))
+        prior=self.value('carried-ledger',None)
+        self.selection = dict(schema_version=1, mode='capture', repository_origin=CONTROL_ORIGIN,
+            review_repository=CONTROL_REPOSITORY, source_commit=self.source, source_tree=self.candidate['source_tree'],
+            inputs=self.inputs, contract_ref=self.contract, authority_ref=authority_ref, prerequisites=self.prerequisites,
+            producer=self.capture_producer, packet_base=git(self.root, 'rev-parse', self.source+'^'), prior_ledger=self.put('prior-ledger',prior) if prior else None,
+            report_ref=self.put('report', report), prompt_ref=self.ref('templates/convergent-review-prompt.md', self.source),
+            runner_ref=self.ref('tools/workflow_assurance_ci.py',self.source), adapter_ref=self.ref('tools/linux_trial_sandbox.sh',self.source),
+            evaluator_ref=self.ref('tools/evaluate_convergent_review_prompt.py',self.source), shadow_state_ref=self.put('shadow',self.shadow),
+            candidate=None,a10_policy_ref=None,capture_pack_ref=None)
+        self.shadow=self.read(self.selection['shadow_state_ref'])
+        self.capture_selection = self.put('selection-capture',self.selection)
+        self.checkout=self.stage_checkout('capture',self.capture_selection)
+        self.exp = self.parent / 'experiment'
+        git(self.root,'worktree','add','--quiet','--detach',str(self.exp),self.source)
+        # Only the later execution worktree is sparse; unchanged115 never sees it.
+        git(self.exp,'sparse-checkout','set','--no-cone','/tools/','/schema/','/.github/',
+            '/templates/convergent-review-prompt.md','/.agent/contracts/','/.agent/run_state.json','/'+CONTROL_PREFIX)
+        self.exp_write('inputs/selection-capture.json',self.raw(self.capture_selection))
+        self.exp_commit('SYNTHETIC capture selected input')
+        self.make_evaluation(self.read(self.selection['report_ref']))
+        capture_tip = git(self.exp,'rev-parse','HEAD')
+        self.capture_host, self.capture_pack = self.host('capture',capture_tip,self.capture_selection,
+            [self.candidate_ref,self.capability_ref,self.evaluation_ref,self.replay_ref,self.map_ref,self.map_capture_ref])
+        app = dict(schema_version=1,role='Root',repository=CONTROL_ORIGIN,feature_id='123',stage='source-ready',
+            candidate_sha256=sha(canonical(self.candidate)),approved=True,authority_ref=authority_ref,
+            owner=authority['owner'],gate=authority['gate'],scope=scope)
+        self.a10_policy = dict(schema_version=1,repository=CONTROL_ORIGIN,feature_id='123',stage='source-ready',operation_id='123-ci-capture',
+            candidate=self.candidate,contract=self.contract,operator=self.put('operator',app),producer=self.capture_producer,
+            prerequisites=self.prerequisites,commands=[dict(argv=self.map_capture['argv'],expected_exit=0,proof_kind='success',
+                diagnostic='WA123_A11_APPROVED',capture=self.map_capture_ref)],from_status='experiment-pending',
+            to_status='experiment-source-ready',at='2026-10-15T00:01:00Z',recovery=None)
+        self.receipt = {k:copy.deepcopy(self.a10_policy[k]) for k in ('schema_version','repository','feature_id','stage','operation_id','candidate','producer','prerequisites')}
+        self.receipt.update(status='passed',contract_ref=self.contract,operator_ref=self.a10_policy['operator'],verdict=gate,
+            checks=[dict(argv=self.map_capture['argv'],executed=True,outcome='success',exit_code=0,
+                stdout=self.map_capture['stdout'],stderr=self.map_capture['stderr'],capture=self.map_capture_ref)])
+        self.receipt=self.value('receipt-body',self.receipt)
+        self.receipt_ref = self.put('receipt',self.receipt)
+        self.a10_policy['recovery'] = self.receipt_ref
+        self.policy_ref = self.put('a10-policy',self.a10_policy)
+        self.verify_selection_value = dict(self.selection,mode='verify',producer=self.verify_producer,
+            candidate=self.candidate,a10_policy_ref=self.policy_ref,capture_pack_ref=self.capture_pack)
+        self.verify_selection = self.put('selection-verify',self.verify_selection_value)
+        self.stage_checkout('verify',self.verify_selection)
+        for label,ref in (('selection-verify',self.verify_selection),('policy-verify',self.policy_ref),('receipt-verify',self.receipt_ref)):
+            self.exp_write('inputs/'+label+'.json',self.raw(ref))
+        self.exp_commit('SYNTHETIC independently selected verify inputs')
+        computation_policy=copy.deepcopy(self.a10_policy); computation_receipt=copy.deepcopy(self.receipt)
+        if source_profile:
+            # Invalid metadata cannot itself pass120. Compute unchanged120 with the
+            # genuine approved object, then project only its contract bindings in
+            # this explicitly SYNTHETIC invalid123 graph before packing outputs.
+            good_prerequisites=copy.deepcopy(self.prerequisites)
+            for entry in good_prerequisites:
+                if entry['kind']=='approved-contract':entry.update(artifact=self.good_contract,assessed_revision=CONTROL_APPROVAL,contract_sha256=self.good_contract['sha256'])
+                if entry['kind']=='provisional-bundle':
+                    record=self.read(entry['artifact']);record.update(reviewed_revision=CONTROL_APPROVAL,approved_contract_sha256=self.good_contract['sha256'])
+                    entry.update(artifact=self.put('computation-provisional',record),assessed_revision=CONTROL_APPROVAL,contract_sha256=self.good_contract['sha256'])
+            computation_policy.update(contract=self.good_contract,prerequisites=good_prerequisites)
+            computation_receipt.update(contract_ref=self.good_contract,prerequisites=good_prerequisites)
+            computation_policy['recovery']=self.put('computation-receipt',computation_receipt)
+            self.synthetic_projection=True
+        if defect and defect['site']=='receipt-body':
+            computation_receipt['status']='passed'
+            computation_policy['recovery']=self.put('computation-receipt',computation_receipt)
+            self.synthetic_projection=True
+        verified = api.verify_stage_receipt(self.exp,computation_receipt,policy=computation_policy)
+        advance = api.plan_receipt_transition(self.exp,self.shadow,computation_receipt,policy=computation_policy)
+        noop = api.plan_receipt_transition(self.exp,advance['state'],computation_receipt,policy=computation_policy)
+        republish = api.plan_receipt_transition(self.exp,self.shadow,None,policy=computation_policy)
+        absent = copy.deepcopy(computation_policy); absent['recovery']['path'] += '.missing-wa123'
+        require(not git(self.root,'ls-tree',absent['recovery']['revision'],'--',absent['recovery']['path']), 'synthetic recovery path actually absent')
+        rerun = api.plan_receipt_transition(self.exp,self.shadow,None,policy=absent)
+        conflicting = copy.deepcopy(advance['state']); conflicting['history'].append(copy.deepcopy(conflicting['history'][-1]))
+        rejected(api,lambda:api.plan_receipt_transition(self.exp,conflicting,computation_receipt,policy=computation_policy),'actual duplicate conflict exercise')
+        self.a10_result = dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
+        if self.synthetic_projection:
+            old_digest=sha(canonical(computation_receipt));new_digest=sha(canonical(self.receipt))
+            def project(value):
+                if value==computation_receipt:return copy.deepcopy(self.receipt)
+                if type(value) is dict:return {k:project(v) for k,v in value.items()}
+                if type(value) is list:return [project(v) for v in value]
+                if type(value) is str:return value.replace(old_digest,new_digest)
+                return value
+            self.a10_result=project(self.a10_result)
+        require([advance['action'],noop['action'],republish['action'],rerun['action']] == ['advance','noop','republish','rerun-required'],'actual four A10 actions')
+        self.exp_write('verify/result.json',self.a10_result); self.exp_write('verify/stdout',self.payloads['verify/result.json']); self.exp_write('verify/stderr',b'')
+        outputs = self.exp_commit('SYNTHETIC A10 parser results'+(' with invalid-binding projection' if self.synthetic_projection else ' from actual local APIs')+'; not hosted')
+        result_ref = self.exp_ref('verify/result.json',outputs)
+        capture = self.capture([sys.executable,'tools/workflow_assurance_ci.py','verify','--selection','.agent/evidence/123/selection.json',
+            '--output',str(self.parent/'wa123-verify')],self.checkouts['verify']['sha'],self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs),cwd=self.root)
+        self.exp_write('verify/capture.json',capture); tip=self.exp_commit('SYNTHETIC verify capture representation')
+        a10_capture_ref=self.exp_ref('verify/capture.json',tip)
+        verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
+        git(self.root,'checkout',tip,'--',CONTROL_PREFIX);self.materialized_tip=tip
+        self.commit('SYNTHETIC materialized immutable experiment outputs')
+        self.evidence = dict(schema_version=1,candidate=self.candidate,checkout=self.checkout,
+            capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evaluation_ref=self.evaluation_ref,
+            replay_ref=self.replay_ref,trial_provenance=self.trials,a11_capture_ref=self.map_capture_ref,a11_result_ref=self.map_ref,
+            a10_receipt_ref=self.receipt_ref,a10_result_ref=result_ref,a10_capture_ref=a10_capture_ref,capability_ref=self.capability_ref,
+            capture_host=self.capture_host,verify_host=verify_host,pack_ref=pack,inventory=self.manifests['verify']['inventory'])
+        self.review = dict(schema_version=1,role='Evaluator',reviewer='SYNTHETIC-independent-host-parser-reviewer',source_commit=self.source,
+            capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evidence_ref=None,
+            capture_host=self.capture_host,verify_host=verify_host,**gate,evidence_files=[self.capture_host['metadata_ref']['path'],verify_host['metadata_ref']['path']])
+        self.policy = dict(schema_version=1,role='Root',repository_origin=CONTROL_ORIGIN,review_repository=CONTROL_REPOSITORY,
+            feature_id='123',selection_ref=self.verify_selection,evidence_ref=None,hosted_review_ref=None,approved=True)
+        self.evidence=self.value('evidence-body',self.evidence)
+        self.bind()
+        self.policy=self.value('policy',self.policy)
+        self.evidence,self.policy,self.review=copy.deepcopy((self.evidence,self.policy,self.review))
+        require(len(self.applied)==(1 if defect else 0),'exactly one deliberate defect site applied')
+        self.assert_bindings()
+
+    def stage_checkout(self,mode,selection):
+        # This outer CLI input belongs to a Root record-only checkout, never the
+        # Source-relative output branch. Both historical versions remain in Git.
+        path='.agent/evidence/123/selection.json';target=self.root/path
+        present=self.value(mode+'-selection-present',True)
+        if present:self.write(path,self.value(mode+'-fixed-selection-bytes',self.raw(selection)))
+        elif target.exists():target.unlink()
+        revision=self.commit('SYNTHETIC '+mode+' fixed CLI selection checkout')
+        checkout=dict(sha=revision,tree=git(self.root,'rev-parse',revision+'^{tree}'),event='push',
+            event_head=revision,event_base=None,parents=git(self.root,'show','-s','--format=%P',revision).split())
+        self.checkouts[mode]=self.value(mode+'-checkout',checkout)
+        return self.checkouts[mode]
+
+    def raw(self, reference):
+        return subprocess.check_output(['git','-C',str(self.root),'show',reference['revision']+':'+reference['path']])
+
+    def read(self, reference): return json.loads(self.raw(reference))
+
+    def value(self,label,value):
+        result=copy.deepcopy(value)
+        if self.defect and self.defect['site']==label:
+            changed=self.defect['change'](result,self)
+            if changed is not None and (type(changed) is bytes or type(value) in (bytes,bool) or value is None):result=changed
+            self.applied.append(label)
+        return result
+
+    def put(self,label,value):
+        self.serial += 1; path='.agent/evidence/123/synthetic-root/%s/%04d-%s' % (self.namespace,self.serial,label)
+        value=self.value(label,value); data=value if type(value) is bytes else canonical(value)+b'\n'
+        self.write(path,data); reference=self.ref(path,self.commit('SYNTHETIC parser record '+label))
+        self.nodes[label]=reference; self.originals[label]=copy.deepcopy(value); return reference
+
+    def exp_write(self,path,value):
+        target=self.exp/(CONTROL_PREFIX+path); target.parent.mkdir(parents=True,exist_ok=True)
+        value=self.value(path,value);data=value if type(value) is bytes else canonical(value)+b'\n'
+        self.payloads[path]=data;target.write_bytes(data)
+
+    def exp_commit(self,message):
+        git(self.exp,'add','--',CONTROL_PREFIX); git(self.exp,'commit','--quiet','-m',message)
+        return git(self.exp,'rev-parse','HEAD')
+
+    def exp_ref(self,path,revision): return self.ref(CONTROL_PREFIX+path,revision)
+
+    def capture(self,argv,revision,producer,stdout,stderr,cwd=None):
+        return dict(schema_version=1,argv=argv,cwd=str(self.exp if cwd is None else cwd),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
+            environment=self.candidate['environment'],producer=producer,executed=True,outcome='success',exit_code=0,stdout=stdout,stderr=stderr)
+
+    def make_evaluation(self,report):
+        cr=load_api(ROOT/'tools/convergent_review.py'); ev=load_api(ROOT/'tools/evaluate_convergent_review_prompt.py')
+        packet_path=self.exp/(CONTROL_PREFIX+'evaluation/packet.json'); packet_path.parent.mkdir(parents=True,exist_ok=True)
+        cr.cmd_build_packet(argparse.Namespace(repo=str(self.exp),repository=CONTROL_REPOSITORY,review_id='wa123-controls',
+            mode='ordinary',base=self.selection['packet_base'],head=self.source,output=str(packet_path)))
+        packet=cr.parse_json_bytes(packet_path.read_bytes(),'synthetic packet'); digest=sha(packet_path.read_bytes())
+        self.exp_write('candidate.json',self.candidate); trial_paths=[]; receipts=[]; paths=[]
+        prior=self.selection['prior_ledger'];prior_file=packet_path.parent/'prior-ledger.json' if prior else None
+        if prior:prior_file.write_bytes(self.raw(prior))
+        runner=str(self.exp/'tools/workflow_assurance_ci.py'); adapter=str(self.exp/'tools/linux_trial_sandbox.sh')
+        for n in (1,2,3):
+            directory=self.exp/(CONTROL_PREFIX+'evaluation/trial-'+str(n)); directory.mkdir()
+            pp=directory/'packet.json'; prompt=directory/'prompt.md'; output=directory/'trial.json'
+            pp.write_bytes(packet_path.read_bytes())
+            trial_prior=directory/'prior-ledger.json' if prior else None
+            if prior:trial_prior.write_bytes(self.raw(prior))
+            prompt.write_text(ev.render_prompt(self.raw(self.selection['prompt_ref']).decode(),pp,n,output,trial_prior))
+            trial=dict(schema_version=cr.SCHEMA_VERSION,review_id='wa123-controls',head_sha=self.source,packet_digest=digest,trial_number=n,observations=[])
+            output.write_bytes(cr.canonical_json_bytes(trial)); (directory/'runner.stdout').write_bytes(b''); (directory/'runner.stderr').write_bytes(b'')
+            trial_paths.append(str(output)); paths.append((pp,prompt,output))
+            receipts.append(dict(trial_number=n,prompt_digest=sha(prompt.read_bytes()),trial_digest=sha(output.read_bytes()),
+                isolated_packet_digest=digest,runner_exit=0,isolation_adapter_digest=self.selection['adapter_ref']['sha256']))
+        review_dir=self.exp/(CONTROL_PREFIX+'evaluation/review')
+        cr.cmd_converge(argparse.Namespace(packet=str(packet_path),trial=trial_paths,prior_ledger=str(prior_file) if prior else None,suppression=[],output_dir=str(review_dir)))
+        ledger=json.loads((review_dir/'ledger.json').read_bytes()); mapped=self.api.convergent_agf_verdict(ledger,report,
+            expected_repository=CONTROL_REPOSITORY,expected_head_sha=self.source)
+        expected=not bool(self.defect and self.defect.get('gate_rejection'))
+        require(mapped['final_verdict']['approved'] is expected,'actual convergent mapping follows explicit clear/blocking variant expectation')
+        if prior:
+            require(all(json.loads(Path(p).read_bytes())['observations']==[] for p in trial_paths),'carried variants have three empty observation trials')
+            require(ledger['findings'] and all(row['lifecycle']=='persisting' for row in ledger['findings']),'actual convergence carries unresolved prior findings')
+        evaluation=dict(schema_version=cr.SCHEMA_VERSION,packet_digest=digest,prompt_template_digest=self.selection['prompt_ref']['sha256'],
+            runner_digest=self.selection['runner_ref']['sha256'],trials=receipts,review_replay_digest=sha((review_dir/'replay.json').read_bytes()))
+        self.exp_write('evaluation/prompt-evaluation.json',evaluation); self.exp_write('map/result.json',mapped)
+        for label,data in (('boundary',b'SANDBOX BOUNDARIES PASS: intact 0; isolated omission controls 40/41/42; unexpected execution errors rejected\n'),('isolation',b'SYNTHETIC parser suite output; not executed namespaces\n'),('map',b'WA123_A11_APPROVED\n')):
+            self.exp_write(label+'/stdout',data); self.exp_write(label+'/stderr',b'')
+        execution=git(self.exp,'rev-parse','HEAD'); outputs=self.exp_commit('SYNTHETIC evaluator and capability parser outputs; no enforced execution')
+        process=lambda argv,label:dict(argv=argv,cwd=str(self.exp),revision=execution,executed=True,actual_exit=0,
+            stdout=self.exp_ref(label+'/stdout',outputs),stderr=self.exp_ref(label+'/stderr',outputs))
+        capability=dict(schema_version=1,source_commit=self.source,checkout_sha=self.checkout['sha'],environment=self.candidate['environment'],
+            producer=self.capture_producer,boundary=process([sys.executable,'.github/scripts/test_sandbox_boundaries.py'],'boundary'),
+            isolation=process([sys.executable,'tools/test_convergent_review.py'],'isolation'))
+        self.map_capture=self.capture([sys.executable,'tools/workflow_assurance_ci.py','map','--selection',CONTROL_PREFIX+'inputs/selection-capture.json',
+            '--evaluation',str(packet_path.parent),'--output',str(self.exp/(CONTROL_PREFIX+'map/result.json'))],execution,self.capture_producer,
+            self.exp_ref('map/stdout',outputs),self.exp_ref('map/stderr',outputs))
+        self.exp_write('capability.json',capability); self.exp_write('map/capture.json',self.map_capture)
+        tip=self.exp_commit('SYNTHETIC parser provenance representations')
+        self.candidate_ref=self.exp_ref('candidate.json',outputs); self.capability_ref=self.exp_ref('capability.json',tip)
+        self.map_ref=self.exp_ref('map/result.json',outputs); self.map_capture_ref=self.exp_ref('map/capture.json',tip)
+        self.evaluation_ref=self.exp_ref('evaluation/prompt-evaluation.json',outputs); self.replay_ref=self.exp_ref('evaluation/review/replay.json',outputs)
+        self.trials=[]
+        for n,(pp,prompt,output) in enumerate(paths,1):
+            refs={key:self.ref(str(path.relative_to(self.exp)),outputs) for key,path in
+                (('packet_ref',pp),('prompt_ref',prompt),('output_ref',output),('stdout_ref',pp.parent/'runner.stdout'),('stderr_ref',pp.parent/'runner.stderr'))}
+            invocation=[adapter,'--root',str(pp.parent),'--runner',runner,'--',runner,'--prompt',str(prompt),'--packet',str(pp),'--trial-number',str(n),'--output',str(output)]
+            if prior:invocation+=['--prior-ledger',str(pp.parent/'prior-ledger.json')]
+            self.trials.append(dict(number=n,**refs,evaluation_receipt_ref=self.evaluation_ref,invocation=invocation,
+                **{k:self.selection[k] for k in ('runner_ref','adapter_ref','evaluator_ref')},boundary_ref=self.capability_ref))
+
+    def inventory(self,tip):
+        rows=[]
+        for revision in git(self.exp,'rev-list','--reverse',self.source+'..'+tip).splitlines():
+            for path in git(self.exp,'diff-tree','--no-commit-id','--name-only','-r',revision).splitlines():
+                mode,kind,blob=git(self.exp,'ls-tree',revision,'--',path).split()[:3]
+                rows.append(dict(path=path,revision=revision,git_blob=blob,git_mode=mode,sha256=self.ref(path,revision)['sha256']))
+        return sorted(rows,key=lambda r:(r['revision'],r['path']))
+
+    def host(self,mode,tip,selection,results):
+        import io,zipfile
+        checkout=self.checkouts[mode]
+        git(self.exp,'update-ref','refs/wa123/proof',tip)
+        path=self.parent/(mode+'.bundle')
+        git(self.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+self.source)
+        changed=self.value(mode+'-bundle-bytes',path.read_bytes());extra={}
+        if type(changed) is tuple:changed,extra=changed
+        bundle=changed;pack=self.put(mode+'-bundle',bundle)
+        manifest=dict(schema_version=1,mode=mode,source_commit=self.source,output_tip=tip,bundle_sha256=sha(bundle),bundle_size=len(bundle),inventory=self.inventory(tip))
+        manifest.update(extra);manifest=self.value(mode+'-manifest',manifest)
+        self.manifests[mode]=manifest;producer=self.capture_producer if mode=='capture' else self.verify_producer
+        invocation=self.value(mode+'-invocation-body',dict(schema_version=1,mode=mode,producer=producer,selection_ref=selection,
+            source_commit=self.source,checkout=checkout,environment=self.candidate['environment'],
+            argv=[sys.executable,'tools/workflow_assurance_ci.py',mode,'--selection','.agent/evidence/123/selection.json',
+                '--output',str(self.parent/('wa123-'+mode))],cwd=str(self.root),output_tip=manifest['output_tip'],
+            bundle_sha256=sha(bundle),manifest_sha256=sha(canonical(manifest)+b'\n'),result_refs=results,actual_exit=0))
+        invocation_ref=self.put(mode+'-invocation',canonical(invocation)+b'\n');raw_inv=self.raw(invocation_ref)
+        archive=io.BytesIO()
+        with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+            for name,data in (('proof.bundle',bundle),('manifest.json',canonical(manifest)+b'\n'),('invocation.json',raw_inv)):
+                info=zipfile.ZipInfo(name);info.create_system=3;info.external_attr=0o100644<<16;z.writestr(info,data)
+        archive_bytes=self.value(mode+'-archive-bytes',archive.getvalue());archive_ref=self.put(mode+'-archive',archive_bytes)
+        run=101 if mode=='capture' else 102;job=run+100;artifact=run+200
+        artifact_name='wa123-'+mode+'-'+producer['session_id']
+        run_json=dict(id=run,run_attempt=1,name='compliance',event=checkout['event'],head_sha=checkout['event_head'],status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY),unconsumed_fixture='SYNTHETIC ignored external field')
+        names=['validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'];jobs=[]
+        for index,name in enumerate(names):
+            steps=[dict(number=1,name='WA123 '+mode,status='completed',conclusion='success'),
+                dict(number=2,name='WA123 '+('verify' if mode=='capture' else 'capture'),status='completed',conclusion='skipped'),
+                dict(number=3,name='Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py',status='completed',conclusion='success'),
+                dict(number=4,name='Run required isolation suite',status='completed',conclusion='success')] if name=='convergent_review' else []
+            jobs.append(dict(id=job if name=='convergent_review' else job+10+index,run_id=run,run_attempt=1,name=name,status='completed',conclusion='success',head_sha=checkout['event_head'],steps=steps))
+        raw_jobs=dict(total_count=5,jobs=jobs,unconsumed_fixture='SYNTHETIC ignored');artifacts=dict(total_count=1,artifacts=[dict(id=artifact,name=artifact_name,expired=False,size_in_bytes=len(archive_bytes),unconsumed_fixture='SYNTHETIC ignored')])
+        log=b'SYNTHETIC parser log only\tWA123_INVOCATION='+raw_inv
+        args=[['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/'+str(run)],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/%d/attempts/1/jobs?per_page=100'%run],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/%d/artifacts?per_page=100'%run],
+            ['gh','run','view',str(run),'--repo',CONTROL_REPOSITORY,'--job',str(job),'--log'],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/artifacts/%d/zip'%artifact]]
+        fetches=[]
+        for kind,argv,data in zip(('run','jobs','artifacts','job-log','archive'),args,(run_json,raw_jobs,artifacts,log,archive_bytes)):
+            output=archive_ref if kind=='archive' else self.put(mode+'-'+kind,data)
+            fetches.append(self.value(mode+'-fetch-'+kind,dict(kind=kind,argv=argv,cwd=str(self.root),revision=git(self.root,'rev-parse','HEAD'),
+                actual_exit=0,stdout=output,stderr=self.put(mode+'-'+kind+'-stderr',b''))))
+        metadata=dict(schema_version=1,mode=mode,source_commit=self.source,producer=producer,selection_ref=selection,invocation_ref=invocation_ref,
+            run_id=run,attempt=1,job_id=job,artifact_id=artifact,artifact_name=artifact_name,archive_ref=archive_ref,fetches=fetches)
+        host=self.value(mode+'-host',dict(repository=CONTROL_REPOSITORY,run_id=run,attempt=1,job_id=job,job='convergent_review',head_sha=checkout['event_head'],
+            checkout_sha=checkout['sha'],artifact_name=artifact_name,artifact_sha256=sha(archive_bytes),metadata_ref=self.put(mode+'-metadata',metadata),job_log_ref=fetches[3]['stdout']))
+        return host,pack
+
+    def bind(self):
+        evidence_ref=self.put('evidence',self.evidence)
+        self.review=dict(self.review,evidence_ref=evidence_ref,capture_host=self.evidence['capture_host'],verify_host=self.evidence['verify_host'])
+        self.policy=dict(self.policy,evidence_ref=evidence_ref,hosted_review_ref=self.put('hosted-review',self.review))
+
+    def assert_bindings(self):
+        """Verify fixture transport companions; skip only a declared target property."""
+        import io,zipfile
+        waiver=self.defect.get('waiver','') if self.defect else ''
+        for ref in self.nodes.values():
+            require(sha(self.raw(ref))==ref['sha256'],'fixture immutable node bytes/digest coherent')
+        if not(self.defect and self.defect['name']=='evidence-checkout'):
+            require(self.evidence['checkout']==self.checkouts['capture'],'fixture Evidence retains capture Checkout')
+        for mode in ('capture','verify'):
+            host=self.evidence[mode+'_host'];metadata=self.read(host['metadata_ref'])
+            fetches={row['kind']:row for row in metadata['fetches']}
+            selected=self.capture_selection if mode=='capture' else self.verify_selection
+            checkout=self.checkouts[mode]
+            frame=not(self.defect and self.defect.get('frame_waiver')==mode+'-checkout')
+            if frame:
+                require(git(self.root,'rev-parse',checkout['sha']+'^{tree}')==checkout['tree'],'fixture actual stage checkout tree')
+                require(git(self.root,'show','-s','--format=%P',checkout['sha']).split()==checkout['parents'],'fixture actual stage checkout parents')
+                git(self.root,'merge-base','--is-ancestor',self.source,checkout['sha'])
+                for category in ('source','tests','tools','contracts'):
+                    for entry in self.candidate['assessed_inputs'][category]:
+                        raw=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+entry['path']])
+                        mode_bits=git(self.root,'ls-tree',checkout['sha'],'--',entry['path']).split()[0]
+                        require(sha(raw)==entry['sha256'] and (mode_bits=='100755') is entry['executable'],'fixture stage checkout preserves protected Source bytes/modes')
+                require(checkout['event']=='push' and checkout['event_head']==checkout['sha'] and checkout['event_base'] is None,'fixture actual synthetic push checkout/event')
+            fixed=frame and not(self.defect and self.defect.get('frame_waiver')==mode+'-fixed-input')
+            if fixed:
+                path='.agent/evidence/123/selection.json'
+                actual=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+path])
+                require(actual==self.raw(selected),'fixture fixed CLI input equals independently selected immutable JSON')
+            archive=self.raw(metadata['archive_ref'])
+            require(metadata['archive_ref']==fetches['archive']['stdout'],'fixture raw archive selection coherent')
+            if not(mode=='verify' and waiver=='archive-hash'):
+                require(host['artifact_sha256']==sha(archive),'fixture Host archive SHA coherent')
+            require(host['job_log_ref']==fetches['job-log']['stdout'],'fixture log selection coherent')
+            if not(mode=='verify' and waiver=='archive-size'):
+                require(self.read(fetches['artifacts']['stdout'])['artifacts'][0]['size_in_bytes']==len(archive),'fixture raw archive size coherent')
+            if mode=='verify' and waiver=='archive-structure':continue
+            with zipfile.ZipFile(io.BytesIO(archive)) as z:
+                bundle=z.read('proof.bundle');manifest_raw=z.read('manifest.json');inv_raw=z.read('invocation.json')
+            manifest=json.loads(manifest_raw);inv=json.loads(inv_raw)
+            require(manifest_raw==canonical(self.manifests[mode])+b'\n','fixture manifest is exact produced object')
+            require(inv_raw==self.raw(metadata['invocation_ref']),'fixture archive/Root invocation bytes coherent')
+            require(inv['bundle_sha256']==manifest['bundle_sha256']==sha(bundle),'fixture bundle hashes coherent')
+            require(inv['manifest_sha256']==sha(manifest_raw),'fixture manifest hash coherent')
+            require(manifest['bundle_size']==len(bundle),'fixture bundle length coherent')
+            require(inv['output_tip']==manifest['output_tip'],'fixture manifest/invocation tip coherent')
+            require(inv['selection_ref']==(self.capture_selection if mode=='capture' else self.verify_selection),'fixture invocation selection coherent')
+            require(inv['checkout']==checkout and host['checkout_sha']==checkout['sha'],'fixture per-stage Invocation/Host checkout coherent')
+            require(inv['source_commit']==metadata['source_commit']==self.source,'fixture stage source remains immutable assessed anchor')
+            run=self.read(fetches['run']['stdout']);jobs=self.read(fetches['jobs']['stdout'])
+            if not(self.defect and self.defect['site'] in (mode+'-run',mode+'-jobs')):
+                require(run['head_sha']==host['head_sha']==checkout['event_head'] and run['event']==checkout['event'],'fixture raw run/Host stage event head coherent')
+                require(all(job['head_sha']==host['head_sha'] for job in jobs['jobs']),'fixture raw jobs stage head coherent')
+            require(inv['producer']==(self.capture_producer if mode=='capture' else self.verify_producer),'fixture invocation producer coherent')
+            expected_results=([self.candidate_ref,self.capability_ref,self.evaluation_ref,self.replay_ref,self.map_ref,self.map_capture_ref] if mode=='capture'
+                else [self.receipt_ref,self.evidence['a10_result_ref'],self.evidence['a10_capture_ref']])
+            require(inv['result_refs']==expected_results,'fixture invocation exact result_refs coherent')
+            if not(mode=='verify' and waiver=='log-marker'):
+                raw_log=self.raw(host['job_log_ref']);require(raw_log.count(b'WA123_INVOCATION=')==1 and raw_log.endswith(b'WA123_INVOCATION='+inv_raw),'fixture unique exact log marker coherent')
+            if mode=='verify':
+                require(bundle==self.raw(self.evidence['pack_ref']),'fixture selected pack/archive bytes coherent')
+                require(manifest['inventory']==self.evidence['inventory'],'fixture selected inventory coherent')
+        capture=json.loads(self.payloads['verify/capture.json']);outer=self.read(self.nodes['verify-invocation'])
+        name=self.defect['name'] if self.defect else ''
+        require(capture['argv']==outer['argv'],'fixture nested A10 Capture exact outer verify argv')
+        require(capture['argv'][capture['argv'].index('--selection')+1]=='.agent/evidence/123/selection.json','fixture nested A10 fixed CLI path')
+        if name!='a10-capture-wrong-cwd':
+            require(capture['cwd']==outer['cwd']==str(self.root),'fixture nested A10 Capture actual Root cwd')
+        if name!='a10-capture-preselection-revision':
+            require(capture['revision']==outer['checkout']['sha']==self.checkouts['verify']['sha'],'fixture nested A10 Capture actual stage V revision')
+        if name not in ('a10-capture-preselection-revision','verify-preselection-checkout','verify-fixed-selection-absent','verify-fixed-selection-substituted'):
+            selected=subprocess.check_output(['git','-C',str(self.root),'show',capture['revision']+':.agent/evidence/123/selection.json'])
+            require(selected==self.raw(self.verify_selection),'fixture nested A10 fixed input equals independently selected verify JSON')
+        result=json.loads(self.payloads['verify/result.json']);expected_receipt=self.read(self.receipt_ref)
+        require(result['receipt']==expected_receipt,'fixture actual/projected result receipt equals selected immutable receipt')
+        for key in ('advance','noop','republish'):
+            require(result[key]['receipt']==expected_receipt,'fixture transition receipt projection coherent')
+        require(result['rerun_required']['receipt'] is None,'fixture missing-recovery has no receipt')
+        for key in ('republish','rerun_required'):
+            require(result[key]['state']==self.shadow,'fixture recovery leaves selected initial state unchanged')
+        require(result['advance']['state']==result['noop']['state'],'fixture identical replay state retained')
+        event=result['advance']['state']['history'][-1];digest=sha(canonical(expected_receipt))
+        require(event['receipt_sha256']==digest and event['candidate_sha256']==sha(canonical(self.candidate)),'fixture projected receipt/candidate event digests coherent')
+        require(event['operation_id']==self.a10_policy['operation_id'] and event['feature_id']=='123' and event['stage']=='source-ready','fixture projected event operation binding coherent')
+        require(event['detail'].endswith('('+digest+')'),'fixture projected event detail digest coherent')
+        before=copy.deepcopy(self.shadow);after=copy.deepcopy(result['advance']['state'])
+        require(after['history'][:-1]==before['history'] and after['status']==self.a10_policy['to_status'] and after['updated_at']==self.a10_policy['at'],'fixture projected owned transition fields coherent')
+        for key in ('history','status','updated_at'):after.pop(key);before.pop(key)
+        require(after==before,'fixture unowned shadow fields coherent')
+        for row in self.evidence['inventory']:
+            ref={k:row[k] for k in ('path','revision','sha256')}
+            require(sha(self.raw(ref))==row['sha256'],'fixture inventory bytes coherent')
+            require(git(self.root,'ls-tree',row['revision'],'--',row['path']).split()[:3]==[row['git_mode'],'blob',row['git_blob']],'fixture inventory Git mode/blob coherent')
+
+
+def controls_snapshot(f):
+    paths=[]
+    for anchor in dict.fromkeys((f.root,f.parent)):
+        for directory,dirs,files in os.walk(anchor):
+            dirs[:]=[d for d in dirs if d!='.git']
+            paths.extend(Path(directory)/name for name in files if name!='.git')
+    return ({str(p):(p.lstat().st_mode,p.lstat().st_nlink,sha(p.read_bytes())) for p in set(paths)},
+        f.outside.lstat().st_mode,f.outside.read_bytes(),git(f.root,'status','--porcelain','--untracked-files=all'),
+        git(f.root,'rev-parse','HEAD'),git(f.root,'show-ref'))
+
+
+def controls_call(api,f,deny=False):
+    before=repr((f.evidence,f.policy)); files=controls_snapshot(f)
+    try:
+        if deny:
+            try:api.verify_controls_ready(f.root,f.evidence,policy=f.policy)
+            except api.AssuranceError as exc:
+                diagnostic=str(exc);require(bool(diagnostic),'nonempty targeted rejection')
+                require(re.search(f.defect['cause'],diagnostic,re.I) is not None,'rejection must identify intended cause '+f.defect['name']+': '+diagnostic)
+                print('EXPECTED_REJECTION '+json.dumps(dict(name=f.defect['name'],site=f.defect['site'],diagnostic=diagnostic),sort_keys=True));return
+            require(False,'synthetic invalid controls proof accepted: '+f.defect['name'])
+            return
+        out=api.verify_controls_ready(f.root,f.evidence,policy=f.policy)
+        require(out==dict(schema_version=1,feature_id='123',source_commit=f.source,checkout_sha=f.checkout['sha'],
+            candidate_sha256=sha(canonical(f.candidate)),capture_run_id=101,verify_run_id=102,a11_verdict='approve',
+            a10_receipt_sha256=f.receipt_ref['sha256'],transition_actions=['advance','noop','republish','rerun-required'],
+            hosted_review_sha256=f.policy['hosted_review_ref']['sha256']),'exact synthetic readiness result')
+        require(not receipt_ids(out)&receipt_ids([f.evidence,f.policy]),'controls result deep copy')
+        return out
+    finally:
+        require(repr((f.evidence,f.policy))==before,'controls inputs unchanged')
+        require(controls_snapshot(f)==files,'controls repository, proof, full modes, origin refs and outside sentinel unchanged')
+
+
+
+def controls_foreign_observer(api,f):
+    """Selected historical Env is independent of the observer's local runtime."""
+    originals={name:getattr(api.platform,name) for name in ('python_implementation','python_version','system','machine')}
+    historical={name:getattr(api,name) for name in ('verify_stage_receipt','plan_receipt_transition','assess_repository')}
+    captured=copy.deepcopy(f.candidate['environment']);process=subprocess.Popen
+    def observe_process(argv,*args,**kwargs):
+        tokens=list(argv) if isinstance(argv,(list,tuple)) else [str(argv)]
+        if tokens and Path(tokens[0]).name!='git':
+            require(not any(name in ' '.join(map(str,tokens)) for name in ('workflow_assurance_ci.py','evaluate_convergent_review_prompt.py','linux_trial_sandbox.sh','isolated_trial_adapter.py','unshare')),'observation launched runner/evaluator/namespace')
+        return process(argv,*args,**kwargs)
+    def forbidden(*args,**kwargs):raise AssertionError('POLICY_ASSERTION: observer reexecuted historical A10/assessment')
+    try:
+        subprocess.Popen=observe_process
+        for name in originals:setattr(api.platform,name,lambda n=name:'SYNTHETIC-local-observer-'+n)
+        for name in historical:setattr(api,name,forbidden)
+        require(captured['runtime']['version']!=api.platform.python_version(),'observer runtime discrimination is real')
+        controls_call(api,f)
+        print('PASS SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged')
+    finally:
+        subprocess.Popen=process
+        for name,value in originals.items():setattr(api.platform,name,value)
+        for name,value in historical.items():setattr(api,name,value)
+    require(f.candidate['environment']==captured,'historical selected environment unchanged')
+    controls_call(api,f)
+
+
+def controls_prior(f,severity):
+    """Actual convergence of an explicitly synthetic prior packet at selected base."""
+    cr=load_api(ROOT/'tools/convergent_review.py');directory=ROOT/'tools/fixtures/convergent_review/02-consensus-blocker'
+    packet=json.loads((directory/'packet.json').read_bytes());base=git(f.root,'rev-parse',f.source+'^')
+    packet.update(repository=CONTROL_REPOSITORY,review_id='wa123-controls',head_sha=base,base_sha=git(f.root,'rev-parse',base+'^'))
+    digest=sha(cr.canonical_json_bytes(packet));trials=[]
+    for n in (1,2,3):
+        trial=json.loads((directory/('trial-%d.json'%n)).read_bytes())
+        trial.update(review_id='wa123-controls',head_sha=base,packet_digest=digest)
+        for observation in trial['observations']:observation['finding']['severity']=severity
+        trials.append(trial)
+    return cr.converge_documents(packet,digest,trials,{n:sha(cr.canonical_json_bytes(trials[n-1])) for n in (1,2,3)},None,None,[])
+
+
+def controls_variant(api,positive,defect):
+    """Fresh graph: inject once before downstream commitments; restore chosen good graph."""
+    with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-variant-') as parent:
+        bad=controls_construct(api,parent,defect,seed=positive)
+        try:controls_call(api,bad,True)
+        finally:git(bad.root,'worktree','remove','--force',str(bad.exp))
+    git(positive.root,'restore','--source='+positive.materialized_tip,'--staged','--worktree','--',CONTROL_PREFIX)
+    positive.write('.agent/evidence/123/selection.json',positive.raw(positive.verify_selection))
+    positive.commit('SYNTHETIC restored original positive materialization')
+    controls_call(api,positive)
+    print('RESTORED '+defect['name'])
+
+
+def controls_zip(raw,change):
+    import io,zipfile
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:entries=[(info,z.read(info)) for info in z.infolist()]
+    entries=change(entries); output=io.BytesIO()
+    with zipfile.ZipFile(output,'w') as z:
+        for info,data in entries:z.writestr(info,data)
+    return output.getvalue()
+
+
+def controls_zip_size(raw,declared):
+    """Change only the proof.bundle uncompressed-size declaration, not its bytes."""
+    data=bytearray(raw)
+    for signature,offset,name_offset in ((b'PK\x03\x04',22,30),(b'PK\x01\x02',24,46)):
+        position=data.find(signature)
+        require(position>=0,'synthetic ZIP header present')
+        require(data[position+name_offset:position+name_offset+12]==b'proof.bundle','synthetic first entry is bundle')
+        data[position+offset:position+offset+4]=declared.to_bytes(4,'little')
+    return bytes(data)
+
+
+def controls_zip_symlink(raw):
+    def change(entries):
+        entries[0][0].create_system=3;entries[0][0].external_attr=0o120777<<16
+        return entries
+    return controls_zip(raw,change)
+
+
+def controls_intermediate_bundle(f,hidden=False,mode_only=False):
+    """Actual Git objects: scope escape, or protected drift restored before tip."""
+    tip=git(f.exp,'rev-parse','HEAD'); source_path='tools/workflow_assurance.py' if hidden or mode_only else 'SYNTHETIC-out-of-scope.txt'
+    blob=subprocess.check_output(['git','-C',str(f.exp),'hash-object','-w','--stdin'],input=b'SYNTHETIC forbidden intermediate bytes\n').decode().strip()
+    with tempfile.TemporaryDirectory(prefix='SYNTHETIC-index-',dir=f.parent) as name:
+        env={**os.environ,'GIT_INDEX_FILE':str(Path(name)/'index')}
+        def index(*args):return subprocess.check_output(['git','-C',str(f.exp),*args],env=env).decode().strip()
+        mode='100644'
+        if mode_only:
+            original_mode,kind,blob=git(f.exp,'ls-tree',tip,'--',source_path).split()[:3]
+            mode='100644' if original_mode=='100755' else '100755'
+        index('read-tree',tip);index('update-index','--add','--cacheinfo',mode,blob,source_path)
+        tree=index('write-tree'); bad=git(f.exp,'commit-tree',tree,'-p',tip,'-m','SYNTHETIC forbidden intermediate')
+        if hidden:bad=git(f.exp,'commit-tree',git(f.exp,'rev-parse',tip+'^{tree}'),'-p',bad,'-m','SYNTHETIC restore protected tip')
+        path=Path(name)/'bad.bundle';git(f.exp,'update-ref','refs/wa123/proof',bad)
+        try:git(f.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+f.source);raw=path.read_bytes()
+        finally:git(f.exp,'update-ref','refs/wa123/proof',tip)
+    return raw,dict(output_tip=bad,inventory=f.inventory(bad))
+
+
+def controls_unknown_object(raw,f):
+    """Valid Git pack carrying one actual unreferenced object beyond declared graph."""
+    tip=git(f.exp,'rev-parse','HEAD')
+    extra=subprocess.check_output(['git','-C',str(f.exp),'hash-object','-w','--stdin'],input=b'SYNTHETIC undeclared unreachable object\n').decode().strip()
+    objects=git(f.exp,'rev-list','--objects','--no-object-names',f.source+'..'+tip).splitlines()
+    packed=subprocess.check_output(['git','-C',str(f.exp),'pack-objects','--stdout'],input=('\n'.join(objects+[extra])+'\n').encode())
+    return raw.split(b'\n\n',1)[0]+b'\n\n'+packed
+
+
+def controls_observer(f):
+    """Independently expected bounded rule; actual trusted observer executable."""
+    cr=load_api(ROOT/'tools/convergent_review.py'); ev=load_api(ROOT/'tools/evaluate_convergent_review_prompt.py')
+    with tempfile.TemporaryDirectory(prefix='SYNTHETIC123-observer-',dir=f.parent) as directory:
+        directory=Path(directory); packet_path=directory/'packet.json'; prompt=directory/'prompt.md'; output=directory/'trial.json'
+        def exercise(old,content,path,expected):
+            packet=dict(schema_version=cr.SCHEMA_VERSION,repository=CONTROL_REPOSITORY,review_id='wa123-controls',
+                mode='ordinary',base_sha=f.selection['packet_base'],head_sha=f.source,scope_commitment=None,
+                delta=[dict(path=path,old_mode='100644',new_mode='100644',old_digest=sha(old.encode()),new_digest=sha(content.encode()),old_content=old)],
+                review_files=[dict(path=path,content=content,content_digest=sha(content.encode()))])
+            cr.validate_packet(packet); packet_path.write_bytes(cr.canonical_json_bytes(packet))
+            prompt.write_text(ev.render_prompt(f.raw(f.selection['prompt_ref']).decode(),packet_path,1,output,None))
+            if output.exists():output.unlink()
+            argv=[sys.executable,str(ROOT/'tools/workflow_assurance_ci.py'),'--prompt',str(prompt),'--packet',str(packet_path),'--trial-number','1','--output',str(output)]
+            process=subprocess.run(argv,cwd=directory,capture_output=True)
+            require(process.returncode==0,'actual deterministic observer command0: '+process.stderr.decode(errors='replace'))
+            trial=cr.parse_json_bytes(output.read_bytes(),'synthetic observer trial');cr.validate_trial(trial,packet,sha(packet_path.read_bytes()),'synthetic observer')
+            require(len(trial['observations'])==len(expected),'substantive gate-disable observation count')
+            evidence=[]
+            for observation in trial['observations']:
+                require(observation['action']=='active' and observation['finding']['severity']=='important' and observation['finding']['path']==path,
+                    'gate-disable is active important finding at authenticated workflow path')
+                evidence.extend(observation['evidence'])
+            require(sorted((e['start_line'],e['end_line'],e['excerpt'],e['content_digest'],e['path']) for e in evidence)==
+                sorted((n,n,content.splitlines()[n-1],sha(content.encode()),path) for n in expected),'exact authenticated offending line evidence')
+        path='.github/workflows/compliance.yml'
+        for value in ('true','"false"','FALSE','${{ success() }}','',"'false'"):
+            content='jobs:\n  check:\n    continue-on-error: '+value+'\n'
+            exercise('# base\n',content,path,[3]);exercise('# base\n','jobs:\n  check:\n    continue-on-error: false\n',path,[])
+        exercise('# base\n','jobs:\n  a:\n    continue-on-error: true\n  b:\n    continue-on-error: \"false\"\n',path,[3,5])
+        exercise('# base\n','jobs:\n  a:\n    continue-on-error: false\n  b:\n    continue-on-error: false\n',path,[])
+        for content in ('# continue-on-error: true\n','continue-on-error: false # allowed literal false\n'):
+            exercise('# base\n',content,path,[])
+        exercise('continue-on-error: true\n# old\n','continue-on-error: true\n# changed only\n',path,[])
+        exercise('# base\n','continue-on-error: true\n','tools/unrelated.yml',[])
+
+
+def controls_defects(blockers=False):
+    """Each entry names one producer site, expected cause and permitted audit exception."""
+    def row(name,site,change,cause,**extra):return dict(name=name,site=site,change=change,cause=cause,**extra)
+    if blockers:
+        rows=[row('incoming-'+key,'report',lambda v,f,k=key:v[k].append({'SYNTHETIC':'blocking despite favorable label'}),
+            r'AGF|report|blocking|verdict|approval|issues|coverage|unsupported',gate_rejection=True) for key in AGF_ARRAYS]
+        rows += [row('carried-'+severity,'carried-ledger',lambda v,f,s=severity:controls_prior(f,s),
+            r'AGF|ledger|blocking|verdict|approval|important|blocker',gate_rejection=True) for severity in ('blocker','important')]
+        rows += [row('wrong-'+key,'verify/result.json',lambda v,f,k=key:v[k].update(action='noop' if k=='advance' else 'advance'),
+            r'A10|transition|action|receipt') for key in ('advance','noop','republish','rerun_required')]
+        rows += [row('unexercised-conflict','verify/result.json',lambda v,f:v.update(conflict_rejected=False),r'A10|conflict|receipt|result'),
+            row('recovery-policy-removed','a10-policy',lambda v,f:v.update(recovery=None),r'A10|policy|recovery|receipt|transition'),
+            row('failed-receipt','receipt-body',lambda v,f:v.update(status='failed'),r'A10|receipt|passed|status')]
+        return rows
+    rows=[]
+    for site in ('capability.json','evaluation/prompt-evaluation.json','verify/capture.json','verify/result.json','capture-metadata','verify-metadata',
+        'selection-capture','selection-verify','hosted-review','authority','shadow','a10-policy'):
+        rows.append(row('unknown-'+site,site,lambda v,f:v.update(unknown=True),r'keys|closed|object|schema|fields|unexpected'))
+    for site in ('capability.json','evaluation/prompt-evaluation.json','verify/capture.json'):
+        rows.append(row('missing-version-'+site,site,lambda v,f:v.pop('schema_version'),r'keys|required|schema|version|field|object'))
+    rows += [row('bool-version','capability.json',lambda v,f:v.update(schema_version=True),r'version|integer|type|capabil'),
+        row('duplicate-key','capability.json',lambda v,f:canonical(v)[:-1]+b',"schema_version":1}\n',r'duplicate|canonical|JSON|json'),
+        row('nonfinite-bytes','capability.json',lambda v,f:canonical(v).replace(b'"schema_version":1',b'"schema_version":NaN')+b'\n',r'finite|JSON|json|constant|canonical'),
+        row('generic-boundary-label','boundary/stdout',lambda v,f:b'PASS\n',r'boundary|capabil|diagnostic|marker'),
+        row('boundary-unsupported','capability.json',lambda v,f:v['boundary'].update(actual_exit=64),r'boundary|capabil|exit|process'),
+        row('boundary-process-extra','capability.json',lambda v,f:v['boundary'].update(unknown=True),r'keys|closed|object|fields|process'),
+        row('capability-runtime-drift','capability.json',lambda v,f:v['environment']['runtime'].update(version='SYNTHETIC-drift'),r'environment|runtime|capabil'),
+        row('fourth-capture-producer','capture-producer',lambda v,f:v.update(session_id='123-ci-capture-attempt4'),r'producer|session|attempt|allocation'),
+        row('bool-trial-exit','evaluation/prompt-evaluation.json',lambda v,f:v['trials'][0].update(runner_exit=True),r'trial|exit|integer|receipt|evaluation'),
+        row('trial-adapter-substitution','evaluation/prompt-evaluation.json',lambda v,f:v['trials'][1].update(isolation_adapter_digest='0'*64),r'adapter|isolation|digest|trial'),
+        row('replay-valid-missing-trials','evidence-body',lambda v,f:v.update(trial_provenance=[]),r'trial|provenance|three|length'),
+        row('evidence-unknown','evidence-body',lambda v,f:v.update(unselected_policy={}),r'keys|closed|object|fields'),
+        row('policy-unknown','policy',lambda v,f:v.update(unknown=True),r'keys|closed|object|fields|policy'),
+        row('policy-bool-version','policy',lambda v,f:v.update(schema_version=True),r'version|integer|type|policy'),
+        row('Root-selection-substitution','policy',lambda v,f:v.update(selection_ref=f.capture_selection),r'policy|selection|mode|verify|binding'),
+        row('approval-metadata-missing','source-contract',lambda v,f:v.pop('approval_evidence'),r'approval|proposal|contract|prerequisite|metadata'),
+        row('approval-proposal-stale','source-contract',lambda v,f:v['approval_evidence'].update(proposal_sha256='0'*64),r'approval|proposal|contract|prerequisite|metadata'),
+        row('approval-gate-link-stale','source-contract',lambda v,f:v['approval_evidence'].update(mode_a=v['approval_evidence']['contract_review']),r'approval|proposal|contract|prerequisite|metadata')]
+    for field,value in (('executed',False),('exit_code',True),('exit_code',7),('outcome','pending'),('outcome','running'),('outcome','failed'),('outcome','invalidated'),('outcome','setup-error')):
+        rows.append(row('capture-'+field+'-'+str(value),'verify/capture.json',lambda v,f,k=field,x=value:v.update({k:x}),r'capture|exit|executed|outcome|success|command'))
+    rows += [row('a10-capture-wrong-cwd','verify/capture.json',lambda v,f:v.update(cwd=str(f.exp)),r'capture|cwd|invocation|verify|fixed|input|binding'),
+        row('a10-capture-preselection-revision','verify/capture.json',lambda v,f:v.update(revision=f.source),r'capture|revision|checkout|invocation|selection|fixed|input|binding')]
+    rows.append(row('capture-forged-producer','verify/capture.json',lambda v,f:v['producer'].update(session_id='123-ci-verify-attempt2'),r'producer|session|capture'))
+    for key in ('source_commit','source_tree'):
+        rows.append(row('evidence-candidate-'+key,'evidence-body',lambda v,f,k=key:v['candidate'].update({k:'0'*40}),r'candidate|identity|source|tree|selection|binding'))
+    rows += [row('evidence-checkout','evidence-body',lambda v,f:v['checkout'].update(sha='0'*40),r'checkout|source|binding'),
+        row('evidence-environment','evidence-body',lambda v,f:v['candidate']['environment']['runtime'].update(version='SYNTHETIC-other'),r'candidate|environment|identity|selection|binding'),
+        row('evidence-capture-attempt','evidence-body',lambda v,f:v['capture_host'].update(attempt=2),r'host|attempt|metadata|review|binding')]
+    for number in range(3):
+        for key in ('packet_ref','prompt_ref','output_ref','stdout_ref','stderr_ref','boundary_ref'):
+            rows.append(row('trial%d-%s-digest'%(number+1,key),'evidence-body',
+                lambda v,f,n=number,k=key:v['trial_provenance'][n][k].update(sha256='0'*64),r'trial|provenance|ref|artifact|digest|boundary|packet|prompt|output'))
+        for key in ('packet_ref','prompt_ref','output_ref'):
+            rows.append(row('trial%d-%s-valid-swap'%(number+1,key),'evidence-body',
+                lambda v,f,n=number,k=key:v['trial_provenance'][n].update({k:copy.deepcopy(v['trial_provenance'][(n+1)%3][k])}),r'trial|provenance|packet|prompt|output|path|receipt|digest|binding'))
+        for key,replacement in (('runner_ref','evaluator_ref'),('adapter_ref','runner_ref'),('evaluator_ref','adapter_ref')):
+            rows.append(row('trial%d-%s-substitution'%(number+1,key),'evidence-body',
+                lambda v,f,n=number,k=key,r=replacement:v['trial_provenance'][n].update({k:f.selection[r]}),r'trial|provenance|runner|adapter|evaluator|selected|binding'))
+    for mode in ('capture','verify'):
+        rows += [row(mode+'-fixed-selection-absent',mode+'-selection-present',lambda v,f:False,r'checkout|selection|CLI|fixed|input|blob|path|missing',frame_waiver=mode+'-fixed-input'),
+            row(mode+'-fixed-selection-substituted',mode+'-fixed-selection-bytes',lambda v,f:canonical(dict(json.loads(v),producer=dict(agent_id='wa123-capable-ci',session_id='123-ci-'+json.loads(v)['mode']+'-attempt2')))+b'\n',r'checkout|selection|CLI|fixed|input|digest|binding',frame_waiver=mode+'-fixed-input'),
+            row(mode+'-preselection-checkout',mode+'-checkout',lambda v,f:v.update(sha=f.source),r'checkout|selection|CLI|fixed|input|tree|parent|path',frame_waiver=mode+'-checkout'),
+            row(mode+'-wrong-checkout-tree',mode+'-checkout',lambda v,f:v.update(tree='0'*40),r'checkout|tree|object|binding',frame_waiver=mode+'-checkout')]
+        rows += [row(mode+'-raw-run-missing',mode+'-run',lambda v,f:v.pop('conclusion'),r'run|required|field|missing|conclusion|metadata'),
+            row(mode+'-raw-run-wrong-id',mode+'-run',lambda v,f:v.update(id=v['id']+500),r'run|id|binding|metadata'),
+            row(mode+'-raw-head-mismatch',mode+'-run',lambda v,f:v.update(head_sha='0'*40),r'head|source|checkout|metadata|binding'),
+            row(mode+'-raw-run-bool',mode+'-run',lambda v,f:v.update(id=True),r'run|integer|metadata|type'),
+            row(mode+'-raw-run-unfinished',mode+'-run',lambda v,f:v.update(status='in_progress'),r'run|completed|status|metadata'),
+            row(mode+'-missing-job-page',mode+'-jobs',lambda v,f:v.update(total_count=4),r'jobs|count|page|five|metadata'),
+            row(mode+'-failed-active-step',mode+'-jobs',lambda v,f:v['jobs'][3]['steps'][0].update(conclusion='failure'),r'step|job|success|conclusion|metadata'),
+            row(mode+'-expired-artifact',mode+'-artifacts',lambda v,f:v['artifacts'][0].update(expired=True),r'artifact|expired|metadata'),
+            row(mode+'-fetch-nonzero',mode+'-fetch-run',lambda v,f:v.update(actual_exit=7),r'fetch|exit|command|metadata'),
+            row(mode+'-fetch-bool-exit',mode+'-fetch-run',lambda v,f:v.update(actual_exit=True),r'fetch|exit|integer|type|metadata')]
+    for kind in ('mode-a','contract-review','approved-contract','provisional-bundle'):
+        rows.append(row('missing-gate-'+kind,'selection-capture',lambda v,f,k=kind:v.update(prerequisites=[e for e in v['prerequisites'] if e['kind']!=k]),r'prerequisite|approval|gate|contract|selection|binding'))
+    rows += [row('hosted-review-not-approved','hosted-review',lambda v,f:v['final_verdict'].update(approved=False),r'review|verdict|approved|gate'),
+        row('hosted-review-blocking','hosted-review',lambda v,f:v['issues'].append({'SYNTHETIC':'blocked'}),r'review|issues|gate|blocking|verdict'),
+        row('missing-log-marker','verify-job-log',lambda v,f:v.replace(b'WA123_INVOCATION=',b'UNSELECTED='),r'log|marker|invocation',waiver='log-marker'),
+        row('duplicate-log-marker','verify-job-log',lambda v,f:v+v,r'log|marker|invocation',waiver='log-marker'),
+        row('substituted-log-marker','verify-job-log',lambda v,f:v.replace(b'\"actual_exit\":0',b'\"actual_exit\":7'),r'log|marker|invocation|exit',waiver='log-marker'),
+        row('archive-declared-size','verify-artifacts',lambda v,f:v['artifacts'][0].update(size_in_bytes=v['artifacts'][0]['size_in_bytes']+1),r'artifact|archive|size|length',waiver='archive-size'),
+        row('archive-hash','verify-host',lambda v,f:v.update(artifact_sha256='0'*64),r'archive|artifact|hash|digest',waiver='archive-hash'),
+        row('invocation-extra','verify-invocation-body',lambda v,f:v.update(unknown=True),r'keys|closed|object|fields|invocation'),
+        row('manifest-extra','verify-manifest',lambda v,f:v.update(unknown=True),r'keys|closed|object|fields|manifest'),
+        row('inventory-duplicate','verify-manifest',lambda v,f:v['inventory'].append(copy.deepcopy(v['inventory'][0])),r'inventory|duplicate|artifact')]
+    for name,change in (('v3',lambda b,f:b.replace(b'# v2 git bundle',b'# v3 git bundle',1)),('truncated',lambda b,f:b[:-1]),
+        ('trailing',lambda b,f:b+b'trailing junk'),('foreign-base',lambda b,f:b.replace(('-'+f.source).encode(),('-'+'0'*40).encode(),1)),
+        ('extra-ref',lambda b,f:b.replace(b' refs/wa123/proof\n',b' refs/wa123/proof\n'+f.source.encode()+b' refs/extra\n',1))):
+        rows.append(row('bundle-'+name,'verify-bundle-bytes',change,r'bundle|pack|prerequisite|base|header|trailing|ref'))
+    rows += [row('out-of-scope-pack','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,False),r'scope|prefix|path|protected|inventory|add.only'),
+        row('restored-tip-hides-source-edit','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,True),r'scope|prefix|path|protected|intermediate|add.only'),
+        row('protected-mode-in-pack','verify-bundle-bytes',lambda b,f:controls_intermediate_bundle(f,mode_only=True),r'scope|prefix|path|protected|mode|add.only'),
+        row('unreferenced-pack-object','verify-bundle-bytes',controls_unknown_object,r'pack|object|inventory|unreach|undeclared')]
+    zip_changes=[('duplicate',lambda entries:entries+entries[:1]),('extra',lambda entries:entries+[('extra.txt',b'extra')]),
+        ('traversal',lambda entries:[('../escape',entries[0][1])]+entries[1:]),
+        ('manifest-mismatch',lambda entries:[entries[0],(entries[1][0],canonical(dict(json.loads(entries[1][1]),bundle_sha256='0'*64))+b'\n'),entries[2]])]
+    for name,change in zip_changes:
+        rows.append(row('zip-'+name,'verify-archive-bytes',lambda raw,f,c=change:controls_zip(raw,c),r'ZIP|zip|entry|archive|duplicate|path|travers|manifest|hash|digest',waiver='archive-structure'))
+    rows += [row('zip-symlink','verify-archive-bytes',lambda raw,f:controls_zip_symlink(raw),r'ZIP|zip|entry|regular|symlink|mode',waiver='archive-structure'),
+        row('zip-entry-bound','verify-archive-bytes',lambda raw,f:controls_zip_size(raw,21*1024*1024),r'size|bound|limit|large|exceed',waiver='archive-structure'),
+        row('zip-archive-bound','verify-archive-bytes',lambda raw,f:b'0'*(32*1024*1024+1)+raw,r'size|bound|limit|large|exceed',waiver='archive-structure')]
+    # Claimed commitment loops are deliberately invalid immutable Refs, not hash fixed points.
+    for name,change in (('future',lambda r,f:r.update(revision=f.nodes['selection-verify']['revision'])),('dangling',lambda r,f:r.update(revision='0'*40)),
+        ('self',lambda r,f:r.update(path='.agent/evidence/123/synthetic-root/%s/%04d-evidence'%(f.namespace,f.serial+1),revision=git(f.root,'rev-parse','HEAD'),sha256='0'*64)),
+        ('loop',lambda r,f:r.update(path='.agent/evidence/123/synthetic-root/%s/%04d-hosted-review'%(f.namespace,f.serial+2),revision=git(f.root,'rev-parse','HEAD'),sha256='0'*64))):
+        rows.append(row('claimed-ref-'+name,'evidence-body',lambda v,f,c=change:c(v['trial_provenance'][0]['evaluation_receipt_ref'],f),r'ref|artifact|commit|digest|path|order|evaluation|trial'))
+    return rows
+
+
+def controls_candidate(api,f):
+    controls_call(api,f)
+    controls_foreign_observer(api,f)
+    for defect in sorted(controls_defects(),key=lambda row:row['name']!='replay-valid-missing-trials'):controls_variant(api,f,defect)
+    saved=copy.deepcopy(f.policy)
+    for label,value in (('nonfinite',float('nan')),('cycle',None)):
+        f.defect=dict(name='policy-'+label,site='in-memory-JSON',cause=r'finite|cycle|JSON|json|serializ')
+        try:
+            f.policy['unknown']=value
+            if label=='cycle':f.policy['unknown']=f.policy
+            controls_call(api,f,True)
+        finally:f.policy=copy.deepcopy(saved);f.defect=None
+        controls_call(api,f)
+    protected=[f.candidate['assessed_inputs'][key][0]['path'] for key in ('source','tests','tools','contracts')]
+    protected+=['.github/workflows/compliance.yml','schema/contract.schema.json','tools/workflow_assurance_ci.py','tools/verify_lib.sh']
+    for path in dict.fromkeys(protected):
+        target=f.root/path;data=target.read_bytes();mode=target.stat().st_mode
+        f.defect=dict(name='current-protected-'+path,site='materialized-current-input',cause=r'input|source|current|mode|contract|digest|protected')
+        try:
+            target.write_bytes(data+b'\n# SYNTHETIC protected drift\n');controls_call(api,f,True)
+            target.write_bytes(data);target.chmod(mode^0o111);controls_call(api,f,True)
+        finally:target.write_bytes(data);target.chmod(mode);f.defect=None
+        controls_call(api,f)
+    target=f.root/f.candidate['assessed_inputs']['source'][0]['path'];raw=target.read_bytes();mode=target.stat().st_mode;alias=f.parent/'SYNTHETIC-hardlink'
+    f.defect=dict(name='current-protected-input-hardlink',site='materialized-current-input',cause=r'link|regular|artifact|file|input')
+    try:
+        os.link(target,alias);require(target.stat().st_nlink==2,'actual selected artifact hardlink control')
+        controls_call(api,f,True)
+    finally:
+        if alias.exists():alias.unlink()
+        require(target.read_bytes()==raw and target.stat().st_mode==mode and target.stat().st_nlink==1,'selected artifact bytes/full modes/link count restore')
+        f.defect=None
+    controls_call(api,f)
+    controls_observer(f)
+
+
+def controls_blockers(api,f):
+    controls_call(api,f)
+    for defect in controls_defects(True):controls_variant(api,f,defect)
+
+
+def controls_construct(api,parent,defect=None,seed=None):
+    try:return ControlsFixture(api,parent,defect,seed)
+    except Exception as exc:
+        print('SETUP_ERROR: synthetic graph constructor '+type(exc).__name__+': '+str(exc),file=sys.stderr)
+        raise SystemExit(2) from exc
+
+
+def run_controls_case(name,api):
+    if not callable(getattr(api,'verify_controls_ready',None)):
+        print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
+    with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-parser-') as parent:
+        f=controls_construct(api,parent)
+        (controls_candidate if name=='ci-candidate-bound' else controls_blockers)(api,f)
+
+
+def run_controls_ready(api):
+    """Observe only completed independently selected hosted proof; never execute it."""
+    if not callable(getattr(api,'verify_controls_ready',None)):
+        print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
+    policy_path=ROOT/'.agent/evidence/123/controls-policy.json'
+    policy=api.parse_json(api.regular_file(ROOT,str(policy_path.relative_to(ROOT))).read_bytes())
+    reference=policy['evidence_ref']
+    evidence=api.parse_json(api._receipt_artifact(ROOT,reference))
+    before=copy.deepcopy((policy,evidence)); status=git(ROOT,'status','--porcelain','--untracked-files=all')
+    with tempfile.TemporaryDirectory(prefix='nizam123-actual-observation-') as parent:
+        scratch=Path(parent)/'repo'; bundle=Path(parent)/'selected.bundle'
+        subprocess.check_call(['git','clone','--quiet','--shared',str(ROOT),str(scratch)])
+        git(scratch,'remote','set-url','origin',git(ROOT,'remote','get-url','origin'))
+        payload=api._receipt_artifact(ROOT,evidence['pack_ref']);bundle.write_bytes(payload)
+        require(payload.startswith(b'# v2 git bundle\n') and b'\n\n' in payload,'selected bundle v2 preparation')
+        pack=payload.split(b'\n\n',1)[1]
+        imported=subprocess.run(['git','-C',str(scratch),'index-pack','--strict','--fix-thin','--stdin'],input=pack,capture_output=True)
+        require(imported.returncode==0,'selected pack imports into owned observation scratch')
+        git(scratch,'bundle','verify',str(bundle))
+        git(scratch,'fetch','--no-tags','--no-write-fetch-head',str(bundle),'refs/wa123/proof:refs/wa123/import-verify')
+        result=api.verify_controls_ready(scratch,evidence,policy=policy)
+        negative=copy.deepcopy(evidence);negative['trial_provenance']=[]
+        synthetic_policy=copy.deepcopy(policy)
+        synthetic_review=api.parse_json(api._receipt_artifact(scratch,policy['hosted_review_ref']))
+        git(scratch,'config','user.name','SYNTHETIC123 private observation control')
+        git(scratch,'config','user.email','synthetic123@example.invalid')
+        git(scratch,'config','gc.auto','0');git(scratch,'config','maintenance.auto','false')
+        def commit_control(label,value):
+            path='.agent/evidence/123/synthetic-observation-'+label+'.json';raw=canonical(value)+b'\n'
+            target=scratch/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
+            git(scratch,'add','--',path);git(scratch,'commit','--quiet','-m','SYNTHETIC observation control '+label)
+            return dict(path=path,revision=git(scratch,'rev-parse','HEAD'),sha256=sha(raw))
+        synthetic_policy['evidence_ref']=commit_control('missing-trials',negative)
+        synthetic_review['evidence_ref']=synthetic_policy['evidence_ref']
+        synthetic_policy['hosted_review_ref']=commit_control('review-ref-binding',synthetic_review)
+        try:api.verify_controls_ready(scratch,negative,policy=synthetic_policy)
+        except api.AssuranceError as exc:
+            require(re.search(r'trial|provenance|three|length',str(exc),re.I) is not None,'readiness missing-trial cause: '+str(exc))
+            print('EXPECTED_REJECTION SYNTHETIC selected missing-trial observation: '+str(exc))
+        else:require(False,'synthetic invalid controls proof accepted: readiness missing trials')
+        require(api.verify_controls_ready(scratch,evidence,policy=policy)==result,'actual selected hosted proof restores after synthetic discrimination')
+    require((policy,evidence)==before and git(ROOT,'status','--porcelain','--untracked-files=all')==status,'actual hosted observation inputs and real checkout unchanged')
+    require(result==dict(schema_version=1,feature_id='123',source_commit=evidence['candidate']['source_commit'],checkout_sha=evidence['checkout']['sha'],
+        candidate_sha256=sha(canonical(evidence['candidate'])),capture_run_id=evidence['capture_host']['run_id'],verify_run_id=evidence['verify_host']['run_id'],
+        a11_verdict='approve',a10_receipt_sha256=evidence['a10_receipt_ref']['sha256'],transition_actions=['advance','noop','republish','rerun-required'],
+        hosted_review_sha256=policy['hosted_review_ref']['sha256']),'exact actual selected hosted observation result')
+    print('PASS controls-ready observed independently selected actual hosted proof')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
     group.add_argument('--scope-116', action='store_true')
     group.add_argument('--scope-controls-116', action='store_true')
     group.add_argument('--pre-entry-cases', action='store_true')
-    group.add_argument('--check', choices=('foundation-ready',))
+    group.add_argument('--check', choices=('foundation-ready', 'controls-ready'))
     group.add_argument('--scope-118', action='store_true')
     group.add_argument('--scope-controls-118', action='store_true')
     group.add_argument('--scope-117', action='store_true')
@@ -1593,6 +2446,9 @@ def main():
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / '.agent/evidence/118/scope-guard.py')
         (helper.scope_controls if args.scope_controls_118 else helper.scope)(args.base); return
+    if args.check == 'controls-ready':
+        if args.base: parser.error('--base requires a scope command')
+        run_controls_ready(load_api()); return
     if args.check:
         if args.base: parser.error('--base requires a scope command')
         load_api(ROOT / '.agent/evidence/118/foundation-fixtures.py').run_foundation(load_api()); return
@@ -1610,8 +2466,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES):
-        (run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES):
+        (run_controls_case if name in CONTROL_CASES else run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':
