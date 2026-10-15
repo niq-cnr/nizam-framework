@@ -1572,17 +1572,614 @@ def run_failure_case(name, api):
         else: os.environ['NIZAM_WA120_FIXTURE'] = previous
 
 
+CONTROL_CASES = ('ci-candidate-bound', 'ci-blocker-rejected')
+CONTROL_ORIGIN = 'https://github.com/niq-cnr/nizam-framework.git'
+CONTROL_REPOSITORY = 'niq-cnr/nizam-framework'
+CONTROL_PREFIX = '.agent/evidence/123/experiment/'
+CONTROL_APPROVAL = '452a5a5f748b5234ce1da3ad765b0da8f622cb53'
+
+
+class ControlsFixture(FailureFixture):
+    """SYNTHETIC parser proof, never an attestation of hosted execution or consent.
+
+    Real Git objects, current convergence and A10 APIs are exercised locally. The
+    REST/log/namespace/evaluator attestations below are synthetic discrimination
+    inputs. Only the separately selected hosted proof can satisfy controls-ready.
+    """
+    commit = FailureFixture.commit  # Disable maintenance before our first commit.
+
+    def __init__(self, api, parent):
+        self.api = api; self.parent = Path(parent); self.root = self.parent / 'root'
+        self.serial = 0; self.nodes = {}; self.originals = {}
+        subprocess.check_call(['git', 'clone', '--quiet', '--shared', '--no-checkout', str(ROOT), str(self.root)])
+        git(self.root, 'config', 'user.name', 'SYNTHETIC123 Independent Parser Fixture')
+        git(self.root, 'config', 'user.email', 'synthetic123@example.invalid')
+        git(self.root, 'remote', 'set-url', 'origin', CONTROL_ORIGIN)
+        git(self.root, 'sparse-checkout', 'set', '--no-cone', '/tools/', '/schema/',
+            '/templates/convergent-review-prompt.md', '/.github/workflows/', '/.agent/contracts/',
+            '/.agent/run_state.json', '/.agent/validator/123-mode-a-rev2.json',
+            '/.agent/qa/123-contract-review-rev2.json',
+            '/.agent/evidence/phase018-preflight/activation-authority.json',
+            '/.agent/evidence/123/synthetic-root/', '/.agent/evidence/123/experiment/')
+        git(self.root, 'checkout', '--quiet', '--detach', git(ROOT, 'rev-parse', 'HEAD'))
+        self.source = git(self.root, 'rev-parse', 'HEAD')
+        self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'SYNTHETIC outside unchanged\n'); self.outside.chmod(0o600)
+        tool_paths = ['tools/workflow_assurance_ci.py', 'tools/convergent_review.py',
+            'tools/evaluate_convergent_review_prompt.py', 'tools/linux_trial_sandbox.sh',
+            'tools/isolated_trial_adapter.py', 'tools/verify_lib.sh',
+            '.github/workflows/compliance.yml', 'tools/fixtures_self_test.sh',
+            '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
+            'templates/convergent-review-prompt.md']
+        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
+        self.inputs = dict(source=['tools/workflow_assurance.py'], contracts=['.agent/contracts/123.json'],
+            tests=['tools/test_workflow_assurance.py'], tools=tool_paths, unknown_dependencies=[])
+        self.candidate = api.assess_repository(self.root, self.source, self.inputs, ['PYTHONDONTWRITEBYTECODE'], {})
+        self.checkout = dict(sha=self.source, tree=self.candidate['source_tree'], event='push',
+            event_head=self.source, event_base=None, parents=git(self.root, 'show', '-s', '--format=%P', self.source).split())
+        self.contract = self.ref('.agent/contracts/123.json', CONTROL_APPROVAL)
+        approved = self.read(self.contract); ae = approved['approval_evidence']
+        self.prerequisites = []
+        for kind, key in (('mode-a', 'mode_a'), ('contract-review', 'contract_review')):
+            self.prerequisites.append(dict(kind=kind, artifact=self.ref(ae[key], self.source), feature_id='123',
+                assessed_revision=ae['proposal_revision'], contract_sha256=ae['proposal_sha256']))
+        self.prerequisites.append(dict(kind='approved-contract', artifact=self.contract, feature_id='123',
+            assessed_revision=CONTROL_APPROVAL, contract_sha256=self.contract['sha256']))
+        gate = dict(final_verdict=dict(approved=True), issues=[], missing_acceptance_coverage=[], unsupported_claims=[])
+        provisional = dict(gate, feature_id='123', reviewed_revision=CONTROL_APPROVAL,
+            approved_contract_sha256=self.contract['sha256'], reviewer='SYNTHETIC-provisional-parser-only')
+        provisional_ref = self.put('provisional', provisional)
+        self.prerequisites.append(dict(kind='provisional-bundle', artifact=provisional_ref, feature_id='123',
+            assessed_revision=CONTROL_APPROVAL, contract_sha256=self.contract['sha256']))
+        origin_ref = self.ref('.agent/evidence/phase018-preflight/activation-authority.json', self.source)
+        original = self.read(origin_ref); scope = {k: original['scope'][k] for k in ('phase','features','original_estimate_lines','ceiling_130pct')}
+        authority = dict(schema_version=1, role='Root', purpose='experiment-only', repository=CONTROL_ORIGIN,
+            **{k: original[k] for k in ('owner','gate','operator_instruction_verbatim')}, scope=scope,
+            source_authority_ref=origin_ref, mapping=dict(repository_origin=CONTROL_ORIGIN, review_repository=CONTROL_REPOSITORY))
+        authority_ref = self.put('authority', authority)
+        self.shadow = dict(repository=CONTROL_ORIGIN, current_phase='018-workflow-assurance-controls', current_feature='123',
+            status='experiment-pending', updated_at='2026-10-15T00:00:00Z',
+            scope_budget=dict(original_estimate_lines=7200,total_lines_changed=4303,per_feature=[]),
+            circuit_breaker={},history=[],purpose='experiment-only')
+        report = dict(gate, required_fixes=[])
+        self.capture_producer = dict(agent_id='wa123-capable-ci', session_id='123-ci-capture-attempt1')
+        self.verify_producer = dict(agent_id='wa123-capable-ci', session_id='123-ci-verify-attempt1')
+        self.selection = dict(schema_version=1, mode='capture', repository_origin=CONTROL_ORIGIN,
+            review_repository=CONTROL_REPOSITORY, source_commit=self.source, source_tree=self.candidate['source_tree'],
+            inputs=self.inputs, contract_ref=self.contract, authority_ref=authority_ref, prerequisites=self.prerequisites,
+            producer=self.capture_producer, packet_base=git(self.root, 'rev-parse', self.source+'^'), prior_ledger=None,
+            report_ref=self.put('report', report), prompt_ref=self.ref('templates/convergent-review-prompt.md', self.source),
+            runner_ref=self.ref('tools/workflow_assurance_ci.py',self.source), adapter_ref=self.ref('tools/linux_trial_sandbox.sh',self.source),
+            evaluator_ref=self.ref('tools/evaluate_convergent_review_prompt.py',self.source), shadow_state_ref=self.put('shadow',self.shadow),
+            candidate=None,a10_policy_ref=None,capture_pack_ref=None)
+        self.capture_selection = self.put('selection-capture',self.selection)
+        self.exp = self.parent / 'experiment'
+        git(self.root,'worktree','add','--quiet','--detach',str(self.exp),self.source)
+        git(self.exp,'sparse-checkout','set','--no-cone','/tools/','/schema/','/.github/',
+            '/templates/convergent-review-prompt.md','/.agent/contracts/','/.agent/run_state.json','/'+CONTROL_PREFIX)
+        self.exp_write('inputs/selection-capture.json',self.raw(self.capture_selection))
+        self.exp_commit('SYNTHETIC capture selected input')
+        self.make_evaluation(report)
+        capture_tip = git(self.exp,'rev-parse','HEAD')
+        self.capture_host, self.capture_pack = self.host('capture',capture_tip,self.capture_selection,
+            [self.candidate_ref,self.capability_ref,self.evaluation_ref,self.replay_ref,self.map_ref,self.map_capture_ref])
+        app = dict(schema_version=1,role='Root',repository=CONTROL_ORIGIN,feature_id='123',stage='source-ready',
+            candidate_sha256=sha(canonical(self.candidate)),approved=True,authority_ref=authority_ref,
+            owner=authority['owner'],gate=authority['gate'],scope=scope)
+        self.a10_policy = dict(schema_version=1,repository=CONTROL_ORIGIN,feature_id='123',stage='source-ready',operation_id='123-ci-capture',
+            candidate=self.candidate,contract=self.contract,operator=self.put('operator',app),producer=self.capture_producer,
+            prerequisites=self.prerequisites,commands=[dict(argv=self.map_capture['argv'],expected_exit=0,proof_kind='success',
+                diagnostic='WA123_A11_APPROVED',capture=self.map_capture_ref)],from_status='experiment-pending',
+            to_status='experiment-source-ready',at='2026-10-15T00:01:00Z',recovery=None)
+        self.receipt = {k:copy.deepcopy(self.a10_policy[k]) for k in ('schema_version','repository','feature_id','stage','operation_id','candidate','producer','prerequisites')}
+        self.receipt.update(status='passed',contract_ref=self.contract,operator_ref=self.a10_policy['operator'],verdict=gate,
+            checks=[dict(argv=self.map_capture['argv'],executed=True,outcome='success',exit_code=0,
+                stdout=self.map_capture['stdout'],stderr=self.map_capture['stderr'],capture=self.map_capture_ref)])
+        self.receipt_ref = self.put('receipt',self.receipt)
+        self.a10_policy['recovery'] = self.receipt_ref
+        self.policy_ref = self.put('a10-policy',self.a10_policy)
+        self.verify_selection_value = dict(self.selection,mode='verify',producer=self.verify_producer,
+            candidate=self.candidate,a10_policy_ref=self.policy_ref,capture_pack_ref=self.capture_pack)
+        self.verify_selection = self.put('selection-verify',self.verify_selection_value)
+        for label,ref in (('selection-verify',self.verify_selection),('policy-verify',self.policy_ref),('receipt-verify',self.receipt_ref)):
+            self.exp_write('inputs/'+label+'.json',self.raw(ref))
+        self.exp_commit('SYNTHETIC independently selected verify inputs')
+        verified = api.verify_stage_receipt(self.exp,self.receipt,policy=self.a10_policy)
+        advance = api.plan_receipt_transition(self.exp,self.shadow,self.receipt,policy=self.a10_policy)
+        noop = api.plan_receipt_transition(self.exp,advance['state'],self.receipt,policy=self.a10_policy)
+        republish = api.plan_receipt_transition(self.exp,self.shadow,None,policy=self.a10_policy)
+        absent = copy.deepcopy(self.a10_policy); absent['recovery']['path'] += '.missing-wa123'
+        require(not git(self.root,'ls-tree',absent['recovery']['revision'],'--',absent['recovery']['path']), 'synthetic recovery path actually absent')
+        rerun = api.plan_receipt_transition(self.exp,self.shadow,None,policy=absent)
+        conflicting = copy.deepcopy(advance['state']); conflicting['history'].append(copy.deepcopy(conflicting['history'][-1]))
+        rejected(api,lambda:api.plan_receipt_transition(self.exp,conflicting,self.receipt,policy=self.a10_policy),'actual duplicate conflict exercise')
+        self.a10_result = dict(receipt=verified,advance=advance,noop=noop,republish=republish,rerun_required=rerun,conflict_rejected=True)
+        require([advance['action'],noop['action'],republish['action'],rerun['action']] == ['advance','noop','republish','rerun-required'],'actual four A10 actions')
+        execution = git(self.exp,'rev-parse','HEAD')
+        self.exp_write('verify/result.json',self.a10_result); self.exp_write('verify/stdout',canonical(self.a10_result)+b'\n'); self.exp_write('verify/stderr',b'')
+        outputs = self.exp_commit('SYNTHETIC actual local A10 results; not hosted')
+        result_ref = self.exp_ref('verify/result.json',outputs)
+        capture = self.capture([sys.executable,'tools/workflow_assurance_ci.py','verify','--selection','.agent/evidence/123/selection.json',
+            '--output',str(self.parent/'wa123-verify')],execution,self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs))
+        self.exp_write('verify/capture.json',capture); tip=self.exp_commit('SYNTHETIC verify capture representation')
+        a10_capture_ref=self.exp_ref('verify/capture.json',tip)
+        verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
+        git(self.root,'checkout',tip,'--',CONTROL_PREFIX)
+        self.commit('SYNTHETIC materialized immutable experiment outputs')
+        self.evidence = dict(schema_version=1,candidate=self.candidate,checkout=self.checkout,
+            capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evaluation_ref=self.evaluation_ref,
+            replay_ref=self.replay_ref,trial_provenance=self.trials,a11_capture_ref=self.map_capture_ref,a11_result_ref=self.map_ref,
+            a10_receipt_ref=self.receipt_ref,a10_result_ref=result_ref,a10_capture_ref=a10_capture_ref,capability_ref=self.capability_ref,
+            capture_host=self.capture_host,verify_host=verify_host,pack_ref=pack,inventory=self.inventory(tip))
+        self.review = dict(schema_version=1,role='Evaluator',reviewer='SYNTHETIC-independent-host-parser-reviewer',source_commit=self.source,
+            capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evidence_ref=None,
+            capture_host=self.capture_host,verify_host=verify_host,**gate,evidence_files=[self.capture_host['metadata_ref']['path'],verify_host['metadata_ref']['path']])
+        self.policy = dict(schema_version=1,role='Root',repository_origin=CONTROL_ORIGIN,review_repository=CONTROL_REPOSITORY,
+            feature_id='123',selection_ref=self.verify_selection,evidence_ref=None,hosted_review_ref=None,approved=True)
+        self.bind()
+        self.evidence,self.policy,self.review=copy.deepcopy((self.evidence,self.policy,self.review))
+
+    def raw(self, reference):
+        return subprocess.check_output(['git','-C',str(self.root),'show',reference['revision']+':'+reference['path']])
+
+    def read(self, reference): return json.loads(self.raw(reference))
+
+    def put(self,label,value):
+        self.serial += 1; path='.agent/evidence/123/synthetic-root/%04d-%s' % (self.serial,label)
+        data=value if type(value) is bytes else canonical(value)+b'\n'
+        self.write(path,data); reference=self.ref(path,self.commit('SYNTHETIC parser record '+label))
+        self.nodes[label]=reference; self.originals[label]=copy.deepcopy(value); return reference
+
+    def exp_write(self,path,value):
+        target=self.exp/(CONTROL_PREFIX+path); target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes(value if type(value) is bytes else canonical(value)+b'\n')
+
+    def exp_commit(self,message):
+        git(self.exp,'add','--',CONTROL_PREFIX); git(self.exp,'commit','--quiet','-m',message)
+        return git(self.exp,'rev-parse','HEAD')
+
+    def exp_ref(self,path,revision): return self.ref(CONTROL_PREFIX+path,revision)
+
+    def capture(self,argv,revision,producer,stdout,stderr):
+        return dict(schema_version=1,argv=argv,cwd=str(self.exp),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
+            environment=self.candidate['environment'],producer=producer,executed=True,outcome='success',exit_code=0,stdout=stdout,stderr=stderr)
+
+    def make_evaluation(self,report):
+        cr=load_api(ROOT/'tools/convergent_review.py'); ev=load_api(ROOT/'tools/evaluate_convergent_review_prompt.py')
+        packet_path=self.exp/(CONTROL_PREFIX+'evaluation/packet.json'); packet_path.parent.mkdir(parents=True,exist_ok=True)
+        cr.cmd_build_packet(argparse.Namespace(repo=str(self.exp),repository=CONTROL_REPOSITORY,review_id='wa123-controls',
+            mode='ordinary',base=self.selection['packet_base'],head=self.source,output=str(packet_path)))
+        packet=cr.parse_json_bytes(packet_path.read_bytes(),'synthetic packet'); digest=sha(packet_path.read_bytes())
+        self.exp_write('candidate.json',self.candidate); trial_paths=[]; receipts=[]; paths=[]
+        runner=str(self.exp/'tools/workflow_assurance_ci.py'); adapter=str(self.exp/'tools/linux_trial_sandbox.sh')
+        for n in (1,2,3):
+            directory=self.exp/(CONTROL_PREFIX+'evaluation/trial-'+str(n)); directory.mkdir()
+            pp=directory/'packet.json'; prompt=directory/'prompt.md'; output=directory/'trial.json'
+            pp.write_bytes(packet_path.read_bytes())
+            prompt.write_text(ev.render_prompt(self.raw(self.selection['prompt_ref']).decode(),pp,n,output,None))
+            trial=dict(schema_version=cr.SCHEMA_VERSION,review_id='wa123-controls',head_sha=self.source,packet_digest=digest,trial_number=n,observations=[])
+            output.write_bytes(cr.canonical_json_bytes(trial)); (directory/'runner.stdout').write_bytes(b''); (directory/'runner.stderr').write_bytes(b'')
+            trial_paths.append(str(output)); paths.append((pp,prompt,output))
+            receipts.append(dict(trial_number=n,prompt_digest=sha(prompt.read_bytes()),trial_digest=sha(output.read_bytes()),
+                isolated_packet_digest=digest,runner_exit=0,isolation_adapter_digest=self.selection['adapter_ref']['sha256']))
+        review_dir=self.exp/(CONTROL_PREFIX+'evaluation/review')
+        cr.cmd_converge(argparse.Namespace(packet=str(packet_path),trial=trial_paths,prior_ledger=None,suppression=[],output_dir=str(review_dir)))
+        ledger=json.loads((review_dir/'ledger.json').read_bytes()); mapped=self.api.convergent_agf_verdict(ledger,report,
+            expected_repository=CONTROL_REPOSITORY,expected_head_sha=self.source)
+        require(mapped['final_verdict']['approved'] is True and all(not mapped[k] for k in AGF_ARRAYS),'synthetic clear actual convergent mapping')
+        evaluation=dict(schema_version=cr.SCHEMA_VERSION,packet_digest=digest,prompt_template_digest=self.selection['prompt_ref']['sha256'],
+            runner_digest=self.selection['runner_ref']['sha256'],trials=receipts,review_replay_digest=sha((review_dir/'replay.json').read_bytes()))
+        self.exp_write('evaluation/prompt-evaluation.json',evaluation); self.exp_write('map/result.json',mapped)
+        for label,data in (('boundary',b'SANDBOX BOUNDARIES PASS: intact 0; isolated omission controls 40/41/42; unexpected execution errors rejected\n'),('isolation',b'SYNTHETIC parser suite output; not executed namespaces\n'),('map',b'WA123_A11_APPROVED\n')):
+            self.exp_write(label+'/stdout',data); self.exp_write(label+'/stderr',b'')
+        execution=git(self.exp,'rev-parse','HEAD'); outputs=self.exp_commit('SYNTHETIC evaluator and capability parser outputs; no enforced execution')
+        process=lambda argv,label:dict(argv=argv,cwd=str(self.exp),revision=execution,executed=True,actual_exit=0,
+            stdout=self.exp_ref(label+'/stdout',outputs),stderr=self.exp_ref(label+'/stderr',outputs))
+        capability=dict(schema_version=1,source_commit=self.source,checkout_sha=self.checkout['sha'],environment=self.candidate['environment'],
+            producer=self.capture_producer,boundary=process([sys.executable,'.github/scripts/test_sandbox_boundaries.py'],'boundary'),
+            isolation=process([sys.executable,'tools/test_convergent_review.py'],'isolation'))
+        self.map_capture=self.capture([sys.executable,'tools/workflow_assurance_ci.py','map','--selection',CONTROL_PREFIX+'inputs/selection-capture.json',
+            '--evaluation',str(packet_path.parent),'--output',str(self.exp/(CONTROL_PREFIX+'map/result.json'))],execution,self.capture_producer,
+            self.exp_ref('map/stdout',outputs),self.exp_ref('map/stderr',outputs))
+        self.exp_write('capability.json',capability); self.exp_write('map/capture.json',self.map_capture)
+        tip=self.exp_commit('SYNTHETIC parser provenance representations')
+        self.candidate_ref=self.exp_ref('candidate.json',outputs); self.capability_ref=self.exp_ref('capability.json',tip)
+        self.map_ref=self.exp_ref('map/result.json',outputs); self.map_capture_ref=self.exp_ref('map/capture.json',tip)
+        self.evaluation_ref=self.exp_ref('evaluation/prompt-evaluation.json',outputs); self.replay_ref=self.exp_ref('evaluation/review/replay.json',outputs)
+        self.trials=[]
+        for n,(pp,prompt,output) in enumerate(paths,1):
+            refs={key:self.ref(str(path.relative_to(self.exp)),outputs) for key,path in
+                (('packet_ref',pp),('prompt_ref',prompt),('output_ref',output),('stdout_ref',pp.parent/'runner.stdout'),('stderr_ref',pp.parent/'runner.stderr'))}
+            invocation=[adapter,'--root',str(pp.parent),'--runner',runner,'--',runner,'--prompt',str(prompt),'--packet',str(pp),'--trial-number',str(n),'--output',str(output)]
+            self.trials.append(dict(number=n,**refs,evaluation_receipt_ref=self.evaluation_ref,invocation=invocation,
+                **{k:self.selection[k] for k in ('runner_ref','adapter_ref','evaluator_ref')},boundary_ref=self.capability_ref))
+
+    def inventory(self,tip):
+        rows=[]
+        for revision in git(self.exp,'rev-list','--reverse',self.source+'..'+tip).splitlines():
+            for path in git(self.exp,'diff-tree','--no-commit-id','--name-only','-r',revision).splitlines():
+                mode,kind,blob=git(self.exp,'ls-tree',revision,'--',path).split()[:3]
+                rows.append(dict(path=path,revision=revision,git_blob=blob,git_mode=mode,sha256=self.ref(path,revision)['sha256']))
+        return sorted(rows,key=lambda r:(r['revision'],r['path']))
+
+    def host(self,mode,tip,selection,results):
+        import io,zipfile
+        git(self.exp,'update-ref','refs/wa123/proof',tip)
+        path=self.parent/(mode+'.bundle')
+        git(self.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+self.source)
+        bundle=path.read_bytes(); pack=self.put(mode+'-bundle',bundle)
+        manifest=dict(schema_version=1,mode=mode,source_commit=self.source,output_tip=tip,bundle_sha256=sha(bundle),bundle_size=len(bundle),inventory=self.inventory(tip))
+        producer=self.capture_producer if mode=='capture' else self.verify_producer
+        invocation=dict(schema_version=1,mode=mode,producer=producer,selection_ref=selection,source_commit=self.source,checkout=self.checkout,
+            environment=self.candidate['environment'],argv=[sys.executable,'tools/workflow_assurance_ci.py',mode,'--selection','.agent/evidence/123/selection.json',
+            '--output',str(self.parent/('wa123-'+mode))],cwd=str(self.root),output_tip=tip,bundle_sha256=sha(bundle),
+            manifest_sha256=sha(canonical(manifest)+b'\n'),result_refs=results,actual_exit=0)
+        raw_inv=canonical(invocation)+b'\n'; invocation_ref=self.put(mode+'-invocation',raw_inv)
+        archive=io.BytesIO()
+        with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+            for name,data in (('proof.bundle',bundle),('manifest.json',canonical(manifest)+b'\n'),('invocation.json',raw_inv)):
+                info=zipfile.ZipInfo(name); info.create_system=3; info.external_attr=0o100644<<16; z.writestr(info,data)
+        archive_bytes=archive.getvalue(); run=101 if mode=='capture' else 102; job=run+100; artifact=run+200
+        artifact_name='wa123-'+mode+'-'+producer['session_id']
+        run_json=dict(id=run,run_attempt=1,name='compliance',event='push',head_sha=self.source,status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY))
+        names=['validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance']; jobs=[]
+        for index,name in enumerate(names):
+            steps=[dict(number=1,name='WA123 '+mode,status='completed',conclusion='success'),
+                dict(number=2,name='WA123 '+('verify' if mode=='capture' else 'capture'),status='completed',conclusion='skipped'),
+                dict(number=3,name='Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py',status='completed',conclusion='success'),
+                dict(number=4,name='Run required isolation suite',status='completed',conclusion='success')] if name=='convergent_review' else []
+            jobs.append(dict(id=job if name=='convergent_review' else job+10+index,run_id=run,run_attempt=1,name=name,status='completed',conclusion='success',head_sha=self.source,steps=steps))
+        raw_jobs=dict(total_count=5,jobs=jobs); artifacts=dict(total_count=1,artifacts=[dict(id=artifact,name=artifact_name,expired=False,size_in_bytes=len(archive_bytes))])
+        log=b'SYNTHETIC parser log only\tWA123_INVOCATION='+raw_inv
+        args=[['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/'+str(run)],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/%d/attempts/1/jobs?per_page=100'%run],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/%d/artifacts?per_page=100'%run],
+            ['gh','run','view',str(run),'--repo',CONTROL_REPOSITORY,'--job',str(job),'--log'],
+            ['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/artifacts/%d/zip'%artifact]]
+        fetches=[]
+        for kind,argv,data in zip(('run','jobs','artifacts','job-log','archive'),args,(run_json,raw_jobs,artifacts,log,archive_bytes)):
+            fetches.append(dict(kind=kind,argv=argv,cwd=str(self.root),revision=git(self.root,'rev-parse','HEAD'),actual_exit=0,
+                stdout=self.put(mode+'-'+kind,data),stderr=self.put(mode+'-'+kind+'-stderr',b'')))
+        metadata=dict(schema_version=1,mode=mode,source_commit=self.source,producer=producer,selection_ref=selection,invocation_ref=invocation_ref,
+            run_id=run,attempt=1,job_id=job,artifact_id=artifact,artifact_name=artifact_name,archive_ref=fetches[-1]['stdout'],fetches=fetches)
+        return dict(repository=CONTROL_REPOSITORY,run_id=run,attempt=1,job_id=job,job='convergent_review',head_sha=self.source,
+            checkout_sha=self.source,artifact_name=artifact_name,artifact_sha256=sha(archive_bytes),metadata_ref=self.put(mode+'-metadata',metadata),
+            job_log_ref=fetches[3]['stdout']),pack
+
+    def bind(self):
+        evidence_ref=self.put('evidence',self.evidence)
+        self.review=dict(self.review,evidence_ref=evidence_ref,capture_host=self.evidence['capture_host'],verify_host=self.evidence['verify_host'])
+        self.policy=dict(self.policy,evidence_ref=evidence_ref,hosted_review_ref=self.put('hosted-review',self.review))
+
+    def replace(self,label,value):
+        old=self.nodes[label]; new=self.put(label,value)
+        def rewrite(obj):
+            if obj==old: return copy.deepcopy(new)
+            if type(obj) is dict: return {k:rewrite(v) for k,v in obj.items()}
+            if type(obj) is list: return [rewrite(v) for v in obj]
+            return obj
+        self.evidence=rewrite(self.evidence); self.policy=rewrite(self.policy); self.review=rewrite(self.review); self.bind()
+
+
+def controls_snapshot(f):
+    paths=[]
+    for directory,dirs,files in os.walk(f.parent):
+        dirs[:]=[d for d in dirs if d!='.git']
+        paths.extend(Path(directory)/name for name in files)
+    return ({str(p.relative_to(f.parent)):(p.lstat().st_mode,p.lstat().st_nlink,sha(p.read_bytes())) for p in paths},
+        f.outside.lstat().st_mode,f.outside.read_bytes(),git(f.root,'status','--porcelain','--untracked-files=all'),
+        git(f.root,'rev-parse','HEAD'),git(f.root,'show-ref'))
+
+
+def controls_call(api,f,deny=False):
+    before=repr((f.evidence,f.policy)); files=controls_snapshot(f)
+    try:
+        if deny:
+            rejected(api,lambda:api.verify_controls_ready(f.root,f.evidence,policy=f.policy),'synthetic invalid controls proof')
+            return
+        out=api.verify_controls_ready(f.root,f.evidence,policy=f.policy)
+        require(out==dict(schema_version=1,feature_id='123',source_commit=f.source,checkout_sha=f.checkout['sha'],
+            candidate_sha256=sha(canonical(f.candidate)),capture_run_id=101,verify_run_id=102,a11_verdict='approve',
+            a10_receipt_sha256=f.receipt_ref['sha256'],transition_actions=['advance','noop','republish','rerun-required'],
+            hosted_review_sha256=f.policy['hosted_review_ref']['sha256']),'exact synthetic readiness result')
+        require(not receipt_ids(out)&receipt_ids([f.evidence,f.policy]),'controls result deep copy')
+        return out
+    finally:
+        require(repr((f.evidence,f.policy))==before,'controls inputs unchanged')
+        require(controls_snapshot(f)==files,'controls repository, proof, full modes, origin refs and outside sentinel unchanged')
+
+
+def controls_evidence_negative(api,f,change):
+    evidence,policy,review=copy.deepcopy((f.evidence,f.policy,f.review))
+    try: change(f.evidence); f.bind(); controls_call(api,f,True)
+    finally: f.evidence,f.policy,f.review=evidence,policy,review
+    controls_call(api,f)
+
+
+def controls_payload_negative(api,f,reference,change):
+    evidence,policy,review=copy.deepcopy((f.evidence,f.policy,f.review))
+    value=f.read(reference); raw=change(value); replacement=f.put('malformed-selected-payload',raw if type(raw) is bytes else value)
+    memo={}
+    def replace(obj):
+        if obj==reference:return replacement
+        if type(obj) is dict and set(obj)=={'path','sha256','revision'}:
+            key=(obj['path'],obj['sha256'],obj['revision'])
+            if key in memo:return memo[key]
+            try:value=json.loads(f.raw(obj))
+            except (UnicodeError,ValueError):return obj
+            rewritten=replace(value)
+            memo[key]=f.put('SYNTHETIC-rebound-parent',rewritten) if rewritten!=value else obj
+            return memo[key]
+        if type(obj) is dict:return {k:replace(v) for k,v in obj.items()}
+        if type(obj) is list:return [replace(v) for v in obj]
+        return obj
+    try:
+        f.evidence=replace(f.evidence); f.policy=replace(f.policy); f.review=replace(f.review); f.bind(); controls_call(api,f,True)
+    finally:f.evidence,f.policy,f.review=evidence,policy,review
+    controls_call(api,f)
+
+
+def controls_host_negative(api,f,mode,kind,change):
+    """Re-pin raw producer bytes and enclosing Root choices, retaining other proof."""
+    evidence,policy,review=copy.deepcopy((f.evidence,f.policy,f.review))
+    host=f.evidence[mode+'_host']; metadata=f.read(host['metadata_ref'])
+    fetch=next(row for row in metadata['fetches'] if row['kind']==kind)
+    raw=f.raw(fetch['stdout'])
+    if kind in ('run','jobs','artifacts'):
+        value=json.loads(raw); change(value); data=canonical(value)+b'\n'
+    else:data=change(raw)
+    fetch['stdout']=f.put('SYNTHETIC-malformed-'+kind,data)
+    if kind=='job-log':host['job_log_ref']=fetch['stdout']
+    if kind=='archive':
+        metadata['archive_ref']=fetch['stdout']; host['artifact_sha256']=sha(data)
+        artifacts=next(row for row in metadata['fetches'] if row['kind']=='artifacts')
+        value=f.read(artifacts['stdout']); value['artifacts'][0]['size_in_bytes']=len(data)
+        artifacts['stdout']=f.put('SYNTHETIC-rebound-artifact-size',value)
+    host['metadata_ref']=f.put('SYNTHETIC-rebound-metadata',metadata)
+    try:f.bind();controls_call(api,f,True)
+    finally:f.evidence,f.policy,f.review=evidence,policy,review
+    controls_call(api,f)
+
+
+def controls_zip(raw,change):
+    import io,zipfile
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:entries=[(info,z.read(info)) for info in z.infolist()]
+    entries=change(entries); output=io.BytesIO()
+    with zipfile.ZipFile(output,'w') as z:
+        for info,data in entries:z.writestr(info,data)
+    return output.getvalue()
+
+
+def controls_bundle_negative(api,f,change):
+    """Keep ZIP/log/invocation/hash projections coherent around an invalid bundle."""
+    import io,zipfile
+    evidence,policy,review=copy.deepcopy((f.evidence,f.policy,f.review))
+    host=f.evidence['verify_host']; metadata=f.read(host['metadata_ref'])
+    raw=f.raw(metadata['archive_ref'])
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:entries={name:z.read(name) for name in z.namelist()}
+    changed=change(entries['proof.bundle']); extra={}
+    if type(changed) is tuple:changed,extra=changed
+    entries['proof.bundle']=changed
+    manifest=json.loads(entries['manifest.json']); manifest.update(bundle_sha256=sha(entries['proof.bundle']),bundle_size=len(entries['proof.bundle']),**extra)
+    entries['manifest.json']=canonical(manifest)+b'\n'
+    invocation=json.loads(entries['invocation.json']); invocation.update(bundle_sha256=sha(entries['proof.bundle']),manifest_sha256=sha(entries['manifest.json']),output_tip=manifest['output_tip'])
+    entries['invocation.json']=canonical(invocation)+b'\n'; output=io.BytesIO()
+    with zipfile.ZipFile(output,'w') as z:
+        for name,data in entries.items():z.writestr(name,data)
+    archive=output.getvalue(); archive_ref=f.put('SYNTHETIC-invalid-bundle-archive',archive)
+    pack_ref=f.put('SYNTHETIC-invalid-bundle',entries['proof.bundle'])
+    metadata['archive_ref']=archive_ref; metadata['invocation_ref']=f.put('SYNTHETIC-coherent-invocation',entries['invocation.json'])
+    for fetch in metadata['fetches']:
+        if fetch['kind']=='archive':fetch['stdout']=archive_ref
+        if fetch['kind']=='job-log':
+            fetch['stdout']=f.put('SYNTHETIC-coherent-job-log',b'SYNTHETIC\tWA123_INVOCATION='+entries['invocation.json']);host['job_log_ref']=fetch['stdout']
+        if fetch['kind']=='artifacts':
+            value=f.read(fetch['stdout']);value['artifacts'][0]['size_in_bytes']=len(archive);fetch['stdout']=f.put('SYNTHETIC-coherent-artifact-size',value)
+    host.update(artifact_sha256=sha(archive),metadata_ref=f.put('SYNTHETIC-coherent-bundle-metadata',metadata));f.evidence['pack_ref']=pack_ref
+    f.evidence['inventory']=manifest['inventory']
+    try:f.bind();controls_call(api,f,True)
+    finally:f.evidence,f.policy,f.review=evidence,policy,review
+    controls_call(api,f)
+
+
+def controls_intermediate_bundle(f,hidden=False):
+    """Actual Git objects: scope escape, or protected drift restored before tip."""
+    tip=git(f.exp,'rev-parse','HEAD'); source_path='tools/workflow_assurance.py' if hidden else 'SYNTHETIC-out-of-scope.txt'
+    blob=subprocess.check_output(['git','-C',str(f.exp),'hash-object','-w','--stdin'],input=b'SYNTHETIC forbidden intermediate bytes\n').decode().strip()
+    with tempfile.TemporaryDirectory(prefix='SYNTHETIC-index-',dir=f.parent) as name:
+        env={**os.environ,'GIT_INDEX_FILE':str(Path(name)/'index')}
+        def index(*args):return subprocess.check_output(['git','-C',str(f.exp),*args],env=env).decode().strip()
+        index('read-tree',tip);index('update-index','--add','--cacheinfo','100644',blob,source_path)
+        tree=index('write-tree'); bad=git(f.exp,'commit-tree',tree,'-p',tip,'-m','SYNTHETIC forbidden intermediate')
+        if hidden:bad=git(f.exp,'commit-tree',git(f.exp,'rev-parse',tip+'^{tree}'),'-p',bad,'-m','SYNTHETIC restore protected tip')
+        path=Path(name)/'bad.bundle';git(f.exp,'update-ref','refs/wa123/proof',bad)
+        try:git(f.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+f.source);raw=path.read_bytes()
+        finally:git(f.exp,'update-ref','refs/wa123/proof',tip)
+    return raw,dict(output_tip=bad,inventory=f.inventory(bad))
+
+
+def controls_observer(f):
+    """Independently expected bounded rule; actual trusted observer executable."""
+    cr=load_api(ROOT/'tools/convergent_review.py'); ev=load_api(ROOT/'tools/evaluate_convergent_review_prompt.py')
+    with tempfile.TemporaryDirectory(prefix='SYNTHETIC123-observer-',dir=f.parent) as directory:
+        directory=Path(directory); packet_path=directory/'packet.json'; prompt=directory/'prompt.md'; output=directory/'trial.json'
+        def exercise(old,content,path,expected):
+            packet=dict(schema_version=cr.SCHEMA_VERSION,repository=CONTROL_REPOSITORY,review_id='wa123-controls',
+                mode='ordinary',base_sha=f.selection['packet_base'],head_sha=f.source,scope_commitment=None,
+                delta=[dict(path=path,old_mode='100644',new_mode='100644',old_digest=sha(old.encode()),new_digest=sha(content.encode()),old_content=old)],
+                review_files=[dict(path=path,content=content,content_digest=sha(content.encode()))])
+            cr.validate_packet(packet); packet_path.write_bytes(cr.canonical_json_bytes(packet))
+            prompt.write_text(ev.render_prompt(f.raw(f.selection['prompt_ref']).decode(),packet_path,1,output,None))
+            if output.exists():output.unlink()
+            argv=[sys.executable,str(ROOT/'tools/workflow_assurance_ci.py'),'--prompt',str(prompt),'--packet',str(packet_path),'--trial-number','1','--output',str(output)]
+            process=subprocess.run(argv,cwd=directory,capture_output=True)
+            require(process.returncode==0,'actual deterministic observer command0: '+process.stderr.decode(errors='replace'))
+            trial=cr.parse_json_bytes(output.read_bytes(),'synthetic observer trial');cr.validate_trial(trial,packet,sha(packet_path.read_bytes()),'synthetic observer')
+            require(len(trial['observations'])==len(expected),'substantive gate-disable observation count')
+            evidence=[]
+            for observation in trial['observations']:
+                require(observation['action']=='active' and observation['finding']['severity']=='important' and observation['finding']['path']==path,
+                    'gate-disable is active important finding at authenticated workflow path')
+                evidence.extend(observation['evidence'])
+            require(sorted((e['start_line'],e['end_line'],e['excerpt'],e['content_digest'],e['path']) for e in evidence)==
+                sorted((n,n,content.splitlines()[n-1],sha(content.encode()),path) for n in expected),'exact authenticated offending line evidence')
+        path='.github/workflows/compliance.yml'
+        for value in ('true','"false"','FALSE','${{ success() }}','',"'false'"):
+            content='jobs:\n  check:\n    continue-on-error: '+value+'\n'
+            exercise('# base\n',content,path,[3]);exercise('# base\n','jobs:\n  check:\n    continue-on-error: false\n',path,[])
+        for content in ('# continue-on-error: true\n','continue-on-error: false # allowed literal false\n'):
+            exercise('# base\n',content,path,[])
+        exercise('continue-on-error: true\n# old\n','continue-on-error: true\n# changed only\n',path,[])
+        exercise('# base\n','continue-on-error: true\n','tools/unrelated.yml',[])
+
+
+def controls_candidate(api,f):
+    controls_call(api,f)
+    load_api(ROOT/'tools/convergent_review.py').verify_replay_directory(f.exp/f.replay_ref['path'])
+    mutations=[lambda e:e.update(unselected_policy={}),lambda e:e.update(schema_version=True),
+        lambda e:e['trial_provenance'].clear(),lambda e:e['trial_provenance'].reverse(),
+        lambda e:e['checkout'].update(sha='0'*40),lambda e:e['candidate']['environment']['runtime'].update(version='SYNTHETIC-drift'),
+        lambda e:e['candidate'].update(source_tree='0'*40),lambda e:e['capture_host'].update(run_id=True),
+        lambda e:e['verify_host'].update(attempt=2),lambda e:e['inventory'].append(copy.deepcopy(e['inventory'][0]))]
+    for change in mutations:controls_evidence_negative(api,f,change)
+    for number in range(3):
+        for key in ('packet_ref','prompt_ref','output_ref','runner_ref','adapter_ref','evaluator_ref','boundary_ref','evaluation_receipt_ref'):
+            controls_evidence_negative(api,f,lambda e,n=number,k=key:e['trial_provenance'][n][k].update(sha256='0'*64))
+    for reference in (f.capability_ref,f.evaluation_ref,f.map_capture_ref,f.evidence['a10_capture_ref'],f.evidence['a10_result_ref'],
+        f.capture_host['metadata_ref'],f.evidence['verify_host']['metadata_ref'],f.capture_selection,f.verify_selection,f.policy['hosted_review_ref'],
+        f.selection['authority_ref'],f.selection['shadow_state_ref']):
+        controls_payload_negative(api,f,reference,lambda v:v.update(unknown=True))
+        controls_payload_negative(api,f,reference,lambda v:v.pop(next(iter(v))))
+    for field,value in (('executed',False),('exit_code',True),('exit_code',7),('outcome','pending'),('outcome','running'),
+        ('outcome','failed'),('outcome','invalidated'),('outcome','setup-error'),('revision','0'*40)):
+        controls_payload_negative(api,f,f.map_capture_ref,lambda v,k=field,x=value:v.update({k:x}))
+    controls_payload_negative(api,f,f.evaluation_ref,lambda v:v['trials'][0].update(runner_exit=True))
+    controls_payload_negative(api,f,f.evaluation_ref,lambda v:v['trials'][1].update(isolation_adapter_digest='0'*64))
+    controls_payload_negative(api,f,f.capability_ref,lambda v:v['boundary'].update(actual_exit=64))
+    controls_payload_negative(api,f,f.capability_ref,lambda v:v['producer'].update(session_id='123-ci-capture-attempt2'))
+    controls_payload_negative(api,f,f.capability_ref,lambda v:v['boundary'].update(unknown=True))
+    controls_payload_negative(api,f,f.contract,lambda v:v.pop('approval_evidence'))
+    controls_payload_negative(api,f,f.contract,lambda v:v['approval_evidence'].update(proposal_sha256='0'*64))
+    controls_payload_negative(api,f,f.capability_ref,lambda v:canonical(v)[:-1]+b',"schema_version":1}\n')
+    controls_payload_negative(api,f,f.capability_ref,lambda v:canonical(v).replace(b'"schema_version":1',b'"schema_version":NaN')+b'\n')
+    for change in (lambda e:e['a11_capture_ref'].update(path='../escape'),lambda e:e['a11_capture_ref'].update(revision=f.source),
+        lambda e:e['trial_provenance'][0]['output_ref'].update(unknown=True)):
+        controls_evidence_negative(api,f,change)
+    saved_policy=copy.deepcopy(f.policy)
+    try:f.policy['unknown']=True;controls_call(api,f,True)
+    finally:f.policy=saved_policy
+    controls_call(api,f)
+    reference=f.capture_host['metadata_ref']; target=f.root/reference['path']; data=target.read_bytes(); mode=target.stat().st_mode
+    link=f.parent/'SYNTHETIC-hardlink'
+    try:
+        target.unlink(); link.write_bytes(data); os.link(link,target); controls_call(api,f,True)
+    finally:target.unlink();link.unlink();target.write_bytes(data);target.chmod(mode)
+    controls_call(api,f)
+    protected=[f.candidate['assessed_inputs'][key][0]['path'] for key in ('source','tests','tools','contracts')]
+    protected+=['.github/workflows/compliance.yml','schema/contract.schema.json','tools/workflow_assurance_ci.py','tools/verify_lib.sh']
+    for path in dict.fromkeys(protected):
+        target=f.root/path; data=target.read_bytes(); mode=target.stat().st_mode
+        try:
+            target.write_bytes(data+b'\n# SYNTHETIC protected drift\n'); controls_call(api,f,True)
+            target.write_bytes(data); target.chmod(mode^0o111); controls_call(api,f,True)
+        finally:target.write_bytes(data); target.chmod(mode)
+        controls_call(api,f)
+    for value in (float('nan'),float('inf'),-float('inf'),True,None):
+        evidence,policy=copy.deepcopy((f.evidence,f.policy))
+        try:f.evidence['schema_version']=value;controls_call(api,f,True)
+        finally:f.evidence,f.policy=evidence,policy
+        controls_call(api,f)
+    cycle=[];cycle.append(cycle)
+    evidence,policy=copy.deepcopy((f.evidence,f.policy))
+    try:f.evidence['schema_version']=cycle;controls_call(api,f,True)
+    finally:f.evidence,f.policy=evidence,policy
+    controls_call(api,f)
+    for mode in ('capture','verify'):
+        for kind,change in (('run',lambda v:v.update(id=True)),('run',lambda v:v.update(status='in_progress')),
+            ('jobs',lambda v:v.update(total_count=4)),('jobs',lambda v:v['jobs'][3]['steps'][0].update(conclusion='failure')),
+            ('jobs',lambda v:v['jobs'][3]['steps'].append(copy.deepcopy(v['jobs'][3]['steps'][0]))),
+            ('artifacts',lambda v:v['artifacts'][0].update(expired=True)),('artifacts',lambda v:v['artifacts'][0].update(id=True)),
+            ('job-log',lambda b:b.replace(b'WA123_INVOCATION=',b'UNSELECTED=')),('job-log',lambda b:b+b)):
+            controls_host_negative(api,f,mode,kind,change)
+    for change in (lambda b:b.replace(b'# v2 git bundle',b'# v3 git bundle',1),lambda b:b[:-1],lambda b:b+b'trailing junk',
+        lambda b:b.replace(('-'+f.source).encode(),('-'+'0'*40).encode(),1),
+        lambda b:b.replace(b' refs/wa123/proof\n',b' refs/wa123/proof\n'+f.source.encode()+b' refs/extra\n',1)):
+        controls_bundle_negative(api,f,change)
+    for hidden in (False,True):controls_bundle_negative(api,f,lambda b,h=hidden:controls_intermediate_bundle(f,h))
+    for change in (lambda entries:entries+entries[:1],lambda entries:entries+[('extra.txt',b'out-of-scope')],
+        lambda entries:[('../escape',b'escape')]+entries[1:],lambda entries:[(info,b'{}\n' if info.filename=='manifest.json' else data) for info,data in entries]):
+        controls_host_negative(api,f,'verify','archive',lambda raw,c=change:controls_zip(raw,c))
+    controls_observer(f)
+
+
+def controls_blockers(api,f):
+    controls_call(api,f)
+    for key in AGF_ARRAYS:
+        controls_payload_negative(api,f,f.selection['report_ref'],lambda v,k=key:v[k].append({'SYNTHETIC':'blocking despite approved label'}))
+    for severity in ('blocker','important'):
+        ledger=agf_severity(agf_ledger('05-prior-persisting'),severity)
+        out=api.convergent_agf_verdict(ledger,dict(final_verdict=dict(approved=True),issues=[],missing_acceptance_coverage=[],unsupported_claims=[],required_fixes=[]),
+            expected_repository=ledger['repository'],expected_head_sha=ledger['head_sha'])
+        require(out['final_verdict']['approved'] is False and out['issues']==ledger['findings'],'actual carried '+severity+' rejects positive label')
+        controls_payload_negative(api,f,f.map_ref,lambda v,o=out:v.update(copy.deepcopy(o)))
+    for field in ('advance','noop','republish','rerun_required'):
+        controls_payload_negative(api,f,f.evidence['a10_result_ref'],lambda v,k=field:v[k].update(action='advance' if k!='advance' else 'noop'))
+    controls_payload_negative(api,f,f.evidence['a10_result_ref'],lambda v:v.update(conflict_rejected=False))
+    controls_payload_negative(api,f,f.receipt_ref,lambda v:v.update(status='failed'))
+    controls_payload_negative(api,f,f.policy_ref,lambda v:v.update(recovery=None))
+
+
+def run_controls_case(name,api):
+    if not callable(getattr(api,'verify_controls_ready',None)):
+        print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
+    with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-parser-') as parent:
+        f=ControlsFixture(api,parent)
+        (controls_candidate if name=='ci-candidate-bound' else controls_blockers)(api,f)
+
+
+def run_controls_ready(api):
+    """Observe only completed independently selected hosted proof; never execute it."""
+    if not callable(getattr(api,'verify_controls_ready',None)):
+        print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
+    policy_path=ROOT/'.agent/evidence/123/controls-policy.json'
+    policy=api.parse_json(api.regular_file(ROOT,str(policy_path.relative_to(ROOT))).read_bytes())
+    reference=policy['evidence_ref']
+    evidence=api.parse_json(api._receipt_artifact(ROOT,reference))
+    before=copy.deepcopy((policy,evidence)); status=git(ROOT,'status','--porcelain','--untracked-files=all')
+    with tempfile.TemporaryDirectory(prefix='nizam123-actual-observation-') as parent:
+        scratch=Path(parent)/'repo'; bundle=Path(parent)/'selected.bundle'
+        subprocess.check_call(['git','clone','--quiet','--shared',str(ROOT),str(scratch)])
+        git(scratch,'remote','set-url','origin',git(ROOT,'remote','get-url','origin'))
+        payload=api._receipt_artifact(ROOT,evidence['pack_ref']);bundle.write_bytes(payload)
+        require(payload.startswith(b'# v2 git bundle\n') and b'\n\n' in payload,'selected bundle v2 preparation')
+        pack=payload.split(b'\n\n',1)[1]
+        imported=subprocess.run(['git','-C',str(scratch),'index-pack','--strict','--fix-thin','--stdin'],input=pack,capture_output=True)
+        require(imported.returncode==0,'selected pack imports into owned observation scratch')
+        git(scratch,'bundle','verify',str(bundle))
+        git(scratch,'fetch','--no-tags','--no-write-fetch-head',str(bundle),'refs/wa123/proof:refs/wa123/import-verify')
+        result=api.verify_controls_ready(scratch,evidence,policy=policy)
+        negative=copy.deepcopy(evidence);negative['trial_provenance']=[]
+        rejected(api,lambda:api.verify_controls_ready(scratch,negative,policy=policy),
+            'SYNTHETIC missing-trial mutation of actual selected replay-valid proof')
+        require(api.verify_controls_ready(scratch,evidence,policy=policy)==result,'actual selected hosted proof restores after synthetic discrimination')
+    require((policy,evidence)==before and git(ROOT,'status','--porcelain','--untracked-files=all')==status,'actual hosted observation inputs and real checkout unchanged')
+    require(result==dict(schema_version=1,feature_id='123',source_commit=evidence['candidate']['source_commit'],checkout_sha=evidence['checkout']['sha'],
+        candidate_sha256=sha(canonical(evidence['candidate'])),capture_run_id=evidence['capture_host']['run_id'],verify_run_id=evidence['verify_host']['run_id'],
+        a11_verdict='approve',a10_receipt_sha256=evidence['a10_receipt_ref']['sha256'],transition_actions=['advance','noop','republish','rerun-required'],
+        hosted_review_sha256=policy['hosted_review_ref']['sha256']),'exact actual selected hosted observation result')
+    print('PASS controls-ready observed independently selected actual hosted proof')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
     group.add_argument('--scope-116', action='store_true')
     group.add_argument('--scope-controls-116', action='store_true')
     group.add_argument('--pre-entry-cases', action='store_true')
-    group.add_argument('--check', choices=('foundation-ready',))
+    group.add_argument('--check', choices=('foundation-ready', 'controls-ready'))
     group.add_argument('--scope-118', action='store_true')
     group.add_argument('--scope-controls-118', action='store_true')
     group.add_argument('--scope-117', action='store_true')
@@ -1593,6 +2190,9 @@ def main():
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / '.agent/evidence/118/scope-guard.py')
         (helper.scope_controls if args.scope_controls_118 else helper.scope)(args.base); return
+    if args.check == 'controls-ready':
+        if args.base: parser.error('--base requires a scope command')
+        run_controls_ready(load_api()); return
     if args.check:
         if args.base: parser.error('--base requires a scope command')
         load_api(ROOT / '.agent/evidence/118/foundation-fixtures.py').run_foundation(load_api()); return
@@ -1610,8 +2210,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES):
-        (run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES):
+        (run_controls_case if name in CONTROL_CASES else run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':
