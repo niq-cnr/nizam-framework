@@ -25,8 +25,17 @@ def git(*args):
     return subprocess.check_output(['git', *args])
 
 
+def unique_object(pairs):
+    value = {}
+    for key, item in pairs:
+        assert key not in value, ('duplicate JSON key', key)
+        value[key] = item
+    return value
+
+
 def read(path):
-    return json.loads(Path(path).read_bytes())
+    return json.loads(Path(path).read_bytes(), object_pairs_hook=unique_object,
+                      parse_constant=lambda token: (_ for _ in ()).throw(ValueError(token)))
 
 
 def strict(value):
