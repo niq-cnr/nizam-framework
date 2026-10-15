@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.7
+version: 0.65.8
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.8"
+    date: "2026-10-15"
+    summary: "Record captured 122, separate QA/hosted proof and pending PR 103 integration; preserve historical snapshots and original budgets."
   - version: "0.65.7"
     date: "2026-10-15"
     summary: "Record captured121, separate QA/hosted proof and pending PR102 closeout; preserve historical snapshots and original budgets."
@@ -227,6 +230,23 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Current position — captured 122, 2026-10-15
+
+Feature 122 is [captured complete](../../.agent/evidence/122/evidence-capture.json) and [canonically closed](../../.agent/evidence/122/closure.json): read-only routing by independently selected evidence of infrastructure or semantic failure.
+Failed outcomes remain failed; attempts 1/2 propose diagnosis or repair, and attempt 3 halts under the unchanged three-attempt limit. Hash/producer labels and schema validity do not authenticate classification or authority.
+Source SHA-256 `fff790d7…` and test `800b5970…` passed the [independent executable seal](../../.agent/evidence/122/executable1-current-seal.json), Mode B and fresh QA before Root capture.
+Author controls and independent replay each retained four positive/intended-negative/restored trios with actual exits 0/1/0 and full byte/mode preservation.
+The [fixture-portability recovery](../../.agent/evidence/122/fixture-portability-recovery.json) records Root’s standing-authority interpretation for bounded author/review 4/4; prior failures remain preserved, without a reset or new product retry budget.
+Its fixture-local Git 2.55 housekeeping isolation preserved semantic assertions and complete Git/file snapshots; renewed independent review preceded current controls.
+[Fresh QA](../../.agent/qa/122.json) passed four selectors/default46, immutable 118 exit 0/current stale exit 1, both compliance modes and exactly one additional duplicate-key authority check.
+[Hosted CI2](../../.agent/evidence/122/ci2-receipt.json) separately passed default46 on these Source/test bytes: compliance 38678198180 and closeout 38678198188 succeeded at head `b4c1b16`.
+[PR 102 merged](../../.agent/evidence/121/pr102-merge-receipt.json) at `3ee2b39`; [main CI 38662903572](../../.agent/evidence/121/pr102-main-ci.json) passed all five jobs.
+[PR 103](https://github.com/niq-cnr/nizam-framework/pull/103) remains unmerged; final exact-head integration, merge and main CI are pending. [Phase 018](phase_018.yaml) stays active; **123 remains pending**.
+Root owns final whole feature 122 measurement after this refresh; prior 119–121 actuals total **3,364**, with unchanged **7,200/9,360** and no rebaseline.
+Archived 016 remains partial at **5,179** (original **5,650/7,345**), 017 **5,203/7,020**; DAG **017 → 016 → 018 → 020 → 019** and 018’s **127-only** prerequisite remain unchanged.
+The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned fixtures do not establish live Root adoption. Installed **v1.5.0** remains immutable.
+Controls-ready for 123, full runtime/SBCL, canary execution, benchmark/superiority and release/install changes remain unclaimed. All earlier “Current” sections below are historical snapshots.
 
 ## Current position — captured 121, 2026-10-15
 
