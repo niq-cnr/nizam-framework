@@ -300,6 +300,26 @@
       "path": ".agent/evidence/123/capture2-inspection1/setup-4.stdout",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent/evidence/123/capture2-inspection1/authored-whitespace.execution.json",
+      "bytes": 796,
+      "sha256": "7fc8ecafea43b44bd93f9ee2eed78c6d1234e6e3efb5c48f6a872701935aa677"
+    },
+    {
+      "path": ".agent/evidence/123/capture2-inspection1/authored-whitespace.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent/evidence/123/capture2-inspection1/authored-whitespace.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
-  ]
+  ],
+  "recording_hygiene": {
+    "observation": "Before evidence commit, git diff --cached --check warned about a trailing space in authentic import-bundle-verify.stdout line4: the Source prerequisite SHA followed by one space. Raw stdout is retained unchanged; its recorded SHA remains authoritative.",
+    "shell_status": "That enclosing tool command also ran git diff --cached --stat after a shell separator and returned0. The first whitespace command exit was not separately captured; no independent exit code is invented. This affected evidence whitespace hygiene, not any actual import or Source predicate result.",
+    "corrective_check": "A separate actual git diff --check restricted to authored report/verdict/recorded inline invocation text exited0 with empty stdout/stderr; real frame captured under authored-whitespace.*. This is a recording check, not a retry of product validation or a proof relaxation."
+  }
 }
