@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T17:57:25.064334+00:00",
+  "updated_at": "2026-10-15T18:14:35.034837+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1830,14 +1830,39 @@
     "123-hosted-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "admitted",
       "owner": "/root/overlap_review123",
       "release": ".agent/evidence/123/root-hosted-review1-release.json",
       "evidence_ref": {
         "path": ".agent/evidence/123/controls-evidence.json",
         "revision": "cfb84f1d559a585bbadf8957d80fd54010ad2f8e",
         "sha256": "d28ccd80b8c68d28d5b519a009b3da19365f5997dc7a97152952e8c107772a77"
+      },
+      "review_revision": "855fb7c44d60705ac04463496a91f6de1ba8a3a2",
+      "policy_ref": {
+        "path": ".agent/evidence/123/controls-policy.json",
+        "revision": "a8b7b902177edc8f7aead70c74bdcb574714c727",
+        "sha256": "cc1ee6cde9faa0f6aaaab3cf2647fb509c04c8644fdca37fea9347e1ba52b53e"
       }
+    },
+    "123-controls-readiness": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released",
+      "owner": "/root/final_seal123",
+      "release": ".agent/evidence/123/root-readiness-and-final-seal1-release.json",
+      "policy_ref": {
+        "path": ".agent/evidence/123/controls-policy.json",
+        "revision": "a8b7b902177edc8f7aead70c74bdcb574714c727",
+        "sha256": "cc1ee6cde9faa0f6aaaab3cf2647fb509c04c8644fdca37fea9347e1ba52b53e"
+      }
+    },
+    "123-final-executable-seal": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-held-on-readiness",
+      "owner": "/root/final_seal123",
+      "release": ".agent/evidence/123/root-readiness-and-final-seal1-release.json"
     }
   },
   "history": [
@@ -7876,7 +7901,7 @@
       }
     ]
   },
-  "last_action": "Genuine collector recovery2 passed unchanged normalization and strict import; actual two-pass Evidence committed, distinct HostedReview1 released. Final policy/readiness/seal/ModeB/QA/closure remain held.",
+  "last_action": "Actual two-pass HostedReview admitted, finalRootpolicy committed; literalreadiness0/1/0 and independent finalseal1 released, ModeB/freshQA/closure held.",
   "completed_contract_ids": [
     "099",
     "103",
