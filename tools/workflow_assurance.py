@@ -1199,6 +1199,109 @@ def rollback_owned_attempt(repo, request, *, policy):
         raise AssuranceError('lane rollback failed: ' + str(exc)[:300]) from exc
 
 
+def _failure_continuity(root, request, policy, authority):
+    anchor = _lane_file(root, authority['coordination_ref'])
+    current = _lane_file(root, policy['coordination_ref'], live=True)
+    for state in (anchor, current):
+        _receipt_schema(root, state, 'run_state')
+        require(state['repository'] == policy['repository'] and state['current_feature'] == request['feature_id'] and
+            state.get('active_contract_id', request['contract_id']) == request['contract_id'] and
+            state['status'] == 'in_progress', 'failure coordination identity')
+        require(type(state['history']) is list, 'failure history list')
+        if 'execution_lanes' in state:
+            require(type(state['execution_lanes']) is list, 'failure lane inventory list')
+        counter = state['circuit_breaker'].get(request['step_key'])
+        require(type(counter) is dict and type(counter.get('attempts')) is int and
+            counter['attempts'] == request['attempt'] and type(counter.get('limit')) is int and
+            counter['limit'] == 3, 'failure counter allocation mismatch')
+    require(anchor['current_phase'] == current['current_phase'], 'failure phase changed')
+    require(('execution_lanes' in anchor) == ('execution_lanes' in current) and
+        canonical(anchor.get('execution_lanes')) == canonical(current.get('execution_lanes')), 'failure lanes changed')
+    owned = ['/history']
+    if 'updated_at' in anchor:
+        require(type(anchor['updated_at']) is str and type(current.get('updated_at')) is str, 'failure timestamp type')
+        owned.append('/updated_at')
+    verify_record_update(anchor, current, owned)
+
+
+def _failure_rejection(root, reference):
+    verdict = _lane_file(root, reference)
+    try:
+        _receipt_schema(root, verdict, 'contract_review')
+    except AssuranceError:
+        _receipt_schema(root, verdict, 'qa_verdict')
+    require(type(verdict.get('final_verdict')) is dict and
+        type(verdict['final_verdict'].get('approved')) is bool and
+        all(type(verdict.get(key)) is list for key in
+            ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'failure semantic verdict shape')
+    require(verdict['final_verdict']['approved'] is False or any(verdict[key] for key in
+        ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'failure semantic verdict passed')
+
+
+def route_failed_attempt(repo, request, *, policy):
+    """Propose a cause route from independently selected failed evidence; never retry or write state."""
+    try:
+        json_value(request); json_value(policy)
+        root = _lane_path(str(repo))
+        require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'failure repository toplevel')
+        keys = ('operation_id', 'contract_id', 'feature_id', 'step_key', 'attempt', 'stage', 'cause')
+        _bundle_object(request, keys, 'failure request')
+        for key in ('operation_id', 'contract_id', 'feature_id', 'step_key', 'stage'):
+            _receipt_text(request[key], 'failure ' + key)
+        require(request['contract_id'] == request['feature_id'], 'failure contract identity')
+        require(type(request['attempt']) is int and 1 <= request['attempt'] <= 3, 'failure attempt outside max3')
+        require(type(request['cause']) is str and request['cause'] in ('infrastructure', 'semantic'), 'failure cause')
+        _bundle_object(policy, ('repository', 'coordination_ref', 'authority_ref'), 'failure policy')
+        require(git(root, 'remote', 'get-url', 'origin').decode().strip() == policy['repository'], 'failure actual repository')
+        authority = _lane_file(root, policy['authority_ref'])
+        _bundle_object(authority, (*keys, 'schema_version', 'role', 'repository', 'approved', 'contract_ref',
+            'coordination_ref', 'candidate', 'producer', 'capture_ref', 'evidence_ref'), 'failure authority')
+        require(type(authority['schema_version']) is int and authority['schema_version'] == 1 and
+            authority['role'] == 'Orchestrator' and authority['approved'] is True and
+            authority['repository'] == policy['repository'], 'failure authority not approved')
+        require(all(canonical(authority[key]) == canonical(request[key]) for key in keys), 'failure request outside authority')
+        _receipt_contract(root, _lane_file(root, authority['contract_ref']), request['feature_id'])
+        _receipt_producer(authority['producer']); _receipt_candidate(root, authority['candidate'])
+        _failure_continuity(root, request, policy, authority)
+        capture = _lane_file(root, authority['capture_ref'])
+        _bundle_object(capture, ('schema_version', 'argv', 'cwd', 'revision', 'candidate_sha256', 'environment',
+            'producer', 'executed', 'outcome', 'exit_code', 'stdout', 'stderr'), 'failure capture')
+        require(type(capture['schema_version']) is int and capture['schema_version'] == 1 and
+            capture['executed'] is True and type(capture['exit_code']) is int and capture['exit_code'] != 0 and
+            capture['outcome'] == request['cause'] + '-failed', 'failure capture is not actual failed outcome')
+        require(type(capture['argv']) is list and capture['argv'] and
+            all(type(arg) is str and arg for arg in capture['argv']), 'failure capture argv')
+        _receipt_text(capture['cwd'], 'failure capture cwd'); _receipt_producer(capture['producer'])
+        require(canonical(capture['producer']) == canonical(authority['producer']) and
+            capture['candidate_sha256'] == sha(canonical(authority['candidate'])) and
+            canonical(capture['environment']) == canonical(authority['candidate']['environment']), 'failure capture bindings')
+        _receipt_candidate(root, authority['candidate'], capture['revision'])
+        for stream in ('stdout', 'stderr'):
+            reference = capture[stream]
+            data = _receipt_artifact(root, reference, live=True)
+            _, executable = _entry_blob(root, reference['revision'], reference['path'])
+            require(bool(regular_file(root, reference['path']).stat().st_mode & 0o111) is executable,
+                'failure output mode changed')
+            data.decode('utf-8')
+        evidence = _lane_file(root, authority['evidence_ref'])
+        _bundle_object(evidence, ('schema_version', 'kind', 'reason', 'capture_ref', 'verdict_ref'), 'failure evidence')
+        require(type(evidence['schema_version']) is int and evidence['schema_version'] == 1 and
+            evidence['kind'] == request['cause'], 'failure evidence classification')
+        require(type(evidence['reason']) is str and bool(evidence['reason'].strip()) and
+            len(evidence['reason']) <= 400, 'failure evidence reason')
+        require(canonical(evidence['capture_ref']) == canonical(authority['capture_ref']), 'failure evidence capture mismatch')
+        if request['cause'] == 'infrastructure':
+            require(evidence['verdict_ref'] is None, 'failure infrastructure verdict must be null')
+        else:
+            _failure_rejection(root, evidence['verdict_ref'])
+        attempt = request['attempt']
+        return copy.deepcopy(dict(request, outcome='failed', route='halt' if attempt == 3 else
+            request['cause'] + ('-diagnosis' if request['cause'] == 'infrastructure' else '-repair'),
+            attempts_used=attempt, limit=3, remaining=3-attempt, capture_ref=authority['capture_ref']))
+    except (AssuranceError, OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
+        raise AssuranceError('failure routing invalid: ' + str(exc)[:800]) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)

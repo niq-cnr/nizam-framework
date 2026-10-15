@@ -9,6 +9,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Evidence-based cause routing (feature 122).** Added a read-only failure route
+  bound to selected classification, actual captures and continuous counters.
+  Infrastructure and semantic outcomes remain failed within the existing max3.
+
 - **Conflict lanes and rollback (feature 121).** Added read-only lane and detached
   attempt checks, with bounded Git-managed removal after captured failure.
   Shared ownership serializes and the existing three-attempt limit remains.
