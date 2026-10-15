@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T12:35:31.589762+00:00",
+  "updated_at": "2026-10-15T12:40:13.223470+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1570,22 +1570,35 @@
       "status": "passed"
     },
     "123-ci-capture": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "failed-fixture-setup-before-producer",
-      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
-      "release": ".agent/evidence/123/root-ci-capture1-release.json",
-      "head_sha": "e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8",
+      "status": "capture2-dispatch-released-not-observed",
+      "strategy": "Reviewedconstructorportabilityrepair/newrealpacketbase andSource9886; allrenewal/preflight gates passed before newactualhosteddispatch",
+      "release": ".agent/evidence/123/root-ci-capture2-release.json",
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "producer": {
+        "agent_id": "wa123-capable-ci",
+        "session_id": "123-ci-capture-attempt2"
+      },
       "pull_request": 104,
-      "run_id": 38725446673,
-      "run_attempt": 1,
-      "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4",
-      "job_id": 116390018603,
-      "retained_observed_pr_merge_revision": "a20f05e7845c3c231770215644216603389e4dd4",
-      "retention_merge_revision": "548b11cbd27c5c9eae8c02e2c5738558c0811480",
-      "run_conclusion": "failure",
-      "producer_executed": false,
-      "failure_evidence": ".agent/evidence/123/root-ci-capture1-failure-admission.json"
+      "prior_capture1": {
+        "attempts": 1,
+        "limit": 3,
+        "status": "failed-fixture-setup-before-producer",
+        "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
+        "release": ".agent/evidence/123/root-ci-capture1-release.json",
+        "head_sha": "e4dbedf95ff9b544f4ade0c5f761cfd76ba6cba8",
+        "pull_request": 104,
+        "run_id": 38725446673,
+        "run_attempt": 1,
+        "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4",
+        "job_id": 116390018603,
+        "retained_observed_pr_merge_revision": "a20f05e7845c3c231770215644216603389e4dd4",
+        "retention_merge_revision": "548b11cbd27c5c9eae8c02e2c5738558c0811480",
+        "run_conclusion": "failure",
+        "producer_executed": false,
+        "failure_evidence": ".agent/evidence/123/root-ci-capture1-failure-admission.json"
+      }
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -1679,22 +1692,31 @@
       "actual_exit": 0
     },
     "123-development-private-controls": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "literal-positive-negative-both-lanes-passed-restoration-pending",
-      "completed_lanes": [
-        "blocker",
-        "candidate"
-      ],
-      "blocker_evidence": ".agent/evidence/123/root-source3-blocker-controls1-admission.json",
-      "candidate_evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
+      "status": "renewed-full-private-controls2-released",
+      "strategy": "Same immutable authorhelper against newlyreviewedSource9886/test06eba; fullpositive then exactintendednegative eachlane alongsideactualcapture2",
+      "release": ".agent/evidence/123/root-renewed-private-controls2-release.json",
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "completed_lanes": [],
+      "prior_controls1": {
+        "attempts": 1,
+        "limit": 3,
+        "status": "literal-positive-negative-both-lanes-passed-restoration-pending",
+        "completed_lanes": [
+          "blocker",
+          "candidate"
+        ],
+        "blocker_evidence": ".agent/evidence/123/root-source3-blocker-controls1-admission.json",
+        "candidate_evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
+      }
     },
     "123-capture-input-preflight": {
       "attempts": 2,
       "limit": 3,
-      "status": "renewed-input-preflight2-execution-released",
+      "status": "passed-renewed-input-preflight2",
       "strategy": "Rebind actual postreviewSource9886/full537/newprovisional4+Report4 and meaningful B2..Source UTF8/2MiB packet after realmerge failure; no historicalpass transfer",
-      "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json",
+      "evidence": ".agent/evidence/123/root-capture-input-preflight2-admission.json",
       "prior_before_input_renewal": {
         "attempts": 1,
         "limit": 3,
@@ -1703,7 +1725,8 @@
         "actual_exit": 0,
         "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json"
       },
-      "release": ".agent/evidence/123/root-capture-input-preflight2-release.json"
+      "release": ".agent/evidence/123/root-capture-input-preflight2-release.json",
+      "actual_exit": 0
     },
     "123-constructor-portability-matrix": {
       "attempts": 1,
@@ -7088,6 +7111,12 @@
       "event": "123-renewed-capture-input-preflight2-release",
       "detail": "Exacthelper2e3/c9f, Source9886, preparation726/072153 pinned; ownedseparateorigin clone, full537/239/realB2packet andpreservation, engineeringonly.",
       "evidence": ".agent/evidence/123/root-capture-input-preflight2-release.json"
+    },
+    {
+      "at": "2026-10-15T12:40:13.223470+00:00",
+      "event": "123-preflight2-admitted-parallel-controls2-capture2-released",
+      "detail": "Actual537protected/400980Bpacket/13104tracked+239 preserved; Source9886/currentreview007339. Newfixedselectionproducer2 committedbeforedispatch. Oldfailedcapture1 andoldlocalpasses quarantinedinpriorcounterfields; no inferrednewpasses.",
+      "evidence": ".agent/evidence/123/root-ci-capture2-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7649,7 +7678,7 @@
       }
     ]
   },
-  "last_action": "123 actualpostreviewSource9886/preparation3 frozen; oneactual renewedinputpreflight2 released, no fullcontrols/CI2 until0 admission.",
+  "last_action": "123 currentinputpreflight2=0 admitted; complete renewedlocalcontrols2 andactualhostedcapture2 releasedparallel atSource9886/test06eba; captureinspection+local0/1 joinbeforeverify, allrestored+hostedreviewbeforeseal.",
   "completed_contract_ids": [
     "099",
     "103",
