@@ -1,0 +1,27 @@
+{
+  "review": "validator-mode-a",
+  "feature": "122",
+  "feature_id": "122",
+  "contract_id": "122",
+  "revision_reviewed": 0,
+  "reviewer": "/root/modea122",
+  "reviewed_revision": "ca3f3917c1d6caf28748877cb47514d0302a4534",
+  "reviewed_commit": "ca3f3917c1d6caf28748877cb47514d0302a4534",
+  "proposal_sha256": "2755c628685458009fb763e1d985339cef87e37608cefabd346253fc69d5183f",
+  "contract_sha256": "2755c628685458009fb763e1d985339cef87e37608cefabd346253fc69d5183f",
+  "issues": [{
+    "verification_index": 3,
+    "criterion": "AT4 bounded, unambiguous counter continuity using preserved existing helpers",
+    "severity": "high",
+    "evidence": ".agent/evidence/122/modea1-static.stdout.txt: api.continuity permits /execution_lanes through verify_record_update; tools/workflow_assurance.py:99 rejects owned dict/list except /history, :1098 requires execution_lanes list. Missing pointer also rejects at :97. Existing helpers must remain unchanged, so the prescribed direct comparison cannot admit this stated positive continuity case.",
+    "required_fix": "Specify an explicit continuity procedure compatible with the unchanged helper, including treatment of absent/present execution_lanes and its allowed transitions, while preserving all counters, other unowned values and the exact history prefix. Bind its legitimate handoff and forbidden mutation cases to AT4 before Source."
+  }],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Scope, four selector mapping, trusted externally selected policy, exact bool/int profiles, failed outcomes, max3, no resets, independent gates and whole950/phase7200/9360 boundaries are explicit in the proposal; this is pre-code review only.",
+    "Static wrapper exited1 after confirming the blocker: reviewer AST collector omitted composed inventory assignments. No 42-count verification claim, repair or rerun; Source/test behavior was never executed. Raw diagnostics retained."
+  ],
+  "evidence": [".agent/evidence/122/modea1-static.execution.json", ".agent/evidence/122/modea1-static.stdout.txt", ".agent/evidence/122/modea1-static.stderr.txt", ".agent/evidence/122/modea1-lookup.json"],
+  "final_verdict": {"approved": false, "feature": "122", "summary": "Reject: continuity prescription conflicts with preserved helper interface; clarify before implementation. Static proof failure is retained separately."}
+}

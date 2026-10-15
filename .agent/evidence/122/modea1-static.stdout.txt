@@ -1,0 +1,31 @@
+exercised_revision 713b8e9b752a0ff7158e8a996ad5319df7b8aee6
+contract_schema_valid schema/contract.schema.json
+contract_schema_valid .nizam/schema/contract.schema.json
+selected_state {"repository": "nizam-framework", "current_phase": "018-workflow-assurance-controls", "current_feature": "122", "status": "in_progress"}
+selected_counters {"122-contract": {"attempts": 1, "limit": 3, "status": "proposed"}, "122-contract-review": {"attempts": 1, "limit": 3, "status": "dispatched"}, "122-mode-a": {"attempts": 1, "limit": 3, "status": "dispatched"}, "122-selection": {"attempts": 1, "limit": 3, "status": "passed"}}
+STATIC_BLOCKER helper rejects owned list except history; contract allows execution_lanes list pointer
+live_execution_lanes_present False
+90:def verify_record_update(before, after, owned_fields):
+91:    json_value(before); json_value(after)
+92:    require(type(before) is dict and type(after) is dict, 'record root must be JSON object')
+93:    owned = pointers(owned_fields)
+94:    for parts in owned:
+95:        value = before
+96:        for key in parts:
+97:            require(type(value) is dict and key in value, 'owned pointer is missing or traverses container')
+98:            value = value[key]
+99:        require(type(value) not in (dict, list) or parts == ('history',), 'owned field must be scalar leaf')
+100:        if parts == ('history',):
+101:            require(type(value) is list, 'history must be a list')
+102:    if 'history' in before:
+103:        require(type(before['history']) is list and type(after.get('history')) is list, 'history must remain a list')
+104:        prefix = after['history'][:len(before['history'])]
+105:        require(canonical(prefix) == canonical(before['history']), 'history original prefix changed')
+1094:            (matches[0]['status'] == 'complete' and matches[0]['passes'] is True)), 'lane dependency not satisfied')
+1095:    counter = state['circuit_breaker'].get(request['step_key'])
+1096:    require(type(counter) is dict and type(counter.get('attempts')) is int and counter['attempts'] == request['attempt'] and
+1097:        type(counter.get('limit')) is int and counter['limit'] == 3, 'lane counter allocation mismatch')
+1098:    lanes = state.get('execution_lanes'); require(type(lanes) is list, 'lane coordination inventory missing')
+1099:    seen = set(); conflicts = []
+1100:    for lane in lanes:
+1101:        _bundle_object(lane, (*request, 'status', 'terminal_ref'), 'coordinated lane')
