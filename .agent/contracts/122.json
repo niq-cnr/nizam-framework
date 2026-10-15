@@ -1,0 +1,166 @@
+{
+  "contract_id": "122",
+  "feature_id": "122",
+  "name": "Evidence-based cause routing",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_018.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/122.json",
+        "purpose": "Generator proposal; Root-only lifecycle promotion after both independent gates."
+      },
+      {
+        "path": ".agent/evidence/122/*",
+        "purpose": "Role-owned proposal, frozen acceptance, provisional/executable controls and seals, Source, QA, preservation, measurement and capture proof only."
+      },
+      {
+        "path": ".agent/validator/122-*.json",
+        "purpose": "Independent Mode A and Mode B verdicts."
+      },
+      {
+        "path": ".agent/qa/122*.json",
+        "purpose": "Independent contract review, provisional/final bundle review and fresh QA verdicts."
+      },
+      {
+        "path": ".agent/evidence/122-qa-adversarial.txt",
+        "purpose": "Exactly one independently selected additional fresh-QA adversarial check."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Generator-only additive read-only routing API/private helpers; preserve all existing115-121 function/class ASTs and CLI."
+      },
+      {
+        "path": "tools/test_workflow_assurance.py",
+        "purpose": "Evaluator-only four selectors in separate ordered inventory, default46; preserve all42 current test definitions/inventories except additive main dispatch."
+      },
+      {
+        "path": "methodology/03_circuit_breaker.md",
+        "purpose": "Generator-only bounded normative clarification of evidenced cause routing, failed outcomes and non-resetting max3; NDS version/change_log, no installed change."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Generator-only concise API/trust/failed-wrapper boundary, NDS version/change_log."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Generator-only small unreleased122 note."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Root-only lifecycle, counters, history and whole122 budget within existing coordination authority."
+      },
+      {
+        "path": ".agent/feature_list_018.json",
+        "purpose": "Root-only122 lifecycle/evidence;123 pending."
+      },
+      {
+        "path": "docs/planning/phase_018.yaml",
+        "purpose": "Root-only canonical122 closure after capture;123 pending."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Root-only current018 projection, no phase closure."
+      },
+      {
+        "path": ".agent/product_spec_018.md",
+        "purpose": "Planner-only optional captured current position/version, requirements/DAG/budget unchanged."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Planner-only optional captured current position projection."
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Planner-only optional captured current position projection."
+      }
+    ]
+  },
+  "roles": {
+    "Generator": "Contract and contract1-* evidence now; Source/docs and own proof only after Root approval and independent provisional bundle. Never tests/verdicts/coordination.",
+    "Evaluator_author": "Independent concrete tests/fixtures, frozen obligations and four case controls; no Source.",
+    "Evaluator_reviewer": "Distinct provisional API/test reviewer before Source, final actual executable controls/seal before Mode B; never self-approves authored tests.",
+    "Validator": "Independent Mode A/Mode B and preservation/scope/budget proof only.",
+    "fresh_QA": "Distinct from Generator, author and bundle reviewer; four selectors, default46, historical/current118, both compliance modes, exactly one own extra check.",
+    "Root": "Sole policy selection, coordination/admission, counter/history owner, receipt parsing, evidence capture and canonical-first closure.",
+    "Planner": "Optional current projections only after capture."
+  },
+  "api": {
+    "signature": "route_failed_attempt(repo, request, *, policy) -> dict; additive private helpers permitted; no new CLI",
+    "execution": "Read-only local Git/files/JSON checks, no command execution beyond existing Git inspection; no retry, state write, reservation, process launch, cleanup or network. Reuse AssuranceError, finite exact JSON/canonical/SHA, regular_file, typed immutable _receipt_artifact/_lane_file, _receipt_candidate, _receipt_contract, existing schema validators and verify_record_update. Do not modify existing helpers/engines.",
+    "request": "Exact keys operation_id,contract_id,feature_id,step_key,attempt,stage,cause. IDs/stage nonempty strings; contract_id==feature_id; attempt exact int1..3 (never bool); cause exactly infrastructure or semantic. No request-selected authority/capture, budget, producer, success, probe or counter overrides.",
+    "policy": "Exact keys repository,coordination_ref,authority_ref. Repository equals actual origin. Refs use existing exact path/sha256/revision immutable type, artifact-containing commit, regular files and current bytes/modes for current coordination. Caller outside API must independently select this trusted policy, never derive it from the request.",
+    "authority": "Immutable authority_ref JSON exact keys schema_version,role,repository,approved,contract_ref,coordination_ref,candidate,producer,capture_ref,evidence_ref plus all request keys. Version exact int1, role Orchestrator, approved exactTrue, repository matches policy, request values match exactly. Existing approved contract with both pre-code approvals matches feature. Existing assessed candidate and producer shapes validated; candidate actual repository/inputs/environment/exercised revision checked using existing validators. Authority coordination_ref anchors the allocated attempt before handoff; current coordination_ref is independently selected live snapshot.",
+    "continuity": "Validate anchor/current run_state schemas, selected repository/current_feature/active_contract_id(if present)/in_progress and same current_phase. Require history lists in both. execution_lanes must be absent in both, or present in both as canonically identical lists; add/remove/reorder/content transitions reject in this read-only routing assessment. Compare the original full anchor/current records using unchanged verify_record_update with /history only, adding /updated_at only when that existing anchor field is a string and current retains a string; if absent in anchor it must remain absent. History remains exact prefix; no list-valued owned pointer or absent owned pointer is passed. All counters, budget, operator and other values unchanged. Selected step counter has exact integer attempts==request.attempt and limit==3 in both snapshots. Authority remains stable across process/agent/session/generation/stage boundaries; a renamed stage/operation/step/contract cannot escape its pinned identity. New independent steps require separately selected Root authority; API cannot establish that authority itself.",
+    "capture": "capture_ref is actual wrapper capture JSON with existing receipt-capture exact keys schema_version,argv,cwd,revision,candidate_sha256,environment,producer,executed,outcome,exit_code,stdout,stderr. Version exact int1; nonempty argv strings/cwd; executed exactTrue; exit_code exact nonzero int; outcome exactly infrastructure-failed or semantic-failed matching authority.cause. Candidate digest/environment/producer match authority; revision is actual committed candidate or allowed protected-input descendant. Output refs verify committed and current bytes/modes, decode UTF8; never guess stdout markers or infer cause from substrings. Existing output is inspected as evidence without executing it.",
+    "evidence_profile": "evidence_ref selects independently classified JSON exact keys schema_version,kind,reason,capture_ref,verdict_ref. Version exact int1; kind equals authority.cause; reason bounded nonempty string1..400; capture_ref exactly matches authority capture_ref. Infrastructure verdict_ref must be null; semantic verdict_ref must be immutable typed reference to schema-valid contract_review or qa_verdict, with final_verdict.approved false OR at least one nonempty issues/missing_acceptance_coverage/unsupported_claims array. Explicitly reject a passing semantic verdict and capture/profile/cause mismatch. The selected classification attestation binds actual failed capture; it is not an automatically inferred universal failure taxonomy.",
+    "result": "Return exactly operation_id,contract_id,feature_id,step_key,attempt,stage,cause,outcome,route,attempts_used,limit,remaining,capture_ref. Preserve bound identity/cause/ref; outcome always failed, attempts_used=attempt, limit=3, remaining=3-attempt. For attempts1/2 route infrastructure-diagnosis or semantic-repair by cause; for attempt3 route halt for either cause. This proposes diagnostic destination, never allocates a next attempt or changes the existing strategy ladder/halt duties. Returned values do not alias inputs.",
+    "errors_and_boundary": "Invalid/missing/stale/unknown/ambiguous/nonfinite/cyclic/unsafe/mismatched data, bool counts, reset/limit override, zero exit or unrun/pending/running/success/probe evidence raises AssuranceError with nonempty bounded diagnostic, no success result/input/files/state mutation. Integrity/hash/producer labels and schema validity do not authenticate classification, human consent or factual truth; independent Root selection and evidence review remain required. Current Root legacy-binding migration remains unapplied; aligned fixture proof is not actual Root adoption. A nested expected nonzero negative can yield a successful outer acceptance command; a failed outer wrapper remains failed and cannot be relabeled successful or a probe."
+  },
+  "non_goals": [
+    "No new mandatory schema/consumer fields, scheduler, authority store, CLI, arbitrary-request authority, cause allowance/reset or strategy-limit exception; max3 and Root-only counters/history remain.",
+    "No edits to existing115-121 APIs/classes/CLI ASTs, current42 acceptance definitions/inventories, schemas, workflows, installed.nizam, historical evidence or016/017 records; additive Evaluator main dispatch only.",
+    "No123 controls-ready/full CI/workflow closure,124/125 profiles, models/benchmarks/runtime/SBCL/phase020/131/release/install/Root alias migration or live Root adoption claim."
+  ],
+  "acceptance_ownership": {
+    "inventory": "Exactly four ordered selectors infrastructure-failed,semantic-failed,reject-cause-relabel,counter-continuity, default46. Independent author may add bounded subcases only. Fixture repositories use actual committed refs/current schemas and independently pinned authority/profiles/captures; fixture producer/authorization is explicitly synthetic. Preserve actual failed runs; Git/setup/missing API failures never count as intended semantic red.",
+    "gates": "Both independent pre-code gates approve identical proposal before Root approval. Independent author freezes concrete API/test bytes and obligations, distinct provisional reviewer approves before Source. Initial missing API is setup. Generator commits initial Source before development behavior runs; genuine intended behavioral-red before repair, actual per-case positive/private intended-semantic-negative/restored controls and distinct final executable review/seal precede Mode B. Do not weaken contract/tests or treat absent API/setup as red; bundle changes require renewed independent review.",
+    "preservation": "Compare actual inherited Source function/class/CLI ASTs and test definitions/inventories to immutable preimplementation objects; only additive test main dispatch permitted. Require inputs/current files/counters/history/prior proof and outside sentinels byte/mode preserved. Include typed bool/string/null, cycle/nonfinite, wrong/missing/stale refs, changed output/candidate/producer/shape, success/zero/unrun and mismatched classification negatives within four cases."
+  },
+  "verification": [
+    {
+      "acceptance_test": "AT1 infrastructure-failed: pinned actual nonzero infrastructure capture yields failed diagnosis route with unchanged counter1/2;3 yields halt; invalid/success/unrun/stale proof rejects with restored positive.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case infrastructure-failed"
+    },
+    {
+      "acceptance_test": "AT2 semantic-failed: pinned nonzero wrapper plus independently selected rejecting semantic verdict yields failed repair route; passing/missing/mismatched verdict rejects; nested expected negative does not convert failed outer wrapper to success.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case semantic-failed"
+    },
+    {
+      "acceptance_test": "AT3 reject-cause-relabel: attempt to relabel pinned infrastructure/semantic failure, make success/probe, replace evidence/capture/producer or select request authority rejects; original classification restores exactly.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-cause-relabel"
+    },
+    {
+      "acceptance_test": "AT4 counter-continuity: same identity and authoritative counters1/2/3 survive handoff/history append with lanes absent in both or identical lists in both; lane add/remove/reorder/content change and process/agent/generation/stage relabel, counter reset/change, extra budget, fourth attempt or rewritten prior history rejects; all inputs/state/proof unchanged.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case counter-continuity"
+    }
+  ],
+  "gate_sequence": [
+    "Predecessor121 capture/PR102 merge3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03 and actualmainCI38662903572 all5success are E122/source-prerequisite; not122 Source approval. Both pre-code gates then Root approval, independent author then distinct provisional review precede Source.",
+    "Committed initial Source, actual intended behavioral-red before repair, four actual positive/intended-negative/restored controls, distinct final executable seal, Mode B exact scope/preservation/measured budget, then distinct fresh QA.",
+    "Fresh QA exactly four selectors plus default46, historical118 positive at8ac94f6808e8197111197c9acbf59b2aa92efc7c exit0/current stale118 exit1, repository default/payload compliance and exactly one own additional adversarial check. Capture all commands/exits/output/revision/protected Git objects by path; no substituted development proof.",
+    "Root verifies all QA/seal/external evidence references, actual exits and candidate identities before evidence-capture approval; canonical122COMPLETED/evidence first, then derived state/list/manifest.123 remains pending. Optional Planner current projections only after capture; no full controls CI claim."
+  ],
+  "estimated_lines": 950,
+  "budget": {
+    "source_and_docs": 200,
+    "independent_tests": 250,
+    "process": 500,
+    "phase_original": 7200,
+    "phase_ceiling": 9360,
+    "measurement_base": "3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03",
+    "prior_actual": {
+      "119": 722,
+      "120": 1397,
+      "121": 1245,
+      "total": 3364
+    },
+    "rule": "Whole122 preparation/contract/gates/tests/Source/docs/coordination/closure once from actualPR102merge, no free rebase or new allowance. Frozen classifier/raw-evidence/run_state exclusions unchanged; unclassified fails closed. Preserve prior actuals and original phase budgets."
+  },
+  "evidence_dir": ".agent/evidence/122/",
+  "evidence_convention": "Role-owned raw stdout/stderr and result: exact argv/cwd/environment/actual_exit/exercised revision and source/test/contract Gitblob-SHA-mode pins; immutable refs use artifact-containing commit, not earlier reviewed base. Failures retained, no recursive snapshots. Exactly one extra at .agent/evidence/122-qa-adversarial.txt. Proposal checks are static only, not API/acceptance claims.",
+  "approval_evidence": {
+    "mode_a": ".agent/validator/122-mode-a-rev1.json",
+    "contract_review": ".agent/qa/122-contract-review-rev1.json",
+    "proposal_sha256": "829aab4a4ba65966c3fa1e01e0bc689f60d2ae718f70192f448c7456e8b0c160",
+    "proposal_revision": "757b0c61c1f586307d8fd7adfc5160718ce7a374"
+  },
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

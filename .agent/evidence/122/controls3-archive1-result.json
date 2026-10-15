@@ -1,0 +1,636 @@
+{
+  "role": "independent controls author",
+  "complete": true,
+  "preparation_only": true,
+  "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+  "release_revision": null,
+  "inputs": {
+    "source_revision": "09e0eb6b1257cd676d107bd8abea4844a25494de",
+    "objects": {
+      "source": {
+        "git_oid": "a627b97cc00be278f22203b3928246e7d37929b0",
+        "sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+        "size_bytes": 94530,
+        "type": "blob"
+      },
+      "tests": {
+        "git_oid": "aa9bde210d32741da26b7ba7ad575d1762f21936",
+        "sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+        "size_bytes": 117743,
+        "type": "blob"
+      },
+      "helper": {
+        "git_oid": "92f52c7d895cbfadc96100e4be2321a670dbc1a1",
+        "sha256": "2e5f6e8dfac4479ed035fe50efbccaea73a0a89ef55b2c5de31661b4a6b04110",
+        "size_bytes": 10267,
+        "type": "blob"
+      },
+      "worker": {
+        "git_oid": "70650b87ce207c60b67b192052aaefe10f4a4b7c",
+        "sha256": "3eae943a962f1e90007bb4dc3bbc095d77fce07f4c88b278462c3bf31f2892f5",
+        "size_bytes": 3138,
+        "type": "blob"
+      },
+      "infrastructure-failed": {
+        "git_oid": "2498ce8d6808c05ef25bb2b316fa7de1e1d70573",
+        "sha256": "0ed0761fbc9f8e10119db86010e0ca1eb968689eae5a0fa127e7098632f7a6f2",
+        "size_bytes": 94527,
+        "type": "blob"
+      },
+      "semantic-failed": {
+        "git_oid": "17765d31879d1eeeaa7f8e04e2eb3b0d1249bddc",
+        "sha256": "ad882d1451701cf4f40c1fef7a5245e9608e762cef3befcce1f5863725f2c39a",
+        "size_bytes": 94526,
+        "type": "blob"
+      },
+      "reject-cause-relabel": {
+        "git_oid": "9c7d2f9f53b4abb14bdaf4bab886f0518b0c7e24",
+        "sha256": "ffc03367108846802ecb253f878a4400f7804856ae2844c05ab6b868eeaf10f7",
+        "size_bytes": 94535,
+        "type": "blob"
+      },
+      "counter-continuity": {
+        "git_oid": "c5bed8adefe516886c7c4f5e2bf35f6e106be948",
+        "sha256": "89eb699ca6fffd8e5dc9a90f91ac0a7039fc4d760922dfbca63063c36083522d",
+        "size_bytes": 94570,
+        "type": "blob"
+      }
+    },
+    "controls": {
+      "infrastructure-failed": {
+        "function": "route_failed_attempt",
+        "old": "request['cause'] + ('-diagnosis' if request['cause'] == 'infrastructure' else '-repair'),",
+        "new": "request['cause'] + ('-repair' if request['cause'] == 'infrastructure' else '-repair'),",
+        "assertion": "AssertionError: POLICY_ASSERTION: exact failed routing result and integer counts"
+      },
+      "semantic-failed": {
+        "function": "_failure_rejection",
+        "old": "require(rejected or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')",
+        "new": "require(True or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')",
+        "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+      },
+      "reject-cause-relabel": {
+        "function": "route_failed_attempt",
+        "old": "authority['role'] == 'Orchestrator' and authority['approved'] is True and",
+        "new": "authority['role'] == 'Orchestrator' and authority['approved'] in (True, 1) and",
+        "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+      },
+      "counter-continuity": {
+        "function": "_failure_continuity",
+        "old": "    verify_record_update(anchor, current, owned)",
+        "new": "    verify_record_update(anchor, current, owned + ['/scope_budget/total_lines_changed'])",
+        "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+      }
+    },
+    "pack_sha256": "9454336d15029f7520c3c5dee04ffce62fe44a7415a30f81096d66aa19611004",
+    "mutant_private_file_mode": "0600",
+    "trust": "Synthetic fixtures; no API or acceptance behavior executed during preparation"
+  },
+  "protected_before": {
+    "count": 12408,
+    "all_bytes_modes_sha256": "2291ae42e70c49e1c0f818e0a91a4a8a0c84c5b75654468678d735ffbe26a92d",
+    "pins": {
+      ".agent/contracts/122.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "13dc45d0daf41fc9af4828ec0b84b1a05ded39f51b2e1fc5b903831e557d42c5",
+        "git_blob": "ed83c7704868180f523329f204440076d33d93b3",
+        "executable": false
+      },
+      ".agent/evidence/122/api-interface.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "08467029eb810790420c55da2505e68c294848c1e4a5d798363852d311a31348",
+        "git_blob": "ae762b7137838720c4a0a54679ace797d07e3770",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-identities.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "58e1ffb6801f2448a845697a9e1ea57474d4df070cdb4906c6a6e6839eaccaa2",
+        "git_blob": "6d1085604dd7d213e37152ba4ab25ef44cccf1aa",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-identities.pack": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "9454336d15029f7520c3c5dee04ffce62fe44a7415a30f81096d66aa19611004",
+        "git_blob": "84ec324fa7d2bb6b975efacf796e8b0bd9254dda",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-run.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "2e5f6e8dfac4479ed035fe50efbccaea73a0a89ef55b2c5de31661b4a6b04110",
+        "git_blob": "92f52c7d895cbfadc96100e4be2321a670dbc1a1",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-worker.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "3eae943a962f1e90007bb4dc3bbc095d77fce07f4c88b278462c3bf31f2892f5",
+        "git_blob": "70650b87ce207c60b67b192052aaefe10f4a4b7c",
+        "executable": false
+      },
+      ".agent/run_state.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "4a61cde74b1bd9a11abf36c358089d62d70db477d097ba0536d02f12b75236ef",
+        "git_blob": "32e0bf4d517b432741fd5d43b3a9cf55b13cd6af",
+        "executable": false
+      },
+      "tools/test_workflow_assurance.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+        "git_blob": "aa9bde210d32741da26b7ba7ad575d1762f21936",
+        "executable": false
+      },
+      "tools/workflow_assurance.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+        "git_blob": "a627b97cc00be278f22203b3928246e7d37929b0",
+        "executable": false
+      }
+    }
+  },
+  "protected_after": {
+    "count": 12408,
+    "all_bytes_modes_sha256": "2291ae42e70c49e1c0f818e0a91a4a8a0c84c5b75654468678d735ffbe26a92d",
+    "pins": {
+      ".agent/contracts/122.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "13dc45d0daf41fc9af4828ec0b84b1a05ded39f51b2e1fc5b903831e557d42c5",
+        "git_blob": "ed83c7704868180f523329f204440076d33d93b3",
+        "executable": false
+      },
+      ".agent/evidence/122/api-interface.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "08467029eb810790420c55da2505e68c294848c1e4a5d798363852d311a31348",
+        "git_blob": "ae762b7137838720c4a0a54679ace797d07e3770",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-identities.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "58e1ffb6801f2448a845697a9e1ea57474d4df070cdb4906c6a6e6839eaccaa2",
+        "git_blob": "6d1085604dd7d213e37152ba4ab25ef44cccf1aa",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-identities.pack": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "9454336d15029f7520c3c5dee04ffce62fe44a7415a30f81096d66aa19611004",
+        "git_blob": "84ec324fa7d2bb6b975efacf796e8b0bd9254dda",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-run.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "2e5f6e8dfac4479ed035fe50efbccaea73a0a89ef55b2c5de31661b4a6b04110",
+        "git_blob": "92f52c7d895cbfadc96100e4be2321a670dbc1a1",
+        "executable": false
+      },
+      ".agent/evidence/122/controls3-worker.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "3eae943a962f1e90007bb4dc3bbc095d77fce07f4c88b278462c3bf31f2892f5",
+        "git_blob": "70650b87ce207c60b67b192052aaefe10f4a4b7c",
+        "executable": false
+      },
+      ".agent/run_state.json": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "4a61cde74b1bd9a11abf36c358089d62d70db477d097ba0536d02f12b75236ef",
+        "git_blob": "32e0bf4d517b432741fd5d43b3a9cf55b13cd6af",
+        "executable": false
+      },
+      "tools/test_workflow_assurance.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+        "git_blob": "aa9bde210d32741da26b7ba7ad575d1762f21936",
+        "executable": false
+      },
+      "tools/workflow_assurance.py": {
+        "mode": 436,
+        "kind": "file",
+        "sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+        "git_blob": "a627b97cc00be278f22203b3928246e7d37929b0",
+        "executable": false
+      }
+    }
+  },
+  "captures": [
+    {
+      "label": "archive-init",
+      "argv": [
+        "git",
+        "init",
+        "--bare",
+        "--template=",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-init.stdout",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-init.stderr",
+      "stdout_sha256": "a6fa62265a70089ff45c5aa178a3e4657120ca8f6c4fdd42b8a9a61983e80461",
+      "stdout_size_bytes": 80,
+      "stdout_storage": "raw",
+      "stderr_sha256": "3e70934f1909b0f5a846d62237fcc1509d733b9fb0321187024723dfc67176d3",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-empty",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "--batch-all-objects",
+        "--batch-check"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-empty.stdout",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-empty.stderr",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_size_bytes": 0,
+      "stdout_storage": "raw",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-import",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "index-pack",
+        "--stdin",
+        "--strict"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-import.stdout",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-import.stderr",
+      "stdout_sha256": "d401d1523761ae305c55f6b9a64af11a27c63ebd4b1159a41c7983b2dc23d563",
+      "stdout_size_bytes": 46,
+      "stdout_storage": "raw",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-inventory",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "--batch-all-objects",
+        "--batch-check"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-inventory.stdout",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-inventory.stderr",
+      "stdout_sha256": "32e596b1e433bb21612c4efc09228304f477398477b04f5a76050230af12d28c",
+      "stdout_size_bytes": 416,
+      "stdout_storage": "raw",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-source",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "a627b97cc00be278f22203b3928246e7d37929b0"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-source.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-source.stderr",
+      "stdout_sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+      "stdout_size_bytes": 94530,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-tests",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "aa9bde210d32741da26b7ba7ad575d1762f21936"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-tests.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-tests.stderr",
+      "stdout_sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+      "stdout_size_bytes": 117743,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-helper",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "92f52c7d895cbfadc96100e4be2321a670dbc1a1"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-helper.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-helper.stderr",
+      "stdout_sha256": "2e5f6e8dfac4479ed035fe50efbccaea73a0a89ef55b2c5de31661b4a6b04110",
+      "stdout_size_bytes": 10267,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-worker",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "70650b87ce207c60b67b192052aaefe10f4a4b7c"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-worker.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-worker.stderr",
+      "stdout_sha256": "3eae943a962f1e90007bb4dc3bbc095d77fce07f4c88b278462c3bf31f2892f5",
+      "stdout_size_bytes": 3138,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-infrastructure-failed",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "2498ce8d6808c05ef25bb2b316fa7de1e1d70573"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-infrastructure-failed.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-infrastructure-failed.stderr",
+      "stdout_sha256": "0ed0761fbc9f8e10119db86010e0ca1eb968689eae5a0fa127e7098632f7a6f2",
+      "stdout_size_bytes": 94527,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-semantic-failed",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "17765d31879d1eeeaa7f8e04e2eb3b0d1249bddc"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-semantic-failed.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-semantic-failed.stderr",
+      "stdout_sha256": "ad882d1451701cf4f40c1fef7a5245e9608e762cef3befcce1f5863725f2c39a",
+      "stdout_size_bytes": 94526,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-reject-cause-relabel",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "9c7d2f9f53b4abb14bdaf4bab886f0518b0c7e24"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-reject-cause-relabel.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-reject-cause-relabel.stderr",
+      "stdout_sha256": "ffc03367108846802ecb253f878a4400f7804856ae2844c05ab6b868eeaf10f7",
+      "stdout_size_bytes": 94535,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    },
+    {
+      "label": "archive-blob-counter-continuity",
+      "argv": [
+        "git",
+        "--git-dir",
+        "/tmp/nizam122-controls3-hr19mag8/empty.git",
+        "cat-file",
+        "blob",
+        "c5bed8adefe516886c7c4f5e2bf35f6e106be948"
+      ],
+      "cwd": "/tmp/nizam122-controls3-hr19mag8",
+      "environment": {
+        "PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/bin:/bin:/usr/bin",
+        "GIT_EXEC_PATH": "/home/cnross/.tmp/nizam-feature122-ci-git255-build1/install/libexec/git-core",
+        "HOME": "/tmp/nizam122-controls3-hr19mag8/home",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_SYSTEM": "/dev/null"
+      },
+      "exercised_revision": "2f0467af9b0e2f5e471b17e4751f00f2bafde4f0",
+      "release_revision": null,
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "expected_assertion": null,
+      "stdout": ".agent/evidence/122/controls3-archive1-archive-blob-counter-continuity.stdout.ref.json",
+      "stderr": ".agent/evidence/122/controls3-archive1-archive-blob-counter-continuity.stderr",
+      "stdout_sha256": "89eb699ca6fffd8e5dc9a90f91ac0a7039fc4d760922dfbca63063c36083522d",
+      "stdout_size_bytes": 94570,
+      "stdout_storage": "portable-pack-object",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "protected_unchanged": true
+    }
+  ]
+}

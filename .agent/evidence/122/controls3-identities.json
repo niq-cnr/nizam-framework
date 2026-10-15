@@ -1,0 +1,82 @@
+{
+  "source_revision": "09e0eb6b1257cd676d107bd8abea4844a25494de",
+  "objects": {
+    "source": {
+      "git_oid": "a627b97cc00be278f22203b3928246e7d37929b0",
+      "sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+      "size_bytes": 94530,
+      "type": "blob"
+    },
+    "tests": {
+      "git_oid": "aa9bde210d32741da26b7ba7ad575d1762f21936",
+      "sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+      "size_bytes": 117743,
+      "type": "blob"
+    },
+    "helper": {
+      "git_oid": "92f52c7d895cbfadc96100e4be2321a670dbc1a1",
+      "sha256": "2e5f6e8dfac4479ed035fe50efbccaea73a0a89ef55b2c5de31661b4a6b04110",
+      "size_bytes": 10267,
+      "type": "blob"
+    },
+    "worker": {
+      "git_oid": "70650b87ce207c60b67b192052aaefe10f4a4b7c",
+      "sha256": "3eae943a962f1e90007bb4dc3bbc095d77fce07f4c88b278462c3bf31f2892f5",
+      "size_bytes": 3138,
+      "type": "blob"
+    },
+    "infrastructure-failed": {
+      "git_oid": "2498ce8d6808c05ef25bb2b316fa7de1e1d70573",
+      "sha256": "0ed0761fbc9f8e10119db86010e0ca1eb968689eae5a0fa127e7098632f7a6f2",
+      "size_bytes": 94527,
+      "type": "blob"
+    },
+    "semantic-failed": {
+      "git_oid": "17765d31879d1eeeaa7f8e04e2eb3b0d1249bddc",
+      "sha256": "ad882d1451701cf4f40c1fef7a5245e9608e762cef3befcce1f5863725f2c39a",
+      "size_bytes": 94526,
+      "type": "blob"
+    },
+    "reject-cause-relabel": {
+      "git_oid": "9c7d2f9f53b4abb14bdaf4bab886f0518b0c7e24",
+      "sha256": "ffc03367108846802ecb253f878a4400f7804856ae2844c05ab6b868eeaf10f7",
+      "size_bytes": 94535,
+      "type": "blob"
+    },
+    "counter-continuity": {
+      "git_oid": "c5bed8adefe516886c7c4f5e2bf35f6e106be948",
+      "sha256": "89eb699ca6fffd8e5dc9a90f91ac0a7039fc4d760922dfbca63063c36083522d",
+      "size_bytes": 94570,
+      "type": "blob"
+    }
+  },
+  "controls": {
+    "infrastructure-failed": {
+      "function": "route_failed_attempt",
+      "old": "request['cause'] + ('-diagnosis' if request['cause'] == 'infrastructure' else '-repair'),",
+      "new": "request['cause'] + ('-repair' if request['cause'] == 'infrastructure' else '-repair'),",
+      "assertion": "AssertionError: POLICY_ASSERTION: exact failed routing result and integer counts"
+    },
+    "semantic-failed": {
+      "function": "_failure_rejection",
+      "old": "require(rejected or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')",
+      "new": "require(True or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')",
+      "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+    },
+    "reject-cause-relabel": {
+      "function": "route_failed_attempt",
+      "old": "authority['role'] == 'Orchestrator' and authority['approved'] is True and",
+      "new": "authority['role'] == 'Orchestrator' and authority['approved'] in (True, 1) and",
+      "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+    },
+    "counter-continuity": {
+      "function": "_failure_continuity",
+      "old": "    verify_record_update(anchor, current, owned)",
+      "new": "    verify_record_update(anchor, current, owned + ['/scope_budget/total_lines_changed'])",
+      "assertion": "AssertionError: POLICY_ASSERTION: invalid failure routing input accepted"
+    }
+  },
+  "pack_sha256": "9454336d15029f7520c3c5dee04ffce62fe44a7415a30f81096d66aa19611004",
+  "mutant_private_file_mode": "0600",
+  "trust": "Synthetic fixtures; no API or acceptance behavior executed during preparation"
+}

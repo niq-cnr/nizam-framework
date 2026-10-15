@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.20
+version: 1.0.21
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.21"
+    date: "2026-10-15"
+    summary: "Record captured 122, separate QA/hosted proof and pending PR 103 integration; preserve historical snapshots and original budgets."
   - version: "1.0.20"
     date: "2026-10-15"
     summary: "Record captured121, separate QA/hosted proof and pending PR102 closeout; preserve historical snapshots and original budgets."
@@ -73,6 +76,23 @@ change_log:
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
+
+## Current handoff — captured 122, 2026-10-15
+
+Feature 122 is [captured complete](../../.agent/evidence/122/evidence-capture.json) and [canonically closed](../../.agent/evidence/122/closure.json): read-only routing by independently selected evidence of infrastructure or semantic failure.
+Failed outcomes remain failed; attempts 1/2 propose diagnosis or repair, and attempt 3 halts under the unchanged three-attempt limit. Hash/producer labels and schema validity do not authenticate classification or authority.
+Source SHA-256 `fff790d7…` and test `800b5970…` passed the [independent executable seal](../../.agent/evidence/122/executable1-current-seal.json), Mode B and fresh QA before Root capture.
+Author controls and independent replay each retained four positive/intended-negative/restored trios with actual exits 0/1/0 and full byte/mode preservation.
+The [fixture-portability recovery](../../.agent/evidence/122/fixture-portability-recovery.json) records Root’s standing-authority interpretation for bounded author/review 4/4; prior failures remain preserved, without a reset or new product retry budget.
+Its fixture-local Git 2.55 housekeeping isolation preserved semantic assertions and complete Git/file snapshots; renewed independent review preceded current controls.
+[Fresh QA](../../.agent/qa/122.json) passed four selectors/default46, immutable 118 exit 0/current stale exit 1, both compliance modes and exactly one additional duplicate-key authority check.
+[Hosted CI2](../../.agent/evidence/122/ci2-receipt.json) separately passed default46 on these Source/test bytes: compliance 38678198180 and closeout 38678198188 succeeded at head `b4c1b16`.
+[PR 102 merged](../../.agent/evidence/121/pr102-merge-receipt.json) at `3ee2b39`; [main CI 38662903572](../../.agent/evidence/121/pr102-main-ci.json) passed all five jobs.
+[PR 103](https://github.com/niq-cnr/nizam-framework/pull/103) remains unmerged; final exact-head integration, merge and main CI are pending. [Phase 018](phase_018.yaml) stays active; **123 remains pending**.
+Root owns final whole feature 122 measurement after this refresh; prior 119–121 actuals total **3,364**, with unchanged **7,200/9,360** and no rebaseline.
+Archived 016 remains partial at **5,179** (original **5,650/7,345**), 017 **5,203/7,020**; DAG **017 → 016 → 018 → 020 → 019** and 018’s **127-only** prerequisite remain unchanged.
+The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned fixtures do not establish live Root adoption. Installed **v1.5.0** remains immutable.
+Controls-ready for 123, full runtime/SBCL, canary execution, benchmark/superiority and release/install changes remain unclaimed. All earlier “Current” sections below are historical snapshots.
 
 ## Current handoff — captured 121, 2026-10-15
 

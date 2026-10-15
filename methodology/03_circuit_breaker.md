@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-15"
+    summary: "Clarify evidenced cause routing with failed outcomes and unchanged max3 continuity."
   - version: "0.3.0"
     date: "2026-10-11"
     summary: "Define governed attempts and predeclared probes with non-resetting cross-stage identity."
@@ -100,6 +103,22 @@ agents read the current identity and preserve those fields. This definition
 changes neither Section 3's strategy ladder nor the three-attempt limit,
 isolation, cleanup or halt duties. Runtime continuity is specified in
 `10_live_runtime_sessions.md`; it creates no extra cause-specific retry budget.
+
+### 3.3 Evidence-based cause routing
+
+A selected infrastructure or semantic failure MUST retain its failed outcome and
+stable contract, step and allocated attempt identity. The Orchestrator selects
+immutable classification and actual wrapper-capture evidence; labels and hashes
+bind that evidence but do not authenticate its truth. Missing or inconsistent
+proof fails closed. A successful nested expected-negative control cannot make a
+failed outer wrapper successful or retroactively turn a repair into a probe.
+
+The optional `route_failed_attempt` library proposes infrastructure diagnosis or
+semantic repair for allocated attempts one and two, and halt for attempt three.
+It neither executes nor authorizes a retry. The strategy ladder, three-attempt
+limit, isolation and Section 4 escalation duties remain binding for either cause.
+A handoff preserves counters, budgets and prior history; process, agent, session,
+generation or stage changes create no additional cause-specific allowance.
 
 ## 4. Attempt 4 Is Forbidden — The Breach Procedure
 

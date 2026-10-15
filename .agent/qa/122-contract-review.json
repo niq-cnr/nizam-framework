@@ -1,0 +1,16 @@
+{
+  "review": "contract-testability",
+  "feature": "122",
+  "feature_id": "122",
+  "contract_id": "122",
+  "revision_reviewed": 0,
+  "reviewed_revision": "ca3f3917c1d6caf28748877cb47514d0302a4534",
+  "proposal_sha256": "2755c628685458009fb763e1d985339cef87e37608cefabd346253fc69d5183f",
+  "reviewer": "/root/contract_review122",
+  "issues": [{"verification_index": 3, "criterion": "AT4 legitimate counter continuity across handoff", "evidence": ".agent/evidence/122/contract-review1-inspection.txt: inherited verify_record_update lines90-103 rejects list-valued /execution_lanes as an owned pointer. Contract api.continuity requires that pointer while preserving this helper unchanged.", "required_fix": "Specify a compatible bounded comparison for execution_lanes and explicit validation of allowed lane changes; preserve the inherited helper and counter/history protections.", "severity": "high"}],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": ["Incidental nonexistent E122 path lookup resolved to .agent/evidence/122; no behavior verification executed."],
+  "evidence": [".agent/evidence/122/contract-review1-inspection.txt", ".agent/evidence/122/contract-review1-inspection.json"],
+  "final_verdict": {"approved": false, "summary": "Reject: required continuity call conflicts with inherited list ownership rules."}
+}
