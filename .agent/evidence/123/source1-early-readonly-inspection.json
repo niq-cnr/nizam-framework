@@ -1,0 +1,57 @@
+{
+  "role": "independent acceptance bundle reviewer early Source inspection",
+  "reviewer": "/root/bundle_review123",
+  "feature_id": "123",
+  "reviewed_source_revision": "4ad51d19d62c812c04e42b261bc13acb133ceeeb",
+  "approved_contract_sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5",
+  "kind": "readonly implementation observations; not a gate or renewed provisional attempt",
+  "observed_behavior": false,
+  "findings": [
+    {
+      "path": "tools/workflow_assurance_ci.py:239",
+      "issue": "Capture-pack import omits approved strict index-pack --strict --fix-thin --stdin and pre-import header/size/hash/declared lineage/inventory validation; bundle verify/fetch alone does not establish these.",
+      "basis": "protocol.bundle_transport.import"
+    },
+    {
+      "path": "tools/workflow_assurance.py:1341",
+      "issue": "raw() allocates/caches full Git blob through _entry_blob before maximum-length check.",
+      "basis": "protocol.bundle_transport.limits requires bounds before allocation"
+    },
+    {
+      "path": "tools/workflow_assurance_ci.py:263",
+      "issue": "A10 Capture stdout artifact is encoded API return bytes that are never emitted by the current command; stderr empty is assigned instead of observed.",
+      "basis": "Actual Capture stdout/stderr provenance; approved O then C then final I envelope order.",
+      "bounded_correction": "Emit/observe actual completed A10 operation stream before final Invocation envelope, tee exact emitted stdout and observed stderr into O, then C and I. No requirement to capture future self-referencing I in C; no new CLI or public fields."
+    },
+    {
+      "path": "tools/workflow_assurance.py:1668",
+      "issue": "host() checks active WA123 success but does not require inactive WA123 stage skipped.",
+      "basis": "protocol Host/external_formats.jobs active success and inactive skipped"
+    },
+    {
+      "path": "tools/workflow_assurance.py:1821",
+      "issue": "Pack inventory is compared, but experiment-output Ref targets are not closed against selected transported inventory/advertised lineage; raw() accepts any existing commit, including a separate untransported commit with identical output bytes/path.",
+      "basis": "protocol.artifact and payload_catalog require transported targets authenticated by selected inventory and forbid unrelated object injection.",
+      "limit": "Static code observation, not an executed exploit; preserve legitimate containing-revision/history semantics and trusted earlier Root/Source references."
+    },
+    {
+      "path": "tools/workflow_assurance_ci.py:196",
+      "issue": "Failed evaluator/map stdout/stderr remain only in temporary experiment, while always-upload directory receives failure.txt with truncated error. Exact child argv/cwd/revision/exit/raw outputs are not retained there; outer scratch assignment happens only on success.",
+      "basis": "Actual failed-command output/exit retention and always-upload bounded failure proof"
+    }
+  ],
+  "confirmed_nonfinding": {
+    "path": ".github/workflows/compliance.yml",
+    "check": "Inline GITHUB_OUTPUT newline literals inspected through AST Constant UTF8 values",
+    "actual_utf8_hex": [
+      "0a",
+      "0a"
+    ],
+    "result": "Genuine LF characters; no escaped-backslash newline defect."
+  },
+  "boundaries": [
+    "No product/test imports, constructor/API/observer/default-bank/compliance/namespace/CI execution.",
+    "Source1 local outcome and Source2 repair routing remain Root-owned; this inspection establishes no passing behavior.",
+    "No Source/test/contract/counter/state edit or formal gate decision."
+  ]
+}
