@@ -2,8 +2,8 @@
   "role": "Root Orchestrator",
   "feature": "123",
   "status": "coordination projection of approved contract64afcf8d; no independent authority or gate verdict",
-  "at": "2026-10-15T10:22:06.948836+00:00",
-  "current_release": "09ddf6e19b9e92751c831e78fde68973a3e9c44b",
+  "at": "2026-10-15T10:54:44.160343+00:00",
+  "current_release": "45b686d87349ff42b12f8386333a61d79528ec73",
   "dependency_admission": ".agent/evidence/123/source-prerequisite.json",
   "vertices": [
     {
@@ -63,7 +63,7 @@
     {
       "id": "local-positive-and-negative-controls",
       "owner": "independent acceptance reviewer",
-      "state": "literal-two-lanes-released-at-immutable059f",
+      "state": "blocker literal0/1 admitted; candidate originalpositive stillrunning at059f, negativepending",
       "after": [
         "initial-source-commit-and-development"
       ]
@@ -71,19 +71,30 @@
     {
       "id": "local-synthetic-development-controls",
       "owner": "independent author/reviewer",
-      "state": "focused16passed; fullpositive/negative pending; complete-restoration-before-seal required",
+      "state": "focused16passed; blocker0/1 admitted; candidatepositive/negative pending; complete-restoration-before-seal required",
       "after": [
         "local-positive-and-negative-controls",
         "hosted-capture"
       ]
     },
     {
+      "id": "hosted-input-preparation",
+      "owner": "Root selected inputs; engineering probe by Generator",
+      "state": "passed actual engineering0 on059f, selected537/realpacket1824875/preservation13001; nothostedidentity",
+      "after": [
+        "initial-source-commit-and-development"
+      ],
+      "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json",
+      "packet_scope": "Documented reviewed repairbasea8a..059f ordinary8path/14lineSource diagnosticrepair/processdelta only; wholefeaturegates and complete537inputcandidate unchanged."
+    },
+    {
       "id": "hosted-capture",
       "owner": "existing capable CI job; Root preselects exact source/runtime/runner inputs",
-      "state": "pending",
+      "state": "prepared notdispatched; counter0; awaiting candidate0/1",
       "after": [
         "initial-source-commit-and-development",
-        "local-positive-and-negative-controls"
+        "local-positive-and-negative-controls",
+        "hosted-input-preparation"
       ]
     },
     {
