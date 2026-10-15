@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T14:45:51.497369+00:00",
+  "updated_at": "2026-10-15T14:57:13.999309+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1723,7 +1723,7 @@
     "123-development-private-controls": {
       "attempts": 2,
       "limit": 3,
-      "status": "renewed-full-positive-negative-both-lanes-passed-restoration-hosted-pending",
+      "status": "renewed-positive-negative-restored-both-synthetic-lanes-complete",
       "strategy": "Same immutable authorhelper against newlyreviewedSource9886/test06eba; fullpositive then exactintendednegative eachlane alongsideactualcapture2",
       "release": ".agent/evidence/123/root-renewed-private-controls2-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1743,7 +1743,13 @@
         "candidate_evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
       },
       "blocker_evidence": ".agent/evidence/123/root-renewed-blocker-controls2-admission.json",
-      "candidate_evidence": ".agent/evidence/123/root-renewed-candidate-controls2-admission.json"
+      "candidate_evidence": ".agent/evidence/123/root-renewed-candidate-controls2-admission.json",
+      "restored_witness_review_ref": {
+        "path": ".agent/evidence/123/restored-default-witness-capture2-review.json",
+        "revision": "5fffe43e74ef96f7fbf618d36a6cb372dfb13e7c",
+        "sha256": "27c205062a62ab195792585219ef59174f0260dc9e594c19db3f624ae58b17e6"
+      },
+      "restored_witness_admission_path": ".agent/evidence/123/root-restored-default-capture2-admission.json"
     },
     "123-capture-input-preflight": {
       "attempts": 2,
@@ -7221,6 +7227,12 @@
       "event": "123-ci-verify1-published-observed-merge-retained",
       "detail": "Normalpush0 and PRbodyedit0 captured; observed compliance run queued, firstverify1/max3. Observed PR mergeRef fetched0 and normallyretained, parents actualbase79811/published1d62 treeequalpublishedhead. Actual job checkout/runtime/producer result remainpending.",
       "evidence": ".agent/evidence/123/root-ci-verify1-publication-admission.json"
+    },
+    {
+      "at": "2026-10-15T14:57:13.999309+00:00",
+      "event": "123-postnegative-default48-restoration-admitted",
+      "detail": "Synthetic candidate and blocker restored0 witnesses only, using genuine actual completed default48 after both actual intended negatives. No newbehavior/rerun/counterreset or finalgateapproval.",
+      "evidence": ".agent/evidence/123/root-restored-default-capture2-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7782,7 +7794,7 @@
       }
     ]
   },
-  "last_action": "First verification published; actual run38754141468 queued and observed merge checkout retained.",
+  "last_action": "Independent post-negative default48 restoration witnesses admitted for both synthetic selectors; actual verify1 remains in progress.",
   "completed_contract_ids": [
     "099",
     "103",
