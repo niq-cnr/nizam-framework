@@ -1,53 +1,52 @@
 {
-  "review": "Independent Validator Mode B, implementation1",
+  "review": "Independent Validator Mode B, implementation2",
   "feature": "133",
   "reviewer": "/root/validator133",
-  "attempt": 1,
+  "attempt": 2,
   "limit": 3,
-  "root_release": "3b1e6193447944fea5b4acce2dd96462c328efe9",
-  "reviewed_commit": "12532d6c814b2d9c1ad5f250cc5eb0c471eccf4c",
+  "root_release": "7721d5db5ea759b75ce5252bb5d06c803c58733b",
+  "reviewed_commit": "6d9556402eb7d3321de77be4572b85931573180e",
   "baseline": "84a1e19afeffdcaba5facfb7c28aa8cb0b14f4d7",
   "approved_contract_sha256": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
-  "source_api_sha256": "677dc608f0c70de962202bd796d09ef255526e2542fb37481c0fd728ebc99ff1",
+  "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
   "workspace": "/home/cnross/.tmp/nizam-133-bundle-validator1",
-  "branch": "review/133-mode-b1",
-  "issues": [
-    {
-      "id": "133-MB1-ARGV",
-      "severity": "high",
-      "path": "tools/workflow_assurance.py",
-      "line": 830,
-      "problem": "One ls-tree argv contains every requested path for a revision. This introduces an aggregate OS argument limit absent from the old per-path helper, rejecting previously valid large assessed input sets. The approved contract preserves existing valid inputs and provides no maximum assessed-path count or aggregate byte limit.",
-      "evidence": [
-        "tools/workflow_assurance.py@12532d6c:_receipt_candidate paths/requested and *sorted(requested)",
-        "tools/workflow_assurance.py@84a1e19a:_entry_blob takes one path; assess_repository uses whole-tree ls-tree and blob IDs through stdin",
-        ".agent/evidence/133/mode-b1/static.stdout.txt"
-      ],
-      "observed_transport": "Actual local SC_ARG_MAX2097152;40000 individually115-byte literal relative paths produce4640014 argument bytes. OS refused the equivalent Git argv before process creation with actual errno7/E2BIG. This is an OS transport probe only, not a constructed candidate or product-execution result.",
-      "required_fix": "Preserve per-call immutable batching while bounding each subprocess argument payload, without restricting candidate inputs or weakening per-revision literal path/type/mode/blob validation. Reuse existing blobs unchanged. Preserve frozen runner/hook and original evidence; return through renewed Mode B before fresh QA."
-    }
-  ],
-  "missing_acceptance_coverage": [],
-  "unsupported_claims": [],
+  "branch": "review/133-mode-b2",
+  "prior_rejection": {
+    "revision": "f05f1b40fe23d457589302fadbb84eaa06ab6d39",
+    "path": ".agent/validator/133-mode-b.json",
+    "sha256": "62eaad69b6bf10dbd5fa57070e5fa0ad924af9fbc8e1a3b9674c77a15ea023c5",
+    "issue": "133-MB1-ARGV",
+    "status": "Original rejected verdict preserved by immutable Git reference; all original mode-b1 raw files byte-identical."
+  },
   "confirmed": [
-    "Actual Generator diff modifies only target function body/toolsREADME/CHANGELOG. Whole-module ASTs are identical after masking only target body; signature/imports/globals/CLI/_entry_blob/blobs and every other function/class remain unchanged. Frozen runner/hook and approved contract hashes match; no installed/workflow/oldtest edits. Root/Planner lifecycle/currentdocs changes are separately attributed coordination work.",
-    "For currently bounded argv, exact source/tree/executed/ancestry/origin checks remain before input acceptance. Per-revision requested sets include protected paths at both revisions, contracts and every owned record at anchor; exact NUL-framed name/type/mode/duplicate/missing validation precedes existing blobs. Distinct paths/modes remain authoritative even with shared OIDs.",
-    "Current physical reads, symlink/regular checks, mode/digest comparisons, canonical ownership/unowned raw bytes/history and freshly built environment remain unchanged. Local variables introduce no cross-call/root cache; caller hardlink boundary stays unchanged. Docs accurately separate synthetic launch metric from wall-time/hosted/comparative claims and make old123 proof historical.",
-    "Independently verified all30 actual capture-index hashes, result3d76a7a5/index4fc25fa8 bindings, four retained focused actual0 frames at product12532d6c. The real old baseline173/oracle168 intended1 and optimized8/oracle168 observations remain valid for their frozen fixture; they do not establish unbounded-input equivalence. No focused/full-bank/fixture acceptance re-execution or product import by Validator.",
-    "Root initial wrong-index lookup Git128/Python1 and subsequent correct capture-index verification before this release are explicitly preserved in run_state history event133-implementation1-focused-admitted-modeb1-released. They are not relabelled successful and no Source/test rerun followed that static correction."
+    "Complete product diff from84a1 to6d955640 is confined to _receipt_candidate body and contracted toolsREADME/UnreleasedCHANGELOG. Whole-module AST comparison masks only that body: signature, module imports/globals, every other function/class and CLI remain identical. Local stdlib errno import is inside target body. Source2 introduces no dependency or frozen test/hook/contract/installed/workflow/oldtest change; Root-owned metadata/evidence/currentdocs remain separately attributed.",
+    "Former aggregate argv issue is repaired without limiting candidates: ordinary chunks budget os.fsencode(path) bytes plus9 for NUL/pointer against32768; every requested path is retained. Multi-path E2BIG from actual OSError cause subdivides pending chunk in halves; the finite path count reaches original one-path transport if needed. Single-path E2BIG and every other AssuranceError propagate. Original git wrapper preserves OSError cause. No broad exception swallow, candidate cap, retained process or global/cross-call/root cache.",
+    "Exact anchor commit/tree, executed exact commit, ancestry and literal origin remain before acceptance. Each revision requests exact protected paths; anchor also requests all contracts and owned records outside contracts. Every chunk verifies exact returned path membership, no duplicates across chunks, safe blob type/mode and terminal NUL; final coverage rejects every missing path. Entries remain keyed by revision/path, while existing unchanged blobs deduplicates payload OIDs only. Same-OID distinct modes/path authorities remain intact.",
+    "Original digest/mode comparisons at both protected revisions, anchor contract canonical/raw rules, fresh regular_file/physical bytes/modes and owned-record history/unowned semantics remain. Environment is rebuilt per call. Symlink/type and higher-level hardlink boundaries are unchanged. Altered rejection ordering for simultaneous defects is not asserted; isolated categories covered by frozen controls remain. No missing-object acceptance or persistent decisions introduced.",
+    "Generator four focused0 outcomes are personally re-bound to Source2 through all30 raw index hashes and exact frames; full decompressed before/after inventories match for each command,14517 physical rows/239installed and metadata/sentinel included. Metric remains oracle168/fullcandidate8 on frozen synthetic fixture. This is evidence inspection, not independent QA re-execution or large-candidate stress qualification.",
+    "ToolsREADME0.33.0 with dated change_log accurately documents default four selectors,166 fixture files/48 oldcases, per-call reads and historical123 proof boundary. Unreleased note makes no release, wall-time, hosted or comparative claim. Root initial wrong-index static failure remains retained in original ModeB1/history and is not relabelled successful. No old proof rebound, cost rebaseline or accounting measurement performed."
   ],
+  "generator_evidence": {
+    "revision": "61a0aa3855cf614f77efc41206081d91c1ed3bb2",
+    "result_sha256": "99093883cf16acbb0a574842531e5c38ae16ce34f138f82eea659e013b3de58b",
+    "index_sha256": "9a43af88f0504c4b9e737c618141114226960629e65fc71a7ef62e9ae8f3991e"
+  },
   "static_evidence": {
     "artifacts": {
-      ".agent/evidence/133/mode-b1/static.stdin": "6ddce294d0a275fd7c534baa3f32525387133d607f0eb53fa04cace9fabc0d14",
-      ".agent/evidence/133/mode-b1/static.started.json": "5b7633e2a6d6c739168b4d0fd305f661e77874b4e8dc2be7b893304624cf9623",
-      ".agent/evidence/133/mode-b1/static.execution.json": "09ffc407c094aefb25213f15aea5666493c0d3eaccc159913042033c6bb8bafa",
-      ".agent/evidence/133/mode-b1/static.stdout.txt": "45388678e44d0cce81897d433ee0c3c73bf42a67a0b14bbb26780c055b9c4a03",
-      ".agent/evidence/133/mode-b1/static.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      ".agent/evidence/133/mode-b2/static.stdin": "97e796ad38d29bc166d5ceb3d48b5a5618d6d699f80d36954e36fff8572fdf0e",
+      ".agent/evidence/133/mode-b2/static.started.json": "0b940db2793017a0b891a5715875ba2f2dbde579598c02dada2fd908bb694633",
+      ".agent/evidence/133/mode-b2/static.execution.json": "62b9e3b9369423e093f8385bc825f298ced8e9d3cfcd5d8f314104abd041d4e0",
+      ".agent/evidence/133/mode-b2/static.stdout.txt": "c3dda1775ee1a5f22068e2e330e28fbc8080f5256c026a2f382244eb2dddbf88",
+      ".agent/evidence/133/mode-b2/static.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "actual_exit": 0,
-    "scope": "AST/hash/index/frame inspection and isolated OS argv transport probe; no Source repair, product import, candidate/test/CI/profile/measurement execution or Rootstate edit."
+    "scope": "AST/in-memory compile, immutable hashes/index/frames/full inventories and original raw equality; no product import, focused/full-suite/CI/profile/measurement execution, Source repair or Rootstate edit."
   },
+  "remaining": "Mode B approval only. Fresh independent all8 commands plus exactlyone evaluator-originated adversarial check, Root evidence/closure/accounting and actual exact-head PR/merge/main gates remain.",
   "final_verdict": {
-    "approved": false
-  }
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": []
 }
