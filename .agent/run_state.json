@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T08:12:03.468430+00:00",
+  "updated_at": "2026-10-15T08:15:43.699966+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1545,7 +1545,7 @@
     "123-author": {
       "attempts": 3,
       "limit": 3,
-      "status": "final-freeze-admitted-pending-independent-review",
+      "status": "passed-final-freeze",
       "strategy": "Close Source-anchor/Root-selected-input/stage-checkout/actual-command frame as one immutable producer graph; preserve all other criteria"
     },
     "123-contract-approval": {
@@ -1583,8 +1583,14 @@
     "123-provisional-review": {
       "attempts": 3,
       "limit": 3,
-      "status": "released-final-frozen-bundle-review",
+      "status": "passed",
       "strategy": "Fresh independent AST/Ref/preservation proof of committed author3 checkpoint before manifest, then final strict bundle review; no behavior"
+    },
+    "123-source": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-initial-executable-source-writing",
+      "strategy": "Implement approved additive parser/runner with unchanged existing APIs and frozen tests; commit initial executable Source and report full revision before Root releases behavioral verification."
     }
   },
   "history": [
@@ -6738,6 +6744,12 @@
       "event": "123-author3-static-freeze-final-provisional3-release",
       "detail": "Admit actual3a73 freeze/current9718 code/sole independent631650 static0 with exact Ref/hash/blob/mode checks. Author-static3 unchanged; no behavior or Source approval. Final strict review3/max3 on actual Root release required.",
       "evidence": ".agent/evidence/123/root-author3-admission.json"
+    },
+    {
+      "at": "2026-10-15T08:15:43.699966+00:00",
+      "event": "123-strict-provisional3-admitted-source1-writing-release",
+      "detail": "Actual54bf stricttrue/all arrays empty/both schemas/independentreviewer/reviewed0e892bc/approved64af/currenttest9bafd/finalreconciliation0. Source1/max3 released in freshownedtree. Commit executable initial API/runner before behavior, then explicit Root behavioral release. No earlier acceptance/hosted result claimed.",
+      "evidence": ".agent/evidence/123/root-source1-writing-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7299,7 +7311,7 @@
       }
     ]
   },
-  "last_action": "123 final author3 currentcode/independent static proof admitted; strict provisional3 released, Source held.",
+  "last_action": "123 strict final provisional3 passed; initial executable Source1 writing released, behavior held until committed initial Source and Root release.",
   "completed_contract_ids": [
     "099",
     "103",
