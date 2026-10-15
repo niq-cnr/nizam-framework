@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T10:53:37.660391+00:00",
+  "updated_at": "2026-10-15T11:07:46.921214+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1589,7 +1589,7 @@
     "123-source": {
       "attempts": 3,
       "limit": 3,
-      "status": "source3-focused-passed-full-private-controls-released",
+      "status": "source3-complete-full-private-positive-negative-controls-passed",
       "strategy": "Architectural error-context audit of all new Ref/AGF boundaries, independently reviewed and confirmed by focused current-code baseline; final Source attempt.",
       "prior_actual_exit": 1
     },
@@ -1614,11 +1614,13 @@
     "123-development-private-controls": {
       "attempts": 1,
       "limit": 3,
-      "status": "literal-positive-and-negative-lanes-released",
+      "status": "literal-positive-negative-both-lanes-passed-restoration-pending",
       "completed_lanes": [
-        "blocker"
+        "blocker",
+        "candidate"
       ],
-      "blocker_evidence": ".agent/evidence/123/root-source3-blocker-controls1-admission.json"
+      "blocker_evidence": ".agent/evidence/123/root-source3-blocker-controls1-admission.json",
+      "candidate_evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
     },
     "123-capture-input-preflight": {
       "attempts": 1,
@@ -6918,6 +6920,12 @@
       "event": "123-capture-input-preflight1-admission",
       "detail": "Actual0/6.124s, unchanged115assessment/newselectedparsers+realpacketbuilder,1,824,875bytes exactstaticforecast,13001tracked+239installedpreserved. Engineering-onlylocalidentity; hostedinputpreparationcleared, fullcandidate0/negative1stillpendingbeforepublication.",
       "evidence": ".agent/evidence/123/root-capture-input-preflight1-admission.json"
+    },
+    {
+      "at": "2026-10-15T11:07:46.921214+00:00",
+      "event": "123-literal-fullcandidate-positive-negative-admission",
+      "detail": "Actualfullcandidate0 then exactmissing-trial-mutant1 on059f,13001tracked/239installedfullmode/link/bytepreserved; originalSource2failure retained. Bothprivate lanes0/1complete, hostedcapture1 maynowbereleased with validatedprep2. Restored0 andactualhosted/finalgatesremainpending.",
+      "evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7479,7 +7487,7 @@
       }
     ]
   },
-  "last_action": "123 preparation2 actual engineering constructibility0 admitted: packet1,824,875bytes/all537inputs/fourgates/13001preserved. Fullcandidate positive running; blocker0/1 admitted; hostedcounter0.",
+  "last_action": "123 fullcandidate actual0/2510.882s then intendednegative1/30.033s admitted; bothprivate lanes0/1 complete; exactprepared2 inputsvalidated. Readyforbounded hostedcapture1 release; finalrestoration andgatespending.",
   "completed_contract_ids": [
     "099",
     "103",
