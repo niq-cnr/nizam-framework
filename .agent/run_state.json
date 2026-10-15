@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T20:10:29.798457+00:00",
+  "updated_at": "2026-10-15T20:11:42.385437+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2011,9 +2011,11 @@
     "123-evidence-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "admitted",
       "owner": "Root Orchestrator",
-      "release": ".agent/evidence/123/root-capture1-release.json"
+      "release": ".agent/evidence/123/root-capture1-release.json",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/123/evidence-capture.json"
     }
   },
   "history": [
@@ -7496,6 +7498,11 @@
       "at": "2026-10-15T20:10:29.798457+00:00",
       "event": "123-fresh-qa-admitted-root-capture-released",
       "detail": "All9 mandatoryexpected+1extra;11behaviorattempts including retainedsetupfailure;2staticadmissions1/0. Root strictparse/323indexedhashes admitted. Isolated Root capture only; no lifecycle closure yet."
+    },
+    {
+      "at": "2026-10-15T20:11:42.385437+00:00",
+      "event": "123-evidence-capture-admitted",
+      "detail": "Isolated Root capture actual0; strictgates/allimmutableRefs/raw323QA+98Hosted+61seal/current537/full14253+239preservation. Canonical completion remains next."
     }
   ],
   "phase_001_scope_budget_final": {
