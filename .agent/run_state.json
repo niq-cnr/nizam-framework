@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T14:57:13.999309+00:00",
+  "updated_at": "2026-10-15T14:58:12.491824+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1618,7 +1618,7 @@
     "123-ci-verify": {
       "attempts": 1,
       "limit": 3,
-      "status": "published-queued",
+      "status": "published-running",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-verify1-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1633,7 +1633,8 @@
       "run_attempt": 1,
       "observed_pr_merge_sha": "e3ce1bb21e6111f80b6ede02f47c2fde2efb6ce8",
       "retention_merge_revision": "d1ad78dc6da0547d29ee360d184bf534b077f66d",
-      "actual_checkout_corroboration": "pending-completed-job-log"
+      "actual_checkout_corroboration": "pending-completed-job-log",
+      "job_id": 116487976586
     },
     "123-ci-final-integration": {
       "attempts": 0,
@@ -7233,6 +7234,12 @@
       "event": "123-postnegative-default48-restoration-admitted",
       "detail": "Synthetic candidate and blocker restored0 witnesses only, using genuine actual completed default48 after both actual intended negatives. No newbehavior/rerun/counterreset or finalgateapproval.",
       "evidence": ".agent/evidence/123/root-restored-default-capture2-admission.json"
+    },
+    {
+      "at": "2026-10-15T14:58:12.491824+00:00",
+      "event": "123-ci-verify1-live-five-jobs-observed",
+      "detail": "ActualRESTrun/jobs captures0; head1d62/attempt1/fiveIDs bind. validate/bootstrap/selfgovernancesuccess; fixture/convergentpending, notfailure. No rerun/cancellation/headpush; actual producer/Host result stillpending.",
+      "evidence": ".agent/evidence/123/verify1-live-observation1/jobs.stdout"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7794,7 +7801,7 @@
       }
     ]
   },
-  "last_action": "Independent post-negative default48 restoration witnesses admitted for both synthetic selectors; actual verify1 remains in progress.",
+  "last_action": "Actual verify1 still in progress: three jobs passed, two fixture-heavy jobs running; restored synthetic witnesses independently admitted.",
   "completed_contract_ids": [
     "099",
     "103",
