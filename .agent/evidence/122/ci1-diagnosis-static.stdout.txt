@@ -1,0 +1,254 @@
+COMMAND 0 ["git", "rev-parse", "HEAD"]
+9ad3a1c2326f3ee1dac18f88db6fb9dc669357c1
+
+COMMAND 1 ["git", "--version"]
+git version 2.43.0
+
+COMMAND 2 ["/usr/bin/python3", "--version"]
+Python 3.12.3
+
+COMMAND 3 ["git", "ls-tree", "HEAD", "tools/workflow_assurance.py", "tools/test_workflow_assurance.py", ".agent/contracts/122.json"]
+100644 blob ed83c7704868180f523329f204440076d33d93b3	.agent/contracts/122.json
+100644 blob 80d1d95991fb0db6f5fcc54341e17f0e50b51e5a	tools/test_workflow_assurance.py
+100644 blob a627b97cc00be278f22203b3928246e7d37929b0	tools/workflow_assurance.py
+
+COMMAND 4 ["git", "ls-tree", "cb14ecbc226122e788c1dca5f6a30c98446c7173", "tools/workflow_assurance.py", "tools/test_workflow_assurance.py", ".agent/contracts/122.json"]
+100644 blob ed83c7704868180f523329f204440076d33d93b3	.agent/contracts/122.json
+100644 blob 80d1d95991fb0db6f5fcc54341e17f0e50b51e5a	tools/test_workflow_assurance.py
+100644 blob a627b97cc00be278f22203b3928246e7d37929b0	tools/workflow_assurance.py
+
+COMMAND 5 ["git", "diff", "--name-only", "6cbc514551f7b54e58f47cb24da261bd2c3dd399", "HEAD"]
+.agent/evidence/122/ci1-diagnosis-induced.py
+
+COMMAND 6 ["git", "status", "--short"]
+?? .agent/evidence/122/ci1-diagnosis-induced-result.json
+?? .agent/evidence/122/ci1-diagnosis-induced-trace.jsonl
+?? .agent/evidence/122/ci1-diagnosis-induced.stderr.txt
+?? .agent/evidence/122/ci1-diagnosis-induced.stdout.txt
+?? .agent/evidence/122/ci1-diagnosis-static.stderr.txt
+?? .agent/evidence/122/ci1-diagnosis-static.stdout.txt
+
+COMMAND 7 ["/usr/bin/python3", "-c", "from pathlib import Path; ranges={'tools/test_workflow_assurance.py':[(617,626),(685,698),(1338,1385),(1469,1481)],'tools/workflow_assurance.py':[(138,143),(777,784),(1202,1310)]}; [(print('PATH '+p),*[print(str(i+1)+': '+line) for a,b in ranges[p] for i,line in enumerate(Path(p).read_text().splitlines()) if a<=i+1<=b]) for p in ranges]"]
+PATH tools/test_workflow_assurance.py
+617: class ReceiptFixture:
+618:     """Synthetic authority/gate fixtures; captures alone describe real local processes."""
+619:     def __init__(self, api, parent, alternate=False):
+620:         self.api = api; self.root = Path(parent) / ('alternate' if alternate else 'receipt')
+621:         self.root.mkdir(); git(self.root, 'init', '-q')
+622:         git(self.root, 'config', 'user.name', 'Receipt Fixture Only')
+623:         git(self.root, 'config', 'user.email', 'fixture@example.invalid')
+624:         self.repository = 'portable/receipt-fixture' if alternate else 'niq-cnr/nizam-framework'
+625:         git(self.root, 'remote', 'add', 'origin', self.repository)
+626:         self.inputs = dict(source=['src/code.py'], contracts=['contract.json'],
+685:     def commit(self, message):
+686:         git(self.root, 'add', '.')
+687:         if git(self.root, 'diff', '--cached', '--name-only'):
+688:             git(self.root, 'commit', '-qm', message)
+689:         return git(self.root, 'rev-parse', 'HEAD')
+690: 
+691:     def ref(self, path, revision=None):
+692:         revision = revision or git(self.root, 'rev-parse', 'HEAD')
+693:         data = subprocess.check_output(['git', '-C', str(self.root), 'show', revision + ':' + path])
+694:         return dict(path=path, sha256=sha(data), revision=revision)
+695: 
+696:     def pin(self, path, value):
+697:         self.write(path, value); return self.ref(path, self.commit('fixture artifact ' + path))
+698: 
+1338:     def pin_new(self, label, value):
+1339:         self.serial += 1
+1340:         return self.pin('proof/failure-%d-%s.json' % (self.serial, label), value)
+1341: 
+1342:     def current(self):
+1343:         self.write('coordination122.json', self.state)
+1344:         reference = self.ref('coordination122.json', self.commit('synthetic current122 coordination'))
+1345:         self.policy = dict(repository=self.repository, coordination_ref=reference, authority_ref=None)
+1346: 
+1347:     def failed_capture(self, cause):
+1348:         revision = git(self.root, 'rev-parse', 'HEAD')
+1349:         # An expected inner negative succeeds; the outer wrapper still actually exits7.
+1350:         code = "import subprocess,sys; p=subprocess.run([sys.executable,'-c','raise SystemExit(9)']); assert p.returncode==9; print('PASS inner expected negative; outer failed'); sys.exit(7)"
+1351:         argv = [sys.executable, '-c', code]; result = subprocess.run(argv, cwd=self.root, capture_output=True, env=os.environ)
+1352:         require(result.returncode == 7, 'actual failed outer capture7')
+1353:         self.write('proof/failed.stdout', result.stdout); self.write('proof/failed.stderr', result.stderr)
+1354:         output_revision = self.commit('actual failed outer122 output')
+1355:         return dict(schema_version=1, argv=argv, cwd=str(self.root), revision=revision, candidate_sha256=sha(canonical(self.candidate)),
+1356:             environment=copy.deepcopy(self.candidate['environment']), producer=copy.deepcopy(self.producer), executed=True,
+1357:             outcome=cause + '-failed', exit_code=result.returncode, stdout=self.ref('proof/failed.stdout', output_revision), stderr=self.ref('proof/failed.stderr', output_revision))
+1358: 
+1359:     def bind(self):
+1360:         capture_ref = self.pin_new('capture', self.capture); self.evidence['capture_ref'] = capture_ref
+1361:         self.authority.update(copy.deepcopy(self.request), capture_ref=capture_ref, evidence_ref=self.pin_new('evidence', self.evidence))
+1362:         self.policy['authority_ref'] = self.pin_new('authority', self.authority)
+1363: 
+1364:     def files(self):
+1365:         return {str(p.relative_to(self.parent)): (p.lstat().st_mode, os.readlink(p) if p.is_symlink() else sha(p.read_bytes()) if p.is_file() else 'directory')
+1366:             for p in self.parent.rglob('*')}
+1367: 
+1368: 
+1369: def failure_call(api, f, deny=False):
+1370:     inputs = repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)); files = f.files()
+1371:     try:
+1372:         result = api.route_failed_attempt(f.root, f.request, policy=f.policy)
+1373:     except api.AssuranceError as exc:
+1374:         require(deny and 0 < len(str(exc)) <= 1000, 'failure rejection is bounded AssuranceError')
+1375:         result = None
+1376:     else:
+1377:         require(not deny, 'invalid failure routing input accepted')
+1378:         q = f.request; attempt = q['attempt']
+1379:         expected = dict(q, outcome='failed', route='halt' if attempt == 3 else q['cause'] + ('-diagnosis' if q['cause'] == 'infrastructure' else '-repair'),
+1380:             attempts_used=attempt, limit=3, remaining=3-attempt, capture_ref=f.authority['capture_ref'])
+1381:         require(type(result) is dict and result == expected and all(type(result[k]) is int for k in ('attempt','attempts_used','limit','remaining')), 'exact failed routing result and integer counts')
+1382:         require(not receipt_ids(result) & receipt_ids([f.request, f.policy, f.state, f.authority, f.capture, f.evidence]), 'failure result never aliases any input')
+1383:         result['capture_ref']['path'] = 'returned-copy-only'
+1384:     require(inputs == repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)) and files == f.files(), 'failure routing preserves full modes/bytes, counters, histories, prior proof and outside sentinel')
+1385: 
+1469:     failure_probe(api, f, 'evidence', 'verdict_ref', f.pin_new('invalid-verdict', malformed), True)
+1470:     failure_probe(api, f, 'capture', 'outcome', 'success', True)
+1471:     failure_call(api, f)
+1472:     for label, verdict, deny in failure_legacy_verdicts(f):
+1473:         saved = copy.deepcopy((f.evidence, f.authority, f.policy)); f.evidence['verdict_ref'] = f.pin_new(label, verdict); f.bind()
+1474:         inputs = repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)); files = f.files()
+1475:         try: failure_call(api, f, deny)
+1476:         except AssertionError as exc:
+1477:             print('SEMANTIC_SCHEMA_CONTEXT ' + label + ': ' + str(exc.__context__), file=sys.stderr); raise
+1478:         finally:
+1479:             require(inputs == repr((f.request, f.policy, f.state, f.authority, f.capture, f.evidence)) and files == f.files(), 'legacy schema union preserves inputs and fixture bytes/modes')
+1480:             f.evidence, f.authority, f.policy = saved
+1481:         failure_call(api, f)
+PATH tools/workflow_assurance.py
+138: def git(root, *args):
+139:     try:
+140:         result = subprocess.run(['git', '-C', str(root), *args], capture_output=True, check=True)
+141:         return result.stdout
+142:     except (OSError, subprocess.CalledProcessError) as exc:
+143:         diagnostic = getattr(exc, 'stderr', b'').decode('utf-8', errors='replace').strip()
+777: def _receipt_schema(root, value, name):
+778:     import jsonschema
+779:     try:
+780:         jsonschema.Draft202012Validator(parse_json(regular_file(root, 'schema/' + name + '.schema.json').read_bytes())).validate(value)
+781:     except jsonschema.exceptions.ValidationError as exc:
+782:         raise AssuranceError('receipt ' + name + ' schema: ' + exc.message[:240]) from exc
+783: 
+784: 
+1202: def _failure_continuity(root, request, policy, authority):
+1203:     anchor = _lane_file(root, authority['coordination_ref'])
+1204:     current = _lane_file(root, policy['coordination_ref'], live=True)
+1205:     for state in (anchor, current):
+1206:         _receipt_schema(root, state, 'run_state')
+1207:         require(state['repository'] == policy['repository'] and state['current_feature'] == request['feature_id'] and
+1208:             state.get('active_contract_id', request['contract_id']) == request['contract_id'] and
+1209:             state['status'] == 'in_progress', 'failure coordination identity')
+1210:         require(type(state['history']) is list, 'failure history list')
+1211:         if 'execution_lanes' in state:
+1212:             require(type(state['execution_lanes']) is list, 'failure lane inventory list')
+1213:         counter = state['circuit_breaker'].get(request['step_key'])
+1214:         require(type(counter) is dict and type(counter.get('attempts')) is int and
+1215:             counter['attempts'] == request['attempt'] and type(counter.get('limit')) is int and
+1216:             counter['limit'] == 3, 'failure counter allocation mismatch')
+1217:     require(anchor['current_phase'] == current['current_phase'], 'failure phase changed')
+1218:     require(('execution_lanes' in anchor) == ('execution_lanes' in current) and
+1219:         canonical(anchor.get('execution_lanes')) == canonical(current.get('execution_lanes')), 'failure lanes changed')
+1220:     owned = ['/history']
+1221:     if 'updated_at' in anchor:
+1222:         require(type(anchor['updated_at']) is str and type(current.get('updated_at')) is str, 'failure timestamp type')
+1223:         owned.append('/updated_at')
+1224:     verify_record_update(anchor, current, owned)
+1225: 
+1226: 
+1227: def _failure_rejection(root, reference):
+1228:     verdict = _lane_file(root, reference)
+1229:     try:
+1230:         _receipt_schema(root, verdict, 'contract_review')
+1231:     except AssuranceError:
+1232:         _receipt_schema(root, verdict, 'qa_verdict')
+1233:     arrays = ('issues', 'missing_acceptance_coverage', 'unsupported_claims')
+1234:     require(all(type(verdict[key]) is list for key in arrays if key in verdict), 'failure semantic array shape')
+1235:     rejected = False
+1236:     if 'final_verdict' in verdict:
+1237:         require(type(verdict['final_verdict']) is dict and
+1238:             type(verdict['final_verdict'].get('approved')) is bool, 'failure semantic approval shape')
+1239:         rejected = verdict['final_verdict']['approved'] is False
+1240:     require(rejected or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')
+1241: 
+1242: 
+1243: def route_failed_attempt(repo, request, *, policy):
+1244:     """Propose a cause route from independently selected failed evidence; never retry or write state."""
+1245:     try:
+1246:         json_value(request); json_value(policy)
+1247:         root = _lane_path(str(repo))
+1248:         require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'failure repository toplevel')
+1249:         keys = ('operation_id', 'contract_id', 'feature_id', 'step_key', 'attempt', 'stage', 'cause')
+1250:         _bundle_object(request, keys, 'failure request')
+1251:         for key in ('operation_id', 'contract_id', 'feature_id', 'step_key', 'stage'):
+1252:             _receipt_text(request[key], 'failure ' + key)
+1253:         require(request['contract_id'] == request['feature_id'], 'failure contract identity')
+1254:         require(type(request['attempt']) is int and 1 <= request['attempt'] <= 3, 'failure attempt outside max3')
+1255:         require(type(request['cause']) is str and request['cause'] in ('infrastructure', 'semantic'), 'failure cause')
+1256:         _bundle_object(policy, ('repository', 'coordination_ref', 'authority_ref'), 'failure policy')
+1257:         require(git(root, 'remote', 'get-url', 'origin').decode().strip() == policy['repository'], 'failure actual repository')
+1258:         authority = _lane_file(root, policy['authority_ref'])
+1259:         _bundle_object(authority, (*keys, 'schema_version', 'role', 'repository', 'approved', 'contract_ref',
+1260:             'coordination_ref', 'candidate', 'producer', 'capture_ref', 'evidence_ref'), 'failure authority')
+1261:         require(type(authority['schema_version']) is int and authority['schema_version'] == 1 and
+1262:             authority['role'] == 'Orchestrator' and authority['approved'] is True and
+1263:             authority['repository'] == policy['repository'], 'failure authority not approved')
+1264:         require(all(canonical(authority[key]) == canonical(request[key]) for key in keys), 'failure request outside authority')
+1265:         _receipt_contract(root, _lane_file(root, authority['contract_ref']), request['feature_id'])
+1266:         _receipt_producer(authority['producer']); _receipt_candidate(root, authority['candidate'])
+1267:         _failure_continuity(root, request, policy, authority)
+1268:         capture = _lane_file(root, authority['capture_ref'])
+1269:         _bundle_object(capture, ('schema_version', 'argv', 'cwd', 'revision', 'candidate_sha256', 'environment',
+1270:             'producer', 'executed', 'outcome', 'exit_code', 'stdout', 'stderr'), 'failure capture')
+1271:         require(type(capture['schema_version']) is int and capture['schema_version'] == 1 and
+1272:             capture['executed'] is True and type(capture['exit_code']) is int and capture['exit_code'] != 0 and
+1273:             capture['outcome'] == request['cause'] + '-failed', 'failure capture is not actual failed outcome')
+1274:         require(type(capture['argv']) is list and capture['argv'] and
+1275:             all(type(arg) is str and arg for arg in capture['argv']), 'failure capture argv')
+1276:         _receipt_text(capture['cwd'], 'failure capture cwd'); _receipt_producer(capture['producer'])
+1277:         require(canonical(capture['producer']) == canonical(authority['producer']) and
+1278:             capture['candidate_sha256'] == sha(canonical(authority['candidate'])) and
+1279:             canonical(capture['environment']) == canonical(authority['candidate']['environment']), 'failure capture bindings')
+1280:         _receipt_candidate(root, authority['candidate'], capture['revision'])
+1281:         for stream in ('stdout', 'stderr'):
+1282:             reference = capture[stream]
+1283:             data = _receipt_artifact(root, reference, live=True)
+1284:             _, executable = _entry_blob(root, reference['revision'], reference['path'])
+1285:             require(bool(regular_file(root, reference['path']).stat().st_mode & 0o111) is executable,
+1286:                 'failure output mode changed')
+1287:             data.decode('utf-8')
+1288:         evidence = _lane_file(root, authority['evidence_ref'])
+1289:         _bundle_object(evidence, ('schema_version', 'kind', 'reason', 'capture_ref', 'verdict_ref'), 'failure evidence')
+1290:         require(type(evidence['schema_version']) is int and evidence['schema_version'] == 1 and
+1291:             evidence['kind'] == request['cause'], 'failure evidence classification')
+1292:         require(type(evidence['reason']) is str and bool(evidence['reason'].strip()) and
+1293:             len(evidence['reason']) <= 400, 'failure evidence reason')
+1294:         require(canonical(evidence['capture_ref']) == canonical(authority['capture_ref']), 'failure evidence capture mismatch')
+1295:         if request['cause'] == 'infrastructure':
+1296:             require(evidence['verdict_ref'] is None, 'failure infrastructure verdict must be null')
+1297:         else:
+1298:             _failure_rejection(root, evidence['verdict_ref'])
+1299:         attempt = request['attempt']
+1300:         return copy.deepcopy(dict(request, outcome='failed', route='halt' if attempt == 3 else
+1301:             request['cause'] + ('-diagnosis' if request['cause'] == 'infrastructure' else '-repair'),
+1302:             attempts_used=attempt, limit=3, remaining=3-attempt, capture_ref=authority['capture_ref']))
+1303:     except (AssuranceError, OSError, ValueError, TypeError, KeyError, AttributeError, RuntimeError) as exc:
+1304:         raise AssuranceError('failure routing invalid: ' + str(exc)[:800]) from exc
+1305: 
+1306: 
+1307: def main():
+1308:     parser = argparse.ArgumentParser(description=__doc__)
+1309:     sub = parser.add_subparsers(dest='command', required=True)
+1310:     assess = sub.add_parser('assess')
+
+COMMAND 8 ["/usr/bin/python3", "-c", "from pathlib import Path; p=Path('/home/cnross/workspace02/nizam-framework/.agent/evidence/122/ci1-failure-log.stdout.txt'); import hashlib; print('HOSTED_LOG_SHA256 '+hashlib.sha256(p.read_bytes()).hexdigest()); [(print(str(i+1)+': '+line)) for i,line in enumerate(p.read_text().splitlines()) if any(s in line for s in ('git version 2.', 'Successfully set up CPython', 'gc.auto 0', 'SEMANTIC_SCHEMA_CONTEXT', 'POLICY_ASSERTION', 'PASS infrastructure-failed', 'Process completed with exit code 1', 'HEAD is now at'))]"]
+HOSTED_LOG_SHA256 4284453ee5269400174e01f3bcfc869a90179b68c8403f0a72b6186e4851ed10
+54: fixtures_self_test	Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683	2026-10-15T02:59:51.9052221Z git version 2.55.0
+79: fixtures_self_test	Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683	2026-10-15T02:59:51.9342806Z [command]/usr/bin/git config --local gc.auto 0
+166: fixtures_self_test	Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683	2026-10-15T02:59:54.7666369Z HEAD is now at 1a99067 Merge cb14ecbc226122e788c1dca5f6a30c98446c7173 into 3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03
+189: fixtures_self_test	Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b	2026-10-15T02:59:55.0180061Z Successfully set up CPython (3.14.8)
+457: fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-15T03:03:44.5976438Z SEMANTIC_SCHEMA_CONTEXT legacy-final-false: None
+458: fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-15T03:03:44.6090142Z AssertionError: POLICY_ASSERTION: legacy schema union preserves inputs and fixture bytes/modes
+501: fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-15T03:03:44.6109602Z PASS infrastructure-failed
+502: fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-15T03:03:44.6319017Z ##[error]Process completed with exit code 1.
+505: fixtures_self_test	Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683	2026-10-15T03:03:44.7373661Z git version 2.55.0
+
