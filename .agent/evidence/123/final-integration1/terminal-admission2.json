@@ -1,0 +1,147 @@
+{
+  "role": "Root Orchestrator",
+  "scope": "Final PR CI and feedback admission only; no merge/main CI claim",
+  "head": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+  "base": "79811ef76df950b8151e2af62637ab7d1df34305",
+  "run": 38802791707,
+  "attempt": 1,
+  "required_checks_passed": 6,
+  "workflow_jobs_passed": 5,
+  "actual_checkout": "b3833b699c5f2d18b1b8f8096ab1139bda33abe7",
+  "checkout_tree_matches_head": true,
+  "source_identity_receipts": 2,
+  "ordered_default_cases": [
+    "identity-positive",
+    "invalidate-source",
+    "invalidate-contract",
+    "invalidate-tests",
+    "invalidate-tool",
+    "invalidate-environment",
+    "invalidate-unknown",
+    "record-continuity",
+    "reject-unowned-field",
+    "reject-history-edit",
+    "allow-owned-append",
+    "reject-self-review",
+    "reject-seal-change",
+    "reject-missing-red",
+    "reject-setup-as-red",
+    "independent-handoff",
+    "accepted-entry",
+    "reject-foreign-repo",
+    "reject-stale-pin",
+    "reject-role-write",
+    "approve-empty",
+    "advisory-visible",
+    "block-carried",
+    "reject-issues",
+    "reject-missing-coverage",
+    "reject-unsupported",
+    "reject-missing-operator",
+    "reject-wrong-candidate",
+    "reject-unrun",
+    "reject-setup",
+    "reject-pending",
+    "reject-running",
+    "reject-failed",
+    "reject-invalidated",
+    "idempotent-replay",
+    "reject-double-advance",
+    "recover-missing-receipt",
+    "independent-lanes",
+    "shared-state-serialized",
+    "reject-terminal-spoof",
+    "reject-fourth",
+    "owned-rollback",
+    "infrastructure-failed",
+    "semantic-failed",
+    "reject-cause-relabel",
+    "counter-continuity",
+    "ci-candidate-bound",
+    "ci-blocker-rejected"
+  ],
+  "auxiliary_pass_literals": [
+    "SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged"
+  ],
+  "fixture_file_inventory_per_job": "166/166",
+  "wa123_operations_skipped": true,
+  "feedback_clear": true,
+  "verified_frames": [
+    {
+      "path": "capable-job-log.execution.json",
+      "actual_exit": 1
+    },
+    {
+      "path": "checkout-fetch.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "initial-runs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "pr-description.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "push.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status01.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status02.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status03.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status04.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-admission.execution.json",
+      "actual_exit": 1
+    },
+    {
+      "path": "terminal-checks.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-feedback.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-jobs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-logs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-run.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "watch.execution.json",
+      "actual_exit": 0
+    }
+  ],
+  "known_original_log_observation": "Premature capable-job-log returned1 because whole run was still in progress; original retained. Terminal collection0 is a changed-precondition observation, not a workflow rerun.",
+  "collector_sha256": "5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075",
+  "log_sha256": "b191c08bea549dc986cdeca18f655fdf540520c5645f9fd450f6228bf1c18207",
+  "log_bytes": 472399,
+  "footer_labels": {
+    "e2e_bootstrap": "UNKNOWN STEP",
+    "validate": "UNKNOWN STEP",
+    "self_governance": "UNKNOWN STEP",
+    "convergent_review": "Complete job",
+    "fixtures_self_test": "Complete job"
+  },
+  "original_static1": "Actual1 at uniform Complete job-label assumption; all5 observed cleanup footers and independently successful jobs retained. Static2 only accepts exact observed label mapping, no product/CI rerun."
+}

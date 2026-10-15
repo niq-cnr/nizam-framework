@@ -1644,10 +1644,12 @@
     "123-ci-final-integration": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "pr-passed-merged-main-running",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-final-integration1-release.json",
-      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb"
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "receipt": ".agent/evidence/123/final-integration1-receipt.json",
+      "main_run": 38817712498
     },
     "123-author-static": {
       "attempts": 4,
@@ -2055,7 +2057,7 @@
     "123-ci-terminal-static-admission": {
       "attempts": 2,
       "limit": 3,
-      "status": "released",
+      "status": "passed",
       "original_actual_exit": 1,
       "original_frame": "/home/cnross/.tmp/nizam-feature123-final-integration1/terminal-admission.execution.json",
       "scope": "Static CLI footer label reconciliation only; actual workflow remains attempt1 success. Preserve original parser1/streams/frame, all substantive gates and original premature log1."
@@ -7606,6 +7608,11 @@
       "at": "2026-10-15T22:30:27.173986+00:00",
       "event": "123-terminal-static-admission2-released",
       "detail": "Actual six checks success at599d/run38802791707 attempt1. Original terminal-admission.py returned1 at assumed alljob Complete job label; actual retained full log has3 UNKNOWN STEP/2 Complete job cleanupfooters. Release exact observed footer mapping and originalfailure classification only; no Source/API/test/CI rerun or gate reduction."
+    },
+    {
+      "at": "2026-10-15T22:35:56.543327+00:00",
+      "event": "123-final-integration-pr-merged",
+      "detail": ".agent/evidence/123/final-integration1-receipt.json; exact599d all6success/default48/166fixtureinventory; ready0 then guarded normalmerge0 c8ef3cd4 with exact[79811,599d]parents/tree. Actual main38817712498 running, all5success remainsrequired. Original observation1/static1 retained; static2 only label reconciliation0."
     }
   ],
   "phase_001_scope_budget_final": {

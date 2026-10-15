@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/local/bin/gh",
+    "api",
+    "graphql",
+    "-f",
+    "query=query { repository(owner:\"niq-cnr\",name:\"nizam-framework\") { pullRequest(number:104) { number url title isDraft state merged mergeable mergeStateStatus baseRefName baseRefOid headRefName headRefOid updatedAt reviewDecision reviews(first:100) { nodes { id state author { login } submittedAt body commit { oid } } pageInfo { hasNextPage endCursor } } comments(first:100) { nodes { author { login } body createdAt url } pageInfo { hasNextPage endCursor } } reviewThreads(first:100) { nodes { id isResolved isOutdated comments(first:100) { nodes { author { login } body createdAt url path } pageInfo { hasNextPage endCursor } } } pageInfo { hasNextPage endCursor } } } } }"
+  ],
+  "child_pid": 879343,
+  "cwd": "/home/cnross/workspace02/nizam-framework",
+  "exercised_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+  "started_at": "2026-10-15T22:31:21.641745+00:00"
+}
