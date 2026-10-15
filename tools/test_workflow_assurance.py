@@ -1335,6 +1335,13 @@ class FailureFixture(ReceiptFixture):
             contract_ref=self.contract, coordination_ref=self.anchor, candidate=self.candidate, producer=self.producer)
         self.bind()
 
+    def commit(self, message):
+        if not getattr(self, '_fixture_housekeeping_disabled', False):
+            for key, value in (('gc.auto', '0'), ('maintenance.auto', 'false')):
+                git(self.root, 'config', '--local', key, value)
+            self._fixture_housekeeping_disabled = True
+        return super().commit(message)
+
     def pin_new(self, label, value):
         self.serial += 1
         return self.pin('proof/failure-%d-%s.json' % (self.serial, label), value)
