@@ -36,9 +36,11 @@ def hex_value(value,length,label):
 
 
 def path_value(value):
-    require(type(value) is str and value and not any(ord(c)<32 or ord(c)==127 for c in value),'safe path text')
-    parsed=PurePosixPath(value)
-    require(not parsed.is_absolute() and str(parsed)==value and all(p not in ('.','..') for p in parsed.parts),'safe relative path')
+    require(type(value) is str and 1<=len(value)<=1024 and '\\' not in value and
+            not any(ord(c)<32 or 127<=ord(c)<=159 for c in value),'safe path text')
+    parsed=PurePosixPath(value);parts=value.split('/')
+    require(not parsed.is_absolute() and str(parsed)==value and not re.match(r'^[A-Za-z]:[\\/]',value) and
+            all(p not in ('','.','..','.git') for p in parts),'safe relative path')
     return value
 
 
