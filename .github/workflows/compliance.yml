@@ -101,6 +101,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
@@ -139,6 +140,44 @@ jobs:
         run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
       - name: Run fixture self-test
         run: bash tools/fixtures_self_test.sh
+
+      - name: Select Root CI operation
+        id: wa123
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          python3 - <<'PYCODE'
+          import json, os, pathlib, re
+          source = pathlib.Path('.agent/evidence/123/selection.json')
+          if source.exists():
+              selected = json.loads(source.read_bytes())
+              mode = selected['mode']
+              producer = selected['producer']
+              assert mode in ('capture', 'verify')
+              assert producer['agent_id'] == 'wa123-capable-ci'
+              assert re.fullmatch('123-ci-' + mode + '-attempt[1-3]', producer['session_id'])
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+                  output.write('mode=' + mode + '\n')
+                  output.write('artifact=wa123-' + mode + '-' + producer['session_id'] + '\n')
+          PYCODE
+      - name: WA123 capture
+        if: steps.wa123.outputs.mode == 'capture'
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 tools/workflow_assurance_ci.py capture --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-capture"
+      - name: WA123 verify
+        if: steps.wa123.outputs.mode == 'verify'
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 tools/workflow_assurance_ci.py verify --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-verify"
+      - name: Preserve actual WA123 proof
+        if: always() && steps.wa123.outputs.mode != ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, official Root-observed pin
+        with:
+          name: ${{ steps.wa123.outputs.artifact }}
+          path: ${{ runner.temp }}/wa123-${{ steps.wa123.outputs.mode }}/
+          if-no-files-found: error
+          archive: true
 
   self_governance:
     runs-on: ubuntu-latest

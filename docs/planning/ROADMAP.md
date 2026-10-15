@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.8
+version: 0.65.9
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.9"
+    date: "2026-10-15"
+    summary: "Record captured 123 and complete 018 with actual independent acceptance and pending PR 104 integration; distinguish historical snapshots and preserve original budgets."
   - version: "0.65.8"
     date: "2026-10-15"
     summary: "Record captured 122, separate QA/hosted proof and pending PR 103 integration; preserve historical snapshots and original budgets."
@@ -231,7 +234,23 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — captured 122, 2026-10-15
+## Current position — captured 123 / complete 018, 2026-10-15
+
+Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
+Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).
+
+The [final executable seal](../../.agent/qa/123-final-executable-seal1.json) retains genuine positive/intended-negative/restored readiness exits 0/1/0. [Mode B](../../.agent/validator/123-mode-b.json) preceded [fresh QA](../../.agent/qa/123.json): all nine mandatory expected outcomes, exact default48, 166/166 fixtures and exactly one warmed-cache hardlink rejection/restoration check passed.
+Root capture returned 0 and preserved 14,253 tracked physical rows and 239 installed rows, and verified 537 protected candidate inputs. Original transport, setup and static inspection failures remain preserved; recovery does not relabel them as successes.
+The [approved 123 contract remains immutable](../../.agent/evidence/123/root-closeout-contract-preservation-decision.json); completion is recorded in canonical lifecycle artifacts. [PR 103 main CI](../../.agent/evidence/122/pr103-main-ci.json) passed all five jobs at merge `79811ef7` before 123.
+
+[PR 104](https://github.com/niq-cnr/nizam-framework/pull/104) final exact-head CI, merge and main CI remain pending at this closeout snapshot; earlier successful proof runs do not establish final integration.
+Original 018 **7,200/9,360** and prior 119–122 **4,303** remain unchanged. Root’s [scope_budget](../../.agent/run_state.json) is authoritative for final feature 123 accounting, including this refresh once.
+
+Archived 016 remains partial at **5,179** (original **5,650/7,345**); full SBCL/runtime and final CI 131 remain phase 020 obligations. Phase 017 remains **5,203/7,020**. The DAG stays **017 → 016 → 018 → 020 → 019**, with 018’s **127-only** prerequisite; phase 020 preparation is next, with activation and independent gates still required.
+The [live repository-binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied, installed **v1.5.0** remains immutable, and balanced real-task comparison remains unmeasured. This closeout establishes no comparative superiority or new release/install change.
+Older snapshots below retain their assessment-time facts and evidence.
+
+## Historical snapshot — position — captured 122, 2026-10-15
 
 Feature 122 is [captured complete](../../.agent/evidence/122/evidence-capture.json) and [canonically closed](../../.agent/evidence/122/closure.json): read-only routing by independently selected evidence of infrastructure or semantic failure.
 Failed outcomes remain failed; attempts 1/2 propose diagnosis or repair, and attempt 3 halts under the unchanged three-attempt limit. Hash/producer labels and schema validity do not authenticate classification or authority.
@@ -248,7 +267,7 @@ Archived 016 remains partial at **5,179** (original **5,650/7,345**), 017 **5,20
 The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned fixtures do not establish live Root adoption. Installed **v1.5.0** remains immutable.
 Controls-ready for 123, full runtime/SBCL, canary execution, benchmark/superiority and release/install changes remain unclaimed. All earlier “Current” sections below are historical snapshots.
 
-## Current position — captured 121, 2026-10-15
+## Historical snapshot — position — captured 121, 2026-10-15
 
 Feature 121 is [captured complete](../../.agent/evidence/121/evidence-capture.json) and [canonically closed](../../.agent/evidence/121/closure.json): dependency/conflict lanes, isolated attempts and owned rollback. After contract pre-code and provisional-bundle approval, Source SHA-256 `1d97f06f…` and test `c94a59e1…` passed executable controls, Mode B and fresh QA before Root capture.
 [QA attempt 2](../../.agent/qa/121.json) retained eight completed results and ran only the two pending compliance commands plus its first additional check. Aggregate proof covers five exact selectors/default42 and immutable 118 exit 0/current stale exit 1; both compliance modes exited 0. QA1’s helper diagnostic failure exit 1 remains preserved.
@@ -258,7 +277,7 @@ Exactly one additional locked-Git-manager failure check ran once, exit 0; nested
 Prior 119/120 proof, archived 016 **5,179** (original **5,650/7,345**), 017 **5,203/7,020**, installed **v1.5.0** and DAG **017 → 016 → 018 → 020 → 019** remain unchanged; 018 requires **127 only**. The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned API fixtures do not establish live Root adoption.
 The balanced proposal remains unmeasured and static canary rev2 remains preparation only. This position establishes no controls-ready for 123, full runtime, canary execution, comparison/superiority, release/install change or new-phase approval. All earlier “Current” sections below are preserved historical snapshots.
 
-## Current position — captured 119–120, 2026-10-14
+## Historical snapshot — position — captured 119–120, 2026-10-14
 
 Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`; [main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs.
 Its C3 source `d965c2c` and sealed 795-line test have [independent nine-check QA plus an adversarial spot check](../../.agent/qa/126.json) and [nine actual hosted CI commands](../../.agent/evidence/126/ci-c3-receipt.json).
@@ -277,7 +296,7 @@ The [balanced comparison proposal](agentic-excellence.md) remains unmeasured; [c
 
 All earlier sections below, including older “Current” headings, are historical snapshots. Their bodies and release-disposition facts are preserved; the canonical records above govern current work.
 
-## Current position — phase 016, 2026-10-14
+## Historical snapshot — position — phase 016, 2026-10-14
 
 Phase 017 is complete at **5,203/7,020**, captured in [foundation evidence](../../.agent/evidence/118/evidence-capture.json) and merged as PR 94 (`e619d284`).
 PR 95 (`c8dc65a`) merged same-host capability and comparison planning; [main CI 38533593961](../../.agent/evidence/phase016-preflight/pr95-main-ci.json) passed.
@@ -308,7 +327,7 @@ Installed v1.5.0 and historical phase proofs remain unchanged.
 # Forward Roadmap
 
 
-## Current foundation overlay — feature 117, 2026-10-13
+## Historical snapshot — foundation overlay — feature 117, 2026-10-13
 
 Features 115 and 116 are captured complete at 1,863 and 1,146 counted lines,
 respectively: 3,009 against the original phase017 5,400/7,020 allowance. Feature
@@ -539,7 +558,7 @@ future release/tag and consumer upgrade decisions, phase016 controller/SBCL/live
 proofs and capable CI remain outstanding. Historical prose above retains its
 dated meaning; current lifecycle follows canonical records.
 
-### Current proposed allocation — 2026-10-12
+### Historical proposed allocation — 2026-10-12
 
 WA planning preceded controller planning. The five draft plans below passed independent Mode B, fresh QA and evidence
 capture; PLAN-WA and PLAN-016 planning delivery is complete. This dated overlay supersedes earlier unallocated and
@@ -1012,9 +1031,9 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-10-13)
+## Historical snapshot — Position (2026-10-13)
 
-### Current foundation progress — feature 116
+### Historical foundation progress — feature 116
 
 Feature 115 completed independent Mode B, fresh seventeen-command QA and actual
 capture at assessed source `2f324c68bf273c54907ff63ad057995040d84d54`;

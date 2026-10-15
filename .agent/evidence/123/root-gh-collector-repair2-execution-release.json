@@ -1,0 +1,178 @@
+{
+  "source": {
+    "upstream_owned_clone": "/home/cnross/.tmp/nizam-gh-collector-repair1-upstream",
+    "baseline": "a2e23a2169337fd70482f92554950092f16005ca",
+    "patched": "cd2c12e67730bc7bdd8a7e3c6122efdc2719113d",
+    "scope": "Only reviewed view.go delta plus identical frozen test copy in each separately owned source context; retain actual Git cleanliness/modified identity. No framework edits."
+  },
+  "test_pin": {
+    "revision": "f45c2ed0ba0f5ba3482b922fb8bbf6c046ac3fd0",
+    "path": ".agent/evidence/123/gh-collector-repair1-regression_test.go",
+    "sha256": "75f068aee1d27fe1969467c74f11845947222cf905a50391e5ea60f51ec00120",
+    "destination": "pkg/cmd/run/view/wa123_collector_repair_test.go"
+  },
+  "extraction": {
+    "seconds": 120,
+    "max_entries": 30000,
+    "max_total_bytes": 1073741824,
+    "max_file_bytes": 268435456,
+    "max_path_bytes": 4096,
+    "rules": "Only regular files/directories under go/. Reject absolute/drive/backslash/traversal/NUL/duplicates/links/special/sparse/unreviewed metadata. Recheck private parents, exclusive no-follow writes. Normalize dirs0700, files0600 or0700 if any executable archive intent; no owner/setid/sticky/group/world permission. Freeze full exact member bytes/hash/original and effective modes inventory before running Go."
+  },
+  "environment": {
+    "PATH": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin:/usr/bin:/bin",
+    "HOME": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/home",
+    "TMPDIR": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/tmp",
+    "GOCACHE": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/gocache",
+    "GOMODCACHE": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/gomodcache",
+    "GOPATH": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/gopath",
+    "GOENV": "off",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "https://proxy.golang.org",
+    "GOSUMDB": "sum.golang.org",
+    "GOFLAGS": "-mod=readonly -p=2",
+    "CGO_ENABLED": "0",
+    "GOOS": "linux",
+    "GOARCH": "amd64",
+    "GOMAXPROCS": "2",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "commands": [
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "version"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "mod",
+        "download",
+        "-json"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/baseline",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "test",
+        "./pkg/cmd/run/view",
+        "-run",
+        "^TestWA123CollectorRepair",
+        "-count=1",
+        "-timeout=120s"
+      ],
+      "seconds": 600,
+      "expected_exit": 1
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "test",
+        "./pkg/cmd/run/view",
+        "-run",
+        "^TestWA123CollectorRepair",
+        "-count=1",
+        "-timeout=120s"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-ldflags",
+        "-X github.com/cli/cli/v2/internal/build.Version=2.76.2+nizam-logfix.1",
+        "-o",
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh",
+        "./cmd/gh"
+      ],
+      "seconds": 600,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh",
+        "--version"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    },
+    {
+      "cwd": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+      "argv": [
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk/go/bin/go",
+        "version",
+        "-m",
+        "/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh"
+      ],
+      "seconds": 30,
+      "expected_exit": 0
+    }
+  ],
+  "id": "123-gh-collector-repair2-execution",
+  "role": "Root operational execution release, no source or verdict authorship",
+  "at": "2026-10-15T17:33:02.357062+00:00",
+  "owner": "/root/runtime_readiness020",
+  "attempt": 2,
+  "limit": 3,
+  "prior_execution_release": "2466980cabea162ef066787d9884c7e953c11466",
+  "failed_execution_revision": "6197d046e750079d5317783855bae105c8e4a822",
+  "preparation_revision": "3b71da718903ec385347b551e1c5525ab5950de8",
+  "static_review_revision": "985c378d4ab0864bed5a646db29252a95bc3d2e6",
+  "helper": {
+    "path": ".agent/evidence/123/gh-collector-repair2-control.py",
+    "sha256": "d6f4dac715e64390c4212080022f585e28c60e4c311d2b527780ac401893372f"
+  },
+  "build_root": "/home/cnross/.tmp/nizam-gh-collector-repair2-build",
+  "sdk_archive_reuse": {
+    "path": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/go1.24.5.linux-amd64.tar.gz",
+    "size": 78563580,
+    "sha256": "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc",
+    "rules": "Rehash actual regular singly-linked archive before parsing, no redownload/partial extraction reuse. Preserve entire build1 tree."
+  },
+  "paths": {
+    "sdk": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/sdk",
+    "baseline": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/baseline",
+    "patched": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/patched",
+    "binary": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh",
+    "raw_capture": ".agent/evidence/123/gh-collector-repair2-execution"
+  },
+  "procedure": "Execute frozen helper once from clean own evidence clone after merging this actual release. Only exact reviewed2 PAX path overrides; same safety/limits and new private build2 root. Freeze SDK inventory before Go, normal checksum module download AND verify, module manifest before offline transition, baseline actual1 from exact defect assertions, repaired0, exact build/version/provenance. Capture actual bounded commands/outer outcomes; stop first unexpected; no retries.",
+  "bounds": "Each command stdout and stderr separately max8MiB, each cache4GiB. Finite wrapper captures actual argv/cwd/source/env/time/PID/exit/hash/bytes and ownership/preservation. No retries; stop first unexpected result, never treat compile/setup failure as baseline red. Preserve failed output and notify Root.",
+  "offline_transition": "After normal checksum verification AND go mod verify, freeze full downloaded module/cache manifest and unchanged go.mod/sum hashes. Then GOPROXY=off/GOSUMDB=off for tests/build; downloaded module content must remain pinned; build cache is separately mutable. No get/tidy/upgrade/direct fallback.",
+  "baseline_assertion": "Expected original actual1 only from all five named defect test failures, with ordinary/empty four leafcases passing. Repaired actual0 all six tests/ten leafcases. No assertion edits or test retries. Literal frozen argv need not add verbose flag; retain raw output and independently inspect coverage.",
+  "retention": "Commit all factual raw receipts/index plus authored finite control helper/qualification report to own Nizam clone; return commit/branch/path. SDK, caches, tool and external source stay private outside product. Full module+SDK inventory can be retained as raw facts. No Generator passing gate verdict.",
+  "accounting": "Authored operational helpers, external patch delta, tests, maintained plans/reviews count honestly once in whole123; no interim scope measure/rebaseline/free allowance.",
+  "held": "No genuine log or five-fetch transport yet; independent binary qualification acceptance and separate Root transport2 release required. No global gh install, current selection push, Source/contract/parser/helper/.nizam changes, product gates or final approval."
+}

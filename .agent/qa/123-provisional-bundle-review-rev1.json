@@ -1,0 +1,17 @@
+{
+  "review": "provisional-concrete-acceptance-bundle",
+  "feature": "123",
+  "feature_id": "123",
+  "contract_id": "123",
+  "reviewed_revision": "532086c3ab8e9df5275d0ad2cb724823935a5fb9",
+  "approved_contract_sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5",
+  "reviewer": "/root/bundle_review123",
+  "author_bundle_revision": "3566df7c8bc99f0022f7e8c46ffb239811027e96",
+  "test_sha256": "846688d44ea34a20045c9a9f34fae7580cc772aa977a3c2b06dc9b2f13778871",
+  "issues": [{"verification_index":0,"criterion":"Synthetic positive has coherent immutable Source/Root selection/outer CLI/actual Checkout producer bindings","severity":"high","evidence":"tools/test_workflow_assurance.py:1627 sets Checkout.sha=self.source before selection creation; put at1783 writes selected JSON only under unique synthetic-root namespace; host at1881-1885 uses that preselection Checkout while claiming fixed --selection .agent/evidence/123/selection.json. No fixture step commits/materializes that newly selected payload at the declared fixed CLI path in its stage checkout. This contradicts approved protocol.bundle_transport.produce and invocation command/checkout correlation. Explicit synthetic provenance labels do not repair the structural relation.","required_fix":"Make the synthetic capture and verify frames satisfy the exact selected-input/fixed-CLI/declared-checkout relation, retaining immutable assessed Source anchor/protected bytes and genuine graph variants. Keep actual hosted proof separate. Do not add a Source alias bypass or weaken approved command/producer binding."}],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": ["Prior four findings are structurally repaired; final holistic readonly audit found the separate positive-frame binding defect recorded here.","Independent reviewer static helper actual1 stopped on its own text lookup IndexError after Ref/AST/main checks; original failure retained, not rerun, and no full preservation pass claimed. This limitation does not replace the independently read immutable binding evidence.","No product/test import, constructor/API/observer/acceptance/default-bank/compliance/namespace/CI behavior executed. Source remains held; no actual hosted proof claimed."],
+  "evidence_files": [".agent/evidence/123/provisional2-manual-review.json",".agent/evidence/123/provisional2-static.py",".agent/evidence/123/provisional2-static.stdout.txt",".agent/evidence/123/provisional2-static.stderr.txt",".agent/evidence/123/provisional2-static.execution.json"],
+  "final_verdict": {"approved":false,"summary":"Reject positive synthetic producer frame: selected fixed CLI input is absent or unrelated in declared preselection Checkout; Source remains held."}
+}

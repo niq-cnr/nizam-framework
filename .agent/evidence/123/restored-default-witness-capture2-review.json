@@ -1,0 +1,199 @@
+{
+  "feature_id": "123",
+  "reviewer": "/root/bundle_review123",
+  "scope": "Restored-default witness eligibility ONLY; not final executable seal, two-pass HostedReview, ModeB, final QA or readiness approval",
+  "reviewed_revision": "d6bcd8b5da65b991b0b01920360152e2f60ca28b",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "raw_log_ref": {
+    "path": ".agent/evidence/123/restored-default-witness-capture2-review.stdout.txt",
+    "revision": "06674d47e44bcf29321fac5361bcc25c5111a50a",
+    "sha256": "36ebeee4c9d26d4d8b9a80290b88a85a5c0bde0f43fb68d6044736166394c286"
+  },
+  "raw_capture_ref": {
+    "path": ".agent/evidence/123/restored-default-witness-capture2-review.execution.json",
+    "revision": "06674d47e44bcf29321fac5361bcc25c5111a50a",
+    "sha256": "155b59ccd76391ac51e50b81de54c2707719c2171219be044474b95e4b5a492a"
+  },
+  "raw_stderr_ref": {
+    "path": ".agent/evidence/123/restored-default-witness-capture2-review.stderr.txt",
+    "revision": "06674d47e44bcf29321fac5361bcc25c5111a50a",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "external_result_binding": {
+    "run_id": 38736608742,
+    "attempt": 1,
+    "job_id": 116427391522,
+    "job_status": "completed",
+    "job_conclusion": "success",
+    "job_metadata_ref": {
+      "path": ".agent/evidence/123/hosted-capture2-fetch-jobs.stdout",
+      "revision": "d6bcd8b5da65b991b0b01920360152e2f60ca28b",
+      "sha256": "2487c3d5774752b07e4b10c9a2d63e0833b3e74401b6735bba91ce37993367cb"
+    },
+    "transport_actual_exit": 0,
+    "transport_exit_interpretation": "gh0 proves successful complete log retrieval; actual step/job result separately observed in pinned raw GitHub metadata"
+  },
+  "actual_execution": {
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py"
+    ],
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "shell": "/usr/bin/bash -e {0}",
+    "cwd": "/home/runner/work/nizam-framework/nizam-framework",
+    "checkout_sha": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+    "pr_head": "6b7d0728ae6f4fbe3a486946d001ec1b41254f68",
+    "runtime_observed": {
+      "implementation": "CPython",
+      "version": "3.14.8",
+      "setup_path": "/opt/hostedtoolcache/Python/3.14.8/x64",
+      "runner_os": "Ubuntu 24.04.5",
+      "image": "ubuntu-24.04/20261012.334.1"
+    },
+    "runtime_limit": "Fixture job does not separately record uname kernel or platform.machine; no local/runtime equality claim. Same-runtime actual capture/verify remains a separate obligation.",
+    "started_at": "2026-10-15T13:31:39Z",
+    "completed_at": "2026-10-15T14:21:31Z",
+    "step_conclusion": "success",
+    "raw_log_line_range": [
+      791,
+      1189
+    ]
+  },
+  "negative_predecessors": {
+    "candidate": {
+      "ref": {
+        "path": ".agent/evidence/123/renewed-controls-candidate2.semantic-negative.execution.json",
+        "revision": "bd5ab9b9f54c794dda5f45be8490a1d1aaa689c2",
+        "sha256": "66d72c126f5ad4157079714a788ec6f639a24dd090551c8bf8fc1871d9dfa9f8"
+      },
+      "actual_exit": 1,
+      "finished_at": "2026-10-15T13:25:29.867367+00:00"
+    },
+    "blocker": {
+      "ref": {
+        "path": ".agent/evidence/123/renewed-controls-blocker2.semantic-negative.execution.json",
+        "revision": "313d3040a96054bd7462d2f7a0bb98aa49dc8ffb",
+        "sha256": "af8922faa6b6f9477fb2d649a69857706183763f8ab926bd01713991ae6ef1cd"
+      },
+      "actual_exit": 1,
+      "finished_at": "2026-10-15T12:48:49.746904+00:00"
+    }
+  },
+  "ordering": "Default entire command starts13:31:39Z after latest intended negative ended13:25:29.867367Z. Preceding fixture suite12:42:07..13:31:39 began before negatives; its aggregate finish is not used as this restoration witness.",
+  "immutable_code_refs": {
+    "tools/workflow_assurance.py": {
+      "path": "tools/workflow_assurance.py",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8"
+    },
+    "tools/test_workflow_assurance.py": {
+      "path": "tools/test_workflow_assurance.py",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13"
+    },
+    "tools/workflow_assurance_ci.py": {
+      "path": "tools/workflow_assurance_ci.py",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "7ab3b092188383897900b7f84af2c22156d662ebe355e25b837b250123b49905"
+    },
+    ".agent/evidence/123/author3-controls.py": {
+      "path": ".agent/evidence/123/author3-controls.py",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "79352536f9db966c73d7552dc5112db08a4fa356d507bf9c6482aef27f06e8bd"
+    },
+    ".agent/contracts/123.json": {
+      "path": ".agent/contracts/123.json",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5"
+    },
+    ".github/workflows/compliance.yml": {
+      "path": ".github/workflows/compliance.yml",
+      "revision": "b843f86f6c104810b307f110f9fa956f3d4b451a",
+      "sha256": "040b5ab4b40643050102c1c70379a18f33be8a60256ec6a5419a2c270e53197b"
+    }
+  },
+  "source_mapping": "Actual PR merge parents main79811/P26b7, protected Source/test/helper/runner/workflow/contract blobs equal Source9886. Git diff Source9886..checkout over tools/schema/standard/templates/workflow/contract is empty. Full ambient trees differ only retained coordination/evidence/selection lineage; no assertion that checkouts are identical.",
+  "predicate_mapping": {
+    "private_helper": "author3-controls.py main lines32..47: positive and restored both call unchanged tests.run_controls_case(selector,api); only semantic-negative installs deliberately_accept_invalid after genuine API baseline",
+    "actual_default": "test main lines2486..2488 loads real API using load_api lines43..48, visits ordered48, directly dispatches both CONTROL_CASES to run_controls_case lines2389..2394",
+    "restored_function": "Each run_controls_case constructs fresh genuine ControlsFixture, then exact controls_candidate2341 or controls_blockers2377. Original verify_controls_ready is loaded; no deliberately_accept_invalid monkeypatch in default path. Foreign-observer temporary stubs restore in finally2086..2108.",
+    "assertions": "controls_call2051..2082 requires exact returned schema/result and copy isolation, exact input representations/full file modes/nlinks/bytes/ownedHEAD/refs/outside sentinel unchanged percall; all original negative/restoration predicates and substantive observer remain exercised."
+  },
+  "observed_outcomes": {
+    "ordered_selector_count": 48,
+    "ordered_selector_names": [
+      "identity-positive",
+      "invalidate-source",
+      "invalidate-contract",
+      "invalidate-tests",
+      "invalidate-tool",
+      "invalidate-environment",
+      "invalidate-unknown",
+      "record-continuity",
+      "reject-unowned-field",
+      "reject-history-edit",
+      "allow-owned-append",
+      "reject-self-review",
+      "reject-seal-change",
+      "reject-missing-red",
+      "reject-setup-as-red",
+      "independent-handoff",
+      "accepted-entry",
+      "reject-foreign-repo",
+      "reject-stale-pin",
+      "reject-role-write",
+      "approve-empty",
+      "advisory-visible",
+      "block-carried",
+      "reject-issues",
+      "reject-missing-coverage",
+      "reject-unsupported",
+      "reject-missing-operator",
+      "reject-wrong-candidate",
+      "reject-unrun",
+      "reject-setup",
+      "reject-pending",
+      "reject-running",
+      "reject-failed",
+      "reject-invalidated",
+      "idempotent-replay",
+      "reject-double-advance",
+      "recover-missing-receipt",
+      "independent-lanes",
+      "shared-state-serialized",
+      "reject-terminal-spoof",
+      "reject-fourth",
+      "owned-rollback",
+      "infrastructure-failed",
+      "semantic-failed",
+      "reject-cause-relabel",
+      "counter-continuity",
+      "ci-candidate-bound",
+      "ci-blocker-rejected"
+    ],
+    "candidate_PASS_line": 1164,
+    "blocker_PASS_line": 1189,
+    "first_PASS_line": 804,
+    "last_PASS_time": "2026-10-15T14:21:31.5531706Z",
+    "marker_taxonomy": "49 textual PASS lines =48 exact ordered selector terminals plus1 internal SYNTHETIC foreign-local-runtime observation. No extra selector inferred.",
+    "warnings": "Intentional duplicate proof.bundle ZIP member UserWarning retained; no failure is hidden. No error marker in default step; actual step/job success independently pinned."
+  },
+  "decision_basis": "Accept complete post-negative default48 as both synthetic selector restored0 witnesses under Root6b7 parallel_DAG. It executes the same frozen positive/restored API predicates on unchanged protected code and genuine fixtures, in a fresh hosted process. No literal --stage restored argv or same-local-process execution is claimed.",
+  "limitations": [
+    "Synthetic validation restoration only; does not prove actual selected capture+verify result or controls-ready observation.",
+    "No whole hosted filesystem full-mode/nlink preservation claim from green job; only unchanged frozen fixture assertions executed.",
+    "Final two-pass provenance review, actual readiness controls, final seal, ModeB, fresh QA and evidence capture remain mandatory."
+  ],
+  "release_ref": {
+    "path": ".agent/evidence/123/root-renewed-private-controls2-release.json",
+    "revision": "6b7d0728ae6f4fbe3a486946d001ec1b41254f68",
+    "sha256": "e626e3c0fdcde69b46af2c792d1a6b284ffc7d787bd622a0baf19832d6d66bff"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "role": "Root Orchestrator",
+  "feature_id": "123",
+  "at": "2026-10-15T10:10:07.392821+00:00",
+  "code_ref": {
+    "path": "tools/workflow_assurance.py",
+    "revision": "d8338297a5de2e14fb89cc459979703a768824f6",
+    "sha256": "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8"
+  },
+  "static_refs": [
+    {
+      "path": ".agent/evidence/123/source3-static.py",
+      "revision": "d8338297a5de2e14fb89cc459979703a768824f6",
+      "sha256": "0eb738a62479b4e82fcd0ed6ed16384c8c76a393390970278d4e4e24216da360"
+    },
+    {
+      "path": ".agent/evidence/123/source3-static.execution.json",
+      "revision": "d8338297a5de2e14fb89cc459979703a768824f6",
+      "sha256": "ea4e251c8ad4e42242a5e368753428b80c6429f005f7303d6dd825127e68f3b8"
+    },
+    {
+      "path": ".agent/evidence/123/source3-static.stdout.txt",
+      "revision": "d8338297a5de2e14fb89cc459979703a768824f6",
+      "sha256": "f9fcf291768c08d435bd1af30d860cb23f1ca71751f819bf8e58754995eef4b3"
+    },
+    {
+      "path": ".agent/evidence/123/source3-static.stderr.txt",
+      "revision": "d8338297a5de2e14fb89cc459979703a768824f6",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "static_admission": "Root independently verifies actual committed code/in-memory syntax/exactly3privateASTchanges/all55inherited and allothernewmethods exact, runner7ab/frozen9bafd/approved64af unchanged, onlyallowedSource/staticpaths changed. Generator staticactual0 with Root/installed/unrelatedbyte+mode preservation admitted. Static admission is not behavior or final gate approval.",
+  "helper_ref": {
+    "path": ".agent/evidence/123/source3-diagnostic-preflight.py",
+    "revision": "241bd48cba2a162ee387ad3d87e0e3354b76609d",
+    "sha256": "e26c1dde994830359c92b9ef719170ce2613bb1d5a17223453d6b723d1ec03b2"
+  },
+  "operation": "123-diagnostic-preflight",
+  "attempt": 2,
+  "limit": 3,
+  "source_attempt": 3,
+  "source_limit": 3,
+  "owner": "/root/bundle_review123",
+  "owned_root": "/home/cnross/.tmp/nizam-feature123-source3-diagnostic2",
+  "base": "Actual containing Root release commit in new clean owned worktree.",
+  "behavior_authorized": true,
+  "argv": [
+    "python3",
+    ".agent/evidence/123/source3-diagnostic-preflight.py",
+    "--source-sha256",
+    "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "expected_exit": 0,
+  "required_result": "Exact same frozen helper completes both genuine baselines, all16selectedvariants with matchingcauses/restorations, entire unchanged candidate tail, no diagnostic mismatches/continuations or unexpected/setup stops, full inputpreservation and actual0. No wholepublicselector/default/finalgate claim.",
+  "procedure": "Execute once; retain argv/cwd/env/full exercisedrevision/input+helperhashes/elapsed/rawstdout/stderr/actualexit, then commitcaptures/report fullSHA. Missing final summary or preservation cannot pass. First unexpected failure retained/reported before any Source repair/retry/dependent command.",
+  "held": "Only privatefocusedhelper; no furtherSource/test/helper changes, fullselector/defaultbank/privateacceptance-mutants/controls-ready/evaluator/namespaces/model/hosted/finalgate yet. Finalcoverage and actualhosted proof remain mandatory. Source3 is finalimplementationattempt; no fourth or counterreset."
+}
