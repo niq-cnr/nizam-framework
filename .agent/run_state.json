@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T14:44:25.362385+00:00",
+  "updated_at": "2026-10-15T14:45:51.497369+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1618,7 +1618,7 @@
     "123-ci-verify": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-not-yet-published",
+      "status": "published-queued",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-verify1-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1627,7 +1627,13 @@
         "session_id": "123-ci-verify-attempt1"
       },
       "pull_request": 104,
-      "selection_preparation_revision": "257b40f0f4e755f4258781495cf9cb4d8f1b9bfe"
+      "selection_preparation_revision": "257b40f0f4e755f4258781495cf9cb4d8f1b9bfe",
+      "head_sha": "1d62c73cfeb41fbb4c47610ddeda77c054b9dd66",
+      "run_id": 38754141468,
+      "run_attempt": 1,
+      "observed_pr_merge_sha": "e3ce1bb21e6111f80b6ede02f47c2fde2efb6ce8",
+      "retention_merge_revision": "d1ad78dc6da0547d29ee360d184bf534b077f66d",
+      "actual_checkout_corroboration": "pending-completed-job-log"
     },
     "123-ci-final-integration": {
       "attempts": 0,
@@ -7209,6 +7215,12 @@
       "event": "123-capture2-inspected-acyclic-a10-firstverify-released",
       "detail": "Strict four-field independent captureinspection approved with all44 indexedraw hashes verified. Actualcandidate/map selected from imported Gitobjects; operator72384->receipt8b48->policye6f20->selection257b committed in order. Verifycounter0->1; Source9886/protected537/installed239 unchanged. Finalgates remainpending.",
       "evidence": ".agent/evidence/123/root-ci-verify1-release.json"
+    },
+    {
+      "at": "2026-10-15T14:45:51.497369+00:00",
+      "event": "123-ci-verify1-published-observed-merge-retained",
+      "detail": "Normalpush0 and PRbodyedit0 captured; observed compliance run queued, firstverify1/max3. Observed PR mergeRef fetched0 and normallyretained, parents actualbase79811/published1d62 treeequalpublishedhead. Actual job checkout/runtime/producer result remainpending.",
+      "evidence": ".agent/evidence/123/root-ci-verify1-publication-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7770,7 +7782,7 @@
       }
     ]
   },
-  "last_action": "Actual capture2 inspection approved; acyclic Root operator/receipt/policy committed; first verify selection pinned and dispatch released.",
+  "last_action": "First verification published; actual run38754141468 queued and observed merge checkout retained.",
   "completed_contract_ids": [
     "099",
     "103",
