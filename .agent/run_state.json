@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T05:55:24.735762+00:00",
+  "updated_at": "2026-10-15T06:07:37.663342+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1533,19 +1533,24 @@
     "123-mode-a": {
       "attempts": 3,
       "limit": 3,
-      "status": "dispatched-architectural-completeness",
+      "status": "passed",
       "strategy": "all referenced payload producer/parser/consumer completeness and positive constructibility"
     },
     "123-contract-review": {
       "attempts": 3,
       "limit": 3,
-      "status": "dispatched-architectural-completeness",
+      "status": "passed",
       "strategy": "all referenced payload producer/parser/consumer completeness and positive constructibility"
     },
     "123-author": {
       "attempts": 1,
       "limit": 3,
       "status": "held-before-concrete-bundle-referenced-payload-formats"
+    },
+    "123-contract-approval": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "dispatched-root-metadata-publication"
     }
   },
   "history": [
@@ -6645,6 +6650,12 @@
       "event": "123-proposal3-dual-gate-and-author-audit-release",
       "detail": "Generatord089cde exactproposedSHA cc441e82; root+installedschema0.31Refpayloadcatalog/closedcapability+hostnormalization+rawGitbundleZIP+acycliccommitsequence declared. Gate3pair innewownedroots, authorparallelreadonlygapclosureaudit; oldapprovals/holdproofretained. Rootpublisherscript036d8bpreparedforactualtruthfulapproval_evidence afterstrictapprovals. NoSource/tests/behavior/CI.",
       "evidence": ".agent/evidence/123/contract3-static.execution.json"
+    },
+    {
+      "at": "2026-10-15T06:07:37.663342+00:00",
+      "event": "123-contract3-strict-dual-gate-admission",
+      "detail": "Both actual strict verdicts pass root+installed schemas; independent author31-payload audit has no unresolved format dependencies. Publish truthful approval_evidence before concrete freeze. Local Git index failure/recovery preserved; no Source or behavior execution.",
+      "evidence": ".agent/evidence/123/contract3-root-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7206,7 +7217,7 @@
       }
     ]
   },
-  "last_action": "123 proposal3cc441e82 released to independentgate3pair plus authorreadonlypayloadconstructibilityaudit; noSource/testauthority.",
+  "last_action": "123 strict dual gates admitted; Root approval metadata publication attempt1 released.",
   "completed_contract_ids": [
     "099",
     "103",
