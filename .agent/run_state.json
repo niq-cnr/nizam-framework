@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T16:36:03.765670+00:00",
+  "updated_at": "2026-10-15T16:46:16.379582+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1618,7 +1618,7 @@
     "123-ci-verify": {
       "attempts": 1,
       "limit": 3,
-      "status": "all-five-success-final-transport-released",
+      "status": "all-five-success-proof-transport-held-on-cli-truncation",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-verify1-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1792,6 +1792,23 @@
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
       "verdict_revision": "915cdf060250e3f93b551b30d77d4b323103734e",
       "verdict_path": ".agent/evidence/123/capture2-inspection1-verdict.json"
+    },
+    "123-verify-proof-transport": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "failed-incomplete-external-cli-log",
+      "fetch_revision": "8e8039dfa638d63fdb3b1cce2572c56955516aeb",
+      "normalization_revision": "fc657d77bc61a56eb79f32b67acb18e5a69160f2",
+      "operation_attempt": 1,
+      "run_id": 38754141468
+    },
+    "123-external-gh-collector-repair": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "preparation-released",
+      "release": ".agent/evidence/123/root-gh-collector-repair1-preparation-release.json",
+      "owner": "/root/runtime_readiness020",
+      "strategy": "Repair the genuine upstream bounded line reader after independent cause confirmation; preserve protocol and all failed raw captures."
     }
   },
   "history": [
@@ -7263,6 +7280,12 @@
       "event": "123-ci-verify1-allfive-success-final-transport-released",
       "detail": "Actual verify1 allfivejobs passed; release real five-fetch transport and acyclic normalization. Originalobservertransportfailure retained, no productretry orcounterreset.",
       "evidence": ".agent/evidence/123/root-verify1-final-transport-release.json"
+    },
+    {
+      "at": "2026-10-15T16:46:16.379582+00:00",
+      "event": "123-verify1-cli-truncation-diagnosed-external-repair1-preparation-released",
+      "detail": "All five verify jobs passed; genuine CLI log collector defect confirmed. Bounded external-tool repair preparation released; product proof gates remain held.",
+      "evidence": ".agent/evidence/123/root-gh-collector-repair1-preparation-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7824,7 +7847,7 @@
       }
     ]
   },
-  "last_action": "Actual verify1 allfivejobs passed; release real five-fetch transport and acyclic normalization.",
+  "last_action": "All five verify jobs passed; genuine CLI log collector defect confirmed. Bounded external-tool repair preparation released; product proof gates remain held.",
   "completed_contract_ids": [
     "099",
     "103",
