@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T01:17:49.430636+00:00",
+  "updated_at": "2026-10-15T01:24:19.763419+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1381,18 +1381,20 @@
     "122-contract": {
       "attempts": 2,
       "limit": 3,
-      "status": "dispatched",
+      "status": "proposed",
       "strategy": "type/interface analysis"
     },
     "122-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "rejected"
+      "status": "dispatched",
+      "strategy": "type/interface analysis"
     },
     "122-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "rejected"
+      "status": "dispatched",
+      "strategy": "type/interface analysis"
     }
   },
   "history": [
@@ -6174,6 +6176,12 @@
       "event": "122-precode1-rejected-contract2-dispatch",
       "detail": "Both independent verdicts reject owned execution_lanes list through unchanged verify_record_update. Contract2 must clarify compatible continuity, absent/present lanes and valid transitions. Static reviewer wrapper1 retained, not Source/red evidence.950/phase7200/9360 unchanged.",
       "evidence": ".agent/evidence/122/precode1-root-decision.json"
+    },
+    {
+      "at": "2026-10-15T01:24:19.763419+00:00",
+      "event": "122-precode2-dispatch",
+      "detail": "Narrow contract2 continuity/AT4/revisions1 correction757b0c6/SHA829aab4; optional lanes absentboth or identicallists, original full-record helper onlyhistory/existingupdated_at. Sameindependentreviewroles innewownedroots; noSourceapproval.",
+      "evidence": ".agent/evidence/122/precode2-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
