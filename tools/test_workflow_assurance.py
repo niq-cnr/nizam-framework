@@ -1738,12 +1738,11 @@ class ControlsFixture(FailureFixture):
                 return value
             self.a10_result=project(self.a10_result)
         require([advance['action'],noop['action'],republish['action'],rerun['action']] == ['advance','noop','republish','rerun-required'],'actual four A10 actions')
-        execution = git(self.exp,'rev-parse','HEAD')
         self.exp_write('verify/result.json',self.a10_result); self.exp_write('verify/stdout',self.payloads['verify/result.json']); self.exp_write('verify/stderr',b'')
         outputs = self.exp_commit('SYNTHETIC A10 parser results'+(' with invalid-binding projection' if self.synthetic_projection else ' from actual local APIs')+'; not hosted')
         result_ref = self.exp_ref('verify/result.json',outputs)
         capture = self.capture([sys.executable,'tools/workflow_assurance_ci.py','verify','--selection','.agent/evidence/123/selection.json',
-            '--output',str(self.parent/'wa123-verify')],execution,self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs))
+            '--output',str(self.parent/'wa123-verify')],self.checkouts['verify']['sha'],self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs),cwd=self.root)
         self.exp_write('verify/capture.json',capture); tip=self.exp_commit('SYNTHETIC verify capture representation')
         a10_capture_ref=self.exp_ref('verify/capture.json',tip)
         verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
@@ -1809,8 +1808,8 @@ class ControlsFixture(FailureFixture):
 
     def exp_ref(self,path,revision): return self.ref(CONTROL_PREFIX+path,revision)
 
-    def capture(self,argv,revision,producer,stdout,stderr):
-        return dict(schema_version=1,argv=argv,cwd=str(self.exp),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
+    def capture(self,argv,revision,producer,stdout,stderr,cwd=None):
+        return dict(schema_version=1,argv=argv,cwd=str(self.exp if cwd is None else cwd),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
             environment=self.candidate['environment'],producer=producer,executed=True,outcome='success',exit_code=0,stdout=stdout,stderr=stderr)
 
     def make_evaluation(self,report):
@@ -1998,6 +1997,17 @@ class ControlsFixture(FailureFixture):
             if mode=='verify':
                 require(bundle==self.raw(self.evidence['pack_ref']),'fixture selected pack/archive bytes coherent')
                 require(manifest['inventory']==self.evidence['inventory'],'fixture selected inventory coherent')
+        capture=json.loads(self.payloads['verify/capture.json']);outer=self.read(self.nodes['verify-invocation'])
+        name=self.defect['name'] if self.defect else ''
+        require(capture['argv']==outer['argv'],'fixture nested A10 Capture exact outer verify argv')
+        require(capture['argv'][capture['argv'].index('--selection')+1]=='.agent/evidence/123/selection.json','fixture nested A10 fixed CLI path')
+        if name!='a10-capture-wrong-cwd':
+            require(capture['cwd']==outer['cwd']==str(self.root),'fixture nested A10 Capture actual Root cwd')
+        if name!='a10-capture-preselection-revision':
+            require(capture['revision']==outer['checkout']['sha']==self.checkouts['verify']['sha'],'fixture nested A10 Capture actual stage V revision')
+        if name not in ('a10-capture-preselection-revision','verify-preselection-checkout','verify-fixed-selection-absent','verify-fixed-selection-substituted'):
+            selected=subprocess.check_output(['git','-C',str(self.root),'show',capture['revision']+':.agent/evidence/123/selection.json'])
+            require(selected==self.raw(self.verify_selection),'fixture nested A10 fixed input equals independently selected verify JSON')
         result=json.loads(self.payloads['verify/result.json']);expected_receipt=self.read(self.receipt_ref)
         require(result['receipt']==expected_receipt,'fixture actual/projected result receipt equals selected immutable receipt')
         for key in ('advance','noop','republish'):
@@ -2241,6 +2251,8 @@ def controls_defects(blockers=False):
         row('approval-gate-link-stale','source-contract',lambda v,f:v['approval_evidence'].update(mode_a=v['approval_evidence']['contract_review']),r'approval|proposal|contract|prerequisite|metadata')]
     for field,value in (('executed',False),('exit_code',True),('exit_code',7),('outcome','pending'),('outcome','running'),('outcome','failed'),('outcome','invalidated'),('outcome','setup-error')):
         rows.append(row('capture-'+field+'-'+str(value),'verify/capture.json',lambda v,f,k=field,x=value:v.update({k:x}),r'capture|exit|executed|outcome|success|command'))
+    rows += [row('a10-capture-wrong-cwd','verify/capture.json',lambda v,f:v.update(cwd=str(f.exp)),r'capture|cwd|invocation|verify|fixed|input|binding'),
+        row('a10-capture-preselection-revision','verify/capture.json',lambda v,f:v.update(revision=f.source),r'capture|revision|checkout|invocation|selection|fixed|input|binding')]
     rows.append(row('capture-forged-producer','verify/capture.json',lambda v,f:v['producer'].update(session_id='123-ci-verify-attempt2'),r'producer|session|capture'))
     for key in ('source_commit','source_tree'):
         rows.append(row('evidence-candidate-'+key,'evidence-body',lambda v,f,k=key:v['candidate'].update({k:'0'*40}),r'candidate|identity|source|tree|selection|binding'))
