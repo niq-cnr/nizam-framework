@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T11:07:46.921214+00:00",
+  "updated_at": "2026-10-15T11:09:43.179686+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1554,10 +1554,11 @@
       "status": "passed"
     },
     "123-ci-capture": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3,
-      "status": "predeclared-not-dispatched",
-      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
+      "status": "released-before-own-pr-publication",
+      "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
+      "release": ".agent/evidence/123/root-ci-capture1-release.json"
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -6926,6 +6927,12 @@
       "event": "123-literal-fullcandidate-positive-negative-admission",
       "detail": "Actualfullcandidate0 then exactmissing-trial-mutant1 on059f,13001tracked/239installedfullmode/link/bytepreserved; originalSource2failure retained. Bothprivate lanes0/1complete, hostedcapture1 maynowbereleased with validatedprep2. Restored0 andactualhosted/finalgatesremainpending.",
       "evidence": ".agent/evidence/123/root-source3-candidate-controls1-admission.json"
+    },
+    {
+      "at": "2026-10-15T11:09:43.179686+00:00",
+      "event": "123-ci-capture1-release",
+      "detail": "Allocate firstcaptureproducer beforedispatch; exactprep2 bytes copiedfixedCLIpath afterall537currentprotectedbytes/modesverified. Actualcandidateandblocker0/1 admitted. Own draftPRpublicationauthorized; no futureGitHubIDs/successclaimed.",
+      "evidence": ".agent/evidence/123/root-ci-capture1-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7487,7 +7494,7 @@
       }
     ]
   },
-  "last_action": "123 fullcandidate actual0/2510.882s then intendednegative1/30.033s admitted; bothprivate lanes0/1 complete; exactprepared2 inputsvalidated. Readyforbounded hostedcapture1 release; finalrestoration andgatespending.",
+  "last_action": "123 hostedcapture1 released after actualbothprivate0/1 andinputprobe0; fixedselectionexactprep2 committedbeforeownPRpublication. ActualhostedIDs/runtime/successpending; no Sourcechange.",
   "completed_contract_ids": [
     "099",
     "103",
