@@ -1,0 +1,42 @@
+{
+  "review": "final-executable-bundle",
+  "feature": "121",
+  "feature_id": "121",
+  "contract_id": "121",
+  "reviewer": "/root/review121_final",
+  "attempt": 3,
+  "limit": 3,
+  "reviewed_revision": "dc1a90b3e6d7a0b8daab9f25daafcad6c54e4915",
+  "author_revision": "92085a4a833d5c175b5d613fc3f215c33675a7b9",
+  "source_sha256": "1d97f06f32713d3944933680d6b2558fd093d26c158da49546d408d5560beb36",
+  "test_sha256": "c94a59e1330680003a1a92ad5881911f7b99bdced2f01504e4335b80469d25c6",
+  "final_verdict": {
+    "approved": false,
+    "feature": "121",
+    "feature_id": "121",
+    "summary": "Stopped before executable controls after an unexpected read-only inspection failure, following the attempt3 stop-on-any-unexpected-failure instruction. No executable-bundle approval is issued."
+  },
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Final executable reviewer must finish an independent current-source control run and seal.",
+      "evidence": ".agent/evidence/121/executable-review3-inspection-failure.json",
+      "required_fix": "Orchestrator must handle final-attempt halt and human escalation under the installed circuit-breaker protocol; reviewer performs no correction or rerun.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": ["Own current-source archive12 and five positive/intended-semantic-negative/restored triplets were not executed; no own27 capture or seal exists."],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/121/executable-review3-dispatch.json",
+    ".agent/evidence/121/executable-review3-inspection-failure.json",
+    ".agent/evidence/121/executable-review3-inspection.stdout.txt",
+    ".agent/evidence/121/executable-review3-inspection.stderr.txt"
+  ],
+  "observations": [
+    "The inspection error is reviewer command construction, not evidence of a source or test defect.",
+    "No Source, tests, schema, installed payload or lifecycle state were edited.",
+    "The frozen helper was never executed in this attempt. No old37 or default42 run occurred.",
+    ".ocr/skills/SKILL.md is absent. Review uses installed AGF/execution protocol without an OCR approval claim."
+  ]
+}
