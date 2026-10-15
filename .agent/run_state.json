@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T02:54:29.710214+00:00",
+  "updated_at": "2026-10-15T02:58:34.900998+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1430,6 +1430,12 @@
       "limit": 3,
       "status": "passed",
       "strategy": "same behavioral legacy fixture after Source repair; new output prefix only"
+    },
+    "122-transport-fetch": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "dispatched",
+      "strategy": "connection/interface diagnosis found HTTPS reachable; normal Git retry"
     }
   },
   "history": [
@@ -6307,6 +6313,12 @@
       "event": "122-source2-development-verified",
       "detail": "Rootverifiedactualcompatibility0/default46zero/exactorder/runtime5cf/currentpins/beforeafter12219/equal andonly_failure_rejectiondelta. OriginalSource1/legacyfailed1 proof/oldprep preserved. Currentplanningpositioncorrected; nofinalgate/completion/Rootadoptionclaim.",
       "evidence": ".agent/evidence/122/source2-root-binding.json"
+    },
+    {
+      "at": "2026-10-15T02:58:34.900998+00:00",
+      "event": "122-transport-recovery",
+      "detail": "FirstGitfetch128connectionfailure retainedfromtoolresult; APIworks, HTTPSdiagnosticlater200. NormalGitfetch2 allocatedafterdiagnosis, no trustoverride/SSHkeyacceptance or Sourcebudgetreset. Localcontrolsworkcontinues.",
+      "evidence": ".agent/evidence/122/transport-fetch1.json"
     }
   ],
   "phase_001_scope_budget_final": {
