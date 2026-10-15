@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:05:31.186350+00:00",
+  "updated_at": "2026-10-15T03:08:45.619113+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1443,6 +1443,16 @@
       "status": "running"
     },
     "122-executable-review": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "preparing"
+    },
+    "122-mode-b": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "preparing"
+    },
+    "122-qa": {
       "attempts": 1,
       "limit": 3,
       "status": "preparing"
@@ -6359,6 +6369,12 @@
       "event": "122-executable-review-preparation",
       "detail": "Distinctreviewer may statically inspectcurrent8blobpack/helper/worker/fourmutants whileauthorruntime1runs; no finalverdict/replayuntilRoot supplies immutableauthorruntimeproof/release. MandatorycurrentSourcefinalseal precedesModeB.",
       "evidence": ".agent/evidence/122/executable1-dispatch.json"
+    },
+    {
+      "at": "2026-10-15T03:08:45.619113+00:00",
+      "event": "122-downstream-preparation",
+      "detail": "IndependentModeB andfreshQA mayreadstableSourcefff/teste251 andprepareown boundedchecks inparallel; nofinalModeB gate before independentactualcontrolseal, noQAbehavior before strictModeB. RootsmergeexplicitRootrelease beforeanyactualexecution.",
+      "evidence": ".agent/evidence/122/downstream-preparation.json"
     }
   ],
   "phase_001_scope_budget_final": {
