@@ -8,6 +8,9 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import stat
+from datetime import datetime
+import re
 import jsonschema
 
 E = Path('.agent/evidence/123')
@@ -129,6 +132,8 @@ def admit_completed_inputs():
     assert candidate['source_commit'] == SOURCE
     protected = [row for rows in candidate['assessed_inputs'].values() for row in rows]
     for row in protected:
+        physical = Path(row['path']).lstat()
+        assert stat.S_ISREG(physical.st_mode) and physical.st_nlink == 1
         raw = Path(row['path']).read_bytes()
         assert sha(raw) == row['sha256']
         assert bool(Path(row['path']).stat().st_mode & 0o111) == row['executable']
@@ -165,3 +170,95 @@ def admit_completed_inputs():
                 raw_indexes=[index(E/'final-seal1/capture-index.json'), index(E/'hosted-review1/capture-index.json')],
                 original_readiness=readiness, adjacent_prior122_refs_verified=len(adjacent),
                 initial_static_limitations_preserved=report['prior_static_control_flow'])
+
+
+QA_BASE = 'd94c880b825f3f5893941f91fea46e2564903a4f'
+HISTORICAL = '8ac94f6808e8197111197c9acbf59b2aa92efc7c'
+QA_OUTPUT = Path('/home/cnross/.tmp/nizam-feature123-fresh-qa1-run')
+
+
+def retained_capture(row):
+    relative = Path(row['path']).relative_to(QA_OUTPUT)
+    path = E/'fresh-qa1'/relative
+    raw = path.read_bytes()
+    assert sha(raw) == row['sha256'], str(path)
+    if 'bytes' in row:
+        assert len(raw) == row['bytes'], str(path)
+    return raw
+
+
+def admit_fresh_qa():
+    qa = read('.agent/qa/123.json')
+    strict(qa)
+    schema(qa, 'qa_verdict')
+    assert qa['qa_pass'] is True and qa['adversarial']['performed'] is True
+    for path in qa['evidence_files']:
+        physical = Path(path).lstat()
+        assert stat.S_ISREG(physical.st_mode) and physical.st_nlink == 1
+    command = ['python3', 'tools/test_workflow_assurance.py']
+    checks = [
+        ('candidate', 'candidate', command+['--case', 'ci-candidate-bound'], 0, QA_BASE),
+        ('default48', 'default48', command, 0, QA_BASE),
+        ('fixture', 'fixture', ['bash', 'tools/fixtures_self_test.sh'], 0, QA_BASE),
+        ('core', 'blocker', command+['--case', 'ci-blocker-rejected'], 0, QA_BASE),
+        ('core', 'readiness', command+['--check', 'controls-ready'], 0, QA_BASE),
+        ('core', 'validate', ['bash', 'tools/validate.sh'], 0, QA_BASE),
+        ('core', 'payload', ['bash', 'tools/validate.sh', '--payload'], 0, QA_BASE),
+        ('historical118', 'historical118', command+['--check', 'foundation-ready'], 0, HISTORICAL),
+        ('core', 'current-stale118', command+['--check', 'foundation-ready'], 1, QA_BASE),
+        ('extra2', 'adversarial2', ['python3', '-'], 0, QA_BASE),
+    ]
+    results = []
+    release = read(E/'root-fresh-qa1-release.json')
+    for lane, name, argv, expected, revision in checks:
+        stem = E/'fresh-qa1'/lane/name
+        value = read(str(stem)+'.execution.json')
+        summary = read(str(stem)+'.capture-summary.json')
+        assert value['argv'] == argv and value['actual_exit'] == expected and not value['timed_out']
+        assert value['exercised_revision'] == revision and type(value['child_pid']) is int and value['child_pid'] > 0
+        assert datetime.fromisoformat(value['started_at']) > datetime.fromisoformat(release['at'])
+        assert datetime.fromisoformat(value['ended_at']) > datetime.fromisoformat(value['started_at'])
+        assert value['environment']['variables'] == {'PYTHONDONTWRITEBYTECODE': '1'}
+        assert value['checkout_tree'] == git('rev-parse', revision+'^{tree}').decode().strip()
+        assert summary['expected_exit'] == expected and summary['actual_exit'] == expected
+        assert summary['success'] and summary['preservation_equal']
+        assert summary['capture_driver_sha256'] == release['capture_driver_ref']['sha256']
+        before = json.loads(gzip.decompress(retained_capture(summary['before'])))
+        after = json.loads(gzip.decompress(retained_capture(summary['after'])))
+        assert before == after and before['head'] == revision
+        assert before['origin'] == 'https://github.com/niq-cnr/nizam-framework.git'
+        assert summary['before']['installed'] == summary['after']['installed'] == 239
+        assert len(before['rows']) == summary['before']['rows']
+        for path, expected_sha in summary['source_bindings'].items():
+            assert sha(git('show', revision+':'+path)) == expected_sha
+        streams = {key: retained_capture(value[key]) for key in ('stdout', 'stderr')}
+        if name == 'current-stale118':
+            assert b'AssuranceError: pinned entry bytes/mode changed: tools/workflow_assurance.py' in streams['stderr']
+        if name == 'default48':
+            observed = re.findall(r'^PASS ([a-z][a-z0-9-]+)$', streams['stdout'].decode(), re.M)
+            witness = read(E/'restored-default-witness-capture2-review.json')
+            assert observed == witness['observed_outcomes']['ordered_selector_names'] and len(observed) == 48
+        if name == 'fixture':
+            output = streams['stdout'].decode()
+            for selector in ('ci-candidate-bound', 'ci-blocker-rejected'):
+                assert 'OK   workflow-assurance '+selector in output
+            matches = re.findall(r'^SELF-TEST OK: ([0-9]+)/([0-9]+) fixtures accounted for, 0 failed$', output, re.M)
+            assert len(matches) == 1 and matches[0][0] == matches[0][1]
+        if name == 'adversarial2':
+            script = (E/'fresh-qa1/adversarial2.py').read_bytes()
+            original = (E/'fresh-qa1/adversarial.py').read_bytes()
+            normalized = script.replace(b'import sys\n', b'').replace(b"sys.path.insert(0, str(root / 'tools'))\n", b'')
+            normalized = normalized.replace(b"-run/extra2')", b"-run/core')")
+            assert normalized == original and retained_capture(value['stdin']) == script
+            for marker in (b'POSITIVE genuine selected proof', b'EXPECTED_REJECTION same warmed parser: capture metadata current artifact regular mode/hardlink', b'RESTORED same warmed parser', b'PASS exactly one independently selected extra'):
+                assert marker in streams['stdout']
+        results.append(dict(name=name, expected_exit=expected, actual_exit=value['actual_exit'],
+                            revision=revision, execution=str(stem)+'.execution.json',
+                            child_pid=value['child_pid'], elapsed_seconds=value['elapsed_seconds']))
+    failed = read(E/'fresh-qa1/core/adversarial.execution.json')
+    assert failed['actual_exit'] == 1 and retained_capture(failed['stdout']) == b''
+    assert b"ModuleNotFoundError: No module named 'convergent_review'" in retained_capture(failed['stderr'])
+    return dict(logical_planned_checks=len(results), mandatory_commands=len(results)-1,
+                additional_adversarial_checks=1, actual_process_attempts=len(results)+1,
+                retained_failed_setup_attempts=1, commands=results,
+                qa_declared_checks_run=qa['checks_run'], qa_declared_checks_passed=qa['checks_passed'])
