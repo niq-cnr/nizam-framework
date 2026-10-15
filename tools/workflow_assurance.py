@@ -811,6 +811,7 @@ def _receipt_policy(root, policy):
 
 
 def _receipt_candidate(root, candidate, revision=None):
+    import errno
     validate_identity(candidate)
     anchor = candidate['source_commit']
     require(git(root, 'rev-parse', '--verify', anchor + '^{commit}').decode().strip() == anchor, 'receipt candidate exact commit')
@@ -827,15 +828,32 @@ def _receipt_candidate(root, candidate, revision=None):
         paths.setdefault(commit, set()).update(entry['path'] for entry in protected)
     entries = {}
     for commit, requested in paths.items():
-        rows = git(root, '--literal-pathspecs', 'ls-tree', '-z', commit, '--', *sorted(requested)).split(b'\0')
-        require(rows[-1] == b'', 'unsafe entry Git input')
+        chunks = []; chunk = []; size = 0
+        for path in sorted(requested):
+            cost = len(os.fsencode(path)) + 9
+            if chunk and size + cost > 32768:
+                chunks.append(chunk); chunk = []; size = 0
+            chunk.append(path); size += cost
+        if chunk: chunks.append(chunk)
+        pending = list(reversed(chunks))
         observed = set()
-        for row in rows[:-1]:
-            metadata, name = row.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
-            path = name.decode()
-            require(path in requested and path not in observed and kind == 'blob' and mode in ('100644', '100755'),
-                    'unsafe entry Git input')
-            observed.add(path); entries[commit, path] = (oid, mode == '100755')
+        while pending:
+            chunk = pending.pop()
+            try:
+                rows = git(root, '--literal-pathspecs', 'ls-tree', '-z', commit, '--', *chunk).split(b'\0')
+            except AssuranceError as exc:
+                if isinstance(exc.__cause__, OSError) and exc.__cause__.errno == errno.E2BIG and len(chunk) > 1:
+                    middle = len(chunk) // 2
+                    pending.extend((chunk[middle:], chunk[:middle])); continue
+                raise
+            require(rows[-1] == b'', 'unsafe entry Git input')
+            selected = set(chunk)
+            for row in rows[:-1]:
+                metadata, name = row.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
+                path = name.decode()
+                require(path in selected and path not in observed and kind == 'blob' and mode in ('100644', '100755'),
+                        'unsafe entry Git input')
+                observed.add(path); entries[commit, path] = (oid, mode == '100755')
         for path in sorted(requested):
             require(path in observed, 'missing entry Git input: ' + path)
     values = blobs(root, [oid for oid, executable in entries.values()])
