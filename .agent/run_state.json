@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T04:11:53.037576+00:00",
+  "updated_at": "2026-10-15T04:20:21.454769+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1454,12 +1454,12 @@
     "122-mode-b": {
       "attempts": 1,
       "limit": 3,
-      "status": "final-seal-review-dispatched"
+      "status": "passed"
     },
     "122-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "preparing"
+      "status": "dispatched"
     },
     "122-ci-diagnosis": {
       "attempts": 2,
@@ -6509,6 +6509,12 @@
       "event": "122-current-executable-seal-modeb-release",
       "detail": "Parsed strict schema-valid independent final executable verdict2ff08b5; verified17 artifactrefs,8 portableobjects,2 historicalRootstate refs and actual author24/replay24 successes with intended0/1/0. FinalModeB1 may proceed in inspection2 ownedroot; no freshQA/capture approval yet.",
       "evidence": ".agent/evidence/122/modeb1-final-release.json"
+    },
+    {
+      "at": "2026-10-15T04:20:21.454769+00:00",
+      "event": "122-strict-modeb-first-freshqa-release",
+      "detail": "Parsed schema-valid strictModeB1 d320642; verified5immutableevidencerefs and3finalreadonlyactual0/rawhashes plusSourcefff/test800b/contract13dc. CurrentQA refinement requires duplicate-key diagnostic, no extra behavior sofar. FirstQA1 nowreleased9mandatory+1owncheck underfrozenhelpers, historical8accheckoutready. No completion untilactualQAandRootcapture.",
+      "evidence": ".agent/evidence/122/qa1-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7041,7 +7047,7 @@
       }
     ]
   },
-  "last_action": "Reviewed fixture CI2 passed all six checks and exact ordered46; await current private controls and independent replay seal.",
+  "last_action": "Strict ModeB1 approved; release first fresh QA9 mandatory plus exactly1 additional duplicate-key cause check.",
   "completed_contract_ids": [
     "099",
     "103",
