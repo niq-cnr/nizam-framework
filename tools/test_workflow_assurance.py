@@ -1590,7 +1590,7 @@ class ControlsFixture(FailureFixture):
 
     def __init__(self, api, parent, defect=None, seed=None):
         self.api = api; self.parent = Path(parent); self.root = self.parent / 'root'
-        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name
+        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name; self.checkouts={}
         source_profile=bool(defect and defect['site']=='source-contract')
         if seed and not source_profile:
             self.root=seed.root;self.source=seed.source
@@ -1624,8 +1624,6 @@ class ControlsFixture(FailureFixture):
         for category in ('source','tests','tools','contracts'):
             for entry in self.candidate['assessed_inputs'][category]:
                 target=self.root/entry['path'];require(sha(target.read_bytes())==entry['sha256'] and bool(target.stat().st_mode&0o111)==entry['executable'],'immutable seed protected bytes/mode stable')
-        self.checkout = dict(sha=self.source, tree=self.candidate['source_tree'], event='push',
-            event_head=self.source, event_base=None, parents=git(self.root, 'show', '-s', '--format=%P', self.source).split())
         self.good_contract=self.ref('.agent/contracts/123.json',CONTROL_APPROVAL)
         self.contract = self.ref('.agent/contracts/123.json', self.source if source_profile else CONTROL_APPROVAL)
         approved = self.read(self.good_contract); ae = approved['approval_evidence']
@@ -1666,6 +1664,7 @@ class ControlsFixture(FailureFixture):
             candidate=None,a10_policy_ref=None,capture_pack_ref=None)
         self.shadow=self.read(self.selection['shadow_state_ref'])
         self.capture_selection = self.put('selection-capture',self.selection)
+        self.checkout=self.stage_checkout('capture',self.capture_selection)
         self.exp = self.parent / 'experiment'
         git(self.root,'worktree','add','--quiet','--detach',str(self.exp),self.source)
         # Only the later execution worktree is sparse; unchanged115 never sees it.
@@ -1696,6 +1695,7 @@ class ControlsFixture(FailureFixture):
         self.verify_selection_value = dict(self.selection,mode='verify',producer=self.verify_producer,
             candidate=self.candidate,a10_policy_ref=self.policy_ref,capture_pack_ref=self.capture_pack)
         self.verify_selection = self.put('selection-verify',self.verify_selection_value)
+        self.stage_checkout('verify',self.verify_selection)
         for label,ref in (('selection-verify',self.verify_selection),('policy-verify',self.policy_ref),('receipt-verify',self.receipt_ref)):
             self.exp_write('inputs/'+label+'.json',self.raw(ref))
         self.exp_commit('SYNTHETIC independently selected verify inputs')
@@ -1738,12 +1738,11 @@ class ControlsFixture(FailureFixture):
                 return value
             self.a10_result=project(self.a10_result)
         require([advance['action'],noop['action'],republish['action'],rerun['action']] == ['advance','noop','republish','rerun-required'],'actual four A10 actions')
-        execution = git(self.exp,'rev-parse','HEAD')
         self.exp_write('verify/result.json',self.a10_result); self.exp_write('verify/stdout',self.payloads['verify/result.json']); self.exp_write('verify/stderr',b'')
         outputs = self.exp_commit('SYNTHETIC A10 parser results'+(' with invalid-binding projection' if self.synthetic_projection else ' from actual local APIs')+'; not hosted')
         result_ref = self.exp_ref('verify/result.json',outputs)
         capture = self.capture([sys.executable,'tools/workflow_assurance_ci.py','verify','--selection','.agent/evidence/123/selection.json',
-            '--output',str(self.parent/'wa123-verify')],execution,self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs))
+            '--output',str(self.parent/'wa123-verify')],self.checkouts['verify']['sha'],self.verify_producer,self.exp_ref('verify/stdout',outputs),self.exp_ref('verify/stderr',outputs),cwd=self.root)
         self.exp_write('verify/capture.json',capture); tip=self.exp_commit('SYNTHETIC verify capture representation')
         a10_capture_ref=self.exp_ref('verify/capture.json',tip)
         verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
@@ -1766,6 +1765,19 @@ class ControlsFixture(FailureFixture):
         require(len(self.applied)==(1 if defect else 0),'exactly one deliberate defect site applied')
         self.assert_bindings()
 
+    def stage_checkout(self,mode,selection):
+        # This outer CLI input belongs to a Root record-only checkout, never the
+        # Source-relative output branch. Both historical versions remain in Git.
+        path='.agent/evidence/123/selection.json';target=self.root/path
+        present=self.value(mode+'-selection-present',True)
+        if present:self.write(path,self.value(mode+'-fixed-selection-bytes',self.raw(selection)))
+        elif target.exists():target.unlink()
+        revision=self.commit('SYNTHETIC '+mode+' fixed CLI selection checkout')
+        checkout=dict(sha=revision,tree=git(self.root,'rev-parse',revision+'^{tree}'),event='push',
+            event_head=revision,event_base=None,parents=git(self.root,'show','-s','--format=%P',revision).split())
+        self.checkouts[mode]=self.value(mode+'-checkout',checkout)
+        return self.checkouts[mode]
+
     def raw(self, reference):
         return subprocess.check_output(['git','-C',str(self.root),'show',reference['revision']+':'+reference['path']])
 
@@ -1775,7 +1787,7 @@ class ControlsFixture(FailureFixture):
         result=copy.deepcopy(value)
         if self.defect and self.defect['site']==label:
             changed=self.defect['change'](result,self)
-            if changed is not None and (type(changed) is bytes or type(value) is bytes or value is None):result=changed
+            if changed is not None and (type(changed) is bytes or type(value) in (bytes,bool) or value is None):result=changed
             self.applied.append(label)
         return result
 
@@ -1796,8 +1808,8 @@ class ControlsFixture(FailureFixture):
 
     def exp_ref(self,path,revision): return self.ref(CONTROL_PREFIX+path,revision)
 
-    def capture(self,argv,revision,producer,stdout,stderr):
-        return dict(schema_version=1,argv=argv,cwd=str(self.exp),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
+    def capture(self,argv,revision,producer,stdout,stderr,cwd=None):
+        return dict(schema_version=1,argv=argv,cwd=str(self.exp if cwd is None else cwd),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
             environment=self.candidate['environment'],producer=producer,executed=True,outcome='success',exit_code=0,stdout=stdout,stderr=stderr)
 
     def make_evaluation(self,report):
@@ -1869,6 +1881,7 @@ class ControlsFixture(FailureFixture):
 
     def host(self,mode,tip,selection,results):
         import io,zipfile
+        checkout=self.checkouts[mode]
         git(self.exp,'update-ref','refs/wa123/proof',tip)
         path=self.parent/(mode+'.bundle')
         git(self.exp,'bundle','create','--version=2',str(path),'refs/wa123/proof','^'+self.source)
@@ -1879,7 +1892,7 @@ class ControlsFixture(FailureFixture):
         manifest.update(extra);manifest=self.value(mode+'-manifest',manifest)
         self.manifests[mode]=manifest;producer=self.capture_producer if mode=='capture' else self.verify_producer
         invocation=self.value(mode+'-invocation-body',dict(schema_version=1,mode=mode,producer=producer,selection_ref=selection,
-            source_commit=self.source,checkout=self.checkout,environment=self.candidate['environment'],
+            source_commit=self.source,checkout=checkout,environment=self.candidate['environment'],
             argv=[sys.executable,'tools/workflow_assurance_ci.py',mode,'--selection','.agent/evidence/123/selection.json',
                 '--output',str(self.parent/('wa123-'+mode))],cwd=str(self.root),output_tip=manifest['output_tip'],
             bundle_sha256=sha(bundle),manifest_sha256=sha(canonical(manifest)+b'\n'),result_refs=results,actual_exit=0))
@@ -1891,14 +1904,14 @@ class ControlsFixture(FailureFixture):
         archive_bytes=self.value(mode+'-archive-bytes',archive.getvalue());archive_ref=self.put(mode+'-archive',archive_bytes)
         run=101 if mode=='capture' else 102;job=run+100;artifact=run+200
         artifact_name='wa123-'+mode+'-'+producer['session_id']
-        run_json=dict(id=run,run_attempt=1,name='compliance',event='push',head_sha=self.source,status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY),unconsumed_fixture='SYNTHETIC ignored external field')
+        run_json=dict(id=run,run_attempt=1,name='compliance',event=checkout['event'],head_sha=checkout['event_head'],status='completed',conclusion='success',repository=dict(full_name=CONTROL_REPOSITORY),unconsumed_fixture='SYNTHETIC ignored external field')
         names=['validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'];jobs=[]
         for index,name in enumerate(names):
             steps=[dict(number=1,name='WA123 '+mode,status='completed',conclusion='success'),
                 dict(number=2,name='WA123 '+('verify' if mode=='capture' else 'capture'),status='completed',conclusion='skipped'),
                 dict(number=3,name='Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py',status='completed',conclusion='success'),
                 dict(number=4,name='Run required isolation suite',status='completed',conclusion='success')] if name=='convergent_review' else []
-            jobs.append(dict(id=job if name=='convergent_review' else job+10+index,run_id=run,run_attempt=1,name=name,status='completed',conclusion='success',head_sha=self.source,steps=steps))
+            jobs.append(dict(id=job if name=='convergent_review' else job+10+index,run_id=run,run_attempt=1,name=name,status='completed',conclusion='success',head_sha=checkout['event_head'],steps=steps))
         raw_jobs=dict(total_count=5,jobs=jobs,unconsumed_fixture='SYNTHETIC ignored');artifacts=dict(total_count=1,artifacts=[dict(id=artifact,name=artifact_name,expired=False,size_in_bytes=len(archive_bytes),unconsumed_fixture='SYNTHETIC ignored')])
         log=b'SYNTHETIC parser log only\tWA123_INVOCATION='+raw_inv
         args=[['gh','api','repos/'+CONTROL_REPOSITORY+'/actions/runs/'+str(run)],
@@ -1913,8 +1926,8 @@ class ControlsFixture(FailureFixture):
                 actual_exit=0,stdout=output,stderr=self.put(mode+'-'+kind+'-stderr',b''))))
         metadata=dict(schema_version=1,mode=mode,source_commit=self.source,producer=producer,selection_ref=selection,invocation_ref=invocation_ref,
             run_id=run,attempt=1,job_id=job,artifact_id=artifact,artifact_name=artifact_name,archive_ref=archive_ref,fetches=fetches)
-        host=self.value(mode+'-host',dict(repository=CONTROL_REPOSITORY,run_id=run,attempt=1,job_id=job,job='convergent_review',head_sha=self.source,
-            checkout_sha=self.source,artifact_name=artifact_name,artifact_sha256=sha(archive_bytes),metadata_ref=self.put(mode+'-metadata',metadata),job_log_ref=fetches[3]['stdout']))
+        host=self.value(mode+'-host',dict(repository=CONTROL_REPOSITORY,run_id=run,attempt=1,job_id=job,job='convergent_review',head_sha=checkout['event_head'],
+            checkout_sha=checkout['sha'],artifact_name=artifact_name,artifact_sha256=sha(archive_bytes),metadata_ref=self.put(mode+'-metadata',metadata),job_log_ref=fetches[3]['stdout']))
         return host,pack
 
     def bind(self):
@@ -1928,9 +1941,29 @@ class ControlsFixture(FailureFixture):
         waiver=self.defect.get('waiver','') if self.defect else ''
         for ref in self.nodes.values():
             require(sha(self.raw(ref))==ref['sha256'],'fixture immutable node bytes/digest coherent')
+        if not(self.defect and self.defect['name']=='evidence-checkout'):
+            require(self.evidence['checkout']==self.checkouts['capture'],'fixture Evidence retains capture Checkout')
         for mode in ('capture','verify'):
             host=self.evidence[mode+'_host'];metadata=self.read(host['metadata_ref'])
             fetches={row['kind']:row for row in metadata['fetches']}
+            selected=self.capture_selection if mode=='capture' else self.verify_selection
+            checkout=self.checkouts[mode]
+            frame=not(self.defect and self.defect.get('frame_waiver')==mode+'-checkout')
+            if frame:
+                require(git(self.root,'rev-parse',checkout['sha']+'^{tree}')==checkout['tree'],'fixture actual stage checkout tree')
+                require(git(self.root,'show','-s','--format=%P',checkout['sha']).split()==checkout['parents'],'fixture actual stage checkout parents')
+                git(self.root,'merge-base','--is-ancestor',self.source,checkout['sha'])
+                for category in ('source','tests','tools','contracts'):
+                    for entry in self.candidate['assessed_inputs'][category]:
+                        raw=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+entry['path']])
+                        mode_bits=git(self.root,'ls-tree',checkout['sha'],'--',entry['path']).split()[0]
+                        require(sha(raw)==entry['sha256'] and (mode_bits=='100755') is entry['executable'],'fixture stage checkout preserves protected Source bytes/modes')
+                require(checkout['event']=='push' and checkout['event_head']==checkout['sha'] and checkout['event_base'] is None,'fixture actual synthetic push checkout/event')
+            fixed=frame and not(self.defect and self.defect.get('frame_waiver')==mode+'-fixed-input')
+            if fixed:
+                path='.agent/evidence/123/selection.json'
+                actual=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+path])
+                require(actual==self.raw(selected),'fixture fixed CLI input equals independently selected immutable JSON')
             archive=self.raw(metadata['archive_ref'])
             require(metadata['archive_ref']==fetches['archive']['stdout'],'fixture raw archive selection coherent')
             if not(mode=='verify' and waiver=='archive-hash'):
@@ -1949,6 +1982,12 @@ class ControlsFixture(FailureFixture):
             require(manifest['bundle_size']==len(bundle),'fixture bundle length coherent')
             require(inv['output_tip']==manifest['output_tip'],'fixture manifest/invocation tip coherent')
             require(inv['selection_ref']==(self.capture_selection if mode=='capture' else self.verify_selection),'fixture invocation selection coherent')
+            require(inv['checkout']==checkout and host['checkout_sha']==checkout['sha'],'fixture per-stage Invocation/Host checkout coherent')
+            require(inv['source_commit']==metadata['source_commit']==self.source,'fixture stage source remains immutable assessed anchor')
+            run=self.read(fetches['run']['stdout']);jobs=self.read(fetches['jobs']['stdout'])
+            if not(self.defect and self.defect['site'] in (mode+'-run',mode+'-jobs')):
+                require(run['head_sha']==host['head_sha']==checkout['event_head'] and run['event']==checkout['event'],'fixture raw run/Host stage event head coherent')
+                require(all(job['head_sha']==host['head_sha'] for job in jobs['jobs']),'fixture raw jobs stage head coherent')
             require(inv['producer']==(self.capture_producer if mode=='capture' else self.verify_producer),'fixture invocation producer coherent')
             expected_results=([self.candidate_ref,self.capability_ref,self.evaluation_ref,self.replay_ref,self.map_ref,self.map_capture_ref] if mode=='capture'
                 else [self.receipt_ref,self.evidence['a10_result_ref'],self.evidence['a10_capture_ref']])
@@ -1958,6 +1997,17 @@ class ControlsFixture(FailureFixture):
             if mode=='verify':
                 require(bundle==self.raw(self.evidence['pack_ref']),'fixture selected pack/archive bytes coherent')
                 require(manifest['inventory']==self.evidence['inventory'],'fixture selected inventory coherent')
+        capture=json.loads(self.payloads['verify/capture.json']);outer=self.read(self.nodes['verify-invocation'])
+        name=self.defect['name'] if self.defect else ''
+        require(capture['argv']==outer['argv'],'fixture nested A10 Capture exact outer verify argv')
+        require(capture['argv'][capture['argv'].index('--selection')+1]=='.agent/evidence/123/selection.json','fixture nested A10 fixed CLI path')
+        if name!='a10-capture-wrong-cwd':
+            require(capture['cwd']==outer['cwd']==str(self.root),'fixture nested A10 Capture actual Root cwd')
+        if name!='a10-capture-preselection-revision':
+            require(capture['revision']==outer['checkout']['sha']==self.checkouts['verify']['sha'],'fixture nested A10 Capture actual stage V revision')
+        if name not in ('a10-capture-preselection-revision','verify-preselection-checkout','verify-fixed-selection-absent','verify-fixed-selection-substituted'):
+            selected=subprocess.check_output(['git','-C',str(self.root),'show',capture['revision']+':.agent/evidence/123/selection.json'])
+            require(selected==self.raw(self.verify_selection),'fixture nested A10 fixed input equals independently selected verify JSON')
         result=json.loads(self.payloads['verify/result.json']);expected_receipt=self.read(self.receipt_ref)
         require(result['receipt']==expected_receipt,'fixture actual/projected result receipt equals selected immutable receipt')
         for key in ('advance','noop','republish'):
@@ -2062,6 +2112,7 @@ def controls_variant(api,positive,defect):
         try:controls_call(api,bad,True)
         finally:git(bad.root,'worktree','remove','--force',str(bad.exp))
     git(positive.root,'restore','--source='+positive.materialized_tip,'--staged','--worktree','--',CONTROL_PREFIX)
+    positive.write('.agent/evidence/123/selection.json',positive.raw(positive.verify_selection))
     positive.commit('SYNTHETIC restored original positive materialization')
     controls_call(api,positive)
     print('RESTORED '+defect['name'])
@@ -2200,6 +2251,8 @@ def controls_defects(blockers=False):
         row('approval-gate-link-stale','source-contract',lambda v,f:v['approval_evidence'].update(mode_a=v['approval_evidence']['contract_review']),r'approval|proposal|contract|prerequisite|metadata')]
     for field,value in (('executed',False),('exit_code',True),('exit_code',7),('outcome','pending'),('outcome','running'),('outcome','failed'),('outcome','invalidated'),('outcome','setup-error')):
         rows.append(row('capture-'+field+'-'+str(value),'verify/capture.json',lambda v,f,k=field,x=value:v.update({k:x}),r'capture|exit|executed|outcome|success|command'))
+    rows += [row('a10-capture-wrong-cwd','verify/capture.json',lambda v,f:v.update(cwd=str(f.exp)),r'capture|cwd|invocation|verify|fixed|input|binding'),
+        row('a10-capture-preselection-revision','verify/capture.json',lambda v,f:v.update(revision=f.source),r'capture|revision|checkout|invocation|selection|fixed|input|binding')]
     rows.append(row('capture-forged-producer','verify/capture.json',lambda v,f:v['producer'].update(session_id='123-ci-verify-attempt2'),r'producer|session|capture'))
     for key in ('source_commit','source_tree'):
         rows.append(row('evidence-candidate-'+key,'evidence-body',lambda v,f,k=key:v['candidate'].update({k:'0'*40}),r'candidate|identity|source|tree|selection|binding'))
@@ -2217,6 +2270,10 @@ def controls_defects(blockers=False):
             rows.append(row('trial%d-%s-substitution'%(number+1,key),'evidence-body',
                 lambda v,f,n=number,k=key,r=replacement:v['trial_provenance'][n].update({k:f.selection[r]}),r'trial|provenance|runner|adapter|evaluator|selected|binding'))
     for mode in ('capture','verify'):
+        rows += [row(mode+'-fixed-selection-absent',mode+'-selection-present',lambda v,f:False,r'checkout|selection|CLI|fixed|input|blob|path|missing',frame_waiver=mode+'-fixed-input'),
+            row(mode+'-fixed-selection-substituted',mode+'-fixed-selection-bytes',lambda v,f:canonical(dict(json.loads(v),producer=dict(agent_id='wa123-capable-ci',session_id='123-ci-'+json.loads(v)['mode']+'-attempt2')))+b'\n',r'checkout|selection|CLI|fixed|input|digest|binding',frame_waiver=mode+'-fixed-input'),
+            row(mode+'-preselection-checkout',mode+'-checkout',lambda v,f:v.update(sha=f.source),r'checkout|selection|CLI|fixed|input|tree|parent|path',frame_waiver=mode+'-checkout'),
+            row(mode+'-wrong-checkout-tree',mode+'-checkout',lambda v,f:v.update(tree='0'*40),r'checkout|tree|object|binding',frame_waiver=mode+'-checkout')]
         rows += [row(mode+'-raw-run-missing',mode+'-run',lambda v,f:v.pop('conclusion'),r'run|required|field|missing|conclusion|metadata'),
             row(mode+'-raw-run-wrong-id',mode+'-run',lambda v,f:v.update(id=v['id']+500),r'run|id|binding|metadata'),
             row(mode+'-raw-head-mismatch',mode+'-run',lambda v,f:v.update(head_sha='0'*40),r'head|source|checkout|metadata|binding'),
