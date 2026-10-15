@@ -69,8 +69,12 @@ def main():
         elif p.name.startswith('pr-description-') and p.suffix == '.txt':
             kind, charge = 'authored PR description', lines
         elif p.suffix == '.json' and path not in mechanical:
-            value = json.loads(raw)
             observed = any(token in p.name for token in ('.execution.', '.started.', '.stdout.', '.stderr.', '.signal.', '.capture-summary.', '.preservation-'))
+            try:
+                value = json.loads(raw)
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                assert observed, ('unclassified non-JSON authored artifact', path)
+                value = None
             observed |= p.name in {'capture-index.json', 'wrapper-launch.json', 'setup-summary.json'}
             observed |= isinstance(value, dict) and 'argv' in value and any(k in value for k in ('actual_exit', 'child_pid'))
             observed |= isinstance(value, dict) and 'files' in value and ('capture' in p.name or 'inventory' in p.name)
