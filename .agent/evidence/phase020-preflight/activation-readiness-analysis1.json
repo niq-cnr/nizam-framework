@@ -214,6 +214,34 @@
       "sha256": "5b6ee27534642c4a7b9deea2a2456efa6cce2d3d7d6d2035757f3174267be67b",
       "git_blob": "6c7708c03f419b496f6f220121f42ddecdfe3cdd",
       "git_mode": "100644"
+    },
+    "capture2_job_observation": {
+      "revision": "05cebf1a1cf8a176accdab7c865d065812b2ad71",
+      "path": ".agent/evidence/123/capture2-preinspection/job.stdout",
+      "sha256": "0a5c57046f4c79c6a1435f8929e99deb40eb228f946ac53d3aa5faf8fd766a1c",
+      "git_blob": "69685114e31e051b2d9588161b61216b42bc4e00",
+      "git_mode": "100644"
+    },
+    "capture2_selected_observation": {
+      "revision": "05cebf1a1cf8a176accdab7c865d065812b2ad71",
+      "path": ".agent/evidence/123/capture2-preinspection/selected-observation.json",
+      "sha256": "6b9bb8f817c5e5b2c5a228d3330f71bbb2b7fafef33416080dd470478b5aede0",
+      "git_blob": "22c57563a42ec0cfb03713d6df3b687c3de5d138",
+      "git_mode": "100644"
+    },
+    "capture2_preinspection_release": {
+      "revision": "05cebf1a1cf8a176accdab7c865d065812b2ad71",
+      "path": ".agent/evidence/123/root-capture2-preinspection-release.json",
+      "sha256": "9987dfb1d654ede897f7cea0f8ed7b79ef6e0268b485a0fdbd3b75a91a4cb338",
+      "git_blob": "fc6194a0a2b1732e43da1af6853457816c0809a5",
+      "git_mode": "100644"
+    },
+    "capture2_preinspection_disposition": {
+      "revision": "05cebf1a1cf8a176accdab7c865d065812b2ad71",
+      "path": ".agent/evidence/123/root-capture2-preinspection-disposition.json",
+      "sha256": "0295ff733e18def89e12764cdd3ed21ccffc284a13795b47077c5ef5ceae0aba",
+      "git_blob": "c70ff4a61be5d8e4e5f1d678bcb0a957908c0d7f",
+      "git_mode": "100644"
     }
   },
   "current_prerequisites": [
@@ -277,14 +305,20 @@
       "facts": [
         "Current feature list and Root state retain123 in_progress. NewSource9886e5fadad31845349e54235820edac71c7b7fb candidate full positive actual0/2393.084900s and exact missing-trials negative actual1/29.456262s were admitted; admission explicitly joins prior blocker0/1 as current local prerequisite lanes.",
         "These are local current-source controls, not completed hosted capture/verify proof, selected final policy, genuine required restorations, final executable seal, ModeB, freshQA, evidence capture or canonical phase closure.",
-        "Latest selected durable handoff observation records run38736608742/attempt1 in_progress with3 successful jobs and2 still running. Observation command0 is not producer/proof success; no later live run conclusion is asserted here."
+        "Earlier root-live-handoff2 observation records run38736608742/attempt1 in_progress with3 successful jobs and2 still running. It is superseded in part by later durable selected-job/artifact observations already present at this same fixed analysis base; it is not the latest known job state.",
+        "Later capture2-preinspection/job.stdout and selected-observation.json record actual convergent_review job116427391140 completed success at2026-10-15T13:36:30Z for run38736608742/attempt1 and published head6b7d0728ae6f4fbe3a486946d001ec1b41254f68. Job steps WA123 capture and Preserve actual WA123 proof are success; WA123 verify is skipped. Real artifact11978025565 named wa123-capture-123-ci-capture-attempt2,144536bytes, was observed. These are actual job/artifact facts, not a completed aggregate or inspected proof/Host result.",
+        "The later Root preinspection release explicitly retains aggregate/default48 pending. Root preinspection disposition records actual gh job-log retrieval exit1 with0stdout/81stderr because the aggregate was still in progress. Released stop-on-first-failure was honored: no archive fetch/extract/import/inspection executed and no final five-fetch transport or Host was produced. Verify/finalintegration counters remain0 in that disposition. Whole-run/allfive success, final transport/independent inspection, actual verify/policy/readiness/gates and canonical closure remain unclaimed; no later live run outcome is inferred."
       ],
       "required_before020": "Actual123 completion/captured candidate-bound receipts and018 canonical closure with its approved gates, then current independent intake of those exact immutable outputs.",
       "evidence": [
         "features018",
         "state",
         "candidate123",
-        "handoff123"
+        "handoff123",
+        "capture2_job_observation",
+        "capture2_selected_observation",
+        "capture2_preinspection_release",
+        "capture2_preinspection_disposition"
       ]
     }
   ],
