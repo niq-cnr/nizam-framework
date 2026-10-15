@@ -1,0 +1,6 @@
+EXACT_PRIVATE_DELTA_OK infrastructure-failed "request['cause'] + ('-diagnosis' if request['cause'] == 'infrastructure' else '-repair')," => "request['cause'] + ('-repair' if request['cause'] == 'infrastructure' else '-repair'),"
+EXACT_PRIVATE_DELTA_OK semantic-failed "require(rejected or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')" => "require(True or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')"
+EXACT_PRIVATE_DELTA_OK reject-cause-relabel "authority['role'] == 'Orchestrator' and authority['approved'] is True and" => "authority['role'] == 'Orchestrator' and authority['approved'] in (True, 1) and"
+EXACT_PRIVATE_DELTA_OK counter-continuity '    verify_record_update(anchor, current, owned)' => "    verify_record_update(anchor, current, owned + ['/scope_budget/total_lines_changed'])"
+HISTORICAL_STATE_AND_PINNED_GIT_OK controls3-runtime2 06985fd29992a68e77c87725ab26f18179e2c86c blob+executable only; fullFS equality separately retained
+HISTORICAL_STATE_AND_PINNED_GIT_OK controls3-executable-review1 fa28d966152db65c28cb43582a7999c22867f11f blob+executable only; fullFS equality separately retained
