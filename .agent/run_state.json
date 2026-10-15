@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:59:55.948294+00:00",
+  "updated_at": "2026-10-15T04:11:53.037576+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1449,12 +1449,12 @@
     "122-executable-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched-current-replay"
+      "status": "passed-current-seal"
     },
     "122-mode-b": {
       "attempts": 1,
       "limit": 3,
-      "status": "preparing"
+      "status": "final-seal-review-dispatched"
     },
     "122-qa": {
       "attempts": 1,
@@ -6503,6 +6503,12 @@
       "event": "122-current-docs-readiness-preparation",
       "detail": "Planner may prepare a minimal current-overlay plan in owned fa28d966 worktree while independent replay runs. Three governed projections remain unchanged until actual Root evidence-capture/canonicalclosure release. No122 completion, PR103 merge,123 readiness or final usage claimed by preparation.",
       "evidence": ".agent/evidence/122/current-docs1-plan.json"
+    },
+    {
+      "at": "2026-10-15T04:11:53.037576+00:00",
+      "event": "122-current-executable-seal-modeb-release",
+      "detail": "Parsed strict schema-valid independent final executable verdict2ff08b5; verified17 artifactrefs,8 portableobjects,2 historicalRootstate refs and actual author24/replay24 successes with intended0/1/0. FinalModeB1 may proceed in inspection2 ownedroot; no freshQA/capture approval yet.",
+      "evidence": ".agent/evidence/122/modeb1-final-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
