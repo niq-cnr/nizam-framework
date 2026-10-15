@@ -1,0 +1,99 @@
+{
+  "role": "Root",
+  "passed": true,
+  "default46_passed": true,
+  "pr": 103,
+  "head": "b4c1b162c8175ae34e811543b247e66661a147a4",
+  "compliance_run": 38678198180,
+  "closeout_run": 38678198188,
+  "job": 116236505330,
+  "checkout": "88c2a086103438b37209f4fb2c6cb84830c32594",
+  "protected_bindings_revision": "b4c1b162c8175ae34e811543b247e66661a147a4",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+  "actual_exit": 0,
+  "exit_basis": "Successful hosted single-command step; immutable workflow has no continue-on-error.",
+  "all46_ordered": [
+    "identity-positive",
+    "invalidate-source",
+    "invalidate-contract",
+    "invalidate-tests",
+    "invalidate-tool",
+    "invalidate-environment",
+    "invalidate-unknown",
+    "record-continuity",
+    "reject-unowned-field",
+    "reject-history-edit",
+    "allow-owned-append",
+    "reject-self-review",
+    "reject-seal-change",
+    "reject-missing-red",
+    "reject-setup-as-red",
+    "independent-handoff",
+    "accepted-entry",
+    "reject-foreign-repo",
+    "reject-stale-pin",
+    "reject-role-write",
+    "approve-empty",
+    "advisory-visible",
+    "block-carried",
+    "reject-issues",
+    "reject-missing-coverage",
+    "reject-unsupported",
+    "reject-missing-operator",
+    "reject-wrong-candidate",
+    "reject-unrun",
+    "reject-setup",
+    "reject-pending",
+    "reject-running",
+    "reject-failed",
+    "reject-invalidated",
+    "idempotent-replay",
+    "reject-double-advance",
+    "recover-missing-receipt",
+    "independent-lanes",
+    "shared-state-serialized",
+    "reject-terminal-spoof",
+    "reject-fourth",
+    "owned-rollback",
+    "infrastructure-failed",
+    "semantic-failed",
+    "reject-cause-relabel",
+    "counter-continuity"
+  ],
+  "new4": [
+    "infrastructure-failed",
+    "semantic-failed",
+    "reject-cause-relabel",
+    "counter-continuity"
+  ],
+  "source_bindings": {
+    "tools/workflow_assurance.py": {
+      "sha256": "fff790d700daa6247557851c6988f8f6e7465ec291907992374d00e3c9d886b6",
+      "git_blob": "a627b97cc00be278f22203b3928246e7d37929b0"
+    },
+    "tools/test_workflow_assurance.py": {
+      "sha256": "800b5970059febf8cf870cc5e23c6bc16e589fc0de6580fe1d6b0dca9f76adae",
+      "git_blob": "aa9bde210d32741da26b7ba7ad575d1762f21936"
+    },
+    "tools/convergent_review.py": {
+      "sha256": "eb4d47be8d91f85779e97c1370f34aa7f4560bec68f9ffce033ae979e4238ea2",
+      "git_blob": "612b05ae75e91060e796dffd68acefd37e8b66a1"
+    },
+    "tools/README.md": {
+      "sha256": "68b1935963759bd75ded4f0b56b2ce758763bd83fc1930a9991eed68e985c0e7",
+      "git_blob": "e13591d39b95aa6702cea679b50ee3e9c3ef84b4"
+    },
+    "CHANGELOG.md": {
+      "sha256": "a9b260d9b14c0ac85a2c8194b5e493bd79379fc309825cfcc4dd12c324af1561",
+      "git_blob": "79eee12680d5de947f804e52459a4bc147de5177"
+    },
+    ".github/workflows/compliance.yml": {
+      "sha256": "aeb0d4f937a2b45ba929f43118b4dbc7dde64b690c26bca97dc41d419c29a217",
+      "git_blob": "43bbca26dbe6da73e7384cd08b25dc0d8c4cb0d3"
+    }
+  },
+  "raw_log": ".agent/evidence/122/ci2-job-log.stdout.txt",
+  "raw_log_sha256": "d908c9bc46bce03aa22f89c8c6629483bb778182aa320ab0871f0d08435309aa",
+  "failed_jobs": [],
+  "boundary": "Observed existing hosted default46 only; no feature123 controls-ready, identical-environment or comparative claim."
+}
