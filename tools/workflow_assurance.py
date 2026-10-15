@@ -1304,6 +1304,570 @@ def route_failed_attempt(repo, request, *, policy):
         raise AssuranceError('failure routing invalid: ' + str(exc)[:800]) from exc
 
 
+# Feature123 composes the existing engines; archived hosted validation is read-only.
+_WA123_ORIGIN = 'https://github.com/niq-cnr/nizam-framework.git'
+_WA123_REPOSITORY = 'niq-cnr/nizam-framework'
+_WA123_PREFIX = '.agent/evidence/123/experiment/'
+_WA123_SELECTION = '.agent/evidence/123/selection.json'
+
+
+class _ControlsProof:
+    """Validate selected immutable bytes, never execute historical receipt APIs."""
+    def __init__(self, repo):
+        self.root = Path(repo).resolve(strict=True)
+        require(git(self.root, 'rev-parse', '--show-toplevel').decode().strip() == str(self.root), 'controls repository toplevel')
+        require(git(self.root, 'remote', 'get-url', 'origin').decode().strip() == _WA123_ORIGIN, 'controls repository origin')
+        self.cache = {}; self.bundle_cache = {}
+
+    def obj(self, value, keys, label):
+        _bundle_object(value, tuple(keys.split()), label + ' closed keys')
+        return value
+
+    def integer(self, value, label, minimum=0):
+        require(type(value) is int and value >= minimum, label + ' exact integer')
+        return value
+
+    def text(self, value, label):
+        require(type(value) is str and 0 < len(value) <= 1024 and '\0' not in value, label + ' string')
+        return value
+
+    def version(self, value, label):
+        require(type(value) is int and value == 1, label + ' version integer1')
+
+    def same(self, left, right, label):
+        require(canonical(left) == canonical(right), label + ' binding mismatch')
+
+    def raw(self, ref, label='artifact', maximum=2*1024*1024):
+        _receipt_ref(self.root, ref)
+        key = (ref['revision'], ref['path'], ref['sha256'])
+        # Check the actual current component chain/link count even with cached Git bytes.
+        current = self.root / ref['path']
+        if current.exists() or current.is_symlink():
+            target = regular_file(self.root, ref['path'])
+            require(target.stat().st_nlink == 1, label + ' current artifact hardlink')
+        if key not in self.cache:
+            data, _ = _entry_blob(self.root, ref['revision'], ref['path'])
+            require(sha(data) == ref['sha256'], label + ' artifact ref digest')
+            self.cache[key] = data
+        data = self.cache[key]
+        require(len(data) <= maximum, label + ' size bound exceeded')
+        return data
+
+    def value(self, ref, label, canonical_bytes=True):
+        raw = self.raw(ref, label); value = parse_json(raw)
+        if canonical_bytes: require(raw == canonical(value) + b'\n', label + ' canonical JSON')
+        return value
+
+    def at(self, revision, path):
+        return _entry_blob(self.root, revision, path)
+
+    def environment(self, env):
+        self.obj(env, 'runtime variables', 'environment')
+        self.obj(env['runtime'], 'implementation version system machine', 'runtime')
+        for key, val in env['runtime'].items(): self.text(val, 'runtime ' + key)
+        require(env['variables'] == {'PYTHONDONTWRITEBYTECODE': '1'}, 'environment selected variables')
+
+    def producer(self, producer, mode):
+        _receipt_producer(producer)
+        require(producer['agent_id'] == 'wa123-capable-ci' and re.fullmatch('123-ci-' + mode + '-attempt[1-3]', producer['session_id']), 'producer session allocation attempt')
+
+    def identity(self, candidate, inputs):
+        validate_identity(candidate); self.environment(candidate['environment'])
+        require(candidate['repository'] == _WA123_ORIGIN and candidate['record_ownership'] == {}, 'candidate origin/record ownership')
+        selected = manifest(inputs)
+        require(candidate['source_tree'] == git(self.root, 'rev-parse', candidate['source_commit'] + '^{tree}').decode().strip(), 'candidate actual source tree')
+        for category in CATEGORIES:
+            require([e['path'] for e in candidate['assessed_inputs'][category]] == selected[category], 'candidate assessed inputs manifest')
+            for entry in candidate['assessed_inputs'][category]:
+                raw, executable = self.at(candidate['source_commit'], entry['path'])
+                require(sha(raw) == entry['sha256'] and executable is entry['executable'], 'protected source input digest/mode')
+                current = regular_file(self.root, entry['path'])
+                require(current.stat().st_nlink == 1 and sha(current.read_bytes()) == entry['sha256'] and bool(current.stat().st_mode & 0o111) is executable, 'protected current input digest/mode/hardlink')
+
+    def checkout(self, value, selection, candidate):
+        self.obj(value, 'sha tree event event_head event_base parents', 'checkout')
+        for key in ('sha', 'tree', 'event_head'): _bundle_hex(value[key], 40, 'checkout ' + key)
+        require(value['event'] in ('push', 'pull_request'), 'checkout event')
+        require(type(value['parents']) is list, 'checkout parents')
+        require(git(self.root, 'rev-parse', value['sha'] + '^{tree}').decode().strip() == value['tree'], 'checkout tree binding')
+        require(git(self.root, 'show', '-s', '--format=%P', value['sha']).decode().split() == value['parents'], 'checkout parents binding')
+        git(self.root, 'merge-base', '--is-ancestor', candidate['source_commit'], value['sha'])
+        if value['event'] == 'push': require(value['event_head'] == value['sha'] and value['event_base'] is None, 'checkout push head/base')
+        else:
+            _bundle_hex(value['event_base'], 40, 'checkout base')
+            require(value['event_head'] in value['parents'] and value['event_base'] in value['parents'], 'checkout PR merge parents')
+        raw, _ = self.at(value['sha'], _WA123_SELECTION)
+        require(raw == self.raw(selection, 'fixed CLI selection'), 'checkout fixed CLI selection input binding')
+        for category in CATEGORIES:
+            for entry in candidate['assessed_inputs'][category]:
+                raw, mode = self.at(value['sha'], entry['path'])
+                require(sha(raw) == entry['sha256'] and mode is entry['executable'], 'checkout protected input digest/mode')
+
+    def selection(self, reference, mode):
+        value = self.value(reference, mode + ' selection')
+        self.obj(value, 'schema_version mode repository_origin review_repository source_commit source_tree inputs contract_ref authority_ref prerequisites producer packet_base prior_ledger report_ref prompt_ref runner_ref adapter_ref evaluator_ref shadow_state_ref candidate a10_policy_ref capture_pack_ref', mode + ' selection')
+        self.version(value['schema_version'], mode + ' selection')
+        require(value['mode'] == mode and value['repository_origin'] == _WA123_ORIGIN and value['review_repository'] == _WA123_REPOSITORY, 'selection mode/repository binding')
+        self.producer(value['producer'], mode)
+        for key in ('source_commit', 'source_tree', 'packet_base'): _bundle_hex(value[key], 40, 'selection ' + key)
+        git(self.root, 'merge-base', '--is-ancestor', value['packet_base'], value['source_commit'])
+        for key in ('contract_ref', 'authority_ref', 'report_ref', 'prompt_ref', 'runner_ref', 'adapter_ref', 'evaluator_ref', 'shadow_state_ref'): self.raw(value[key], 'selection ' + key)
+        if mode == 'capture': require(all(value[k] is None for k in ('candidate', 'a10_policy_ref', 'capture_pack_ref')), 'capture selection future input')
+        else: require(all(value[k] is not None for k in ('candidate', 'a10_policy_ref', 'capture_pack_ref')), 'verify selection missing input')
+        paths = {'prompt_ref': 'templates/convergent-review-prompt.md', 'runner_ref': 'tools/workflow_assurance_ci.py', 'adapter_ref': 'tools/linux_trial_sandbox.sh', 'evaluator_ref': 'tools/evaluate_convergent_review_prompt.py'}
+        for key, path in paths.items():
+            require(value[key]['path'] == path, 'selected runner/adapter/evaluator/prompt path')
+            raw, mode_bit = self.at(value['source_commit'], path)
+            require(raw == self.raw(value[key], key), 'selected executable/prompt protected source binding')
+            if key != 'prompt_ref': require(mode_bit or key == 'evaluator_ref', 'selected runner/adapter executable mode')
+        return value
+
+    def authority(self, selection):
+        value = self.value(selection['authority_ref'], 'authority')
+        self.obj(value, 'schema_version role purpose repository owner gate operator_instruction_verbatim scope source_authority_ref mapping', 'authority')
+        self.version(value['schema_version'], 'authority')
+        require(value['role'] == 'Root' and value['purpose'] == 'experiment-only' and value['repository'] == _WA123_ORIGIN, 'authority role/repository')
+        original = self.value(value['source_authority_ref'], 'original authority', False)
+        require(value['source_authority_ref']['path'] == '.agent/evidence/phase018-preflight/activation-authority.json' and original['repository'] == _WA123_REPOSITORY + ' only', 'original authority repository/path')
+        for key in ('owner', 'gate', 'operator_instruction_verbatim'):
+            self.text(value[key], 'authority ' + key); require(value[key] == original[key], 'authority original instruction/owner/gate')
+        self.obj(value['scope'], 'phase features original_estimate_lines ceiling_130pct', 'authority scope')
+        self.same(value['scope'], {k: original['scope'][k] for k in value['scope']}, 'original authority scope')
+        require(value['scope'] == {'phase':'018-workflow-assurance-controls','features':['119','120','121','122','123'],'original_estimate_lines':7200,'ceiling_130pct':9360}, 'authority original scope constants')
+        self.same(value['mapping'], {'repository_origin':_WA123_ORIGIN,'review_repository':_WA123_REPOSITORY}, 'authority selected mapping')
+        return value
+
+    def prerequisites(self, selection, candidate):
+        contract = self.value(selection['contract_ref'], 'approved contract', False)
+        _receipt_contract(self.root, contract, '123')
+        anchor, _ = self.at(candidate['source_commit'], '.agent/contracts/123.json')
+        require(anchor == self.raw(selection['contract_ref'], 'approved contract'), 'approved contract protected candidate input')
+        ae = contract.get('approval_evidence', {})
+        self.obj(ae, 'mode_a contract_review proposal_sha256 proposal_revision', 'approval metadata')
+        _bundle_hex(ae['proposal_sha256'], 64, 'approval proposal digest'); _bundle_hex(ae['proposal_revision'], 40, 'approval proposal revision')
+        proposed, _ = self.at(ae['proposal_revision'], '.agent/contracts/123.json')
+        require(sha(proposed) == ae['proposal_sha256'], 'approval proposal digest binding')
+        rows = selection['prerequisites']; require(type(rows) is list, 'prerequisite list')
+        seen = set(); reviewers = []
+        for row in rows:
+            self.obj(row, 'kind artifact feature_id assessed_revision contract_sha256', 'prerequisite')
+            require(row['kind'] in ('mode-a','contract-review','approved-contract','provisional-bundle') and row['feature_id']=='123' and row['kind'] not in seen, 'prerequisite kind/duplicate')
+            seen.add(row['kind']); _bundle_hex(row['assessed_revision'],40,'prerequisite revision'); _bundle_hex(row['contract_sha256'],64,'prerequisite contract')
+            value = self.value(row['artifact'], 'prerequisite ' + row['kind'], False)
+            if row['kind']=='approved-contract':
+                require(row['artifact']==selection['contract_ref'] and row['assessed_revision']==row['artifact']['revision'] and row['contract_sha256']==row['artifact']['sha256'], 'approved-contract prerequisite binding')
+            else:
+                _receipt_gate(value)
+                if row['kind']=='mode-a':
+                    require(row['artifact']['path']==ae['mode_a'] and value['feature']=='123' and value['reviewed_commit']==row['assessed_revision'] and value['contract_sha256']==row['contract_sha256']==ae['proposal_sha256'], 'ModeA approval prerequisite binding')
+                    reviewers.append(value['reviewer'])
+                elif row['kind']=='contract-review':
+                    _receipt_schema(self.root,value,'contract_review')
+                    require(row['artifact']['path']==ae['contract_review'] and value['feature']=='123' and value['reviewed_revision']==row['assessed_revision'] and value['proposal_sha256']==row['contract_sha256']==ae['proposal_sha256'], 'contract-review approval prerequisite binding')
+                    reviewers.append(value.get('reviewer',value.get('actor')))
+                else:
+                    require(value['feature_id']=='123' and value['reviewed_revision']==row['assessed_revision'] and value['approved_contract_sha256']==row['contract_sha256']==selection['contract_ref']['sha256'], 'provisional-bundle approval prerequisite binding')
+                    self.text(value['reviewer'],'provisional reviewer')
+        require(seen=={'mode-a','contract-review','approved-contract','provisional-bundle'} and len(set(reviewers))==2, 'missing bound dual approval/provisional prerequisites')
+        return contract
+
+    def shadow(self, selection):
+        state=self.value(selection['shadow_state_ref'],'shadow')
+        self.obj(state,'repository current_phase current_feature status updated_at scope_budget circuit_breaker history purpose','shadow')
+        _receipt_schema(self.root,state,'run_state')
+        require(state['repository']==_WA123_ORIGIN and state['current_phase']=='018-workflow-assurance-controls' and state['current_feature']=='123' and state['status']=='experiment-pending' and state['purpose']=='experiment-only', 'shadow experiment binding')
+        self.same(state['scope_budget'],dict(original_estimate_lines=7200,total_lines_changed=4303,per_feature=[]),'shadow scope')
+        require(state['history']==[] and state['circuit_breaker']=={},'shadow new experiment counters/history')
+        require(type(state['updated_at']) is str and state['updated_at'].endswith('Z'),'shadow time')
+        return state
+
+    def capture(self, reference, candidate, producer, label):
+        value=self.value(reference,label+' capture')
+        self.obj(value,'schema_version argv cwd revision candidate_sha256 environment producer executed outcome exit_code stdout stderr',label+' capture')
+        self.version(value['schema_version'],label+' capture')
+        require(type(value['argv']) is list and value['argv'] and all(type(x) is str and x for x in value['argv']),label+' capture argv')
+        require(type(value['cwd']) is str and Path(value['cwd']).is_absolute(),label+' capture cwd')
+        _bundle_hex(value['revision'],40,label+' capture revision');git(self.root,'merge-base','--is-ancestor',candidate['source_commit'],value['revision'])
+        require(value['executed'] is True and type(value['exit_code']) is int and value['exit_code']==0 and value['outcome']=='success',label+' capture executed exit outcome')
+        self.same(value['producer'],producer,label+' capture producer');self.same(value['environment'],candidate['environment'],label+' capture environment')
+        require(value['candidate_sha256']==sha(canonical(candidate)),label+' capture candidate digest')
+        self.raw(value['stdout'],label+' capture stdout').decode('utf8');self.raw(value['stderr'],label+' capture stderr').decode('utf8')
+        return value
+
+    def pack(self, raw, source):
+        import zlib
+        key=(sha(raw),source)
+        if key in self.bundle_cache:return self.bundle_cache[key]
+        require(len(raw)<=16*1024*1024,'bundle size limit')
+        header,sep,pack=raw.partition(b'\n\n'); lines=header.split(b'\n')
+        require(sep and len(lines)==3 and lines[0]==b'# v2 git bundle','bundle v2 header/ref count')
+        require(lines[1].startswith(('-'+source+' ').encode()) and len(lines[1])>42,'bundle prerequisite base')
+        match=re.fullmatch(rb'([0-9a-f]{40}) refs/wa123/proof',lines[2]);require(match is not None,'bundle advertised ref')
+        tip=match[1].decode();require(pack[:4]==b'PACK' and len(pack)>=32,'pack header truncated')
+        require(int.from_bytes(pack[4:8],'big') in (2,3),'pack version')
+        count=int.from_bytes(pack[8:12],'big');require(count<=100000,'pack object count bound')
+        offset=12; entries={}; resolved={}; by_oid={}
+        for _ in range(count):
+            start=offset;byte=pack[offset];offset+=1;kind=(byte>>4)&7;size=byte&15;shift=4
+            while byte&128:
+                byte=pack[offset];offset+=1;size|=(byte&127)<<shift;shift+=7;require(shift<=63,'pack size overflow')
+            require(size<=20*1024*1024,'pack object size bound')
+            base=None
+            if kind==6:
+                byte=pack[offset];offset+=1;distance=byte&127
+                while byte&128:byte=pack[offset];offset+=1;distance=((distance+1)<<7)+(byte&127)
+                base=start-distance
+            elif kind==7:base=pack[offset:offset+20].hex();offset+=20
+            else:require(kind in (1,2,3,4),'pack unknown object type')
+            decoder=zlib.decompressobj();data=decoder.decompress(pack[offset:],20*1024*1024+1)
+            require(decoder.eof and len(data)==size,'pack compressed size/truncation')
+            offset+=len(pack[offset:])-len(decoder.unused_data)
+            entries[start]=(kind,base,data)
+        require(offset+20==len(pack) and hashlib.sha1(pack[:offset]).digest()==pack[offset:],'pack trailing junk/checksum')
+        def delta(base,data):
+            cursor=0
+            def number():
+                nonlocal cursor
+                result=shift=0
+                while True:
+                    byte=data[cursor];cursor+=1;result|=(byte&127)<<shift;shift+=7
+                    if not byte&128:return result
+                    require(shift<=63,'pack delta varint')
+            require(number()==len(base),'pack delta base size');length=number();out=bytearray()
+            while cursor<len(data):
+                op=data[cursor];cursor+=1
+                if op&128:
+                    at=length_copy=0
+                    for bit in range(4):
+                        if op&(1<<bit):at|=data[cursor]<<(8*bit);cursor+=1
+                    for bit in range(3):
+                        if op&(16<<bit):length_copy|=data[cursor]<<(8*bit);cursor+=1
+                    length_copy=length_copy or 65536;require(at+length_copy<=len(base),'pack delta copy');out.extend(base[at:at+length_copy])
+                else:
+                    require(op>0 and cursor+op<=len(data),'pack delta literal');out.extend(data[cursor:cursor+op]);cursor+=op
+                require(len(out)<=20*1024*1024,'pack delta output bound')
+            require(len(out)==length,'pack delta result size');return bytes(out)
+        types={1:'commit',2:'tree',3:'blob',4:'tag'}
+        pending=set(entries)
+        while pending:
+            progress=False
+            for start in list(pending):
+                kind,base,data=entries[start]
+                if kind in types:otype=types[kind];body=data
+                else:
+                    if type(base) is int:
+                        if base not in resolved:continue
+                        otype,parent=resolved[base]
+                    else:
+                        if base in by_oid:otype,parent=by_oid[base]
+                        else:
+                            try:
+                                otype=git(self.root,'cat-file','-t',base).decode().strip();parent=git(self.root,'cat-file',otype,base)
+                            except AssuranceError:continue
+                    body=delta(parent,data)
+                oid=hashlib.sha1((otype+' '+str(len(body))+'\0').encode()+body).hexdigest()
+                require(oid not in by_oid,'pack duplicate object');resolved[start]=(otype,body);by_oid[oid]=(otype,body);pending.remove(start);progress=True
+            require(progress,'pack unresolved delta base')
+        expected={line.split()[0] for line in git(self.root,'rev-list','--objects',tip,'^'+source).decode().splitlines()}
+        require(set(by_oid)==expected,'pack undeclared/unreachable object inventory')
+        git(self.root,'merge-base','--is-ancestor',source,tip)
+        inventory=[]; previous=source
+        for revision in git(self.root,'rev-list','--reverse',source+'..'+tip).decode().splitlines():
+            require(git(self.root,'show','-s','--format=%P',revision).decode().split()==[previous],'bundle output commit ancestry')
+            changes=git(self.root,'diff-tree','--no-commit-id','--raw','-r','-z',revision).split(b'\0');changes=[x for x in changes if x]
+            require(len(changes)%2==0,'bundle raw tree diff')
+            for meta,name in zip(changes[::2],changes[1::2]):
+                old_mode,new_mode,old_oid,oid,status=meta.decode().lstrip(':').split();path=name.decode()
+                require(status=='A' and path.startswith(_WA123_PREFIX) and new_mode in ('100644','100755'),'bundle add-only prefix/protected intermediate path/mode')
+                data,_=self.at(revision,path)
+                inventory.append(dict(path=path,revision=revision,git_blob=oid,git_mode=new_mode,sha256=sha(data)))
+            previous=revision
+        inventory.sort(key=lambda x:(x['revision'],x['path']))
+        self.bundle_cache[key]=(tip,inventory)
+        return tip,inventory
+
+    def host(self, host, mode, selection_ref, selection, candidate):
+        import io
+        import zipfile
+        self.obj(host,'repository run_id attempt job_id job head_sha checkout_sha artifact_name artifact_sha256 metadata_ref job_log_ref',mode+' host')
+        require(host['repository']==_WA123_REPOSITORY and host['job']=='convergent_review','host repository/job')
+        for key in ('run_id','attempt','job_id'):self.integer(host[key],'host '+key,1)
+        metadata=self.value(host['metadata_ref'],mode+' metadata')
+        self.obj(metadata,'schema_version mode source_commit producer selection_ref invocation_ref run_id attempt job_id artifact_id artifact_name archive_ref fetches',mode+' metadata')
+        self.version(metadata['schema_version'],mode+' metadata')
+        require(metadata['mode']==mode and metadata['source_commit']==candidate['source_commit'],'metadata source/mode')
+        self.same(metadata['selection_ref'],selection_ref,'metadata selection');self.same(metadata['producer'],selection['producer'],'metadata producer')
+        for key in ('run_id','attempt','job_id','artifact_name'):require(metadata[key]==host[key],'host metadata '+key+' binding')
+        self.integer(metadata['artifact_id'],'artifact id',1)
+        require(host['artifact_name']=='wa123-'+mode+'-'+selection['producer']['session_id'],'host artifact name')
+        rows=metadata['fetches'];require(type(rows) is list and [r.get('kind') for r in rows]==['run','jobs','artifacts','job-log','archive'],'metadata fetch order')
+        expected=[['gh','api',f'repos/{_WA123_REPOSITORY}/actions/runs/{host["run_id"]}'],
+            ['gh','api',f'repos/{_WA123_REPOSITORY}/actions/runs/{host["run_id"]}/attempts/{host["attempt"]}/jobs?per_page=100'],
+            ['gh','api',f'repos/{_WA123_REPOSITORY}/actions/runs/{host["run_id"]}/artifacts?per_page=100'],
+            ['gh','run','view',str(host['run_id']),'--repo',_WA123_REPOSITORY,'--job',str(host['job_id']),'--log'],
+            ['gh','api',f'repos/{_WA123_REPOSITORY}/actions/artifacts/{metadata["artifact_id"]}/zip']]
+        outputs={}
+        for row,argv in zip(rows,expected):
+            self.obj(row,'kind argv cwd revision actual_exit stdout stderr',mode+' fetch')
+            require(type(row['actual_exit']) is int and row['actual_exit']==0,'fetch actual exit integer0')
+            self.same(row['argv'],argv,'fetch command argv');require(type(row['cwd']) is str and Path(row['cwd']).is_absolute(),'fetch cwd')
+            _bundle_hex(row['revision'],40,'fetch exercised revision')
+            outputs[row['kind']]=self.raw(row['stdout'],'raw '+row['kind'],32*1024*1024 if row['kind']=='archive' else 16*1024*1024 if row['kind']=='job-log' else 2*1024*1024)
+            self.raw(row['stderr'],'fetch stderr').decode('utf8')
+        require(rows[-1]['stdout']==metadata['archive_ref'] and rows[3]['stdout']==host['job_log_ref'],'metadata archive/log ref binding')
+        archive=outputs['archive'];require(sha(archive)==host['artifact_sha256'],'archive artifact hash digest')
+        require(len(archive)<=32*1024*1024,'archive size limit')
+        with zipfile.ZipFile(io.BytesIO(archive)) as z:
+            infos=z.infolist();require(len(infos)==3 and {i.filename for i in infos}=={'proof.bundle','manifest.json','invocation.json'},'ZIP entry duplicate/extra/path')
+            require(sum(i.file_size for i in infos)<=20*1024*1024,'ZIP entry decompression size bound')
+            for info in infos:
+                mode_bits=info.external_attr>>16
+                require(not info.is_dir() and not info.flag_bits&1 and stat.S_IFMT(mode_bits) in (0,stat.S_IFREG),'ZIP entry regular mode/symlink/encryption')
+                limit=16*1024*1024 if info.filename=='proof.bundle' else 2*1024*1024
+                require(info.file_size<=limit,'ZIP entry size bound')
+            bundle=z.read('proof.bundle');manifest_raw=z.read('manifest.json');invocation_raw=z.read('invocation.json')
+        manifest_value=parse_json(manifest_raw);require(manifest_raw==canonical(manifest_value)+b'\n','manifest canonical JSON')
+        self.obj(manifest_value,'schema_version mode source_commit output_tip bundle_sha256 bundle_size inventory','manifest')
+        self.version(manifest_value['schema_version'],'manifest')
+        require(manifest_value['mode']==mode and manifest_value['source_commit']==candidate['source_commit'],'manifest source/mode')
+        require(type(manifest_value['bundle_size']) is int and manifest_value['bundle_size']==len(bundle) and manifest_value['bundle_sha256']==sha(bundle),'manifest bundle size/hash')
+        tip,inventory=self.pack(bundle,candidate['source_commit'])
+        require(tip==manifest_value['output_tip'],'manifest bundle output tip')
+        self.same(manifest_value['inventory'],inventory,'artifact inventory')
+        invocation=self.value(metadata['invocation_ref'],mode+' invocation')
+        require(invocation_raw==self.raw(metadata['invocation_ref']),'archive invocation bytes')
+        self.obj(invocation,'schema_version mode producer selection_ref source_commit checkout environment argv cwd output_tip bundle_sha256 manifest_sha256 result_refs actual_exit',mode+' invocation')
+        self.version(invocation['schema_version'],'invocation')
+        require(invocation['mode']==mode and invocation['source_commit']==candidate['source_commit'],'invocation source/mode')
+        self.same(invocation['selection_ref'],selection_ref,'invocation selection');self.same(invocation['producer'],selection['producer'],'invocation producer')
+        self.same(invocation['environment'],candidate['environment'],'invocation environment')
+        require(type(invocation['actual_exit']) is int and invocation['actual_exit']==0,'invocation actual exit')
+        require(type(invocation['cwd']) is str and Path(invocation['cwd']).is_absolute(),'invocation cwd')
+        require(type(invocation['argv']) is list and len(invocation['argv'])==7 and invocation['argv'][1:6]==['tools/workflow_assurance_ci.py',mode,'--selection',_WA123_SELECTION,'--output'] and Path(invocation['argv'][0]).is_absolute() and Path(invocation['argv'][6]).is_absolute(),'invocation exact argv')
+        require(invocation['output_tip']==tip and invocation['bundle_sha256']==sha(bundle) and invocation['manifest_sha256']==sha(manifest_raw),'invocation manifest/hash binding')
+        self.checkout(invocation['checkout'],selection_ref,candidate)
+        require(invocation['checkout']['sha']==host['checkout_sha'] and invocation['checkout']['event_head']==host['head_sha'],'host checkout/head binding')
+        log=outputs['job-log'].decode('utf8');markers=re.findall(r'WA123_INVOCATION=(\{[^\r\n]*\})$',log,re.M)
+        require(len(markers)==1 and markers[0].encode()+b'\n'==invocation_raw,'job log unique invocation marker binding')
+        run=parse_json(outputs['run']);jobs=parse_json(outputs['jobs']);artifacts=parse_json(outputs['artifacts'])
+        require(type(run) is dict,'raw run object')
+        for key in ('id','run_attempt'):self.integer(run.get(key),'raw run '+key,1)
+        require(run['id']==host['run_id'] and run['run_attempt']==host['attempt'] and run.get('name')=='compliance' and run.get('status')=='completed' and run.get('conclusion')=='success','raw run id/status/conclusion metadata')
+        require(run.get('head_sha')==host['head_sha'] and run.get('event')==invocation['checkout']['event'] and type(run.get('repository')) is dict and run['repository'].get('full_name')==_WA123_REPOSITORY,'raw run head/event/repository binding')
+        require(type(jobs) is dict and type(jobs.get('total_count')) is int and jobs['total_count']==5 and type(jobs.get('jobs')) is list and len(jobs['jobs'])==5,'raw jobs five/count/page')
+        require({j.get('name') for j in jobs['jobs']}=={'validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'} and len({j.get('id') for j in jobs['jobs']})==5,'raw jobs names/id uniqueness')
+        selected_job=None
+        for job in jobs['jobs']:
+            for key in ('id','run_id','run_attempt'):self.integer(job.get(key),'raw job '+key,1)
+            require(job['run_id']==host['run_id'] and job['run_attempt']==host['attempt'] and job.get('head_sha')==host['head_sha'] and job.get('status')=='completed' and job.get('conclusion')=='success','raw job run/head/success binding')
+            require(type(job.get('steps')) is list,'job steps list')
+            numbers=[]
+            for step in job['steps']:
+                numbers.append(self.integer(step.get('number'),'step number',1));self.text(step.get('name'),'step name')
+                require(type(step.get('status')) is str and (step.get('conclusion') is None or type(step.get('conclusion')) is str),'step status/conclusion types')
+            require(len(numbers)==len(set(numbers)),'duplicate job step number')
+            if job['id']==host['job_id'] and job['name']=='convergent_review':selected_job=job
+        require(selected_job is not None,'selected host job id binding')
+        for name in ('WA123 '+mode,'Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py','Run required isolation suite'):
+            matches=[s for s in selected_job['steps'] if s['name']==name]
+            require(len(matches)==1 and matches[0]['status']=='completed' and matches[0]['conclusion']=='success','required job step success: '+name)
+        require(type(artifacts) is dict and type(artifacts.get('total_count')) is int and 1<=artifacts['total_count']<=100 and type(artifacts.get('artifacts')) is list and len(artifacts['artifacts'])==artifacts['total_count'],'artifact pagination/count')
+        ids=set();matches=[]
+        for artifact in artifacts['artifacts']:
+            self.integer(artifact.get('id'),'artifact id',1);self.integer(artifact.get('size_in_bytes'),'artifact size',1)
+            require(artifact['id'] not in ids and type(artifact.get('expired')) is bool and type(artifact.get('name')) is str,'artifact id/type/duplicate');ids.add(artifact['id'])
+            if artifact['name']==host['artifact_name']:matches.append(artifact)
+        require(len(matches)==1 and not matches[0]['expired'] and matches[0]['id']==metadata['artifact_id'],'selected artifact expired/id')
+        require(matches[0]['size_in_bytes']==len(archive),'artifact archive size length')
+        return invocation,bundle,inventory
+
+    def replay(self, evidence, selection):
+        try:
+            import convergent_review as cr
+        except ModuleNotFoundError:
+            from tools import convergent_review as cr
+        ref=evidence['replay_ref'];replay=self.value(ref,'replay');cr.validate_replay(replay)
+        prefix=ref['path'].rsplit('/',1)[0]+'/'
+        def read(path):
+            relative_path(path);raw,_=self.at(ref['revision'],prefix+path);return raw
+        ledger_raw=read('ledger.json');markdown=read('review.md')
+        require(sha(ledger_raw)==replay['output_digests']['ledger'] and sha(markdown)==replay['output_digests']['markdown'],'replay output digests')
+        ledger=parse_json(ledger_raw);cr.validate_ledger(ledger)
+        require(ledger_raw==cr.canonical_json_bytes(ledger) and markdown==cr.render_markdown(ledger).encode() and cr.canonical_json_bytes(cr.extract_embedded_ledger(markdown.decode()))==ledger_raw,'replay canonical ledger/markdown')
+        packet=prior=None;pd=prior_digest=None;trials=[];trial_digests={};trial_raw={}
+        for artifact in replay['artifacts']:
+            raw=read(artifact['path']);require(len(raw)==artifact['bytes'] and sha(raw)==artifact['digest'],'replay retained artifact digest')
+            value=parse_json(raw);require(raw==cr.canonical_json_bytes(value),'replay retained canonical JSON')
+            if artifact['role']=='packet':packet=value;pd=artifact['digest'];cr.validate_packet(packet)
+            elif artifact['role']=='trial':trials.append(value);trial_digests[artifact['trial_number']]=artifact['digest'];trial_raw[artifact['trial_number']]=raw
+            elif artifact['role']=='prior_ledger':prior=value;prior_digest=artifact['digest'];cr.validate_ledger(prior)
+            else:raise AssuranceError('replay unselected suppression')
+        require(packet is not None and packet['repository']==_WA123_REPOSITORY and packet['head_sha']==selection['source_commit'] and packet['base_sha']==selection['packet_base'] and packet['review_id']=='wa123-controls' and packet['mode']=='ordinary','replay packet selected identity/head/base')
+        require(replay['repository']==packet['repository'] and replay['head_sha']==packet['head_sha'] and replay['review_id']==packet['review_id'],'replay identity binding')
+        if selection['prior_ledger'] is None:require(prior is None,'replay unexpected prior ledger')
+        else:require(prior_digest==selection['prior_ledger']['sha256'] and self.raw(selection['prior_ledger'])==cr.canonical_json_bytes(prior),'selected prior ledger digest')
+        for trial in trials:cr.validate_trial(trial,packet,pd,'replay trial')
+        computed=cr.converge_documents(packet,pd,trials,trial_digests,prior,prior_digest,[])
+        require(cr.canonical_json_bytes(computed)==ledger_raw,'replay convergence mismatch')
+        evaluation=self.value(evidence['evaluation_ref'],'evaluation receipt')
+        self.obj(evaluation,'schema_version packet_digest prompt_template_digest runner_digest trials review_replay_digest','evaluation receipt')
+        require(evaluation['schema_version']==cr.SCHEMA_VERSION and evaluation['packet_digest']==pd and evaluation['prompt_template_digest']==selection['prompt_ref']['sha256'] and evaluation['runner_digest']==selection['runner_ref']['sha256'] and evaluation['review_replay_digest']==ref['sha256'],'evaluation selected input/replay digest')
+        rows=evidence['trial_provenance'];require(type(rows) is list and len(rows)==3 and [r.get('number') for r in rows]==[1,2,3],'three trial provenance length/order')
+        require(type(evaluation['trials']) is list and len(evaluation['trials'])==3,'evaluation three receipts')
+        try:
+            import evaluate_convergent_review_prompt as evaluator
+        except ModuleNotFoundError:
+            from tools import evaluate_convergent_review_prompt as evaluator
+        for number,(row,receipt) in enumerate(zip(rows,evaluation['trials']),1):
+            self.obj(row,'number packet_ref prompt_ref output_ref stdout_ref stderr_ref evaluation_receipt_ref invocation runner_ref adapter_ref evaluator_ref boundary_ref','trial provenance')
+            self.obj(receipt,'trial_number prompt_digest trial_digest isolated_packet_digest runner_exit isolation_adapter_digest','trial evaluation receipt')
+            require(type(row['number']) is int and type(receipt['trial_number']) is int and receipt['trial_number']==number and type(receipt['runner_exit']) is int and receipt['runner_exit']==0,'trial receipt number/exit integer')
+            require(receipt['isolated_packet_digest']==pd and receipt['isolation_adapter_digest']==selection['adapter_ref']['sha256'],'trial adapter/packet digest')
+            for key in ('runner_ref','adapter_ref','evaluator_ref'):self.same(row[key],selection[key],'trial selected '+key)
+            self.same(row['boundary_ref'],evidence['capability_ref'],'trial boundary provenance');self.same(row['evaluation_receipt_ref'],evidence['evaluation_ref'],'trial evaluation receipt ref')
+            for key,suffix in [('packet_ref','packet.json'),('prompt_ref','prompt.md'),('output_ref','trial.json'),('stdout_ref','runner.stdout'),('stderr_ref','runner.stderr')]:
+                require(row[key]['path'].endswith('/trial-'+str(number)+'/'+suffix),'trial provenance path binding '+key)
+            require(self.raw(row['packet_ref'],'trial packet')==cr.canonical_json_bytes(packet) and self.raw(row['output_ref'],'trial output')==trial_raw[number],'trial retained packet/output bytes')
+            require(receipt['trial_digest']==row['output_ref']['sha256'] and receipt['prompt_digest']==row['prompt_ref']['sha256'],'trial output/prompt receipt digest')
+            self.raw(row['stdout_ref'],'trial stdout').decode();self.raw(row['stderr_ref'],'trial stderr').decode()
+            argv=row['invocation'];require(type(argv) is list and len(argv) in (15,17),'trial adapter invocation argv')
+            require(argv[1]=='--root' and argv[3]=='--runner' and argv[5]=='--' and argv[6]==argv[4] and argv[7]=='--prompt' and argv[9]=='--packet' and argv[11]=='--trial-number' and argv[12]==str(number) and argv[13]=='--output','trial adapter invocation structure')
+            require(Path(argv[0]).name=='linux_trial_sandbox.sh' and Path(argv[4]).name=='workflow_assurance_ci.py' and Path(argv[2]).name=='trial-'+str(number),'trial selected adapter/runner/root path')
+            require(argv[8]==str(Path(argv[2])/'prompt.md') and argv[10]==str(Path(argv[2])/'packet.json') and argv[14]==str(Path(argv[2])/'trial.json'),'trial invocation input/output paths')
+            prior_path=Path(argv[2])/'prior-ledger.json' if prior is not None else None
+            require((len(argv)==17 and argv[15:]==['--prior-ledger',str(prior_path)]) if prior is not None else len(argv)==15,'trial prior invocation')
+            rendered=evaluator.render_prompt(self.raw(selection['prompt_ref']).decode(),Path(argv[10]),number,Path(argv[14]),prior_path).encode()
+            require(self.raw(row['prompt_ref'],'trial prompt')==rendered,'trial rendered prompt binding')
+        report=self.value(selection['report_ref'],'report')
+        self.obj(report,'final_verdict issues missing_acceptance_coverage unsupported_claims required_fixes','report')
+        self.obj(report['final_verdict'],'approved','report verdict')
+        require(type(report['final_verdict']['approved']) is bool and all(type(report[k]) is list for k in ('issues','missing_acceptance_coverage','unsupported_claims','required_fixes')),'report boolean/array types')
+        mapped=convergent_agf_verdict(ledger,report,expected_repository=_WA123_REPOSITORY,expected_head_sha=selection['source_commit'])
+        _receipt_gate(mapped)
+        self.same(mapped,self.value(evidence['a11_result_ref'],'A11 mapped result'),'A11 report/ledger result')
+        return mapped
+
+    def capability(self, evidence, capture_selection, candidate):
+        value=self.value(evidence['capability_ref'],'capability')
+        self.obj(value,'schema_version source_commit checkout_sha environment producer boundary isolation','capability')
+        self.version(value['schema_version'],'capability')
+        require(value['source_commit']==candidate['source_commit'] and value['checkout_sha']==evidence['checkout']['sha'],'capability source/checkout')
+        self.same(value['environment'],candidate['environment'],'capability environment/runtime');self.same(value['producer'],capture_selection['producer'],'capability producer')
+        for key,path in [('boundary','.github/scripts/test_sandbox_boundaries.py'),('isolation','tools/test_convergent_review.py')]:
+            process=value[key];self.obj(process,'argv cwd revision executed actual_exit stdout stderr','capability '+key+' process')
+            require(process['executed'] is True and type(process['actual_exit']) is int and process['actual_exit']==0,'capability '+key+' process exit')
+            require(type(process['argv']) is list and len(process['argv'])==2 and Path(process['argv'][0]).is_absolute() and process['argv'][1]==path,'capability '+key+' argv')
+            require(type(process['cwd']) is str and Path(process['cwd']).is_absolute(),'capability process cwd')
+            git(self.root,'merge-base','--is-ancestor',candidate['source_commit'],process['revision'])
+            stdout=self.raw(process['stdout'],'capability '+key+' stdout').decode();self.raw(process['stderr'],'capability stderr').decode()
+            if key=='boundary':require(stdout.splitlines().count('SANDBOX BOUNDARIES PASS: intact 0; isolated omission controls 40/41/42; unexpected execution errors rejected')==1,'capability boundary diagnostic')
+        return value
+
+    def a10(self, evidence, selection, capture_selection, candidate, verify_invocation):
+        policy=self.value(selection['a10_policy_ref'],'A10 policy')
+        _receipt_policy(self.root,policy)
+        require(policy['stage']=='source-ready' and policy['feature_id']=='123' and policy['operation_id']=='123-ci-capture' and policy['repository']==_WA123_ORIGIN,'A10 policy stage/operation')
+        self.same(policy['candidate'],candidate,'A10 policy candidate');self.same(policy['producer'],capture_selection['producer'],'A10 captured producer')
+        self.same(policy['contract'],capture_selection['contract_ref'],'A10 contract');self.same(policy['prerequisites'],capture_selection['prerequisites'],'A10 prerequisites')
+        require(policy['from_status']=='experiment-pending' and policy['to_status']=='experiment-source-ready','A10 transition status')
+        require(type(policy['at']) is str and policy['at'].endswith('Z'),'A10 transition time')
+        operator=self.value(policy['operator'],'A10 operator')
+        self.obj(operator,'schema_version role repository feature_id stage candidate_sha256 approved authority_ref owner gate scope','A10 operator')
+        self.version(operator['schema_version'],'A10 operator')
+        authority=self.authority(capture_selection)
+        require(operator['role']=='Root' and operator['approved'] is True and operator['repository']==_WA123_ORIGIN and operator['feature_id']=='123' and operator['stage']=='source-ready' and operator['candidate_sha256']==sha(canonical(candidate)),'A10 operator binding')
+        self.same(operator['authority_ref'],capture_selection['authority_ref'],'A10 operator authority')
+        for key in ('owner','gate','scope'):self.same(operator[key],authority[key],'A10 operator '+key)
+        receipt=self.value(evidence['a10_receipt_ref'],'A10 receipt')
+        self.obj(receipt,'schema_version repository feature_id stage operation_id status candidate producer contract_ref operator_ref prerequisites checks verdict','A10 receipt')
+        self.version(receipt['schema_version'],'A10 receipt')
+        require(receipt['status']=='passed','A10 receipt passed status')
+        for key in ('repository','feature_id','stage','operation_id','candidate','producer','prerequisites'):self.same(receipt[key],policy[key],'A10 receipt '+key)
+        self.same(receipt['contract_ref'],policy['contract'],'A10 receipt contract');self.same(receipt['operator_ref'],policy['operator'],'A10 receipt operator')
+        self.obj(receipt['verdict'],'final_verdict issues missing_acceptance_coverage unsupported_claims','A10 receipt verdict');_receipt_gate(receipt['verdict'])
+        require(type(policy['commands']) is list and len(policy['commands'])==1 and type(receipt['checks']) is list and len(receipt['checks'])==1,'A10 command/check coverage')
+        command=policy['commands'][0];check=receipt['checks'][0]
+        self.obj(command,'argv expected_exit proof_kind diagnostic capture','A10 command')
+        self.obj(check,'argv executed outcome exit_code stdout stderr capture','A10 check')
+        require(type(command['expected_exit']) is int and command['expected_exit']==0 and command['proof_kind']=='success' and command['diagnostic']=='WA123_A11_APPROVED','A10 expected command policy')
+        self.same(command['capture'],evidence['a11_capture_ref'],'A10 selected actual capture');self.same(check['capture'],command['capture'],'A10 check capture')
+        capture=self.capture(evidence['a11_capture_ref'],candidate,capture_selection['producer'],'A11')
+        self.same(capture['argv'],command['argv'],'A10 actual argv');self.same(check['argv'],capture['argv'],'A10 check argv')
+        require(check['executed'] is True and type(check['exit_code']) is int and check['exit_code']==0 and check['outcome']=='success','A10 check exit/outcome')
+        for key in ('stdout','stderr'):self.same(check[key],capture[key],'A10 check '+key)
+        require('WA123_A11_APPROVED' in self.raw(capture['stdout']).decode().splitlines(),'A11 actual map diagnostic')
+        argv=capture['argv'];require(len(argv)==9 and argv[1:5]==['tools/workflow_assurance_ci.py','map','--selection',_WA123_PREFIX+'inputs/selection-capture.json'] and argv[5]=='--evaluation' and argv[7]=='--output','A11 map command argv')
+        copied,_=self.at(capture['revision'],_WA123_PREFIX+'inputs/selection-capture.json')
+        require(copied==self.raw(evidence['capture_selection_ref']),'A11 selected input copy')
+        require(policy['recovery']==evidence['a10_receipt_ref'],'A10 selected recovery receipt')
+        state=self.shadow(capture_selection)
+        digest=sha(canonical(receipt));event=dict(at=policy['at'],event='wa-receipt-transition',detail='Receipt '+policy['operation_id']+' advanced 123:source-ready ('+digest+')',operation_id=policy['operation_id'],feature_id='123',stage='source-ready',candidate_sha256=sha(canonical(candidate)),receipt_sha256=digest)
+        advanced=copy.deepcopy(state);advanced['status']=policy['to_status'];advanced['updated_at']=policy['at'];advanced['history'].append(event)
+        verify_record_update(state,advanced,['/status','/updated_at','/history'])
+        result=self.value(evidence['a10_result_ref'],'A10 result')
+        self.obj(result,'receipt advance noop republish rerun_required conflict_rejected','A10 result')
+        self.same(result['receipt'],receipt,'A10 verified receipt')
+        for key,action,expected_state,expected_receipt in [('advance','advance',advanced,receipt),('noop','noop',advanced,receipt),('republish','republish',state,receipt),('rerun_required','rerun-required',state,None)]:
+            item=result[key];self.obj(item,'action state receipt reason','A10 transition '+key)
+            require(item['action']==action,'A10 transition action '+key);self.same(item['state'],expected_state,'A10 transition state/history '+key);self.same(item['receipt'],expected_receipt,'A10 transition receipt '+key);self.text(item['reason'],'A10 transition reason')
+            _receipt_schema(self.root,item['state'],'run_state')
+        require(result['conflict_rejected'] is True,'A10 conflict rejection not exercised')
+        absent=copy.deepcopy(policy['recovery']);absent['path']+='.missing-wa123'
+        require(not git(self.root,'ls-tree',absent['revision'],'--',absent['path']),'A10 recovery missing path actually absent')
+        capture=self.capture(evidence['a10_capture_ref'],candidate,selection['producer'],'A10')
+        self.same(capture['argv'],verify_invocation['argv'],'A10 capture invocation argv')
+        require(capture['cwd']==verify_invocation['cwd'] and capture['revision']==verify_invocation['checkout']['sha'],'A10 capture cwd/revision verify invocation checkout binding')
+        require(self.raw(capture['stdout'])==self.raw(evidence['a10_result_ref']),'A10 actual result stdout')
+
+    def verify(self, evidence, policy):
+        json_value(policy);json_value(evidence)
+        self.obj(policy,'schema_version role repository_origin review_repository feature_id selection_ref evidence_ref hosted_review_ref approved','controls policy')
+        self.version(policy['schema_version'],'controls policy')
+        require(policy['role']=='Root' and policy['approved'] is True and policy['repository_origin']==_WA123_ORIGIN and policy['review_repository']==_WA123_REPOSITORY and policy['feature_id']=='123','controls selected Root policy')
+        self.obj(evidence,'schema_version candidate checkout capture_selection_ref verify_selection_ref evaluation_ref replay_ref trial_provenance a11_capture_ref a11_result_ref a10_receipt_ref a10_result_ref a10_capture_ref capability_ref capture_host verify_host pack_ref inventory','controls evidence')
+        self.version(evidence['schema_version'],'controls evidence')
+        self.same(evidence,self.value(policy['evidence_ref'],'selected evidence'),'controls selected evidence')
+        self.same(policy['selection_ref'],evidence['verify_selection_ref'],'controls policy verify selection')
+        capture_selection=self.selection(evidence['capture_selection_ref'],'capture');selection=self.selection(evidence['verify_selection_ref'],'verify')
+        for key in capture_selection:
+            if key not in ('mode','candidate','a10_policy_ref','capture_pack_ref','producer'):self.same(capture_selection[key],selection[key],'capture/verify selection '+key)
+        candidate=evidence['candidate'];self.identity(candidate,selection['inputs']);self.same(candidate,selection['candidate'],'selected candidate identity')
+        require(candidate['source_commit']==selection['source_commit'] and candidate['source_tree']==selection['source_tree'],'candidate selected source/tree')
+        self.prerequisites(capture_selection,candidate);self.authority(capture_selection);self.shadow(capture_selection)
+        capture_inv,capture_bundle,capture_inventory=self.host(evidence['capture_host'],'capture',evidence['capture_selection_ref'],capture_selection,candidate)
+        verify_inv,verify_bundle,verify_inventory=self.host(evidence['verify_host'],'verify',evidence['verify_selection_ref'],selection,candidate)
+        self.same(evidence['checkout'],capture_inv['checkout'],'Evidence capture checkout')
+        require(self.raw(selection['capture_pack_ref'],'capture bundle',16*1024*1024)==capture_bundle,'selected capture bundle bytes')
+        require(self.raw(evidence['pack_ref'],'verify bundle',16*1024*1024)==verify_bundle,'selected final pack bytes')
+        self.same(evidence['inventory'],verify_inventory,'evidence artifact inventory')
+        git(self.root,'merge-base','--is-ancestor',capture_inv['output_tip'],verify_inv['output_tip'])
+        self.same(capture_inv['environment'],verify_inv['environment'],'capture/verify environment')
+        self.same(capture_inv['result_refs'],[next(r for r in capture_inv['result_refs'] if r['path'].endswith('/candidate.json')),evidence['capability_ref'],evidence['evaluation_ref'],evidence['replay_ref'],evidence['a11_result_ref'],evidence['a11_capture_ref']],'capture invocation result refs')
+        self.same(self.value(capture_inv['result_refs'][0],'candidate artifact'),candidate,'capture candidate artifact')
+        self.same(verify_inv['result_refs'],[evidence['a10_receipt_ref'],evidence['a10_result_ref'],evidence['a10_capture_ref']],'verify invocation result refs')
+        self.capability(evidence,capture_selection,candidate);self.replay(evidence,capture_selection)
+        self.a10(evidence,selection,capture_selection,candidate,verify_inv)
+        review=self.value(policy['hosted_review_ref'],'hosted review')
+        self.obj(review,'schema_version role reviewer source_commit capture_selection_ref verify_selection_ref evidence_ref capture_host verify_host final_verdict issues missing_acceptance_coverage unsupported_claims evidence_files','hosted review')
+        self.version(review['schema_version'],'hosted review');self.text(review['reviewer'],'hosted reviewer')
+        require(review['role']=='Evaluator' and review['source_commit']==candidate['source_commit'],'hosted review role/source')
+        self.obj(review['final_verdict'],'approved','hosted review verdict');_receipt_gate(review)
+        for key in ('capture_selection_ref','verify_selection_ref','capture_host','verify_host'):self.same(review[key],evidence[key],'hosted review '+key)
+        self.same(review['evidence_ref'],policy['evidence_ref'],'hosted review evidence')
+        require(type(review['evidence_files']) is list and review['evidence_files'],'hosted review evidence paths')
+        for path in review['evidence_files']:relative_path(path)
+        return dict(schema_version=1,feature_id='123',source_commit=candidate['source_commit'],checkout_sha=evidence['checkout']['sha'],candidate_sha256=sha(canonical(candidate)),capture_run_id=evidence['capture_host']['run_id'],verify_run_id=evidence['verify_host']['run_id'],a11_verdict='approve',a10_receipt_sha256=evidence['a10_receipt_ref']['sha256'],transition_actions=['advance','noop','republish','rerun-required'],hosted_review_sha256=policy['hosted_review_ref']['sha256'])
+
+
+def verify_controls_ready(repo, evidence, *, policy):
+    """Observe selected hosted A11/A10 proof without running historical commands."""
+    try:
+        return copy.deepcopy(_ControlsProof(repo).verify(evidence,policy))
+    except AssuranceError:
+        raise
+    except (OSError,ValueError,TypeError,KeyError,AttributeError,IndexError,StopIteration,RecursionError,RuntimeError) as exc:
+        raise AssuranceError('controls proof invalid: '+str(exc)[:600]) from exc
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
