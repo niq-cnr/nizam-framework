@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T14:58:12.491824+00:00",
+  "updated_at": "2026-10-15T15:26:14.059716+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1618,7 +1618,7 @@
     "123-ci-verify": {
       "attempts": 1,
       "limit": 3,
-      "status": "published-running",
+      "status": "active-job-success-aggregate-pending",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-ci-verify1-release.json",
       "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
@@ -1634,7 +1634,9 @@
       "observed_pr_merge_sha": "e3ce1bb21e6111f80b6ede02f47c2fde2efb6ce8",
       "retention_merge_revision": "d1ad78dc6da0547d29ee360d184bf534b077f66d",
       "actual_checkout_corroboration": "pending-completed-job-log",
-      "job_id": 116487976586
+      "job_id": 116487976586,
+      "observed_artifact_id": 11984023820,
+      "active_stage_conclusion": "success"
     },
     "123-ci-final-integration": {
       "attempts": 0,
@@ -7240,6 +7242,12 @@
       "event": "123-ci-verify1-live-five-jobs-observed",
       "detail": "ActualRESTrun/jobs captures0; head1d62/attempt1/fiveIDs bind. validate/bootstrap/selfgovernancesuccess; fixture/convergentpending, notfailure. No rerun/cancellation/headpush; actual producer/Host result stillpending.",
       "evidence": ".agent/evidence/123/verify1-live-observation1/jobs.stdout"
+    },
+    {
+      "at": "2026-10-15T15:26:14.059716+00:00",
+      "event": "123-ci-verify1-active-job-success-artifact-observed",
+      "detail": "Actual verify1 active assurance job completed success and artifact observed; aggregate fixture job still pending, no completed Host or A10 payload inspection yet.",
+      "evidence": ".agent/evidence/123/verify1-completed-stage-observation/job.stdout"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7801,7 +7809,7 @@
       }
     ]
   },
-  "last_action": "Actual verify1 still in progress: three jobs passed, two fixture-heavy jobs running; restored synthetic witnesses independently admitted.",
+  "last_action": "Actual verify1 active assurance job completed success and artifact observed; aggregate fixture job still pending, no completed Host or A10 payload inspection yet.",
   "completed_contract_ids": [
     "099",
     "103",
