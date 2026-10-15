@@ -1,0 +1,67 @@
+{
+  "role": "Generator",
+  "feature": "123",
+  "attempt": "123-contract2",
+  "approved_base": "fff98fc8f98dbc64ba3131f3ba2cd703cc661e9c",
+  "attempt_root": "/home/cnross/.tmp/nizam-feature123-contract2",
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-contract2",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "exercised_revision": "fff98fc8f98dbc64ba3131f3ba2cd703cc661e9c",
+      "stdout": ".agent/evidence/123/contract2-diff-check.stdout.txt",
+      "stderr": ".agent/evidence/123/contract2-diff-check.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-contract2",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "exercised_revision": "fff98fc8f98dbc64ba3131f3ba2cd703cc661e9c",
+      "stdout": ".agent/evidence/123/contract2-ownership.stdout.txt",
+      "stderr": ".agent/evidence/123/contract2-ownership.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--numstat"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-contract2",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "exercised_revision": "fff98fc8f98dbc64ba3131f3ba2cd703cc661e9c",
+      "stdout": ".agent/evidence/123/contract2-numstat.stdout.txt",
+      "stderr": ".agent/evidence/123/contract2-numstat.stderr.txt"
+    }
+  ],
+  "root_state_sha256": "3b1e177167c383d720ba8f22854bfbbeb42c797e74d31234dab0012e189e56ac",
+  "proposal_sha256": "3871de65953edb7652932bf756038791f350ad9c40a14488873f051eaba7bff3",
+  "status": "revised proposal; awaits both independent gates",
+  "prior_failures_preserved": [
+    ".agent/validator/123-mode-a.json",
+    ".agent/qa/123-contract-review.json",
+    ".agent/evidence/123/contract1-rejection-routing.json"
+  ],
+  "editing_note": "Temporary out-of-repository rewrite script first emitted SyntaxError for an unescaped apostrophe; no contract write occurred. Corrected script wrote proposal; subsequent separately captured static check exited0. This was editing syntax, not semantic red or acceptance evidence.",
+  "boundaries": "No Source/test/runner/workflow/state/verdict/install changes or API/bank/behavior/compliance/namespace/CI run. Root owns counters/lifecycle; two hosted passes and local observation require strict independent approval."
+}

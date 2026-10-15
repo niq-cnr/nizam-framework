@@ -1,0 +1,71 @@
+import hashlib,json,pathlib,re,sys
+root=pathlib.Path.cwd();sys.path.insert(0,str(root/'tools'))
+assert hashlib.sha256((root/'tools/workflow_assurance.py').read_bytes()).hexdigest()=='2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8'
+import workflow_assurance as wa
+import convergent_review as cr
+p=wa._ControlsProof(root)
+release=json.loads((root/'.agent/evidence/123/root-capture2-independent-inspection1-release.json').read_bytes())
+selection=p.selection(release['capture_selection_ref'],'capture')
+inv=p.value(release['actual_invocation_ref'],'actual invocation')
+assert inv['source_commit']==release['source_commit'] and inv['output_tip']==release['output_tip']
+candidate=p.value(inv['result_refs'][0],'actual candidate')
+p.identity(candidate,selection['inputs'])
+assert candidate['source_commit']==release['source_commit'] and candidate['source_tree']==release['source_tree']
+assert candidate['environment']==release['actual_capture_environment']==inv['environment']
+contract=p.prerequisites(selection,candidate);authority=p.authority(selection);shadow=p.shadow(selection)
+p.checkout(inv['checkout'],release['capture_selection_ref'],candidate)
+rawhost=(root/release['capture_host_path']).read_bytes();host=wa.parse_json(rawhost)
+assert rawhost==wa.canonical(host)+b'\n'
+assert hashlib.sha256(rawhost).hexdigest()=='262e09545e5cfb6fb5b3503b347b29d57723571f2b61792575a8cf94fa92d0d4'
+actual_inv,bundle,inventory=p.host(host,'capture',release['capture_selection_ref'],selection,candidate)
+assert actual_inv==inv and len(inventory)==39
+p.bind_transport(candidate['source_commit'],inv['output_tip'],inventory)
+expected_refs=[candidate_ref,capability_ref,evaluation_ref,replay_ref,result_ref,capture_ref]=inv['result_refs']
+expected_paths=[wa._WA123_PREFIX+x for x in ['candidate.json','capability.json','evaluation/run/prompt-evaluation.json','evaluation/run/review/replay.json','map/result.json','map/capture.json']]
+assert [r['path'] for r in expected_refs]==expected_paths
+for row in inventory:
+ raw,executable=p.at(row['revision'],row['path'])
+ assert hashlib.sha256(raw).hexdigest()==row['sha256'] and executable==(row['git_mode']=='100755')
+provenance_path=wa._WA123_PREFIX+'trial-provenance.json';provenance_raw,executable=p.at(inv['output_tip'],provenance_path)
+assert not executable
+trial_ref={'path':provenance_path,'revision':inv['output_tip'],'sha256':hashlib.sha256(provenance_raw).hexdigest()}
+trials=p.value(trial_ref,'actual trial provenance')
+evidence={'candidate':candidate,'checkout':inv['checkout'],'capture_selection_ref':release['capture_selection_ref'],'capability_ref':capability_ref,'evaluation_ref':evaluation_ref,'replay_ref':replay_ref,'a11_result_ref':result_ref,'a11_capture_ref':capture_ref,'trial_provenance':trials}
+capability=p.capability(evidence,selection,candidate)
+mapped=p.replay(evidence,selection)
+capture=p.capture(capture_ref,candidate,selection['producer'],'A11')
+assert capture['argv'][1:5]==['tools/workflow_assurance_ci.py','map','--selection',wa._WA123_PREFIX+'inputs/selection-capture.json'] and len(capture['argv'])==9
+assert capture['argv'][5]=='--evaluation' and capture['argv'][7]=='--output'
+copied,_=p.at(capture['revision'],wa._WA123_PREFIX+'inputs/selection-capture.json')
+assert copied==p.raw(release['capture_selection_ref'])
+assert p.raw(capture['stdout'])==b'WA123_A11_APPROVED\n' and p.raw(capture['stderr'])==b''
+assert p.value(result_ref,'actual mapped result')==mapped
+packet_ref=trials[0]['packet_ref'];packet_raw=p.raw(packet_ref,'actual packet');packet=wa.parse_json(packet_raw)
+rebuilt=cr.build_packet_from_git(root,selection['review_repository'],'wa123-controls','ordinary',selection['packet_base'],selection['source_commit'])
+assert cr.canonical_json_bytes(rebuilt)==packet_raw
+assert len(packet_raw)==400980 and hashlib.sha256(packet_raw).hexdigest()=='a2de232933d789795563f59cfc312195dc2880a4860bd69cfafb61cb83da17f6'
+assert '.github/workflows/compliance.yml' not in [row['path'] for row in packet['delta']]
+roots=[];trial_facts=[]
+for trial in trials:
+ stdout=p.raw(trial['stdout_ref'],'actual trial stdout').decode();matches=re.findall(r'^WA123_OBSERVER_FRAME=(\{.*\})$',stdout,re.M)
+ assert len(matches)==1
+ frame=wa.parse_json(matches[0]);assert set(frame)=={'argv','cwd'}
+ assert frame['argv']==trial['invocation'][6:] and frame['cwd']==trial['invocation'][2]
+ assert trial['invocation'][0].endswith('/tools/linux_trial_sandbox.sh')
+ assert trial['invocation'][4].endswith('/tools/workflow_assurance_ci.py')
+ roots.append(frame['cwd'])
+ output=p.value(trial['output_ref'],'actual trial output')
+ assert output['observations']==[] and output['trial_number']==trial['number']
+ assert p.raw(trial['stderr_ref'],'actual trial stderr')==b''
+ trial_facts.append({'number':trial['number'],'adapter_argv':trial['invocation'],'observer_frame':frame,'output_ref':trial['output_ref'],'packet_ref':trial['packet_ref'],'stdout_ref':trial['stdout_ref'],'stderr_ref':trial['stderr_ref'],'evaluation_receipt_ref':trial['evaluation_receipt_ref'],'basis':'Actual retained observer frame/output and unchanged evaluator adapter-exit receipt, authenticated through Source/manifest/Host; no fabricated per-process OS audit or model judgment.'})
+assert len(set(roots))==3
+metadata=p.value(release['metadata_ref'],'actual capture metadata')
+assert metadata['run_id']==38736608742 and metadata['attempt']==1 and metadata['job_id']==116427391140 and metadata['artifact_id']==11978025565
+fetch_by_kind={row['kind']:row for row in metadata['fetches']};run=wa.parse_json(p.raw(fetch_by_kind['run']['stdout'],'actual run'));jobs=wa.parse_json(p.raw(fetch_by_kind['jobs']['stdout'],'actual jobs'))
+assert run['status']=='completed' and run['conclusion']=='success'
+job_summary=[{'name':j['name'],'id':j['id'],'status':j['status'],'conclusion':j['conclusion']} for j in jobs['jobs']]
+assert len(job_summary)==5 and all(j['status']=='completed' and j['conclusion']=='success' for j in job_summary)
+checks={'selection_identity_authority_shadow_prerequisites_checkout':'passed','actual_host_five_fetches_archive_manifest_unique_invocation':'passed','strict_pack_full_object_inventory_add_only_protected_closure':'passed','capability_boundary_isolation_process_captures':'passed','replay_packet_report_mapped_result':'passed','three_distinct_trial_roots_observer_frames_receipts':'passed','a11_actual_map_capture_copy_output':'passed','packet_rebuilt_from_real_git_objects':'passed'}
+facts={'role':'Independent Evaluator','reviewer':'/root/overlap_review123','scope':'Actual completed capture2 only; not final two-pass HostedReview, final seal, ModeB, freshQA or restored-default witness.','source_commit':candidate['source_commit'],'source_tree':candidate['source_tree'],'candidate':candidate,'candidate_digest':wa.sha(wa.canonical(candidate)),'capture_selection_ref':release['capture_selection_ref'],'invocation_ref':release['actual_invocation_ref'],'metadata_ref':release['metadata_ref'],'capture_host':host,'checkout':inv['checkout'],'producer':selection['producer'],'actual_environment':candidate['environment'],'output_tip':inv['output_tip'],'inventory_rows':len(inventory),'inventory':inventory,'result_refs':inv['result_refs'],'trial_provenance_ref':trial_ref,'trial_facts':trial_facts,'a11_capture':capture,'mapped_result':mapped,'packet_ref':packet_ref,'packet_bytes':len(packet_raw),'packet_delta_paths':[row['path'] for row in packet['delta']],'jobs':job_summary,'checks':checks,'local_runtime_is_observation_only':{'historical_runtime_reexecuted':False,'namespaces_executed':False,'A10_executed':False},'held':['No verify result or verify Host yet','No final hosted provenance approval or policy','No fixture/default48 restoration acceptance from convergent job log','No final executable seal/ModeB/freshQA/closure']}
+pathlib.Path('/home/cnross/.tmp/nizam-capture2-inspection1-captures/predicates.facts.json').write_text(json.dumps(facts,indent=2)+'\n')
+print(json.dumps({'stage':'actual capture predicates','source':candidate['source_commit'],'candidate_sha256':facts['candidate_digest'],'protected_inputs':sum(len(x) for x in candidate['assessed_inputs'].values()),'inventory_rows':len(inventory),'three_trial_roots':roots,'packet_bytes':len(packet_raw),'packet_delta_paths':facts['packet_delta_paths'],'all_five_jobs_success':True,'checks':checks},sort_keys=True))

@@ -1,0 +1,125 @@
+{
+  "role": "External-tool Generator actual qualification/build facts; no passing verdict",
+  "release_revision": "fb8766a071b66cc11f10804d9038cecaf369f9b6",
+  "helper_sha256": "d6f4dac715e64390c4212080022f585e28c60e4c311d2b527780ac401893372f",
+  "outer_actual_exit": 0,
+  "command_outcomes": [
+    {
+      "index": 0,
+      "actual_exit": 0,
+      "elapsed_seconds": 0.002786409924738109
+    },
+    {
+      "index": 1,
+      "actual_exit": 0,
+      "elapsed_seconds": 177.24986311001703
+    },
+    {
+      "index": 2,
+      "actual_exit": 0,
+      "elapsed_seconds": 2.4954401140566915
+    },
+    {
+      "index": 3,
+      "actual_exit": 1,
+      "elapsed_seconds": 15.075420951005071
+    },
+    {
+      "index": 4,
+      "actual_exit": 0,
+      "elapsed_seconds": 1.622930365963839
+    },
+    {
+      "index": 5,
+      "actual_exit": 0,
+      "elapsed_seconds": 46.24986494996119
+    },
+    {
+      "index": 6,
+      "actual_exit": 0,
+      "elapsed_seconds": 0.027033568010665476
+    },
+    {
+      "index": 7,
+      "actual_exit": 0,
+      "elapsed_seconds": 0.0032663040328770876
+    }
+  ],
+  "sdk": {
+    "archive_reused": "/home/cnross/.tmp/nizam-gh-collector-repair1-build/go1.24.5.linux-amd64.tar.gz",
+    "bytes": 78563580,
+    "sha256": "10ad9e86233e74c0f6590fe5426895de6bf388964210eac34a6d83f38918ecdc",
+    "redownload": false,
+    "logical_members": 15735,
+    "raw_headers": 15737,
+    "exact_pax_path_overrides": 2,
+    "inventory_before_Go": {
+      "path": ".agent/evidence/123/gh-collector-repair2-execution/sdk-members-before-go.json",
+      "bytes": 4032145,
+      "sha256": "a62c1c2aac49a0565a291199ea538017dfe38f09fd4d88bb54cf1ca7cc549e4f"
+    },
+    "full_bytes_and_effective_modes_checked_unchanged_after_execution": true
+  },
+  "dependency_verification": {
+    "downloaded_modules": 225,
+    "download_json_error_fields": 0,
+    "go_mod_verify_output": "all modules verified",
+    "frozen_before_offline": {
+      "path": ".agent/evidence/123/gh-collector-repair2-execution/module-cache-before-offline.json",
+      "bytes": 7354585,
+      "sha256": "abb79e919a9c5fc026b6844b40e7d77c0571440b35f521782ec41e9f912cd3a0"
+    },
+    "offline_environment": "GOPROXY=off;GOSUMDB=off;GOTOOLCHAIN=local",
+    "full_downloaded_module_and_gopath_manifest_unchanged_after_each_offline_command": true,
+    "go_mod_and_go_sum_unchanged": true
+  },
+  "tests": {
+    "frozen_test_sha256": "75f068aee1d27fe1969467c74f11845947222cf905a50391e5ea60f51ec00120",
+    "baseline_actual_exit": 1,
+    "baseline_interpretation": "Exactly five top-level defect failures observed, with expected long-line/limit/read/write assertions; no compile/setup error. Ordinary four subcases are inferred passing from frozen unskipped test source, literal filter and absence of that test failure, not invented per-case raw receipts.",
+    "patched_actual_exit": 0,
+    "patched_interpretation": "Unchanged literal filter and frozen test body cover six test functions/ten leafcases; nonverbose Go package result0. No extra verbose/test rerun."
+  },
+  "source_contexts": {
+    "baseline": {
+      "head": "a2e23a2169337fd70482f92554950092f16005ca\n5284545b0ec7653cbd539f65fdc4b2f323ae4cf6\n",
+      "status": "?? pkg/cmd/run/view/wa123_collector_repair_test.go\n",
+      "tracked-diff": "",
+      "test_sha256": "75f068aee1d27fe1969467c74f11845947222cf905a50391e5ea60f51ec00120"
+    },
+    "patched": {
+      "head": "cd2c12e67730bc7bdd8a7e3c6122efdc2719113d\n1ec1b2bd6ae94248bb6c1f202280dcbb30d785e2\n",
+      "status": "?? pkg/cmd/run/view/wa123_collector_repair_test.go\n",
+      "tracked-diff": "",
+      "test_sha256": "75f068aee1d27fe1969467c74f11845947222cf905a50391e5ea60f51ec00120"
+    }
+  },
+  "binary": {
+    "path": "/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh",
+    "bytes": 78384034,
+    "full_mode": 33277,
+    "mode_octal": "0o100775",
+    "nlink": 1,
+    "sha256": "5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075"
+  },
+  "version_output_ref": {
+    "path": ".agent/evidence/123/gh-collector-repair2-execution/command6.stdout",
+    "bytes": 76,
+    "sha256": "5f0b3750611f8d818a2dc94cade13f77bbd07c845d3afa35ce5152d82722ccc9"
+  },
+  "go_build_info_ref": {
+    "path": ".agent/evidence/123/gh-collector-repair2-execution/command7.stdout",
+    "bytes": 20386,
+    "sha256": "ea2ace670301b21fdee74de971e90238968d19a26c67dbdc691ce5053b4842cd"
+  },
+  "vcs_modified_disclosure": "Actual build info vcs.revision=cd2c12e67730bc7bdd8a7e3c6122efdc2719113d,vcs.modified=true. Both actual source statuses contain only explicit byte-identical untracked test copy; tracked diffs empty. No claim of a clean source directory or official unpatched binary.",
+  "private_parent_modes": "Build root and bin directory0700; binary actual fullmode0o100775 captured without alteration.",
+  "capture_index": {
+    "path": ".agent/evidence/123/gh-collector-repair2-execution/capture-index.json",
+    "bytes": 16709,
+    "sha256": "01f7d830f9161afaca349becea33b800c8d952f9487a0c765012bfe00007ce1a"
+  },
+  "preservation": "Rootstate matches release bytes; old control bytes unchanged. Existing verified archive read-only reused, original partial build1 tree never reused or modified by helper2. Framework Source/test/contract/.nizam/selection/counters unchanged; futureEX-P1/020 untouched.",
+  "held": "No real log/five-fetch/CI/model/provenance Host/product gate execution or approval. Independent binary qualification admission and separate Root transport release remain required.",
+  "accounting": "Authored operational helper/code/plans/qualification records belong honestly once to whole123. Raw inventories/actual streams separately labelled; no interim scope measure or extra allowance."
+}

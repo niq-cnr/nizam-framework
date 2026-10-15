@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.21
+version: 1.0.22
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.22"
+    date: "2026-10-15"
+    summary: "Record captured 123 and complete 018 with actual independent acceptance and pending PR 104 integration; distinguish historical snapshots and preserve original budgets."
   - version: "1.0.21"
     date: "2026-10-15"
     summary: "Record captured 122, separate QA/hosted proof and pending PR 103 integration; preserve historical snapshots and original budgets."
@@ -77,7 +80,23 @@ change_log:
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current handoff — captured 122, 2026-10-15
+## Current handoff — captured 123 / complete 018, 2026-10-15
+
+Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
+Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).
+
+The [final executable seal](../../.agent/qa/123-final-executable-seal1.json) retains genuine positive/intended-negative/restored readiness exits 0/1/0. [Mode B](../../.agent/validator/123-mode-b.json) preceded [fresh QA](../../.agent/qa/123.json): all nine mandatory expected outcomes, exact default48, 166/166 fixtures and exactly one warmed-cache hardlink rejection/restoration check passed.
+Root capture returned 0 and preserved 14,253 tracked physical rows and 239 installed rows, and verified 537 protected candidate inputs. Original transport, setup and static inspection failures remain preserved; recovery does not relabel them as successes.
+The [approved 123 contract remains immutable](../../.agent/evidence/123/root-closeout-contract-preservation-decision.json); completion is recorded in canonical lifecycle artifacts. [PR 103 main CI](../../.agent/evidence/122/pr103-main-ci.json) passed all five jobs at merge `79811ef7` before 123.
+
+[PR 104](https://github.com/niq-cnr/nizam-framework/pull/104) final exact-head CI, merge and main CI remain pending at this closeout snapshot; earlier successful proof runs do not establish final integration.
+Original 018 **7,200/9,360** and prior 119–122 **4,303** remain unchanged. Root’s [scope_budget](../../.agent/run_state.json) is authoritative for final feature 123 accounting, including this refresh once.
+
+Archived 016 remains partial at **5,179** (original **5,650/7,345**); full SBCL/runtime and final CI 131 remain phase 020 obligations. Phase 017 remains **5,203/7,020**. The DAG stays **017 → 016 → 018 → 020 → 019**, with 018’s **127-only** prerequisite; phase 020 preparation is next, with activation and independent gates still required.
+The [live repository-binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied, installed **v1.5.0** remains immutable, and balanced real-task comparison remains unmeasured. This closeout establishes no comparative superiority or new release/install change.
+Older snapshots below retain their assessment-time facts and evidence.
+
+## Historical snapshot — handoff — captured 122, 2026-10-15
 
 Feature 122 is [captured complete](../../.agent/evidence/122/evidence-capture.json) and [canonically closed](../../.agent/evidence/122/closure.json): read-only routing by independently selected evidence of infrastructure or semantic failure.
 Failed outcomes remain failed; attempts 1/2 propose diagnosis or repair, and attempt 3 halts under the unchanged three-attempt limit. Hash/producer labels and schema validity do not authenticate classification or authority.
@@ -94,7 +113,7 @@ Archived 016 remains partial at **5,179** (original **5,650/7,345**), 017 **5,20
 The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned fixtures do not establish live Root adoption. Installed **v1.5.0** remains immutable.
 Controls-ready for 123, full runtime/SBCL, canary execution, benchmark/superiority and release/install changes remain unclaimed. All earlier “Current” sections below are historical snapshots.
 
-## Current handoff — captured 121, 2026-10-15
+## Historical snapshot — handoff — captured 121, 2026-10-15
 
 Feature 121 is [captured complete](../../.agent/evidence/121/evidence-capture.json) and [canonically closed](../../.agent/evidence/121/closure.json): dependency/conflict lanes, isolated attempts and owned rollback. After contract pre-code and provisional-bundle approval, Source SHA-256 `1d97f06f…` and test `c94a59e1…` passed executable controls, Mode B and fresh QA before Root capture.
 [QA attempt 2](../../.agent/qa/121.json) retained eight completed results and ran only the two pending compliance commands plus its first additional check. Aggregate proof covers five exact selectors/default42 and immutable 118 exit 0/current stale exit 1; both compliance modes exited 0. QA1’s helper diagnostic failure exit 1 remains preserved.
@@ -104,7 +123,7 @@ Exactly one additional locked-Git-manager failure check ran once, exit 0; nested
 Prior 119/120 proof, archived 016 **5,179** (original **5,650/7,345**), 017 **5,203/7,020**, installed **v1.5.0** and DAG **017 → 016 → 018 → 020 → 019** remain unchanged; 018 requires **127 only**. The [binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied; aligned API fixtures do not establish live Root adoption.
 The balanced proposal remains unmeasured and static canary rev2 remains preparation only. This position establishes no controls-ready for 123, full runtime, canary execution, comparison/superiority, release/install change or new-phase approval. All earlier “Current” sections below are preserved historical snapshots.
 
-## Current handoff — captured 119–120, 2026-10-14
+## Historical snapshot — handoff — captured 119–120, 2026-10-14
 
 Begin with AGENTS.md and the installed index/skill.
 Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`; [main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs.
@@ -124,7 +143,7 @@ The [balanced comparison proposal](agentic-excellence.md) remains unmeasured; [c
 
 All earlier sections below, including older “Current” headings, are historical snapshots. Their bodies and release-disposition facts are preserved; the canonical records above govern current work.
 
-## Current handoff — feature 126, 2026-10-14
+## Historical snapshot — handoff — feature 126, 2026-10-14
 
 Begin with AGENTS.md and the installed index/skill. Phase017 is complete at **5,203/7,020** (PR94 `e619d284`); PR95 `c8dc65a` merged capability/comparison preparation with [green main CI](../../.agent/evidence/phase016-preflight/pr95-main-ci.json).
 [Phase016 activation](../../.agent/evidence/phase016-preflight/activation-decision.json) at `9f361` retains **5,650/7,345**, including the initial **307-line** preparation snapshot.
@@ -136,7 +155,7 @@ Installed v1.5.0 stays immutable. The [comparison proposal](agentic-excellence.m
 
 The older handoffs below, including “current” headings and pending016 statements, are dated snapshots. Canonical records above govern present work; all older bodies and release-disposition facts are retained.
 
-## Current foundation handoff — feature 118, 2026-10-14
+## Historical snapshot — foundation handoff — feature 118, 2026-10-14
 
 Features 115–117 have completed independent QA and capture. Feature118 binds
 foundation readiness to immutable SourceC, unchanged assessed inputs and an
@@ -151,7 +170,7 @@ Next phase016 remains proposed and separately gated, as do phases018/019/020.
 Installed v1.5.0 stays immutable. The earlier handoffs below remain historical
 snapshots of their respective candidates.
 
-## Current entry handoff — feature 117, 2026-10-13
+## Historical snapshot — entry handoff — feature 117, 2026-10-13
 
 Features 115 and 116 are captured complete, totaling 3,009 counted lines. Feature
 117 is the authorized-entry candidate after renewed independent pre-code gates
@@ -171,7 +190,7 @@ a historical handover snapshot; current canonical records control progression.
 
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current status — 2026-10-13
+## Historical snapshot — status — 2026-10-13
 
 ### Feature 116 implementation handoff
 
@@ -206,7 +225,7 @@ proofs remain unchanged. Begin through the installed index/skill in AGENTS.md.
 The material below is the preserved dated handover context, not the current
 activation position.
 
-## Previous current-status snapshot — 2026-10-12
+## Historical snapshot — 2026-10-12
 
 Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 
@@ -262,7 +281,7 @@ then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP
 Completed phase-014 assertions should be interpreted at their recorded assessment
 revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
 
-### Current planning allocation — 2026-10-12
+### Historical planning allocation — 2026-10-12
 
 This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
 their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
@@ -335,7 +354,7 @@ Then read one completed feature end to end, to see the method in practice. Featu
 `.agent/validator/105-mode-a.json`, `.agent/qa/105-contract-review.json`,
 `.agent/validator/105-mode-b.json`, `.agent/qa/105.json` and `.agent/evidence/105/`.
 
-## (b) Current state at handover
+## (b) Historical state at handover
 
 **Release.**
 
