@@ -1230,12 +1230,14 @@ def _failure_rejection(root, reference):
         _receipt_schema(root, verdict, 'contract_review')
     except AssuranceError:
         _receipt_schema(root, verdict, 'qa_verdict')
-    require(type(verdict.get('final_verdict')) is dict and
-        type(verdict['final_verdict'].get('approved')) is bool and
-        all(type(verdict.get(key)) is list for key in
-            ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'failure semantic verdict shape')
-    require(verdict['final_verdict']['approved'] is False or any(verdict[key] for key in
-        ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'failure semantic verdict passed')
+    arrays = ('issues', 'missing_acceptance_coverage', 'unsupported_claims')
+    require(all(type(verdict[key]) is list for key in arrays if key in verdict), 'failure semantic array shape')
+    rejected = False
+    if 'final_verdict' in verdict:
+        require(type(verdict['final_verdict']) is dict and
+            type(verdict['final_verdict'].get('approved')) is bool, 'failure semantic approval shape')
+        rejected = verdict['final_verdict']['approved'] is False
+    require(rejected or any(verdict.get(key, []) for key in arrays), 'failure semantic verdict passed')
 
 
 def route_failed_attempt(repo, request, *, policy):
