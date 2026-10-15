@@ -18,6 +18,14 @@ def positive(value):
     return parsed
 
 
+def digest(path):
+    value = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(65536), b''):
+            value.update(block)
+    return value.hexdigest()
+
+
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('mode', choices=('capture', 'verify'))
 parser.add_argument('operation_attempt', type=int, choices=(1, 2, 3))
@@ -57,8 +65,8 @@ for kind, argv, bound_mib in plan:
               'finished_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
               'stdout_path': str(out), 'stderr_path': str(err),
               'stdout_bytes': out.stat().st_size,
-              'stdout_sha256': hashlib.sha256(out.read_bytes()).hexdigest(),
-              'stderr_sha256': hashlib.sha256(err.read_bytes()).hexdigest()}
+              'stdout_sha256': digest(out),
+              'stderr_sha256': digest(err)}
     record['within_size_bound'] = out.stat().st_size <= bound_mib * 1024 * 1024 and err.stat().st_size <= 2 * 1024 * 1024
     records.append(record)
     manifest_path.write_text(json.dumps({'role': 'Root transport', 'mode': args.mode,
