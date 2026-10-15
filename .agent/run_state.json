@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T19:17:22.498911+00:00",
+  "updated_at": "2026-10-15T19:20:45.163073+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1944,6 +1944,24 @@
           "cwd": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-fixture",
           "exercised_revision": "d94c880b825f3f5893941f91fea46e2564903a4f",
           "started_record": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-run/fixture/fixture.started.json"
+        }
+      ],
+      "extra_setup_release": ".agent/evidence/123/root-fresh-qa-extra2-setup-recovery-release.json",
+      "final_verdict_held_on": "same planned own-extra corrected setup2 plus original longlanes"
+    },
+    "123-fresh-qa-extra-setup": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "released",
+      "owner": "/root/fresh_qa123",
+      "release": ".agent/evidence/123/root-fresh-qa-extra2-setup-recovery-release.json",
+      "history": [
+        {
+          "attempt": 1,
+          "actual_exit": 1,
+          "cause": "operational-module-search-path",
+          "revision": "ac905a62231fb9e0f87359f794477c0a117d1e10",
+          "predicate_executed": false
         }
       ]
     }
@@ -7984,7 +8002,7 @@
       }
     ]
   },
-  "last_action": "Independent freshQA1 running three parallel long lanes at d94c880b. Actual historical positive/blocker/readiness passed so far; final verdict/capture/closure pending.",
+  "last_action": "Retained freshQA own-extra setup1 failure; bounded isolated same-predicate setup2 released. Completed mandatory commands not rerun; original longlanes continue.",
   "completed_contract_ids": [
     "099",
     "103",
