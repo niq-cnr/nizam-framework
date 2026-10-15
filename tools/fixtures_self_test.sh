@@ -1156,6 +1156,14 @@ for controls_case in ci-candidate-bound ci-blocker-rejected; do
   fi
 done
 
+# Feature133 checks are separate from the on-disk fixture-file denominator.
+if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py; then
+  echo "OK   receipt-candidate-batching four focused checks"
+else
+  echo "FAIL receipt-candidate-batching focused checks"
+  fail=1
+fi
+
 total=${#ondisk[@]}
 accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
 echo "---"
