@@ -1,11 +1,11 @@
 {
   "feature_id": "122",
-  "author": "independent Evaluator author2",
-  "status": "renewed freeze for distinct provisional review2; no Source behavior claim",
+  "author": "independent Evaluator author3",
+  "status": "Renewed schema-union freeze for distinct provisional review3; current Source regression pending capture",
   "base_revision": "d9dd92db6ae7b4b6aaa5fc7c99060e6bfbb2752a",
   "contract_sha256": "13dc45d0daf41fc9af4828ec0b84b1a05ded39f51b2e1fc5b903831e557d42c5",
   "test_path": "tools/test_workflow_assurance.py",
-  "test_sha256": "8b0b8f2d3e2bea397eaf8b9bc6761aaedd38ba3bcdc5f47d7b62e0bec9938fa4",
+  "test_sha256": "e251283add498c699f6c90fd7934f92dcffe570e6c3fdda51326c6dc0e504c21",
   "signature": "route_failed_attempt(repo, request, *, policy) -> dict; additive private helpers permitted; no new CLI",
   "request_keys": [
     "operation_id",
@@ -122,7 +122,8 @@
       "rejecting contract_review and qa_verdict schema families; approved false or blocking array",
       "passing/missing/wrong-schema/wrong-type verdict rejects",
       "success relabel rejects and positives restore",
-      "Both semantic verdict families and all three approval/issue outcomes use the shared failure_verdict fixture builder; nonempty contract-review issues are schema-valid objects; author2 static validation covers all six combinations"
+      "Both semantic verdict families and all three approval/issue outcomes use the shared failure_verdict fixture builder; nonempty contract-review issues are schema-valid objects; author2 static validation covers all six combinations",
+      "Approved schema union includes legacy QA: final_verdict.approved exact False with other arrays absent, or each one nonempty known blocking array with final_verdict absent. Legacy verdict fail/pass strings without AGF rejection do not satisfy acceptance. Present malformed final/approved/known array types reject even if another OR branch rejects; legacy extra-field permissiveness does not create a new strict schema profile. Shared 24-row legacy fixture table has four intended routing positives and twenty typed/passing negatives, plus existing six evolved/contract-review combinations unchanged."
     ],
     "reject-cause-relabel": [
       "both classification directions; fixture Root chosen outside request",
@@ -145,7 +146,14 @@
   },
   "trust_boundary": "All Root labels, classification attestations, independent parser gates and producer labels are explicitly synthetic fixtures. Actual subprocess exit/output and Git objects are observed; no authentication, real Root adoption or universal cause taxonomy is established.",
   "controls": "Later distinct reviewer must run each frozen case actual positive/private intended semantic negative/restored positive against committed Source and seal exact bytes before Mode B. Missing API setup is never intended red.",
-  "author_attempt": 2,
-  "supersedes_frozen_bundle_revision": "933b1335f877c728c98c87338c78757743223fc1",
-  "repair_authorization": ".agent/evidence/122/author2-dispatch.json"
+  "author_attempt": 3,
+  "supersedes_frozen_bundle_revision": "a774da9c9ce16039ea4605cb22e538ee96237abd",
+  "repair_authorization": ".agent/evidence/122/author3-dispatch.json",
+  "schema_union_regression": {
+    "unchanged_source_sha256": "e4d17fb258bbcf19d1b6c7011661368dbe196323c4bb1f94af6540296d204e46",
+    "independent_failure_revision": "62671719a9fd57d939c8f61b1c87003989d76bed",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case semantic-failed",
+    "expected_acceptance_exit": 0,
+    "planned_observation": "Once after immutable freeze; current Source false rejection expected actual1 remains failed, not setup or passing QA."
+  }
 }
