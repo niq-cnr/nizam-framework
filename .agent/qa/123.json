@@ -1,0 +1,119 @@
+{
+  "adversarial": {
+    "logical_checks": 1,
+    "performed": true,
+    "setup_attempts": 2
+  },
+  "adversarial_check": {
+    "description": "One independently selected same-instance warmed immutable-cache metadata hardlink rejection/restoration",
+    "evidence": ".agent/evidence/123-qa-adversarial.txt",
+    "result": "pass"
+  },
+  "approved_contract_ref": {
+    "path": ".agent/contracts/123.json",
+    "revision": "452a5a5f748b5234ce1da3ad765b0da8f622cb53",
+    "sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5"
+  },
+  "assessed_revision": "d94c880b825f3f5893941f91fea46e2564903a4f",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case ci-candidate-bound",
+      "evidence": ".agent/evidence/123/fresh-qa1/candidate/candidate.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case ci-blocker-rejected",
+      "evidence": ".agent/evidence/123/fresh-qa1/core/blocker.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check controls-ready",
+      "evidence": ".agent/evidence/123/fresh-qa1/core/readiness.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/123/fresh-qa1/core/validate.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/123/fresh-qa1/core/payload.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "evidence": ".agent/evidence/123/fresh-qa1/default48/default48.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/123/fresh-qa1/fixture/fixture.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "evidence": ".agent/evidence/123/fresh-qa1/historical118/historical118.execution.json",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "evidence": ".agent/evidence/123/fresh-qa1/core/current-stale118.execution.json",
+      "exit_code": 1,
+      "expected_exit": 1
+    }
+  ],
+  "checks_passed": 8,
+  "checks_passed_scope": "Literal exit0 count; all9 mandatory expected outcomes satisfied including intended current-stale118 exit1.",
+  "checks_run": 9,
+  "evidence_files": [
+    ".agent/evidence/123/fresh-qa1/results.json",
+    ".agent/evidence/123/fresh-qa1/capture-index.json",
+    ".agent/evidence/123-qa-adversarial.txt",
+    ".agent/evidence/123/fresh-qa1/candidate/candidate.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/blocker.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/readiness.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/validate.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/payload.execution.json",
+    ".agent/evidence/123/fresh-qa1/default48/default48.execution.json",
+    ".agent/evidence/123/fresh-qa1/fixture/fixture.execution.json",
+    ".agent/evidence/123/fresh-qa1/historical118/historical118.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/current-stale118.execution.json",
+    ".agent/evidence/123/fresh-qa1/extra2/adversarial2.execution.json",
+    ".agent/evidence/123/fresh-qa1/core/adversarial.execution.json",
+    ".agent/evidence/123/fresh-qa1/static2/static2.execution.json",
+    ".agent/evidence/123/fresh-qa1-static1.execution.json"
+  ],
+  "feature_id": "123",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent freshQA: all9 mandatory expected outcomes, exact default48/fixture coverage, preserved physical/installed/history/source bounds, and exactly one own extra verified. Original operational setup1 failure retained and bounded setup2 correction proved."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "mode_b_ref": {
+    "path": ".agent/validator/123-mode-b.json",
+    "revision": "f301a2d819498a7af297b164379f7c16de720787",
+    "sha256": "64ca918f4fdbf0d73e20c1b5648dcf3f3162ddec4014103cfafcbaf2e14a07bf"
+  },
+  "notes": [
+    "Original static admission1 actual1 retained. Corrected static2 actual0, PID3530533,2026-10-15T20:07:43.257742+00:00 to20:07:44.374981+00:00,1.117240936961025s; Source55128e72 at frozen ad947c80. Eleven directly captured behavior attempts remain separate from two static admission attempts. No acceptance/API/test rerun.",
+    "Original one-extra setup1 actual1 is retained, not semantic rejection. Root72605b4a authorized only tools import-path/new outside directory correction; setup2 same check actual0 with original assertions unchanged.",
+    "Incidental read-only preparation git show of source-prerequisite container at019398 returned128 (container absent there); actual d94 container records28 embedded rows anchored019398. Correct location read; no acceptance rerun, contract edit or wider exception.",
+    "Core orchestration process stopped actual1 after original own-extra setup failure; original selected child has complete PID/time/argv/rawstreams/fullpreservation. Exact outer controller PID/times were not retained and are not invented.",
+    "No fresh namespace/model/historical-runtime A10 execution; local readiness independently observes actual completed hosted proof. No benchmark/comparative or lifecycle closure claim."
+  ],
+  "qa_pass": true,
+  "required_fixes": [],
+  "reviewer": "/root/fresh_qa123",
+  "source_revision": "9886e5fadad31845349e54235820edac71c7b7fb",
+  "unsupported_claims": []
+}
