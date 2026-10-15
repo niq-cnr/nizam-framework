@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:49:12.825194+00:00",
+  "updated_at": "2026-10-15T03:54:07.354985+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1471,6 +1471,13 @@
       "attempts": 1,
       "limit": 3,
       "status": "passed"
+    },
+    "122-mode-b-static-inspection": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "readonly-continuation-released",
+      "prior_actual_exit": 1,
+      "strategy": "Exact immutable prior-feature evidence attribution; unchanged product checks"
     }
   },
   "history": [
@@ -6456,6 +6463,12 @@
       "event": "122-ci2-reviewed-fixture-head-pushed",
       "detail": "Normal push succeeded at b4c1b162c8175ae34e811543b247e66661a147a4. Observed all six checks: compliance38678198180 fixtures116236505330 plus closeout38678198188. Current Sourcefff/test800b with renewed independent review and pinnedGit2.55 regression0. Current controls2 running; no final success claimed.",
       "evidence": ".agent/evidence/122/ci2-push.json"
+    },
+    {
+      "at": "2026-10-15T03:54:07.354985+00:00",
+      "event": "122-modeb1-static-inspection2-recovery",
+      "detail": "Static helper1 actual1 stopped on42 adjacentE121 additions; no API/measurement/final verdict. Root verified39 rawcloseout files at8360563 plus3 mainCI prerequisite files at457f226, exactadd-onlyblob/mode/bytes list. Newownedinspection2(max3) permitsonlythatreadonlyscopefilterreconciliation; allrawEcounted, noSource/test/budget/gate exemption. FinalModeB1 awaits current independentactualseal.",
+      "evidence": ".agent/evidence/122/modeb1-inspection2-recovery.json"
     }
   ],
   "phase_001_scope_budget_final": {
