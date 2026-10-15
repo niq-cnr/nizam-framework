@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T05:18:28.839093+00:00",
+  "updated_at": "2026-10-15T05:29:34.691954+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1527,18 +1527,20 @@
     "123-contract": {
       "attempts": 2,
       "limit": 3,
-      "status": "prepared-revision",
+      "status": "proposed-revision",
       "strategy": "type/interface and execution provenance analysis; exact schemas and independent capture selection before Source"
     },
     "123-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "rejected-awaiting-revision"
+      "status": "dispatched",
+      "strategy": "exact public protocol, independent capture selection and enforced trial provenance analysis"
     },
     "123-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "rejected-awaiting-revision"
+      "status": "dispatched",
+      "strategy": "exact public protocol, independent capture selection and enforced trial provenance analysis"
     }
   },
   "history": [
@@ -6608,6 +6610,12 @@
       "event": "123-proposal1-rejected-route-revision2",
       "detail": "Strictrejections ModeAf2c4542 (2highissues) and independentreviewa70bca6 (1highissue), root+installedschema0. Fixclosedpublicprotocol/commands+Rootselectionandrealpertrialenforcedprovenance. Also preserveknownlocalnamespacefailure; nohostpolicy/modelauthorization inferred. Originalcontract00e2b4ec andbothfailuresretained; newownedcontract2root, noSource/tests.",
       "evidence": ".agent/evidence/123/contract1-rejection-routing.json"
+    },
+    {
+      "at": "2026-10-15T05:29:34.691954+00:00",
+      "event": "123-revised-proposal-dual-gate2-release",
+      "detail": "Generatorcba8187 contractSHA3871de65 root+installedschema0; exactschemas/twoCIpasses/Rootselection/provenance/localobservation revised. Gate1rejections preserved; eachgate2 innewownedroot. Rootchecksbytes/schemaonly, no implementationapproval.",
+      "evidence": ".agent/evidence/123/contract2-static.execution.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7169,7 +7177,7 @@
       }
     ]
   },
-  "last_action": "123 proposal1 rejected by bothgates; boundedGeneratorrevision2 prepared, noSource/tests authorized.",
+  "last_action": "123 revisedproposal3871de65 released to both independent gate2 reviews; noSource/test authority.",
   "completed_contract_ids": [
     "099",
     "103",
