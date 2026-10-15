@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T11:12:26.874313+00:00",
+  "updated_at": "2026-10-15T11:14:14.414453+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1563,7 +1563,10 @@
       "pull_request": 104,
       "run_id": 38725446673,
       "run_attempt": 1,
-      "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4"
+      "observed_pr_merge_sha": "a20f05e7845c3c231770215644216603389e4dd4",
+      "job_id": 116390018603,
+      "retained_observed_pr_merge_revision": "a20f05e7845c3c231770215644216603389e4dd4",
+      "retention_merge_revision": "548b11cbd27c5c9eae8c02e2c5738558c0811480"
     },
     "123-ci-verify": {
       "attempts": 0,
@@ -6950,6 +6953,12 @@
       "event": "123-ci-capture1-actual-run-observed",
       "detail": "ActualREST0 PR104 confirmsdraft/open head e4db andPRmergea20f; actualworkflowlist0 yields uniquecompliance pull_request run38725446673/attempt1 in_progress. Actualjobcheckout/runtime/trials/archive/successremainpending.",
       "evidence": ".agent/evidence/123/root-ci-capture1-initial-runs.execution.json"
+    },
+    {
+      "at": "2026-10-15T11:14:14.414453+00:00",
+      "event": "123-ci-capture1-job-and-checkout-retention",
+      "detail": "Actual5jobs response identifiesselectedconvergentjob116390018603 in_progress withboundary/isolation success; validate/e2e/selfgovernance complete0metadata. ActualPRmergea20f fetched0 andnormalmerged0 at548b withsamepublishedtree/all537protectedGitentries; actualproducerInvocation remainspending.",
+      "evidence": ".agent/evidence/123/root-ci-capture1-checkout-retention.execution.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7511,7 +7520,7 @@
       }
     ]
   },
-  "last_action": "123 actual hostedcapture run38725446673/attempt1 in_progress for own draftPR104/e4dbhead; actualPRmergea20f observed, jobcheckout/outputs pending. Do notpushnewhead whilecaptureactive.",
+  "last_action": "123 capture1 actualrun38725446673/job116390018603 active: threejobs passed; convergent boundary/isolation stepspassed, fixtures running. ObservedPRmergea20f durablyretained viaordinarylocal548b ancestry; all537Gitinputs matchS. No newpush/proofsuccess.",
   "completed_contract_ids": [
     "099",
     "103",
