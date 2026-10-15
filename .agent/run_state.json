@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:54:07.354985+00:00",
+  "updated_at": "2026-10-15T03:55:56.518442+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1475,9 +1475,14 @@
     "122-mode-b-static-inspection": {
       "attempts": 2,
       "limit": 3,
-      "status": "readonly-continuation-released",
+      "status": "passed",
       "prior_actual_exit": 1,
       "strategy": "Exact immutable prior-feature evidence attribution; unchanged product checks"
+    },
+    "122-ci2-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "dispatched"
     }
   },
   "history": [
@@ -6469,6 +6474,12 @@
       "event": "122-modeb1-static-inspection2-recovery",
       "detail": "Static helper1 actual1 stopped on42 adjacentE121 additions; no API/measurement/final verdict. Root verified39 rawcloseout files at8360563 plus3 mainCI prerequisite files at457f226, exactadd-onlyblob/mode/bytes list. Newownedinspection2(max3) permitsonlythatreadonlyscopefilterreconciliation; allrawEcounted, noSource/test/budget/gate exemption. FinalModeB1 awaits current independentactualseal.",
       "evidence": ".agent/evidence/122/modeb1-inspection2-recovery.json"
+    },
+    {
+      "at": "2026-10-15T03:55:56.518442+00:00",
+      "event": "122-ci2-complete-capture-dispatched",
+      "detail": "Observed compliance38678198180 allfive success and closeout38678198188 success at b4c1b16. New owned CI2 receipt capture will run frozen observed-ID transport once; static inspection2 actual0/classifier0 and no material findings, current executable seal still pending.",
+      "evidence": ".agent/evidence/122/fetch-hosted-ci2.py"
     }
   ],
   "phase_001_scope_budget_final": {
