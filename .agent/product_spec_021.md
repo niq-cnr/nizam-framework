@@ -1,23 +1,28 @@
 ---
 id: nizam-phase021-product-spec
 title: "Phase 021 — Receipt Input Read Maintenance"
-description: "Proposed measured maintenance of per-call immutable receipt input reads; execution and budget remain separately gated."
-version: 0.1.0
-status: draft
+description: "Selected measured maintenance of per-call immutable receipt input reads; independent implementation and delivery gates remain."
+version: 0.1.1
+status: active
 authoritative_source: .agent/product_spec_021.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-15"
+    summary: "Record delegated activation and selected2000/2600 after clean PR104 merge; no implementation or main-CI pass claimed."
   - version: "0.1.0"
     date: "2026-10-15"
     summary: "Propose pending 133 from actual candidate profiling, preserving receipt semantics and existing runtime plans."
 ---
 
-# Proposed phase 021
+# Phase 021
 
 Balanced real-task correctness, recovery, delivery time/cost and ease of use guide this maintenance.
 
-Feature **133** is proposed in this separate maintenance phase; neither identifier
-is allocated in the existing 599d planning lists. This draft pair does not activate
-it, approve its budget or change Root coordination, the manifest or phase records.
+Feature **133** is active in this separate maintenance phase under the recorded
+[delegated selection](evidence/133/activation-decision.json), applied after PR 104
+merged normally at `c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7`. Root selected
+2000/2600 under operator delegation; these are not verbatim operator figures.
+Independent frozen tests, bundle review and intended red remain before product work.
 Features 129–132 remain phase 020; profiles 124–125 remain phase 019. Preserve the
 existing 017 → 016 → 018 → 020 → 019 plan and all original allowances. Root may select
 serialized maintenance ahead of 020; 133 is not a required dependency of 020.
@@ -85,9 +90,9 @@ job remains future. Capture actual commands/exits/revisions, raw streams and ful
 preservation, plus exactly one independently selected additional adversarial check.
 No wall-time speedup or balanced competitor result is a completion requirement.
 
-## Full proposed cost and accounting
+## Selected cost and accounting
 
-Propose **2000 lines**, ceiling **2600**: product 150, independent tests 450,
+Root selected **2000 lines**, ceiling **2600**: product 150, independent tests 450,
 process 1400. Process includes carried attribution preparation/report/release/index
 budget 300, this planning pair 220, contract 170, independent reviews 300,
 QA/capture/CI integration 300 and closeout 110. Buckets already include overhead.
@@ -101,4 +106,4 @@ phase lower bound 11990 versus 9360 and conservative phase 26657. Its exception 
 not authorize a new allowance or reset any baseline. Root records this tranche's
 actual base, carried preparation and final endpoint separately; do not remeasure
 or transfer 123 costs. Reuse existing capture tooling; defer its generic promotion.
-No release/tag/install, runtime canary, new phase activation or superiority follows.
+No release/tag/install, runtime canary, other phase activation or superiority follows.
