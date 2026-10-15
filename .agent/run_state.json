@@ -2159,7 +2159,7 @@
     "133-fresh-qa": {
       "attempts": 2,
       "limit": 3,
-      "status": "released-targeted-metadata-recovery",
+      "status": "compliance-and-one-extra-passed-awaiting-live5-6",
       "owner": "/root/qa133",
       "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
       "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
@@ -2245,7 +2245,29 @@
       ],
       "strategy": "Structural schema/artifact-boundary recovery: preserve actual product checks1-6 at cb5 (long5/6 remain live), rerun only failed compliance7 and unexecuted8 plus first/only extra at new repaired-metadata revision. Whole Source/tests/hook/contract byte-identical. Original failure and every actual revision remain; new exact-headCI still required.",
       "partial_failure_revision": "9a0272d309690c2e1e18134d2302c6935ece7f87",
-      "record_repair_revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61"
+      "record_repair_revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61",
+      "execution_contexts": {
+        "product_checks_1_to_6": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+        "repaired_compliance_7_8_and_one_extra": "b225e55182ceee05bbc482badb61499f1a395cac"
+      },
+      "selected_passed_commands": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        8
+      ],
+      "pending_commands": [
+        5,
+        6
+      ],
+      "completed_mandatory_attempts": 7,
+      "completed_mandatory_exit_zero": 6,
+      "additional_adversarial_checks_executed": 1,
+      "additional_adversarial_actual_exit": 0,
+      "recovery_evidence_revision": "cc033afd95fc16202a2d0881aff27dd8d7b19173",
+      "recovery_evidence_index_sha256": "43bb5466d74e7f300cafa8184dae6a92805d3ba68ac16e7b235f7e6d76c4790f"
     },
     "comparative-design-review": {
       "attempts": 1,
@@ -7892,6 +7914,11 @@
       "at": "2026-10-15T23:35:56.318971+00:00",
       "event": "133-record-schema-repair-admitted-targeted-qa2-released",
       "detail": "Root verified negative9a067/all35rawhashes and exactb8e5 twofield metadata repair, root+installedschema0. Diff fromcb5 contains onlyRootstate/roleevidence/twoQA records; product/frozenrunner/hook/oldtests/approvedcontract byte-identical. Original ca6b approval and failed QA1 remain immutable. Under delegated strategic recovery, revise Root one-context preference to honestlyboundtwo contexts: retain1-6 actualcb5, only7/8/oneextra newmetadata context, no healthy cancellation/broad rerun/Source3 or waived gate. FinalQA must separately report selectedeight outcomes, allactualattempts inclfailed7 and per-command revisions; no allsamehead claim. ExactnewPRCI/merge/main gates unchanged."
+    },
+    {
+      "at": "2026-10-15T23:41:41.357494+00:00",
+      "event": "133-targeted-compliance-and-largevalidinput-extra-admitted",
+      "detail": "Root verified22rawhashes and exactb225 frames: compliance7actual0/16gates,8actual0/payload12; soleextraactual0. Full14595/239preserved for each. LargevalidactualGit9884sourcepaths/generatedargumentlowerbound2162844>host2097152;69chunksperrevision, positive/specificlateGitdefectreject/restoredpositive verified. OriginalQA1fail kept; sixselectedmandatory0/oneextra0, twooriginalcb5suitesstilllivePIDs990977/991647. No finalQA/lifecycle/scope/merge/speedup/comparative claim. Actualoldmainstatus3 capture hasfourjobssuccess andfixturepending; mainwatchPID891381live, neverrestart/cancel."
     }
   ],
   "phase_001_scope_budget_final": {
