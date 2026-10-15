@@ -1,0 +1,33 @@
+import json,pathlib,subprocess,hashlib,ast
+root=pathlib.Path.cwd();cap=pathlib.Path('/home/cnross/.tmp/nizam-feature123-hosted-review1-captures')
+Eref={'revision':'cfb84f1d559a585bbadf8957d80fd54010ad2f8e','path':'.agent/evidence/123/controls-evidence.json','sha256':'d28ccd80b8c68d28d5b519a009b3da19365f5997dc7a97152952e8c107772a77'}
+Dref={'revision':'dd9a578c70486c149e0537d13d4fbb8b1c538a54','path':'.agent/evidence/123/root-hosted-review1-ref-taxonomy-disposition.json'}
+def git(*a):return subprocess.check_output(['git','--no-optional-locks',*a],cwd=root,stderr=subprocess.PIPE)
+def read(ref):
+ row=git('ls-tree','-z',ref['revision'],'--',ref['path']);assert row.endswith(b'\0');meta,name=row[:-1].split(b'\t');mode,kind,oid=meta.decode().split();assert name.decode()==ref['path'] and kind=='blob' and mode in ['100644','100755'];size=int(git('cat-file','-s',oid));assert size<=16*1024*1024;raw=git('cat-file','blob',oid);assert len(raw)==size
+ if 'sha256' in ref:assert hashlib.sha256(raw).hexdigest()==ref['sha256']
+ return raw,mode,oid
+Eraw,_,_=read(Eref);E=json.loads(Eraw);draw,_,_=read(Dref);Dref['sha256']=hashlib.sha256(draw).hexdigest();assert 'No rerun' in json.loads(draw)['authorized']
+exact={};projected={};inventory={}
+def walk(v):
+ if type(v)is dict:
+  if {'path','revision','sha256'}<=set(v):
+   ref={k:v[k] for k in ['path','revision','sha256']};key=tuple(ref[k] for k in ['revision','path','sha256']);raw,mode,oid=read(ref);projected[key]=ref
+   if set(v)=={'path','revision','sha256'}:exact[key]=ref
+   if 'git_blob' in v or 'git_mode' in v:assert v['git_blob']==oid and v['git_mode']==mode;inventory[key]=ref
+  else:
+   for x in v.values():walk(x)
+ elif type(v)is list:
+  for x in v:walk(x)
+walk(E);assert set(exact)<=set(projected) and set(inventory)<=set(projected)
+script=(cap/'predicates.stdin.txt').read_text();tree=ast.parse(script);assert tree.body
+failed=json.loads((cap/'predicates.execution.json').read_bytes());assert failed['actual_exit']==1 and failed['preservation']['equal'] and failed['streams_complete']
+assert (cap/'predicates.stderr').read_text()=='Traceback (most recent call last):\n  File "<stdin>", line 44, in <module>\nAssertionError\n'
+lines=script.splitlines();assert lines[43]=='walk(evidence);assert len(unique)==60'
+a10line=next(i+1 for i,x in enumerate(lines) if 'p.a10(evidence,vs,cs,candidate,vi)' in x);assert a10line<44
+assert all(x in script[:script.index('walk(evidence);assert len(unique)==60')] for x in ['p.host(evidence[','p.bind_transport(','p.capability(','p.replay(','p.a10(','cr.build_packet_from_git('])
+# Reconstruct selected facts from immutable bytes; do not import product modules or rerun any Source predicates.
+def value(ref):return json.loads(read(ref)[0])
+cs=value(E['capture_selection_ref']);vs=value(E['verify_selection_ref']);cm=value(E['capture_host']['metadata_ref']);vm=value(E['verify_host']['metadata_ref']);ci=value(cm['invocation_ref']);vi=value(vm['invocation_ref']);result=value(E['a10_result_ref']);capture=value(E['a10_capture_ref']);stdout=read(capture['stdout'])[0];assert stdout==read(E['a10_result_ref'])[0] and len(stdout)==356061
+f={'scope':'HostedReview1 narrow supplemental bookkeeping reconciliation only. No Source predicate or external API rerun.','evidence_ref':Eref,'Root_disposition_ref':Dref,'exact_three_key_unique_refs':len(exact),'all_ref_key_subset_unique_projections':len(projected),'additional_projected_unique_rows':len(set(projected)-set(exact)),'inventory_unique_rows':len(inventory),'every_projected_ref_object_path_mode_blob_sha_verified':True,'prior_script_actual_exit':1,'prior_failure_line':44,'Source_a10_readonly_call_returned_by_control_flow_before_failure_line':a10line,'Source_stages_returned':'All pre-HostedReview Source selection/identity/authority/shadow/prerequisite/checkout/Host/pack/replay/capability/A10 methods returned before supplementary count assertion; original aggregate1 remains1. Subsequent helper calls on script lines45-49 were not executed. Their needed raw values are now read only through Git/JSON.','source':E['candidate']['source_commit'],'source_tree':E['candidate']['source_tree'],'candidate_sha256':hashlib.sha256(json.dumps(E['candidate'],sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest(),'protected_inputs':sum(map(len,E['candidate']['assessed_inputs'].values())),'capture_checkout':ci['checkout'],'verify_checkout':vi['checkout'],'environment':ci['environment'],'capture_producer':cs['producer'],'verify_producer':vs['producer'],'capture_tip':ci['output_tip'],'verify_tip':vi['output_tip'],'capture_inventory_rows':39,'verify_inventory_rows':len(E['inventory']),'a10_transition_actions':{k:result[k]['action'] for k in ['advance','noop','republish','rerun_required']},'actual_conflict_rejected':result['conflict_rejected'],'a10_stdout_bytes':len(stdout),'predicate_stdin_sha256':hashlib.sha256(script.encode()).hexdigest()}
+(cap/'reconciliation.facts.json').write_text(json.dumps(f,indent=2)+'\n');print(json.dumps(f,sort_keys=True))

@@ -1,0 +1,35 @@
+import pathlib,sys,hashlib,json,importlib.util
+root=pathlib.Path.cwd();sys.path.insert(0,str(root/'tools'))
+assert hashlib.sha256((root/'tools/workflow_assurance.py').read_bytes()).hexdigest()=='2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8'
+import workflow_assurance as wa
+p=wa._ControlsProof(root)
+release=json.loads((root/'.agent/evidence/123/root-hosted-review1-release.json').read_bytes())
+evidence=p.value(release['evidence_ref'],'Root selected actual evidence')
+assert hashlib.sha256(p.raw(release['evidence_ref'])).hexdigest()=='d28ccd80b8c68d28d5b519a009b3da19365f5997dc7a97152952e8c107772a77'
+assert hashlib.sha256((root/'.agent/contracts/123.json').read_bytes()).hexdigest()=='64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5'
+assert hashlib.sha256((root/'tools/test_workflow_assurance.py').read_bytes()).hexdigest()=='06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13'
+freeze=json.loads((root/'.agent/evidence/123/author4-freeze.json').read_bytes())
+assert hashlib.sha256((root/'.agent/evidence/123/author4-freeze.json').read_bytes()).hexdigest()=='1e24614b0e6315ce74274cf5f04803a3a01ca492b8184ebf6dd8555ea369648d'
+refs=[]
+def walk(v):
+ if type(v)is dict:
+  if {'path','revision','sha256'}<=set(v):p.raw({k:v[k] for k in ['path','revision','sha256']},'frozen input');refs.append(v)
+  else:
+   for x in v.values():walk(x)
+ elif type(v)is list:
+  for x in v:walk(x)
+walk(freeze);assert len(refs)==27
+helper=root/'.agent/evidence/123/root-normalize-hosted.py';assert hashlib.sha256(helper.read_bytes()).hexdigest()=='aaa0ca5d6016ce1e8def6d6d65efd806f563d8d8adcb4d2b6eafbdb4ae52ffd3'
+spec=importlib.util.spec_from_file_location('actual_root_transport',helper);normalizer=importlib.util.module_from_spec(spec);spec.loader.exec_module(normalizer)
+summary={}
+for mode in ['capture','verify']:
+ host=evidence[mode+'_host'];metadata=p.value(host['metadata_ref'],mode+' metadata');raw=p.raw(metadata['archive_ref'],mode+' archive',32*1024*1024);entries=normalizer.archive_entries(raw)
+ inv=p.value(metadata['invocation_ref'],mode+' Invocation');manifest=normalizer.decoded(entries['manifest.json'],True)
+ assert entries['invocation.json']==p.raw(metadata['invocation_ref']) and manifest['source_commit']==inv['source_commit']==release['source']
+ assert len(entries['proof.bundle'])==manifest['bundle_size'] and wa.sha(entries['proof.bundle'])==manifest['bundle_sha256']==inv['bundle_sha256']
+ assert wa.sha(entries['manifest.json'])==inv['manifest_sha256']
+ tip,pack=p.bundle_header(entries['proof.bundle'],release['source']);assert tip==manifest['output_tip']==inv['output_tip']
+ pathlib.Path('/home/cnross/.tmp/nizam-feature123-hosted-review1-captures/'+mode+'.pack.stdin').write_bytes(pack)
+ pathlib.Path('/home/cnross/.tmp/nizam-feature123-hosted-review1-captures/'+mode+'.bundle').write_bytes(entries['proof.bundle'])
+ summary[mode]={'archive_bytes':len(raw),'archive_sha256':wa.sha(raw),'bundle_bytes':len(entries['proof.bundle']),'bundle_sha256':wa.sha(entries['proof.bundle']),'pack_bytes':len(pack),'output_tip':tip,'inventory_rows':len(manifest['inventory']),'invocation_ref':metadata['invocation_ref']}
+print(json.dumps({'source':release['source'],'frozen_refs':len(refs),'modes':summary},sort_keys=True))

@@ -1,0 +1,49 @@
+import pathlib,sys,hashlib,json,re
+root=pathlib.Path.cwd();sys.path.insert(0,str(root/'tools'))
+assert hashlib.sha256((root/'tools/workflow_assurance.py').read_bytes()).hexdigest()=='2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8'
+import workflow_assurance as wa
+import convergent_review as cr
+p=wa._ControlsProof(root)
+release=json.loads((root/'.agent/evidence/123/root-hosted-review1-release.json').read_bytes())
+evidence=p.value(release['evidence_ref'],'Root-selected evidence');wa.json_value(evidence)
+p.obj(evidence,'schema_version candidate checkout capture_selection_ref verify_selection_ref evaluation_ref replay_ref trial_provenance a11_capture_ref a11_result_ref a10_receipt_ref a10_result_ref a10_capture_ref capability_ref capture_host verify_host pack_ref inventory','controls evidence');p.version(evidence['schema_version'],'controls evidence')
+for key in ['evaluation_ref','replay_ref','a11_capture_ref','a11_result_ref','a10_result_ref','a10_capture_ref','capability_ref']:p.output_ref(evidence[key],key)
+cs=p.selection(evidence['capture_selection_ref'],'capture');vs=p.selection(evidence['verify_selection_ref'],'verify')
+for key in cs:
+ if key not in ['mode','candidate','a10_policy_ref','capture_pack_ref','producer']:p.same(cs[key],vs[key],'same selection '+key)
+candidate=evidence['candidate'];p.identity(candidate,vs['inputs']);p.same(candidate,vs['candidate'],'selected candidate');assert candidate['source_commit']==vs['source_commit']==release['source'] and candidate['source_tree']==vs['source_tree']
+p.prerequisites(cs,candidate);p.authority(cs);p.shadow(cs)
+ci,cb,crows=p.host(evidence['capture_host'],'capture',evidence['capture_selection_ref'],cs,candidate)
+vi,vb,vrows=p.host(evidence['verify_host'],'verify',evidence['verify_selection_ref'],vs,candidate)
+p.bind_transport(candidate['source_commit'],vi['output_tip'],vrows)
+p.same(evidence['checkout'],ci['checkout'],'capture checkout');assert p.raw(vs['capture_pack_ref'],'capture bundle',16*1024*1024)==cb and p.raw(evidence['pack_ref'],'verify bundle',16*1024*1024)==vb
+p.same(evidence['inventory'],vrows,'full inventory');wa.git(root,'merge-base','--is-ancestor',ci['output_tip'],vi['output_tip']);p.same(ci['environment'],vi['environment'],'runtime')
+p.same(ci['result_refs'],[next(r for r in ci['result_refs'] if r['path'].endswith('/candidate.json')),evidence['capability_ref'],evidence['evaluation_ref'],evidence['replay_ref'],evidence['a11_result_ref'],evidence['a11_capture_ref']],'capture result refs')
+p.output_ref(ci['result_refs'][0],'candidate artifact');p.same(p.value(ci['result_refs'][0],'candidate artifact'),candidate,'actual candidate')
+p.same(vi['result_refs'],[evidence['a10_receipt_ref'],evidence['a10_result_ref'],evidence['a10_capture_ref']],'verify result refs')
+p.capability(evidence,cs,candidate);mapped=p.replay(evidence,cs);p.a10(evidence,vs,cs,candidate,vi)
+assert len(crows)==39 and len(vrows)==49 and len(evidence['trial_provenance'])==3
+roots=[]
+for row in evidence['trial_provenance']:
+ matches=re.findall(r'^WA123_OBSERVER_FRAME=(\{.*\})$',p.raw(row['stdout_ref']).decode(),re.M);assert len(matches)==1
+ frame=wa.parse_json(matches[0]);assert set(frame)=={'argv','cwd'} and frame['argv']==row['invocation'][6:] and frame['cwd']==row['invocation'][2];roots.append(frame['cwd'])
+ assert p.value(row['output_ref'],'actual trial')['observations']==[] and p.raw(row['stderr_ref'])==b''
+assert len(set(roots))==3
+packet_raw=p.raw(evidence['trial_provenance'][0]['packet_ref']);packet=wa.parse_json(packet_raw)
+assert cr.canonical_json_bytes(cr.build_packet_from_git(root,cs['review_repository'],'wa123-controls','ordinary',cs['packet_base'],cs['source_commit']))==packet_raw
+assert len(packet_raw)==400980 and not any(x['path']=='.github/workflows/compliance.yml' for x in packet['delta'])
+unique={}
+def walk(v):
+ if type(v)is dict:
+  if set(v)=={'path','revision','sha256'}:
+   key=(v['revision'],v['path'],v['sha256']);p.raw(v,'actual evidence Ref');unique[key]=v
+  else:
+   for x in v.values():walk(x)
+ elif type(v)is list:
+  for x in v:walk(x)
+walk(evidence);assert len(unique)==60
+result=p.value(evidence['a10_result_ref'],'actual A10 result');capture=p.capture(evidence['a10_capture_ref'],candidate,vs['producer'],'A10')
+assert p.raw(capture['stdout'])==p.raw(evidence['a10_result_ref']) and len(p.raw(capture['stdout']))==356061
+facts={'role':'Independent hosted Evaluator','reviewer':'/root/overlap_review123','scope':'Executed unchanged read-only pre-HostedReview predicates only; no final policy/HostedReview placeholder and no historical A10/runtime execution.','source':candidate['source_commit'],'source_tree':candidate['source_tree'],'candidate_sha256':wa.sha(wa.canonical(candidate)),'protected_inputs':sum(map(len,candidate['assessed_inputs'].values())),'evidence_ref':release['evidence_ref'],'capture_selection_ref':evidence['capture_selection_ref'],'verify_selection_ref':evidence['verify_selection_ref'],'capture_host':evidence['capture_host'],'verify_host':evidence['verify_host'],'capture_checkout':ci['checkout'],'verify_checkout':vi['checkout'],'environment':ci['environment'],'capture_producer':cs['producer'],'verify_producer':vs['producer'],'capture_tip':ci['output_tip'],'verify_tip':vi['output_tip'],'capture_inventory_rows':len(crows),'verify_inventory_rows':len(vrows),'evidence_unique_refs':len(unique),'packet_bytes':len(packet_raw),'packet_delta_paths':[x['path'] for x in packet['delta']],'trial_roots':roots,'a11_result':mapped,'a10_transition_actions':{k:result[k]['action'] for k in ['advance','noop','republish','rerun_required']},'actual_conflict_rejected':result['conflict_rejected'],'a10_stdout_bytes':len(p.raw(capture['stdout'])),'predicates':['closed Evidence/selection/typed input refs and same Source/candidate/runtime','all537protected source/current/checkouts and true Root authority/pre-code/provisional/Report4','both actual five-fetch Host chains, full ZIP/manifest/unique Invocation/step/checkout/producer bindings','complete39/49pack inventories, exact imported objects/add-only commit/path/mode boundary and capture ancestry','three distinct real trial roots/observer frames/adapter receipts/rendered inputs/output/replay/convergence/report mapping','real boundary/isolation/map captures and bounded ordinary400980Bpacket independently rebuilt from Git','real A10 receipt/result/capture/stdout, advance/noop/conflict/republish/rerun-required and shadow-state/history relations'],'separation':'Reviewer authored external CLI regression tests only. Did not author Nizam Source, Nizam acceptance tests, independent Report4 or bundle seal; no framework edit or claimed fresh model review.'}
+pathlib.Path('/home/cnross/.tmp/nizam-feature123-hosted-review1-captures/predicates.facts.json').write_text(json.dumps(facts,indent=2)+'\n')
+print(json.dumps({k:facts[k] for k in ['source','candidate_sha256','protected_inputs','capture_tip','verify_tip','capture_inventory_rows','verify_inventory_rows','evidence_unique_refs','packet_bytes','a10_transition_actions','actual_conflict_rejected','a10_stdout_bytes']},sort_keys=True))
