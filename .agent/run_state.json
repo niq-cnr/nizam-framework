@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T03:08:45.619113+00:00",
+  "updated_at": "2026-10-15T03:13:51.612132+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1440,7 +1440,7 @@
     "122-ci": {
       "attempts": 1,
       "limit": 3,
-      "status": "running"
+      "status": "failed-preservation-assertion"
     },
     "122-executable-review": {
       "attempts": 1,
@@ -1456,6 +1456,12 @@
       "attempts": 1,
       "limit": 3,
       "status": "preparing"
+    },
+    "122-ci-diagnosis": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "static-diagnosis",
+      "strategy": "inspect actual hosted failure before repair"
     }
   },
   "history": [
@@ -6375,6 +6381,12 @@
       "event": "122-downstream-preparation",
       "detail": "IndependentModeB andfreshQA mayreadstableSourcefff/teste251 andprepareown boundedchecks inparallel; nofinalModeB gate before independentactualcontrolseal, noQAbehavior before strictModeB. RootsmergeexplicitRootrelease beforeanyactualexecution.",
       "evidence": ".agent/evidence/122/downstream-preparation.json"
+    },
+    {
+      "at": "2026-10-15T03:13:51.612132+00:00",
+      "event": "122-ci1-failed-diagnosis",
+      "detail": "Actual run38673915083 fixtures116223074727 failed new semantic legacy preservation guard underPython3.14.8;42 inherited andinfrastructurepassed,otherfourcompliancejobsandcloseoutpassed. Rawlog retained. Independentreadonlydiagnosisinnewownedroot; noSource/testrepair, rerun, ModeB orQAbehavior authorized. Author3counterretained.",
+      "evidence": ".agent/evidence/122/ci1-failure-capture.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6907,7 +6919,7 @@
       }
     ]
   },
-  "last_action": "122 finalSourcefff/teste251 controls2currentprep refs+8objectpack verified; actualfour0/1/0 controlsattempt1 released. PR103drafthostedCIrunning; independentfinalseal/ModeB/freshQA/capture pending.",
+  "last_action": "Investigate actual hosted CI1 legacy-fixture preservation failure; no downstream execution approval.",
   "completed_contract_ids": [
     "099",
     "103",
