@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T01:36:40.230364+00:00",
+  "updated_at": "2026-10-15T01:40:13.656059+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1397,14 +1397,15 @@
       "strategy": "type/interface analysis"
     },
     "122-author": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "passed"
+      "status": "dispatched",
+      "strategy": "type/interface analysis"
     },
     "122-provisional-review": {
       "attempts": 1,
       "limit": 3,
-      "status": "dispatched"
+      "status": "rejected"
     }
   },
   "history": [
@@ -6210,6 +6211,12 @@
       "event": "122-author-freeze-provisional-release",
       "detail": "Rootverifiedall authorfrozenartifactrefs, fixture-static0 and fouractualSETUP2 records; testdf2bcd/interface147be0 immutable. No intendedsemanticred claimed. Distinctpreparedreviewer now actualreview beforeSource.",
       "evidence": ".agent/evidence/122/author-root-binding.json"
+    },
+    {
+      "at": "2026-10-15T01:40:13.656059+00:00",
+      "event": "122-provisional1-rejected-author2-dispatch",
+      "detail": "Three concrete authoredtest defects routed to independentauthor; no contract weakening/Source change. Reviewer readonlyinventory-parser1 retained then diagnosticstatic2; Root accepts rejection only, no executablegate/runtimered claimed. Sameoriginal950/phase7200/9360.",
+      "evidence": ".agent/evidence/122/author2-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6742,7 +6749,7 @@
       }
     ]
   },
-  "last_action": "122 independentacceptancefreeze authored239changedlines; fixtures0/newcasesmissingAPI2 only. Distinctprovisionalreview next, noSourceapproval.",
+  "last_action": "122 provisional1 rejected UTF8/exactkeymalformed gaps and schema-invalidsemanticpositive; author2 isolatedrepair, Sourcewithheld.",
   "completed_contract_ids": [
     "099",
     "103",
