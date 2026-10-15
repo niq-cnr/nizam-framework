@@ -1594,6 +1594,7 @@ class ControlsFixture(FailureFixture):
         source_profile=bool(defect and defect['site']=='source-contract')
         if seed and not source_profile:
             self.root=seed.root;self.source=seed.source
+            self.ambient_source=seed.ambient_source;self.packet_base=seed.packet_base;self.fixture_source_path=seed.fixture_source_path
             require(git(self.root,'remote','get-url','origin')==CONTROL_ORIGIN,'seed actual origin stable')
             git(self.root,'merge-base','--is-ancestor',self.source,'HEAD')
             for path in seed.source_paths:require((self.root/path).is_file() and not (self.root/path).is_symlink(),'seed complete Source remains materialized')
@@ -1604,9 +1605,26 @@ class ControlsFixture(FailureFixture):
             git(self.root, 'remote', 'set-url', 'origin', CONTROL_ORIGIN)
             git(self.root, 'checkout', '--quiet', '--detach', git(ROOT, 'rev-parse', 'HEAD'))
             self.source = git(self.root, 'rev-parse', 'HEAD')
+            self.ambient_source=self.source;self.fixture_source_path='tools/zz_wa123_synthetic_candidate.txt'
+            require(not git(self.root,'status','--porcelain=v1'),'full ambient clone is clean before private source anchors')
+            require(not git(self.root,'ls-tree',self.ambient_source,'--',self.fixture_source_path),'private synthetic source input is absent from ambient tree')
+            target=self.root/self.fixture_source_path
+            with target.open('xb') as stream:stream.write(b'SYNTHETIC_INPUT_VERSION = 0\n')
+            target.chmod(0o644)
+            self.packet_base=self.commit('SYNTHETIC private UTF8 source baseline F0')
+            target.write_bytes(b'SYNTHETIC_INPUT_VERSION = 1\n')
             if source_profile:
                 value=self.value('source-contract',json.loads((self.root/'.agent/contracts/123.json').read_bytes()))
-                self.write('.agent/contracts/123.json',canonical(value)+b'\n');self.source=self.commit('SYNTHETIC invalid contract metadata candidate')
+                self.write('.agent/contracts/123.json',canonical(value)+b'\n')
+            self.source=self.commit('SYNTHETIC private meaningful UTF8 source candidate F1')
+        require(git(self.root,'show','-s','--format=%P',self.source)==self.packet_base,'private F1 has exactly F0 as parent')
+        require(git(self.root,'show','-s','--format=%P',self.packet_base)==self.ambient_source,'private F0 has exactly ambient checkout as parent')
+        require(self.fixture_source_path>'tools/workflow_assurance.py','private source input preserves original first Source drift target')
+        require(git(self.root,'diff','--name-only',self.ambient_source,self.packet_base)==self.fixture_source_path,'F0 retains every ambient tracked blob and mode')
+        changed=sorted([self.fixture_source_path]+(['.agent/contracts/123.json'] if source_profile else []))
+        require(git(self.root,'diff','--name-only',self.packet_base,self.source).splitlines()==changed,'F1 changes only meaningful private input and designated contract mutation')
+        require(self.ref(self.fixture_source_path,self.packet_base)['sha256']==sha(b'SYNTHETIC_INPUT_VERSION = 0\n'),'F0 contains actual synthetic UTF8 baseline')
+        require(self.ref(self.fixture_source_path,self.source)['sha256']==sha(b'SYNTHETIC_INPUT_VERSION = 1\n'),'F1 contains actual changed synthetic UTF8 input')
         self.source_paths=git(self.root,'ls-tree','-r','--name-only',self.source).splitlines()
         self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'SYNTHETIC outside unchanged\n'); self.outside.chmod(0o600)
         tool_paths = ['tools/workflow_assurance_ci.py', 'tools/convergent_review.py',
@@ -1616,7 +1634,7 @@ class ControlsFixture(FailureFixture):
             '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
             'templates/convergent-review-prompt.md']
         tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
-        self.inputs = dict(source=['tools/workflow_assurance.py'], contracts=['.agent/contracts/123.json'],
+        self.inputs = copy.deepcopy(seed.inputs) if seed and not source_profile else dict(source=['tools/workflow_assurance.py',self.fixture_source_path], contracts=['.agent/contracts/123.json'],
             tests=['tools/test_workflow_assurance.py'], tools=tool_paths, unknown_dependencies=[])
         self.candidate = copy.deepcopy(seed.candidate) if seed and not source_profile else api.assess_repository(self.root, self.source, self.inputs, ['PYTHONDONTWRITEBYTECODE'], {})
         api.validate_identity(self.candidate)
