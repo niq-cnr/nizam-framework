@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.9
+version: 0.65.10
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.10"
+    date: "2026-10-15"
+    summary: "Record merged PR104 and active optional021, pending old main CI and archived018 budget failure; preserve historical snapshots and normative dependencies."
   - version: "0.65.9"
     date: "2026-10-15"
     summary: "Record captured 123 and complete 018 with actual independent acceptance and pending PR 104 integration; distinguish historical snapshots and preserve original budgets."
@@ -234,7 +237,7 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — captured 123 / complete 018, 2026-10-15
+## Current position — active 021 / complete 018, 2026-10-15
 
 Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
 Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).
@@ -243,11 +246,13 @@ The [final executable seal](../../.agent/qa/123-final-executable-seal1.json) ret
 Root capture returned 0 and preserved 14,253 tracked physical rows and 239 installed rows, and verified 537 protected candidate inputs. Original transport, setup and static inspection failures remain preserved; recovery does not relabel them as successes.
 The [approved 123 contract remains immutable](../../.agent/evidence/123/root-closeout-contract-preservation-decision.json); completion is recorded in canonical lifecycle artifacts. [PR 103 main CI](../../.agent/evidence/122/pr103-main-ci.json) passed all five jobs at merge `79811ef7` before 123.
 
-[PR 104](https://github.com/niq-cnr/nizam-framework/pull/104) final exact-head CI, merge and main CI remain pending at this closeout snapshot; earlier successful proof runs do not establish final integration.
-Original 018 **7,200/9,360** and prior 119–122 **4,303** remain unchanged. Root’s [scope_budget](../../.agent/run_state.json) is authoritative for final feature 123 accounting, including this refresh once.
+[PR 104](https://github.com/niq-cnr/nizam-framework/pull/104) passed all six required checks at exact head `599d7c5a` and normally merged as `c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7`; [Root’s integration receipt](../../.agent/evidence/123/final-integration1-receipt.json) verifies its parents and matching tested tree. [Main run 38817712498](https://github.com/niq-cnr/nizam-framework/actions/runs/38817712498) was still running at the 021 activation snapshot; all five jobs must succeed before later maintenance integration.
+Original 018 **7,200/9,360** and prior 119–122 **4,303** remain unchanged. Final accounting is preserved under [run_state.phase_018_scope_budget_final](../../.agent/run_state.json): **11,990 source-only lower bound / 26,657 conservative total**, failed/flagged with the recorded delivery exception, without a rebaseline. Its immutable endpoint excludes later integration administration, retained separately as subsequent costs.
 
-Archived 016 remains partial at **5,179** (original **5,650/7,345**); full SBCL/runtime and final CI 131 remain phase 020 obligations. Phase 017 remains **5,203/7,020**. The DAG stays **017 → 016 → 018 → 020 → 019**, with 018’s **127-only** prerequisite; phase 020 preparation is next, with activation and independent gates still required.
-The [live repository-binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied, installed **v1.5.0** remains immutable, and balanced real-task comparison remains unmeasured. This closeout establishes no comparative superiority or new release/install change.
+[Phase 021](phase_021.yaml) is active and [contract 133](../../.agent/contracts/133.json) approved for per-call immutable receipt-input batching. Independent tests are being authored; implementation has not begun at this snapshot. [Root selected the 2,000/2,600 estimate/ceiling](../../.agent/evidence/133/activation-decision.json) under delegated self-improvement authority; the numeric figures are Root’s choice, not a direct human quote. Current `run_state.scope_budget` belongs to 021 and is unmeasured: initialized zero does not mean zero preparation cost. This refresh is charged once to 021.
+
+Archived 016 remains partial at **5,179** (original **5,650/7,345**); full SBCL/runtime and final CI 131 remain phase 020 obligations. Phase 017 remains **5,203/7,020**. The DAG stays **017 → 016 → 018 → 020 → 019**, with 018’s **127-only** prerequisite. Optional 021 maintenance precedes 020 without adding a normative dependency. Phase 020 prerequisite corrections are prepared on a separate unpublished branch; activation and independent gates remain future.
+The [live repository-binding migration](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied, installed **v1.5.0** remains immutable at **239 files**, and balanced real-task comparison remains unmeasured. No comparative superiority or new release/install change is established.
 Older snapshots below retain their assessment-time facts and evidence.
 
 ## Historical snapshot — position — captured 122, 2026-10-15

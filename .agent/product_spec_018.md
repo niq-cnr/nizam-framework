@@ -2,10 +2,13 @@
 id: nizam-phase018-product-spec
 title: "Phase 018 — Workflow Assurance — Controls"
 description: "Bounded WA control plan, recorded authorization and future independent acceptance gates."
-version: 0.1.6
+version: 0.1.7
 status: active
 authoritative_source: .agent/product_spec_018.md
 change_log:
+  - version: "0.1.7"
+    date: "2026-10-15"
+    summary: "Record merged PR104, pending main CI and optional active021; point historical018 accounting to its preserved archive without changing requirements or budgets."
   - version: "0.1.6"
     date: "2026-10-15"
     summary: "Record captured 123 and canonical 018 closure, independent actual acceptance and remaining PR 104 integration; preserve requirements and original budget."
@@ -32,7 +35,7 @@ change_log:
 # Phase 018 plan
 
 NIP-0004 accepted scope and six operator selections are inputs. [Root’s authority receipt](evidence/phase018-preflight/activation-authority.json) applies standing operator logical-next-steps authorization to existing features 119–123 and the unchanged 7,200/9,360 estimate/ceiling under H-PHASE-018; it does not assert a new numeric user quote or rely on earlier 017/016 approvals.
-[Independent activation and Root promotion](evidence/phase018-preflight/activation-result.json) made phase 018 active; [canonical phase 018](../docs/planning/phase_018.yaml) now records all 119–123 complete after independent QA and [Root capture 123](evidence/123/evidence-capture.json). [PR 103 main CI](evidence/122/pr103-main-ci.json) passed all five jobs at merge `79811ef7` before 123. PR 104 final exact-head CI, merge and main CI remain pending at this closeout snapshot.
+[Independent activation and Root promotion](evidence/phase018-preflight/activation-result.json) made phase 018 active; [canonical phase 018](../docs/planning/phase_018.yaml) now records all 119–123 complete after independent QA and [Root capture 123](evidence/123/evidence-capture.json). [PR 103 main CI](evidence/122/pr103-main-ci.json) passed all five jobs at merge `79811ef7` before 123. [PR 104 final integration](evidence/123/final-integration1-receipt.json) passed all six required checks at exact head `599d7c5a` and normally merged as `c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7`. Its [main run 38817712498](https://github.com/niq-cnr/nizam-framework/actions/runs/38817712498) was still running at the 021 activation snapshot; all five main jobs must succeed before later maintenance integration.
 [Foundation 118](evidence/118/evidence-capture.json) and [controller semantics 127](evidence/127/evidence-capture.json) are captured prerequisites; 128, full phase-016 closure and later 131 are not added prerequisites. [Postmerge main CI](evidence/128/pr99-main-ci.json) passed all five jobs on PR 99 merge `fcd0584`; this earlier integration proof is separate from the later 119–123 acceptance.
 Records for phases 015 and 014, installed v1.5.0, release versions and Open debts NDEBT-040/NDEBT-034 remain unchanged. Local adoption covers niq-cnr/nizam-framework only; planning is not activation.
 
@@ -66,7 +69,8 @@ Features 119–121 retain captured acceptance. [Feature 122 QA](qa/122.json) pas
 Feature 122’s [canonical closure](evidence/122/closure.json) follows independent pre-code, renewed bundle, Mode B, fresh QA and Root capture gates. Read-only cause routing preserves failed outcomes and the three-attempt limit; integrity/producer labels do not authenticate classification or authority.
 
 Feature 123’s actual two-pass hosted capture/verify proof passed [independent HostedReview](evidence/123/hosted-review1.json), the [final executable seal](qa/123-final-executable-seal1.json), [Mode B](validator/123-mode-b.json) and [fresh QA](qa/123.json) before Root capture. Fresh QA verified all nine mandatory expected outcomes, exact default48 and 166/166 fixtures, plus exactly one same-instance warmed-cache hardlink rejection/restoration check. The seal retains actual positive/intended-negative/restored readiness exits 0/1/0; original operational setup/static failures remain recorded. [Root’s closure decision](evidence/123/root-closeout-contract-preservation-decision.json) preserves the approved 123 contract byte-identical as one of 537 protected candidate inputs; feature completion is recorded separately in canonical lifecycle artifacts.
-Root owns final feature 123 accounting in [run_state.scope_budget](run_state.json), including this refresh once; original 7,200/9,360 and prior 119–122 total 4,303 remain unchanged. Full runtime/SBCL and final CI 131 remain later phase 020 obligations; comparative performance remains unmeasured. Aligned API fixtures do not establish live Root adoption: [repository-binding migration](evidence/120/repository-binding-decision-proposal.json) remains unapplied.
+Root preserved final feature 123 accounting in [run_state.phase_018_scope_budget_final](run_state.json). Original 7,200/9,360 and prior 119–122 total 4,303 remain unchanged: the phase source-only lower bound is 11,990 and conservative total 26,657, so the budget remains failed/flagged under the recorded delivery exception, without a rebaseline. The immutable measurement endpoint excludes later integration administration, retained separately as subsequent costs.
+Optional [phase 021](../docs/planning/phase_021.yaml) is now active with [contract 133](contracts/133.json) approved; independent tests are being authored and implementation has not begun at this snapshot. [Root selected 2,000/2,600 under delegated self-improvement authority](evidence/133/activation-decision.json); these figures are not a direct human numeric quote. Current `run_state.scope_budget` belongs to 021 and is unmeasured: initialized zero does not mean zero preparation cost. This refresh is charged once to 021. The optional maintenance precedes 020 without adding a new dependency to the normative 017 → 016 → 018 → 020 → 019 DAG. Phase 020 prerequisite corrections are prepared on a separate unpublished branch; its activation and independent gates remain future. Full runtime/SBCL and final CI 131 remain later phase 020 obligations; comparative performance remains unmeasured. Aligned API fixtures do not establish live Root adoption: [repository-binding migration](evidence/120/repository-binding-decision-proposal.json) remains unapplied.
 Its --case NAME tests exactly the named invariant; --check foundation-ready,
 controls-ready or profiles-ready verifies that stage's candidate-bound receipts.
 Unknown cases/checks, setup failures and missing proof exit nonzero. Existing
