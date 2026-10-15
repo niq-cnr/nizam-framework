@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T06:25:24.407360Z",
+  "updated_at": "2026-10-15T06:39:13.154582+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1545,7 +1545,7 @@
     "123-author": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-first-concrete-bundle-after-protocol-audit"
+      "status": "first-concrete-bundle-frozen-provisional-review-pending"
     },
     "123-contract-approval": {
       "attempts": 1,
@@ -1569,6 +1569,19 @@
       "limit": 3,
       "status": "predeclared-not-dispatched",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure"
+    },
+    "123-author-static": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "actual-static2-pass-admitted-as-preparation-only",
+      "prior_actual_exit": 1,
+      "same_owned_root_preallocation_deviation": ".agent/evidence/123/author1-concrete-static-chronology.json",
+      "standing_operator_override": ".agent/evidence/123/root-author1-admission.json"
+    },
+    "123-provisional-review": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "dispatched-distinct-static-review"
     }
   },
   "history": [
@@ -6692,6 +6705,12 @@
       "event": "123-experiment-only-fixed-input-preparation",
       "detail": "Projected exact existing owner/gate/operator instruction and four scope values into closed experiment-only authority. Created schema-valid isolated pending shadow4303 with empty experiment counters/history. Live repository binding and all real counters/budgets unchanged; no Source/candidate/CI selection or success claim.",
       "evidence": ".agent/evidence/123/root-input-preparation.json"
+    },
+    {
+      "at": "2026-10-15T06:39:13.154582+00:00",
+      "event": "123-concrete-author1-freeze-and-provisional1-release",
+      "detail": "12 ownedRefs actualbytes/hash/blob/mode +approvedcontract/Source verified. Static exits1/0 and same-root prematurecheckerretry disclosed; narrowstandingoperator disposition preservesattempts2/max3, no semanticproof. Distinct reviewer freshownedroot checks exactbundle beforeSource; actualbehaviorexecutions0.",
+      "evidence": ".agent/evidence/123/root-author1-admission.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7253,7 +7272,7 @@
       }
     ]
   },
-  "last_action": "123 truthful contract approval published; independent concrete acceptance author1 released; Source held for provisional review.",
+  "last_action": "123 concrete author1 frozen; static failure/chronology admitted only as preparation; independent provisional1 released, Source held.",
   "completed_contract_ids": [
     "099",
     "103",
