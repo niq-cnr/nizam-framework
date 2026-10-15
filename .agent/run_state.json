@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T19:10:21.516185+00:00",
+  "updated_at": "2026-10-15T19:17:22.498911+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1912,14 +1912,40 @@
     "123-fresh-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "running",
       "owner": "/root/fresh_qa123",
       "release": ".agent/evidence/123/root-fresh-qa1-release.json",
       "mode_b_ref": {
         "path": ".agent/validator/123-mode-b.json",
         "revision": "f301a2d819498a7af297b164379f7c16de720787",
         "sha256": "64ca918f4fdbf0d73e20c1b5648dcf3f3162ddec4014103cfafcbaf2e14a07bf"
-      }
+      },
+      "long_lanes": [
+        {
+          "lane": "candidate",
+          "child_pid": 3585102,
+          "started_at": "2026-10-15T19:11:37.220932+00:00",
+          "cwd": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-candidate",
+          "exercised_revision": "d94c880b825f3f5893941f91fea46e2564903a4f",
+          "started_record": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-run/candidate/candidate.started.json"
+        },
+        {
+          "lane": "default48",
+          "child_pid": 3585104,
+          "started_at": "2026-10-15T19:11:37.236584+00:00",
+          "cwd": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-default48",
+          "exercised_revision": "d94c880b825f3f5893941f91fea46e2564903a4f",
+          "started_record": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-run/default48/default48.started.json"
+        },
+        {
+          "lane": "fixture",
+          "child_pid": 3585107,
+          "started_at": "2026-10-15T19:11:37.243944+00:00",
+          "cwd": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-fixture",
+          "exercised_revision": "d94c880b825f3f5893941f91fea46e2564903a4f",
+          "started_record": "/home/cnross/.tmp/nizam-feature123-fresh-qa1-run/fixture/fixture.started.json"
+        }
+      ]
     }
   },
   "history": [
@@ -7958,7 +7984,7 @@
       }
     ]
   },
-  "last_action": "Strict independent Mode B admitted; freshQA1 released under frozen plan/driver with three parallel long lanes. Rootcapture/closure still held.",
+  "last_action": "Independent freshQA1 running three parallel long lanes at d94c880b. Actual historical positive/blocker/readiness passed so far; final verdict/capture/closure pending.",
   "completed_contract_ids": [
     "099",
     "103",
