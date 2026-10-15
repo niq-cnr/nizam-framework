@@ -1,0 +1,83 @@
+{
+  "role": "Root actual capture pack import only; not provenance approval",
+  "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+  "bundle_ref": {
+    "path": ".agent/evidence/123/hosted-capture2-transport/proof.bundle",
+    "revision": "5dc455949a1855dec956d081b9a46dff487d201e",
+    "sha256": "787831bb369a5900d3b1e6a112d985d80f717da3da731d7d0957a78b674953c2"
+  },
+  "records": [
+    {
+      "kind": "index-pack",
+      "argv": [
+        "git",
+        "index-pack",
+        "--strict",
+        "--fix-thin",
+        "--stdin"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-hosted-capture2-final",
+      "revision": "bf608008f0fd203d7875ec82af0a0349f382ba4b",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "started_at": "2026-10-15T14:35:12.997197+00:00",
+      "finished_at": "2026-10-15T14:35:13.023509+00:00",
+      "stdin_bytes": 140911,
+      "stdin_sha256": "07963ddc17f6deba6c1d1e46f254daa0f9a0eea980565156392f37e27111f483",
+      "stdout_bytes": 46,
+      "stderr_bytes": 0,
+      "stdout_sha256": "e854798b90be63acd1862aadaf9062b288f9f3cd150cd624e0e7f3cd8e07496b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "kind": "bundle-verify",
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        ".agent/evidence/123/hosted-capture2-transport/proof.bundle"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-hosted-capture2-final",
+      "revision": "bf608008f0fd203d7875ec82af0a0349f382ba4b",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "started_at": "2026-10-15T14:35:13.023919+00:00",
+      "finished_at": "2026-10-15T14:35:13.051922+00:00",
+      "stdin_bytes": 0,
+      "stdin_sha256": null,
+      "stdout_bytes": 202,
+      "stderr_bytes": 67,
+      "stdout_sha256": "3135692da09f11162eb0f70a5ec44c224b2fe07363cb1f3567cc10d22241580e",
+      "stderr_sha256": "8143eb6b894e1ccefc7c32c7783f86e43ad218c59fccd4490045c5bec9120234"
+    },
+    {
+      "kind": "fetch",
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "--no-write-fetch-head",
+        ".agent/evidence/123/hosted-capture2-transport/proof.bundle",
+        "refs/wa123/proof:refs/nizam/123/capture2-root-import"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature123-hosted-capture2-final",
+      "revision": "bf608008f0fd203d7875ec82af0a0349f382ba4b",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "started_at": "2026-10-15T14:35:13.052242+00:00",
+      "finished_at": "2026-10-15T14:35:13.081850+00:00",
+      "stdin_bytes": 0,
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stderr_bytes": 143,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "a0654be844c4080141cdf03bc55e9c2e9a752e5812f078c9dfd98f55c7a96bf7"
+    }
+  ]
+}
