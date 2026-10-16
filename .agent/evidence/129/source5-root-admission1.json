@@ -1,0 +1,109 @@
+{
+  "role": "Root admission of the Source5 product onto the handover line",
+  "at": "2026-10-16T12:58:12Z",
+  "repository": "https://github.com/niq-cnr/nizam-framework.git",
+  "branch": "phase/020-129-source5-admission",
+  "product_revision": "ea30d229fc667c32eee0f451394694d6652620ee",
+  "product_parent": "d19f090e48399ff2c508d1935789567e53f07183",
+  "source_candidate": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "source_candidate_parent": "a9114bcbe16fba76dbdba1147ea76db8a5a6b39d",
+  "product_blobs": {
+    "tools/runtime_session.py": "65f3452358fa2a488be0e9bb64879a0e1ebc9fe6",
+    "tools/sbcl_session_loop.lisp": "ba9f42fa441e2047480be1895434bea011ac92d4"
+  },
+  "runner_blob": {
+    "path": "tools/test_runtime_session.py",
+    "git_blob": "5af7a9f5683886dff6b607ec39f87490b9cddbd9",
+    "changed_in_this_adoption": false
+  },
+  "attempts": 5,
+  "limit": 5,
+  "installed_limit": 3,
+  "authorized_additional_attempts": 2,
+  "attempt_counter_reset": false,
+  "feature_129_complete": false,
+  "full_live_claim": false,
+  "full_live_qualification": "Required capable CI, the full seventeen-row qualification, and the thirteen-case qualification remain features 131 and 132.",
+  "receipts": {
+    "authority": ".agent/evidence/129/source5-authority1.json",
+    "design": ".agent/evidence/129/source5-design1.json",
+    "release": ".agent/evidence/129/source-release5.json",
+    "review_admission": ".agent/evidence/129/source5-review-admission1.json",
+    "applicability_review": ".agent/validator/129-replacement-architecture2.json",
+    "mode_b": ".agent/validator/129-source5-mode-b.json",
+    "fresh_qa": ".agent/qa/129-source5.json",
+    "implementation": ".agent/evidence/129/implementation5/summary.json",
+    "qa_commands": ".agent/evidence/129/qa5/summary.json",
+    "adversarial": ".agent/evidence/129/qa5/b1-result.json",
+    "adoption_rerun": ".agent/evidence/129/adoption-rerun1/summary.json",
+    "classifier_output": ".agent/evidence/129/source5-adoption-measure1.txt"
+  },
+  "gates": {
+    "mode_b_approved": true,
+    "mode_b_issues": [],
+    "mode_b_missing_acceptance_coverage": [],
+    "mode_b_unsupported_claims": [],
+    "fresh_qa_approved": true,
+    "fresh_qa_issues": [],
+    "fresh_qa_missing_acceptance_coverage": [],
+    "fresh_qa_unsupported_claims": [],
+    "fresh_qa_tree": "Isolated worktree at e47a645, not this handover line.",
+    "adoption_tree_eleven_exits": 0,
+    "adoption_tree_public_entry_exit": 0,
+    "quarantine_5f7de036": "Not adopted.",
+    "source4_currentness": "Not revived."
+  },
+  "classifier": {
+    "path": ".agent/evidence/scope-budget-014/measure.py",
+    "sha256": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 129=d19f090e48399ff2c508d1935789567e53f07183..ea30d229fc667c32eee0f451394694d6652620ee --files",
+    "exit": 0,
+    "PRODUCT_LINES": 1218,
+    "PROCESS_OVERHEAD_LINES": 626,
+    "BUDGET_COUNTED_LINES": 1844,
+    "EVIDENCE_LINES": 1526,
+    "EXCLUDED_LINES": 0,
+    "UNCLASSIFIED_LINES": 0,
+    "verbatim": ".agent/evidence/129/source5-adoption-measure1.txt"
+  },
+  "comparison": {
+    "feature_product_estimate": 650,
+    "feature_independent_tests_estimate": 450,
+    "feature_process_estimate": 1000,
+    "feature_estimated_lines": 2100,
+    "phase_product": 1850,
+    "phase_independent_tests": 1750,
+    "phase_process": 3750,
+    "phase_original": 7350,
+    "phase_ceiling": 9555,
+    "product_lines": 1218,
+    "independent_test_lines_in_this_diff": 0,
+    "process_overhead_lines": 626,
+    "budget_counted_lines": 1844,
+    "product_variance": "1218 exceeds the feature product estimate 650 by 568. It remains inside the phase product category 1850. The 650 figure is not raised.",
+    "independent_tests_note": "The frozen classifier has no independent_tests class. tools/ changes count as budget/product. This diff changes no test file. The feature independent_tests estimate of 450 is not consumed here.",
+    "process_note": "PROCESS_OVERHEAD_LINES 626 are the three verdict JSON files. That is under the feature process estimate 1000 and the phase process category 3750.",
+    "cumulative": "1844 is under the feature estimate 2100, the phase original 7350, and the ceiling 9555. No cumulative halt.",
+    "rolling_average": "No prior completed phase 020 feature. The 3x rolling-average check has no baseline and is not flagged.",
+    "allocation_raised": false
+  },
+  "scope_of_measurement": "This is the adoption diff of ea30d229 onto d19f090e. It is not the unexecuted whole-phase historical assembler. The carried 529-line analysis and 56-line delta remain inside the same allocation and are not added by this measurement.",
+  "merge_base_choice": "The pull request base is docs/public-start-paths. A pull request of e47a645 against origin/main would publish the diverged history. This admission does not retarget onto origin/main.",
+  "post_edit_validate": {
+    "note": "Ran after this admission record and the run_state cost edit were written. Stdout matches the pre-edit adoption rerun byte for byte.",
+    "commands": [
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp bash tools/validate.sh",
+        "exit": 0,
+        "summary": "SUMMARY: 16 passed, 0 failed",
+        "stdout_sha256": "1643c81b81705bf6832a1cb625e1bfbc40ad453b1ca81573c3bf4bce3f46f45c"
+      },
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp bash tools/validate.sh --payload",
+        "exit": 0,
+        "summary": "SUMMARY (payload mode): 12 passed, 0 failed",
+        "stdout_sha256": "5769d46d15b5479122948e44658226979a23da6167a245c8bb79615cff34bc4a"
+      }
+    ]
+  }
+}

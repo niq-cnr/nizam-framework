@@ -1,0 +1,94 @@
+{
+  "archived_script": ".agent/evidence/129/qa5/b1_stale_attempt.py",
+  "command": "PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp python3 /tmp/qa5-b1.py",
+  "cwd": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/tmp"
+  },
+  "exit": 0,
+  "name": "stale-attempt apply race",
+  "passed": true,
+  "procedure": [
+    "Open a private runtime=sbcl session against an untouched run_state whose governed attempts integer is 1.",
+    "Positive control: submit (+ 19 23) with a side-effect witness while both reads observe the same on-disk buffer. Require completed execution, result 42, witness text, child executable SBCL, and unchanged run_state bytes.",
+    "Arm a deterministic split read without modifying tools/runtime_session.py: the helper capture read still returns the on-disk attempts=1 buffer, and the supervisor pre-apply read returns a buffer whose attempts integer is 2. The two input digests differ. The on-disk file is not rewritten.",
+    "Submit a second evaluate whose Lisp would write a distinct witness.",
+    "Pass only if the helper logged the original buffer, the supervisor logged the attempts=2 buffer, the response is ok false with ambiguous_state or attempt_mismatch, no result file or executed operation record exists, and the stale witness was not created.",
+    "A cached attempt_ok apply, a stub fallback, a refusal that does not re-read, or any project execution is a failure."
+  ],
+  "result": {
+    "adversarial_submit": {
+      "error": "ambiguous_state",
+      "exit": 70,
+      "keys": [
+        "error",
+        "ok"
+      ],
+      "ok": false
+    },
+    "cwd": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+    "digests_differ": true,
+    "disk_digest": "bda65be59f8d7e9138a6809dbd28624e26049152df3cfda3a1d555d12c6cbe40",
+    "disk_sha256": "977602da3551cf1611dd0a632fc4334b596c8fa629a1e37c6cf7622cef942855",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "TMPDIR": "/tmp"
+    },
+    "failures": [],
+    "finished_at": "2026-10-16T10:32:05Z",
+    "fixture": "/tmp/qa5-b1-1ffq5umz",
+    "lisp_sha256": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9",
+    "mutated_digest": "6caff6c6ec2de0e6c2eb721f005fa0bdc99b21a6f5ab23045b8ae72c78cc827b",
+    "mutated_sha256": "b9bf45bfcea0b61257c84735fa84717989d943d8555a6098573673028631404e",
+    "name": "stale-attempt apply race",
+    "open": {
+      "error": null,
+      "exit": 0,
+      "ok": true
+    },
+    "passed": true,
+    "positive_poll_exit": 0,
+    "positive_result": 42,
+    "positive_submit": {
+      "error": null,
+      "exit": 0,
+      "ok": true
+    },
+    "positive_terminal": "completed",
+    "positive_witness": [
+      "b1c058a7ecc99dae"
+    ],
+    "product_sha256": "37edd39f59dda792e83f392845b95e0e46bb48013514facd1e88c24312f122c5",
+    "reads": [
+      {
+        "attempts": 1,
+        "bytes": 322,
+        "is_supervisor": false,
+        "pid": 591782,
+        "sha256": "977602da3551cf1611dd0a632fc4334b596c8fa629a1e37c6cf7622cef942855"
+      },
+      {
+        "attempts": 2,
+        "bytes": 322,
+        "is_supervisor": true,
+        "pid": 591777,
+        "sha256": "b9bf45bfcea0b61257c84735fa84717989d943d8555a6098573673028631404e"
+      }
+    ],
+    "revision": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+    "run_state_unchanged": true,
+    "runner_sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
+    "runtime": {
+      "child_exe": "/usr/bin/sbcl",
+      "child_pid": 591778,
+      "controller_runtime": "sbcl"
+    },
+    "stale_operation": null,
+    "stale_witness_exists": false,
+    "started_at": "2026-10-16T10:32:05Z",
+    "target": "129-B1"
+  },
+  "script_sha256": "9c337e9c9445dc51f004990414efc7bab155df7db2bd5a238bf5deccbd22800c",
+  "target": "129-B1"
+}

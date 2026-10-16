@@ -1,0 +1,244 @@
+{
+  "review": "validator-mode-b",
+  "role": "Independent Validator Mode B for feature 129 Source5. Implementation match only. Not fresh QA, counted cost, adoption, merge, tag, or a sixth-attempt authorization.",
+  "feature": "129",
+  "feature_id": "129",
+  "contract_id": "129",
+  "attempt": 5,
+  "mode": "B",
+  "risk_level": "high",
+  "reviewed_commit": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "parent": "a9114bcbe16fba76dbdba1147ea76db8a5a6b39d",
+  "branch": "fix/129-source5-same-byte",
+  "contract_path": ".agent/contracts/129.json",
+  "contract_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+  "contract_status": "approved",
+  "design": ".agent/evidence/129/source5-design1.json",
+  "applicability": ".agent/validator/129-replacement-architecture2.json",
+  "product_file": "tools/runtime_session.py",
+  "product_sha256": "37edd39f59dda792e83f392845b95e0e46bb48013514facd1e88c24312f122c5",
+  "product_git_blob": "65f3452358fa2a488be0e9bb64879a0e1ebc9fe6",
+  "parent_product_blob": "a2e8daca7caed7958c6846b303ad2cf6fb417fe9",
+  "lisp_git_blob": "ba9f42fa441e2047480be1895434bea011ac92d4",
+  "lisp_unchanged": true,
+  "runner_sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
+  "runner_unchanged": true,
+  "diff": {
+    "command": "git diff a9114bcbe16fba76dbdba1147ea76db8a5a6b39d..e47a645f947ccb2cce0f40eafe93a740e421487f",
+    "files": [
+      "tools/runtime_session.py"
+    ],
+    "stat": "1 file changed, 221 insertions(+), 75 deletions(-)",
+    "git_diff_HEAD": "empty for tracked product; HEAD is the candidate",
+    "untracked_inspected": ".agent/evidence/129/implementation5/"
+  },
+  "prior_findings": {
+    "cited_file": ".agent/validator/129-mode-b.json",
+    "present_in_worktree": false,
+    "text_used": "129-B1 and 129-B2 as recorded in .agent/validator/129-replacement-architecture2.json decisions.same_byte_binding and decisions.history_frame_and_certificate, and as repaired by .agent/evidence/129/source5-design1.json"
+  },
+  "final_verdict": {
+    "approved": true,
+    "mode": "B",
+    "contract_id": "129",
+    "feature_id": "129",
+    "risk_level": "high",
+    "summary": "Candidate e47a645 repairs 129-B1 and 129-B2 on parent a9114bc. Each helper gating input is read once and the attempt integer is parsed from that same buffer. Apply is refused unless a fresh read matches the certificate digest and attempt_value. The cached attempt_ok flag is not applied. check_live does not return early because a certificate exists. Cancel and close do not start the history helper and do not glob operations/*.json. The job result is a fixed certificate with no files array and stays inside FRAME_LIMIT 65536. The helper deadline is 30 seconds and expiry is infrastructure, not cancellation. The cancellation-confirmation deadline and tools/sbcl_session_loop.lisp are unchanged. No lease, inotify, mtime/ctime currentness, or sealed-memfd path authority was added.",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "not_discharged": [
+      {
+        "id": "counted-cost",
+        "status": "Not discharged. This review did not measure candidate cost."
+      },
+      {
+        "id": "fresh-qa",
+        "status": "Not discharged. Generator implementation5 exits are not approval. Distinct fresh QA of all eleven contract commands plus one extra adversarial check was not run here."
+      },
+      {
+        "id": "root-adoption",
+        "status": "Not discharged. No adoption, merge, tag, pull request, or completion admission."
+      },
+      {
+        "id": "sixth-attempt",
+        "status": "Not authorized."
+      }
+    ]
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "not_discharged": [
+    {
+      "id": "counted-cost",
+      "status": "Not discharged. This review did not measure candidate cost."
+    },
+    {
+      "id": "fresh-qa",
+      "status": "Not discharged. Generator implementation5 exits are not approval. Distinct fresh QA of all eleven contract commands plus one extra adversarial check was not run here."
+    },
+    {
+      "id": "root-adoption",
+      "status": "Not discharged. No adoption, merge, tag, pull request, or completion admission."
+    },
+    {
+      "id": "sixth-attempt",
+      "status": "Not authorized."
+    }
+  ],
+  "evidence_summary": [
+    {
+      "claim": "Commit diff is only tools/runtime_session.py against parent a9114bc",
+      "source": "git diff a9114bc..e47a645 name-status",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Contract 129 is approved and its bytes match the design pin",
+      "source": ".agent/contracts/129.json status/approvals; sha256 71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Each gating path is read once and the attempt integer is parsed from that buffer",
+      "source": "tools/runtime_session.py capture_gating lines 1370-1385; governed_count lines 274-281; digest_buffers lines 257-271; capture_source lines 308-328",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Apply is refused unless a fresh read matches input_digest and attempt_value",
+      "source": "tools/runtime_session.py accept_certificate lines 1387-1419; tick_jobs lines 1587-1613",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Cached attempt_ok is not the apply decision",
+      "source": "tools/runtime_session.py verified_attempt lines 1238-1256; accept_certificate discards _attempt_ok at line 1401. Parent a9114bc returned verification['attempt_ok']",
+      "verdict": "supported"
+    },
+    {
+      "claim": "check_live does not return early merely because a certificate exists",
+      "source": "tools/runtime_session.py check_live lines 583-589. The parent early return on self.verification is absent from the diff",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Cancel and close stay off the helper and off the operations/*.json glob",
+      "source": "tools/runtime_session.py client_event lines 1322-1327; cancel lines 1096-1118; close lines 1134-1143. verification_files glob removed. reconcile_idle glob at line 602 is not on those actions",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Fixed certificate, no files array, FRAME_LIMIT 65536",
+      "source": "tools/runtime_session.py lines 29 and 35-39; validate_job_result lines 355-375; failure_certificate lines 345-352; oversize replacement lines 1455-1458",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Helper deadline is 30 seconds and expiry is infrastructure, not cancellation",
+      "source": "tools/runtime_session.py HELPER_RECONCILE_SECONDS line 34; job end lines 1497 and 1500; tick_jobs lines 1554-1555 and 1608-1609",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Cancellation-confirmation deadline and sbcl_session_loop.lisp are unchanged",
+      "source": "git diff -G cancel_deadline is empty; lisp blob ba9f42fa441e2047480be1895434bea011ac92d4 at both parent and candidate; cancel_deadline assignment remains line 1111",
+      "verdict": "supported"
+    },
+    {
+      "claim": "No leases, inotify, mtime/ctime currentness, or sealed-memfd path authority",
+      "source": "file_stamp mtime/ctime helper removed; tools/runtime_session.py has flock at line 1707 only and no inotify, fanotify, F_SETLEASE, memfd, st_mtime, or st_ctime",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Frozen runner and contract bytes were not edited",
+      "source": "tools/test_runtime_session.py sha256 d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431; no test or contract path in the commit diff",
+      "verdict": "supported"
+    }
+  ],
+  "implementation_checks": [
+    {
+      "check": "B1",
+      "verdict": "pass",
+      "evidence": "The Source5 repair diff contains tools/runtime_session.py. tools/sbcl_session_loop.lisp remains the parent blob, which source5-design1.json lisp_rule requires. The frozen runner is unchanged rather than rewritten."
+    },
+    {
+      "check": "B2",
+      "verdict": "pass",
+      "evidence": "CERTIFICATE_KEYS matches source5-design1.json certificate.keys. No public action, route, or CLI signature was added. verified_attempt no longer returns the cached boolean."
+    },
+    {
+      "check": "B3",
+      "verdict": "pass",
+      "evidence": "Commit diff name-status is only tools/runtime_session.py, which contract files_modify lists. git diff HEAD has no tracked product delta."
+    },
+    {
+      "check": "B4",
+      "verdict": "pass",
+      "evidence": "Contract verification commands remain in the unchanged runner. This repair was forbidden to edit acceptance tests. No promised test was removed or weakened in the diff."
+    },
+    {
+      "check": "B5",
+      "verdict": "pass",
+      "evidence": "No new import or package. Helper code uses the existing standard library."
+    },
+    {
+      "check": "B6",
+      "verdict": "pass",
+      "evidence": "New helpers are the same-byte certificate inside the contracted controller. The seven actions are unchanged. No lease, watch, or memfd mechanism was added."
+    },
+    {
+      "check": "B7",
+      "verdict": "pass",
+      "evidence": "No TODO, skip, xfail, or future-work marker in the changed controller. Attempt refusal still happens before an execute frame."
+    },
+    {
+      "check": "B8",
+      "verdict": "pass",
+      "evidence": "capture_gating, accept_certificate, the fixed certificate, and the cancel/close bypass are implemented, not stubbed."
+    }
+  ],
+  "decision_results": [
+    {
+      "decision": "read each gating input once and parse the attempt from that same buffer",
+      "verdict": "pass"
+    },
+    {
+      "decision": "refuse apply unless a fresh read matches the certificate digest and attempt value",
+      "verdict": "pass"
+    },
+    {
+      "decision": "do not apply a cached attempt_ok",
+      "verdict": "pass"
+    },
+    {
+      "decision": "do not make check_live return early merely because a certificate exists",
+      "verdict": "pass"
+    },
+    {
+      "decision": "keep cancel and close off the history helper and off an operations/*.json glob",
+      "verdict": "pass"
+    },
+    {
+      "decision": "return a fixed certificate with no files array inside FRAME_LIMIT 65536",
+      "verdict": "pass"
+    },
+    {
+      "decision": "use a 30-second helper deadline whose expiry is infrastructure, not cancellation",
+      "verdict": "pass"
+    },
+    {
+      "decision": "leave the cancellation-confirmation deadline and tools/sbcl_session_loop.lisp unchanged",
+      "verdict": "pass"
+    },
+    {
+      "decision": "do not add leases, inotify, mtime/ctime currentness, or sealed-memfd path authority",
+      "verdict": "pass"
+    }
+  ],
+  "observations_not_issues": [
+    "Initial open_session and Supervisor.prepare still admit through attempt_matches, which parses circuit_breaker attempts from that call's own read_json buffer and does not trust a helper certificate. Supervisor socket open, submit, reattach, and transfer use the certificate recheck.",
+    "client() still bounds its socket wait at CONTROL_SECONDS. If that peer disconnects before the helper finishes, tick_jobs sets infrastructure and does not apply. Cancel and close never enter the helper, so history size does not hold them on that wait.",
+    "reconcile_idle still globs operations/*.json for crash disagreement. check_live calls it from the helper and from submit/reattach. Cancel and close do not call it.",
+    ".agent/validator/129-mode-b.json is absent from this worktree. The repaired defect text is the quotation in .agent/validator/129-replacement-architecture2.json."
+  ],
+  "generator_receipts": {
+    "path": ".agent/evidence/129/implementation5/summary.json",
+    "use": "Inspected. Eleven commands are recorded at e47a645 with exit 0. Those exits are not this approval."
+  }
+}
