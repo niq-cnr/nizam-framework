@@ -2,10 +2,13 @@
 id: nizam-phase020-product-spec
 title: "Phase 020 — Live Runtime Sessions — SBCL and Fresh Acceptance"
 description: "Proposed runtime scope, bounded full cost and independently owned future live acceptance."
-version: 0.1.1
+version: 0.1.2
 status: draft
 authoritative_source: .agent/product_spec_020.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-10-16"
+    summary: "Refresh current Source and delivered old-main context with pending133 integration; preserve draft scope, feature acceptance and original budget."
   - version: "0.1.1"
     date: "2026-10-15"
     summary: "Refresh actual captured 128/119/120/123 prerequisite refs and bounded runner facts; preserve pending activation, full runtime acceptance and original proposed budget."
@@ -77,10 +80,18 @@ repair; changed bundles need renewed independent review. Both pre-code gates,
 Mode B, independent fresh QA and actual command/exit/revision evidence capture
 remain mandatory. Orchestrator alone owns coordination/counters/history.
 
-Preparation at frozen 599d does not establish PR 104 final CI, merge or main-CI
-success. Actual 020 intake requires Root review of then-current Source, old main-CI
-success and any selected maintenance delivery; optional 133 is not a new dependency
-of 129–132. Reassess changed inputs instead of rebinding old candidate proof.
+[Current intake delta](evidence/phase020-preflight/intake-current-context1.json)
+updates the reviewed 529-line analysis and 56-line delta without replacing them.
+Old PR 104 main 38817712498/c8 passed all five jobs; current Source 133 API 5f differs
+from historical 123 API 2579, whose proof remains assessment-time evidence.
+Local 133 gates/capture are complete; its frozen PR 105 still awaits capable CI,
+normal merge and main delivery. No current controls-ready/live Root 120 adoption is claimed.
+129 is the next planning-eligible node, not authorized implementation. Under separate
+Root release, planning/pre-code may overlap PR 105 CI; implementation waits approved
+activation/allocation, dual-approved contract, independent bundle and PR 105 normal merge.
+New integration waits PR 105 main all five. Optional 133 is not a new normative dependency.
+H-PHASE-020 and its numeric allocation remain separate decisions; neither is implied here.
+Reassess changed inputs instead of rebinding old candidate proof.
 EX-P1 is optional separately reviewed runtime preparation; metadata/sidecar parsing
 is not cryptographic or runtime qualification and is not an SBCL prerequisite.
 
