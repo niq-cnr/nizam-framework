@@ -1,0 +1,60 @@
+import subprocess, json, hashlib, re, pathlib
+rev = 'a39b84e8c50347cf07e9f9b8312de1e45c833212'
+prefix = '.agent/evidence/133/ci/pr105-terminal1/'
+def blob(path):
+    return subprocess.check_output(['git', 'show', rev + ':' + prefix + path])
+index = blob('capture-index.sha256')
+assert hashlib.sha256(index).hexdigest() == '6feade86bdf3b29cfe944c8fe61e2ba6e5729b1007e67fa03322fe4e855d2f4b'
+rows = index.decode().splitlines()
+assert len(rows) == 51
+for line in rows:
+    digest, path = line.split('  ', 1)
+    assert hashlib.sha256(blob(path)).hexdigest() == digest
+raw = blob('report.json')
+assert hashlib.sha256(raw).hexdigest() == '2ccff848226a10a8a482ed2e02270661b85493bfcea35d8d89b9bc1a3583e685'
+report = json.loads(raw)
+assert report['final_verdict']['approved'] is False and report['workflow_conclusion'] == 'failure'
+for row in report['verified_frames']:
+    frame = json.loads(blob(row['path']))
+    assert frame['actual_exit'] == row['actual_exit'] and not frame['timed_out']
+    for name in ('stdin', 'stdout', 'stderr'):
+        stream = frame.get(name)
+        if stream is None:
+            assert name == 'stdin'
+            continue
+        data = blob(pathlib.Path(stream['path']).name)
+        assert len(data) == stream['bytes'] and hashlib.sha256(data).hexdigest() == stream['sha256']
+logs = blob('terminal-logs.stdout.txt')
+assert len(logs) == 425394
+assert hashlib.sha256(logs).hexdigest() == 'c7103a0d443dc83a34e850cbce6e32a60522189e48c97ed105ab800b0442e8ea'
+text = logs.decode()
+receipts = []
+for line in text.splitlines():
+    match = re.search(r'MAINTENANCE_CHECKOUT_RECEIPT=(\{.*\})$', line)
+    if match:
+        receipts.append(json.loads(match[1]))
+assert len(receipts) == 2 and len(report['physical_source9_hashes']) == 9
+for receipt in receipts:
+    assert receipt['checkout_sha'] == report['actual_checkout']
+    assert receipt['source_sha256'] == report['physical_source9_hashes']
+for path, digest in {**report['physical_source9_hashes'], **report['immutable_checkout_pins']}.items():
+    data = subprocess.check_output(['git', 'show', report['head'] + ':' + path])
+    assert hashlib.sha256(data).hexdigest() == digest
+commit = blob('checkout-commit.stdout.txt')
+assert hashlib.sha1(b'commit ' + str(len(commit)).encode() + bytes([0]) + commit).hexdigest() == report['actual_checkout']
+assert re.findall(rb'^parent ([0-9a-f]{40})$', commit, re.M) == [x.encode() for x in report['checkout_parents']]
+assert subprocess.check_output(['git', 'rev-parse', report['head'] + '^{tree}'], text=True).strip() == report['checkout_tree']
+assert report['checkout_tree'].encode() in commit
+run = json.loads(blob('terminal-run.stdout.txt'))
+assert run['status'] == 'completed' and run['conclusion'] == 'failure'
+assert {x['name']: x['conclusion'] for x in run['jobs']} == {k: v['conclusion'] for k, v in report['jobs'].items()}
+assert len(report['required_checks']) == 6
+assert list(report['required_checks'].values()).count('SUCCESS') == 4
+assert list(report['required_checks'].values()).count('FAILURE') == 2
+for job in ('fixtures_self_test', 'convergent_review'):
+    own = '\n'.join(x for x in text.splitlines() if x.startswith(job + '\t'))
+    assert own.count('ASSERTION_FAILURE: product AST outside _receipt_candidate body changed') == 1
+    assert 'SELF-TEST FAILED' in own and '166/166' in own
+    for name in report['coverage']['expected_new_checks']:
+        assert 'PASS ' + name not in own
+print(json.dumps({'terminal': 'failure-merge-held', 'indexed_files_verified': 51, 'actual_frames_verified': len(report['verified_frames']), 'log_bytes': len(logs), 'log_sha': hashlib.sha256(logs).hexdigest(), 'physical_source9_receipts': 2, 'synthetic_commit_oid_verified': report['actual_checkout'], 'checks': report['required_checks']}))
