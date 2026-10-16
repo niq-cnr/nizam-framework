@@ -1,0 +1,49 @@
+import ast,hashlib,json,subprocess
+from pathlib import Path
+import yaml
+R=Path.cwd();O=Path('/home/cnross/.tmp/nizam-feature123-main-terminal1');OLD=Path('/home/cnross/.tmp/nizam-feature123-main-integration1')
+HEAD='c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7';TESTED='599d7c5aa0c0c80ce8da596c7aeae2924d7dca04';COLLECTOR='d139e1bb8ca0dee5a5373bfd5a5914988dfb2b0c'
+def sha(raw):return hashlib.sha256(raw).hexdigest()
+def git(*argv):return subprocess.check_output(['git','-C',str(R),*argv])
+def read(directory,name):return json.loads((directory/(name+'.stdout.txt')).read_bytes())
+assert git('rev-parse','HEAD').decode().strip()==COLLECTOR and git('status','--porcelain','--untracked-files=all')==b''
+run=read(O,'terminal-run');container=read(O,'terminal-jobs');jobs=container['jobs'];expected={'validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'}
+assert run['id']==38817712498 and run['run_attempt']==1 and run['head_sha']==HEAD and run['event']=='push' and run['status']=='completed' and run['conclusion']=='success'
+assert container['total_count']==len(jobs)==5 and {j['name'] for j in jobs}==expected and all(j['status']=='completed' and j['conclusion']=='success' and j['run_id']==run['id'] and j['head_sha']==HEAD for j in jobs)
+rows=[]
+for line in (O/'terminal-logs.stdout.txt').read_text().splitlines():
+ parts=line.split('\t',2);assert len(parts)==3;rows.append((parts[0],parts[1],parts[2].lstrip('\ufeff').partition(' ')[2]))
+footers=[(j,s) for j,s,t in rows if t=='Cleaning up orphan processes'];assert len(footers)==5 and {j for j,s in footers}==expected
+helper=git('show',TESTED+':.agent/evidence/123/fresh-qa1/finalize2.py');assert sha(helper)=='55128e72b14e620f7b35b8e0d68293af39c53236d61de4c88eb1cf469fda1872'
+function=next(n for n in ast.parse(helper).body if isinstance(n,ast.FunctionDef) and n.name=='inventory_ast');scope={'ast':ast};exec(compile(ast.Module(body=[function],type_ignores=[]),'immutable inventory_ast','exec'),scope)
+source=git('show',HEAD+':tools/test_workflow_assurance.py');cases=scope['inventory_ast'](source);assert len(cases)==len(set(cases))==48
+passes=[t[5:] for j,s,t in rows if j=='fixtures_self_test' and s=='Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py' and t.startswith('PASS ')]
+assert [p for p in passes if p in cases]==cases
+observer=next(n for n in ast.parse(source).body if isinstance(n,ast.FunctionDef) and n.name=='controls_foreign_observer');aux=[n.args[0].value[5:] for n in ast.walk(observer) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='print' and n.args and isinstance(n.args[0],ast.Constant) and isinstance(n.args[0].value,str) and n.args[0].value.startswith('PASS ')]
+assert len(aux)==1 and [p for p in passes if p not in cases]==aux
+for job,step in [('fixtures_self_test','Run bash tools/fixtures_self_test.sh'),('convergent_review','Run fixture self-test')]:assert sum(j==job and s==step and t=='SELF-TEST OK: 166/166 fixtures accounted for, 0 failed' for j,s,t in rows)==1
+receipts=[(j,json.loads(t.split('=',1)[1])) for j,s,t in rows if s=='Record maintenance checkout source identity' and t.startswith('MAINTENANCE_CHECKOUT_RECEIPT={')];assert len(receipts)==2 and {j for j,r in receipts}=={'fixtures_self_test','convergent_review'}
+workflow=yaml.safe_load(git('show',HEAD+':.github/workflows/compliance.yml'));path_sets=[]
+for job,receipt in receipts:
+ step=next(s for s in workflow['jobs'][job]['steps'] if s.get('name')=='Record maintenance checkout source identity')
+ lines=step['run'].splitlines();assert lines[0]=="python3 - <<'PY'" and lines[-1]=='PY'
+ paths=ast.literal_eval(next(n.value for n in ast.parse('\n'.join(lines[1:-1])).body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='paths' for t in n.targets)))
+ assert len(paths)==len(set(paths))==9 and receipt['checkout_sha']==HEAD and set(receipt['source_sha256'])==set(paths)
+ for path,digest in receipt['source_sha256'].items():assert sha(git('show',HEAD+':'+path))==digest
+ path_sets.append(set(paths))
+assert path_sets[0]==path_sets[1]
+assert git('rev-parse',HEAD+'^{tree}')==git('rev-parse',TESTED+'^{tree}') and git('show','-s','--format=%P',HEAD).decode().strip().split()==['79811ef76df950b8151e2af62637ab7d1df34305',TESTED]
+api_sha=sha(git('show',HEAD+':tools/workflow_assurance.py'));assert api_sha=='2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8'
+frames=[]
+for directory in (OLD,O):
+ for path in sorted(directory.glob('*.execution.json')):
+  frame=json.loads(path.read_bytes());expected_exit=1 if (directory==OLD and path.name=='watch.execution.json') or (directory==O and path.name=='admission.execution.json') else 0
+  assert frame['actual_exit']==expected_exit and not frame['timed_out'] and frame['exercised_revision']==COLLECTOR and frame['child_pid']>0
+  for stream in ('stdout','stderr'):
+   ref=frame[stream];raw=Path(ref['path']).read_bytes();assert sha(raw)==ref['sha256'] and len(raw)==ref['bytes']
+  frames.append(dict(path=('original-observer/' if directory==OLD else '')+path.name,actual_exit=expected_exit))
+assert 'connection timed out' in (OLD/'watch.stderr.txt').read_text()
+qualified=Path('/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh');assert sha(qualified.read_bytes())=='5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075'
+report=dict(role='Read-only delivery observer',root_release='9c48cde1e5de717b88634c3670cb75b23dd886ee',scope='Old PR104 main integration only; no Source133 QA, CI restart, test rerun or historical proof rebinding.',run_id=run['id'],run_attempt=run['run_attempt'],event=run['event'],head=HEAD,conclusion='success',completed_at=max(j['completed_at'] for j in jobs),jobs={j['name']:dict(id=j['id'],conclusion=j['conclusion'],completed_at=j['completed_at']) for j in jobs},collector_revision=COLLECTOR,collector_tree=git('rev-parse','HEAD^{tree}').decode().strip(),actual_checkout=HEAD,checkout_tree=git('rev-parse',HEAD+'^{tree}').decode().strip(),tree_matches_tested_pr_head=TESTED,normal_merge_parents=['79811ef76df950b8151e2af62637ab7d1df34305',TESTED],maintenance_checkout_receipts=2,source9_physical_hashes=receipts[0][1]['source_sha256'],immutable_checkout_api_sha256=api_sha,api_binding_scope='API hash derives from immutable c8 Git blob; the two physical maintenance receipts cover their explicit nine paths.',coverage=dict(default_ordered_cases=48,default_cases_source_sha256=sha(source),auxiliary_pass_literals=aux,fixture_file_inventory_per_job={'fixtures_self_test':'166/166','convergent_review':'166/166'}),logs=dict(path='terminal-logs.stdout.txt',bytes=(O/'terminal-logs.stdout.txt').stat().st_size,sha256=sha((O/'terminal-logs.stdout.txt').read_bytes()),lines=len(rows),observed_cleanup_footer_labels=dict(footers),qualified_cli_sha256=sha(qualified.read_bytes())),verified_frames=frames,original_observer_failure='watch actual1 on network TCP read timeout at23:29:17; same workflow later completed success; original streams/frame retained.',static_scope='AST-only inventory reader; no imported product or acceptance execution. This report precedes its own separate execution frame.')
+report['original_static1']='Actual1 parsing shell heredoc as Python; retained admission.stdin/frame/streams. Root462f30f2 releases bounded body extraction only, all substantive assertions retained.'
+p=O/'report2.json';assert not p.exists();p.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(dict(main_success=True,jobs=5,ordered_default_cases=48,fixture_files=166,checkout=HEAD,log_bytes=report['logs']['bytes'])))
