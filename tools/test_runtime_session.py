@@ -1556,7 +1556,7 @@ class LiveSession(Session):
                 record['session_id'] == self.name and record['generation'] == self.record['generation'] and
                 record['lease_epoch'] == self.record['lease_epoch'] and record['contract_id'] == '129' and
                 record['step_key'] == '129-implementation' and record['attempt'] == 1,
-                'observed terminal status, identity, generation, lease and governed attempt')
+                'TERMINAL_CORRELATION')
         return record
 
     def eval(self, expression):
@@ -1597,10 +1597,17 @@ def live_nonce(s, nonce):
 
 
 def admission(home, executable):
-    nonce = os.urandom(16).hex(); stubhome = home / 'stub'; stubhome.mkdir(); stub = Session(stubhome)
+    nonce = os.urandom(16).hex(); stubhome = home / 'stub'; stubhome.mkdir(); stub = LiveSession(stubhome)
     try:
-        stub.open(); stub.execute('set', nonce); require(stub.execute('get') == nonce, 'omitted-runtime exact stub nonce control')
-        stub.close(); stub.record = None
+        opening = stub.opening(); opening.pop('runtime')
+        stub.record = stub.call('open-session', opening)['result']
+        stub.remember(); ids = []
+        for op in ('set', 'get'):
+            request = {**stub.request(op, nonce), **governed(stub)}
+            ids.append(request['operation_id'])
+            stub.submit(request); result = stub.finish(request)
+            require(result == nonce, 'paired omitted-runtime request and actual exact stub nonce control')
+        require(stub.receipts() == ids, 'paired stub operations each actually dispatched once')
     except Exception as exc:
         raise RuntimeError('required unchanged-stub nonce control failed') from exc
     finally:
@@ -1716,7 +1723,7 @@ def live_cancel(s):
                 'uncorrelated cancellation cannot stop actual pending work')
     response = s.call('cancel-operation', control)['result']
     require(response['status'] == 'cancel_requested' and response.get('cancellation_confirmed') is False,
-            'request receipt is unconfirmed, never cancelled')
+            'CANCEL_REQUEST_IS_UNCONFIRMED')
     wait_for(lambda: cleaning.exists() and cleaning.read_text().splitlines() == [witness], 'real unwind-protect cleanup starts')
     response = s.poll(request['operation_id'])
     require(response['status'] in ('cancel_requested', 'unknown') and response.get('cancellation_confirmed') is not True,
@@ -1749,13 +1756,90 @@ def live_terminate(s, executable):
                 'old generation cannot execute or silently auto-restart')
         s.record = s.call('open-session', s.opening())['result']
         require(s.record['generation']['counter'] > before['generation']['counter'] and
-                s.record['generation']['nonce'] != before['generation']['nonce'], 'explicit reconstruction starts a distinct generation')
+                s.record['generation']['nonce'] != before['generation']['nonce'], 'NEW_GENERATION')
         s.observe_runtime(executable); live_nonce(s, os.urandom(16).hex())
         require(s.runstate.read_bytes() == s.saved_state, 'reconstruction preserves governed attempt')
     finally:
         sentinel.terminate(); out, err = sentinel.communicate(timeout=3)
         print('LIVE_UNRELATED_CONTROL', repr({'argv': argv, 'pid': sentinel.pid, 'exit': sentinel.returncode,
               'stdout': out, 'stderr': err}), flush=True)
+
+
+def live_control_candidate(home, fault):
+    """Disposable observation mutant: real backend runs; only public observations change.
+
+    Never used for baseline admission, production repair, or an accepted candidate.
+    Diagnostic section mutations await the explicit bundle/API convention.
+    """
+    candidate = home / 'candidate'; (candidate / 'tools/fixtures/runtime_session').mkdir(parents=True)
+    for relative in ('tools/sbcl_session_loop.lisp', 'tools/fixtures/runtime_session/stub_runtime.py'):
+        shutil.copyfile(ROOT / relative, candidate / relative)
+    shutil.copyfile(ROOT / 'tools/runtime_session.py', candidate / 'tools/real_runtime_session.py')
+    wrapper = '''import json, subprocess, sys
+from pathlib import Path
+fault = FAULT
+p = subprocess.Popen([sys.executable, str(Path(__file__).with_name('real_runtime_session.py')), *sys.argv[1:]], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+out, err = p.communicate(timeout=35)
+print(json.dumps({'control_real_cli_pid': p.pid, 'actual_exit': p.returncode, 'original_stdout': out, 'original_stderr': err}), file=sys.stderr, flush=True)
+response = json.loads(out); record = response.get('result', {})
+if isinstance(record, dict):
+ if fault == 'premature-cancel' and sys.argv[1] == 'cancel-operation' and record.get('status') == 'cancel_requested':
+  record.update(status='cancelled', cancellation_confirmed=True)
+ if fault == 'mismatched-cancel' and record.get('status') == 'cancelled': record['operation_id'] = 'wrong-correlated-operation'
+ if record.get('status') == 'condition_signalled':
+  if fault == 'late-capture': record['condition_capture'] = 'after_unwind'
+  if fault == 'unbounded':
+   directory = Path(sys.argv[sys.argv.index('--root') + 1]) / record['session_id']
+   path = Path(record['condition_ref']); path = path if path.is_absolute() else directory / path
+   path.write_bytes(path.read_bytes() + b' ' * 65536)
+ if fault == 'generation-reuse' and sys.argv[1] == 'open-session' and response.get('ok'):
+  path = Path(sys.argv[sys.argv.index('--root') + 1]) / 'control-first-generation.json'
+  if path.exists(): record['generation'] = json.loads(path.read_text())
+  else: path.write_text(json.dumps(record['generation']))
+print(json.dumps(response), flush=True)
+sys.exit(p.returncode)
+'''.replace('FAULT', repr(fault))
+    (candidate / 'tools/runtime_session.py').write_text(wrapper)
+    print('LIVE_MUTANT', json.dumps({'fault': fault, 'candidate': str(candidate),
+          'real_product_sha256': hashlib.sha256((candidate / 'tools/real_runtime_session.py').read_bytes()).hexdigest(),
+          'wrapper_sha256': hashlib.sha256(wrapper.encode()).hexdigest()}), flush=True)
+    return candidate
+
+
+def live_scenario(selection, home, executable, candidate=ROOT):
+    s = LiveSession(home, candidate=candidate)
+    try:
+        s.start(executable); live_nonce(s, os.urandom(16).hex())
+        if selection == 5:
+            live_wait(s)
+        elif selection == 6:
+            live_reattach(s)
+        elif selection == 'cancel-confirmed':
+            live_cancel(s)
+        elif selection == 'termination-ends-generation':
+            live_terminate(s, executable)
+        else:
+            raise RuntimeError('diagnostic observation convention pending independent bundle/API review')
+    finally:
+        s.cleanup()
+
+
+def live_negative_controls(selection, home, executable):
+    controls = {'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
+                                   ('mismatched-cancel', 'TERMINAL_CORRELATION')],
+                'termination-ends-generation': [('generation-reuse', 'NEW_GENERATION')]}
+    for fault, expected in controls.get(selection, []):
+        with tempfile.TemporaryDirectory(prefix='mutant-', dir=home) as temp:
+            scratch = Path(temp); candidate = live_control_candidate(scratch, fault)
+            fixture = scratch / 'fixture'; fixture.mkdir()
+            try:
+                live_scenario(selection, fixture, executable, candidate)
+            except AssertionError as exc:
+                require(str(exc) == 'BEHAVIOR_ASSERTION: ' + expected, 'targeted mutant must fail the exact intended assertion')
+                print('LIVE_NEGATIVE_CONTROL', json.dumps({'fault': fault, 'expected_assertion': expected,
+                      'observed_assertion': str(exc), 'result': 'rejected', 'accepted_product': False}), flush=True)
+            else:
+                raise AssertionError('BEHAVIOR_ASSERTION: targeted faulty observation escaped its assertion')
 
 
 def live_main():
@@ -1773,21 +1857,8 @@ def live_main():
         if args.check == 'sbcl-admission':
             admission(home, executable)
         else:
-            s = LiveSession(home)
-            try:
-                s.start(executable); live_nonce(s, os.urandom(16).hex())
-                if args.case == 5:
-                    live_wait(s)
-                elif args.case == 6:
-                    live_reattach(s)
-                elif args.check == 'cancel-confirmed':
-                    live_cancel(s)
-                elif args.check == 'termination-ends-generation':
-                    live_terminate(s, executable)
-                else:
-                    raise RuntimeError('diagnostic observation convention pending independent bundle/API review')
-            finally:
-                s.cleanup()
+            live_scenario(args.check or args.case, home, executable)
+            live_negative_controls(args.check or args.case, home, executable)
         print('PASS', args.check or f'case{args.case}/sbcl')
         return 0
 
