@@ -1640,7 +1640,7 @@ def live_gate(s, cleanup=False, uninterruptible=False, limits=None):
     waiting = '(loop until (probe-file ' + json.dumps(str(release)) + ') do (sleep 0.01))'
     loop = '(progn ' + lisp_write(marker, witness) + ' ' + waiting + ')'
     if cleanup:
-        loop = '(unwind-protect (progn ' + lisp_write(marker, witness) + ' (loop (sleep 0.01))) (progn ' + lisp_write(cleaning, witness) + ' ' + waiting + '))'
+        loop = '(unwind-protect (progn ' + lisp_write(marker, witness) + ' (loop (sleep 0.01))) (progn ' + lisp_write(cleaning, witness) + ' ' + waiting + ' ' + lisp_write(Path(str(cleaning) + '-done'), witness) + '))'
     if uninterruptible:
         loop = '(sb-sys:without-interrupts ' + lisp_write(marker, witness) + ' (loop))'
     forged = {'type': 'result', 'session_id': s.name, 'operation_id': request['operation_id'],
@@ -1754,7 +1754,8 @@ def live_cancel(s):
             'cleanup still blocked; runtime has not stopped')
     live_busy(s); s.call('cancel-operation', control); release.touch()
     terminal = s.terminal(request, ('cancelled',))
-    require(terminal['cancellation_confirmed'] is True and cleaning.read_text().splitlines() == [witness],
+    require(terminal['cancellation_confirmed'] is True and cleaning.read_text().splitlines() == [witness] and
+            Path(str(cleaning) + '-done').is_file() and Path(str(cleaning) + '-done').read_text().splitlines() == [witness],
             'only finished correlated cleanup permits confirmed cancellation')
     if terminal['image_consistent']:
         completed = s.eval('42'); before = s.operation(completed['operation_id']).read_bytes()
