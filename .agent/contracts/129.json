@@ -1,0 +1,88 @@
+{
+  "contract_id": "129",
+  "feature_id": "129",
+  "name": "SBCL loop and confirmed cancellation",
+  "status": "proposed",
+  "spec_ref": ".agent/product_spec_020.md",
+  "scope": {
+    "files_create": [
+      {"path": "tools/sbcl_session_loop.lisp", "purpose": "Generator after activation/gates: built-in-only SBCL operation worker and bounded condition/restart/backtrace capture."},
+      {"path": ".agent/contracts/129.json", "purpose": "Generator proposal; Root alone promotes approval fields after both independent gates."},
+      {"path": ".agent/evidence/129/*", "purpose": "Role-attributed preparation, sealed bundle, intended red, development, QA and capture receipts; each role owns its own evidence."},
+      {"path": ".agent/validator/129-*.json", "purpose": "Independent Validator Mode A and Mode B verdicts."},
+      {"path": ".agent/qa/129*.json", "purpose": "Independent contract/bundle reviews and distinct fresh QA verdict."},
+      {"path": ".agent/evidence/129-qa-adversarial.txt", "purpose": "Fresh QA's exactly one independently selected additional adversarial check."}
+    ],
+    "files_modify": [
+      {"path": "tools/runtime_session.py", "purpose": "Generator after gates: select SBCL, carry correlated outcomes/diagnostics, confirm cancellation or terminate owned runtime group and end generation; preserve stub core."},
+      {"path": "tools/test_runtime_session.py", "purpose": "Independent Evaluator author only: seven new acceptance selections/controls and SBCL fixtures constructed in private scratch; preserve inherited fourteen leaves and core-ready."}
+    ]
+  },
+  "inputs": {
+    "proposal_base": "be41d87608f932a5f025d2ca76ea77d9cd8e18d7",
+    "reviewed_intake": "d29f0666; .agent/evidence/phase020-preflight/intake-current-context1.json and .agent/validator/phase020-intake-context1.json",
+    "requirements": ["methodology/10_live_runtime_sessions.md R3-R8/R12", "methodology/11_sbcl_runtime_binding.md sections 3-5/7-8/10", "docs/nips/NIP-0003-live-runtime-sessions.md cases 4/5/6"],
+    "historical_runner": {"path": "tools/test_runtime_session.py", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534"},
+    "prerequisite_receipts": "Reuse captured128 and historical119/120/123 immutable refs in feature_list_020.json; their original candidate/policy and bounded partial-stub qualification remain unchanged."
+  },
+  "role_ownership": {
+    "Generator": "Proposal and own preparation evidence only now. After separate Source release, owns only the two product files and own development evidence; never acceptance bytes or verdicts.",
+    "Evaluator_author": "Exclusively authors runner additions, private committed fixtures and concrete positive/negative controls; seals complete new runner and relevant fixture/control identities before repair.",
+    "Evaluator_reviewer": "Distinct recorded session independently reviews and freezes bundle, protocol API, intended negatives and preservation; bundle changes require renewed review.",
+    "Validator": "Separate Mode A and Mode B gates; no repairs or implementation.",
+    "fresh_QA": "Distinct from Generator, test author and bundle reviewer; executes all verification commands plus exactly one extra adversarial check on a committed candidate in its own fresh context.",
+    "Root": "Owns activation/numeric allocation, releases, counters, candidate selection, actual evidence gate and lifecycle/accounting in separately owned state; no such fields are Generator scope."
+  },
+  "implementation_obligations": {
+    "admission": "Keep seven existing calls. Add closed optional open-session request runtime=stub|sbcl, default stub; persist selection in controller metadata and reject mismatched reopen. No arbitrary runtime_command or caller executable. Resolve actual SBCL on explicit sbcl selection; absent/failed startup is nonzero, never fallback. Start fixed repository Lisp loop without user/system init, using SBCL built-ins and Python standard library only.",
+    "payload": "Existing payload.expression remains a nonempty string: stub retains its JSON set/get/gate grammar; SBCL accepts Lisp source forms under the requested existing kind. Defer runtime-specific parsing until selection is known; source-bound handoff templates validate under the selected runtime. No lifecycle evaluation, shell interpretation or admission bypass. Establish package/readtable/printer and correlated operation bindings inside each worker thread.",
+    "transport": "Adapt existing private bounded transport as needed for built-in-only SBCL, with separate diagnostic output. Preserve strict frame limits/types, owner/generation/lease/attempt guards, duplicate-ID precedence, atomic records and one busy lane. Accept results only from the current correlated operation/runtime; malformed, stale or unsolicited frames cannot manufacture completion or free busy state.",
+    "capture": "Use handler-bind to capture condition identity, actual active backtrace and compute-restarts while original dynamic context exists, before unwind; handler-case after unwind is insufficient. Serialize bounded restart descriptions, never durable invocable objects or automatic restart invocation. Store diagnostics by condition_ref with condition_capture=before_unwind; honest failed/partial load_source or compile_source yields condition_signalled and image_consistent=false, preserving earlier effects without rollback claims. Quarantine an inconsistent image from further project execution pending explicit reconstruction.",
+    "printing": "Bound diagnostic depth, length, total bytes and wall time with finite documented defaults and stricter requested limits. Bind print-level/length/circle; arbitrary condition-report/print-object callbacks cannot evade budgets. Use trusted minimal type/identity fallback, explicit truncation/capture-failure markers and no recursive unsafe reporting. A stuck capture remains outstanding execution; only confirmed stop or observed process termination resolves it.",
+    "wait": "Timed polling/disconnect stops waiting only: stopped_waiting preserves running/cancel_requested/unknown and busy lane. Concurrent project work remains refused until outcome is resolved. Reattach preserves actual live generation, owner/lease, outstanding operation and governed attempt.",
+    "cancel": "Publish cancel_requested/cancellation_confirmed=false before sending one correlated request. Confirm cancelled only after operation unwind/cleanup has actually finished and runtime reports matching session/operation/generation/lease. Evaluate residual consistency independently; do not require image_consistent=true to accept a truthful cancellation. Preserve completion-winning races and idempotence. Missing/wrong/forged acknowledgements or child death cannot count as cancellation.",
+    "termination": "Use a finite documented cancellation-confirmation deadline; on inability to confirm, terminate the proven owned runtime process group with bounded escalation, observe death before terminated, record image_consistent=false and end that generation. Never kill a broad process name/unowned group. Until death is established retain unknown/busy uncertainty. Old-generation submits/reattach cannot execute, auto-restart or clear uncertainty; explicit reconstruction creates a new counter/nonce while preserving contract/step/attempt. Keep supervisor/control lifetime distinct from runtime group lifetime."
+  },
+  "test_obligations": {
+    "behavior": "Real SBCL subprocesses prove pre-unwind restarts/backtrace, partial load effects, nested/cyclic/oversized and hostile reporting, delayed unwind confirmation, withheld confirmation escalation, bounded waits and live reattachment. Each negative has a real working-path positive control and correlated dispatch/progress witness; missing source/selectors/SBCL/setup is infrastructure, never intended semantic red.",
+    "preservation": "New --check selectors exercise real SBCL fail-closed, as do cases4/5/6 with --runtime sbcl --require-sbcl. Preserve all fourteen stub selections and core-ready semantics, single existing harness/claim row and historical receipts; review and run inherited core-ready as regression proof. No full-matrix, isolation or fresh-build claim follows from these seven leaves.",
+    "freeze": "Seal new whole-runner Git object/SHA256 and applicable control/fixture identities. Distinct reviewer freezes exact bundle before intended semantic red is captured on unmodified product. Red identifies the contracted behavioral defect with successful setup/control; CLI/setup failures do not qualify. Product repair begins only after Root admits that evidence."
+  },
+  "non_goals": [
+    "No current Source/test/runtime probe/install execution; preparation-only release authorizes this proposed contract and minimal own evidence.",
+    "No Quicklisp, qlot, third-party dependency, core builder, editor bridge, remote service, resumable debugger, automatic saved restart invocation or additional scheduler/lane.",
+    "No feature130 archive/hermetic ASDF acceptance, feature131 sixth CI job/full matrix/docs/path resolver, feature132 readiness/release work, or change to workflow, harness, stub fixture, schema, normative docs or installed .nizam payload.",
+    "No lifecycle/manifest/phase/run_state/budget edits, archived018 changes, release/tag/GA/upgrade, live Root120 migration or external ecosystem scope. Preserve immutable021 actual3024/original2000/ceiling2600 failed budget and its bounded delivery exception; it grants no020 allowance.",
+    "No historical proof rebound to current Source133, local version/support claim, warm transcript acceptance or current controls-ready claim; optional133 is not a new normative129 dependency."
+  ],
+  "verification": [
+    {"acceptance_test": "AT1 actual condition/backtrace/restarts captured in original dynamic context before unwind; partial failure remains honest.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind"},
+    {"acceptance_test": "AT2 bounded diagnostics, hostile printers and explicit fallback/truncation/failure cannot hang or falsely complete.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing"},
+    {"acceptance_test": "AT3 correlated unwind/cleanup completion is required for cancelled; negatives/races never fabricate confirmation.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmed"},
+    {"acceptance_test": "AT4 unconfirmed cancellation triggers observed owned-group termination, ends generation and preserves attempt accounting.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check termination-ends-generation"},
+    {"acceptance_test": "AT5 real SBCL case4: earlier load forms execute, later failure is condition_signalled with image_consistent=false and diagnostics.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl"},
+    {"acceptance_test": "AT6 real SBCL case5: wait timeout/disconnect leaves operation live and lane busy until observed resolution; normal release succeeds.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl"},
+    {"acceptance_test": "AT7 real SBCL case6: fresh client reattaches same live process/identity/pending work, refuses stale/ambiguous continuity, then resolves original work.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl"},
+    {"acceptance_test": "Regression: preserve inherited fourteen-leaf bounded stub aggregate.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready"},
+    {"acceptance_test": "Repository compliance for scoped candidate artifacts.", "command": "bash tools/validate.sh"},
+    {"acceptance_test": "Payload compliance and immutable installed governance preservation.", "command": "bash tools/validate.sh --payload"}
+  ],
+  "gate_sequence": [
+    "Preparation attempt1/3 only: unchanged draft020 scope and proposed numbers are inputs. Independent Validator Mode A and Evaluator second contract review must approve the same proposal by installed JSON Verdict Parse Rule; Root alone promotes approval.",
+    "Separate Root H-PHASE-020 activation and numeric allocation, both pre-code approvals, reviewed frozen independent bundle, admitted intended semantic red and PR105 normal merge after required checks all precede product repair. Preserve frozen PR105 head441d292559eacb95c778b4e20bcc62350e9f31a8; captured run38831271485 status is historical, not current proof. New integration waits matching PR105 main all-five success.",
+    "Generator repairs only approved product scope. Missing files/changed API/budget insufficiency stop for reviewed revision; no silent expansion. Acceptance changes return to distinct bundle review and required red controls.",
+    "Independent Mode B checks full diff/ownership, deliverables, preservation and actual counted cost. Distinct fresh QA then runs every verification command plus exactly one extra adversarial check from committed candidate with private fresh processes/fixtures/cache and captured actual toolchain/environment identity.",
+    "Root actual evidence gate checks all referenced paths, exact argv/output/actual exits, exercised candidate/source/test/bundle identities, intended red, controls and preservation before any completion/accounting projection. Required capable CI/full seventeen-row/thirteen-case qualification remains131/132; no129 working/full-live claim before that proof."
+  ],
+  "estimated_lines": 2100,
+  "budget": {
+    "status": "proposed; no allocation or activation implied",
+    "product": 650, "independent_tests": 450, "process": 1000,
+    "phase_original": 7350, "phase_ceiling": 9555, "phase_process": 3750,
+    "rule": "Charge all preparation/contracts/reviews/tests/product/process once inside existing020 categories, including carried intake; no free allowance, overhead multiplier, rebaseline or transfer from133/021/018. Root measures with existing classification; unclassified fails closed, cumulative overrun needs actual human authorization. First completed020 feature has no prior rolling baseline."
+  },
+  "evidence_dir": ".agent/evidence/129/",
+  "evidence_convention": "Minimal role-attributed path receipts; actual command/stdout/stderr/exit/cwd/environment and exercised revision/source/test hashes, no copied historical forests. Generator preparation uses generator-contract1*. Fresh QA extra is .agent/evidence/129-qa-adversarial.txt. Reuse frozen .agent/evidence/123/fresh-qa-capture1.py@599d7c5aa0c0c80ce8da596c7aeae2924d7dca04 SHA256 e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0 by reference; PYTHONDONTWRITEBYTECODE=1.",
+  "approvals": {"validator_mode_a": false, "evaluator_contract_review": false, "revisions": 0},
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
