@@ -1,0 +1,14 @@
+import hashlib,json,subprocess
+from pathlib import Path
+p=Path('.agent/evidence/phase020-candidate-accounting-preparation2');sha=lambda b:hashlib.sha256(b).hexdigest()
+assert sha((p/'delta.json').read_bytes())=='dfe9108e61ac50ec5fd1d776cb3fd199c37fc91d014db10dd5ac96d4af475dc9'
+assert sha((p/'index.json').read_bytes())=='6f80fc49a1925b0544731f4bbdf18236964ae865fda798ab383328b615942da8'
+for path,digest in json.loads((p/'index.json').read_bytes()).items():assert sha(Path(path).read_bytes())==digest
+f=json.loads((p/'static1.execution.json').read_bytes());assert f['actual_exit']==0 and f['child_pid']==332089 and f['timed_out'] is False
+assert f['exercised_revision']=='36db123e4baf9f7ed4842fe2bd6b370c15437a42'
+for k in ['stdin','stdout','stderr']:
+ row=f[k];b=(p/Path(row['path']).name).read_bytes();assert sha(b)==row['sha256'] and len(b)==row['bytes']
+d=json.loads((p/'delta.json').read_bytes());assert len(d['joint_doc_overrides'])==9 and [a['id'] for a in d['accepted_by_reference']]==['A1','A2','A3','A4','A5','A6','A7']
+for key in ['base_closure','canonical_review','Root_policy']:
+ r=d[key];assert sha(Path(r['path']).read_bytes())==r['sha256'];assert sha(subprocess.check_output(['git','show',r['revision']+':'+r['path']]))==r['sha256']
+print('Focused accounting delta/index/static capture pins and original references admitted for independent rereview only. No measurement or budget verdict.')
