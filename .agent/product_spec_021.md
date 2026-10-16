@@ -1,11 +1,14 @@
 ---
 id: nizam-phase021-product-spec
 title: "Phase 021 — Receipt Input Read Maintenance"
-description: "Selected measured maintenance of per-call immutable receipt input reads; independent implementation and delivery gates remain."
-version: 0.1.1
+description: "Locally completed per-call immutable receipt input maintenance; final accounting and exact-head PR/main delivery remain."
+version: 0.1.2
 status: active
 authoritative_source: .agent/product_spec_021.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-10-16"
+    summary: "Record local133/021 QA and Root capture closure; preserve pending final accounting and PR/main delivery, all requirements and original allowance."
   - version: "0.1.1"
     date: "2026-10-15"
     summary: "Record delegated activation and selected2000/2600 after clean PR104 merge; no implementation or main-CI pass claimed."
@@ -18,11 +21,14 @@ change_log:
 
 Balanced real-task correctness, recovery, delivery time/cost and ease of use guide this maintenance.
 
-Feature **133** is active in this separate maintenance phase under the recorded
+Feature **133** and canonical phase **021** are locally complete after independent QA
+and [Root capture](evidence/133/evidence-capture.json), under the recorded
 [delegated selection](evidence/133/activation-decision.json), applied after PR 104
 merged normally at `c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7`. Root selected
 2000/2600 under operator delegation; these are not verbatim operator figures.
-Independent frozen tests, bundle review and intended red remain before product work.
+Independent frozen tests, renewed bundle review, intended old reduction failure,
+implementation repair and Mode B preceded fresh QA. Final accounting and exact-head
+PR/merge/main delivery remain; no new PR exists at this snapshot.
 Features 129–132 remain phase 020; profiles 124–125 remain phase 019. Preserve the
 existing 017 → 016 → 018 → 020 → 019 plan and all original allowances. Root may select
 serialized maintenance ahead of 020; 133 is not a required dependency of 020.
@@ -68,8 +74,8 @@ Generator implements only the approved scope. Root alone owns lifecycle/counters
 
 ## Acceptance
 
-The feature list names atomic future commands; the new test runner does not yet
-exist and its commands cannot pass by planning. Its differential oracle uses the
+The feature list retains the original atomic acceptance commands. The independent
+runner now exists; its differential oracle uses the
 shipped unchanged `_entry_blob` on equivalent independently built synthetic Git
 inputs, delegating counted operations to real Git. No test depends on unshipped
 historical objects, a deep clone, a paid model or elapsed-time thresholds.
@@ -82,7 +88,7 @@ for the intended rejection. Cover exact commits/tree/ancestry/origin, missing or
 nonblob entries, executable modes, literal unusual paths, current symlink/type/
 bytes/mode changes, canonical owned/unowned fields and environment drift.
 
-Retain every original 48 ordered Workflow Assurance case and all 166 fixture checks;
+Retain every original 48 ordered Workflow Assurance case and all 166 fixture files;
 new independent coverage may strengthen the bank, with its actual count recorded.
 Run both compliance modes and all currently required capable-CI jobs on the exact
 new PR head, then observe its merge and main CI. Future phase 020's sixth runtime
@@ -90,8 +96,26 @@ job remains future. Capture actual commands/exits/revisions, raw streams and ful
 preservation, plus exactly one independently selected additional adversarial check.
 No wall-time speedup or balanced competitor result is a completion requirement.
 
+## Current local acceptance — 2026-10-16
+
+[Fresh QA](qa/133.json) selected eight successful contracted outcomes: commands 1–6
+at `cb5aa36d`, commands 7–8 and exactly one independent extra at `b225e551`.
+All nine actual mandatory attempts remain recorded, including original command 7
+exit 1; this is neither a single-head run nor an all-attempts-pass claim.
+The valid focused readset measured **168 → 8 real Git launches**; Source SHA-256 is
+`5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d`.
+Both long suites retained all 48 cases in order plus one auxiliary observer message;
+the fixture suite retained 166 files and separately ran four new hook checks.
+Root capture exited 0 with 14,645 physical rows and 239 installed rows unchanged;
+QA preservation was 14,553/239 or 14,595/239 at its respective revisions.
+These local observations establish no elapsed-time speedup or comparative result.
+Old main [38817712498](https://github.com/niq-cnr/nizam-framework/actions/runs/38817712498)
+at merge `c8ef3cd4` remained running at the 00:10 UTC snapshot; all five main jobs
+must succeed before new integration. The installed public v1.5.0 payload is unchanged.
+
 ## Selected cost and accounting
 
+Final scope remains unmeasured; initialized zero is not zero preparation cost.
 Root selected **2000 lines**, ceiling **2600**: product 150, independent tests 450,
 process 1400. Process includes carried attribution preparation/report/release/index
 budget 300, this planning pair 220, contract 170, independent reviews 300,
