@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-16T04:07:46.184259+00:00",
+  "updated_at": "2026-10-16T04:09:53.584508+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2882,7 +2882,7 @@
     "phase020-activation-preparation": {
       "attempts": 2,
       "limit": 3,
-      "status": "correction2-qualified-proposed-not-applied",
+      "status": "correction2-strict-reviewed-frozen-not-applied",
       "owner": "separate Planner session",
       "scope": "Planner only: qualify original intake snapshot prose, preserve immutable historical refs and exact fourfileconditionalactivationdelta. ExplicitRoot actual currenthead/all6checks/clearfeedback/normalmerge verification beforeapplication. No futurefacts, scope/budget/acceptance/status/Sourcegate changes. Minimal staticqualification of changed prose; no fullsuite/runtime rerun. Own lean revisionreceipt; Rootstate/canonicalRootfiles untouched.",
       "numeric_allocation_ref": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
@@ -2978,18 +2978,16 @@
     "phase020-activation-review": {
       "attempts": 2,
       "limit": 3,
-      "status": "released-narrow-corrected-proposal-review2",
+      "status": "strict-approved-root-admitted-proposal-only",
       "owner": "independent Validator session",
       "proposal_revision": "2508a71768111e015f36a87ddb08e7b0b135ecb7",
       "root_context_revision": "581623b5",
       "scope": "Review exactspecparagraph correction plus unchanged4-fileactivationdelta/currentRootinputpins; retain allreview1invariants. Strictproposalverdict only, no actualactivation orfuture105success. Actualapplication requires Rootbindingofcurrentall6clearfeedbacknormalmergeandunchangedpins. No runtime/fullsuite/source/test/state/canonicaledits. Oneleanreview2 withactualstaticmetadataframe.",
       "reason": "Move independent proposal review off hostedCI criticalpath; actualactivation/implementation gates remain unchanged.",
-      "revision": "5a08813eeaeafd4b81cbc642c369abcb99678ad7",
-      "verdict": ".agent/validator/phase020-activation1.json",
-      "verdict_sha256": "c3884c6353646b88ccfc902851e86c1f3260c29a482cd18a71086cfadbd7603a",
-      "issues": [
-        "P020-ACTIVATION1-CURRENT-CONTEXT"
-      ],
+      "revision": "9fc1d426a2e7478cddda917a33639b5ac2840a9e",
+      "verdict": ".agent/validator/phase020-activation2.json",
+      "verdict_sha256": "faff496890eeb73b973bb2f5e25d44366bc94b8cd939acbf616be5745897d5d7",
+      "issues": [],
       "prior_attempts": [
         {
           "attempts": 1,
@@ -3007,7 +3005,10 @@
             "P020-ACTIVATION1-CURRENT-CONTEXT"
           ]
         }
-      ]
+      ],
+      "indexed_files_verified": 5,
+      "freeze": ".agent/evidence/phase020-preflight/activation-proposal-approved.json",
+      "freeze_sha256": "6d405a1e775740620eb9a4f02941088c6a7b4ff90f4485b83abbd341cc4f5d0b"
     }
   },
   "history": [
@@ -8865,6 +8866,11 @@
       "at": "2026-10-16T04:07:46.184259+00:00",
       "event": "phase020-proposal2-evidence-retained-review2-released",
       "detail": "Only6Planner evidencefilescopied from32776089; actual4canonicalactivationfilesnotapplied. Exactproposal2508a717 correctsoriginalsnapshotwordingandRootactualdeliverycheck. Fiveactualstaticrawhashesverified; actual0/PID3559269. Historicalintakeandallacceptance/DAG/budgetsunchanged. Separateindependentreview2releasedbeforeCIcompletion; normalmerge/Rootactivation/Sourcegatesremain."
+    },
+    {
+      "at": "2026-10-16T04:09:53.584508+00:00",
+      "event": "phase020-corrected-activation-proposal-strict-approved-and-frozen",
+      "detail": "Rootstrictparse faff4968 true/3emptyarrays; actualreview0/PID3563786 and5indexedfiles/streamsverified. Exactfourproposalhashes andcurrentcanonicalbeforehashesboundbyactivation-proposal-approved.json. Canonical4filesstillpending, no actualactivation/Source. ProposalwordingneedsnofutureeditwhenRootlaterbindsactual105normalmerge/clearchecks/feedback andunchangedinputs."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -9352,7 +9358,7 @@
       }
     ]
   },
-  "last_action": "Admitted exact frozen129 narrow baseline deficiency after14core/directSBCL/stubpositives; Source waits105normalmerge/020activation.133costhelperv2 prepared, no measurement.",
+  "last_action": "Exactconditional020activationproposal2508a717strict-approvedandfrozen; actualactivation/129Sourcewait105cleanremote normalmerge. CI2samehead19efdefault48live.",
   "completed_contract_ids": [
     "099",
     "103",
