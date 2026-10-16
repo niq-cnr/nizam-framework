@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-16T14:57:34Z",
+  "updated_at": "2026-10-16T18:22:55Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2776,7 +2776,11 @@
       ],
       "failure2": "Actual outer1; balanced wrapper reader0 and all11 native fixture reads0, but auxiliary Python assertion expected1 repeated label although FORMAT was inside DOLIST. Active condition controls not reached; not product semanticred.",
       "failed_attempt2": "/home/cnross/.tmp/nizam-e129-acceptance-author1-20261016/.agent/evidence/129/E129/author1/development-native-fixtures2.execution.json",
-      "failure3": "Outer Python tool wrapper nested-triple-quote SyntaxError actual1/chunkb18751 before capturehelper/nativechild. No native3frame/PID exists. Preserve rawfailure; no fourth retry. Readable proposedbundle and cleanup-done strengthening mayhandoff unqualified forindependentreview, not acceptedfreeze/red/Source."
+      "failure3": "Outer Python tool wrapper nested-triple-quote SyntaxError actual1/chunkb18751 before capturehelper/nativechild. No native3frame/PID exists. Preserve rawfailure; no fourth retry. Readable proposedbundle and cleanup-done strengthening mayhandoff unqualified forindependentreview, not acceptedfreeze/red/Source.",
+      "disposition": "superseded-by-source5-closure",
+      "disposition_at": "2026-10-16T18:22:55Z",
+      "disposition_detail": "Feature 129 closed via the source5 admission path (129-source5-root-admission-cost-recorded, then 129-feature-scope-complete at 2026-10-16T14:57:34Z with canonical QA .agent/qa/129.json approved and all verdict arrays empty) without the native-fixture qualification this step was exhausting. The independent bundle diagnosis it awaited is therefore no longer required for 129. The three failed native preflight frames remain preserved above unchanged; the native-environment failure class is carried as scoping context for feature 130, whose live acceptance tests require SBCL.",
+      "disposition_evidence": ".agent/qa/129.json"
     },
     "133-ci-portability-qa": {
       "attempts": 1,
@@ -10092,6 +10096,11 @@
       "at": "2026-10-16T14:57:34Z",
       "event": "129-feature-scope-complete",
       "detail": "Canonical QA .agent/qa/129.json republishes the eleven recorded contract exits of 0 and the recorded 129-B1 adversarial receipt. final_verdict.approved is true and issues, missing_acceptance_coverage, and unsupported_claims are empty. This publication did not re-execute the commands. Feature 129 is feature-scope complete. Full-live qualification remains 131/132. Attempts remain 5 of limit 5. Allocation 650/2100/7350/9555 is not raised. current_feature advances to 130 for contract negotiation. Feature 130 implementation has not started."
+    },
+    {
+      "at": "2026-10-16T18:22:55Z",
+      "event": "audit-readiness-2026-10-16",
+      "detail": "Operator directive supersedes the handover goal: 'audit the project and planning and ready for further development', executed as a 13-scope read-only audit. Findings: compliance validator 16/16 green at HEAD 54c6a5f3 on fix/start-path-gates; installed .nizam/ byte-identical to tag v1.5.0 with consistent pin chain; contracts/QA corpus well-formed with no orphaned rejections; debt register holds only NDEBT-034 and NDEBT-040 (both Low). Readiness repairs recorded by the Orchestrator in this event's pass: (a) 129-native-fixture-preflight BLOCKED 3/3 dispositioned as superseded-by-source5-closure; (b) handover block re-anchored to the new directive with its pending next-action items dispositioned; (c) HEAD-green battery captured at .agent/evidence/audit-2026-10-16/head-green.txt and head-green-summary.json (six checks, all exit 0, exercised revision 54c6a5f3); (d) planning current-view refresh delegated (phase_020.yaml 129 PENDING flip, HANDOVER/ROADMAP supersession preambles, feature_list_021 delivery note, backlog overlays). Post-handover branch commits 2f9b5ae9..54c6a5f3 (PR 106 merge, PR 109 merge, start-path gating 05825106, EX-P1 checklist 1471bd41, preregistered pin checkout 221785ab, smoke ceiling freeze 54c6a5f3) recorded as governed under the standing operator dogfooding/self-improvement authority, now evidence-anchored by the HEAD-green battery. current_phase/current_feature unchanged: 020/130 at pre-contract stage. Feature 130 contract lifecycle is next; implementation has not started."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10547,7 +10556,7 @@
       }
     ]
   },
-  "last_action": "Marked feature 129 feature-scope complete from canonical QA .agent/qa/129.json. Full-live remains 131/132. Feature 130 contract lifecycle is next.",
+  "last_action": "Recorded audit-readiness-2026-10-16: handover goal superseded by operator directive (audit + ready for further development); 129-native-fixture-preflight dispositioned superseded-by-source5-closure; HEAD-green battery captured at .agent/evidence/audit-2026-10-16/ (six checks exit 0 at 54c6a5f3); planning current-view refresh delegated in-session. Feature 129 stays feature-scope complete; full-live remains 131/132. Feature 130 contract lifecycle is next; feature 130 implementation has not started.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -11344,6 +11353,13 @@
   },
   "handover": {
     "status": "ready-verified-committed-checkpoint",
+    "supersession": {
+      "at": "2026-10-16T18:22:55Z",
+      "by": "operator directive: audit the project and planning and ready for further development",
+      "audit_event": "audit-readiness-2026-10-16",
+      "audit_evidence": ".agent/evidence/audit-2026-10-16/head-green-summary.json",
+      "note": "Handover goal superseded; this block is retained as the historical record of the 2026-10-16 handover checkpoint. Live status is docs/planning/ROADMAP.md current section."
+    },
     "requested_by": "Operator changed active goal to prepare the project for handover",
     "prepared_at": "2026-10-16T09:15:42.449567+00:00",
     "branch": "chore/handover-2026-10-16-recovery2",
@@ -11355,10 +11371,10 @@
     "implementation_started": true,
     "diagnostic_started": true,
     "background_agents": "All execution agents stopped at committed checkpoints; no further development/investigation dispatched",
-    "next_action": "Independent review of replacement4869 against original contract, then fresh recorded authority before any further product work. Accounting288 assembler unexecuted; exact END/heads and effective inventory review plus separate measurement release pending.",
+    "next_action": "Dispositioned 2026-10-16T18:22:55Z under the supersession above: (1) independent review of replacement4869 vs original contract — no longer gates feature 129 (closed via the source5 path, 129-feature-scope-complete 14:57:34Z); retained as unpublished context for any future SBCL-loop rework; (2) Accounting288 assembler, exact END/heads and effective inventory review, separate measurement release — retained as unexecuted handover accounting, recorded as not gating feature 130; (3) fresh recorded authority before further product work — recorded via the standing dogfooding authority and the audit-readiness-2026-10-16 history event. Active next action: feature 130 contract negotiation (see last_action); feature 130 implementation has not started.",
     "budget": "No020numericmeasurement/newallowance; handoverandallrecoverycountonce.",
     "portable_bundle": "/home/cnross/workspace02/handover-artifacts/nizam-framework-2026-10-16-recovery2.bundle",
-    "goal": "Current active goal is prepare the project for handover. Previous long-term active goal was cleared by operator; comparative bar remains preserved as future direction, unproven.",
+    "goal": "SUPERSEDED 2026-10-16 by operator directive: audit the project and planning and ready for further development. Active line of work: branch fix/start-path-gates at HEAD 54c6a5f3; feature 130 at pre-contract stage; comparative bar remains preserved as future direction, unproven. Original text preserved: 'Current active goal is prepare the project for handover. Previous long-term active goal was cleared by operator; comparative bar remains preserved as future direction, unproven.'",
     "delivery_bar_verbatim": "Continue until we have a world class agentic development framework superpassing Superpowers, BMAD Method, and GitHub Spec Kit.",
     "comparison_priorities": [
       "real-task correctness",
