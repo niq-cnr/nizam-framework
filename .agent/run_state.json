@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-16T02:43:17.161495+00:00",
+  "updated_at": "2026-10-16T02:45:37.162298+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2697,7 +2697,7 @@
     "133-ci-portability-repair": {
       "attempts": 1,
       "limit": 3,
-      "status": "local-repair-reviewed-qa-captured-awaiting-ownbranch-preflight-push",
+      "status": "ordinary-pushed-new-exacthead-ci2-pending",
       "owner": "/root/qa133",
       "approved_source_base": "441d292559eacb95c778b4e20bcc62350e9f31a8",
       "plan": ".agent/evidence/133/ci-portability1/recovery-plan.json",
@@ -2710,7 +2710,9 @@
       "review_revision": "ab2ad3d6a352d5482867bcd0d06341843708d921",
       "review_sha256": "d969d0d4717e5333c408323fa716f5853669305bb08ff1171235ffa62a55a542",
       "fresh_qa_owner": "/root/portability_freshqa133",
-      "fresh_qa_revision": "ab2ad3d6a352d5482867bcd0d06341843708d921"
+      "fresh_qa_revision": "ab2ad3d6a352d5482867bcd0d06341843708d921",
+      "delivery_head": "19efbca54be6b2d58f637b22ee4b4185cf32b342",
+      "ordinary_push_frame": ".agent/evidence/133/ci-portability1/delivery-preflight1/ordinary-push.execution.json"
     },
     "129-native-fixture-preflight": {
       "attempts": 3,
@@ -2771,6 +2773,20 @@
       "actual_exit": 0,
       "pid": 3287385,
       "evidence": ".agent/evidence/133/ci-portability1/root-capture2/admission.execution.json"
+    },
+    "133-pr105-hosted-delivery": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "ci2-pending",
+      "head": "19efbca54be6b2d58f637b22ee4b4185cf32b342",
+      "observer": "/root/qa133 CIobserveronly",
+      "first_attempt": {
+        "head": "441d292559eacb95c778b4e20bcc62350e9f31a8",
+        "run": 38831271485,
+        "conclusion": "failure",
+        "evidence": ".agent/evidence/133/ci/pr105-terminal1/report.json"
+      },
+      "scope": "Freshall6exactheadCI/clearfeedback before normalmerge, matchingmain5 afterwards. No rerun/cancel/forcepush orRoot020branchpush. Sourceunchanged, originalbudgetfailedandnewsupplementpending."
     }
   },
   "history": [
@@ -8553,6 +8569,11 @@
       "at": "2026-10-16T02:43:17.161495+00:00",
       "event": "133-fresh-portability-qa-root-capture-admitted",
       "detail": "QA2a2/f68dstricttrueemptyarrays; Rootcapture2actual0/PID3287385 validates242hashes35frames/streams22equal14909/239inventories andsourcepins. Capture1actual1 metadataframefamilyerrorretained, no behavioraltestfailure. Targeted18+oneextra scope only, old48/fullbankhistorical. Ordinaryrepairbranchpreflight/pushauthorized; neverRoot020branch. All6freshCI/clearfeedback/normalmerge/main5remain."
+    },
+    {
+      "at": "2026-10-16T02:45:37.162298+00:00",
+      "event": "133-pr105-portability-ordinary-push-ci2",
+      "detail": "Own isolateddelivery19ef containsrunner2+/1- plusonly133evidence/QA/review beyond441, nofuture020state/source. Preflightvalidate16/16actual0, remote/PRhead441basec8confirmed, normalpushactual0/PID3294795; exacthead19efnowobservedCI2byqa133. No merge/readinessclaimuntil6checks/qualifiedlogs/clearfeedback, thenmain5. Allrawpreflight/pushframesretained."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -9040,7 +9061,7 @@
       }
     ]
   },
-  "last_action": "133portabilityreview/freshQA/Rootcapture2 passed; ordinaryownrepairbranch105preflight/pushnext, all6newCI mandatory.129independentdirectfilequalificationreviewinprogress, noSource.",
+  "last_action": "PR105ordinaryupdated19efafterreview/freshQA/Rootcapture, isolated16/16preflight; newall6hostedCIpending.129reviewerfile-drivenqualificationunderexplicitrecovery, noSource.",
   "completed_contract_ids": [
     "099",
     "103",
