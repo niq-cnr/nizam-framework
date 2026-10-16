@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": "133",
   "status": "in_progress",
-  "updated_at": "2026-10-15T23:58:25.150376+00:00",
+  "updated_at": "2026-10-16T00:05:04.972089+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2159,7 +2159,7 @@
     "133-fresh-qa": {
       "attempts": 2,
       "limit": 3,
-      "status": "compliance-and-one-extra-passed-awaiting-live5-6",
+      "status": "approved-awaiting-root-evidence-capture",
       "owner": "/root/qa133",
       "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
       "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
@@ -2194,7 +2194,7 @@
           ]
         }
       ],
-      "long_commands_disposition": "Original5/6 remain running atcb5; repaired7/8 and exactlyoneextra completed0 atb225. Preserve all per-command contexts and original failure, no restart or further extra.",
+      "long_commands_disposition": "Original5/6 completed actual0 with full14553/239 preservation; exact48 ordered plusoneaux/166fixtures+newfour verified. Selected8all0, originalfailed7retained; no single-head claim.",
       "prior_attempts": [
         {
           "attempts": 1,
@@ -2252,15 +2252,14 @@
         2,
         3,
         4,
+        5,
+        6,
         7,
         8
       ],
-      "pending_commands": [
-        5,
-        6
-      ],
-      "completed_mandatory_attempts": 7,
-      "completed_mandatory_exit_zero": 6,
+      "pending_commands": [],
+      "completed_mandatory_attempts": 9,
+      "completed_mandatory_exit_zero": 8,
       "additional_adversarial_checks_executed": 1,
       "additional_adversarial_actual_exit": 0,
       "recovery_evidence_revision": "cc033afd95fc16202a2d0881aff27dd8d7b19173",
@@ -2270,7 +2269,10 @@
         "actual_exit": 1,
         "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json"
       },
-      "latest_execution_revision": "b225e55182ceee05bbc482badb61499f1a395cac"
+      "latest_execution_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "verdict_revision": "5151517e459e0575209ca7851709de3ebc661588",
+      "verdict_path": ".agent/qa/133.json",
+      "verdict_sha256": "c771723ec77a3c3a32c3c38e85ae9238b55ba05ef9d23cee7b40e40ce643bdf8"
     },
     "comparative-design-review": {
       "attempts": 1,
@@ -2305,7 +2307,29 @@
       "observation_sha256": "272386b247b23adbb1d5364e60d7f2228b3cbf066f50acd59a25ade66d6b7756",
       "held_workspace": "/home/cnross/.tmp/nizam-comparison-design1",
       "held_branch": "plan/checkout-footprint1",
-      "review_owner": "/root/validator133"
+      "review_owner": "/root/validator133",
+      "review_static_admission": {
+        "attempts": 2,
+        "limit": 3,
+        "status": "released-transport-recovery",
+        "original_failure": {
+          "actual_exit": 1,
+          "frame": "/home/cnross/.tmp/nizam-checkout-footprint-review1/review.execution.json",
+          "cause": "owned review clone lacks exact immutable assessed object; actual git128 inside static checker1"
+        },
+        "strategy": "Fetch exact fbc686c5 object locally from Root, preserve original raw; use explicit byte delimiters in unexercised aggregation, then one bounded static admission2. No observation numbers/source repair or133scope measurement."
+      }
+    },
+    "133-evidence-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-read-only",
+      "owner": "Root Orchestrator",
+      "stdin_sha256": "100b7293de69edde455e3c20d6db629f7bd6bf96af8a1eed6f34bb85d61f90f0",
+      "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture1-input.py",
+      "workspace": "/home/cnross/.tmp/nizam-133-root-capture1",
+      "external_output": "/home/cnross/.tmp/nizam-133-root-capture1-run",
+      "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0."
     }
   },
   "history": [
@@ -7958,6 +7982,11 @@
       "at": "2026-10-15T23:58:25.150376+00:00",
       "event": "comparison-checkout-footprint-observation-held-review-requested",
       "detail": "Planner9c2383e4 remains separate/unpublished over preparedcaf81e6a. Candidatefbc686c5 tracked logical bytes337426810, evidence325762342; immutablev1.5pin12537280 total. Four realGit captures0, aggregation/static0; no transfer/install/time/speedup inference. ExistingNDEBT034 condition retained. IndependentValidator factual review requested in ownheldbranch, no Source133 merge/activation/budget change. Same oldmain status6 actual0 confirms fourjobssuccess/fixturefullbanklive; QA PIDs990977/991647 remain active with intended ZIPwarning only. No test/CI restart or approval."
+    },
+    {
+      "at": "2026-10-16T00:05:04.972089+00:00",
+      "event": "133-independent-qa-approved-root-capture1-released",
+      "detail": "Strict5151517e QAsha c771723e/root+installedschemas verified and normalmergedae4fcb04. Both originals5/6 actual0/full14553/239; selected8all0, original7failure retained. Root frozen-driver isolated capture1 released with exact71line stdin hash; canonical state remains inprogress until capture passes. Separately authorize futurefootprint review static2 local object transport recovery after preserved actual1/innergit128; no source/observation repair or active budget change."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -8392,7 +8421,7 @@
       }
     ]
   },
-  "last_action": "133: Source2 ModeB approved; selected checks1-4/7-8 and one extra passed; original5/6 live. Old main38817712498 four jobs passed, full-bank pending. Future checkout observation held for independent review.",
+  "last_action": "Independent133 QA approved8selected/9actualattempts+oneextra; Root static evidence capture1 released. Oldmain4/5passed; futurefootprint review static2 transport recovery released.",
   "completed_contract_ids": [
     "099",
     "103",
