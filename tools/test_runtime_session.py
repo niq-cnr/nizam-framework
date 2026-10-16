@@ -1703,7 +1703,7 @@ def live_runtime_guards(s, executable):
                 control = {**stub.request(op, nonce), **governed(stub)}
                 stub.submit(control); require(stub.finish(control) == nonce, 'explicit stub exact nonce positive')
             live_selection_refusals(stub, 'stub')
-            release = stub.home / 'release-stub'
+            release = stub.state / 'release-stub'
             request = {**stub.request('gate', release), **governed(stub)}
             stub.submit(request)
             wait_for(lambda: request['operation_id'] in stub.receipts(), 'explicit stub actual gate dispatch')
