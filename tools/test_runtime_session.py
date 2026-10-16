@@ -2020,15 +2020,65 @@ def live_unresolved_capture(s, request, progress, cleanup, invoked, witness):
     return None
 
 
+def live_rendered_snapshot(s):
+    logs, diagnostics = {}, {}
+    for path in s.directory.glob('child.*.log'):
+        require(not path.is_symlink() and path.is_file() and path.stat().st_uid == os.getuid(), 'owned regular captured output')
+        logs[path.name] = path.stat().st_size
+    directory = s.directory / 'diagnostics'
+    require(not directory.is_symlink(), 'private diagnostics directory has no symlink')
+    if directory.exists():
+        require(directory.is_dir(), 'private diagnostics directory')
+        for path in directory.rglob('*'):
+            require(not path.is_symlink() and path.stat().st_uid == os.getuid() and
+                    (path.is_dir() or path.is_file()), 'owned regular diagnostic material')
+            if path.is_file():
+                st = path.stat()
+                diagnostics[str(path.relative_to(directory))] = (st.st_size, st.st_mtime_ns, st.st_ino)
+    return logs, diagnostics
+
+
+def live_rendered_guard(s, before, limits):
+    logs, diagnostics = live_rendered_snapshot(s); old_logs, old_diagnostics = before
+    require(all(logs.get(name, -1) >= size for name, size in old_logs.items()) and
+            all(diagnostics.get(name) == stamp for name, stamp in old_diagnostics.items()),
+            'rendering cannot discard captured output or overwrite earlier diagnostics')
+    log_bytes = sum(logs.values()) - sum(old_logs.values())
+    diagnostic_bytes = sum(stamp[0] for name, stamp in diagnostics.items() if name not in old_diagnostics)
+    budget = min(16384, limits.get('output_bytes', 16384))
+    print('LIVE_RENDERED_BYTES', json.dumps({'log_bytes': log_bytes, 'diagnostic_bytes': diagnostic_bytes,
+          'budget': budget, 'condition_ref_required': False}), flush=True)
+    require(log_bytes + diagnostic_bytes <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+
+
+def aborted_capture_observation(callback, ended):
+    # These are lifetime observations, never an assertion about when capture
+    # was abandoned. A killed callback need not finish either witness file.
+    if not callback.exists():
+        return
+    text = callback.read_text(); lines = text.splitlines()
+    if len(lines) == 2 and text.endswith('\n'):
+        capture_bindings(lines[1])
+    observation = {'callback_witness': str(callback), 'complete_binding_witness': len(lines) == 2 and text.endswith('\n'),
+                   'completed_capture_proof': False, 'deadline_asserted': False}
+    if lines and ended.is_file():
+        first = lines[0].split(); end = ended.read_text().strip()
+        if len(first) == 2 and all(value.isdigit() for value in [*first, end]) and int(first[1]) > 0:
+            observation['aborted_lifetime_seconds'] = (int(end) - int(first[0])) / int(first[1])
+    print('LIVE_ABORTED_CALLBACK', json.dumps(observation), flush=True)
+
+
 def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omission_required=False,
                    restart_report=None, allow_unresolved=False):
     fixture, callback, ended = capture_fixture(s, kind, report, restart_report, limits)
     request, progress, cleanup, invoked, witness, names = fixture
-    request['limits'] = limits or {}; before = sum(p.stat().st_size for p in s.directory.glob('child.*.log'))
+    request['limits'] = limits or {}; before = live_rendered_snapshot(s)
     s.submit(request)
     record = (live_unresolved_capture(s, request, progress, cleanup, invoked, witness) if allow_unresolved else
               s.terminal(request, ('condition_signalled',)))
+    live_rendered_guard(s, before, request['limits'])
     if record is None:
+        aborted_capture_observation(callback, ended)
         return  # Actual busy-to-observed-stop proof above; never a fabricated diagnostic success.
     require(progress.read_text().splitlines() == [witness] and cleanup.read_text().splitlines() == [witness],
             'correlated project progress and actual unwind happened; setup is successful')
@@ -2037,8 +2087,6 @@ def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omis
         require(record['image_consistent'] is False, 'partial load/compile never claims rollback or image consistency')
     budget = min(16384, request['limits'].get('output_bytes', 16384))
     value = diagnostic(s, record, budget, full)
-    delta = sum(p.stat().st_size for p in s.directory.glob('child.*.log')) - before
-    require(delta >= 0 and delta + Path(record['condition_ref']).stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
     capture_observation(callback, ended, request['limits'])
     if value is not None:
         require(value['condition']['type'].rsplit(':', 1)[-1].upper() == names[0], 'actual captured condition identity')
@@ -2220,6 +2268,41 @@ def live_scenario(selection, home, executable, candidate=ROOT):
         s.cleanup()
 
 
+def live_rendered_overflow_control(home, executable):
+    """Common guard mechanics after real positives; no fabricated runtime status.
+
+    A conforming metadata-only producer may never expose unresolved reporting.
+    The production branch uses this same guard before its None return; this
+    control corrupts only disposable file observations, not backend outcomes.
+    """
+    with tempfile.TemporaryDirectory(prefix='rendered-overflow-', dir=home) as temp:
+        s = LiveSession(Path(temp))
+        try:
+            s.start(executable); live_nonce(s, os.urandom(16).hex()); live_condition(s)
+            for kind in ('log', 'diagnostic'):
+                before = live_rendered_snapshot(s)
+                path = (s.directory / 'child.guard-control.log' if kind == 'log' else
+                        s.directory / 'diagnostics' / 'guard-control-overflow')
+                require(not path.exists(), 'overflow control uses a fresh private observation path')
+                try:
+                    path.write_bytes(b'x' * 2049)
+                    try:
+                        live_rendered_guard(s, before, {'output_bytes': 2048})
+                    except AssertionError as exc:
+                        require(str(exc) == 'BEHAVIOR_ASSERTION: DIAGNOSTIC_BYTE_BUDGET', 'overflow control exact assertion')
+                        print('LIVE_NEGATIVE_CONTROL', json.dumps({'fault': kind + '-overflow-after-resolution',
+                              'observed_assertion': str(exc), 'scope': 'common guard file-observation mechanics after real nonce/full-condition progress',
+                              'unresolved_backend_branch_executed': False, 'fabricated_backend_status': False}), flush=True)
+                    else:
+                        raise AssertionError('BEHAVIOR_ASSERTION: common rendering guard accepted overflow')
+                finally:
+                    path.unlink()
+            live_nonce(s, os.urandom(16).hex())
+            require(s.runstate.read_bytes() == s.saved_state, 'overflow control preserves governed attempt')
+        finally:
+            s.cleanup()
+
+
 def live_negative_controls(selection, home, executable):
     controls = {5: [('runtime-refusal-accepted', 'RUNTIME_SELECTION_GUARD')],
                 'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
@@ -2229,6 +2312,8 @@ def live_negative_controls(selection, home, executable):
                                           ('missing-frame', 'CAPTURE_ACTIVE_FRAME')],
                 'bounded-printing': [('unbounded', 'DIAGNOSTIC_BYTE_BUDGET'), ('print-level', 'CAPTURE_PRINT_LEVEL'),
                                      ('print-length', 'CAPTURE_PRINT_LENGTH'), ('print-circle', 'CAPTURE_PRINT_CIRCLE')]}
+    if selection == 'bounded-printing':
+        live_rendered_overflow_control(home, executable)
     for fault, expected in controls.get(selection, []):
         with tempfile.TemporaryDirectory(prefix='mutant-', dir=home) as temp:
             scratch = Path(temp); candidate = live_control_candidate(scratch, fault)
