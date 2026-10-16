@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T04:48:29.979186+00:00",
+  "updated_at": "2026-10-16T04:57:18.677306+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3053,13 +3053,26 @@
     "129-source": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-source1",
+      "status": "source1-stopped-on-SBCL-startup-infrastructure-failure",
       "owner": "separate Generator session",
       "release": ".agent/evidence/129/source-release1.json",
       "base_revision": "7257e43dce83d93e9498ba8c676aedd79d6ac83b",
       "contract_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
       "runner_sha256": "81a7299120ad79cca1765e6c4c47f0d8907bfa6e593804a9ffd97210700dffe4",
-      "scope": "Implement only approved two product files plus own evidence. Do not edit tests or Root state. Capture actual source revision/commands/exits/preservation; stop unexpected failures for Root bounded assessment. No public schema expansion/dependencies/implicit restart/fake confirmations or scope reduction."
+      "scope": "Implement only approved two product files plus own evidence. Do not edit tests or Root state. Capture actual source revision/commands/exits/preservation; stop unexpected failures for Root bounded assessment. No public schema expansion/dependencies/implicit restart/fake confirmations or scope reduction.",
+      "candidate_revision": "ee1ce1dfb6b0f235c23eae439e00328645098c42",
+      "evidence_revision": "b6208a16855ece7d79d2d17bf196d10f6cbee645",
+      "receipt": ".agent/evidence/129/implementation1/receipt.json",
+      "selector_exit": 2,
+      "product_open_exit": 70
+    },
+    "129-startup-diagnosis": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-native-startup-diagnostic1-no-repair",
+      "owner": "/root/source129 Generator",
+      "candidate_revision": "ee1ce1dfb6b0f235c23eae439e00328645098c42",
+      "scope": "Read-only source and one bounded actual fixed-worker startup diagnostic against same Source1 candidate in fresh external scratch. Preserve backend stderr/protocol and actual subprocess identity/revision; retain all command input/output. Use real private init/control descriptor setup or equivalent direct controller diagnostic that preserves scratch logs. No test rerun, source repair or changed launch as a fake positive. Full physical/installed preservation expected. Stop after concrete diagnosis or unexpected diagnostic setup failure; Root releases Source2 only after actual cause."
     }
   },
   "history": [
@@ -8947,6 +8960,11 @@
       "at": "2026-10-16T04:48:29.979186+00:00",
       "event": "129-lifecycle-list-format-preserved",
       "detail": "Root Source release reserialized the entire feature list while setting only129 status. Restored the reviewed original formatting with exactly the same single lifecycle status change; semantic contents unchanged. Both retained revisions remain historical; no budget-pass or free-work claim."
+    },
+    {
+      "at": "2026-10-16T04:57:18.677306+00:00",
+      "event": "129-source1-startup-failure-retained-and-bounded-diagnosis-released",
+      "detail": "Candidate ee1ce1df passed directSBCL and defaultstub/core14 controls but SBCL open returned70/infrastructure, selector2; no deeper behaviors executed. Retained own evidence only from b6208a16; failed product files remain outside Root. Full preservation15777 rows/239 installed matched. Startup diagnostics1 released to observe actual worker failure with retained stderr, no repeated full admission or silent repair."
     }
   ],
   "phase_001_scope_budget_final": {
