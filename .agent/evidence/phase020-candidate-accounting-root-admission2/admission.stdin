@@ -1,0 +1,15 @@
+import hashlib,json
+from pathlib import Path
+sha=lambda b:hashlib.sha256(b).hexdigest()
+p=Path('.agent/evidence/phase020-candidate-accounting-review2');vpath=Path('.agent/validator/020-candidate-accounting-closure2.json');v=json.loads(vpath.read_bytes())
+assert sha(vpath.read_bytes())=='6466bcae2a99ab4baa4612beba6742d54cb194db916917d5bc3c51cc963f849e'
+assert sha((p/'index.json').read_bytes())=='0d98cea193e50863bf0fcd579ecbb8d6129f8405ee6020eb8f012ccf4613167e'
+for path,digest in json.loads((p/'index.json').read_bytes()).items():assert sha(Path(path).read_bytes())==digest
+assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+assert {x['id'] for x in v['resolved_findings']}=={'C1','C2'}
+f=json.loads((p/'static1.execution.json').read_bytes());assert f['actual_exit']==0 and f['child_pid']==375288 and not f['timed_out'] and f['exercised_revision']=='5154d8d477e7cf10236d80b927af757f64607c70'
+for k in ['stdin','stdout','stderr']:
+ r=f[k];b=(p/Path(r['path']).name).read_bytes();assert sha(b)==r['sha256'] and len(b)==r['bytes']
+for r in [v['reviewed_delta'],v['effective_adapter_binding']]:assert sha(Path(r['path']).read_bytes())==r['sha256']
+assert 'inventory_sha256' not in v
+print('Independent scoped C1/C2 attribution approval admitted, exact proposal/adapter/index/streams pinned. Closed inventory, delta application, END/heads and measurement release remain pending; no numeric accounting or budget pass.')
