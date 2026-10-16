@@ -69,9 +69,12 @@ Artifacts this path leaves:
   under `.agent/evidence/`.
 
 Implementation may begin once the assessed cause and the scoped fix are both
-recorded. The bug fix is not done until the recorded verification result exists.
-A repair that stays inside an already approved contract does not open a new
-feature specification or repeat the feature path's pre-code contract gates.
+recorded. `tools/start_path.py begin bugfix --id <id>` is that decision: it
+exits 0 only when those two records validate. The bug fix is not done until
+the recorded verification result exists, which
+`tools/start_path.py done bugfix --id <id>` checks. A repair that stays inside
+an already approved contract does not open a new feature specification or
+repeat the feature path's pre-code contract gates.
 
 ### Small unambiguous change
 
@@ -84,7 +87,7 @@ Artifacts this path leaves:
 - `.agent/qa/<id>.json` — the recorded verification result, with command output
   under `.agent/evidence/`.
 
-Implementation may begin once the intent is recorded. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.
+Implementation may begin once the intent is recorded. `tools/start_path.py begin small-change --id <id>` is that decision, and `tools/start_path.py done small-change --id <id>` checks the recorded verification result. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.
 
 ## Quickstart
 

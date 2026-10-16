@@ -496,9 +496,12 @@
       <li><code>.agent/qa/&lt;id&gt;.json</code> — the recorded verification result, with command output under <code>.agent/evidence/</code>.</li>
     </ul>
     <p>Implementation may begin once the assessed cause and the scoped fix are both
-    recorded. The bug fix is not done until the recorded verification result
-    exists. A repair that stays inside an already approved contract does not open
-    a new feature specification or repeat the feature path's pre-code contract gates.</p>
+    recorded. <code>tools/start_path.py begin bugfix --id &lt;id&gt;</code> is that
+    decision: it exits 0 only when those two records validate. The bug fix is not
+    done until the recorded verification result exists, which
+    <code>tools/start_path.py done bugfix --id &lt;id&gt;</code> checks. A repair that
+    stays inside an already approved contract does not open a new feature
+    specification or repeat the feature path's pre-code contract gates.</p>
 
     <h3>Small unambiguous change</h3>
     <p>Record the intent, make the change, and record a verification result.</p>
@@ -506,7 +509,7 @@
       <li><code>.agent/evidence/&lt;id&gt;-intent.json</code> — the intent.</li>
       <li><code>.agent/qa/&lt;id&gt;.json</code> — the recorded verification result, with command output under <code>.agent/evidence/</code>.</li>
     </ul>
-    <p>Implementation may begin once the intent is recorded. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.</p>
+    <p>Implementation may begin once the intent is recorded. <code>tools/start_path.py begin small-change --id &lt;id&gt;</code> is that decision, and <code>tools/start_path.py done small-change --id &lt;id&gt;</code> checks the recorded verification result. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.</p>
   </section>
 
   <section id="execution-loop" aria-labelledby="execution-loop-heading">
