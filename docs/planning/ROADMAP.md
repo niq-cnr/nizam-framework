@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.14
+version: 0.65.15
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.15"
+    date: "2026-10-16"
+    summary: "Refresh the current section after the 13-scope audit: the recovery2 handover is superseded by the operator's active directive ('audit the project and planning and ready for further development'); feature 129 is complete (PR #109 96cd3573, approved QA, Source5 adopted 5/5 under recorded authority) and feature 130 is active at pre-contract stage; 021/133 is delivered (PR105 bfd15d10, five-success main CI) under the retained budget exception. Historical snapshots preserved untouched."
   - version: "0.65.14"
     date: "2026-10-16"
     summary: "Refresh stopped recovery handover with verified B2 and monitor failures, provisional alternatives and unexecuted accounting assembly."
@@ -249,29 +252,38 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current handover — phase020 / feature129 recovery, 2026-10-16
+## Current position — audit-refresh, 2026-10-16
 
-Read the [current handover packet](HANDOVER-2026-10-16.md) for the verbatim
-**dogfooding/self-improvement authorization**, exact resume instructions and refs.
-Phase020 is active; 129 is in progress and 130–132 remain pending. Source3's eleven
-Generator commands and sealed idle-close regression passed, but independent ModeB
-rejected its stale-validation race and history-size cancellation/close failure.
-B2 was reproduced after151 completed history operations: public submit and idle
-close returned70; native controls, cleanup and preservation passed. Source4 then
-failed native qualification: shared mmap writes escaped directory/inode watches
-and timestamps. Its unexecuted draft is quarantined, attempts4/4 are preserved,
-and no further product release exists. Replacement architecture and accounting
-assembly are stopped, unreviewed/unexecuted preparations as detailed in the packet.
-B1 remains static evidence. Root has not adopted Source3 or the Source4 draft.
-Installed v1.5.0/239-file governance remains immutable. The current task is handover;
-the comparative bar is preserved as future direction, with no superiority claim.
+The 2026-10-16 recovery2 handover goal (branch `chore/handover-2026-10-16-recovery2`,
+checkpoint `b07b1e3c`) is **SUPERSEDED**: the operator's active directive is now
+"audit the project and planning and ready for further development". Work continues
+on branch `fix/start-path-gates` (HEAD `54c6a5f3`, clean tree). The historical
+handover packets and all snapshot sections below retain their dated facts.
 
-PR105 normally merged as `bfd15d10eb718d2cf18272b35c1bb5857af71f3f`; its matching
-main run38851734070 passed all five jobs. Phase020 cost is unmeasured against
-unchanged7350/9555. Held accounting closure and recovery gates are listed in the
-packet. No freshQA, full-live readiness, new release or comparative superiority
-follows. Earlier sections are historical snapshots; current coordination is in
-[run_state](../../.agent/run_state.json).
+Phase **020** is active under H-PHASE-020. Feature **129** (SBCL loop and confirmed
+cancellation) is **COMPLETE**: approved contract `.agent/contracts/129.json`, canonical
+QA `.agent/qa/129.json` approved, merged via PR #109 (`96cd3573`); Source5 was adopted
+(`tools/sbcl_session_loop.lisp` at HEAD) and the 129-source circuit reads 5/5 under the
+recorded operator extension (`.agent/evidence/129/source5-authority1.json`). Feature
+**130** (hermetic committed-source acceptance) is the active feature at its
+pre-contract stage — no contract yet, implementation not started; the environment is
+verified green at HEAD (SBCL 2.2.9.debian; `python3 tools/test_runtime_session.py
+--check sbcl-admission --require-sbcl` exit 0). Remaining phase-020 product headroom is
+632 lines against 130's estimate of 750, a recorded non-halting variance. Features
+**131/132** remain PENDING behind 130 in the 020 order 129→130→131→132. Phase **019**
+(features 124–125) remains the declared next phase after 020.
+
+Phase **021** / feature **133** is complete and delivered: PR105 merged as `bfd15d10`
+and the five-success main CI proof is recorded in run_state (`133-main-hosted-delivery`);
+its budget gate retains the recorded delivery exception (3,024 against the 2,600
+ceiling, `budget_gate_passed` false under standing operator authority).
+
+Open debt is limited to NDEBT-034 and NDEBT-040 (both Low); NDEBT-034 awaits an
+operator close decision (its deferral trigger is extinct). Comparative superiority
+remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 adapter
+checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
+Current coordination is in [run_state](../../.agent/run_state.json); the live status
+section is this one.
 
 
 ## Historical snapshot — position — locally complete 021 / delivery pending, 2026-10-16

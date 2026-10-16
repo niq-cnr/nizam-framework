@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.28
+version: 1.0.29
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-16"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.29"
+    date: "2026-10-16"
+    summary: "Mark the 2026-10-16 recovery handover SUPERSEDED by the operator's directive ('audit the project and planning and ready for further development'); add a dated preamble recording post-handover events (Source5 adoption, 129 completion via PR #109, work continuing on fix/start-path-gates, 129-source 5/5 under recorded authority) and point to ROADMAP.md's current section as the live status. Historical bodies unchanged."
   - version: "1.0.28"
     date: "2026-10-16"
     summary: "Refresh stopped recovery handover with verified B2 and monitor failures, provisional alternatives and unexecuted accounting assembly."
@@ -97,6 +100,20 @@ change_log:
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
+
+## SUPERSEDED — 2026-10-16
+
+The 2026-10-16 recovery handover goal (branch `chore/handover-2026-10-16-recovery2`,
+checkpoint `b07b1e3c`) is **SUPERSEDED** by the operator's active directive of
+2026-10-16: "audit the project and planning and ready for further development".
+Post-handover events: Source5 was adopted (`tools/sbcl_session_loop.lisp` at HEAD,
+circuit 129-source 5/5 under the recorded operator authority in
+`.agent/evidence/129/source5-authority1.json`); feature **129 completed** via PR #109
+(`96cd3573`) with approved canonical QA `.agent/qa/129.json`; work continues on branch
+`fix/start-path-gates` (HEAD `54c6a5f3`), with feature 130 active at its pre-contract
+stage and 131/132 pending. The live current status is the
+[current section of ROADMAP.md](ROADMAP.md); all handover content below is retained
+unchanged as the historical record.
 
 ## Current handover — phase020 / feature129 recovery, 2026-10-16
 

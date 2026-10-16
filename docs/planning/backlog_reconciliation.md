@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.15
+version: 0.1.16
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
-last_audited: "2026-10-11"
+last_audited: "2026-10-16"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.16"
+    date: "2026-10-16"
+    summary: "Append a dated current-state reconciliation note (audit-anchored): phase 018 complete, phase 020 active (H-PHASE-020 applied) with 129 complete and 130 pre-contract active, phase 021/133 complete and delivered under the retained budget exception; DAG recommended order 017→016→018→020→019 with actual execution 017→018→020; NDEBT-034 operator decision outstanding. No earlier text restructured."
   - version: "0.1.15"
     date: "2026-10-12"
     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
@@ -188,6 +191,21 @@ live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDE
 Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
 [capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+
+### Current-state reconciliation — 2026-10-16
+
+Audit-anchored current position (supplements, does not rewrite, the dated views
+above): phase 018 is complete (features 119–123 captured). Phase 020 is active under
+H-PHASE-020: feature 129 is complete (PR #109 `96cd3573`; canonical QA
+`.agent/qa/129.json` approved; Source5 adopted, circuit 129-source 5/5 under the
+recorded operator authority) and feature 130 is active at its pre-contract stage, with
+131/132 pending behind it. Phase 021 / feature 133 is complete and delivered (PR105
+merged `bfd15d10`, five-success main CI proofs recorded in run_state) under the
+retained budget delivery exception (3,024 vs the 2,600 ceiling). Phase 019
+(features 124–125) remains the declared next phase after 020. The DAG's recommended
+order 017→016→018→020→019 stands; actual execution has run 017→018→020. Open debt is
+limited to NDEBT-034 and NDEBT-040 (both Low); NDEBT-034 awaits an operator close
+decision (its deferral trigger is extinct).
 
 ## Prior reconciliation history
 
