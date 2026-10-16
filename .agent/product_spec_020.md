@@ -2,10 +2,13 @@
 id: nizam-phase020-product-spec
 title: "Phase 020 — Live Runtime Sessions — SBCL and Fresh Acceptance"
 description: "Proposed runtime scope, bounded full cost and independently owned future live acceptance."
-version: 0.1.0
+version: 0.1.1
 status: draft
 authoritative_source: .agent/product_spec_020.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-15"
+    summary: "Refresh actual captured 128/119/120/123 prerequisite refs and bounded runner facts; preserve pending activation, full runtime acceptance and original proposed budget."
   - version: "0.1.0"
     date: "2026-10-12"
     summary: "Plan pending controller features after reviewed WA planning; no activation or live-pass claim."
@@ -43,7 +46,11 @@ release, tag, GA decision or installed upgrade is implied.
 Recommended order: phase 017 foundation → phase 016 core → phase 018 controls →
 phase 020 fresh acceptance → phase 019 profiles, subject to future activation.
 Core requires captured phase 017 foundation; phase 020 requires core feature 128 and trusted phase 018
-features 119/120/123. Phase 018 requires feature 127 only, not split alias NIP3-116's later feature 131.
+features 119/120/123. Their actual immutable capture refs are recorded in the feature list.
+Captured 128 is bounded partial stub core: fresh QA ran its fourteen-leaf aggregate;
+hosted 38569054719 ran fourteen leaves separately, not that aggregate or full SBCL proof.
+Captured 119/120/123 and complete 018 do not apply the live Root 120 binding migration.
+Phase 018 requires feature 127 only, not split alias NIP3-116's later feature 131.
 Feature dependencies stay within each list; external receipts and shared-file
 serialization are explicit metadata in the existing single coordination model.
 Full case 8 mechanism and all required stub/SBCL cases must pass on capable CI
@@ -55,8 +62,11 @@ runs; trial access stays unavailable. No workstation sysctl changes.
 ## Future acceptance and independent ownership
 
 All feature commands are future acceptance obligations, not runs performed by
-planning. Feature 126 introduces the future test runner; later owners expand it under
-reviewed contracts. CLI --case N --runtime stub|sbcl|ci selects one live case;
+planning. The runner already exists through 126–128 at SHA-256
+`005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534`;
+its fourteen-leaf bounded qualification does not establish the full 17-row/13-case
+live matrix. Later independent Evaluator owners expand it under reviewed contracts.
+CLI --case N --runtime stub|sbcl|ci selects one live case;
 case 8 additionally requires --layer policy|mechanism. --require-sbcl and
 --require-isolation fail closed. --check NAME selects the named additional
 invariant; unknown switches/checks, missing cases, setup errors and absent proof
@@ -66,6 +76,13 @@ Actual intended red-before-repair and immutable bundle/source identities precede
 repair; changed bundles need renewed independent review. Both pre-code gates,
 Mode B, independent fresh QA and actual command/exit/revision evidence capture
 remain mandatory. Orchestrator alone owns coordination/counters/history.
+
+Preparation at frozen 599d does not establish PR 104 final CI, merge or main-CI
+success. Actual 020 intake requires Root review of then-current Source, old main-CI
+success and any selected maintenance delivery; optional 133 is not a new dependency
+of 129–132. Reassess changed inputs instead of rebinding old candidate proof.
+EX-P1 is optional separately reviewed runtime preparation; metadata/sidecar parsing
+is not cryptographic or runtime qualification and is not an SBCL prerequisite.
 
 ## Full counted proposed budget
 
@@ -83,6 +100,10 @@ do not multiply overhead again. Full controller estimate: 13,000 compares retain
 4,585 naive × 2.3…2.89 = 10,545…13,251 forecasts. Full-cost splits of 5,650 and 7,350
 fit the 7,200/8,600 predecessors; the larger fresh stage prices actual full live CI,
 hermetic controls and captured readiness, without trimming scope to match 7,200.
+The prior 529-line analysis, 56-line delta, this pair and its reviews count once
+as future 020 process/preparation within 3750, with disjoint intake attribution;
+not 133 process, retroactive 123 evidence, a free allowance or a new feature baseline.
+Historical 018 overrun exceptions supply no 020 allowance.
 Future budget activation remains separate. Use existing counted classification;
 raw evidence/run_state excluded; unclassified fails closed. Rolling comparison
 uses only this phase's prior completed features before appending; first feature
