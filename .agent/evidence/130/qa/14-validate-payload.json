@@ -1,0 +1,25 @@
+{
+  "id": "14-validate-payload",
+  "kind": "contract",
+  "command": "bash tools/validate.sh --payload",
+  "cwd": "/home/cnross/workspace02/nizam-framework",
+  "exit_code": 0,
+  "timed_out": false,
+  "started_at": "2026-10-16T16:07:55Z",
+  "finished_at": "2026-10-16T16:08:06Z",
+  "duration_seconds": 11.084,
+  "revision": "ef3eb5aa25ddd8dad92e3f8048843cf5b33fa56b",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/tmp"
+  },
+  "stdout_bytes": 929,
+  "stderr_bytes": 0,
+  "stdout_sha256": "5769d46d15b5479122948e44658226979a23da6167a245c8bb79615cff34bc4a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_path": ".agent/evidence/130/qa/14-validate-payload.stdout.log",
+  "stderr_path": ".agent/evidence/130/qa/14-validate-payload.stderr.log",
+  "stdout_excerpt": "MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\n[C9] PASS path-resolution\n[C10] PASS consistency\n[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)\n[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)\n[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)\nSUMMARY (payload mode): 12 passed, 0 failed\n",
+  "stderr_excerpt": "",
+  "source": "independent evaluator execution; not copied from a generator receipt"
+}
