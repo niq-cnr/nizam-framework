@@ -1,0 +1,45 @@
+from pathlib import Path
+import ast,hashlib,json,subprocess
+import jsonschema
+root=Path.cwd()
+def git(*a): return subprocess.check_output(['git',*a]).decode().strip()
+def sha(p): return hashlib.sha256((root/p).read_bytes()).hexdigest()
+base='a6ddbee2cef7097b1b6747017d987b4f1aec24e7'
+proposal='872bb3bb611834d1f3e9ec76b8dc9e8f018aab81'
+assert git('rev-parse','HEAD')==base
+assert git('remote','get-url','origin')=='https://github.com/niq-cnr/nizam-framework.git'
+contract='.agent/contracts/129.json'
+assert sha(contract)=='4ac4353b7087336b86fab01baf5ba04c28e4260cb40f43849aec270a4901844f'
+assert subprocess.check_output(['git','show',proposal+':'+contract])==(root/contract).read_bytes()
+paths=[contract,'.agent/product_spec_020.md','.agent/feature_list_020.json','.agent/evidence/phase020-preflight/intake-current-context1.json','.agent/validator/phase020-intake-context1.json','tools/runtime_session.py','tools/test_runtime_session.py','methodology/10_live_runtime_sessions.md','methodology/11_sbcl_runtime_binding.md','docs/nips/NIP-0003-live-runtime-sessions.md','.nizam/schema/contract_review.schema.json','schema/contract_review.schema.json']
+print('ROLE Evaluator129 independent contract review; static only; no controller, SBCL, runner, acceptance or compliance command executed')
+print('REVISION',base,'PROPOSAL',proposal,'ORIGIN',git('remote','get-url','origin'))
+for p in paths: print('PIN',p,git('rev-parse','HEAD:'+p),sha(p))
+c=json.loads((root/contract).read_text());f=json.loads((root/'.agent/feature_list_020.json').read_text())['features'][0]
+for p in ['.nizam/schema/contract.schema.json','schema/contract.schema.json']:
+ jsonschema.Draft202012Validator(json.loads((root/p).read_text())).validate(c)
+ print('CONTRACT_SCHEMA_PASS',p)
+assert [v['command'] for v in c['verification'][:7]]==f['acceptance_tests']
+assert c['estimated_lines']==f['estimated_lines']==2100
+assert c['status']=='proposed' and not any(c['approvals'][k] for k in ['validator_mode_a','evaluator_contract_review'])
+print('COVERAGE seven planned acceptance commands exact, plus core-ready and two compliance commands; estimate2100 with proposed1000process')
+s=json.loads((root/'.agent/run_state.json').read_text());breaker=s['circuit_breaker']['129-precode'];assert breaker['attempts']==1 and breaker['limit']==3
+print('READ_ONLY_PRECODE_STATE',json.dumps(breaker,sort_keys=True))
+tree=ast.parse((root/'tools/test_runtime_session.py').read_text())
+leaves=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(x,ast.Name) and x.id=='CORE_LEAVES' for x in n.targets))
+assert len(leaves)==14
+print('INHERITED_CORE_LEAVES',json.dumps(leaves))
+historical=subprocess.check_output(['git','show','599d7c5aa0c0c80ce8da596c7aeae2924d7dca04:tools/test_runtime_session.py'])
+assert hashlib.sha256(historical).hexdigest()==c['inputs']['historical_runner']['sha256']==sha('tools/test_runtime_session.py')
+print('HISTORICAL_RUNNER_SAME_BYTES',sha('tools/test_runtime_session.py'))
+print('LISP_LOOP_EXISTS',(root/'tools/sbcl_session_loop.lisp').exists())
+assert not (root/'tools/sbcl_session_loop.lisp').exists()
+for key in ['admission','payload','transport']:
+ print('CONTRACT_IMPLEMENTATION',key,c['implementation_obligations'][key])
+for key in ['behavior','preservation','freeze']:
+ print('CONTRACT_TEST',key,c['test_obligations'][key])
+for rel,ranges in [('tools/runtime_session.py',[(73,76),(153,161),(191,212),(489,502)]),('tools/test_runtime_session.py',[(1392,1408)]),('docs/nips/NIP-0003-live-runtime-sessions.md',[(548,550)]),('methodology/11_sbcl_runtime_binding.md',[(90,123),(146,165)])]:
+ lines=(root/rel).read_text().splitlines()
+ for first,last in ranges:
+  for i in range(first,last+1): print(f'{rel}:{i}: {lines[i-1]}')
+print('STATIC_FINDING: runtime selection and Lisp payload are rejected before dispatch; only fixed Python stub is launched and Lisp loop is absent. Frozen-red gate requires successful actual SBCL dispatch/control before any product repair; no staged bootstrap or approved alternate red target is specified.')
