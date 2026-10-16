@@ -1,0 +1,113 @@
+{
+  "role": "Independent portability test author; development evidence only, excluded from new fresh QA",
+  "root_release": "2e285ad36c7cd72d2b9fde34eb66edcb14680c67",
+  "attempt": 1,
+  "limit": 3,
+  "base": "441d292559eacb95c778b4e20bcc62350e9f31a8",
+  "candidate_revision": "7f080b16af45c72a852f77acce387c87961e6586",
+  "candidate_committed_before_development": true,
+  "scope": "Only conditional full-empty-field AST serialization in runner:2added/1removed. All other assertions/CLI/selectors/mask and original fingerprint remain; every other base file unchanged.",
+  "source_bindings": {
+    "tools/workflow_assurance.py": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+    "tools/test_receipt_candidate_batching.py": "d4d2e4df39ffabc24135d414e478c417bfab28a8914aaa6d91a90fe0ebb0bc44",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+    ".agent/contracts/133.json": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
+    ".agent/evidence/123/fresh-qa-capture1.py": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0"
+  },
+  "old_runner_sha256": "b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024",
+  "original_masked_ast": "09e5fe17512b479669de145a8498cf0ba0d25dea60e43ecbc486cff62f79cbc9",
+  "observations": [
+    {
+      "label": "py312",
+      "python": "3.12.3",
+      "executable": "/usr/bin/python3.12",
+      "executable_sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+      "default_four_exit": 0,
+      "guard_controls_outer_exit": 0,
+      "negative_exits": [
+        1,
+        1,
+        1
+      ],
+      "body_only_exit": 0,
+      "oracle_launches": 168,
+      "candidate_launches": 8,
+      "frames": [
+        "py312/default-four.execution.json",
+        "py312/guard-controls.execution.json"
+      ],
+      "controls": [
+        "py312/global-added.execution.json",
+        "py312/helper-pass.execution.json",
+        "py312/signature-added.execution.json",
+        "py312/body-pass.execution.json"
+      ]
+    },
+    {
+      "label": "py313",
+      "python": "3.13.13",
+      "executable": "/home/cnross/.local/share/uv/python/cpython-3.13.13-linux-x86_64-gnu/bin/python3.13",
+      "executable_sha256": "1b6373b55566df2953fe1e1345aec5df0d2e76c5e385871e68aa46c48020803d",
+      "default_four_exit": 0,
+      "guard_controls_outer_exit": 0,
+      "negative_exits": [
+        1,
+        1,
+        1
+      ],
+      "body_only_exit": 0,
+      "oracle_launches": 168,
+      "candidate_launches": 8,
+      "frames": [
+        "py313/default-four.execution.json",
+        "py313/guard-controls.execution.json"
+      ],
+      "controls": [
+        "py313/global-added.execution.json",
+        "py313/helper-pass.execution.json",
+        "py313/signature-added.execution.json",
+        "py313/body-pass.execution.json"
+      ]
+    },
+    {
+      "label": "py314",
+      "python": "3.14.3",
+      "executable": "/home/cnross/.local/share/uv/python/cpython-3.14.3-linux-x86_64-gnu/bin/python3.14",
+      "executable_sha256": "3c5fd2caadada58c68c7ad95ca9003b32602aa81e5ea606caeb3e5da55bf7169",
+      "default_four_exit": 0,
+      "guard_controls_outer_exit": 0,
+      "negative_exits": [
+        1,
+        1,
+        1
+      ],
+      "body_only_exit": 0,
+      "oracle_launches": 168,
+      "candidate_launches": 8,
+      "frames": [
+        "py314/default-four.execution.json",
+        "py314/guard-controls.execution.json"
+      ],
+      "controls": [
+        "py314/global-added.execution.json",
+        "py314/helper-pass.execution.json",
+        "py314/signature-added.execution.json",
+        "py314/body-pass.execution.json"
+      ]
+    }
+  ],
+  "preservation": {
+    "physical_rows": 14804,
+    "installed": 239,
+    "all_six_outer_commands_equal": true
+  },
+  "controls_scope": "Private valid-Python copies only: added global, helper Pass and signature mutation reject exact guard1; body-only Pass accepts count selector0. Child frames use unchanged carrier checkout7f; private-source hashes are in guard-controls.stdout.txt. No setup-as-red or frozen API mutation.",
+  "canonical_authored_control_source": "py312/guard-controls.stdin",
+  "canonical_authored_control_source_sha256": "d3bbf194330749ccd3da2b36cc4322a71988dfd2c3beea262650d563b579f208",
+  "identical_source_duplicates": [
+    "py313/guard-controls.stdin",
+    "py314/guard-controls.stdin"
+  ],
+  "remaining": "Independent bundle/ModeB review, distinct targeted fresh QA and Root admission precede any ordinary PR update; new exact-head fullCI6/main5 remain mandatory. No full48/fullbank rerun or hosted3.14.8 claim; old QA/delivery failures remain historical.",
+  "accounting": "Post-endpoint disjoint recovery work; original3024/2600failed unchanged, no scope remeasurement or allowance change."
+}
