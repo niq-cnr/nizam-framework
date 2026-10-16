@@ -1,0 +1,62 @@
+import ast,gzip,hashlib,json,subprocess
+from pathlib import Path
+area=Path('.agent/evidence/phase020-candidate-accounting-preparation1');sha=lambda b:hashlib.sha256(b).hexdigest()
+closure=json.loads((area/'closure.json').read_bytes());meta=json.loads(gzip.decompress((area/'events.json.gz').read_bytes()));merges=json.loads(gzip.decompress((area/'merges.json.gz').read_bytes()));shared=json.loads(gzip.decompress((area/'shared.json.gz').read_bytes()))
+assert closure['base']==meta['base']=='7278cd902ec0209766e9e06f1f72587ff2a1a45c' and closure['endpoint'] is None and closure['heads'] is None
+assert closure['status'].startswith('HELD') and closure['pending']
+assert closure['history_floor']=='a63cf0c513ad645a9771a69af00dca5d0a45474d'
+assert 'a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24' in closure['preparation_heads']
+assert {'ee1ce1dfb6b0f235c23eae439e00328645098c42','2e8c92d11c36525c3b73b8cfb23822c4507835cb','a9114bcbe16fba76dbdba1147ea76db8a5a6b39d'}<=set(x['commit'] for x in meta['ancestry'])
+for p,pin in closure['helper_pins'].items():
+ raw=Path(p).read_bytes();assert sha(raw)==pin;compile(raw,p,'exec')
+for p,pin in closure['count_semantics']['pins'].items():assert sha(Path(p).read_bytes())==pin
+assert sha((area/'derivations.json').read_bytes())==closure['derivations']['sha256']
+for row in closure['generated_metadata']['generated_outputs']:
+ raw=Path(row['path']).read_bytes();assert sha(raw)==row['sha256'] and sha(gzip.decompress(raw))==row['decoded_sha256']
+assert sha((area/'prepare.py').read_bytes())==closure['generated_metadata']['generator_sha256']
+for name in ('prepare1','derive1'):
+ f=json.loads((area/(name+'.execution.json')).read_bytes());assert f['actual_exit']==0 and not f['timed_out'] and f['exercised_revision']==closure['base']
+ for stream in ('stdout','stderr'):assert sha((area/(name+'.'+stream+'.txt')).read_bytes())==f[stream]['sha256']
+refs=[]
+def collect(v):
+ if isinstance(v,dict):
+  if {'revision','path','sha256'}<=v.keys():refs.append(v)
+  for z in v.values():collect(z)
+ elif isinstance(v,list):
+  for z in v:collect(z)
+collect(closure);collect(json.loads((area/'derivations.json').read_bytes()))
+for r in refs:assert sha(subprocess.check_output(['git','show',r['revision']+':'+r['path']]))==r['sha256'],r
+merge_map={x['commit']:x for x in merges};actual=set(subprocess.check_output(['git','rev-list','--min-parents=2',*meta['preparation_heads'],'^'+meta['history_floor']]).decode().split());assert actual==set(merge_map)
+for a in meta['ancestry']:
+ parents=subprocess.check_output(['git','show','-s','--format=%P',a['commit']]).decode().split();assert parents==a['parents']
+for m in merges:
+ if 'actual_exit' in m:
+  assert m['actual_exit']==0 and m['child_pid']>0
+  for s in ('stdout','stderr'):assert sha(m[s]['text'].encode())==m[s]['sha256']
+ else:
+  assert m['disposition']=='verified-automatic-by-reference' and m['original_actual_exit']==0 and m['original_actual_child_pid']>0
+nonempty=[m for m in merges if 'stdout' in m and m['stdout']['text']]
+assert all(m['commit']=='69e1903da50487cf09d27022bb3450329aa685be' for m in nonempty)
+assert any(x['disposition']=='foreign018-authored-resolution-unmeasured' for x in closure['merge_decisions'])
+events={e['commit']+':'+e['path']:e for e in meta['events']};decisions={e['key']:e for e in closure['event_decisions']}
+assert {k for k,e in events.items() if e['owner']=='020'}<=decisions.keys()
+for k,d in decisions.items():
+ e=events[k];assert e['before_sha256']==d['before_sha256'] and e['after_sha256']==d['after_sha256']
+ assert e['path']!='.agent/run_state.json'
+ if d['disposition']=='proven-copy':assert d['canonical_event'] in decisions and decisions[d['canonical_event']]['after_sha256']==d['after_sha256']
+# Failed original/corrected programs remain present; no numeric measurement is invoked.
+for suffix in ('source3-environment-helper-failure1/diagnosis1.stdin','source3-environment-helper-failure1/static2.stdin','source3-environment-helper-failure1/static3-approved-input.py'):
+ assert any(k.endswith('/'+suffix) and d['disposition']=='charge-authored' for k,d in decisions.items())
+for name in ('diagnosis1','static2','static3'):
+ f=json.loads(Path('.agent/evidence/129/source3-environment-diagnosis1/'+name+'.execution.json').read_bytes());assert f['actual_exit']==(0 if name=='static3' else 1)
+for name in ('static1','static2'):
+ f=json.loads(Path('.agent/evidence/phase020-accounting-method-review2/'+name+'.execution.json').read_bytes());assert f['actual_exit']==(1 if name=='static1' else 0)
+for s in closure['shared_proposals']:
+ actual=next(z for z in shared if (z['commit'],z['path'])==(s['commit'],s['path']));assert actual['patch_sha256']==s['patch_sha256']
+ changed=[l for l in actual['patch'].splitlines() if l[:1] in ('+','-') and not l.startswith(('+++ ','--- '))]
+ assert [sha(l.encode()) for l in changed]==[l['signed_line_sha256'] for l in s['split_lines']]
+state=json.loads(Path('.agent/run_state.json').read_bytes());assert state['circuit_breaker']['020-candidate-accounting-closure-preparation']['attempts']==1
+assert state['scope_budget']['original_estimate_lines']==7350 and state['scope_budget']['ceiling_130pct']==9555
+assert 'raw evidence/run_state excluded' in Path('.agent/product_spec_020.md').read_text()
+p=subprocess.run(['git','diff','--check'],capture_output=True);assert p.returncode==0 and not p.stdout and not p.stderr
+print(json.dumps({'result':'PASS static metadata/provenance/adapter compilation only','closure_sha256':sha((area/'closure.json').read_bytes()),'adapter_sha256':sha((area/'adapter.py').read_bytes()),'actual_readonly_merge_proofs_and_exact_reuse_verified':True,'static_fixture_derivations_verified_by_prior_derive1':True,'failed_helpers_preserved':True,'measurement_adapter_main_executed':False,'numeric_accounting_or_budget_verdict':False,'closure_state':'HELD; joint-intake/interface/mixed-copy review and future Root END/heads/snapshot/tail binding required'},sort_keys=True))
