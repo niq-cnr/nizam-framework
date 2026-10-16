@@ -43,6 +43,10 @@ def main():
         require(text, "scoped fix")
         require(text, "does not require the full feature-gate stack")
         require(text, "Implementation may begin once the intent is recorded")
+        require(text, "tools/start_path.py begin bugfix")
+        require(text, "tools/start_path.py done bugfix")
+        require(text, "tools/start_path.py begin small-change")
+        require(text, "tools/start_path.py done small-change")
         for banned in ("surpass", "superior", "world class", "matches Superpowers",
                        "matches BMAD", "matches Spec Kit"):
             if banned in text:

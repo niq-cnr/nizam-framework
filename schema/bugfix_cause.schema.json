@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:bugfix_cause.schema.json",
+  "title": "Nizam bug-fix cause",
+  "description": "Validates .agent/evidence/<id>-cause.json, the assessed cause that tools/start_path.py reads before a bug-fix implementation may begin.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "path", "summary", "evidence"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Same identifier as the <id> in the evidence file name."
+    },
+    "path": {
+      "const": "bugfix",
+      "description": "Selects the bug-fix start path."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Assessed cause of the defect."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Observations that establish the cause."
+    }
+  }
+}
