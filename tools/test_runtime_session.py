@@ -1738,7 +1738,7 @@ def live_reattach(s):
     require(s.runstate.read_bytes() == s.saved_state, 'reattach preserves governed attempt')
 
 
-def live_cancel(s):
+def live_cancel(s, executable):
     request, release, cleaning, witness = live_gate(s, cleanup=True); control = s.cancellation(request)
     for key, value in [('operation_id', 'unknown'), ('expected_generation', {'counter': 0, 'nonce': '0' * 32}),
                        ('expected_lease_epoch', 100), ('requester', OTHER)]:
@@ -1757,10 +1757,15 @@ def live_cancel(s):
     require(terminal['cancellation_confirmed'] is True and cleaning.read_text().splitlines() == [witness] and
             Path(str(cleaning) + '-done').is_file() and Path(str(cleaning) + '-done').read_text().splitlines() == [witness],
             'only finished correlated cleanup permits confirmed cancellation')
-    if terminal['image_consistent']:
-        completed = s.eval('42'); before = s.operation(completed['operation_id']).read_bytes()
-        require(s.call('cancel-operation', s.cancellation(completed))['result']['status'] == 'completed' and
-                s.operation(completed['operation_id']).read_bytes() == before, 'completion-winning cancellation is immutable')
+    with tempfile.TemporaryDirectory(prefix='completion-race-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            completed = peer.eval('42'); before = peer.operation(completed['operation_id']).read_bytes()
+            require(peer.call('cancel-operation', peer.cancellation(completed))['result']['status'] == 'completed' and
+                    peer.operation(completed['operation_id']).read_bytes() == before, 'completion-winning cancellation is immutable')
+        finally:
+            peer.cleanup()
     require(s.runstate.read_bytes() == s.saved_state, 'cancellation does not reset attempt')
 
 
@@ -1984,7 +1989,7 @@ def live_scenario(selection, home, executable, candidate=ROOT):
         elif selection == 6:
             live_reattach(s)
         elif selection == 'cancel-confirmed':
-            live_cancel(s)
+            live_cancel(s, executable)
         elif selection == 'termination-ends-generation':
             live_terminate(s, executable)
             with tempfile.TemporaryDirectory(prefix='zero-deadline-', dir=home) as temp:
