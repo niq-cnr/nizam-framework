@@ -1826,7 +1826,99 @@ def live_cancel(s, executable):
     require(s.runstate.read_bytes() == s.saved_state, 'cancellation does not reset attempt')
 
 
+def group_descendant_fixture(home, operation_id, nonce):
+    """Exact private native spawn form; finite lifetime is a cleanup backstop."""
+    ready, pulse = [Path(home) / (prefix + nonce) for prefix in ('group-ready-', 'group-pulse-')]
+    program = ("import json, os, signal, time\nfrom pathlib import Path\n"
+               "os.setpgid(0, os.getpgid(os.getppid()))\n"
+               "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+               "ready=Path(" + repr(str(ready)) + "); pulse=Path(" + repr(str(pulse)) + ")\n"
+               "ready.write_text(json.dumps({'pid':os.getpid(),'ppid':os.getppid(),'pgid':os.getpgid(0),"
+               "'nonce':" + repr(nonce) + ",'operation_id':" + repr(operation_id) + "}))\n"
+               "end=time.monotonic()+45; count=0\n"
+               "while time.monotonic()<end:\n count+=1; tmp=pulse.with_suffix('.tmp'); tmp.write_text(str(count)); tmp.replace(pulse); time.sleep(.02)\n")
+    program_literal = '"' + program.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"') + '"'
+    form = ('(progn (sb-ext:run-program ' + json.dumps(sys.executable) + ' (list "-c" ' + program_literal +
+            ') :search nil :wait nil :input nil :output nil :error nil) 42)')
+    return form, ready, pulse
+
+
+def live_group_descendant(s):
+    request = s.lisp('pending'); nonce = os.urandom(16).hex()
+    form, ready, pulse = group_descendant_fixture(s.home, request['operation_id'], nonce)
+    request['payload']['expression'] = form; s.submit(request); s.terminal(request)
+    wait_for(lambda: ready.is_file() and pulse.is_file(), 'actual runtime-spawned descendant readiness')
+    witness = load(ready); pid = witness['pid']; token = process_token(pid)
+    leader, leader_token = next(iter(s.live_tokens.items())); group = os.getpgid(leader)
+    require(witness == {'pid': pid, 'ppid': leader, 'pgid': group, 'nonce': nonce,
+                        'operation_id': request['operation_id']} and token is not None and
+            process_token(leader) == leader_token and group == leader and
+            group != os.getpgrp() and live_owned(s.marker).get(pid) == token and os.getpgid(pid) == group,
+            'actual descendant belongs to the proven owned runtime group')
+    before = int(pulse.read_text()); os.kill(pid, signal.SIGTERM)
+    wait_for(lambda: process_token(pid) == token and int(pulse.read_text()) > before,
+             'actual descendant continues progress after TERM')
+    print('LIVE_GROUP_DESCENDANT', json.dumps({**witness, 'token': token, 'leader_token': leader_token,
+          'term_ignored_with_progress': True, 'spawn_form_sha256': hashlib.sha256(form.encode()).hexdigest()}), flush=True)
+    return pid, token
+
+
+def live_partial_frame_deadline(s, executable):
+    """An accepted incomplete request cannot defer an existing cancellation."""
+    s.start(executable); live_nonce(s, os.urandom(16).hex())
+    request, _, _, _ = live_gate(s, uninterruptible=True, limits={'timeout_seconds': 1})
+    tokens = dict(s.live_tokens); meta = load(s.directory / 'controller.json')
+    supervisor = meta['supervisor_pid']; supervisor_token = process_token(supervisor)
+    require(supervisor_token and live_owned(s.marker).get(supervisor) == supervisor_token and s.owns_lock(supervisor),
+            'deadline control proves private supervisor identity and lock')
+    response = s.call('cancel-operation', s.cancellation(request))['result']; durable_at = time.monotonic()
+    durable = load(s.operation(request['operation_id']))
+    require(response['status'] == durable['status'] == 'cancel_requested' and
+            durable.get('cancellation_confirmed') is False and
+            load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] == str(s.operation(request['operation_id']).resolve()) and
+            all(process_token(pid) == token for pid, token in tokens.items()),
+            'deadline control begins after durable unconfirmed cancellation of actual pending work')
+    def sockets():
+        try:
+            return {link[8:-1] for fd in Path(f'/proc/{supervisor}/fd').iterdir()
+                    if (link := os.readlink(fd)).startswith('socket:[')}
+        except OSError:
+            return set()
+    before = sockets()
+    with socket.socket(socket.AF_UNIX) as client:
+        client.settimeout(1); client.connect(str(s.directory / 'control.sock')); client.sendall(b'{')
+        def accepted():
+            connected = {row[6] for line in Path('/proc/net/unix').read_text().splitlines()[1:]
+                         if len(row := line.split()) > 6 and row[5] == '03'}
+            return sorted((sockets() - before) & connected)
+        inodes = wait_for(accepted, 'private supervisor accepted the incomplete client frame', .6)
+        require(process_token(supervisor) == supervisor_token and s.owns_lock(supervisor) and
+                load(s.operation(request['operation_id']))['status'] == 'cancel_requested' and
+                any(process_token(pid) == token for pid, token in tokens.items()),
+                'accepted partial frame overlaps actual unresolved cancellation')
+        # Contract1s + TERM-to-KILL.25s + death observation1s + scheduling.25s.
+        bound = 2.5
+        while time.monotonic() - durable_at < bound:
+            durable = load(s.operation(request['operation_id']))
+            if durable['status'] == 'terminated' and all(process_token(pid) != token for pid, token in tokens.items()):
+                break
+            time.sleep(.01)
+        elapsed = time.monotonic() - durable_at
+        print('LIVE_PARTIAL_FRAME_DEADLINE', json.dumps({'operation_id': request['operation_id'],
+              'supervisor_pid': supervisor, 'supervisor_token': supervisor_token, 'accepted_socket_inodes': inodes,
+              'runtime_tokens': tokens, 'elapsed_seconds': elapsed, 'bound_seconds': bound,
+              'durable_status': durable['status'], 'runtime_still_live': [pid for pid, token in tokens.items() if process_token(pid) == token]}), flush=True)
+        require(durable['status'] == 'terminated' and durable.get('cancellation_confirmed') is not True and
+                durable['image_consistent'] is False and elapsed <= bound + .05 and
+                all(process_token(pid) != token for pid, token in tokens.items()),
+                'CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME')
+    s.terminal(request, ('terminated',))
+    require(load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] is None and
+            s.runstate.read_bytes() == s.saved_state, 'deadline resolution clears only observed dead work and preserves attempt')
+
+
 def live_terminate(s, executable):
+    descendant, descendant_token = live_group_descendant(s)
     request, _, _, _ = live_gate(s, uninterruptible=True); tokens = dict(s.live_tokens)
     sentinel_marker = s.home / 'unrelated-runtime'
     argv = [executable, '--no-sysinit', '--no-userinit', '--non-interactive', '--eval',
@@ -1837,6 +1929,7 @@ def live_terminate(s, executable):
         s.call('cancel-operation', s.cancellation(request)); terminal = s.terminal(request, ('terminated',), 30)
         require(terminal['image_consistent'] is False and terminal.get('cancellation_confirmed') is not True and
                 all(process_token(p) != t for p, t in tokens.items()), 'terminated only after actual owned runtime death')
+        require(process_token(descendant) != descendant_token, 'OWNED_RUNTIME_GROUP_DEATH_BEYOND_LEADER')
         require(sentinel.poll() is None, 'unrelated SBCL survives owned-group termination')
         stale_marker = s.home / 'forbidden-stale-execution'
         stale = s.lisp('(progn ' + lisp_write(stale_marker, 'forbidden') + ' 42)')
@@ -1995,7 +2088,7 @@ def live_unresolved_capture(s, request, progress, cleanup, invoked, witness):
         require(record['status'] in ('running', 'unknown', 'cancel_requested') and
                 record.get('cancellation_confirmed') is not True and not invoked.exists(), 'HOSTILE_CAPTURE_REMAINS_UNRESOLVED')
         before = load(s.directory / 'runtime_session.json')
-        require(before['outstanding_operation_ref'] == request['operation_id'] and
+        require(before['outstanding_operation_ref'] == str(s.operation(request['operation_id']).resolve()) and
                 any(process_token(pid) == token for pid, token in tokens.items()), 'unresolved capture retains actual runtime and outstanding work')
         live_busy(s)
         s.call('cancel-operation', s.cancellation(request), (0, 70))
@@ -2241,6 +2334,12 @@ def live_scenario(selection, home, executable, candidate=ROOT):
             live_reattach(s)
         elif selection == 'cancel-confirmed':
             live_cancel(s, executable)
+            with tempfile.TemporaryDirectory(prefix='partial-frame-deadline-', dir=home) as temp:
+                peer = LiveSession(Path(temp), candidate=candidate)
+                try:
+                    live_partial_frame_deadline(peer, executable)
+                finally:
+                    peer.cleanup()
         elif selection == 'termination-ends-generation':
             live_terminate(s, executable)
             with tempfile.TemporaryDirectory(prefix='zero-deadline-', dir=home) as temp:
@@ -2297,7 +2396,15 @@ def live_rendered_overflow_control(home, executable):
                         raise AssertionError('BEHAVIOR_ASSERTION: common rendering guard accepted overflow')
                 finally:
                     path.unlink()
-            live_nonce(s, os.urandom(16).hex())
+            # A real evaluate condition may conservatively quarantine its image.
+            # The subsequent execution positive belongs to a fresh private image.
+            with tempfile.TemporaryDirectory(prefix='overflow-positive-', dir=s.home) as fresh:
+                peer = LiveSession(Path(fresh), candidate=s.candidate)
+                try:
+                    peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                    require(peer.runstate.read_bytes() == peer.saved_state, 'fresh overflow positive preserves governed attempt')
+                finally:
+                    peer.cleanup()
             require(s.runstate.read_bytes() == s.saved_state, 'overflow control preserves governed attempt')
         finally:
             s.cleanup()
