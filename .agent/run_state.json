@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T09:18:21.258322+00:00",
+  "updated_at": "2026-10-16T12:58:12Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3056,9 +3056,26 @@
       "root_admission": ".agent/evidence/133/ci/main-root-admission2/admission.execution.json"
     },
     "129-source": {
-      "attempts": 4,
-      "limit": 4,
-      "status": "Source4-held-native-coverage-counterexample-no-further-product-release",
+      "attempts": 5,
+      "limit": 5,
+      "human_authorized_extension": {
+        "at": "2026-10-16T09:52:37.274231+00:00",
+        "authorized_by": "operator",
+        "verbatim": "I authorize and release the fifth source attempt, a product design, or a merge.",
+        "scope": "ONE further 129-source product attempt only. Attempts stay 4; limit moves 4 to 5. No counter reset or relabel. The product design must preserve the mmap coverage negative and must not revive Source4 currentness-through-publication or merge the quarantined draft. Merge authority is separate and found no open pull request.",
+        "evidence": ".agent/evidence/129/source5-authority1.json",
+        "from_limit": 4,
+        "to_limit": 5
+      },
+      "status": "attempt5-admitted-on-handover-line-not-complete",
+      "source5_adoption_revision": "ea30d229fc667c32eee0f451394694d6652620ee",
+      "source5_adoption_parent": "d19f090e48399ff2c508d1935789567e53f07183",
+      "source5_root_admission": ".agent/evidence/129/source5-root-admission1.json",
+      "source5_adoption_rerun": ".agent/evidence/129/adoption-rerun1/summary.json",
+      "source5_mode_b": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862/.agent/validator/129-source5-mode-b.json",
+      "source5_candidate": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+      "source5_branch": "fix/129-source5-same-byte",
+      "source5_worktree": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
       "owner": "separate Generator session",
       "release": ".agent/evidence/129/source-release4.json",
       "base_revision": "7257e43dce83d93e9498ba8c676aedd79d6ac83b",
@@ -3161,7 +3178,7 @@
           }
         }
       ],
-      "next": "Independent replacement architecture feasibility only. Source4attempt4 and unexecuted draft preserved; no fifth product attempt or contract weakening authorized. Fresh reviewed plan and documented Root authority application required before future code.",
+      "next": "Source5 product blobs from e47a645 are admitted at ea30d229 on phase/020-129-source5-admission. Counted adoption cost is 1844 budget lines (product 1218, verdict overhead 626). Product 1218 exceeds the feature product estimate 650 and stays inside the phase product category 1850. Allocation 650/2100/7350/9555 is not raised. Carried 529-line analysis and 56-line delta remain unassembled. Feature 129 is not complete. Full-live qualification remains 131/132. Attempts stay 5 of limit 5. Pull request base is docs/public-start-paths.",
       "bundle_identity_sha256": "bd6d2638a0a636993047b09e3aca985e1facee6472abf15d5d3fa225d4c2fe7b",
       "latest_evaluator_candidate": "fde4115b4468b7b9da412b1078294345a4f4a442",
       "current_frozen_runner_sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
@@ -3176,7 +3193,12 @@
       "generator_root_admission": ".agent/evidence/129/source3-generator-root-admission2/admission.execution.json",
       "installed_limit": 3,
       "operator_override": ".agent/evidence/129/self-improvement-recovery-authority1.json",
-      "authorized_additional_attempts": 1,
+      "source5_authority": ".agent/evidence/129/source5-authority1.json",
+      "source5_design": ".agent/evidence/129/source5-design1.json",
+      "source5_release": ".agent/evidence/129/source-release5.json",
+      "applicability_review": ".agent/validator/129-replacement-architecture2.json",
+      "applicability_review_admission": ".agent/evidence/129/source5-review-admission1.json",
+      "authorized_additional_attempts": 2,
       "prior_top_level_failure_projection": {
         "retained_from_revision": "f8b8ab877be580dc5f2571068379363f9e9123c7",
         "meaning": "Legacy current-position fields inherited from earlier Source attempts; preserved as history without assigning a new observation to another candidate. Original raw evidence and prior_attempts remain authoritative.",
@@ -3203,7 +3225,7 @@
         "cost": "unmeasured; no budget pass",
         "fresh_QA": "not run",
         "Root_adopted": false,
-        "recovery": "Source4 monitor coverage disproved by actual mmap counterexample; code admission held. Quarantined draft unexecuted, Source3 remains rejected and Root baseline unchanged. Replacement architecture feasibility only."
+        "recovery": "Source4 monitor coverage remains disproved by the mmap counterexample. Quarantined draft unexecuted. Source3 remains rejected and Root baseline unchanged. Operator released attempt 5 and a bounded product design; implementation waits for the applicability review."
       },
       "native_qualification": {
         "revision": "b0ca47e8283d94235d7973d191a25b4159e7a4af",
@@ -10030,6 +10052,36 @@
       "at": "2026-10-16T09:18:21.258322+00:00",
       "event": "recovery2-handover-verified-stopped-checkpoints-ready",
       "detail": "At76c5a385 metadata/repository/payload actual0 PIDs437678/437681/437682. All239installed hashes/bytes/modes unchanged. Dogfooding authority/bar retained; source4failed/quarantined, replacementunreviewed, accountingunexecuted. All execution agents/worktrees stopped/clean. Bundle is finalized externally after this receipt commit."
+    },
+    {
+      "at": "2026-10-16T09:52:37.274231+00:00",
+      "event": "129-source5-authorized-no-merge-design-pending-review",
+      "detail": "Operator released one further source attempt, a product design, and clean-merge authority. Attempts remain 4; limit 4 to 5; no reset. Authority .agent/evidence/129/source5-authority1.json. Open pull requests 0, so no merge. Source5 implementation waits for applicability-review admission. Mmap negative and quarantined draft preserved. Installed payload unchanged."
+    },
+    {
+      "at": "2026-10-16T09:58:10Z",
+      "event": "129-applicability-review-admitted-source5-design-released",
+      "detail": "Validator 129-replacement-architecture2 approved false with four issues and three unsupported claims. Three report options rejected. Decisions accepted. No contract revision. Operator authority remains. Source5 design and release written. Attempts consumed 4 to 5 at limit 5. No merge."
+    },
+    {
+      "at": "2026-10-16T10:16:00Z",
+      "event": "129-source5-candidate-recorded-not-adopted",
+      "detail": "Generator commit e47a645f on fix/129-source5-same-byte, parent a9114bc, only tools/runtime_session.py. Lisp blob ba9f42fa unchanged. Eleven command logs exist under the worktree implementation5 directory and are not Mode B or QA. No pull request and no merge."
+    },
+    {
+      "at": "2026-10-16T10:25:00Z",
+      "event": "129-source5-mode-b-approved-qa-not-run",
+      "detail": "Worktree .agent/validator/129-source5-mode-b.json final_verdict.approved true, issues empty, missing_acceptance_coverage empty, unsupported_claims empty. Counted cost, fresh QA, and adoption explicitly not discharged. No merge."
+    },
+    {
+      "at": "2026-10-16T10:33:00Z",
+      "event": "129-source5-fresh-qa-passed-not-merged",
+      "detail": "QA verdict approved true with empty issues, missing acceptance coverage, and unsupported claims. Eleven exits 0. Adversarial 129-B1 returned ambiguous_state exit 70 and wrote no operation. Candidate e47a645 is absent from the handover checkout and is not an ancestor of b07b1e3. No pull request. No merge. Cost unmeasured."
+    },
+    {
+      "at": "2026-10-16T12:58:12Z",
+      "event": "129-source5-root-admission-cost-recorded",
+      "detail": "Product commit ea30d229 admits e47a645 blobs for tools/runtime_session.py 65f34523 and tools/sbcl_session_loop.lisp ba9f42fa onto parent d19f090e. Frozen classifier 3d40a57b measured PRODUCT_LINES=1218, PROCESS_OVERHEAD_LINES=626, BUDGET_COUNTED_LINES=1844, EVIDENCE_LINES=1526, UNCLASSIFIED_LINES=0. Product 1218 exceeds feature product estimate 650 and remains inside phase product 1850. Cumulative 1844 is under 2100, 7350, and 9555. Allocation not raised. Adoption-tree re-run of the eleven contract commands and tools/test_public_entry.py exited 0. Feature 129 stays in progress. Attempts remain 5 of limit 5. Full-live qualification remains 131/132."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10204,12 +10256,26 @@
   "scope_budget": {
     "original_estimate_lines": 7350,
     "ceiling_130pct": 9555,
-    "total_lines_changed": 0,
-    "per_feature": [],
+    "total_lines_changed": 1844,
+    "per_feature": [
+      {
+        "id": "129",
+        "estimated": 2100,
+        "actual": 1844,
+        "flag": "CATEGORY VARIANCE (non-halting): product lines 1218 exceed the feature product estimate 650 by 568. Phase product category 1850 still holds 1218. Cumulative budget-counted 1844 is under feature estimate 2100, phase original 7350, and ceiling 9555. No prior completed 020 feature, so the 3x rolling-average check has no baseline. Allocation 650/2100/7350/9555 is not raised. Human acknowledgment is required before feature 130.",
+        "note": "Adoption diff d19f090e..ea30d229 only. Frozen classifier sha256 3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973. PRODUCT_LINES=1218 (tools/runtime_session.py 938, tools/sbcl_session_loop.lisp 280). PROCESS_OVERHEAD_LINES=626 from three verdict JSON files. EVIDENCE_LINES=1526 are not gated. Independent-test lines in this diff are 0. This is not the whole-phase historical assembler. The carried 529-line analysis and 56-line delta stay unassembled inside the same allocation. Feature 129 is not complete.",
+        "product_lines": 1218,
+        "process_overhead_lines": 626,
+        "evidence_lines": 1526,
+        "measurement_range": "d19f090e48399ff2c508d1935789567e53f07183..ea30d229fc667c32eee0f451394694d6652620ee",
+        "classifier_sha256": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973",
+        "complete": false
+      }
+    ],
     "phase_base_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
     "authorization_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
     "counting_rule": "Count all product/tests/process and disjoint carried 020/129 preparation once. Preserve all original failed/revised preparation events, 529-line analysis and56-line delta. Reconcile explicit historical refs/path ranges at final measurement with frozen classification; no133/legacy018 transfer or free work.",
-    "measurement_status": "Allocated but unmeasured. Initialized zero does not mean zero preparation cost. Pre-activation129 contracts/tests/reviews/baseline/interface and020 intake/activation preparation are carried inside the same allocation.",
+    "measurement_status": "Adoption diff d19f090e..ea30d229 measured at 1844 budget-counted lines. Carried 020/129 preparation, including the 529-line analysis and 56-line delta, remains unassembled inside the same allocation. Allocation not raised. Feature 129 not complete.",
     "preparation_accounting_ref": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
     "activation_ref": ".agent/evidence/phase020-preflight/activation-decision.json",
     "budget_categories": {
@@ -10471,7 +10537,7 @@
       }
     ]
   },
-  "last_action": "Recovery2 handover documents and stopped checkpoints validated; package final committed checkpoint externally",
+  "last_action": "Admitted Source5 product at ea30d229 and recorded adoption cost 1844. Feature 129 remains in progress.",
   "completed_contract_ids": [
     "099",
     "103",
