@@ -4,7 +4,8 @@
 Exit codes: 0 admitted/successful; 1 refused; 64 usage; 70 infrastructure.
 Declared identities and exclusive locks coordinate work; they do not authenticate.
 The seven calls use JSON request files. Only submit-operation sends an execute
-frame. Source-bound replay uses explicit submits; fresh acceptance is deferred.
+frame. Source-bound replay uses explicit submits. An SBCL run_tests operation
+accepts committed source in a private hermetic process; it does not add a call.
 """
 import argparse
 import copy
@@ -525,6 +526,432 @@ def stop_group(group):
     return False
 
 
+def hermetic_fail(reason):
+    """Raise a candidate/infrastructure refusal while an acceptance receipt is open."""
+    raise SessionError(1, reason)
+
+
+def hermetic_git(repo, *args):
+    """Run one Git command against the candidate and return its stdout bytes."""
+    env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
+    try:
+        result = subprocess.run(['git', '-c', 'core.hooksPath=' + os.devnull, '-C', str(repo), *args],
+                                env=env, capture_output=True, timeout=20)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        hermetic_fail('git_failed:' + type(exc).__name__)
+    if result.returncode != 0:
+        hermetic_fail('git_failed')
+    return result.stdout
+
+
+def hermetic_archive(repo, destination):
+    """Extract committed HEAD with git archive into a new private directory.
+
+    Returns the committed revision. The work tree is not an input.
+    """
+    revision = hermetic_git(repo, 'rev-parse', 'HEAD').decode().strip()
+    if re.fullmatch(r'[0-9a-f]{40}', revision) is None:
+        hermetic_fail('source_revision')
+    destination.mkdir()
+    env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
+    archiver = subprocess.Popen(
+        ['git', '-c', 'core.hooksPath=' + os.devnull, '-C', str(repo), 'archive', '--format=tar', 'HEAD'],
+        env=env, stdout=subprocess.PIPE)
+    extractor = subprocess.Popen(['tar', '-x', '-C', str(destination), '-f', '-'], stdin=archiver.stdout)
+    archiver.stdout.close()
+    archive_code = archiver.wait(timeout=20)
+    extract_code = extractor.wait(timeout=20)
+    if archive_code != 0 or extract_code != 0:
+        hermetic_fail('git_archive_failed')
+    if any(path.is_symlink() for path in destination.rglob('*')):
+        hermetic_fail('archive_symlink')
+    return revision
+
+
+def hermetic_lock(archive):
+    """Read the explicit lock and require it to name exactly the archived files."""
+    path = archive / 'acceptance.lock'
+    if not path.is_file() or path.is_symlink():
+        hermetic_fail('lock_missing')
+    raw = path.read_bytes()
+    value = parse_json(raw)
+    object_keys(value, {'primary_system', 'noop_system', 'failure_system', 'sources'})
+    names = set()
+    for key in ('primary_system', 'noop_system', 'failure_system'):
+        insist(isinstance(value[key], str) and re.fullmatch(r'[A-Za-z][A-Za-z0-9_+-]*', value[key]))
+        if value[key] in names:
+            hermetic_fail('system_names')
+        names.add(value[key])
+    insist(type(value['sources']) is list and value['sources'])
+    files = {}
+    for entry in value['sources']:
+        object_keys(entry, {'path', 'sha256'})
+        relative_file(entry['path'])
+        if entry['path'] == 'acceptance.lock' or entry['path'] in files:
+            hermetic_fail('lock_paths')
+        insist(isinstance(entry['sha256'], str) and re.fullmatch(r'[0-9a-f]{64}', entry['sha256']))
+        candidate = archive / entry['path']
+        if (not candidate.is_file() or candidate.is_symlink()
+                or not candidate.resolve().is_relative_to(archive.resolve())):
+            hermetic_fail('lock_paths')
+        observed = candidate.read_bytes()
+        if hashlib.sha256(observed).hexdigest() != entry['sha256']:
+            hermetic_fail('lock_digest')
+        files[entry['path']] = observed
+    archived = sorted(item.relative_to(archive).as_posix()
+                      for item in archive.rglob('*') if item.is_file())
+    if archived != sorted([*files, 'acceptance.lock']):
+        hermetic_fail('lock_manifest')
+    return value, raw, files
+
+
+def hermetic_match_committed(repo, archive, files):
+    """Require every locked archive byte to be the committed blob."""
+    for name, observed in files.items():
+        if hermetic_git(repo, 'show', 'HEAD:' + name) != observed:
+            hermetic_fail('archive_not_committed')
+    if hermetic_git(repo, 'show', 'HEAD:acceptance.lock') != (archive / 'acceptance.lock').read_bytes():
+        hermetic_fail('archive_not_committed')
+
+
+def hermetic_environment(home, config, cache, data, registry, translations, output):
+    """Build a replacement environment. Empty inherited variables are not copied."""
+    if not all(value.strip() for value in (registry, translations)):
+        hermetic_fail('empty_configuration')
+    if ':ignore-inherited-configuration' not in registry or ':ignore-inherited-configuration' not in translations:
+        hermetic_fail('inherited_configuration')
+    return {
+        'PATH': os.environ.get('PATH', '/usr/bin:/bin'),
+        'HOME': str(home),
+        'XDG_CONFIG_HOME': str(config),
+        'XDG_CACHE_HOME': str(cache),
+        'XDG_DATA_HOME': str(data),
+        'CL_SOURCE_REGISTRY': registry,
+        'ASDF_OUTPUT_TRANSLATIONS': translations,
+        'LC_ALL': 'C',
+        'N130_OUTPUT': str(output) + '/',
+    }
+
+
+def hermetic_observe(proc):
+    """Read the live process identity before it can exit.
+
+    An empty command line is not a capture: ``/proc`` can exist before the
+    kernel publishes argv. Keep reading until argv is present.
+    """
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline and proc.poll() is None:
+        try:
+            argv = [os.fsdecode(part) for part in Path(f'/proc/{proc.pid}/cmdline').read_bytes().split(b'\0') if part]
+            if not argv:
+                time.sleep(.01)
+                continue
+            env = {}
+            for item in Path(f'/proc/{proc.pid}/environ').read_bytes().split(b'\0'):
+                if item and b'=' in item:
+                    key, value = item.split(b'=', 1)
+                    env[os.fsdecode(key)] = os.fsdecode(value)
+            return argv, env, os.readlink(f'/proc/{proc.pid}/cwd')
+        except OSError:
+            time.sleep(.01)
+    return None, None, None
+
+
+def hermetic_process(argv, env, cwd):
+    """Run one fresh process and retain its actual argv, environment, and output."""
+    proc = subprocess.Popen(argv, env=env, cwd=str(cwd), stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, start_new_session=True)
+    observed_argv, observed_env, observed_cwd = hermetic_observe(proc)
+    try:
+        stdout, stderr = proc.communicate(timeout=30)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        stdout, stderr = proc.communicate()
+        hermetic_fail('process_timeout')
+    text_out = stdout.decode(errors='replace')
+    text_err = stderr.decode(errors='replace')
+    return {
+        'requested_argv': argv,
+        'observed_argv': observed_argv,
+        'observed_env': observed_env,
+        'observed_cwd': observed_cwd,
+        'exit': proc.returncode,
+        'stdout': text_out[-20000:],
+        'stderr': text_err[-8000:],
+        'pid': proc.pid,
+    }
+
+
+def hermetic_markers(stdout):
+    """Return N130 marker lines from a controlled acceptance transcript."""
+    values = {}
+    for line in stdout.splitlines():
+        if line.startswith('N130-') and ':' in line:
+            key, value = line.split(':', 1)
+            values[key] = value
+    return values
+
+
+def hermetic_files(root):
+    """List regular files created under one private output root."""
+    return sorted(item.relative_to(root).as_posix() for item in root.rglob('*') if item.is_file())
+
+
+def hermetic_lisp(executable, core, env, cwd, program):
+    """Launch a fresh no-init SBCL. The illustrative section 9 forms are not this launcher."""
+    path = cwd / 'driver.lisp'
+    path.write_text(program)
+    argv = [str(executable), '--core', str(core), '--noinform', '--no-sysinit',
+            '--no-userinit', '--non-interactive', '--load', str(path)]
+    captured = hermetic_process(argv, env, cwd)
+    captured.update(driver_text=program, markers=hermetic_markers(captured['stdout']))
+    required = ('--no-sysinit', '--no-userinit', '--non-interactive')
+    observed = captured['observed_argv'] or []
+    captured['fresh_flags'] = all(flag in observed for flag in required) and '--script' not in observed
+    captured['core_argument'] = str(core) in observed
+    return captured
+
+
+def hermetic_core_probe(executable, cwd, home, config, cache, data):
+    """Discover the installation core with a fresh process that does not compile."""
+    env = {
+        'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'HOME': str(home),
+        'XDG_CONFIG_HOME': str(config), 'XDG_CACHE_HOME': str(cache),
+        'XDG_DATA_HOME': str(data), 'LC_ALL': 'C',
+    }
+    program = '''(sleep 0.05)
+(format t "N130-CORE:~A~%" (namestring sb-ext:*core-pathname*))
+(format t "N130-IMPL:~A~%" (lisp-implementation-type))
+(format t "N130-VERSION:~A~%" (lisp-implementation-version))
+(format t "N130-MACHINE:~A~%" (machine-type))
+(require :asdf)
+(format t "N130-ASDF:~A~%" (asdf:asdf-version))
+(sb-ext:quit :unix-status 0)
+'''
+    cwd.mkdir(parents=True)
+    (cwd / 'core-probe.lisp').write_text(program)
+    captured = hermetic_process([str(executable), '--noinform', '--no-sysinit', '--no-userinit',
+                                 '--non-interactive', '--load', str(cwd / 'core-probe.lisp')], env, cwd)
+    captured.update(driver_text=program, markers=hermetic_markers(captured['stdout']), role='core-probe',
+                    rebuild_proof=False)
+    observed = captured['observed_argv'] or []
+    captured['fresh_flags'] = all(flag in observed for flag in
+                                  ('--no-sysinit', '--no-userinit', '--non-interactive')) and '--script' not in observed
+    markers = captured['markers']
+    core = Path(markers.get('N130-CORE', ''))
+    if captured['exit'] != 0 or not core.name or not captured['fresh_flags']:
+        hermetic_fail('core_probe')
+    resolved = core.resolve()
+    if not resolved.is_file():
+        hermetic_fail('core_probe')
+    version = subprocess.run([str(executable), '--version'], env=env, capture_output=True, text=True, timeout=10)
+    if version.returncode != 0 or not version.stdout.strip():
+        hermetic_fail('toolchain_version')
+    identity = {
+        'implementation': markers.get('N130-IMPL', ''),
+        'version': markers.get('N130-VERSION', ''),
+        'platform': markers.get('N130-MACHINE', ''),
+        'executable': str(Path(executable).resolve()),
+        'executable_sha256': hashlib.sha256(Path(executable).resolve().read_bytes()).hexdigest(),
+        'version_text': version.stdout,
+        'asdf_version': markers.get('N130-ASDF', ''),
+    }
+    provenance = {'kind': 'trusted_base', 'ref': str(resolved),
+                  'sha256': hashlib.sha256(resolved.read_bytes()).hexdigest()}
+    if not all(identity[key] for key in ('implementation', 'version', 'platform', 'asdf_version')):
+        hermetic_fail('toolchain_identity')
+    return captured, resolved, identity, provenance
+
+
+def hermetic_phase(executable, core, env, private, role, system, output):
+    """Run one ASDF control in its own fresh process and private output directory."""
+    phase_home = private / role
+    phase_home.mkdir()
+    program = '''(sleep 0.05)
+(require :asdf)
+(handler-case
+    (progn (asdf:load-system @@SYSTEM@@) (format t "N130-RESULT:ok~%"))
+  (error (condition) (format t "N130-RESULT:fail:~A~%" (type-of condition))))
+(format t "N130-CORE:~A~%" (namestring sb-ext:*core-pathname*))
+(sb-ext:quit :unix-status 0)
+'''.replace('@@SYSTEM@@', json.dumps(system))
+    before = hermetic_files(output)
+    captured = hermetic_lisp(executable, core, env, phase_home, program)
+    captured.update(role=role, files_before=before, files_after=hermetic_files(output),
+                    output=str(output))
+    markers = captured['markers']
+    result = markers.get('N130-RESULT', '')
+    captured['ok'] = captured['exit'] == 0 and result == 'ok' and captured['fresh_flags'] and captured['core_argument']
+    captured['condition'] = result.split(':', 1)[1] if result.startswith('fail:') else None
+    captured['new_files'] = [name for name in captured['files_after'] if name not in before]
+    return captured
+
+
+def perform_hermetic_acceptance(spec):
+    """Accept one committed revision in a private fresh build and write its receipt.
+
+    ``run_tests`` is the existing operation that reaches this function. The
+    development image is not the acceptance image. Section 9's ASDF forms stay
+    illustrative: resolution comes from the explicit environment.
+    """
+    receipt_path = Path(spec['receipt'])
+    private = Path(spec['private'])
+    receipt = {'accepted': False, 'controls_ok': False, 'expression_passed': False,
+               'fresh_process_is_fresh_build': False, 'empty_environment_sufficient': False,
+               'illustrative_forms_are_launcher': False, 'failure_reason': None}
+    try:
+        repo = Path(spec['workspace'])
+        expression = spec['expression']
+        if not isinstance(expression, str) or not expression.strip():
+            hermetic_fail('expression')
+        if not repo.is_dir() or repo.is_symlink():
+            hermetic_fail('workspace')
+        archive = private / 'archive'
+        home = private / 'home'
+        config, cache, data = home / 'config', home / 'cache', home / 'data'
+        output = private / 'output'
+        for path in (home, config, cache, data, output, private / 'setup-output', private / 'failure-output'):
+            path.mkdir(parents=True)
+        if hermetic_files(output):
+            hermetic_fail('output_not_empty')
+        revision = hermetic_archive(repo, archive)
+        if archive.resolve() == repo.resolve():
+            hermetic_fail('archive_not_private')
+        lock, lock_bytes, files = hermetic_lock(archive)
+        hermetic_match_committed(repo, archive, files)
+        probe, core, toolchain, core_provenance = hermetic_core_probe(
+            spec['executable'], private / 'probe', home, config, cache, data)
+        if core_provenance['kind'] == 'development':
+            hermetic_fail('development_core')
+        registry = '(:source-registry (:directory "%s") :ignore-inherited-configuration)' % (str(archive) + '/')
+        translations = '(:output-translations (t ("%s" :implementation)) :ignore-inherited-configuration)' % (str(output) + '/')
+        setup_registry = '(:source-registry (:directory "%s") :ignore-inherited-configuration)' % (str(private / 'empty-registry') + '/')
+        (private / 'empty-registry').mkdir()
+        base_locations = (home, config, cache, data)
+        setup_env = hermetic_environment(home, config, cache, data, setup_registry,
+                                         '(:output-translations (t ("%s" :implementation)) :ignore-inherited-configuration)'
+                                         % (str(private / 'setup-output') + '/'), private / 'setup-output')
+        real_env = hermetic_environment(home, config, cache, data, registry, translations, output)
+        failure_env = hermetic_environment(
+            home, config, cache, data, registry,
+            '(:output-translations (t ("%s" :implementation)) :ignore-inherited-configuration)'
+            % (str(private / 'failure-output') + '/'), private / 'failure-output')
+        setup = hermetic_phase(spec['executable'], core, setup_env, private, 'setup',
+                               lock['primary_system'], private / 'setup-output')
+        noop = hermetic_phase(spec['executable'], core, real_env, private, 'noop',
+                              lock['noop_system'], output)
+        failure = hermetic_phase(spec['executable'], core, failure_env, private, 'failure',
+                                 lock['failure_system'], private / 'failure-output')
+        primary_dir = private / 'primary'
+        primary_dir.mkdir()
+        expression_path = primary_dir / 'expression.lisp'
+        expression_path.write_text(expression if expression.endswith('\n') else expression + '\n')
+        program = '''(sleep 0.05)
+(require :asdf)
+(handler-case
+    (progn (asdf:load-system @@SYSTEM@@) (format t "N130-LOAD:ok~%"))
+  (error (condition) (format t "N130-LOAD:fail:~A~%" (type-of condition))))
+(handler-case
+    (format t "N130-SOURCE:~A~%" (namestring (asdf:system-source-file (asdf:find-system @@SYSTEM@@))))
+  (error (condition) (format t "N130-SOURCE:fail:~A~%" (type-of condition))))
+(handler-case
+    (let ((value nil) (seen nil))
+      (with-open-file (stream @@EXPR@@ :direction :input)
+        (loop for form = (read stream nil :eof)
+              until (eq form :eof)
+              do (setf value (eval form) seen t)))
+      (unless seen (error "empty-expression"))
+      (format t "N130-VALUE:~S~%" value))
+  (error (condition) (format t "N130-VALUE:fail:~A~%" (type-of condition))))
+(format t "N130-CORE:~A~%" (namestring sb-ext:*core-pathname*))
+(sb-ext:quit :unix-status 0)
+'''.replace('@@SYSTEM@@', json.dumps(lock['primary_system'])).replace('@@EXPR@@', json.dumps(str(expression_path)))
+        before_primary = hermetic_files(output)
+        primary = hermetic_lisp(spec['executable'], core, real_env, primary_dir, program)
+        primary.update(role='primary', files_before=before_primary, files_after=hermetic_files(output),
+                       output=str(output), new_files=[name for name in hermetic_files(output) if name not in before_primary])
+        markers = primary['markers']
+        source = markers.get('N130-SOURCE', '')
+        source_path = Path(source) if source and not source.startswith('fail:') else None
+        source_ok = (source_path is not None and source_path.is_file()
+                     and source_path.resolve().is_relative_to(archive.resolve()))
+        booted = Path(markers.get('N130-CORE', ''))
+        booted_ok = booted.name and booted.resolve() == core and hashlib.sha256(booted.resolve().read_bytes()).hexdigest() == core_provenance['sha256']
+        expression_passed = markers.get('N130-VALUE') == '"pass"' and markers.get('N130-LOAD') == 'ok'
+        setup_failure = (not setup['ok'] and setup['condition'] not in (None, '')
+                         and not setup['new_files'] and setup['fresh_flags'])
+        noop_ok = setup_failure and noop['ok'] and not noop['new_files'] and not noop['condition']
+        genuine = (failure['condition'] not in (None, '', setup.get('condition'))
+                   and not failure['ok'] and failure['condition'] != 'MISSING-COMPONENT')
+        failure_distinct = genuine and not failure['new_files']
+        rebuild = bool(primary['new_files']) and source_ok and expression_passed and primary['fresh_flags']
+        processes = [probe, setup, noop, failure, primary]
+        locations_ok = all((item['observed_env'] or {}).get('HOME') == str(home)
+                           and (item['observed_env'] or {}).get('XDG_CONFIG_HOME') == str(config)
+                           and (item['observed_env'] or {}).get('XDG_CACHE_HOME') == str(cache)
+                           and (item['observed_env'] or {}).get('XDG_DATA_HOME') == str(data)
+                           for item in (setup, noop, failure, primary))
+        replaced = all(':ignore-inherited-configuration' in ((item['observed_env'] or {}).get('CL_SOURCE_REGISTRY') or '')
+                       and ':ignore-inherited-configuration' in ((item['observed_env'] or {}).get('ASDF_OUTPUT_TRANSLATIONS') or '')
+                       and (item['observed_env'] or {}).get('CL_SOURCE_REGISTRY') not in ('', os.environ.get('CL_SOURCE_REGISTRY'))
+                       and (item['observed_env'] or {}).get('ASDF_OUTPUT_TRANSLATIONS') not in ('', os.environ.get('ASDF_OUTPUT_TRANSLATIONS'))
+                       for item in (noop, failure, primary))
+        launcher_ok = all('initialize-source-registry' not in item['driver_text']
+                          and '/candidate/src/' not in item['driver_text']
+                          and '/candidate/deps/' not in item['driver_text']
+                          for item in (setup, noop, failure, primary))
+        controls_ok = all((
+            noop_ok, failure_distinct, setup_failure, source_ok, booted_ok, locations_ok, replaced,
+            launcher_ok, not setup['new_files'], before_primary == noop['files_after'],
+            all(item['fresh_flags'] and item['observed_argv'] and item['observed_cwd'] for item in processes),
+            all(Path(item['observed_cwd']).resolve() != repo.resolve() for item in (setup, noop, failure, primary)),
+        ))
+        receipt.update(
+            accepted=bool(controls_ok and expression_passed and rebuild),
+            controls_ok=bool(controls_ok), expression_passed=bool(expression_passed),
+            rebuild_proof=bool(rebuild), source_revision=revision, archive_root=str(archive),
+            private_home=str(home), xdg={'config': str(config), 'cache': str(cache), 'data': str(data)},
+            output_cache=str(output), output_cache_empty_before=before_primary == [],
+            source_registry=registry, output_translations=translations,
+            inherited={'CL_SOURCE_REGISTRY': os.environ.get('CL_SOURCE_REGISTRY'),
+                       'ASDF_OUTPUT_TRANSLATIONS': os.environ.get('ASDF_OUTPUT_TRANSLATIONS'),
+                       'HOME': os.environ.get('HOME')},
+            processes=[{key: item.get(key) for key in
+                        ('role', 'requested_argv', 'observed_argv', 'observed_env', 'observed_cwd', 'exit',
+                         'stdout', 'stderr', 'fresh_flags', 'ok', 'condition', 'new_files', 'files_before',
+                         'files_after', 'rebuild_proof', 'driver_text', 'core_argument', 'markers')}
+                       | {'rebuild_proof': item['role'] == 'primary' and bool(rebuild),
+                          'setup_failure': item['role'] == 'setup' and setup_failure,
+                          'genuine_failure': item['role'] == 'failure' and genuine,
+                          'noop': item['role'] == 'noop' and noop['ok'] and not noop['new_files']}
+                       for item in processes],
+            toolchain=toolchain, core_provenance=core_provenance,
+            lock_ref=hashlib.sha256(lock_bytes).hexdigest(),
+            source_manifest=[{'path': name, 'sha256': hashlib.sha256(blob).hexdigest()} for name, blob in sorted(files.items())],
+            command_refs=primary['observed_argv'],
+            locations=[str(path) for path in base_locations],
+            provenance={
+                'isolation': {'process': 'fresh', 'build_cache': 'fresh_private_empty',
+                              'fixtures': 'committed_source', 'configuration': 'ignore_inherited',
+                              'dependencies': 'hermetic', 'resources': 'isolated_or_reset'},
+                'toolchain_identity': {key: toolchain[key] for key in ('implementation', 'version', 'platform')},
+                'lock_ref': hashlib.sha256(lock_bytes).hexdigest(),
+                'core_provenance': core_provenance,
+                'source_revision': revision, 'source_state': 'committed',
+                'source_manifest': [{'path': name, 'sha256': hashlib.sha256(blob).hexdigest()}
+                                    for name, blob in sorted(files.items())],
+                'command_refs': primary['observed_argv'] or []})
+    except (SessionError, OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
+        receipt['failure_reason'] = exc.reason if isinstance(exc, SessionError) else type(exc).__name__ + ':' + str(exc)
+    receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    atomic_json(receipt_path, receipt)
+
+
 class Supervisor:
     def __init__(self, root, request, lock_fd):
         self.root, self.request, self.lock_fd = root, request, lock_fd
@@ -552,6 +979,7 @@ class Supervisor:
         self.closing = False
         self.close_clients = []
         self.job_cursor = 0
+        self.hermetic = None
 
     def clear_transition(self):
         self.session.pop('transition', None)
@@ -902,7 +1330,97 @@ class Supervisor:
         except (SessionError, ValueError, KeyError, TypeError, OSError):
             self.protocol_fault()
 
+    def begin_hermetic(self, request):
+        """Start committed-source acceptance without evaluating it in the development image."""
+        private = self.directory / 'acceptance-work' / request['operation_id']
+        private.mkdir(parents=True)
+        receipt = self.directory / 'acceptance' / (request['operation_id'] + '.json')
+        receipt.parent.mkdir(parents=True)
+        spec = private / 'spec.json'
+        executable = shutil.which('sbcl')
+        if not executable:
+            atomic_json(receipt, {'accepted': False, 'controls_ok': False, 'expression_passed': False,
+                                  'failure_reason': 'sbcl_missing'})
+            self.hermetic = {'proc': None, 'receipt': receipt, 'operation_id': request['operation_id'],
+                             'deadline': time.monotonic(), 'done': True}
+            return
+        spec.write_text(json.dumps({
+            'workspace': request['context'].get('working_dir', ''),
+            'expression': request['payload']['expression'],
+            'receipt': str(receipt), 'private': str(private / 'private'),
+            'executable': str(Path(executable).resolve()),
+        }))
+        child_env = os.environ.copy()
+        child_env['PYTHONDONTWRITEBYTECODE'] = '1'
+        child_env.pop('NIZAM_LIVE_OWNER', None)
+        proc = subprocess.Popen(
+            [sys.executable, '-c',
+             'import json, runpy, sys\n'
+             'module = runpy.run_path(sys.argv[1])\n'
+             'module["perform_hermetic_acceptance"](json.loads(open(sys.argv[2], encoding="utf-8").read()))\n',
+             str(Path(__file__).resolve()), str(spec)],
+            cwd=str(private), env=child_env, start_new_session=True)
+        self.hermetic = {'proc': proc, 'receipt': receipt, 'operation_id': request['operation_id'],
+                         'deadline': time.monotonic() + 40, 'done': False}
+
+    def stop_hermetic(self):
+        state = self.hermetic
+        if not state or state.get('proc') is None or state['proc'].poll() is not None:
+            return
+        proc = state['proc']
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        try:
+            proc.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait(timeout=2)
+
+    def publish_hermetic(self, receipt):
+        path = self.operation_path(self.hermetic['operation_id'])
+        record = read_json(path)
+        accepted = receipt.get('accepted') is True
+        provenance = receipt.get('provenance') if isinstance(receipt.get('provenance'), dict) else {}
+        for key in ('isolation', 'toolchain_identity', 'lock_ref', 'core_provenance', 'source_revision',
+                    'source_state', 'source_manifest', 'command_refs'):
+            if key in provenance and provenance[key] not in (None, []):
+                record[key] = provenance[key]
+        if accepted:
+            atomic_json(path.with_suffix('.result.json'), {
+                'type': 'result', 'operation_id': record['operation_id'], 'generation': record['generation'],
+                'status': 'completed', 'result': 'pass', 'image_consistent': True})
+            record.update(status='completed', image_consistent=True)
+        else:
+            record.update(status='condition_signalled', image_consistent=False)
+            self.quarantined = True
+        atomic_json(path, record)
+        self.outstanding = None
+        self.session['outstanding_operation_ref'] = None
+        self.clear_transition()
+        self.session_write()
+
+    def finish_hermetic(self):
+        state = self.hermetic
+        if state is None or self.jobs:
+            return
+        proc = state['proc']
+        finished = state.get('done') or proc is None or proc.poll() is not None or time.monotonic() >= state['deadline']
+        if not finished:
+            return
+        if proc is not None and proc.poll() is None:
+            self.stop_hermetic()
+        try:
+            receipt = read_json(state['receipt']) if state['receipt'].is_file() else {
+                'accepted': False, 'failure_reason': 'receipt_missing'}
+            self.publish_hermetic(receipt)
+        except (SessionError, OSError, ValueError, KeyError, TypeError):
+            self.protocol_fault()
+        self.hermetic = None
+
     def end_generation(self):
+        self.stop_hermetic()
         self.broken = True
         self.quarantined = True
         self.cancel_deadline = None
@@ -1072,6 +1590,9 @@ class Supervisor:
             self.session['outstanding_operation_ref'] = str(path)
             self.clear_transition()
             self.session_write()
+            if self.runtime == 'sbcl' and request['kind'] == 'run_tests':
+                self.begin_hermetic(request)
+                return {'ok': True, 'result': record}
             try:
                 self.render_budget = min(16384, request['limits'].get('output_bytes', 16384))
                 self.render_remaining = max(0, self.render_budget - 1)
@@ -1616,6 +2137,8 @@ class Supervisor:
 
     def tick(self):
         now = time.monotonic()
+        if self.runtime == 'sbcl':
+            self.finish_hermetic()
         if self.cancel_deadline is not None and now >= self.cancel_deadline:
             self.end_generation()
         if self.group and self.group['phase'] is not None:
@@ -1666,6 +2189,7 @@ class Supervisor:
 
     def cleanup(self):
         if self.runtime == 'sbcl':
+            self.stop_hermetic()
             for job in self.jobs.values():
                 job['failure'] = 'infrastructure'
                 job['abandoned'] = True

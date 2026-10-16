@@ -1,0 +1,186 @@
+{
+  "contract_id": "130",
+  "feature_id": "130",
+  "name": "Hermetic committed-source acceptance",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_020.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/130/*",
+        "purpose": "Future externalized verification receipts only, after a separately approved implementation. This proposal creates none of them and does not claim any feature 130 check passes."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/runtime_session.py",
+        "purpose": "Add hermetic committed-source acceptance behavior only. Feature 129 behaviors stay intact. Do not change the frozen feature 129 acceptance commands, public schemas, public API, or installed .nizam/."
+      },
+      {
+        "path": "tools/test_runtime_session.py",
+        "purpose": "Add the feature 130 hermetic acceptance checks and cases 7, 10, 11, and 12 only. Feature 129 behaviors stay intact. Do not change the frozen feature 129 acceptance commands or authorize a sixth source attempt."
+      }
+    ],
+    "implementation_files_only": ["tools/runtime_session.py", "tools/test_runtime_session.py"],
+    "feature_129_behaviors": "Feature 129 behaviors stay intact. The seven frozen feature 129 acceptance commands remain unchanged and are not this contract's acceptance tests.",
+    "not_authorized": [
+      "Installed .nizam/ edits",
+      "Public schema edits",
+      "Public API expansion",
+      "Edits to the frozen feature 129 acceptance commands",
+      "A sixth feature 129 source attempt",
+      "tools/sbcl_session_loop.lisp or any product file other than the two files_modify paths"
+    ]
+  },
+  "preservation": {
+    "feature_129_behaviors_stay_intact": true,
+    "frozen_feature_129_acceptance_commands": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmed",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check termination-ends-generation",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl"
+    ],
+    "rule": "Implementation may add feature 130 branches and checks only where those additions preserve the already accepted feature 129 behaviors and leave these seven command texts unchanged."
+  },
+  "implementation_obligations": {
+    "claim_boundary": "These are future obligations. This proposed contract does not claim that any of them already pass, and it does not implement them.",
+    "committed_source": "Accept only committed source through git archive into a private root, and compile that committed source and its dependencies afresh.",
+    "fresh_process": "Start a fresh sbcl --no-sysinit --no-userinit --non-interactive process. A fresh process is not a fresh build.",
+    "private_locations": "Use private HOME and private XDG configuration, cache, and data locations.",
+    "empty_output_cache": "Use a newly created empty private ASDF output directory. Empty environment variables are not sufficient.",
+    "ignore_inherited_resolution": "Replace inherited CL_SOURCE_REGISTRY and ASDF_OUTPUT_TRANSLATIONS with explicit source-registry and output-translation configurations that each contain :ignore-inherited-configuration and use private roots.",
+    "provenance": "Capture actual toolchain, lock, and core provenance, including the profile's clean core and pinned toolchain required by methodology/11_sbcl_runtime_binding.md section 9.",
+    "must_fail": "Unsaved definitions, a fasl compiled against an unsaved macro, inherited fasl or shared build cache, and a deleted definition that survives only in a development image must fail.",
+    "distinct_asdf_controls": "The ASDF no-op control and the genuine ASDF failure control must be distinct. A no-op must not count as a genuine failure, and a setup failure must not count as rebuild proof.",
+    "illustrative_forms_are_not_a_launcher": "methodology/11_sbcl_runtime_binding.md section 9 Lisp ASDF forms are illustrative, not a tested launcher, and must not be treated as one."
+  },
+  "non_goals": [
+    "No full-live qualification claim. Full-live qualification remains features 131 and 132.",
+    "No seventeen-row or thirteen-case live matrix claim. Feature 130 owns cases 7, 10, 11, and 12 only; that matrix remains 131/132.",
+    "No attempt 6. Feature 129 source attempts stay 5 of limit 5. A sixth source attempt is not authorized.",
+    "No installed .nizam/ edit. The installed payload stays immutable.",
+    "No origin/main retarget. This contract does not change the base branch or retarget origin/main.",
+    "No public schema or public API expansion.",
+    "No budget increase. Do not raise phase original 7350 or ceiling 9555. No free allowance, transfer, or rebaseline.",
+    "No Source4 currentness revival. Do not revive Source4 currentness-through-publication.",
+    "No merge of quarantine 5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c.",
+    "No treating methodology/11_sbcl_runtime_binding.md section 9 Lisp ASDF forms as a tested launcher. Those forms are illustrative only.",
+    "A fresh process is not a fresh build. A fresh sbcl process alone does not satisfy fresh-build acceptance.",
+    "Empty environment variables are not sufficient. An empty output-cache environment variable does not satisfy the newly created empty private ASDF output directory.",
+    "Feature 129 behaviors stay intact. This contract does not authorize edits to the frozen feature 129 acceptance commands, tools/sbcl_session_loop.lisp, workflows, normative methodology, or docs.",
+    "This proposal does not execute the twelve feature 130 commands, git archive acceptance, or SBCL, and it does not claim those checks already pass."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
+      "requirement": "Require committed source through git archive into a private root. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
+      "requirement": "Require a fresh sbcl --no-sysinit --no-userinit --non-interactive process. A fresh process is not a fresh build. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check private-home-xdg",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check private-home-xdg",
+      "requirement": "Require private HOME and private XDG configuration, cache, and data locations. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check empty-output-cache",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check empty-output-cache",
+      "requirement": "Require a newly created empty private ASDF output cache. Empty environment variables are not sufficient. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ignore-inherited-resolution",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ignore-inherited-resolution",
+      "requirement": "Require explicit source registry and output translations that each contain :ignore-inherited-configuration. Section 9 Lisp forms are not a tested launcher. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check toolchain-lock-core-bound",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check toolchain-lock-core-bound",
+      "requirement": "Require captured actual toolchain, lock, and core provenance. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-noop-control",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-noop-control",
+      "requirement": "Require an ASDF no-op control distinct from the genuine failure control. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+      "requirement": "Require a genuine ASDF failure control distinct from the no-op control. Do not claim this check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
+      "requirement": "This command is the feature 130 acceptance command for case 7. This proposal does not claim the check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
+      "requirement": "This command is the feature 130 acceptance command for case 10. This proposal does not claim the check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
+      "requirement": "This command is the feature 130 acceptance command for case 11. This proposal does not claim the check already passes."
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl",
+      "requirement": "This command is the feature 130 acceptance command for case 12. This proposal does not claim the check already passes."
+    },
+    {
+      "acceptance_test": "Repository compliance command named as verification, not one of the twelve feature 130 acceptance tests: bash tools/validate.sh",
+      "command": "bash tools/validate.sh",
+      "requirement": "Additional repository compliance verification. It does not replace or drop any of the twelve feature 130 acceptance commands."
+    },
+    {
+      "acceptance_test": "Repository compliance command named as verification, not one of the twelve feature 130 acceptance tests: bash tools/validate.sh --payload",
+      "command": "bash tools/validate.sh --payload",
+      "requirement": "Additional payload compliance verification. It does not replace or drop any of the twelve feature 130 acceptance commands, and it does not authorize an installed .nizam/ edit."
+    }
+  ],
+  "estimated_lines": 2600,
+  "budget": {
+    "status": "proposed statement only; this proposal does not allocate, transfer, or rebaseline",
+    "product": 750,
+    "independent_tests": 650,
+    "process": 1200,
+    "estimated_lines": 2600,
+    "phase_original": 7350,
+    "ceiling": 9555,
+    "phase_product_category": 1850,
+    "feature_129_product_lines_already_counted": 1218,
+    "remaining_phase_product_headroom": 632,
+    "product_estimate_exceeds_headroom_by": 118,
+    "headroom_arithmetic": "1850 - 1218 = 632 remaining phase product headroom. Feature 130 product 750 exceeds that headroom by 118.",
+    "measurement_rule": "A product-category overrun is recorded at measurement. It does not raise 7350 or 9555. No free allowance, transfer, or rebaseline.",
+    "unassembled_preparation": "The carried 529-line analysis and 56-line delta remain unassembled inside the same allocation."
+  },
+  "evidence_dir": ".agent/evidence/130/",
+  "evidence_convention": "Future receipts, not this proposal, record exact argv, stdout, stderr, actual exit, cwd, private HOME/XDG, empty private ASDF output cache, and exercised source revision. PYTHONDONTWRITEBYTECODE=1. No feature 130 check is claimed to pass.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1
+  },
+  "approved_at": "2026-10-16T15:24:01Z",
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "proposal_basis": {
+    "branch": "phase/020-130-contract-basis",
+    "revision": "e2c13af6039dbd2d4f565e9e910e6d3a96938225",
+    "sources": [
+      ".agent/evidence/130/contract-basis1.json",
+      ".agent/feature_list_020.json",
+      ".agent/product_spec_020.md",
+      "methodology/11_sbcl_runtime_binding.md"
+    ],
+    "implemented": false,
+    "checks_already_pass": false
+  }
+}

@@ -39,6 +39,10 @@ def private_source(destination, source_ref):
     run(['git', 'init', '-q'], destination)
     run(['git', 'config', 'user.email', 'cleanup-test@example.test'], destination)
     run(['git', 'config', 'user.name', 'C13 cleanup regression'], destination)
+    # The committed tree is above git's default gc.auto of 6700 loose objects.
+    # gc.autoDetach then leaves a background gc writing under .git while
+    # TemporaryDirectory removes this copy, which fails with ENOTEMPTY.
+    run(['git', 'config', 'gc.auto', '0'], destination)
     run(['git', 'add', '-A'], destination)
     run(['git', 'commit', '-qm', 'private actual source'], destination)
 

@@ -1,0 +1,171 @@
+{
+  "record": "contract-basis1",
+  "feature_id": "130",
+  "phase": "020-sbcl-fresh-acceptance",
+  "role": "Planner contract basis only. This record does not write .agent/contracts/130.json, does not implement feature 130, and does not mark feature 130 in progress.",
+  "branch": "phase/020-130-contract-basis",
+  "revision": "e2c13af6039dbd2d4f565e9e910e6d3a96938225",
+  "files_read": [
+    ".agent/feature_list_020.json",
+    ".agent/product_spec_020.md",
+    "methodology/11_sbcl_runtime_binding.md",
+    ".agent/run_state.json"
+  ],
+  "eligibility": {
+    "statement": "Feature 130 may enter contract negotiation because feature 129 status is complete. Observed feature 130 status is pending and its dependencies are [\"129\"].",
+    "observed_feature_129": {
+      "id": "129",
+      "name": "SBCL loop and confirmed cancellation",
+      "status": "complete",
+      "passes": true,
+      "dependencies": []
+    },
+    "observed_feature_130": {
+      "id": "130",
+      "name": "Hermetic committed-source acceptance",
+      "description": "Archive committed source into private root; fresh no-init SBCL, private HOME/XDG and empty build cache, ignored inherited ASDF source/output resolution, actual toolchain/lock/core provenance; reject session-only, stale-cache and deleted-definition drift.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": ["129"],
+      "estimated_lines": 2600,
+      "budget_categories": {"product": 750, "tests": 650, "process": 1200}
+    },
+    "may_enter_contract_negotiation": true,
+    "feature_130_marked_in_progress_by_this_record": false,
+    "full_live_qualification_remains": ["131", "132"],
+    "grounded_in": [
+      ".agent/feature_list_020.json: feature 129 status is complete and passes is true; feature 130 status is pending, passes is false, dependencies are [\"129\"].",
+      ".agent/run_state.json circuit_breaker.129-source: attempts 5, limit 5, status attempt5-feature-scope-complete-not-full-live.",
+      ".agent/run_state.json history event 129-feature-scope-complete at 2026-10-16T14:57:34Z: current_feature advances to 130 for contract negotiation and feature 130 implementation has not started."
+    ]
+  },
+  "acceptance": {
+    "count": 12,
+    "copied_exactly_from": ".agent/feature_list_020.json feature 130 acceptance_tests",
+    "commands": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check private-home-xdg",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check empty-output-cache",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ignore-inherited-resolution",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check toolchain-lock-core-bound",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-noop-control",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl"
+    ]
+  },
+  "normative_binding": {
+    "methodology_path": "methodology/11_sbcl_runtime_binding.md",
+    "section": "9. Fresh-environment acceptance",
+    "lines_read": "172-212",
+    "read_constraints": [
+      "The Lisp ASDF configuration forms in section 9 are illustrative, not a tested launcher.",
+      "A fresh process alone is not a fresh build.",
+      "Empty environment variables alone are insufficient."
+    ],
+    "obligations": [
+      {
+        "obligation": "Accept only committed source, archived with git archive into a private root, and compile that committed source and its dependencies afresh.",
+        "grounded_in": "Feature 130 description says archive committed source into a private root. .agent/product_spec_020.md architecture says feature 130 accepts only committed source through git archive. Section 9 says acceptance MUST compile committed source and dependencies afresh; section 9 does not itself use the words git archive."
+      },
+      {
+        "obligation": "Start a fresh sbcl --no-sysinit --no-userinit --non-interactive process. A fresh process is not a fresh build.",
+        "grounded_in": "Section 9 requires a fresh process with sbcl --no-sysinit --no-userinit and says a fresh process alone is not a fresh build. The --non-interactive flag is in the .agent/product_spec_020.md architecture paragraph, not in the section 9 command."
+      },
+      {
+        "obligation": "Use private HOME and private XDG configuration, cache, and data locations.",
+        "grounded_in": "Section 9: consumers MUST use private HOME and XDG configuration/cache/data locations. The architecture paragraph repeats private HOME/XDG."
+      },
+      {
+        "obligation": "Use a newly created empty private ASDF output directory. An empty output-cache environment variable is not sufficient.",
+        "grounded_in": "Section 9 requires a newly created empty private ASDF output directory and says empty environment variables alone are insufficient. The architecture paragraph says empty ASDF output cache."
+      },
+      {
+        "obligation": "Replace inherited CL_SOURCE_REGISTRY and ASDF_OUTPUT_TRANSLATIONS with explicit configurations that each contain :ignore-inherited-configuration.",
+        "grounded_in": "Section 9 requires replacement of inherited CL_SOURCE_REGISTRY and ASDF_OUTPUT_TRANSLATIONS with approved explicit configurations, each containing :ignore-inherited-configuration. The architecture paragraph says source registry and output translations use private roots and :ignore-inherited-configuration."
+      },
+      {
+        "obligation": "Capture actual toolchain, lock, and core provenance. Section 9 additionally requires the profile's clean core and pinned toolchain.",
+        "grounded_in": "Feature 130 description requires actual toolchain/lock/core provenance. The architecture paragraph says toolchain, lock, and core provenance are captured. Section 9 says the fresh process uses the profile's clean core and pinned toolchain; it does not itself say lock or provenance capture."
+      },
+      {
+        "obligation": "Reject unsaved definitions, including a fasl compiled against an unsaved macro.",
+        "grounded_in": "Section 9: an unsaved definition or a fasl compiled against an unsaved macro must not make acceptance pass. The architecture paragraph says unsaved definitions must fail."
+      },
+      {
+        "obligation": "Reject inherited fasls and shared build caches.",
+        "grounded_in": "Section 9: reject inherited fasls or shared build caches. The architecture paragraph says inherited macro/fasl cache must fail."
+      },
+      {
+        "obligation": "Reject a deleted definition that survives only in a development image.",
+        "grounded_in": "Section 9: a deleted definition surviving in the development image must not make acceptance pass. Feature 130 description says reject deleted-definition drift. The architecture paragraph says deleted definitions must fail."
+      }
+    ]
+  },
+  "non_goals": {
+    "no_full_live_claim": "Feature 130 does not claim full-live qualification. .agent/run_state.json says full-live qualification remains 131 and 132. Feature 129 source status is attempt5-feature-scope-complete-not-full-live.",
+    "no_seventeen_row_or_thirteen_case_claim": "Do not claim the 17-row or 13-case live matrix. .agent/feature_list_020.json acceptance_availability says 129-132 commands and full 17-row/13-case live coverage remain future acceptance. The spec says feature 132 closes only after that whole matrix. Feature 130 owns cases 7, 10, 11, and 12 only.",
+    "no_sixth_129_source_attempt": "Attempts on 129 stay 5 of limit 5 in circuit_breaker.129-source. Attempt 6 is not authorized.",
+    "no_change_to_installed_nizam": "Installed .nizam/ stays immutable. This planning step does not edit it.",
+    "no_retarget_of_origin_main": "origin/main is not the base. This step does not retarget it. Observed HEAD remains phase/020-130-contract-basis at e2c13af6039dbd2d4f565e9e910e6d3a96938225.",
+    "no_public_schema_or_public_api_expansion": "No public schema or public API expansion. Feature 129's recorded source scope already withheld new public API, schema, and dependency surface; feature 130 does not add one.",
+    "no_budget_increase": "Allocation 650/2100/7350/9555 is not raised.",
+    "no_revival_of_source4_currentness_through_publication": "Do not revive Source4 currentness-through-publication. The 129-source extension scope says the product design must not revive it.",
+    "no_merge_of_quarantine_5f7de036": "Do not merge quarantined draft 5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c, recorded at circuit_breaker.129-source.qualification_stop.quarantined_draft."
+  },
+  "runner": {
+    "future_output_targets": ["tools/runtime_session.py", "tools/test_runtime_session.py"],
+    "grounded_in": ".agent/feature_list_020.json feature 130 future_output_targets. shared_file_lanes order places 130 after 129 on both paths.",
+    "may_add_own_checks_and_cases": true,
+    "preserve_feature_129_behaviors": "Feature 130 must not change the already accepted feature 129 behaviors except where a 130 check requires a new branch that preserves those behaviors.",
+    "edit_authorized_by_this_planning_step": false
+  },
+  "budget": {
+    "statement": "Product headroom is 632 versus feature 130's product estimate of 750. The later contract must say a product-category overrun is recorded at measurement and does not raise 7350 or 9555. No free allowance, transfer, or rebaseline.",
+    "feature_129_product_lines_already_counted": 1218,
+    "phase_product_category": 1850,
+    "product_headroom": 632,
+    "product_headroom_arithmetic": "1850 - 1218 = 632. Headroom is not a stored run_state field; it is this subtraction of the two fields that were read.",
+    "feature_130_product_estimate": 750,
+    "feature_130_estimated_lines": 2600,
+    "feature_130_budget_categories": {"product": 750, "tests": 650, "process": 1200},
+    "cumulative_budget_counted_lines": 1844,
+    "phase_original_estimate_lines": 7350,
+    "ceiling_130pct": 9555,
+    "protocol_halt": "The protocol halt is the cumulative ceiling 9555, not a silent subcategory expansion.",
+    "measurement_rule": "A product-category overrun is recorded at measurement. It does not raise 7350 or 9555. No free allowance, transfer, or rebaseline.",
+    "unassembled_preparation_not_free": "scope_budget.measurement_status says the adoption diff was measured at 1844 budget-counted lines and that carried 020/129 preparation, including the 529-line analysis and 56-line delta, remains unassembled inside the same allocation. That gap is not a free allowance.",
+    "spec_budget_table_row_130": {"product": 750, "independent_tests": 650, "process": 1200, "total": 2600},
+    "grounded_in": [
+      ".agent/run_state.json scope_budget.per_feature id 129 product_lines 1218, actual 1844, total_lines_changed 1844, original_estimate_lines 7350, ceiling_130pct 9555, budget_categories.product 1850.",
+      ".agent/feature_list_020.json feature 130 budget_categories.product 750 and phase budget_categories.product 1850.",
+      ".agent/product_spec_020.md full counted activation budget table: 130 is 750/650/1,200/2,600 and the phase total is 1,850/1,750/3,750/7,350 with ceiling 9,555. Activation applies this allocation without a new allowance or rebaseline."
+    ]
+  },
+  "spec_correction": {
+    "path": ".agent/product_spec_020.md",
+    "reason": "The sentence '129 remains pending until separate Root implementation release' would tell a later Generator that feature 129 is still pending and that feature 130, which depends on 129, cannot start.",
+    "replacement_identifies_snapshot_as_historical": true,
+    "architecture_paragraph_unchanged": true,
+    "budget_table_unchanged": true,
+    "frontmatter_version_left_at": "0.2.0",
+    "feature_list_spec_version": "0.2.0",
+    "spec_drift": false,
+    "version_not_bumped_because": "The frontmatter key is version 0.2.0 and feature_list_020.json spec_version is 0.2.0. This planner must not edit the feature list. A version bump would create spec drift. The sentence change only stops a historical pending claim from being read as a current block."
+  },
+  "contract_handoff": {
+    "statement": "The Generator proposes .agent/contracts/130.json with status \"proposed\" from this record, .agent/feature_list_020.json, and .agent/product_spec_020.md. The Generator must not implement in that step.",
+    "contract_path": ".agent/contracts/130.json",
+    "required_status": "proposed",
+    "sources": [
+      ".agent/evidence/130/contract-basis1.json",
+      ".agent/feature_list_020.json",
+      ".agent/product_spec_020.md"
+    ],
+    "implement_in_contract_step": false,
+    "planner_wrote_contract": false
+  }
+}
