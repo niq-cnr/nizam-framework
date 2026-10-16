@@ -7,6 +7,8 @@ sha256, output_sha256, frame [rev,path], reason. Known19ef copies derive b084.
 Raw JSON body fields require bodies {pointer: {canonical:[rev,path,pointer|null],
 reason}} or {authored:true, previous:[rev,path,pointer|null]|null, owner,reason}.
 Canonical Markdown bytes are derived; other body declarations require review.
+body_texts maps body SHA to [rev,path,pointer]; body_readbacks lists reviewed
+read-only capture prefixes. Original body events still require authored entries.
 Two-parent merges require actual empty remerge-diff proof. Strict JSON hash
 indexes use repository-relative paths; other mixed reports retain authored cost.
 """
@@ -215,6 +217,11 @@ def main():
                 decoded = None
             for p, text in bodies(decoded):
                 proof = entry.get('bodies', {}).get(p)
+                if not proof and any(path.startswith(prefix) for prefix in cfg.get('body_readbacks', [])):
+                    canonical_body = cfg.get('body_texts', {}).get(sha(text.encode()))
+                    if canonical_body is not None:
+                        assert canonical_body[1:] != [path, p], ('body origin needs authored declaration', key, p)
+                        proof = dict(canonical=canonical_body, reason='reviewed readback family and exact canonical body bytes')
                 if 'copy' in provenance:
                     proof = dict(canonical=provenance['copy'] + [p], reason='proven mechanical branch copy')
                 if not proof and sha(text.encode()) in markdown:
