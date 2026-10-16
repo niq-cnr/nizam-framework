@@ -1,0 +1,170 @@
+{
+  "review": "Independent Validator Mode B for approved contract 130, implementation attempt 1.",
+  "mode": "B",
+  "contract_id": "130",
+  "feature_id": "130",
+  "contract_path": ".agent/contracts/130.json",
+  "contract_status": "approved",
+  "branch": "phase/020-130-contract-basis",
+  "head": "7a31fc8c102c78a3fe03189b3f20b175106706b4",
+  "risk_level": "high",
+  "feature_130_not_marked_complete": true,
+  "change_set_before_this_verdict": {
+    "git_status_short": [
+      " M tools/runtime_session.py",
+      " M tools/test_runtime_session.py",
+      "?? .agent/evidence/130/implementation1/"
+    ],
+    "git_diff_head_stat": "tools/runtime_session.py 526 insertions; tools/test_runtime_session.py 375 insertions; 2 files changed, 895 insertions, 6 deletions",
+    "runtime_session_removed_lines": 1,
+    "runtime_session_removed_text": "Module docstring no longer says fresh acceptance is deferred."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "mode": "B",
+    "contract_id": "130",
+    "feature_id": "130",
+    "risk_level": "high",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "summary": "Approved. The uncommitted product diff is only tools/runtime_session.py and tools/test_runtime_session.py, plus the receipt at .agent/evidence/130/implementation1/summary.json. All twelve feature 130 acceptance commands are implemented, and that receipt records exit 0 for each. An independent re-run of PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control also exited 0. Hermetic acceptance uses git archive of committed source, fresh sbcl --no-sysinit --no-userinit --non-interactive, private HOME/XDG, a newly created empty private ASDF output directory, explicit :ignore-inherited-configuration configs, and captured toolchain, lock, and clean-core provenance. The ASDF no-op and genuine failure controls are distinct. Unsaved definitions, an inherited fasl or shared cache, and a deleted definition that survives only in a development image fail. Section 9 Lisp forms are not the launcher. A fresh process is not treated as a fresh build, and empty environment variables are not treated as sufficient. No unsourced NIP-0003 case-to-scenario map was added, and the implementation does not claim full-live, the seventeen-row matrix, or the thirteen-case matrix. Installed .nizam/, public schemas, the public API, and the 7350/9555 figures were not edited. The only feature 129 behavior edit shortens two bounded-printing temporary-directory prefixes, from rendered-overflow- to ro- and from overflow-positive- to op-, so the nested control socket fits in sockaddr_un. That edit does not change the seven feature 129 command texts and does not weaken a feature 129 assertion. Feature 130 is not marked complete."
+  },
+  "implementation_checks": [
+    {
+      "check": "B1",
+      "verdict": "pass",
+      "evidence": "git diff HEAD --stat contains tools/runtime_session.py and tools/test_runtime_session.py. Contract scope.files_modify names those two paths."
+    },
+    {
+      "check": "B2",
+      "verdict": "pass",
+      "evidence": "Contract 130 has no signatures array. ACTIONS remains the existing seven calls. SBCL run_tests is routed to perform_hermetic_acceptance and does not add a call. Observed acceptance argv on the re-run was sbcl --core /usr/lib/sbcl/sbcl.core --noinform --no-sysinit --no-userinit --non-interactive --load driver.lisp."
+    },
+    {
+      "check": "B3",
+      "verdict": "pass",
+      "evidence": "git status --short before this verdict listed only the two product files and untracked .agent/evidence/130/implementation1/. No .nizam/, schema, workflow, contract, feature-list, or tools/sbcl_session_loop.lisp edit."
+    },
+    {
+      "check": "B4",
+      "verdict": "pass",
+      "evidence": "HERMETIC_CHECKS and HERMETIC_CASES implement the twelve commands. summary.json records exit_code 0 for each. Independent re-run of --check asdf-failure-control exited 0 and printed PASS asdf-failure-control."
+    },
+    {
+      "check": "B5",
+      "verdict": "pass",
+      "evidence": "git diff HEAD removed no import lines and added no import lines. No new package dependency."
+    },
+    {
+      "check": "B6",
+      "verdict": "pass",
+      "evidence": "New functions implement contracted hermetic acceptance only. No full-live, seventeen-row, thirteen-case, or NIP-0003 case-to-scenario map text in either product file."
+    },
+    {
+      "check": "B7",
+      "verdict": "pass",
+      "evidence": "No TODO, FIXME, xfail, or skipped-test marker was added. Feature 129 assertions around the shortened prefixes are unchanged."
+    },
+    {
+      "check": "B8",
+      "verdict": "pass",
+      "evidence": "perform_hermetic_acceptance archives HEAD, compiles in a private output directory, and distinguishes setup failure, no-op, and genuine failure. The re-run reached status completed with trusted_base core provenance and then evaluated (+ 19 23) in the development session."
+    }
+  ],
+  "acceptance_criteria_coverage": [
+    {
+      "criterion_id": "committed-source-archive",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 39",
+      "evidence": "tools/test_runtime_session.py HERMETIC_CHECKS and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "no-init-process",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 40",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0; re-run observed --no-sysinit --no-userinit --non-interactive",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "private-home-xdg",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 41",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "empty-output-cache",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 42",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "ignore-inherited-resolution",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 43",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "toolchain-lock-core-bound",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 44",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0; re-run recorded SBCL 2.2.9.debian, lock_ref, and trusted_base /usr/lib/sbcl/sbcl.core",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "asdf-noop-control",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 45",
+      "evidence": "HERMETIC_CHECKS and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "asdf-failure-control",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 46",
+      "evidence": "summary.json exit_code 0; independent re-run exit 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-7",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 47",
+      "evidence": "HERMETIC_CASES and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-10",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 48",
+      "evidence": "HERMETIC_CASES and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-11",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 49",
+      "evidence": "HERMETIC_CASES and summary.json exit_code 0",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-12",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 50",
+      "evidence": "HERMETIC_CASES and summary.json exit_code 0",
+      "verdict": "covered"
+    }
+  ],
+  "feature_129_prefix_note": "tools/test_runtime_session.py changes the bounded-printing prefixes rendered-overflow- to ro- and overflow-positive- to op-. The seven feature 129 acceptance command texts in .agent/feature_list_020.json lines 19-25 are unchanged, and the assertions in live_rendered_overflow_control are unchanged. The shortening only keeps the nested control socket inside the 107-byte sockaddr_un limit.",
+  "independent_rerun": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+    "exit_code": 0,
+    "final_stdout_line": "PASS asdf-failure-control",
+    "reason": "Re-ran one acceptance command to confirm the receipt was backed by current code. The other eleven feature 130 commands were not re-run; summary.json records exit_code 0 for each."
+  },
+  "receipt": ".agent/evidence/130/implementation1/summary.json",
+  "non_claims": [
+    "No full-live qualification.",
+    "No seventeen-row matrix.",
+    "No thirteen-case matrix.",
+    "No NIP-0003 case-to-scenario map.",
+    "No raise of phase original 7350 or ceiling 9555.",
+    "Feature 130 remains not complete."
+  ]
+}

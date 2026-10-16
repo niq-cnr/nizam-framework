@@ -1435,11 +1435,26 @@ def main():
 LIVE_CHECKS = ('sbcl-admission', 'capture-before-unwind', 'bounded-printing',
                'cancel-confirmed', 'termination-ends-generation')
 LIVE_TERMINAL = {'completed', 'condition_signalled', 'cancelled', 'terminated', 'rejected'}
+HERMETIC_CHECKS = ('committed-source-archive', 'no-init-process', 'private-home-xdg',
+                   'empty-output-cache', 'ignore-inherited-resolution', 'toolchain-lock-core-bound',
+                   'asdf-noop-control', 'asdf-failure-control')
+HERMETIC_CASES = (7, 10, 11, 12)
+HERMETIC_PASS = '''(unless (equal (n130:token) "COMMITTED") (error "unsaved-or-stale-token"))
+(unless (equal (n130:n130-use) "COMMITTED-MACRO") (error "unsaved-macro-fasl"))
+(when (fboundp 'n130-deleted) (error "development-image-definition"))
+"pass"
+'''
+HERMETIC_MUST_FAIL = (
+    '(unless (equal (n130:token) "UNSAVED") (error "unsaved-definition"))\n"pass"\n',
+    '(unless (equal (n130:n130-use) "UNSAVED-MACRO") (error "unsaved-macro-fasl"))\n"pass"\n',
+    '(unless (fboundp \'n130-deleted) (error "development-image-definition"))\n"pass"\n',
+)
 
 
 def live_selection(argv):
+    names = (*LIVE_CHECKS, *HERMETIC_CHECKS)
     return ('--runtime' in argv and argv[argv.index('--runtime') + 1:][:1] == ['sbcl'] or
-            '--check' in argv and argv[argv.index('--check') + 1:][:1] in [[x] for x in LIVE_CHECKS])
+            '--check' in argv and argv[argv.index('--check') + 1:][:1] in [[x] for x in names])
 
 
 def live_process(argv, cwd, env, timeout=12):
@@ -2374,7 +2389,8 @@ def live_rendered_overflow_control(home, executable):
     The production branch uses this same guard before its None return; this
     control corrupts only disposable file observations, not backend outcomes.
     """
-    with tempfile.TemporaryDirectory(prefix='rendered-overflow-', dir=home) as temp:
+    # Short prefixes keep the nested control socket inside the 107-byte sockaddr_un limit.
+    with tempfile.TemporaryDirectory(prefix='ro-', dir=home) as temp:
         s = LiveSession(Path(temp))
         try:
             s.start(executable); live_nonce(s, os.urandom(16).hex()); live_condition(s)
@@ -2398,7 +2414,7 @@ def live_rendered_overflow_control(home, executable):
                     path.unlink()
             # A real evaluate condition may conservatively quarantine its image.
             # The subsequent execution positive belongs to a fresh private image.
-            with tempfile.TemporaryDirectory(prefix='overflow-positive-', dir=s.home) as fresh:
+            with tempfile.TemporaryDirectory(prefix='op-', dir=s.home) as fresh:
                 peer = LiveSession(Path(fresh), candidate=s.candidate)
                 try:
                     peer.start(executable); live_nonce(peer, os.urandom(16).hex())
@@ -2435,10 +2451,357 @@ def live_negative_controls(selection, home, executable):
                 raise AssertionError('BEHAVIOR_ASSERTION: targeted faulty observation escaped its assertion')
 
 
+def registry_sexp(path):
+    """Explicit source registry. An empty variable is not this configuration."""
+    return '(:source-registry (:directory "%s") :ignore-inherited-configuration)' % (str(path) + '/')
+
+
+def translation_sexp(path):
+    """Explicit output translations. An empty variable is not this configuration."""
+    return '(:output-translations (t ("%s" :implementation)) :ignore-inherited-configuration)' % (str(path) + '/')
+
+
+def private_sbcl_env(home, **extra):
+    """Build a private SBCL environment without copying inherited Lisp configuration."""
+    env = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'HOME': str(home), 'LC_ALL': 'C',
+           'XDG_CONFIG_HOME': str(home / 'config'), 'XDG_CACHE_HOME': str(home / 'cache'),
+           'XDG_DATA_HOME': str(home / 'data')}
+    env.update(extra)
+    return env
+
+
+def run_sbcl(executable, home, program, env, extra_argv=(), timeout=30):
+    """Run one fresh no-init SBCL and return its actual exit, output, and argv."""
+    home.mkdir(parents=True, exist_ok=True)
+    path = home / 'probe.lisp'
+    path.write_text(program)
+    argv = [str(executable), *extra_argv, '--noinform', '--no-sysinit', '--no-userinit',
+            '--non-interactive', '--load', str(path)]
+    code, out, err = live_process(argv, home, env, timeout=timeout)
+    return code, out, err
+
+
+def git_bytes(repo, *args):
+    """Return committed Git output bytes without stripping the blob."""
+    env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
+    completed = subprocess.run(['git', '-c', 'core.hooksPath=' + os.devnull, '-C', str(repo), *args],
+                               env=env, capture_output=True, timeout=20)
+    require(completed.returncode == 0, 'committed blob is readable')
+    return completed.stdout
+
+
+def fasl_hashes(root):
+    """Hash fasl files under one cache. A fresh process can reuse them unchanged."""
+    return {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in Path(root).rglob('*.fasl')}
+
+
+def prepare_hermetic_hazards(home, executable):
+    """Commit a source fixture, then plant unsaved, stale-fasl, decoy, and development-image hazards."""
+    repo = home / 'source'
+    repo.mkdir()
+    git_fixture(repo, 'init', '-q')
+    files = {
+        'n130.asd': '(defsystem "n130" :components ((:file "n130-macro") (:file "n130-main" :depends-on ("n130-macro"))))\n',
+        'n130-macro.lisp': '(defpackage :n130 (:use :cl) (:export #:token #:n130-use #:n130-macro))\n'
+                           '(in-package :n130)\n(defmacro n130-macro () \'"COMMITTED-MACRO")\n',
+        'n130-main.lisp': '(in-package :n130)\n(defun token () "COMMITTED")\n(defun n130-use () (n130-macro))\n',
+        'n130-noop.asd': '(defsystem "n130-noop" :components ())\n',
+        'n130-failure.asd': '(defsystem "n130-failure" :components ((:file "n130-failure")))\n',
+        'n130-failure.lisp': '(eval-when (:compile-toplevel :load-toplevel :execute) (error "genuine-failure"))\n',
+    }
+    for name, text in files.items():
+        (repo / name).write_text(text)
+    sources = [{'path': name, 'sha256': hashlib.sha256((repo / name).read_bytes()).hexdigest()}
+               for name in sorted(files)]
+    (repo / 'acceptance.lock').write_text(json.dumps({
+        'failure_system': 'n130-failure', 'noop_system': 'n130-noop', 'primary_system': 'n130', 'sources': sources,
+    }, indent=2, sort_keys=True) + '\n')
+    git_fixture(repo, 'add', '--', '.')
+    git_fixture(repo, '-c', 'user.name=Acceptance Fixture', '-c', 'user.email=acceptance@example.invalid',
+                'commit', '-qm', 'pin committed source')
+    (repo / 'n130-main.lisp').write_text('(in-package :n130)\n(defun token () "UNSAVED")\n(defun n130-use () (n130-macro))\n')
+    (repo / 'n130-macro.lisp').write_text('(defpackage :n130 (:use :cl) (:export #:token #:n130-use #:n130-macro))\n'
+                                          '(in-package :n130)\n(defmacro n130-macro () \'"UNSAVED-MACRO")\n')
+    decoy = home / 'decoy'
+    decoy.mkdir()
+    (decoy / 'n130.asd').write_text('(defsystem "n130" :components ((:file "n130-main")))\n')
+    (decoy / 'n130-main.lisp').write_text('(defpackage :n130 (:use :cl) (:export #:token #:n130-use #:n130-macro))\n'
+                                          '(in-package :n130)\n(defun token () "DECOY")\n(defun n130-use () "DECOY")\n'
+                                          '(defmacro n130-macro () \'"DECOY")\n')
+    shared = home / 'shared-cache'
+    shared.mkdir()
+    hazard_env = private_sbcl_env(home / 'hazard-home', CL_SOURCE_REGISTRY=registry_sexp(repo),
+                                  ASDF_OUTPUT_TRANSLATIONS=translation_sexp(shared))
+    hazard_program = '(require :asdf)\n(asdf:load-system "n130")\n(format t "N130-HAZARD:~A:~A~%" (n130:token) (n130:n130-use))\n(sb-ext:quit :unix-status 0)\n'
+    code, out, err = run_sbcl(executable, home / 'hazard-compile', hazard_program, hazard_env)
+    require(code == 0 and 'N130-HAZARD:UNSAVED:UNSAVED-MACRO' in out, 'dirty tree compiles an unsaved fasl')
+    future = time.time() + 86400
+    for path in shared.rglob('*.fasl'):
+        os.utime(path, (future, future))
+    stale = fasl_hashes(shared)
+    require(stale, 'unsaved macro fasl is present in the shared cache')
+    code, out, err = run_sbcl(executable, home / 'hazard-reuse', hazard_program, hazard_env)
+    require(code == 0 and 'N130-HAZARD:UNSAVED:UNSAVED-MACRO' in out, 'fresh process reuses the unsaved fasl')
+    require('compiling file' not in (out + err).lower() and fasl_hashes(shared) == stale,
+            'fresh process is not a fresh build')
+    dev_core = home / 'dev.core'
+    code, out, err = run_sbcl(executable, home / 'dev-save',
+                              '(defun n130-deleted () "DELETED-SURVIVOR")\n(save-lisp-and-die ' + json.dumps(str(dev_core)) + ')\n',
+                              private_sbcl_env(home / 'dev-home'))
+    require(code == 0 and dev_core.is_file(), 'development image can be saved')
+    code, out, err = run_sbcl(executable, home / 'dev-boot',
+                              '(format t "SURVIVOR:~A~%" (n130-deleted))\n(sb-ext:quit :unix-status 0)\n',
+                              private_sbcl_env(home / 'dev-boot-home'), ('--core', str(dev_core)))
+    require(code == 0 and 'SURVIVOR:DELETED-SURVIVOR' in out, 'deleted definition survives only in the development image')
+    version = subprocess.run([str(executable), '--version'], capture_output=True, text=True, timeout=10,
+                             env=private_sbcl_env(home / 'version-home'))
+    require(version.returncode == 0 and version.stdout.strip(), 'pinned toolchain version is readable')
+    return {'repo': repo, 'revision': git_fixture(repo, 'rev-parse', 'HEAD'), 'decoy': decoy, 'shared': shared,
+            'registry': registry_sexp(decoy), 'translations': translation_sexp(shared), 'fasl_hashes': stale,
+            'dev_core': dev_core, 'dev_sha': hashlib.sha256(dev_core.read_bytes()).hexdigest(),
+            'ambient_home': str(Path.home()), 'executable': str(Path(executable).resolve()),
+            'executable_sha': hashlib.sha256(Path(executable).resolve().read_bytes()).hexdigest(),
+            'version_text': version.stdout, 'asd_sha': hashlib.sha256((repo / 'n130.asd').read_bytes()).hexdigest()}
+
+
+def hermetic_role(receipt, role):
+    found = [item for item in receipt['processes'] if item.get('role') == role]
+    require(len(found) == 1, role + ' process captured once')
+    return found[0]
+
+
+def assert_hermetic_controls(receipt, record, hazards):
+    """Require the shared hermetic proof: archive, fresh process, private locations, and distinct controls."""
+    repo = hazards['repo']
+    require(receipt['controls_ok'] is True and receipt['failure_reason'] is None, 'hermetic controls completed')
+    require(receipt['fresh_process_is_fresh_build'] is False, 'a fresh process is not a fresh build')
+    require(receipt['empty_environment_sufficient'] is False, 'empty environment variables are not sufficient')
+    require(receipt['illustrative_forms_are_launcher'] is False, 'section 9 forms are not a tested launcher')
+    require(receipt['source_revision'] == hazards['revision'] == record['source_revision'], 'actual source revision')
+    require(record['source_state'] == 'committed' and record['lock_ref'] == receipt['lock_ref'], 'committed lock binding')
+    archive = Path(receipt['archive_root'])
+    private_root = archive.parent
+    require(archive.is_dir() and archive.resolve() != repo.resolve(), 'git archive has a private root')
+    manifest = {item['path']: item['sha256'] for item in receipt['source_manifest']}
+    archived = sorted(path.relative_to(archive).as_posix() for path in archive.rglob('*') if path.is_file())
+    require(archived == sorted([*manifest, 'acceptance.lock']), 'archive contains the lock and the locked sources')
+    for name, digest in manifest.items():
+        blob = (archive / name).read_bytes()
+        require(hashlib.sha256(blob).hexdigest() == digest and git_bytes(repo, 'show', 'HEAD:' + name) == blob,
+                'archived source is the committed blob')
+        require(not path_is_symlink(archive / name), 'archived source is a regular file')
+    lock_bytes = (archive / 'acceptance.lock').read_bytes()
+    require(git_bytes(repo, 'show', 'HEAD:acceptance.lock') == lock_bytes, 'archived lock is committed')
+    require(receipt['lock_ref'] == hashlib.sha256(lock_bytes).hexdigest() != hazards['asd_sha'],
+            'lock digest is not an ASDF system definition')
+    require(b'UNSAVED' in (repo / 'n130-main.lisp').read_bytes() and b'UNSAVED' not in (archive / 'n130-main.lisp').read_bytes(),
+            'unsaved worktree definition is outside the archive')
+    require(b'UNSAVED-MACRO' in (repo / 'n130-macro.lisp').read_bytes()
+            and b'UNSAVED-MACRO' not in (archive / 'n130-macro.lisp').read_bytes(),
+            'unsaved macro is outside the archive')
+    require(b'DECOY' in (hazards['decoy'] / 'n130-main.lisp').read_bytes(), 'decoy source is a distinct hazard')
+    output = Path(receipt['output_cache'])
+    require(receipt['output_cache_empty_before'] is True and output.is_dir() and output.resolve() != hazards['shared'].resolve(),
+            'private ASDF output cache starts empty')
+    require(str(output) + '/' in receipt['output_translations'] and ':ignore-inherited-configuration' in receipt['output_translations'],
+            'output translations name the private cache')
+    require(str(archive) + '/' in receipt['source_registry'] and ':ignore-inherited-configuration' in receipt['source_registry'],
+            'source registry names the private archive')
+    require(receipt['inherited']['CL_SOURCE_REGISTRY'] == hazards['registry']
+            and receipt['inherited']['ASDF_OUTPUT_TRANSLATIONS'] == hazards['translations']
+            and receipt['inherited']['HOME'] != receipt['private_home'],
+            'inherited registry and translations were visible and were replaced')
+    home = Path(receipt['private_home'])
+    xdg = receipt['xdg']
+    require(home.is_dir() and home.resolve() != Path(hazards['ambient_home']).resolve(), 'private HOME')
+    for key in ('config', 'cache', 'data'):
+        require(Path(xdg[key]).is_dir() and Path(xdg[key]).resolve().is_relative_to(home.resolve()), 'private XDG ' + key)
+    processes = receipt['processes']
+    require(len(processes) == 5, 'core, setup, no-op, failure, and primary processes')
+    flags = ('--no-sysinit', '--no-userinit', '--non-interactive')
+    for item in processes:
+        argv = item['observed_argv']
+        require(argv and argv == item['requested_argv'], 'captured argv is the live command line')
+        require(all(flag in argv for flag in flags) and '--script' not in argv, 'fresh no-init non-interactive process')
+        require(Path(item['observed_cwd']).resolve().is_relative_to(private_root.resolve()), 'private process cwd')
+        env = item['observed_env']
+        require(env.get('HOME') == str(home) and env.get('XDG_CONFIG_HOME') == xdg['config']
+                and env.get('XDG_CACHE_HOME') == xdg['cache'] and env.get('XDG_DATA_HOME') == xdg['data'],
+                'observed private HOME and XDG locations')
+        text = item.get('driver_text') or ''
+        require('initialize-source-registry' not in text and 'initialize-output-translations' not in text
+                and '/candidate/src/' not in text and '/candidate/deps/' not in text and '/candidate/build/' not in text,
+                'illustrative section 9 forms are not the launcher')
+    for role in ('setup', 'noop', 'failure', 'primary'):
+        item = hermetic_role(receipt, role)
+        require(item['core_argument'] is True and item['fresh_flags'] is True, role + ' uses the pinned fresh core')
+        registry = item['observed_env'].get('CL_SOURCE_REGISTRY') or ''
+        translations = item['observed_env'].get('ASDF_OUTPUT_TRANSLATIONS') or ''
+        require(registry not in ('', hazards['registry']) and translations not in ('', hazards['translations']),
+                'empty or inherited configuration was not reused')
+        require(':ignore-inherited-configuration' in registry and ':ignore-inherited-configuration' in translations,
+                'explicit ignore-inherited configuration')
+        require(str(hazards['decoy']) not in registry and str(hazards['shared']) not in translations,
+                'decoy registry and shared cache are not the acceptance configuration')
+        require(str(hazards['dev_core']) not in ' '.join(item['observed_argv']), 'development image is not booted')
+    setup, noop, failure, primary = (hermetic_role(receipt, role) for role in ('setup', 'noop', 'failure', 'primary'))
+    require(setup['condition'] == 'MISSING-COMPONENT' and setup['new_files'] == [] and setup['rebuild_proof'] is False
+            and setup.get('setup_failure') is True, 'setup failure is not rebuild proof')
+    require(noop['ok'] is True and noop['condition'] is None and noop['new_files'] == [] and noop.get('noop') is True
+            and noop.get('genuine_failure') is not True, 'ASDF no-op is not a genuine failure')
+    require(failure['condition'] == 'SIMPLE-ERROR' and failure['ok'] is False and failure['new_files'] == []
+            and failure.get('genuine_failure') is True and failure['condition'] != setup['condition'],
+            'genuine ASDF failure is distinct from the no-op and the setup failure')
+    require('failure-output' in (failure['observed_env'].get('ASDF_OUTPUT_TRANSLATIONS') or '')
+            and receipt['output_cache'] in (noop['observed_env'].get('ASDF_OUTPUT_TRANSLATIONS') or ''),
+            'failure control uses a different output cache from the no-op')
+    require(primary['markers'].get('N130-LOAD') == 'ok', 'committed system loaded')
+    source = Path(primary['markers'].get('N130-SOURCE', ''))
+    require(source.is_file() and source.resolve().is_relative_to(archive.resolve())
+            and b'DECOY' not in source.read_bytes() and b'UNSAVED' not in source.read_bytes(),
+            'loaded system source is the archived committed file')
+    core = receipt['core_provenance']
+    core_path = Path(core['ref'])
+    require(core['kind'] == 'trusted_base' and core_path.is_file()
+            and hashlib.sha256(core_path.read_bytes()).hexdigest() == core['sha256']
+            and core['sha256'] != hazards['dev_sha'] and core_path.resolve() != hazards['dev_core'].resolve(),
+            'clean core provenance is not the development image')
+    require(record['core_provenance'] == core, 'operation core provenance matches the receipt')
+    toolchain = receipt['toolchain']
+    require(toolchain['implementation'] == 'SBCL' and toolchain['version_text'] == hazards['version_text']
+            and toolchain['executable'] == hazards['executable']
+            and toolchain['executable_sha256'] == hazards['executable_sha'] and toolchain['asdf_version'],
+            'actual toolchain executable, version, and ASDF')
+    require(record['toolchain_identity']['implementation'] == 'SBCL'
+            and record['toolchain_identity']['version'] == toolchain['version'], 'operation toolchain identity')
+    require(record['command_refs'] == primary['observed_argv'], 'command provenance is the observed primary argv')
+    require(record['isolation'] == {'process': 'fresh', 'build_cache': 'fresh_private_empty',
+            'fixtures': 'committed_source', 'configuration': 'ignore_inherited', 'dependencies': 'hermetic',
+            'resources': 'isolated_or_reset'}, 'operation isolation is hermetic')
+    fresh = {hashlib.sha256((output / name).read_bytes()).hexdigest() for name in primary['new_files']}
+    require(primary['new_files'] and fresh.isdisjoint(hazards['fasl_hashes'].values()),
+            'acceptance compiled committed source into the private cache')
+    for relative, digest in hazards['fasl_hashes'].items():
+        require(hashlib.sha256((hazards['shared'] / relative).read_bytes()).hexdigest() == digest,
+                'inherited fasl bytes stayed unchanged')
+    require(fasl_hashes(hazards['shared']) == hazards['fasl_hashes'], 'shared fasl set stayed unchanged')
+
+
+def path_is_symlink(path):
+    return Path(path).is_symlink()
+
+
+def assert_hermetic_focus(name, receipt, hazards):
+    """Discriminate the named obligation inside the shared proof."""
+    if name == 'committed-source-archive':
+        require(b'COMMITTED' in Path(hermetic_role(receipt, 'primary')['markers']['N130-SOURCE']).read_bytes()
+                or b'COMMITTED' in (Path(receipt['archive_root']) / 'n130-main.lisp').read_bytes(),
+                'private archive holds committed definitions')
+    elif name == 'no-init-process':
+        require(all(item['fresh_flags'] for item in receipt['processes']), 'every acceptance process is fresh no-init')
+        require(hermetic_role(receipt, 'setup')['rebuild_proof'] is False and receipt['rebuild_proof'] is True,
+                'fresh setup process is not rebuild proof')
+    elif name == 'private-home-xdg':
+        require(Path(receipt['private_home']).resolve() != Path(hazards['ambient_home']).resolve(),
+                'HOME is not the ambient home')
+    elif name == 'empty-output-cache':
+        require(receipt['output_cache_empty_before'] is True and receipt['output_translations'].strip(),
+                'newly created output cache is configured explicitly')
+    elif name == 'ignore-inherited-resolution':
+        require(':ignore-inherited-configuration' in receipt['source_registry']
+                and ':ignore-inherited-configuration' in receipt['output_translations'],
+                'both replacement configurations ignore inherited configuration')
+    elif name == 'toolchain-lock-core-bound':
+        require(receipt['toolchain']['executable_sha256'] == hazards['executable_sha']
+                and receipt['core_provenance']['sha256'] != hazards['dev_sha']
+                and receipt['lock_ref'] != hazards['asd_sha'],
+                'toolchain, lock, and clean core are bound')
+    elif name == 'asdf-noop-control':
+        require(hermetic_role(receipt, 'noop')['condition'] is None
+                and hermetic_role(receipt, 'failure')['condition'] == 'SIMPLE-ERROR',
+                'no-op control stays distinct from genuine failure')
+    elif name == 'asdf-failure-control':
+        require(hermetic_role(receipt, 'failure')['condition'] == 'SIMPLE-ERROR'
+                and hermetic_role(receipt, 'setup')['condition'] == 'MISSING-COMPONENT'
+                and hermetic_role(receipt, 'setup')['rebuild_proof'] is False,
+                'genuine failure stays distinct from setup failure')
+    else:
+        raise RuntimeError('unknown hermetic check')
+
+
+def hermetic_once(home, executable, hazards, expression, accepted):
+    """Run one acceptance in a fresh session. A rejected expression quarantines that session."""
+    home.mkdir()
+    session = LiveSession(home)
+    session.env['CL_SOURCE_REGISTRY'] = hazards['registry']
+    session.env['ASDF_OUTPUT_TRANSLATIONS'] = hazards['translations']
+    try:
+        session.start(executable)
+        request = session.lisp(expression, kind='run_tests')
+        request['context'] = {'working_dir': str(hazards['repo'])}
+        session.submit(request)
+        record = session.terminal(request, ('completed', 'condition_signalled'), 50)
+        receipt_path = session.directory / 'acceptance' / (request['operation_id'] + '.json')
+        require(receipt_path.is_file(), 'acceptance receipt written')
+        receipt = load(receipt_path)
+        operation = load(session.operation(request['operation_id']))
+        require(operation['status'] == record['status'] and operation['evidence_class'] == 'development',
+                'operation evidence class and status')
+        if accepted:
+            require(record['status'] == 'completed' and record['image_consistent'] is True, 'accepted image stays consistent')
+            require(receipt['accepted'] is True and receipt['expression_passed'] is True and receipt['rebuild_proof'] is True,
+                    'committed expression accepted with rebuild proof')
+            require(hermetic_role(receipt, 'primary')['markers'].get('N130-VALUE') == '"pass"', 'expression value is pass')
+            result = load(session.result_path(request['operation_id']))
+            require(result['result'] == 'pass' and result['status'] == 'completed' and result['image_consistent'] is True,
+                    'completed result is pass')
+            follow = session.lisp('(+ 19 23)')
+            session.submit(follow)
+            session.terminal(follow)
+            require(load(session.result_path(follow['operation_id']))['result'] == 42, 'session loop still evaluates')
+            session.observe_runtime(executable)
+        else:
+            require(record['status'] == 'condition_signalled' and record['image_consistent'] is False,
+                    'rejected acceptance signals a condition')
+            require(receipt['accepted'] is False and receipt['expression_passed'] is False and receipt['rebuild_proof'] is False,
+                    'must-fail expression does not count as acceptance or rebuild proof')
+            require(str(hermetic_role(receipt, 'primary')['markers'].get('N130-VALUE', '')).startswith('fail:'),
+                    'must-fail expression reaches a Lisp condition')
+            require(not session.result_path(request['operation_id']).exists(), 'signalled acceptance has no result file')
+        assert_hermetic_controls(receipt, operation, hazards)
+        try:
+            validate_records(session)
+        except AssertionError:
+            raise
+        except Exception as exc:
+            require(False, f'operation record schema: {type(exc).__name__}: {exc}')
+        return receipt
+    finally:
+        session.cleanup()
+
+
+def hermetic_command(check, case, home, executable):
+    """Run one feature 130 command. Cases 7, 10, 11, and 12 share one proof."""
+    hazards = prepare_hermetic_hazards(home, executable)
+    if case is not None:
+        receipt = hermetic_once(home / 'accepted', executable, hazards, HERMETIC_PASS, True)
+        assert_hermetic_focus('committed-source-archive', receipt, hazards)
+        assert_hermetic_focus('asdf-noop-control', receipt, hazards)
+        assert_hermetic_focus('asdf-failure-control', receipt, hazards)
+        for index, expression in enumerate(HERMETIC_MUST_FAIL, start=1):
+            hermetic_once(home / f'must-fail-{index}', executable, hazards, expression, False)
+        return
+    receipt = hermetic_once(home / 'accepted', executable, hazards, HERMETIC_PASS, True)
+    assert_hermetic_focus(check, receipt, hazards)
+
+
 def live_main():
     parser = argparse.ArgumentParser(allow_abbrev=False)
     choice = parser.add_mutually_exclusive_group(required=True)
-    choice.add_argument('--check', choices=LIVE_CHECKS); choice.add_argument('--case', type=int, choices=(4, 5, 6))
+    choice.add_argument('--check', choices=(*LIVE_CHECKS, *HERMETIC_CHECKS))
+    choice.add_argument('--case', type=int, choices=(4, 5, 6, *HERMETIC_CASES))
     parser.add_argument('--runtime', choices=('sbcl',)); parser.add_argument('--require-sbcl', action='store_true')
     args = parser.parse_args()
     if args.case is not None and args.runtime != 'sbcl' or args.check and args.runtime:
@@ -2447,7 +2810,9 @@ def live_main():
         raise RuntimeError('controller source absent, never intended admission red')
     with tempfile.TemporaryDirectory(prefix='n129-') as temp:
         home = Path(temp); executable = sbcl_preflight(home)
-        if args.check == 'sbcl-admission':
+        if args.check in HERMETIC_CHECKS or args.case in HERMETIC_CASES:
+            hermetic_command(args.check, args.case, home, executable)
+        elif args.check == 'sbcl-admission':
             admission(home, executable)
         else:
             live_scenario(args.check or args.case, home, executable)
