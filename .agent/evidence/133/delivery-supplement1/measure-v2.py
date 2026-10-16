@@ -7,6 +7,10 @@ sha256, output_sha256, frame [rev,path], reason. Known19ef copies derive b084.
 Raw JSON body fields require bodies {pointer: {canonical:[rev,path,pointer|null],
 reason}} or {authored:true, previous:[rev,path,pointer|null]|null, owner,reason}.
 Canonical Markdown bytes are derived; other body declarations require review.
+path_entries supplies shared defaults; allocation_owner attributes a whole event,
+split_blocks uses default_owner and rules [{pattern,owner}] with hunk_proof.
+Hash-pinned authored {kind,sha256,reason} handles genuine evidence prose/source.
+Foreign-only work is attributed separately and remains unmeasured, not free.
 body_texts maps body SHA to [rev,path,pointer]; body_readbacks lists reviewed
 read-only capture prefixes. Original body events still require authored entries.
 Two-parent merges require actual empty remerge-diff proof. Strict JSON hash
@@ -108,6 +112,31 @@ def json_hash_index(data, revision):
                 schema='filepath->sha256' if strings else 'filepath->{sha256,bytes}', sources=sources)
 
 
+def allocate_blocks(parent, revision, path, specification):
+    """Derive shared-file attribution from reviewed changed-block patterns."""
+    patch = git('-c', 'color.ui=false', 'diff', '--no-ext-diff', '--no-textconv',
+                '--no-renames', '--unified=0', parent, revision, '--', path).decode()
+    blocks, current = [], []
+    for line in patch.splitlines():
+        if line.startswith(('--- ', '+++ ')):
+            continue
+        if line[:1] in ('+', '-'):
+            current.append(line)
+        elif current and not line.startswith('\\ No newline'):
+            blocks.append(current)
+            current = []
+    if current:
+        blocks.append(current)
+    allocations = {}
+    for block in blocks:
+        text = '\n'.join(block)
+        matched = {rule['owner'] for rule in specification['rules'] if re.search(rule['pattern'], text)}
+        assert len(matched) <= 1, ('ambiguous shared block', revision, path)
+        owner = next(iter(matched)) if matched else specification['default_owner']
+        allocations[owner] = allocations.get(owner, 0) + len(block)
+    return allocations
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--endpoint', required=True)
@@ -153,7 +182,7 @@ def main():
         data_revision = rev if raw is not None else parent
         assert data is not None
         key = ('snapshot' if view == 'snapshot' else rev) + ':' + path
-        entry = cfg.get('entries', {}).get(key, {})
+        entry = dict(cfg.get('path_entries', {}).get(path, {}), **cfg.get('entries', {}).get(key, {}))
         automatic = 'coordination' if path == '.agent/run_state.json' else ('133' if path.startswith(('.agent/evidence/133/', '.agent/evidence/performance-maintenance/')) or re.fullmatch(r'\.agent/(contracts|qa|validator)/133[^/]*\.json', path) or path == '.agent/evidence/133-qa-adversarial.txt' else ('legacy018' if path.startswith('.agent/evidence/123/') else ('129/phase020' if path.startswith(('.agent/evidence/129/', '.agent/evidence/phase020-preflight/')) else None)))
         if re.fullmatch(r'\.agent/(contracts|qa|validator)/(129|phase020)[^/]*\.json', path):
             automatic = '129/phase020'
@@ -162,18 +191,37 @@ def main():
         assert owner in {'133', 'legacy018', '129/phase020', 'other', 'coordination'} and (len(owners) <= 1 or 'owner' in entry), ('ownership', key)
         category = classify(path)
         assert category != 'unclassified', key
+        lines = 0 if a == '-' else int(a) + int(d)
+        if 'allocation_owner' in entry:
+            entry['allocations'] = {entry['allocation_owner']: lines}
+        if 'split_blocks' in entry:
+            entry['allocations'] = allocate_blocks(parent, rev, path, entry['split_blocks'])
+        if path.startswith(('.agent/feature_list', '.agent/product_spec', 'docs/planning/')):
+            assert entry.get('hunk_proof') and 'allocations' in entry, ('shared attribution', key)
+        if 'allocations' in entry:
+            assert sum(entry['allocations'].values()) == lines, ('shared allocation coverage', key)
+        if owner != '133' and not entry.get('allocations', {}).get('133'):
+            rows.append(dict(view=view, commit=rev, parent=parent, path=path, owner=owner,
+                             before=sha(prior) if prior is not None else None,
+                             after=sha(raw) if raw is not None else None,
+                             disposition='Separate owner; excluded from133, authored cost unmeasured'))
+            return
         kind = authored(path, data) if category == 'evidence' else category
+        authored_proof = entry.get('authored')
+        if authored_proof is not None:
+            assert kind is None and category == 'evidence' and authored_proof['sha256'] == sha(data) and authored_proof['reason']
+            assert authored_proof['kind'] in {'source', 'inline-source', 'maintained-prose'}
+            kind = authored_proof['kind']
         git_object = entry.get('observed_git_object')
         if git_object is not None:
             assert kind is None and category == 'evidence'
             assert set(git_object) == {'type', 'oid'} and git_object['type'] in {'blob', 'tree', 'commit', 'tag'}
             assert re.fullmatch('[0-9a-f]{40}', git_object['oid']) and git('cat-file', git_object['type'], git_object['oid']) == data, ('Git object observation', key)
         assert kind is not None or git_object is not None or a == '-' or any(t in path for t in ('/raw/', '.stdout.', '.stderr.', '.execution.', '.started.', '.capture-summary.', '.preservation-', 'capture-index', 'outside-sentinel', '.stdin')) or path.endswith('numstat.raw') or (entry.get('observed', {}).get('reason') and entry['observed']['sha256'] == sha(data) and 'actual_exit' in json.loads(blob(*entry['observed']['frame']))), ('unknown observation', key)
-        lines = 0 if a == '-' else int(a) + int(d)
         charge = lines if kind and category != 'excluded/run_state' else 0
-        if path.startswith(('.agent/feature_list', '.agent/product_spec', 'docs/planning/')):
-            assert entry.get('hunk_proof') and 'allocations' in entry, ('shared attribution', key)
         provenance = {'before': sha(prior) if prior is not None else None, 'after': sha(raw) if raw is not None else None}
+        if authored_proof is not None:
+            provenance['authored'] = authored_proof
         if git_object is not None:
             provenance['git_object'] = git_object
         if category == 'evidence' and path.endswith('.json') and kind == 'maintained-mixed-json':
@@ -250,7 +298,7 @@ def main():
             a, d, path = item.decode().split('\t', 2)
             record('snapshot', end, path, FROZEN, a, d)
     supplement = max(totals[v].get('133', 0) for v in totals)
-    report = dict(endpoint=end, heads=heads, inventory_sha256=sha(args.inventory.read_bytes()), frozen_endpoint=FROZEN, historical_cost=3024, historical_budget_gate_passed=False, views=totals, supplement=supplement, cumulative_retained_lines=3024 + supplement, rows=rows, merges=merges, limitation='No new budget verdict; later authored administration remains separate and unmeasured; retained-line cost excludes unretained work/time/tokens/billing.')
+    report = dict(endpoint=end, heads=heads, inventory_sha256=sha(args.inventory.read_bytes()), frozen_endpoint=FROZEN, historical_cost=3024, historical_budget_gate_passed=False, views=totals, supplement=supplement, cumulative_retained_lines=3024 + supplement, rows=rows, merges=merges, foreign_owner_costs='Not measured; foreign-only rows retain ownership and hashes without asserting free work.', limitation='No new budget verdict; later authored administration remains separate and unmeasured; retained-line cost excludes unretained work/time/tokens/billing.')
     out.write_text(json.dumps(report, indent=2) + '\n')
 if __name__ == '__main__':
     main()
