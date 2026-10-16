@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-16T00:28:17.002567+00:00",
+  "updated_at": "2026-10-16T00:33:01.654703+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2424,7 +2424,7 @@
     "123-main-terminal-capture": {
       "attempts": 1,
       "limit": 3,
-      "status": "all5-ci-success-terminal-static2-released",
+      "status": "admitted-main-all5-success",
       "owner": "/root/qa133",
       "run_id": 38817712498,
       "expected_head": "c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7",
@@ -2435,15 +2435,23 @@
         "original_actual_exit": 1,
         "original_frame": "/home/cnross/.tmp/nizam-feature123-main-terminal1/admission.execution.json",
         "original_stdin_sha256": "f27c833acf62228331bffc192c6ffab7e160380c8448380f44aa952b19930c80",
-        "strategy": "Structural grammar correction: extract exact bounded Python heredoc from already-observed shell workflow before ast.parse. Preserve originalhelper/stdin/frame1 and all raw logs/metadata; allow original1 in frame inventory. No CI rerun/logrecollection/test/source/assertion weakening."
+        "strategy": "Structural grammar correction: extract exact bounded Python heredoc from already-observed shell workflow before ast.parse. Preserve originalhelper/stdin/frame1 and all raw logs/metadata; allow original1 in frame inventory. No CI rerun/logrecollection/test/source/assertion weakening.",
+        "status": "passed",
+        "actual_exit": 0
       },
       "observed_workflow_status": "completed/success",
-      "observed_jobs_success": 5
+      "observed_jobs_success": 5,
+      "actual_exit": 0,
+      "evidence_revision": "10e7d141119412cb55ba11ff7159fc899a89f0bf",
+      "evidence": ".agent/evidence/123/main-terminal1/report2.json",
+      "report_sha256": "d671371dc09f5abbe8f541f7d01935a3b812f47feb5ec4d7b45f692602b14633",
+      "completed_at": "2026-10-16T00:24:45Z",
+      "root_verified_indexed_files": 81
     },
     "133-final-scope": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-once-after-canonical-close-and-reviewed-docs",
+      "status": "measured-overrun-recorded",
       "base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
       "approved_endpoint": "This release commit, resolved before isolated clone creation.",
       "helper": ".agent/evidence/133/root-final-scope1.py",
@@ -2453,7 +2461,19 @@
       "method": "Unchanged frozen endpoint classifier once, plus explicit authored evidence overlay. Separate conservative chronological authored view sums nonmerge mutations once to include failed/overwritten versions; choose max of two alternative views, never add them twice. Retain raw observations separately, canonical inline copies deduped by hash. Dedicated oldE123 administration separately attributed, old018 archive untouched; Root coordination excluded under existing frozen rule. No intermediate or later second baseline.",
       "original_estimate": 2000,
       "ceiling": 2600,
-      "interpretation": "Actual0 means completed accounting, not budget pass. Preserve any overrun/flags; no allowance reset or claim of exhaustive token/time/agent-work cost."
+      "interpretation": "Actual0 means completed accounting, not budget pass. Preserve any overrun/flags; no allowance reset or claim of exhaustive token/time/agent-work cost.",
+      "actual_exit": 0,
+      "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+      "actual_conservative": 3024,
+      "budget_gate_passed": false,
+      "evidence": ".agent/evidence/133/scope-final/scope-report.json"
+    },
+    "133-post-accounting-docs": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-factual-administration-only",
+      "owner": "/root/currentdocs133",
+      "scope": "Record actual3024/2600 failed budget and bounded existing-delivery exception, immutable endpoint/supplement semantics and oldmainall5success in currentplanningviews; log dated variance in DEBT without new architecture/debtrow/allowance/history/source changes. Post-endpoint administration retained separately, no scope rerun."
     }
   },
   "history": [
@@ -8146,6 +8166,11 @@
       "at": "2026-10-16T00:28:17.002567+00:00",
       "event": "133-reviewed-currentdocs-final-scope1-released-oldmain-static2",
       "detail": "Strict e116c39d SHA7e83b48b approved narrowcountfixf5ee; normalmerged currentdocs/rejections only, four static captures imported/hashed. Canonical133closed and QA/Rootcapture verified; finalScope1 on599d..release nowauthorized with frozenendpoint+explicit conservativeauthorchronology, no prior measurement. Oldmain38817712498 actualcompleted/success/all5, qualifiedlogs0; terminalhelper1 actual1/PID2992840 parsed shellheredoc asPython. Static2 onlyextractobservedPythonbody; original retained, no CI/product rerun. Budget interpretation remains pending actual measurement."
+    },
+    {
+      "at": "2026-10-16T00:33:01.654703+00:00",
+      "event": "133-final-accounting-overrun-retained-oldmain-admitted",
+      "detail": "FrozenScope1actual0/full14694/239 preservation at462f30f2; unchangedclassifier1493 plusauthoredendpoint1299=2792, chronologicalfullauthored3024 selected conservatively, notaddedagain. Source/docs83/tests331/process2610; original2000/2600 untouched, cumulativefail424. Rootstandingauthority permitsverifiedexistingdelivery only, newfeatureallocationseparate; Plannerlogactualvariance/currentfactsaspostendpointadministration, no remeasurement. Legacy018dedicatedauthored916 atendpointseparate; oldarchive unchanged. Strict10e7d141 main38817712498/c8all5success fullyRootverified81rawhashes/actualframes/exact48+aux/two166/Source9andoldAPI2579, normalmergeparents/tree; oldwatch/parser1failures retained. Legacyterminaladminpostendpoint separate from133QA."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -8320,12 +8345,57 @@
   "scope_budget": {
     "original_estimate_lines": 2000,
     "ceiling_130pct": 2600,
-    "total_lines_changed": 0,
-    "per_feature": [],
+    "total_lines_changed": 3024,
+    "per_feature": [
+      {
+        "id": "133",
+        "estimated": 2000,
+        "actual": 3024,
+        "actual_kind": "Conservative maximum of unchanged frozen endpoint+authored overlay2792 and explicit chronological authored changes3024, not their sum.",
+        "product_lines": 414,
+        "source_lines": 83,
+        "independent_test_lines": 331,
+        "process_overhead_lines": 2610,
+        "frozen_budget_lines": 1493,
+        "authored_snapshot_overlay": 1299,
+        "frozen_evidence_lines": 103444,
+        "evidence_lines": 86569,
+        "excluded_lines": 1021,
+        "range": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04..462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "evidence": ".agent/evidence/133/scope-final/scope-report.json",
+        "report_sha256": "291a25fdf8f8d3601dc1f108c851b47815e0a897a5149b9d4f0647b169770235",
+        "baseline": {
+          "prior_features": [],
+          "first_feature_exception": true,
+          "flagged": false
+        },
+        "cumulative_ceiling_exceeded": true,
+        "category_estimates_unchanged": {
+          "source_and_docs": 150,
+          "tests": 450,
+          "process": 1400
+        },
+        "legacy018_post_endpoint_authored_at_snapshot": 916,
+        "limitations": "Root coordination excluded under frozen rule; no invented token/time/terminal-only authoring counts. Exact source copies deduped, failed/overwritten authored versions in chronological supplement, raw observations distinct."
+      }
+    ],
     "phase_base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
     "authorization_revision": "d9af57777452b8252ecb9d61639502154d64992d",
     "counting_rule": "One final immutable measurement after canonical closure/current docs. Include actual maintained attribution/preparation once; preserve legacy018 post-snapshot integration administration as disjoint retained costs, never free evidence or a new018 budget pass.",
-    "measurement_status": "Not measured yet; initialized0 does not mean preparation cost0."
+    "measurement_status": "Final once-only immutable endpoint462f30f2; frozen1493+authored snapshot1299=2792, conservative chronological authored3024 selected. Later measurement/CI/current-view administration retained separately, never a second baseline.",
+    "evidence_lines_total": 86569,
+    "excluded_lines_total": 1021,
+    "last_measured_at": "2026-10-16T00:33:01.654703+00:00",
+    "budget_gate_passed": false,
+    "ceiling_exceeded": true,
+    "delivery_exception": {
+      "scope": "Finish already verified133/021 documentation, CI and ordinary merge/main delivery only. Preserve failed2000/2600 budget and actual3024; no new allowance/rebaseline, other-phase activation or future gate waiver.",
+      "operator_authority": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.",
+      "strategic_reason": "All product/independent behavioral/preservation gates passed. Preserve424 over ceiling and1210 process variance explicitly while completing this delivery; prioritize reducing repeated process work in later separately reviewed planning. Future implementation requires its own scope/allocation disposition.",
+      "budget_gate_passed": false,
+      "debt_register_note": "Planner post-accounting factual note released; no existing debt row or original allowance rewritten."
+    }
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -8580,7 +8650,7 @@
       }
     ]
   },
-  "last_action": "Reviewed133 currentdocs integrated; final once-only scope1 released. Oldmain all5success observed, complete logs captured; terminal static2 grammar repair released preserving original failure.",
+  "last_action": "Final133 accounting actual3024 exceeds2600, failedgate retained under bounded existing-delivery exception. Old104 main all5 fully verified/admitted. Planner factual budget/current-position note then exact-head PR delivery.",
   "completed_contract_ids": [
     "099",
     "103",
