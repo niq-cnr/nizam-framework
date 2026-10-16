@@ -68,7 +68,7 @@ def automatic_merge(commit, parents):
             '--format=', '--no-ext-diff', '--no-textconv', commit]
     process = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
-    proof = dict(commit=commit, parents=parents, argv=argv, child_pid=process.pid,
+    proof = dict(commit=commit, parents=parents, argv=argv, cwd=str(Path.cwd().resolve()), child_pid=process.pid,
                  actual_exit=process.returncode, git_version=git('--version').decode().strip(),
                  tree=git('rev-parse', commit + '^{tree}').decode().strip(),
                  parent_trees=[git('rev-parse', p + '^{tree}').decode().strip() for p in parents],
