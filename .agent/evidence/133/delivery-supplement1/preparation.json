@@ -1,0 +1,33 @@
+{
+  "kind": "Evaluator helper preparation only; no measurement or gate verdict",
+  "exercised_revision": "53e0199eb593898a005b8e565b54e27eb031034b",
+  "helper_sha256": "97aa21952679b2155530af1f114afbe2fb411df7f51664418a96aa2dee3b2656",
+  "checks": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-c",
+        "from pathlib import Path; p=Path('.agent/evidence/133/delivery-supplement1/measure.py'); compile(p.read_bytes(),str(p),'exec'); assert len(p.read_text().splitlines()) <= 180; print('syntax=pass; lines=180; measurement_main_not_executed=true')"
+      ],
+      "actual_exit": 0,
+      "stdout_stderr": ".agent/evidence/133/delivery-supplement1/preparation.stdout.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "actual_exit": 0,
+      "stdout_stderr": ".agent/evidence/133/delivery-supplement1/preparation.stdout.txt"
+    }
+  ],
+  "limits": [
+    "Requires Root final endpoint and reviewed small exceptions inventory; merge nodes fail closed for separate resolution review.",
+    "Shared-file hunk allocation and non-Markdown raw-body provenance require explicit review; unknown ownership/observations/body fields stop without report.",
+    "Only syntax and staged whitespace qualified; helper execution and accounting remain unqualified until the once-only released measurement.",
+    "Helper and preparation receipt belong once to 133 delivery cost; later authored administration stays separate and explicitly unmeasured."
+  ],
+  "static_packaging_note": "One interim line-bound assertion failed at 181 lines; corrected to 180 before final qualification; no measurement main executed."
+}

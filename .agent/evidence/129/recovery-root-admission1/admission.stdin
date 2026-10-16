@@ -1,0 +1,19 @@
+
+import pathlib,json,hashlib,gzip,subprocess
+r=pathlib.Path.cwd();sha=lambda b:hashlib.sha256(b).hexdigest();load=lambda p:json.loads(p.read_text());base=r/'.agent/evidence/129/source2-recovery1';v=load(r/'.agent/validator/129-source2-recovery1.json')
+assert v['final_verdict']['approved'] is False and [x['id'] for x in v['issues']]==['F1','F2','S1','S2'] and v['unsupported_claims']==[]
+for name,row in load(base/'index.json').items():
+ b=(base/name).read_bytes();assert sha(b)==row['sha256'] and len(b)==row['bytes'],name
+f=load(base/'static2.execution.json');assert f['actual_exit']==0 and f['child_pid']==3836880 and not f['timed_out'] and f['exercised_revision']==v['review_base_revision']
+assert load(base/'static.execution.json')['actual_exit']==1
+base=r/'.agent/evidence/129/implementation2/public-validation2';index=load(base/'raw-index.json');assert len(index)==22
+for name,row in index.items():
+ b=(base/name).read_bytes();assert sha(b)==row['sha256'] and len(b)==row['bytes'],name
+for name,expected,pid in [('admission',0,3811817),('capture',0,3815310),('printing',2,3816231)]:
+ f=load(base/(name+'.execution.json'));assert f['actual_exit']==expected and f['child_pid']==pid and f['exercised_revision']==v['candidate_revision'] and not f['timed_out']
+ before=json.loads(gzip.decompress((base/(name+'.preservation-before.json.gz')).read_bytes()));after=json.loads(gzip.decompress((base/(name+'.preservation-after.json.gz')).read_bytes()));assert before==after and before['head']==v['candidate_revision'] and len(before['rows'])==15916
+ assert sum(x['path'].startswith('.nizam/') for x in before['rows'])==239
+assert sha(subprocess.check_output(['git','show',v['candidate_revision']+':tools/runtime_session.py']))=='aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5'
+assert sha(subprocess.check_output(['git','show',v['candidate_revision']+':tools/sbcl_session_loop.lisp']))=='2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9'
+assert sha((r/'tools/runtime_session.py').read_bytes())=='fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345' and not (r/'tools/sbcl_session_loop.lisp').exists()
+print(json.dumps({'admitted':'four independent recovery findings only; no acceptance or product approval','raw_files':22,'review_capture':0,'historical_review_capture':1,'source_attempt_remains':2,'next':'separate author correction and bounded regressions then independent review/refreeze and actual baseline'},sort_keys=True))

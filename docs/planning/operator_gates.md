@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.38.0
+version: 0.39.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.39.0"
+    date: "2026-10-16"
+    summary: "Append a dated current-state note: H-PHASE-020 applied (phase 020 active) with feature 129 complete and 130 pre-contract active; phase 021/133 complete and delivered (PR105 bfd15d10, five-success main CI) under the retained budget delivery exception; NDEBT-034 operator close decision outstanding. Informational only; records no new gate and restructures no row."
   - version: "0.38.0"
     date: "2026-10-14"
     summary: "Record completed phase017 and exercised feature118 recovery; phase016 remains proposed."
@@ -267,3 +270,17 @@ and [Root capture](../../.agent/evidence/118/evidence-capture.json).
 Earlier gate entries retain their historical decisions. H-PHASE-016 activation
 and its proposed 5,650 counted allowance / 7,345 ceiling remain future; this
 completion does not activate controller execution or alter the installed v1.5.0 pin.
+
+## Current-state note — 2026-10-16
+
+Audit-anchored, informational only (this registry records dispositions; it is not a
+gate and no new gate is defined here). H-PHASE-020 is applied: phase 020 is active,
+feature 129 is complete (PR #109 `96cd3573`; approved canonical QA; Source5 adopted,
+circuit 129-source 5/5 under the recorded operator authority) and feature 130 is
+active at its pre-contract stage, with 131/132 pending and phase 019 (features
+124–125) the declared next phase after 020. Phase 021 / feature 133 is complete and
+delivered (PR105 merged `bfd15d10`, five-success main CI proofs recorded in runstate)
+under the retained budget delivery exception (3,024 vs the 2,600 ceiling). The DAG's
+recommended order 017→016→018→020→019 stands; actual execution has run 017→018→020.
+Open debt is limited to NDEBT-034 and NDEBT-040 (both Low); NDEBT-034 awaits an
+operator close decision.

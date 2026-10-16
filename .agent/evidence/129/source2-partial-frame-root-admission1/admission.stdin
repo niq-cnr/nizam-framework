@@ -1,0 +1,17 @@
+
+from pathlib import Path
+import json,hashlib,gzip,subprocess
+r=Path.cwd();b=r/'.agent/evidence/129/source2-partial-frame-red1';sha=lambda x:hashlib.sha256(x).hexdigest();load=lambda n:json.loads((b/n).read_text());assert sha((b/'report.json').read_bytes())=='3690694ceebab68bcb90367b5b6476783a9eddd5619b96bdf4abdc3fe392f6a7' and sha((b/'index.json').read_bytes())=='39077005b5de886600f0aa484cd40494db0577fd38e71705740d4e76ac6ae8ec'
+for p,h in load('index.json').items():assert sha((r/p).read_bytes())==h
+v=load('report.json');rev='fde4115b4468b7b9da412b1078294345a4f4a442';assert v['candidate']==rev
+for p,h in v['bindings_sha256'].items():assert sha(subprocess.check_output(['git','show',rev+':'+p]))==h
+for name,exitcode,pid in [('partial-frame',1,4027177),('driver',0,4026678)]:
+ f=load(name+'.execution.json');assert f['actual_exit']==exitcode and f['child_pid']==pid and f['exercised_revision']==rev and not f['timed_out']
+ for k in ['stdout','stderr']:
+  x=(b/Path(f[k]['path']).name).read_bytes();assert sha(x)==f[k]['sha256'] and len(x)==f[k]['bytes']
+assert (b/'partial-frame.stderr.txt').read_text().strip()=='BEHAVIOR_ASSERTION: CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME'
+out=(b/'partial-frame.stdout.txt').read_text();w=[json.loads(x.partition(' ')[2]) for x in out.splitlines() if x.startswith('LIVE_PARTIAL_FRAME_DEADLINE ')];assert len(w)==1 and w[0]==v['actual_target_witness']
+x=w[0];assert x['elapsed_seconds']>x['bound_seconds']==2.5 and x['durable_status']=='cancel_requested' and x['runtime_still_live']==[4027871] and x['accepted_socket_inodes']==['348192800']
+before=json.loads(gzip.decompress((b/'partial-frame.preservation-before.json.gz').read_bytes()));after=json.loads(gzip.decompress((b/'partial-frame.preservation-after.json.gz').read_bytes()));assert before==after and before['head']==rev and before['status']=='' and len(before['rows'])==16355 and sum(x['path'].startswith('.nizam/') for x in before['rows'])==239
+assert sha((r/v['reused_admission']['path']).read_bytes())==v['reused_admission']['sha256']
+print(json.dumps({'admitted':'actual partial-frame cancellation deadline semanticred only','selector':1,'driver':0,'runtime_live_after_seconds':x['elapsed_seconds'],'S1_red':False,'Source3_released':False},sort_keys=True))

@@ -1,0 +1,11 @@
+
+from pathlib import Path
+import json,hashlib,subprocess
+r=Path.cwd();b=r/'.agent/evidence/129/source3-architecture-review2';v=json.loads((r/'.agent/validator/129-source3-architecture2.json').read_text());assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+for n,row in json.loads((b/'index.json').read_text()).items():
+ x=(b/n).read_bytes();assert hashlib.sha256(x).hexdigest()==row['sha256'] and len(x)==row['bytes']
+f=json.loads((b/'static1.execution.json').read_text());assert f['actual_exit']==0 and f['child_pid']==3987154 and not f['timed_out']
+assert subprocess.check_output(['git','show','205b5152dfc18cbab2c42ea25cd39ce92a295038:.agent/evidence/129/implementation3/architecture-preparation1.json'])==(r/'.agent/evidence/129/implementation3/architecture-preparation1.json').read_bytes()
+prior='10ee9b2406df5141b2aed9aaa1a022416ad74117';assert prior in v['provenance_erratum']['independent_resolution'] and len(v['provenance_erratum']['text_reference'])==39
+assert subprocess.check_output(['git','show',prior+':.agent/validator/129-source3-architecture1.json'])==(r/'.agent/validator/129-source3-architecture1.json').read_bytes()
+print(json.dumps({'admitted':'strict architectural planning approval only with explicit nonauthoritative citation erratum','actual_prior_review':prior,'Source3_released':False}))

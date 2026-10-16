@@ -1,0 +1,455 @@
+{
+  "role": "Read-only matching-main CI delivery observer",
+  "root_release": "7257e43dce83d93e9498ba8c676aedd79d6ac83b",
+  "observation_complete": true,
+  "all_five_main_jobs_succeeded": true,
+  "run_id": 38851734070,
+  "run_attempt": 1,
+  "event": "push",
+  "branch": "main",
+  "head": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+  "workflow_conclusion": "success",
+  "terminal_at": "2026-10-16T06:01:35Z",
+  "jobs": {
+    "self_governance": {
+      "id": 116814220025,
+      "conclusion": "success"
+    },
+    "e2e_bootstrap": {
+      "id": 116814220062,
+      "conclusion": "success"
+    },
+    "convergent_review": {
+      "id": 116814220198,
+      "conclusion": "success"
+    },
+    "validate": {
+      "id": 116814220251,
+      "conclusion": "success"
+    },
+    "fixtures_self_test": {
+      "id": 116814220261,
+      "conclusion": "success"
+    }
+  },
+  "actual_checkout": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+  "checkout_tree": "8f9ac668163966c488886cf069c0f4cf0b663c8e",
+  "normal_merge_parents": [
+    "c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7",
+    "19efbca54be6b2d58f637b22ee4b4185cf32b342"
+  ],
+  "tree_matches_tested_pr_head": "19efbca54be6b2d58f637b22ee4b4185cf32b342",
+  "checkout_commit_bytes_retained": "checkout-commit.stdout.txt",
+  "immutable_checkout_pins": {
+    "tools/workflow_assurance.py": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+    "tools/test_receipt_candidate_batching.py": "d4d2e4df39ffabc24135d414e478c417bfab28a8914aaa6d91a90fe0ebb0bc44",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e"
+  },
+  "physical_source9_hashes": {
+    ".github/scripts/test_c13_cleanup.py": "2011512c6561428ebe56d3e6cfd774bfac6b83bc7a5837307f9ca71e58bff149",
+    ".github/scripts/test_sandbox_boundaries.py": "09ab83c3c9a73e11e03a7c7856a06ae35dbddd6337251a6b3ca12cfa014924e4",
+    ".github/workflows/compliance.yml": "040b5ab4b40643050102c1c70379a18f33be8a60256ec6a5419a2c270e53197b",
+    "standard/AGF.md": "8be73efde73d4c2e830c17bed3e619cb9ae038621433bdcefd7e85ebfcd95e84",
+    "templates/AGENTS.md": "c448e983cd3461d08ec4615ad86916da8fe4638d72095e8033f9e0456f8b328f",
+    "tools/README.md": "1ce67e199c6fe0fa5adbe33eee65460f87dc45ca4b94bcaad9d5ac63ce76c65d",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+    "tools/test_convergent_review.py": "a4fa85869ccb1d0f63d2bea3062efb13db2ed3a042fe82ae2fea1da8d119c662",
+    "tools/validate.sh": "843ba358154b88df16c0854040548f80c37a6bf6de99e3f052b20e2a5255fa72"
+  },
+  "pin_scope": "Two physical receipts cover their explicit nine paths; API and runner hashes bind immutable main checkout Git blobs.",
+  "collector_revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+  "coverage": {
+    "default_ordered_cases": [
+      "identity-positive",
+      "invalidate-source",
+      "invalidate-contract",
+      "invalidate-tests",
+      "invalidate-tool",
+      "invalidate-environment",
+      "invalidate-unknown",
+      "record-continuity",
+      "reject-unowned-field",
+      "reject-history-edit",
+      "allow-owned-append",
+      "reject-self-review",
+      "reject-seal-change",
+      "reject-missing-red",
+      "reject-setup-as-red",
+      "independent-handoff",
+      "accepted-entry",
+      "reject-foreign-repo",
+      "reject-stale-pin",
+      "reject-role-write",
+      "approve-empty",
+      "advisory-visible",
+      "block-carried",
+      "reject-issues",
+      "reject-missing-coverage",
+      "reject-unsupported",
+      "reject-missing-operator",
+      "reject-wrong-candidate",
+      "reject-unrun",
+      "reject-setup",
+      "reject-pending",
+      "reject-running",
+      "reject-failed",
+      "reject-invalidated",
+      "idempotent-replay",
+      "reject-double-advance",
+      "recover-missing-receipt",
+      "independent-lanes",
+      "shared-state-serialized",
+      "reject-terminal-spoof",
+      "reject-fourth",
+      "owned-rollback",
+      "infrastructure-failed",
+      "semantic-failed",
+      "reject-cause-relabel",
+      "counter-continuity",
+      "ci-candidate-bound",
+      "ci-blocker-rejected"
+    ],
+    "auxiliary_pass_literals": [
+      "SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged"
+    ],
+    "fixture_file_inventory_per_shell_job": "166/166",
+    "new_ordered_checks_per_shell_job": [
+      "real-git-count-reduction",
+      "semantic-equivalence",
+      "fresh-mutations",
+      "literal-paths-and-modes"
+    ],
+    "selected_workflow_assurance_cases_per_shell_job": [
+      "ci-candidate-bound",
+      "ci-blocker-rejected"
+    ]
+  },
+  "qualified_log": {
+    "path": "terminal-logs.stdout.txt",
+    "bytes": 541370,
+    "sha256": "d771df8e5dfbc51ff7c28ad136509b333b462e14c4959eae11abe3da6cc5f8a4",
+    "lines": 3190,
+    "observed_cleanup_footer_labels": {
+      "self_governance": "UNKNOWN STEP",
+      "e2e_bootstrap": "UNKNOWN STEP",
+      "convergent_review": "Complete job",
+      "validate": "UNKNOWN STEP",
+      "fixtures_self_test": "Complete job"
+    },
+    "collector_cli_sha256": "5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075"
+  },
+  "unknown_step_associations": [],
+  "verified_frames": [
+    {
+      "path": "checkout-commit.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "discover-runs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status1.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status10.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status11.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status12.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status13.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status14.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status15.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status16.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status17.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status18.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status19.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status2.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status20.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status21.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status22.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status23.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status24.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status25.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status26.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status27.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status28.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status29.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status3.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status30.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status31.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status32.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status33.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status34.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status35.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status36.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status37.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status38.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status39.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status4.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status40.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status41.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status42.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status43.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status44.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status45.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status46.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status47.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status48.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status49.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status5.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status50.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status51.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status52.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status53.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status54.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status55.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status56.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status57.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status58.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status59.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status6.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status60.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status61.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status62.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status63.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status64.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status65.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status66.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status67.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status68.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status69.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status7.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status8.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status9.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-jobs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-logs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-run.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "watch.execution.json",
+      "actual_exit": 1
+    }
+  ],
+  "original_watch": {
+    "frame": "watch.execution.json",
+    "actual_exit": 1,
+    "started_at": "2026-10-16T04:43:02.035946+00:00",
+    "ended_at": "2026-10-16T04:53:22.719361+00:00",
+    "stderr": "watch.stderr.txt",
+    "meaning": "Observer command outcome retained separately from authoritative workflow and job conclusions; no watcher or CI restart."
+  },
+  "historical_scope": "PR CI2 success and CI1 failure remain separate in their original evidence. No historical Source123 proof rebinding.",
+  "scope": "Delivery metadata and AST-only static inventory inspection, separate post-endpoint administrative work. No product import, tests rerun, fresh QA/gate authorship, CI restart, push, merge, lifecycle-state edit, free/full-cost or current-controls-ready claim. Root owns independent admission and integration decisions. This factual report precedes its own execution frame.",
+  "collector_origin": "https://github.com/niq-cnr/nizam-framework.git"
+}

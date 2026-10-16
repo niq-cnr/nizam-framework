@@ -1,0 +1,47 @@
+import hashlib,json,subprocess,ast
+from pathlib import Path
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def git(*a):
+ p=subprocess.run(['git',*a],capture_output=True)
+ return {'argv':['git',*a],'actual_exit':p.returncode,'stdout':p.stdout.decode(errors='replace').strip(),'stderr':p.stderr.decode(errors='replace').strip()}
+def blob(rev,p):
+ r=subprocess.run(['git','show',rev+':'+p],capture_output=True)
+ assert r.returncode==0,(rev,p,r.stderr)
+ return r.stdout
+release='e5a3565b32300927ab6a3dd52a473da788077443'
+assert git('rev-parse','HEAD')['stdout']==release
+assert git('status','--porcelain=v1','--untracked-files=all')['stdout']==''
+mp='.agent/evidence/phase020-accounting-preparation1/method.json'
+raw=Path(mp).read_bytes();assert sha(raw)=='8194e4b8d39a7168acf6a79ea853fbcd09adc93703f84791a417a9caa0a28e77'
+m=json.loads(raw);assert m['final_endpoint'] is None and m['final_retained_heads'] is None
+pins=[]
+for x in m['pinned_inputs']+m['reuse_by_reference']:
+ assert sha(blob(x['revision'],x['path']))==x['sha256'],x
+ pins.append({'revision':x['revision'],'path':x['path'],'sha256':x['sha256']})
+contract=json.loads(Path('.agent/contracts/129.json').read_bytes());assert contract['status']=='approved' and contract['estimated_lines']==2100
+allocation=json.loads(Path('.agent/evidence/phase020-preflight/preparation-allocation1.json').read_bytes());assert [allocation['selected_phase_original'],allocation['selected_phase_ceiling']]==[7350,9555]
+state=json.loads(Path('.agent/run_state.json').read_bytes());assert state['circuit_breaker']['020-final-accounting-method-review']['attempts']==1
+archive='a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24';accepted='abc822f1cca7d246c82557e9181f051fb40f6cfc'
+assert git('rev-parse','refs/heads/archive/129-fixture-author2-prequalification-a3dffed6')['stdout']==archive
+ancestry=git('merge-base','--is-ancestor',archive,accepted);assert ancestry['actual_exit']==1
+changed=git('diff-tree','--no-commit-id','--name-only','-r',archive);assert changed['stdout']=='tools/test_runtime_session.py'
+fixture=json.loads(Path('.agent/evidence/129/fixture-correction2/receipt.json').read_bytes());assert fixture['superseded_prequalification_revision']['revision']==archive
+worker=git('cat-file','-e',release+':tools/sbcl_session_loop.lisp');assert worker['actual_exit']==128
+assert sha(Path('tools/runtime_session.py').read_bytes())=='fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345'
+source_external=git('rev-parse','--verify','fde4115b^{commit}')
+source_hashes={}
+if source_external['actual_exit']==0:
+ for p in ['tools/runtime_session.py','tools/sbcl_session_loop.lisp']:source_hashes[p]=sha(blob(source_external['stdout'],p))
+classifier=Path('.agent/evidence/scope-budget-014/measure.py').read_text(); authored=Path('.agent/evidence/133/root-final-scope1.py').read_text()
+assert '(EXCLUDED, "exact", ".agent/run_state.json")' in classifier
+node=next(n for n in ast.parse(authored).body if isinstance(n,ast.FunctionDef) and n.name=='authored'); authored_source=ast.get_source_segment(authored,node)
+assert "{'.py', '.go', '.sh'}" in authored_source and 'ast.parse(raw)' in authored_source and '.lisp' not in authored_source
+shapes={}
+for p in ['.agent/evidence/129/bundle-review-qualification2/manifest.json','.agent/evidence/129/fixture-correction2/receipt.json','.agent/evidence/129/frozen-bundle3.json','.agent/evidence/129/fixture-root-admission3/admission.execution.json','.agent/evidence/129/fixture-root-admission4/admission.execution.json']:
+ raw=Path(p).read_bytes();v=json.loads(raw);shapes[p]={'sha256':sha(raw),'type':type(v).__name__,'keys':sorted(v)}
+ if 'actual_exit' in v:shapes[p]['actual_exit']=v['actual_exit']
+ if 'stdin' in v:shapes[p]['stdin']=v['stdin']
+assert shapes['.agent/evidence/129/fixture-root-admission3/admission.execution.json']['actual_exit']==1
+assert shapes['.agent/evidence/129/fixture-root-admission4/admission.execution.json']['actual_exit']==0
+spec=Path('.agent/product_spec_020.md').read_text();assert 'raw evidence/run_state excluded' in spec
+print(json.dumps({'kind':'planning-only static reference/hash/shape checks; no accounting engine, line measurement, runtime, benchmark or tests','release':release,'method_sha256':sha(Path(mp).read_bytes()),'verified_pins':pins,'archive_nonancestor':ancestry,'archive_changed_paths':changed,'external_source2_object':source_external,'external_source2_hashes':source_hashes,'root_lisp_absence':worker,'actual_shapes':shapes,'classifier_gap':{'run_state_excluded':True,'authored_lisp_unrecognized':True,'stdin_only_python_ast':True},'scope_authority':{'contract_status':contract['status'],'allocation':allocation['categories'],'counter':state['circuit_breaker']['020-final-accounting-method-review']},'status_after':git('status','--porcelain=v1','--untracked-files=all')},sort_keys=True,indent=2))

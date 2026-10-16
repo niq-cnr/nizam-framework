@@ -1,0 +1,33 @@
+{
+  "role": "Generator129 Source2/3",
+  "status": "stopped at unexpected own startup-helper assertion failure; no admission or deep validation",
+  "candidate_revision": "2e8c92d11c36525c3b73b8cfb23822c4507835cb",
+  "native_qualification": {
+    "revision": "32acc1725ee9b7aa065132d871ab8410d2e85999",
+    "actual_exit": 0,
+    "frame": "native-api.execution.json",
+    "observation": "All four SB-DI interfaces exported and actual zero/one-argument calls observed live named condition/frame/restart before unwind"
+  },
+  "repair": "Replace unexported MAP-BACKTRACE with qualified exported TOP-FRAME/FRAME-DOWN walk; retain real active metadata. Private data receiver also bounds and preserves literal newlines in Lisp strings.",
+  "startup_qualification": {
+    "outer_actual_exit": 1,
+    "worker_pid": 3700214,
+    "worker_actual_exit": 0,
+    "worker_stderr_bytes": 0,
+    "protocol_bytes": 87,
+    "frame": "worker.execution.json",
+    "actual_observation": "Actual correlated ready frame emitted. Helper expected process exit on EOF, timed out6s then sent owned TERM; own assertion rejected timed_out. This is helper lifetime false-fail, not deep backend acceptance.",
+    "preservation_equal": true,
+    "installed_rows": 239,
+    "inventory_rows": 15804
+  },
+  "source_files": {
+    "tools/runtime_session.py": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5",
+    "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"
+  },
+  "protected": {
+    "tools/test_runtime_session.py": "81a7299120ad79cca1765e6c4c47f0d8907bfa6e593804a9ffd97210700dffe4",
+    ".agent/contracts/129.json": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6"
+  },
+  "limit": "No helper retry, further product repair, admission/deep test, final QA, status/counter update, installed edit or push. Await Root disposition."
+}

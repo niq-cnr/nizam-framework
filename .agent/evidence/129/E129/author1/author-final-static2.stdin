@@ -1,0 +1,29 @@
+from pathlib import Path
+import ast,hashlib,json,shlex,subprocess
+root=Path.cwd(); p=root/'tools/test_runtime_session.py'; raw=p.read_bytes(); compile(raw,str(p),'exec')
+def git(*args): return subprocess.check_output(['git',*args],cwd=root).decode().strip()
+old=ast.parse(subprocess.check_output(['git','show','d66ff730248dec4f086365be55eb4ad060a350c5:tools/test_runtime_session.py'],cwd=root)); new=ast.parse(raw)
+for node in old.body:
+ if isinstance(node,(ast.FunctionDef,ast.ClassDef)):
+  assert ast.dump(node)==ast.dump(next(n for n in new.body if type(n) is type(node) and n.name==node.name)),node.name
+for name in ('CHECKS','CASES','CORE_LEAVES'):
+ def find(tree): return next(n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id==name for t in n.targets))
+ assert ast.dump(find(old))==ast.dump(find(new)),name
+expected=('sbcl-admission','capture-before-unwind','bounded-printing','cancel-confirmed','termination-ends-generation')
+live=next(ast.literal_eval(n.value) for n in new.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='LIVE_CHECKS' for t in n.targets)); assert live==expected
+contract=root/'.agent/contracts/129.json'; assert hashlib.sha256(contract.read_bytes()).hexdigest()=='71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6'
+intent=root/'.agent/evidence/129/interface-intent1.json'; assert hashlib.sha256(intent.read_bytes()).hexdigest()=='402e7d02486f7ff29697433c13d05d9d86b691c67eba2310a24bc0817cbbf773'
+assert len(json.loads(contract.read_text())['verification'])==11
+paths=set(git('diff','--name-only','d66ff730248dec4f086365be55eb4ad060a350c5').splitlines())|set(git('ls-files','--others','--exclude-standard').splitlines())
+assert all(x=='tools/test_runtime_session.py' or x=='.agent/evidence/129/interface-intent1.json' or x.startswith('.agent/evidence/129/E129/author1/') for x in paths),sorted(paths)
+assert git('remote','get-url','origin')=='https://github.com/niq-cnr/nizam-framework.git'
+assert not (root/'tools/sbcl_session_loop.lisp').exists()
+failure=json.loads((root/'.agent/evidence/129/E129/author1/development-native-fixtures3-outer-failure.json').read_text()); assert failure['actual_exit']==1 and failure['native_execution_frame'] is None and failure['native_program_started'] is False
+for node in new.body:
+ if isinstance(node,ast.FunctionDef) and node.name=='live_control_candidate':
+  template=next(n.value for n in ast.walk(node) if isinstance(n,ast.Constant) and isinstance(n.value,str) and n.value.startswith('import json, subprocess, sys')); compile(template.replace('FAULT',repr('late-capture')),'disposable-control-wrapper','exec')
+subprocess.run(['git','diff','--check'],cwd=root,check=True)
+print('STATIC_PASS syntax, original function/class/CORE14 preservation, closed new selectors, contract/API pins and complete untracked-aware scope')
+print('RUNNER_SHA256',hashlib.sha256(raw).hexdigest()); print('RUNNER_GIT_BLOB',git('hash-object','tools/test_runtime_session.py'))
+print('CLEANUP_WITNESS_STRENGTHENING compile/AST only; no native or backend behavioral qualification claimed')
+print('UNQUALIFIED_BUNDLE native counter exhausted3; active native controls/deep backend/mutants remain pending; no accepted red, freeze approval or Source release')

@@ -1,0 +1,41 @@
+{
+  "role": "Handover index for unexecuted inventory preparation",
+  "status": "PENDING / NOT MEASURED",
+  "prepared_revision": "6ae7069e4ff76d4fccad79525a2d0341ab15a20c",
+  "files": {
+    "assemble.py": "74b4b52133386747f3373279d65d3cfb2555cba6b1c3a57a8edab905a09d4742",
+    "preparation.json": "386aa37579f60d89233b8a0e1c384fa9068419b967ebe55d566d697b9e081993",
+    "static1.execution.json": "9117b88260f8d78cfacf73347736481f1bf6b3ab54bc29d3d06c55f4dc1dca23",
+    "static1.started.json": "aaedf8aaa4f0baa1cee9c52969b6beaf39e43ce49d435b1b7d8ec2e8e6f57054",
+    "static1.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "static1.stdin": "19217de75969f344f1acdb93e1fa0a094adc435a9bf7144e18825dd149826908",
+    "static1.stdout.txt": "9ef99d1c84f1077c37fbc3152e6b5e9095274a9651d829866975f93aeda82e78"
+  },
+  "static_proof": {
+    "argv": [
+      "/usr/bin/python",
+      "-"
+    ],
+    "child_pid": 427002,
+    "exercised_revision": "6ae7069e4ff76d4fccad79525a2d0341ab15a20c",
+    "actual_exit": 0,
+    "stdout": {
+      "bytes": 176,
+      "path": "/tmp/nizam-020-closed-inventory-author1/.agent/evidence/phase020-closed-candidate-inventory1/static1.stdout.txt",
+      "sha256": "9ef99d1c84f1077c37fbc3152e6b5e9095274a9651d829866975f93aeda82e78"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/tmp/nizam-020-closed-inventory-author1/.agent/evidence/phase020-closed-candidate-inventory1/static1.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "limitations": "Static proof verifies syntax and pinned inputs only. Assembler has not executed; no effective final inventory, candidate endpoint/head seal, snapshot ownership closure, new merge proof, numeric accounting or strict inventory approval exists. Stable script applies reviewed delta in its assembly path, not proof of executed application. Parent handover instruction stops further work.",
+  "next_steps": [
+    "Read immutable Root release/state and these pinned inputs before resuming.",
+    "Root must release exact endpoint/retained heads including current authored preparation and all required failed/draft history.",
+    "Execute metadata assembly under capture; resolve explicit held ownership/derivation/shared snapshot and new merge proof gates.",
+    "Independent review must bind exact inventory SHA256 before separate Root numerical measurement release."
+  ],
+  "accounting": "Authored script/config/static program/index020process once; machine execution frames/streams retain exact123execute provenance. No allowance or budget verdict."
+}

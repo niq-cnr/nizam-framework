@@ -1,0 +1,10 @@
+from pathlib import Path
+import json,hashlib
+r=Path.cwd()
+for p,h in [('.agent/validator/129-source3-diagnostic1.json','4fc1d9404e5b74466b92c9295c47112a4f937fa4cfbe8297b33bf645e2187456'),('.agent/validator/129-source4-architecture1.json','bbfe0a6a0b5478c55bbdf6ea1ad280ef56bc4e80181c346e28bb07fd7b47d69c')]:
+ b=(r/p).read_bytes();assert hashlib.sha256(b).hexdigest()==h;v=json.loads(b);assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+for p,h in [('.agent/evidence/129/implementation4/architecture-preparation1.json','a3d9831d2e5fc65c8bb523b9b2c5fe87a7a84060bd3510643fbe0bd9e52cbdc0'),('.agent/evidence/129/source3-semantic-diagnostics1/probe.py','f5b4184aa275058436abb7290dacdf396f16597777b6ee37cb3b445a549486bc'),('.agent/evidence/129/source3-semantic-diagnostics1/intent.json','7ffe78852566c5540e313839548c515a59a71e86c33bbf04d6bb5a49d3761ff4')]:assert hashlib.sha256((r/p).read_bytes()).hexdigest()==h,p
+base=r/'.agent/evidence/129/bounded-recovery-review1';f=json.loads((base/'static1.execution.json').read_text());assert f['actual_exit']==0 and f['child_pid']==298467 and not f['timed_out']
+for k in ['stdin','stdout','stderr']:
+ x=f[k];b=(base/Path(x['path']).name).read_bytes();assert hashlib.sha256(b).hexdigest()==x['sha256'] and len(b)==x['bytes']
+print('PASS strict independent architecture/diagnostic preparation approvals, exact artifact pins and shared actual0/PID298467 static proof; no runtime or implementation claim')

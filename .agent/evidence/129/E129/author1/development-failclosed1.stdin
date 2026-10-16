@@ -1,0 +1,22 @@
+from pathlib import Path
+import ast,hashlib,importlib.util,json,os,shutil,subprocess,sys,tempfile
+root=Path.cwd();p=root/'tools/test_runtime_session.py';raw=p.read_bytes();compile(raw,str(p),'exec')
+old=ast.parse(subprocess.check_output(['git','show','d66ff730248dec4f086365be55eb4ad060a350c5:tools/test_runtime_session.py']));new=ast.parse(raw)
+for n in old.body:
+ if isinstance(n,(ast.FunctionDef,ast.ClassDef)):
+  assert ast.dump(n)==ast.dump(next(v for v in new.body if type(v) is type(n) and v.name==n.name)),n.name
+s=importlib.util.spec_from_file_location('acceptance',p);module=importlib.util.module_from_spec(s);s.loader.exec_module(module)
+for args,fragment in [(['--check','sbcl-admission-typo'],'invalid choice'),(['--check','sbcl-admission','--invented-switch'],'unrecognized arguments')]:
+ rc,out,err=module.live_process([sys.executable,str(p),*args],root,dict(os.environ))
+ assert rc==2 and fragment in err and 'SBCL_ADMISSION_UNAVAILABLE' not in err
+with tempfile.TemporaryDirectory(prefix='n129-missing-source-') as temp:
+ scratch=Path(temp);(scratch/'tools').mkdir();shutil.copyfile(p,scratch/'tools/test_runtime_session.py')
+ rc,out,err=module.live_process([sys.executable,str(scratch/'tools/test_runtime_session.py'),'--check','capture-before-unwind'],scratch,dict(os.environ))
+ assert rc==2 and err.strip()=='SETUP_OR_INFRASTRUCTURE_FAILURE: RuntimeError: controller source absent, never intended admission red'
+rc,out,err=module.live_process([sys.executable,str(p),'--check','sbcl-admission','--require-sbcl'],root,{**os.environ,'PATH':'/nonexistent'})
+assert rc==2 and err.strip()=='SETUP_OR_INFRASTRUCTURE_FAILURE: RuntimeError: actual SBCL executable absent'
+assert subprocess.check_output(['git','diff','--name-only','d66ff730248dec4f086365be55eb4ad060a350c5','--','tools']).decode().splitlines()==['tools/test_runtime_session.py']
+assert not (root/'tools/sbcl_session_loop.lisp').exists()
+print('DEVELOPMENT_ONLY final draft syntax/inherited-function preservation and targeted unknown-switch/check/missing-source/missing-SBCL infrastructure classifications PASS')
+print('RUNNER_SHA256',hashlib.sha256(raw).hexdigest())
+print('PARTIAL_CHECKPOINT diagnostic conventions and three diagnostic selections incomplete; deep controls not run; no complete bundle freeze')

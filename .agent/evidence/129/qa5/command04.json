@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "tools/test_runtime_session.py",
+    "--check",
+    "termination-ends-generation"
+  ],
+  "command": "PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp python3 tools/test_runtime_session.py --check termination-ends-generation",
+  "cwd": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+  "environment": {
+    "HOME": "/home/cnross",
+    "LANG": "en_US.UTF-8",
+    "LOGNAME": "cnross",
+    "PATH": "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.cargo/bin:/home/cnross/.nvm/versions/node/v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "PWD": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "SHELL": "/bin/bash",
+    "TERM": "dumb",
+    "TMPDIR": "/tmp",
+    "USER": "cnross"
+  },
+  "exit": 0,
+  "finished_at": "2026-10-16T10:29:51Z",
+  "index": 4,
+  "revision": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "started_at": "2026-10-16T10:29:40Z",
+  "stderr_bytes": 0,
+  "stderr_excerpt": "",
+  "stderr_path": ".agent/evidence/129/qa5/command04.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 311360,
+  "stdout_excerpt": "LIVE_COMMAND {\"argv\": [\"/usr/bin/sbcl\", \"--version\"], \"pid\": 582625, \"exit\": 0, \"stdout\": \"SBCL 2.2.9.debian\\n\", \"stderr\": \"\", \"timeout\": false}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/sbcl\", \"--no-sysinit\", \"--no-userinit\", \"--non-interactive\", \"--eval\", \"(format t \\\"~&b11f089886177fc02c8268810aea7076:~D~%\\\" (+ 19 23))\"], \"pid\": 582626, \"exit\": 0, \"stdout\": \"This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.\\nMore information about SBCL is available at <http://www.sbcl.org/>.\\n\\nSBCL is free software, provided as is, with absolutely no warranty.\\nIt is mostly in the public domain; some portions are provided under\\nBSD-style licenses.  See the CREDITS and COPYING files in the\\ndistribution for more information.\\nb11f089886177fc02c8268810aea7076:42\\n\", \"stderr\": \"\", \"timeout\": false}\nSBCL_PREFLIGHT {\"executable\": \"/usr/bin/sbcl\", \"sha256\": \"2409c8befe0ca3d6309fcce4f820d8257ceff316a437b38115e228d9259f5670\", \"nonce\": \"b11f089886177fc02c8268810aea7076\", \"arithmetic\": 42}\nLIVE_REQUEST {\"action\": \"open-session\", \"request\": {\"session_id\": \"live\", \"requester\": {\"principal_kind\": \"agent\", \"role\": \"Orchestrator\", \"agent_id\": \"root\"}, \"owner\": {\"principal_kind\": \"agent\", \"role\": \"Generator\", \"agent_id\": \"owner\"}, \"purpose\": \"develop\", \"contract_id\": \"129\", \"step_key\": \"129-implementation\", \"attempt\": 1, \"run_state_path\": \"/tmp/n129-l0ygcon9/run_state.json\", \"runtime\": \"sbcl\"}}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/python3\", \"/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862/tools/runtime_session.py\", \"open-session\", \"--root\", \"/tmp/n129-l0ygcon9/state\", \"--request\", \"/tmp/n129-l0ygcon9/live-request-1.json\"], \"pid\": 582628, \"exit\": 0, \"stdout\": \"{\\\"ok\\\": true, \\\"result\\\": {\\\"generation\\\": {\\\"counter\\\": 1, \\\"nonce\\\": \\\"97ad43338b23f8b2da81f5828255a949\\\"}, \\\"lease_epoch\\\": 0, \\\"outstanding_operation_ref\\\": null, \\\"owner\\\": {\\\"agent_id\\\": \\\"owner\\\", \\\"principal_kind\\\": \\\"agent\\\", \\\"role\\\": \\\"Generator\\\"}, \\\"purpose\\\": \\\"devel\n...[excerpt truncated]...\n\\\\\", \\\\\\\"principal_kind\\\\\\\": \\\\\\\"agent\\\\\\\", \\\\\\\"role\\\\\\\": \\\\\\\"Generator\\\\\\\"}, \\\\\\\"purpose\\\\\\\": \\\\\\\"develop\\\\\\\", \\\\\\\"session_id\\\\\\\": \\\\\\\"live\\\\\\\"}}\\\\n\\\", \\\"original_stderr\\\": \\\"\\\"}\\n\", \"timeout\": false}\nLIVE_UNRELATED_CONTROL {'argv': ['/usr/bin/sbcl', '--no-sysinit', '--no-userinit', '--non-interactive', '--eval', '(progn (with-open-file (s \"/tmp/n129-l0ygcon9/mutant-6j4bog54/fixture/unrelated-runtime\" :direction :output :if-exists :supersede) (write-line \"unrelated\" s)) (sleep 60))'], 'pid': 582966, 'exit': 0, 'stdout': b'This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.\\nMore information about SBCL is available at <http://www.sbcl.org/>.\\n\\nSBCL is free software, provided as is, with absolutely no warranty.\\nIt is mostly in the public domain; some portions are provided under\\nBSD-style licenses.  See the CREDITS and COPYING files in the\\ndistribution for more information.\\n', 'stderr': b''}\nLIVE_REQUEST {\"action\": \"close-session\", \"request\": {\"session_id\": \"live\", \"requester\": {\"principal_kind\": \"agent\", \"role\": \"Orchestrator\", \"agent_id\": \"root\"}, \"expected_generation\": {\"counter\": 1, \"nonce\": \"3fae0718176c385a307dac352a238366\"}, \"expected_lease_epoch\": 0}}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/python3\", \"/tmp/n129-l0ygcon9/mutant-6j4bog54/candidate/tools/runtime_session.py\", \"close-session\", \"--root\", \"/tmp/n129-l0ygcon9/mutant-6j4bog54/fixture/state\", \"--request\", \"/tmp/n129-l0ygcon9/mutant-6j4bog54/fixture/live-request-48.json\"], \"pid\": 583013, \"exit\": 1, \"stdout\": \"{\\\"error\\\": \\\"stale_generation\\\", \\\"ok\\\": false}\\n\", \"stderr\": \"{\\\"control_real_cli_pid\\\": 583031, \\\"actual_exit\\\": 1, \\\"original_stdout\\\": \\\"{\\\\\\\"error\\\\\\\": \\\\\\\"stale_generation\\\\\\\", \\\\\\\"ok\\\\\\\": false}\\\\n\\\", \\\"original_stderr\\\": \\\"\\\"}\\n\", \"timeout\": false}\nLIVE_NEGATIVE_CONTROL {\"fault\": \"generation-reuse\", \"expected_assertion\": \"NEW_GENERATION\", \"observed_assertion\": \"BEHAVIOR_ASSERTION: NEW_GENERATION\", \"result\": \"rejected\", \"accepted_product\": false}\nPASS termination-ends-generation\n",
+  "stdout_path": ".agent/evidence/129/qa5/command04.stdout.log",
+  "stdout_sha256": "e6abf7b0c12fc079b23406698f16e87e58c7bfc52132b01a83bdfd303dd435eb"
+}

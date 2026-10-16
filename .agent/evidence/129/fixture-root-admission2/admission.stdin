@@ -1,0 +1,22 @@
+
+import pathlib,json,hashlib,subprocess
+r=pathlib.Path.cwd();sha=lambda b:hashlib.sha256(b).hexdigest();load=lambda p:json.loads((r/p).read_text())
+p='.agent/validator/129-postsource-fixture2.json';v=load(p)
+assert sha((r/p).read_bytes())=='afef8292bc41045e45ed2ba523f69dbbf5cb639099896f73ccbfc5a4a32a8bd9'
+assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+for p,h in load(v['evidence']['index']).items():assert sha((r/p).read_bytes())==h,p
+for p,row in load('.agent/evidence/129/fixture-correction1/raw-index.json').items():
+ b=(r/'.agent/evidence/129/fixture-correction1'/p).read_bytes();assert sha(b)==row['sha256'] and len(b)==row['bytes'],p
+for directory,pid,rev in [('postsource-fixture-review2',3795423,'f5a48ab52e268d9b451477564001df78ce995b05'),('fixture-correction1',3781478,'6d1bda89c049c9df1c32153f36d880c3d04e2b72')]:
+ base=r/'.agent/evidence/129'/directory;f=json.loads((base/'static1.execution.json').read_text());assert f['actual_exit']==0 and not f['timed_out'] and f['child_pid']==pid and f['exercised_revision']==rev
+ for key in ['stdout','stderr']+(['stdin'] if f['stdin'] else []):
+  b=(base/pathlib.Path(f[key]['path']).name).read_bytes();assert sha(b)==f[key]['sha256'] and len(b)==f[key]['bytes']
+old=load('.agent/evidence/129/frozen-bundle1.json')['bundle'];new=v['bundle'];expected=dict(old,revision=v['candidate_revision'],runner_git_blob='915d91be3cd9bd03edaf804fee381863140ffc55',runner_sha256='a61a2ec17e729a6c6ea0b9090a639beb0903db49c4d9869b948d908d568bdf1e');assert new==expected
+b=(r/new['runner_path']).read_bytes();assert sha(b)==new['runner_sha256'];assert subprocess.check_output(['git','hash-object',new['runner_path']]).decode().strip()==new['runner_git_blob']
+original=subprocess.check_output(['git','show',old['revision']+':'+old['runner_path']]);assert b==original.replace(b"release = stub.home / 'release-stub'",b"release = stub.state / 'release-stub'",1)
+assert sha((r/'.agent/contracts/129.json').read_bytes())==new['contract_sha256'] and sha((r/'.agent/evidence/129/interface-intent1.json').read_bytes())==new['interface_sha256']
+assert sha((r/'tools/runtime_session.py').read_bytes())=='fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345' and not (r/'tools/sbcl_session_loop.lisp').exists()
+assert len(subprocess.check_output(['git','ls-files','.nizam']).splitlines())==239
+assert subprocess.check_output(['git','rev-parse','HEAD:.nizam'])==subprocess.check_output(['git','rev-parse',v['root_release']+':.nizam'])
+identity=sha(json.dumps(new,sort_keys=True,separators=(',',':')).encode());assert identity==v['bundle_identity_sha256']=='342a1e113346bdbc071dc28008bef0c843b72c5d9464ec5db7dad0b14670fcb2'
+print(json.dumps({'admitted':'independently reviewed exact amended acceptance bundle only','identity':identity,'author_and_reviewer_exit':0,'product_unchanged':True,'installed_files':239,'runtime_validation':False},sort_keys=True))

@@ -1,0 +1,98 @@
+{
+  "role": "Fresh independent Evaluator baseline3 admission capture only",
+  "agent": "/root/baseline129_refresh",
+  "classification": "Observed exact intended admission deficiency; Root admission pending",
+  "workspace": "/home/cnross/.tmp/nizam-129-baseline-admission3",
+  "branch": "evidence/129-baseline-admission3",
+  "exercised_revision": "66503189c67c2710024046265c4c39dbd0a6c6ec",
+  "exercised_tree": "b6114f0d65f69d1635fc2bc8630e99e87261ba00",
+  "origin": "https://github.com/niq-cnr/nizam-framework.git",
+  "attempt": {
+    "key": "129-postsource-baseline-refresh",
+    "number": 2,
+    "limit": 3,
+    "runs": 1,
+    "state_owner": "Root; unchanged"
+  },
+  "bindings_sha256": {
+    "tools/runtime_session.py": "fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345",
+    "tools/test_runtime_session.py": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
+    ".agent/contracts/129.json": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+    ".agent/evidence/123/fresh-qa-capture1.py": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+    ".agent/evidence/129/interface-intent1.json": "402e7d02486f7ff29697433c13d05d9d86b691c67eba2310a24bc0817cbbf773",
+    ".agent/validator/129-postsource-fixture3.json": "ffed0d1a3cb7eb5c72fe4fc3bf40e5ebb3e6127c4e69e53346cabde3cd0020fa",
+    ".agent/evidence/129/fixture-correction2/native1.execution.json": "bdcdc2e89c0e62c96fee852253f85f4ad7c42562b0db8ff1b919ed1e7828c478",
+    ".agent/evidence/129/fixture-correction2/native-expression.lisp": "e77c3657a84756ca9e959fb8b0658a85b383a16ee875130b2019c2699a48290d",
+    ".agent/evidence/129/frozen-bundle3.json": "f8c8a01f598b723e0c837b7e82d12d597f82bd235f67cf8d9e4dacf64865aa9a",
+    ".agent/evidence/129/fixture-root-admission4/admission.execution.json": "aa153dd3356a17375433a36ed858c6cc2de16455fa0ed13b8bc03183c2896093",
+    ".agent/evidence/129/fixture-correction2/receipt.json": "da079c89e3f092940df8a44c9178c74054c958f26f96b764da54dcc770ce3aca",
+    ".agent/evidence/129/fixture-correction2/raw-index.json": "e1963cf1a90c8fc5befdde0e115255a9359e52761604d5ab9fe62e83a1251383"
+  },
+  "bundle_identity_sha256": "bd6d2638a0a636993047b09e3aca985e1facee6472abf15d5d3fa225d4c2fe7b",
+  "sbcl_loop_present": false,
+  "selector": {
+    "actual_exit": 1,
+    "pid": 3981342,
+    "execution": "admission-red.execution.json",
+    "assertion": "SBCL_ADMISSION_UNAVAILABLE: otherwise-valid runtime=sbcl request; product64/usage after SBCL, stub nonce and core14 positives",
+    "timed_out": false
+  },
+  "product": {
+    "actual_exit": 64,
+    "pid": 3983732,
+    "response": {
+      "error": "usage",
+      "ok": false
+    },
+    "request_and_argv": "admission-red.stdout.txt final LIVE_REQUEST/LIVE_COMMAND",
+    "boundary": "runtime=sbcl is the sole admission capability addition; frozen assertions before dedicated failure verify no endpoint/dispatch and unchanged private attempt."
+  },
+  "driver": {
+    "actual_exit": 0,
+    "pid": 3981278,
+    "execution": "driver.execution.json",
+    "qualification": "Legacy workflow-assurance source_bindings retained; relevant runtime bindings pinned above."
+  },
+  "positives": {
+    "direct_sbcl": {
+      "executable": "/usr/bin/sbcl",
+      "sha256": "2409c8befe0ca3d6309fcce4f820d8257ceff316a437b38115e228d9259f5670",
+      "nonce": "5755ac84ae5dc724222d252d3a6d6d03",
+      "arithmetic": 42,
+      "version": "SBCL 2.2.9.debian",
+      "version_pid": 3981344,
+      "arithmetic_pid": 3981345,
+      "actual_exits": [
+        0,
+        0
+      ]
+    },
+    "omitted_runtime_stub": {
+      "open_pid": 3981347,
+      "nonce": "24adc9d025a4b180c40470e7acc5ebdc",
+      "exact_set_get_results_and_once_dispatch": true
+    },
+    "core_ready": {
+      "actual_exit": 0,
+      "successful_leaves": 14,
+      "raw_records": "admission-red.stdout.txt CORE_LEAF/CORE_CLEANUP and PASS core-ready; full argv/output/exit/proof/cleanup retained"
+    }
+  },
+  "preservation": {
+    "equal": true,
+    "physical_rows": 16322,
+    "installed_files": 239,
+    "tracked_paths": 16322,
+    "untracked_and_ignored_paths": 0,
+    "inventory_sha256": "729f39ecdf84f7f15960aa047a8dd41df2826b519553de67f7c53fac9221d926",
+    "scope": "Physical bytes/modes/nlink/size, directory modes, HEAD/tree/refs/origin/status/sentinel; exact compressed before/after inventories retained."
+  },
+  "limitations": [
+    "Admission control only; no backend correctness, final QA, Source2 execution/Source3 release, readiness or completion claim.",
+    "Inherited CORE_LEAF records omit individual leaf PIDs. Direct SBCL/LIVE_COMMAND/selector/driver PIDs retained.",
+    "Scratch result files asserted then removed by frozen runner; raw requests/responses retained; no stdin supplied.",
+    "Native qualification identities are inherited reviewed proof pins, not a new native run. Baselines1/2 remain immutable."
+  ],
+  "accounting": "Count all own preparation/raw/receipt once within existing129/020 allocation; no allowance/rebaseline or unmeasured budget-pass claim.",
+  "next_gate": "Root independent baseline admission; no QA approval verdict."
+}

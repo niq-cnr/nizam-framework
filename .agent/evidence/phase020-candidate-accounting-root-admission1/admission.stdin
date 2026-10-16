@@ -1,0 +1,13 @@
+from pathlib import Path
+import json,hashlib
+r=Path.cwd();p=r/'.agent/validator/020-candidate-accounting-closure1.json';b=p.read_bytes();assert hashlib.sha256(b).hexdigest()=='0a5e8fba013c0ee8991d2ea58a3262d1d69770e4e4bc8e1e779a363051da3204'
+v=json.loads(b);assert v['final_verdict']['approved'] is False and [x['id'] for x in v['issues']]==['C1','C2'];assert v['missing_acceptance_coverage']==[] and v['unsupported_claims']==[]
+d=r/'.agent/evidence/phase020-candidate-accounting-review1'
+for path,h in json.loads((d/'index.json').read_text()).items():assert hashlib.sha256((r/path).read_bytes()).hexdigest()==h,path
+f=json.loads((d/'static2.execution.json').read_text());assert f['actual_exit']==0 and f['child_pid']==289695
+for k in ['stdin','stdout','stderr']:
+ x=f[k]
+ if x is not None:
+  raw=(d/Path(x['path']).name).read_bytes();assert hashlib.sha256(raw).hexdigest()==x['sha256'] and len(raw)==x['bytes']
+assert len(v['approved_decisions'])==8
+print('PASS currentclosureC1/C2rejection, eight scoped supported decisions and actual0/PID289695 evidence verified; no numeric measurement or budget pass')
