@@ -1,0 +1,153 @@
+{"candidate": "f9fe6d441a94a94798bd42071827b4f2d264be49", "path": "tools/runtime_session.py", "sha256": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5", "lines": 1150}
+{"candidate": "f9fe6d441a94a94798bd42071827b4f2d264be49", "path": "tools/sbcl_session_loop.lisp", "sha256": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9", "lines": 280}
+{"candidate": "f9fe6d441a94a94798bd42071827b4f2d264be49", "path": "tools/test_runtime_session.py", "sha256": "a61a2ec17e729a6c6ea0b9090a639beb0903db49c4d9869b948d908d568bdf1e", "lines": 2360}
+{"bundle_identity": "342a1e113346bdbc071dc28008bef0c843b72c5d9464ec5db7dad0b14670fcb2", "contract_and_interface_hashes_verified": true}
+{"raw_index": ".agent/evidence/129/implementation2/public-validation2/raw-index.json", "sha256": "ba2683e2e4c24442079301b22ad01f2c95155f3ba011683c731dbe62988d0efb", "verified_entries": 22}
+{"execution": ".agent/evidence/129/implementation2/public-validation2/admission.execution.json", "actual_exit": 0, "exercised_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49"}
+{"execution": ".agent/evidence/129/implementation2/public-validation2/capture.execution.json", "actual_exit": 0, "exercised_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49"}
+{"execution": ".agent/evidence/129/implementation2/public-validation2/printing.execution.json", "actual_exit": 2, "exercised_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49"}
+{"raw_path": ".agent/evidence/129/implementation2/public-validation2/printing.stdout.txt", "line": 357, "actual_cli_exit": 1, "operation_id": "live-11", "rejection": "inconsistent_image"}
+{"parsed_public_cli_records": 149, "all_candidate_error_records_parsed": [{"line": 16, "exit": 1, "error": "runtime_mismatch"}, {"line": 18, "exit": 64, "error": "usage"}, {"line": 24, "exit": 1, "error": "runtime_mismatch"}, {"line": 26, "exit": 64, "error": "usage"}, {"line": 30, "exit": 1, "error": "session_busy"}, {"line": 53, "exit": 1, "error": "runtime_mismatch"}, {"line": 55, "exit": 64, "error": "usage"}, {"line": 59, "exit": 1, "error": "runtime_mismatch"}, {"line": 61, "exit": 64, "error": "usage"}, {"line": 65, "exit": 1, "error": "session_busy"}, {"line": 357, "exit": 1, "error": "inconsistent_image"}], "other_command_observations": [{"line": 1, "argv": ["/usr/bin/sbcl", "--version"], "exit": 0, "stdout_bytes": 18, "stdout_sha256": "638a6f89a4e08cd4a2368a6a8600126507dff425e5bb6c214a794d82a1531cb8"}, {"line": 2, "argv": ["/usr/bin/sbcl", "--no-sysinit", "--no-userinit", "--non-interactive", "--eval", "(format t \"~&37f8fcf752c31bc9fd10aa4b2c2d1207:~D~%\" (+ 19 23))"], "exit": 0, "stdout_bytes": 404, "stdout_sha256": "3b79b5360cf09e7e10cdf254f090ab300c8c9686e55ab12ca417bd42c5d04a48"}]}
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/test_runtime_session.py:1798-1826
+1798: def live_cancel(s, executable):
+1799:     request, release, cleaning, witness = live_gate(s, cleanup=True); control = s.cancellation(request)
+1800:     for key, value in [('operation_id', 'unknown'), ('expected_generation', {'counter': 0, 'nonce': '0' * 32}),
+1801:                        ('expected_lease_epoch', 100), ('requester', OTHER)]:
+1802:         response = s.call('cancel-operation', {**control, key: value}, 1)
+1803:         require(response['ok'] is False and s.poll(request['operation_id'])['status'] == 'running',
+1804:                 'uncorrelated cancellation cannot stop actual pending work')
+1805:     response = s.call('cancel-operation', control)['result']
+1806:     require(response['status'] == 'cancel_requested' and response.get('cancellation_confirmed') is False,
+1807:             'CANCEL_REQUEST_IS_UNCONFIRMED')
+1808:     wait_for(lambda: cleaning.exists() and cleaning.read_text().splitlines() == [witness], 'real unwind-protect cleanup starts')
+1809:     response = s.poll(request['operation_id'])
+1810:     require(response['status'] in ('cancel_requested', 'unknown') and response.get('cancellation_confirmed') is not True,
+1811:             'cleanup still blocked; runtime has not stopped')
+1812:     live_busy(s); s.call('cancel-operation', control); release.touch()
+1813:     terminal = s.terminal(request, ('cancelled',))
+1814:     require(terminal['cancellation_confirmed'] is True and cleaning.read_text().splitlines() == [witness] and
+1815:             Path(str(cleaning) + '-done').is_file() and Path(str(cleaning) + '-done').read_text().splitlines() == [witness],
+1816:             'only finished correlated cleanup permits confirmed cancellation')
+1817:     with tempfile.TemporaryDirectory(prefix='completion-race-', dir=s.home) as temp:
+1818:         peer = LiveSession(Path(temp), candidate=s.candidate)
+1819:         try:
+1820:             peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+1821:             completed = peer.eval('42'); before = peer.operation(completed['operation_id']).read_bytes()
+1822:             require(peer.call('cancel-operation', peer.cancellation(completed))['result']['status'] == 'completed' and
+1823:                     peer.operation(completed['operation_id']).read_bytes() == before, 'completion-winning cancellation is immutable')
+1824:         finally:
+1825:             peer.cleanup()
+1826:     require(s.runstate.read_bytes() == s.saved_state, 'cancellation does not reset attempt')
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/test_runtime_session.py:1994-2017
+1994:     if record['status'] != 'terminated':
+1995:         require(record['status'] in ('running', 'unknown', 'cancel_requested') and
+1996:                 record.get('cancellation_confirmed') is not True and not invoked.exists(), 'HOSTILE_CAPTURE_REMAINS_UNRESOLVED')
+1997:         before = load(s.directory / 'runtime_session.json')
+1998:         require(before['outstanding_operation_ref'] == request['operation_id'] and
+1999:                 any(process_token(pid) == token for pid, token in tokens.items()), 'unresolved capture retains actual runtime and outstanding work')
+2000:         live_busy(s)
+2001:         s.call('cancel-operation', s.cancellation(request), (0, 70))
+2002:         record = s.terminal(request, ('condition_signalled', 'cancelled', 'terminated'), 8)
+2003:     else:
+2004:         record = s.terminal(request, ('terminated',))
+2005:     if record['status'] == 'condition_signalled':
+2006:         return record  # A completion-winning race must satisfy all strict capture assertions.
+2007:     require(record['image_consistent'] is False and not invoked.exists(), 'HOSTILE_STOP_FALSE_CONSISTENCY')
+2008:     if record['status'] == 'cancelled':
+2009:         require(record.get('cancellation_confirmed') is True and cleanup.is_file() and
+2010:                 cleanup.read_text().splitlines() == [witness], 'HOSTILE_CANCEL_CONFIRMED_CLEANUP')
+2011:     else:
+2012:         require(record.get('cancellation_confirmed') is not True and
+2013:                 all(process_token(pid) != token for pid, token in tokens.items()), 'HOSTILE_TERMINATED_OBSERVED_DEATH')
+2014:     marker = s.home / ('forbidden-hostile-reuse-' + request['operation_id'])
+2015:     response = s.call('submit-operation', s.lisp('(progn ' + lisp_write(marker, 'forbidden') + ' 42)'), (1, 70))
+2016:     require(response['ok'] is False and not marker.exists() and s.runstate.read_bytes() == s.saved_state,
+2017:             'unsafe hostile image remains quarantined without replacement or attempt reset')
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/test_runtime_session.py:2281-2281
+2281:             s.start(executable); live_nonce(s, os.urandom(16).hex()); live_condition(s)
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/test_runtime_session.py:2299-2301
+2299:                     path.unlink()
+2300:             live_nonce(s, os.urandom(16).hex())
+2301:             require(s.runstate.read_bytes() == s.saved_state, 'overflow control preserves governed attempt')
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/runtime_session.py:724-733
+724:     def pump(self, seconds):
+725:         if self.cancel_deadline is not None:
+726:             seconds = min(seconds, max(0, self.cancel_deadline - time.monotonic()))
+727:         for key, _ in self.selector.select(seconds):
+728:             if key.data == 'waiter':
+729:                 self.finish_waiter(key.fileobj, None)
+730:                 continue
+731:             if key.data == 'server':
+732:                 self.serve()
+733:                 continue
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/runtime_session.py:759-760
+759:         if self.runtime == 'sbcl' and self.cancel_deadline is not None and time.monotonic() >= self.cancel_deadline:
+760:             self.end_generation()
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/runtime_session.py:837-840
+837:             self.outstanding = request['operation_id']
+838:             self.session['outstanding_operation_ref'] = str(path)
+839:             self.clear_transition()
+840:             self.session_write()
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/runtime_session.py:962-966
+962:     def serve(self):
+963:         connection, _ = self.server.accept()
+964:         connection.settimeout(CONTROL_SECONDS)
+965:         try:
+966:             envelope = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/runtime_session.py:984-1003
+984:     def stop_child(self):
+985:         if self.runtime == 'sbcl':
+986:             if not self.child or self.child.poll() is not None:
+987:                 return True
+988:             if (live_token(self.child.pid) != self.meta.get('child_token')
+989:                     or os.getpgid(self.child.pid) != self.child.pid
+990:                     or self.child.pid == os.getpgrp()):
+991:                 return False
+992:             try:
+993:                 os.killpg(self.child.pid, signal.SIGTERM)
+994:                 try:
+995:                     self.child.wait(timeout=.25)
+996:                 except subprocess.TimeoutExpired:
+997:                     os.killpg(self.child.pid, signal.SIGKILL)
+998:                     self.child.wait(timeout=1.0)
+999:             except ProcessLookupError:
+1000:                 self.child.poll()
+1001:             except (OSError, subprocess.TimeoutExpired):
+1002:                 return False
+1003:             return self.child.poll() is not None and live_token(self.child.pid) is None
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/sbcl_session_loop.lisp:210-220
+210:          (diagnostic nil) (status "cancelled") (result nil) (consistent nil))
+211:     (catch tag
+212:       (block execution
+213:         (handler-bind
+214:             ((error (lambda (condition)
+215:                       ;; Prevent recursive capture on trusted metadata failures.
+216:                       (let ((raw (handler-case
+217:                                      (capture-condition condition seconds (- budget (byte-count stream)))
+218:                                    (error () "0"))))
+219:                         (setf diagnostic raw status "condition_signalled")
+220:                         (return-from execution nil)))))
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/sbcl_session_loop.lisp:228-233
+228:           (setf status "completed" consistent t))))
+229:     ;; Reaching here means every project UNWIND-PROTECT has completed. The main
+230:     ;; control thread waits for actual worker death before emitting this value.
+231:     (list :status status :result (if (string= status "completed") result nil)
+232:           :diagnostic diagnostic :consistent consistent
+233:           :output (copy-seq (buffer stream)))))
+SOURCE f9fe6d441a94a94798bd42071827b4f2d264be49:tools/sbcl_session_loop.lisp:235-249
+235: (defun publish-completion ()
+236:   (when (and *worker* (not (sb-thread:thread-alive-p *worker*)))
+237:     (sb-thread:join-thread *worker*)
+238:     (let ((request *request*) (outcome *outcome*))
+239:       ;; Project output has already been bounded in the worker. Emit before
+240:       ;; protocol completion so the supervisor can drain it before publication.
+241:       (write-string (getf outcome :output) *output*) (finish-output *output*)
+242:       (send-frame
+243:        (object "type" "result" "session_id" (getf request :session-id)
+244:                "operation_id" (getf request :operation-id) "generation" (generation-json *generation*)
+245:                "lease_epoch" (getf request :expected-lease-epoch)
+246:                "status" (getf outcome :status) "result" (getf outcome :result)
+247:                "image_consistent" (truth (getf outcome :consistent))
+248:                "cancellation_confirmed" (truth (string= (getf outcome :status) "cancelled"))
+249:                "diagnostic" (getf outcome :diagnostic)))
+STATIC_ONLY: no product import, runtime, acceptance, mutation candidate or diagnostic rerun
