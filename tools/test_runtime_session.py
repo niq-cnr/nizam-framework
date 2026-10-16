@@ -1629,6 +1629,10 @@ def admission(home, executable):
             require(s.runstate.read_bytes() == s.saved_state, 'admission refusal preserves private attempt')
             raise AssertionError('SBCL_ADMISSION_UNAVAILABLE: otherwise-valid runtime=sbcl request; product64/usage after SBCL, stub nonce and core14 positives')
         s.record = response['result']; s.observe_runtime(executable); live_nonce(s, nonce)
+        # New-selection guards belong only to the backend-positive path.  In
+        # particular, explicit stub selection must never precede the old
+        # omitted-runtime/core controls and exact product64 admission target.
+        live_runtime_guards(s, executable)
     finally:
         s.cleanup()
 
@@ -1659,6 +1663,59 @@ def live_busy(s):
     response = s.submit(request, 1)['result']
     require(response['status'] == 'rejected' and response['executed'] is False and
             response['rejection_reason'] == 'session_busy', 'busy lane rejects actual public submit')
+
+
+def live_selection_refusals(s, selected, pending=None):
+    """A rejected open cannot change the selected live runtime or busy lane."""
+    path = s.directory / 'runtime_session.json'
+    before = load(path); processes = live_owned(s.marker)
+    require(processes, 'runtime-selection controls have actual live processes')
+    original = s.operation(pending['operation_id']).read_bytes() if pending else None
+    for runtime, expected in [('stub' if selected == 'sbcl' else 'sbcl', 1), ('not-a-runtime', 64)]:
+        response = s.call('open-session', {**s.opening(), 'runtime': runtime}, (0, 1, 64, 70))
+        require(s.last_exit == expected and response['ok'] is False and
+                (expected != 64 or response == {'ok': False, 'error': 'usage'}), 'RUNTIME_SELECTION_GUARD')
+        after = load(path)
+        require(all(after.get(k) == before.get(k) for k in
+                    ('owner', 'generation', 'lease_epoch', 'outstanding_operation_ref')) and
+                live_owned(s.marker) == processes and s.runstate.read_bytes() == s.saved_state and
+                (pending is None or s.operation(pending['operation_id']).read_bytes() == original),
+                'RUNTIME_SELECTION_PRESERVES_IDENTITY')
+    if pending:
+        require(s.poll(pending['operation_id'])['status'] == 'running', 'runtime refusal preserves actual busy work')
+
+
+def live_runtime_guards(s, executable):
+    # Check idle as well as busy: session_busy must not mask a missing selector
+    # check.  Every CLI below is a fresh client of the same session.
+    live_selection_refusals(s, 'sbcl')
+    request, release, _, _ = live_gate(s)
+    live_selection_refusals(s, 'sbcl', request); live_busy(s)
+    release.touch(); s.terminal(request); s.observe_runtime(executable)
+    live_nonce(s, os.urandom(16).hex())
+    with tempfile.TemporaryDirectory(prefix='explicit-stub-', dir=s.home) as temp:
+        stub = LiveSession(Path(temp))
+        try:
+            stub.record = stub.call('open-session', {**stub.opening(), 'runtime': 'stub'})['result']
+            stub.remember()  # /proc ancestry, private flock and actual stub argv.
+            nonce = os.urandom(16).hex()
+            for op in ('set', 'get'):
+                control = {**stub.request(op, nonce), **governed(stub)}
+                stub.submit(control); require(stub.finish(control) == nonce, 'explicit stub exact nonce positive')
+            live_selection_refusals(stub, 'stub')
+            release = stub.home / 'release-stub'
+            request = {**stub.request('gate', release), **governed(stub)}
+            stub.submit(request)
+            wait_for(lambda: request['operation_id'] in stub.receipts(), 'explicit stub actual gate dispatch')
+            live_selection_refusals(stub, 'stub', request)
+            conflict = {**stub.request('get'), **governed(stub)}
+            require(stub.submit(conflict, 1)['result']['rejection_reason'] == 'session_busy',
+                    'explicit stub runtime refusal retains busy lane')
+            release.touch(); stub.finish(request)
+            control = {**stub.request('get'), **governed(stub)}
+            stub.submit(control); require(stub.finish(control) == nonce, 'explicit stub state survives guarded reopening')
+        finally:
+            stub.cleanup()
 
 
 def live_wait(s):
@@ -1855,10 +1912,124 @@ def condition_fixture(s, kind='evaluate', report=None, restart_report=None):
     return request, progress, cleanup, invoked, witness, (condition, frame, restart)
 
 
-def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omission_required=False, restart_report=None):
-    request, progress, cleanup, invoked, witness, names = condition_fixture(s, kind, report, restart_report)
+def capture_fixture(s, kind, report, restart_report, limits):
+    """Private project witnesses, not backend fields or callback requirements.
+
+    The common native-qualified fixture stays unchanged.  When a project
+    callback actually runs, record its printer bindings and native start tick;
+    cleanup records its end tick.  CLI startup/poll latency is excluded.
+    Safe metadata fallback may avoid the callback entirely.
+    """
+    nonce = os.urandom(12).hex(); callback = s.home / ('capture-callback-' + nonce)
+    ended = s.home / ('capture-end-' + nonce)
+    prefix = ('(with-open-file (probe ' + json.dumps(str(callback)) +
+              ' :direction :output :if-exists nil :if-does-not-exist :create) '
+              '(when probe (format probe "~D ~D~%~S/~S/~S~%" (get-internal-real-time) internal-time-units-per-second '
+              '*print-level* *print-length* *print-circle*))) ')
+    rendering = '(format stream "N129-CAPTURE/~S/~S/~S/END~%" *print-level* *print-length* *print-circle*) '
+    wrapped_report = (prefix + rendering + '(let ((n129-report-start (get-internal-real-time))) ' + report +
+                      ' (format stream "~&N129-CAPTURE-TICKS/~D/~D/~D/END~%" n129-report-start '
+                      '(get-internal-real-time) internal-time-units-per-second))') if report is not None else None
+    wrapped_restart = None
+    if restart_report is not None:
+        # Existing restart-report fixture is a lambda; this wrapper observes
+        # invocation without requiring the producer to invoke project code.
+        wrapped_restart = '(lambda (out) ' + prefix + ' (funcall ' + restart_report + ' out))'
+    fixture = condition_fixture(s, kind, wrapped_report, wrapped_restart)
+    request, _, cleanup, _, witness, _ = fixture
+    original = lisp_write(cleanup, witness)
+    ending = ('(progn (with-open-file (probe ' + json.dumps(str(ended)) +
+              ' :direction :output :if-exists :supersede) (format probe "~D~%" (get-internal-real-time))) ' + original + ')')
+    require(request['payload']['expression'].count(original) == 1, 'private capture fixture has one cleanup witness')
+    request['payload']['expression'] = request['payload']['expression'].replace(original, ending)
+    request['limits'] = limits or {}
+    return fixture, callback, ended
+
+
+def capture_bindings(text):
+    fields = text.split('/')
+    require(len(fields) == 3, 'complete printer binding observation')
+    require(fields[0] == '6', 'CAPTURE_PRINT_LEVEL')
+    require(fields[1] == '32', 'CAPTURE_PRINT_LENGTH')
+    require(fields[2] == 'T', 'CAPTURE_PRINT_CIRCLE')
+
+
+def capture_deadline(start, end, units, limits):
+    require(units >= 200, 'native callback clock resolution at most5ms')
+    elapsed = (end - start) / units
+    bound = min(.25, limits.get('timeout_seconds', .25))
+    print('LIVE_CAPTURE_DEADLINE', json.dumps({'elapsed_seconds': elapsed, 'requested_bound_seconds': bound,
+          'unwind_scheduling_allowance_seconds': .025}), flush=True)
+    require(0 <= elapsed <= bound + .025, 'CAPTURE_REQUESTED_DEADLINE')
+
+
+def capture_observation(callback, ended, limits):
+    # A scheduling allowance of25ms is for the signal/unwind and one witness
+    # write, not CLI latency.  It cannot hide the finite300ms printer below.
+    # Native clocks coarser than5ms are unsuitable for this observation.
+    if not callback.exists():
+        print('LIVE_CAPTURE_CALLBACK', json.dumps({'invoked': False, 'proof': 'safe capture/fallback checked separately'}), flush=True)
+        return
+    lines = callback.read_text().splitlines()
+    require(len(lines) == 2, 'complete project callback witness')
+    start, units = map(int, lines[0].split())
+    capture_bindings(lines[1])
+    require(ended.is_file(), 'completed capture has actual cleanup clock')
+    print('LIVE_CAPTURE_CALLBACK', json.dumps({'invoked': True, 'bindings': lines[1],
+          'callback_witness': str(callback), 'cleanup_clock': str(ended)}), flush=True)
+    capture_deadline(start, int(ended.read_text()), units, limits)
+
+
+def live_unresolved_capture(s, request, progress, cleanup, invoked, witness):
+    """A stuck printer is still work; only real stop/death resolves it."""
+    wait_for(lambda: progress.exists() and progress.read_text().splitlines() == [witness], 'actual hostile-condition dispatch')
+    started = time.monotonic()
+    response = s.call('poll-operation', {**s.identity(), 'operation_id': request['operation_id'],
+                      'limits': {'timeout_seconds': .1}}, (0, 70))
+    require(time.monotonic() - started < 3, 'bounded client wait for hostile capture; not diagnostic budget proof')
+    record = response['result']
+    if record['status'] == 'condition_signalled':
+        return s.terminal(request, ('condition_signalled',))
+    tokens = dict(s.live_tokens)
+    if record['status'] != 'terminated':
+        require(record['status'] in ('running', 'unknown', 'cancel_requested') and
+                record.get('cancellation_confirmed') is not True and not invoked.exists(), 'HOSTILE_CAPTURE_REMAINS_UNRESOLVED')
+        before = load(s.directory / 'runtime_session.json')
+        require(before['outstanding_operation_ref'] == request['operation_id'] and
+                any(process_token(pid) == token for pid, token in tokens.items()), 'unresolved capture retains actual runtime and outstanding work')
+        live_busy(s)
+        s.call('cancel-operation', s.cancellation(request), (0, 70))
+        record = s.terminal(request, ('condition_signalled', 'cancelled', 'terminated'), 8)
+    else:
+        record = s.terminal(request, ('terminated',))
+    if record['status'] == 'condition_signalled':
+        return record  # A completion-winning race must satisfy all strict capture assertions.
+    require(record['image_consistent'] is False and not invoked.exists(), 'HOSTILE_STOP_FALSE_CONSISTENCY')
+    if record['status'] == 'cancelled':
+        require(record.get('cancellation_confirmed') is True and cleanup.is_file() and
+                cleanup.read_text().splitlines() == [witness], 'HOSTILE_CANCEL_CONFIRMED_CLEANUP')
+    else:
+        require(record.get('cancellation_confirmed') is not True and
+                all(process_token(pid) != token for pid, token in tokens.items()), 'HOSTILE_TERMINATED_OBSERVED_DEATH')
+    marker = s.home / ('forbidden-hostile-reuse-' + request['operation_id'])
+    response = s.call('submit-operation', s.lisp('(progn ' + lisp_write(marker, 'forbidden') + ' 42)'), (1, 70))
+    require(response['ok'] is False and not marker.exists() and s.runstate.read_bytes() == s.saved_state,
+            'unsafe hostile image remains quarantined without replacement or attempt reset')
+    print('LIVE_HOSTILE_RESOLUTION', json.dumps({'operation_id': request['operation_id'], 'status': record['status'],
+          'image_consistent': record['image_consistent'], 'completed_capture_proof': False}), flush=True)
+    return None
+
+
+def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omission_required=False,
+                   restart_report=None, allow_unresolved=False):
+    fixture, callback, ended = capture_fixture(s, kind, report, restart_report, limits)
+    request, progress, cleanup, invoked, witness, names = fixture
     request['limits'] = limits or {}; before = sum(p.stat().st_size for p in s.directory.glob('child.*.log'))
-    started = time.monotonic(); s.submit(request); record = s.terminal(request, ('condition_signalled',))
+    s.submit(request)
+    record = (live_unresolved_capture(s, request, progress, cleanup, invoked, witness) if allow_unresolved else
+              s.terminal(request, ('condition_signalled',)))
+    if record is None:
+        return  # Actual busy-to-observed-stop proof above; never a fabricated diagnostic success.
     require(progress.read_text().splitlines() == [witness] and cleanup.read_text().splitlines() == [witness],
             'correlated project progress and actual unwind happened; setup is successful')
     require(not invoked.exists(), 'no arbitrary or durable restart automatically invoked')
@@ -1868,9 +2039,15 @@ def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omis
     value = diagnostic(s, record, budget, full)
     delta = sum(p.stat().st_size for p in s.directory.glob('child.*.log')) - before
     require(delta >= 0 and delta + Path(record['condition_ref']).stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
-    require(time.monotonic() - started < 3, 'diagnostic time bound includes hostile printers')
+    capture_observation(callback, ended, request['limits'])
     if value is not None:
         require(value['condition']['type'].rsplit(':', 1)[-1].upper() == names[0], 'actual captured condition identity')
+        # Public report text is an additional observation when project printing
+        # runs.  Metadata-only fallback need not invent this report output.
+        for observed in re.findall(r'N129-CAPTURE/([^\r\n]+)/END', value['condition']['text']):
+            capture_bindings(observed)
+        for ticks in re.findall(r'N129-CAPTURE-TICKS/(\d+)/(\d+)/(\d+)/END', value['condition']['text']):
+            capture_deadline(*map(int, ticks), request['limits'])
     if full:
         symbols = lambda text: [word.rsplit(':', 1)[-1].upper() for word in re.findall(r'[A-Za-z0-9_:+*/<>=!?-]+', text)]
         require(any(names[1] in symbols(item['frame']) for item in value['backtrace']), 'CAPTURE_ACTIVE_FRAME')
@@ -1907,12 +2084,28 @@ def live_printing(s, executable):
         ('(progn (defclass n129-unsafe-printer () ()) (defmethod print-object ((obj n129-unsafe-printer) out) '
          '(declare (ignore obj out)) (loop (sleep 0.01))) (write (make-instance (quote n129-unsafe-printer)) :stream stream))',
          {'output_bytes': 2048, 'timeout_seconds': .1})]
+    live_condition(s)  # Mandatory nonvacuous healthy type/frame/restart proof.
     for index, (report, limits) in enumerate(reports):
         with tempfile.TemporaryDirectory(prefix='printer-', dir=s.home) as temp:
             peer = LiveSession(Path(temp), candidate=s.candidate)
             try:
                 peer.start(executable); live_nonce(peer, os.urandom(16).hex())
-                live_condition(peer, report=report, limits=limits, full=False, omission_required=index != 1)
+                live_condition(peer, report=report, limits=limits, full=False, omission_required=index != 1,
+                               allow_unresolved=index in (4, 5, 6, 7))
+            finally:
+                peer.cleanup()
+    # Finite300ms reports expose a renderer that silently ignores .1/0 but
+    # returns within the old3second hang guard.  If project code is safely
+    # skipped, normal diagnostic/fallback proof is still mandatory.  If it
+    # runs and returns, its own clock must meet min(.25, requested)+25ms.
+    for seconds in (.1, 0):
+        with tempfile.TemporaryDirectory(prefix='finite-printer-', dir=s.home) as temp:
+            peer = LiveSession(Path(temp), candidate=s.candidate)
+            try:
+                peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                live_condition(peer, report='(sleep 0.3) (write-string "finite-report-complete" stream)',
+                               limits={'output_bytes': 2048, 'timeout_seconds': seconds}, full=False,
+                               omission_required=True, allow_unresolved=True)
             finally:
                 peer.cleanup()
     with tempfile.TemporaryDirectory(prefix='restart-printer-', dir=s.home) as temp:
@@ -1920,7 +2113,7 @@ def live_printing(s, executable):
         try:
             peer.start(executable); live_nonce(peer, os.urandom(16).hex())
             live_condition(peer, limits={'output_bytes': 2048, 'timeout_seconds': .1}, full=False,
-                           restart_report='(lambda (out) (declare (ignore out)) (loop (sleep 0.01)))')
+                           restart_report='(lambda (out) (declare (ignore out)) (loop (sleep 0.01)))', allow_unresolved=True)
         finally:
             peer.cleanup()
     with tempfile.TemporaryDirectory(prefix='tiny-result-', dir=s.home) as temp:
@@ -1951,7 +2144,11 @@ fault = FAULT
 p = subprocess.Popen([sys.executable, str(Path(__file__).with_name('real_runtime_session.py')), *sys.argv[1:]], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 out, err = p.communicate(timeout=35)
 print(json.dumps({'control_real_cli_pid': p.pid, 'actual_exit': p.returncode, 'original_stdout': out, 'original_stderr': err}), file=sys.stderr, flush=True)
-response = json.loads(out); record = response.get('result', {})
+response = json.loads(out); record = response.get('result', {}); code = p.returncode
+root = Path(sys.argv[sys.argv.index('--root') + 1])
+request = json.loads(Path(sys.argv[sys.argv.index('--request') + 1]).read_text())
+if fault == 'runtime-refusal-accepted' and sys.argv[1] == 'open-session' and p.returncode in (1, 64) and request.get('runtime') in ('stub', 'not-a-runtime'):
+ response = {'ok': True, 'result': {}}; record = {}; code = 0
 if isinstance(record, dict):
  if fault == 'premature-cancel' and sys.argv[1] == 'cancel-operation' and record.get('status') == 'cancel_requested':
   record.update(status='cancelled', cancellation_confirmed=True)
@@ -1966,12 +2163,18 @@ if isinstance(record, dict):
    directory = Path(sys.argv[sys.argv.index('--root') + 1]) / record['session_id']
    path = Path(record['condition_ref']); path = path if path.is_absolute() else directory / path
    path.write_bytes(path.read_bytes() + b' ' * 65536)
+  if fault in ('print-level', 'print-length', 'print-circle'):
+   path = Path(record['condition_ref'])
+   if path.read_bytes() != b'0':
+    value = json.loads(path.read_text())
+    value['condition']['text'] = 'N129-CAPTURE/' + {'print-level': '7/32/T', 'print-length': '6/33/T', 'print-circle': '6/32/NIL'}[fault] + '/END'
+    path.write_text(json.dumps(value))
  if fault == 'generation-reuse' and sys.argv[1] == 'open-session' and response.get('ok'):
   path = Path(sys.argv[sys.argv.index('--root') + 1]) / 'control-first-generation.json'
   if path.exists(): record['generation'] = json.loads(path.read_text())
   else: path.write_text(json.dumps(record['generation']))
 print(json.dumps(response), flush=True)
-sys.exit(p.returncode)
+sys.exit(code)
 '''.replace('FAULT', repr(fault))
     (candidate / 'tools/runtime_session.py').write_text(wrapper)
     print('LIVE_MUTANT', json.dumps({'fault': fault, 'candidate': str(candidate),
@@ -1983,7 +2186,7 @@ sys.exit(p.returncode)
 def live_scenario(selection, home, executable, candidate=ROOT):
     s = LiveSession(home, candidate=candidate)
     try:
-        s.start(executable); live_nonce(s, os.urandom(16).hex())
+        s.start(executable); live_nonce(s, os.urandom(16).hex()); live_runtime_guards(s, executable)
         if selection == 5:
             live_wait(s)
         elif selection == 6:
@@ -2018,12 +2221,14 @@ def live_scenario(selection, home, executable, candidate=ROOT):
 
 
 def live_negative_controls(selection, home, executable):
-    controls = {'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
+    controls = {5: [('runtime-refusal-accepted', 'RUNTIME_SELECTION_GUARD')],
+                'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
                                    ('mismatched-cancel', 'TERMINAL_CORRELATION')],
                 'termination-ends-generation': [('generation-reuse', 'NEW_GENERATION')],
                 'capture-before-unwind': [('late-capture', 'CAPTURE_BEFORE_UNWIND'), ('missing-restart', 'CAPTURE_ACTIVE_RESTART'),
                                           ('missing-frame', 'CAPTURE_ACTIVE_FRAME')],
-                'bounded-printing': [('unbounded', 'DIAGNOSTIC_BYTE_BUDGET')]}
+                'bounded-printing': [('unbounded', 'DIAGNOSTIC_BYTE_BUDGET'), ('print-level', 'CAPTURE_PRINT_LEVEL'),
+                                     ('print-length', 'CAPTURE_PRINT_LENGTH'), ('print-circle', 'CAPTURE_PRINT_CIRCLE')]}
     for fault, expected in controls.get(selection, []):
         with tempfile.TemporaryDirectory(prefix='mutant-', dir=home) as temp:
             scratch = Path(temp); candidate = live_control_candidate(scratch, fault)
