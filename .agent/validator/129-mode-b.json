@@ -1,0 +1,58 @@
+{
+  "review": "feature129 independent Validator Mode B; attempt1/3",
+  "candidate_revision": "0697bfe5e121543b2aa8ed8c8607d0c50e99b413",
+  "product_revision": "a9114bcbe16fba76dbdba1147ea76db8a5a6b39d",
+  "preimplementation_revision": "7257e43dce83d93e9498ba8c676aedd79d6ac83b",
+  "review_base_revision": "e68cc9e0f9e04059ffbe0cc96f659af27ba851ce",
+  "contract": {
+    "path": ".agent/contracts/129.json",
+    "sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6"
+  },
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject exact0697 implementation: stale-validation snapshot race and growing-history transport ceiling violate preserved attempt/source/cancellation/close invariants."
+  },
+  "issues": [
+    {
+      "id": "129-B1",
+      "severity": "high",
+      "file": "tools/runtime_session.py",
+      "lines": "1310-1326;1431-1467;1144-1147;494-496",
+      "title": "Helper snapshots later bytes than those it actually validated",
+      "description": "attempt_ok is read at1310, check_live/reconciliation runs1312, and source_provenance validates committed/working contents1313-1315. Only afterward does verification_files enumerate inputs and stamp/hash them1318-1325. No prevalidation stamp/digest is compared to those later bytes. Parent checks later stamps, private version and digest length, then dispatches with cached attempt_ok; check_live returns immediately whenever this verification is supplied.",
+      "consequence": "A valid attemptN is read true. During helper reconciliation/provenance, Orchestrator increments the external run_state attempt toN+1. Hashing now records the stable new state and its stamp. Supervisor version has not changed, and parent stamp checks pass on those same new bytes. verified_attempt returns cached true and submit-operation sends execution charged to stale attemptN. Similarly a previously validated operation/source file changed before the later snapshot can be accepted as though the new bytes were validated.",
+      "authority": "Preserve live contract/step/attempt and crash-disagreement/source continuity guards; full reviewed S2 snapshot must bind bytes actually validated and recheck current identities/live attempt before applying. External file edits do not advance self.version."
+    },
+    {
+      "id": "129-B2",
+      "severity": "high",
+      "file": "tools/runtime_session.py",
+      "lines": "1250-1260;1296-1300;1318-1326;1208-1216",
+      "title": "Growing valid history eventually disables cancellation and close",
+      "description": "verification_files includes every operation and result forever. Every successful helper response serializes a full path/stamp/SHA row per file. send replaces any encoded response larger than FRAME_LIMIT65536 with infrastructure failure. There is no history bound, paging or bounded summary. client_event requires this job for every non-poll action, including cancel-operation and close-session.",
+      "consequence": "A sufficiently long otherwise valid completed history necessarily exceeds the response ceiling. From that point cancel/close/reattach/transfer/new admission cannot reach dispatch. A just-admitted pending operation whose publication crosses that size boundary cannot be cancelled through the API: the helper failure occurs before cancel_requested publication and deadline arming. Idle sessions also cannot close normally. This is a deterministic growth boundary, independent of scheduler speed or hostile input.",
+      "authority": "Preserve seven calls, original operation/history and cancellation invariants while moving full reconciliation off the event loop. Bounded helper transport must not make safety calls unavailable as legal durable history grows."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "Generator_proof": {
+    "immutable_commit": "0ae08da6a153e589a7dbcac65223d1fa9d2449a4",
+    "Root_admission_commit": "6ed588f91ec452ef154612102fdaeda28d11f327",
+    "intake": ".agent/evidence/129/mode-b1/proof-intake.json",
+    "verified": "Eleven exact contracted commands actual0 on0697 across retained and eight-command explicitTMPDIR=/tmp continuation; sealed idle-close extra0. All indexed bytes/frame streams and full before/after inventories independently verified. Originalprinting2/peer70 and Root bookkeeping1 preserved. Generator passes do not exercise or discharge B1/B2; no tests rerun here."
+  },
+  "scope_and_preservation": ".agent/evidence/129/mode-b1/intake.json records full7257-to0697 source/runner diff, actual Source1/2/3 commit ownership, reviewed architecture plus authenticated reference erratum, exact product/contract/runner hashes and byte-equal sealed probe digest-only transformation. No source/test/contract/planning/state/installed mutation by Validator.",
+  "evidence": [
+    ".agent/evidence/129/mode-b1/static1.execution.json",
+    ".agent/evidence/129/mode-b1/static1.stdout.txt",
+    ".agent/evidence/129/mode-b1/proof1.execution.json",
+    ".agent/evidence/129/mode-b1/proof1.stdout.txt"
+  ],
+  "remaining_unassessed": [
+    "Actual counted candidatecost, END/heads/measurement: unmeasured and not assessed; required before any future approval. Method suitability supplies no numeric pass.",
+    "Distinct fresh QA all11 plus exactlyone independently selected additional adversarial check remains downstream and unperformed; no QA/readiness claim."
+  ],
+  "decision_boundary": "Known technical rejection does not await the cost required for approval. No Source repair/redesign or further attempt authorization follows; Root owns counters, bounded next release, accounting, evidence capture and lifecycle.",
+  "budget": "All own static/proof/rejection process counted phase020once within existing3750 process; original7350/9555 and1292100 unchanged; no new allowance or budget pass."
+}
