@@ -1,0 +1,283 @@
+{
+  "role": "Independent Evaluator actual one-shot B2 diagnostic outcome; not QA, implementation approval or Source4 release",
+  "authority": {
+    "release_revision": "f013665aa4a3289932537366b3725f3e20b27fca",
+    "release": ".agent/evidence/129/source3-B2-diagnostic-release1.json",
+    "independent_review_revision": "c65b89d8",
+    "review": ".agent/validator/129-source3-diagnostic1.json",
+    "execution_counter": "129-source3-B2-diagnostic-execution=1/3; no retry"
+  },
+  "classification": "ACTUAL INTENDED B2 SEMANTIC RED: valid completed-history growth disables public idle close",
+  "candidate": {
+    "head": "0697bfe5e121543b2aa8ed8c8607d0c50e99b413",
+    "tree": "b7153f05a157213f8e6739780fb1e95c92a750d8",
+    "workspace": "/tmp/nizam-129-b2-execution1",
+    "origin": "https://github.com/niq-cnr/nizam-framework.git",
+    "status_before_after": ""
+  },
+  "inputs": {
+    "probe_revision": "bccaef268ef2f385a8b14acac47f5d61a0e41216",
+    "probe_path": "/tmp/nizam-129-semantic-prep/.agent/evidence/129/source3-semantic-diagnostics1/probe.py",
+    "probe_sha256": "f5b4184aa275058436abb7290dacdf396f16597777b6ee37cb3b445a549486bc",
+    "intent_sha256": "7ffe78852566c5540e313839548c515a59a71e86c33bbf04d6bb5a49d3761ff4",
+    "capture_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+    "pins": {
+      ".agent/contracts/129.json": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+      "tools/runtime_session.py": "e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce",
+      "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9",
+      "tools/test_runtime_session.py": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431"
+    }
+  },
+  "execution": {
+    "actual_probe_exit": 1,
+    "capture_driver_exit": 0,
+    "child_pid": 314499,
+    "elapsed_seconds": 49.857682502944954,
+    "timed_out": false,
+    "argv": [
+      "env",
+      "TMPDIR=/tmp",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "python3",
+      "/tmp/nizam-129-semantic-prep/.agent/evidence/129/source3-semantic-diagnostics1/probe.py",
+      "--candidate",
+      "/tmp/nizam-129-b2-execution1"
+    ],
+    "cwd": "/tmp/nizam-129-b2-execution1",
+    "frame": ".agent/evidence/129/source3-B2-diagnostic1/raw/probe1.execution.json",
+    "raw_index": ".agent/evidence/129/source3-B2-diagnostic1/raw-index.json"
+  },
+  "native_positives": {
+    "direct_sbcl": [
+      {
+        "executable": "/usr/bin/sbcl",
+        "sha256": "2409c8befe0ca3d6309fcce4f820d8257ceff316a437b38115e228d9259f5670",
+        "nonce": "f50623b24a8250814e0775a577bf2eca",
+        "arithmetic": 42
+      }
+    ],
+    "actual_session_identities": [
+      {
+        "controller": {
+          "attempt": 1,
+          "child_pid": 314529,
+          "child_token": "93786400",
+          "contract_id": "129",
+          "ended": false,
+          "generation": {
+            "counter": 1,
+            "nonce": "3a2fd56d2d31f9a1b1fbf09c0243c55c"
+          },
+          "previous_generation": null,
+          "run_state_path": "/tmp/n129-history-jwjiskiu/positive/run_state.json",
+          "runtime": "sbcl",
+          "runtime_group": {
+            "pgid": 314529,
+            "pid": 314529,
+            "sid": 314529,
+            "token": "93786400",
+            "uid": 1000
+          },
+          "step_key": "129-implementation",
+          "supervisor_pgid": 314528,
+          "supervisor_pid": 314528,
+          "supervisor_token": "93786399"
+        },
+        "nonce_operations": 2,
+        "session": "positive"
+      },
+      {
+        "controller": {
+          "attempt": 1,
+          "child_pid": 314545,
+          "child_token": "93786459",
+          "contract_id": "129",
+          "ended": false,
+          "generation": {
+            "counter": 1,
+            "nonce": "ee32a56374f50e9c9295e878716c7099"
+          },
+          "previous_generation": null,
+          "run_state_path": "/tmp/n129-history-jwjiskiu/history/run_state.json",
+          "runtime": "sbcl",
+          "runtime_group": {
+            "pgid": 314545,
+            "pid": 314545,
+            "sid": 314545,
+            "token": "93786459",
+            "uid": 1000
+          },
+          "step_key": "129-implementation",
+          "supervisor_pgid": 314544,
+          "supervisor_pid": 314544,
+          "supervisor_token": "93786458"
+        },
+        "nonce_operations": 2,
+        "session": "history"
+      }
+    ],
+    "small_history_close": {
+      "exit": 0,
+      "response": {
+        "ok": true,
+        "result": {
+          "closed": true,
+          "session_id": "positive"
+        }
+      },
+      "session": "positive"
+    },
+    "genuine_completed_admitted_operations_total": 153,
+    "history_completed_operations": 151,
+    "history_records": 302,
+    "nonce_arithmetic": "All149 history-loop operations completed with frozen correlation, exact native nonce side effect and integer42. Each of the two sessions also passed the two initial live_nonce operations: integer42 with nonce side effect, then exact string nonce result. Total153 genuine completed operations."
+  },
+  "failure_before_cleanup": {
+    "public_submit": {
+      "exit": 70,
+      "request": {
+        "attempt": 1,
+        "context": {},
+        "contract_id": "129",
+        "expected_generation": {
+          "counter": 1,
+          "nonce": "ee32a56374f50e9c9295e878716c7099"
+        },
+        "expected_lease_epoch": 0,
+        "kind": "evaluate",
+        "limits": {},
+        "operation_id": "live-455",
+        "payload": {
+          "expression": "(progn (with-open-file (s \"/tmp/n129-history-jwjiskiu/history/latest-native-nonce\" :direction :output :if-exists :supersede) (write-line \"4c2210b20f69610697ad98b9cc61905b\" s)) (+ 19 23))"
+        },
+        "requester": {
+          "agent_id": "owner",
+          "principal_kind": "agent",
+          "role": "Generator"
+        },
+        "session_id": "history",
+        "step_key": "129-implementation"
+      },
+      "response": {
+        "error": "infrastructure",
+        "ok": false
+      }
+    },
+    "idle_close": {
+      "exit": 70,
+      "response": {
+        "error": "infrastructure",
+        "ok": false
+      },
+      "session": "history"
+    },
+    "outstanding_operation_ref": null,
+    "before_cleanup": true,
+    "attempt_equal": true,
+    "history_hashes_recorded": 302,
+    "elapsed_seconds_at_observation": 49.02944265701808,
+    "source_of_full_observation": "raw/probe1.stdout.txt B2_OBSERVATION"
+  },
+  "cleanup": {
+    "owned": [
+      {
+        "owned_tokens_before": {},
+        "pgids_before": {},
+        "remaining": {},
+        "session": "positive"
+      },
+      {
+        "owned_tokens_before": {
+          "314544": "93786458",
+          "314545": "93786459"
+        },
+        "pgids_before": {
+          "314544": 314544,
+          "314545": 314545
+        },
+        "remaining": {},
+        "session": "history"
+      }
+    ],
+    "unrelated_after_owned_cleanup": {
+      "observed_token": "93786391",
+      "original_token": "93786391",
+      "pid": 314523,
+      "sentinel_equal": true
+    },
+    "post_exit_process_observations_at": "2026-10-16T08:39:14.213138+00:00",
+    "post_exit_processes": [
+      {
+        "pid": 314499,
+        "original_token": null,
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      },
+      {
+        "pid": 314523,
+        "original_token": "93786391",
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      },
+      {
+        "pid": 314529,
+        "original_token": "93786400",
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      },
+      {
+        "pid": 314528,
+        "original_token": "93786399",
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      },
+      {
+        "pid": 314545,
+        "original_token": "93786459",
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      },
+      {
+        "pid": 314544,
+        "original_token": "93786458",
+        "observed_token": null,
+        "state": "absent",
+        "same_original_live": false
+      }
+    ],
+    "qualified_cleanup_complete": true,
+    "additional_signals_needed": false,
+    "note": "The probe observed B2 before its qualified marker/token/PGID cleanup; both runtime groups ended with no owned processes. Separately grouped sentinel survived cleanup and was then intentionally terminated/reaped by its own Popen identity. Capture timeout/groupkill was not used."
+  },
+  "preservation": {
+    "capture_full_equal": true,
+    "physical_file_rows": 16455,
+    "installed_rows": 239,
+    "noninstalled_rows": 16216,
+    "inventory_sha256": "7fd360df33e6fc321bccad8556a1c4a2972abd8add3f102083326a5c594a4fca",
+    "compressed_inventory_sha256": "092a135db76cb54c3c04f95126180756e5a007b00248fe47e5d8d876545fd962",
+    "head_tree_refs_status_origin_external_sentinel_equal": true,
+    "no_untracked_files_during_run": true,
+    "root_state_contract_product_runner_installed_equal": true,
+    "inventory_frames": [
+      "raw/probe1.preservation-before.json.gz",
+      "raw/probe1.preservation-after.json.gz"
+    ],
+    "note": "Both compressed inventories also byte equal. Evidence packaging occurs only after the complete after inventory; no capture metadata was rewritten."
+  },
+  "limits": {
+    "admitted_operations": 153,
+    "maximum": 512,
+    "work_seconds_limit": 270,
+    "capture_timeout_seconds": 300,
+    "one_execution_only": true
+  },
+  "B1": "Static counterexample/applicability limit only. No actual B1 semantic execution/red and no cancellation/deadline claim follows from this idle-close witness.",
+  "boundary": "No probe repair, runtime reexecution, Source4 code, product/test/contract/state/installed mutation, budget measurement, readiness or QA claim. Root owns admission and any separate Source4 release.",
+  "accounting": "Own fixture/test and all preparation/capture/packaging/process charged once to original020 allocation; original7350/9555 and1292100 unchanged, no allowance or rebaseline."
+}
