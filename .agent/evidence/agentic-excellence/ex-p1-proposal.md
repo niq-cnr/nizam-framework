@@ -47,8 +47,12 @@ That sentence authorizes only:
    `methodology/01_execution.md` Section 2.1 already names that consumer. This
    proposal does not reopen, reimplement, or extend that gate.
 2. Execution of the preregistered comparison, subject to the comparison's own
-   unfilled preconditions. Those preconditions are not waived. This file does
-   not execute the comparison.
+   preconditions. This file does not execute the comparison. A later operator
+   selection froze two of those preconditions in
+   `.agent/evidence/agentic-excellence/smoke-preconditions.json`: a 100 USD
+   smoke ceiling and the model snapshot `gpt-6.1-sol` with reasoning effort
+   `high`. The task manifest and the hidden oracles remain unsealed. No
+   candidate run is authorized by this proposal.
 
 The earlier planning record remains
 `.agent/evidence/agentic-excellence/authorization.json`. Its boundary still
@@ -65,8 +69,7 @@ The 2026-10-16 sentence does not authorize any of the following:
 
 - a sentence that Nizam matches Superpowers, BMAD Method, or GitHub Spec Kit
 - a sentence that Nizam surpasses any of those three
-- a dollar ceiling
-- paid model calls
+- spend above the 100 USD smoke ceiling recorded in `smoke-preconditions.json`
 - the 1,800–6,000 confirmation campaign
 - the 12-person novice study
 - attempt 6
@@ -120,20 +123,21 @@ per family per arm. It is not twenty independent tasks, three repetitions, or
 twenty novice sessions.
 
 The same report, `pin-execution.json`, and `docs/planning/agentic-excellence.md`
-version 0.1.1 leave these blockers open. No value is filled in by this draft:
+version 0.1.1 left the run blockers open. The operator later froze the smoke
+ceiling at 100 USD and the common snapshot at `gpt-6.1-sol` with reasoning
+effort `high`, recorded in `smoke-preconditions.json`. The smoke repeat
+policy recorded there is one run per family per arm, twenty runs total, with
+no extra seed repeats. These blockers remain:
 
 - no sealed task manifest
 - no hidden oracles
-- no common model snapshot
-- no budget ceiling
-- no frozen resolution of the twenty-run repeat-policy ambiguity
 - no five selected fixtures, and none are proposed here
 - no Spec Kit extension revision or config seal
 - no frozen Nizam authored-candidate identity distinct from installed v1.5.0
 - no adapter manifests and no independent fidelity seal
 - no isolated evaluator store for held-out checks
 - no preregistration of order, exclusions, or the single infrastructure rerun
-- no priced host, rate card, or paid-call permission
+- no provider rate card, so a dollar receipt cannot be computed until the provider returns usage
 - telemetry for tokens, cost, latency, and operator minutes remains null
 
 Unsupported, missing, or unmeasured fields stay null. They are not zeroes and
@@ -260,6 +264,7 @@ This proposal does not do, approve, or record any of the following:
 - editing `.nizam/`
 - feature 131
 
-It also does not invent tasks, hidden oracles, scores, a model snapshot, a
-dollar amount, or a spend receipt. `benchmark_results` stays null.
+It also does not invent tasks, hidden oracles, or scores. The operator froze
+the model snapshot and the 100 USD ceiling after this proposal was drafted.
+No spend receipt exists yet. `benchmark_results` stays null.
 `superiority_established` stays false.
