@@ -1,0 +1,2761 @@
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 14 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 15 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 16 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 17 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 18 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 19 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 20 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 21 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 22 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 23 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 24 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 25 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 26 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 27 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 28 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 30 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 31 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 32 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 33 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 34 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 35 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 36 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 37 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 38 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 39 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 40 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 41 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 42 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 43 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 44 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+Refreshing run status every 60 seconds. Press Ctrl+C to quit.
+
+* phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 45 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* convergent_review (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  * Run fixture self-test
+  * Select Root CI operation
+  * WA123 capture
+  * WA123 verify
+  * Preserve actual WA123 proof
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+* fixtures_self_test (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  * Run bash tools/fixtures_self_test.sh
+  * Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  * Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  * Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+X phase/021-receipt-performance compliance niq-cnr/nizam-framework#105 · 38831271485
+Triggered via pull_request about 46 minutes ago
+
+JOBS
+✓ e2e_bootstrap in 49s (ID 116750359900)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/e2e_bootstrap_test.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+X convergent_review in 45m49s (ID 116750360170)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Enable unprivileged user namespaces where the kernel restricts them
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+  ✓ Record capability runner environment
+  ✓ Install SBCL
+  ✓ Check SBCL version
+  ✓ Check fresh SBCL without init files
+  ✓ Run required isolation suite
+  X Run fixture self-test
+  - Select Root CI operation
+  - WA123 capture
+  - WA123 verify
+  - Preserve actual WA123 proof
+  - Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ self_governance in 32s (ID 116750360174)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run python3 .github/scripts/verify_self_governance.py
+  ✓ Run python3 .github/scripts/test_self_governance.py
+  ✓ Run bash .nizam/tools/validate.sh --payload
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+✓ validate in 42s (ID 116750360211)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Run bash tools/validate.sh
+  ✓ Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+X fixtures_self_test in 45m47s (ID 116750360230)
+  ✓ Set up job
+  ✓ Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Run pip install jsonschema pyyaml
+  ✓ Record maintenance checkout source identity
+  ✓ Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+  X Run bash tools/fixtures_self_test.sh
+  - Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+  - Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+  ✓ Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+e2e_bootstrap: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+e2e_bootstrap: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+self_governance: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+self_governance: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+validate: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+validate: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+fixtures_self_test: .github#2
+
+X Process completed with exit code 1.
+fixtures_self_test: .github#539
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+fixtures_self_test: .github#1
+
