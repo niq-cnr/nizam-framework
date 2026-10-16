@@ -1,0 +1,80 @@
+{
+  "review_id": "129-source3-architecture1",
+  "role": "Independent read-only planning assessment only; not Mode B, QA, implementation approval or Source3 release",
+  "review_base_revision": "a5a6e2ed56588068ebdd3e0b88de3aa7d1a37113",
+  "counter": "129-source3-architecture-review1/3; 129-source remains2/3",
+  "proposal": {
+    "revision": "0e45957e531818e57119c2360e488a25d0b06045",
+    "path": ".agent/evidence/129/implementation3/architecture-preparation1.json",
+    "sha256": "630da502970f31f2d8ebb4c99407fbc201349cfb20e63d083f4a5f97896032b3",
+    "root_copy_identical": true
+  },
+  "authority": [
+    ".agent/contracts/129.json:69-90, gate_sequence (approved)",
+    ".agent/validator/129-source2-recovery1.json:issues S1/S2, required_next_gate",
+    ".nizam/methodology/01_execution.md:3-4",
+    "methodology/10_live_runtime_sessions.md:R3-R8/R12",
+    "methodology/11_sbcl_runtime_binding.md:88-116,152-170"
+  ],
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "A1",
+      "severity": "blocking_planning_gap",
+      "refs": [
+        "proposal:31-32,43-48,55-56"
+      ],
+      "finding": "The forked helper introduces a process outside the runtime group. The plan disclaims runtime-control writer/server ownership but does not explicitly close the inherited supervisor.lock descriptor, runtime/protocol reader endpoints, accepted client sockets, parent-only response pipes and other unrelated inherited descriptors. A fork inherits those kernel references even if helper code never publishes. Nor does finite asynchronous helper cleanup state what happens to its Git descendants, inherited locks/endpoints or unresolved helper-group death before close/reconstruction.",
+      "required_plan_change": "Specify a minimal helper descriptor allowlist and closure before verification work: only required read inputs/result pipe and explicitly retained standard streams; no session flock/listener/client/runtime/control or unrelated parent endpoints. Define finite job/TERM/KILL/death phases for its separately proven group, handling descendant survivors and timeout/malformed/late/EOF results without blocking the supervisor or permitting helper publication. State how unresolved helper cleanup is preserved and prevented from silently retaining or crossing session lifetime. Existing group-death, single-publisher and fail-closed obligations motivate this boundary; no new public API or product file is requested."
+    },
+    {
+      "id": "A2",
+      "severity": "blocking_gate_sequence_ambiguity",
+      "refs": [
+        "proposal:78",
+        "proposal:6-7,22",
+        ".agent/contracts/129.json:gate_sequence",
+        ".agent/validator/129-source2-recovery1.json:required_next_gate"
+      ],
+      "finding": "future_validation starts After Root separately releases Source3, then says merge reviewed/refrozen fixtures and require fresh baseline admission and actual targeted Source2 intended reds first. That sentence puts unreleased prerequisites inside the post-release sequence and can be read as authorizing Source3 before its evidence gates.",
+      "required_plan_change": "Order the held plan explicitly: distinct bundle review/refreeze, unchanged-product fresh baseline admission and targeted actual Source2 S1/S2 semantic-red capture all precede Root Source3 release; only then may the bounded two-file Source3 repair begin. Preserve Source2=2/3 and all previous failures. No runtime work or product retry follows this review."
+    }
+  ],
+  "structural_coverage": [
+    {
+      "obligation": "S1 retained owned group proof and finite stop",
+      "refs": "proposal:24-27",
+      "assessment": "Addresses PGID/SID/uid/leader start-token reservation, retained identity after leader exit, complete membership observation, identity revalidation, ambiguity as unknown, TERM/KILL timing, separate leader reap, observed group death before terminated/ended and retained busy on uncertainty. Concrete proof and races remain implementation/qualification work; this plan is not evidence that group death is observed."
+    },
+    {
+      "obligation": "S2 nonblocking bounded transport and timer priority",
+      "refs": "proposal:30,33-35,39-40,51-60",
+      "assessment": "Addresses bounded nonblocking client reads/writes, runtime frame queues, cancellation publication before sending, finite client/job deadlines, due-stop priority around bounded batches and no blocking waits/sleeps on armed callbacks. Atomic record ordering is preserved; physical I/O inability to meet a claimed bound is explicitly failure, not proof. A1 remains the helper-lifetime gap."
+    },
+    {
+      "obligation": "Read-only history/provenance jobs and stale inputs",
+      "refs": "proposal:31-32,43-48",
+      "assessment": "Correctly moves Git/path/history work outside callbacks, bounds result transport, preserves sole supervisor publication, versions snapshots with identity/outstanding/binding/input digests, rechecks live attempt and rejects invalidated/late results. The implementation must actually revalidate those digests/state before admission/publication; an old successful helper receipt cannot clear uncertainty. A1 must make FD and cleanup isolation concrete."
+    },
+    {
+      "obligation": "Contract scope and established runtime invariants",
+      "refs": "proposal:68,72-76,79; contract:69-77",
+      "assessment": "Retains original two product files, standard-library/built-in dependencies, seven calls, one project lane, duplicate precedence, owner/generation/lease/attempt checks, atomic crash-disagreement guards, pre-unwind capture, bounded fallback, conservative quarantine, honest cancellation/cleanup, bounded waits and explicit new-generation reconstruction. Read-only verification jobs do not create a second project-execution lane. No contract/API/budget extension is requested."
+    }
+  ],
+  "protected_identities": {
+    "source2_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49",
+    "tools/runtime_session.py": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5",
+    "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9",
+    "contract_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+    "historical_frozen_runner_sha256": "a61a2ec17e729a6c6ea0b9090a639beb0903db49c4d9869b948d908d568bdf1e",
+    "new_acceptance_bundle": "Separate independent review in progress; no freeze, current baseline or Source2 red approval inferred from author/native/static qualification."
+  },
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_next_gate": "Root retains Source3 hold and may release a bounded architecture-plan revision addressing A1/A2 for another independent planning review. Distinct bundle refreeze, actual fresh baseline and actual targeted Source2 S1/S2 semantic reds remain separate prerequisites; no product implementation or diagnostic rerun authorized here.",
+  "evidence": ".agent/evidence/129/source3-architecture-review1/index.json; static1.execution.json actualexit0 child_pid3974951; frozen execute() used by reference",
+  "limits": "Read-only Git/blob/hash/text inspection only. No product/test/contract/state/installed edits, runtime/probes/tests, implementation suggestions authored as source, acceptance result or counter/lifecycle mutation. Historical recovery helper failure remains immutable."
+}

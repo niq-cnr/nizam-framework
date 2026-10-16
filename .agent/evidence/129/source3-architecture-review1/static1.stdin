@@ -1,0 +1,20 @@
+from pathlib import Path
+import hashlib,json,subprocess
+proposal="0e45957e531818e57119c2360e488a25d0b06045"
+plan=".agent/evidence/129/implementation3/architecture-preparation1.json"
+def blob(rev,path): return subprocess.check_output(["git","show",rev+":"+path])
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+raw=blob(proposal,plan);assert raw==Path(plan).read_bytes()
+assert sha(raw)=="630da502970f31f2d8ebb4c99407fbc201349cfb20e63d083f4a5f97896032b3"
+print(json.dumps({"proposal_revision":proposal,"path":plan,"sha256":sha(raw),"root_copy_identical":True}))
+for path,want in {".agent/contracts/129.json":"71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6","tools/test_runtime_session.py":"a61a2ec17e729a6c6ea0b9090a639beb0903db49c4d9869b948d908d568bdf1e",".agent/evidence/123/fresh-qa-capture1.py":"e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0"}.items():
+ actual=sha(Path(path).read_bytes());assert actual==want;print(json.dumps({"protected_path":path,"sha256":actual}))
+for path,want in {"tools/runtime_session.py":"aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5","tools/sbcl_session_loop.lisp":"2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"}.items():
+ actual=sha(blob("f9fe6d441a94a94798bd42071827b4f2d264be49",path));assert actual==want;print(json.dumps({"protected_source2_path":path,"sha256":actual}))
+for path in [".nizam/NIZAM.json",".nizam/tools/SKILL.md",".agent/validator/129-source2-recovery1.json"]:
+ print(json.dumps({"read_authority":path,"sha256":sha(Path(path).read_bytes())}))
+state=json.loads(Path(".agent/run_state.json").read_text());counter=state["circuit_breaker"]["129-source3-architecture-review"];assert counter["attempts"]==1
+print(json.dumps({"authorized_counter":counter}))
+for number,line in enumerate(raw.decode().splitlines(),1):
+ if 23<=number<=35 or number in (48,56,60,72,73,74,75,76,78,79): print(f"PLAN {proposal}:{plan}:{number}: {line}")
+print("STATIC_ONLY: no product import, runtime, probes, tests or acceptance execution")
