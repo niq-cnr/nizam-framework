@@ -1,0 +1,29 @@
+import gzip, hashlib, json, shlex, subprocess
+from pathlib import Path
+C='0697bfe5e121543b2aa8ed8c8607d0c50e99b413'
+def raw(ref,path): return subprocess.check_output(['git','show',ref+':'+path])
+def obj(ref,path): return json.loads(raw(ref,path))
+def sha(x): return hashlib.sha256(x).hexdigest()
+commands=[]
+for dirname,rev,names in [('validation1','73961d78b9b3eba221e1bd0951befc1a8aa08dfd',['admission','capture','termination','idle-close']),('environment-continuation1','0ae08da6a153e589a7dbcac65223d1fa9d2449a4',['printing','cancel','case4','case5','case6','core','compliance','payload'])]:
+ p='.agent/evidence/129/implementation3/'+dirname+'/'
+ index=obj(rev,p+'raw-index.json')
+ for name,binding in index.items():
+  value=raw(rev,p+name); assert len(value)==binding['bytes'] and sha(value)==binding['sha256'],name
+ for name in names:
+  f=obj(rev,p+name+'.execution.json'); s=obj(rev,p+name+'.capture-summary.json')
+  assert f['actual_exit']==0 and f['timed_out'] is False and f['exercised_revision']==C
+  assert s['success'] is True and s['preservation_equal'] is True
+  a=gzip.decompress(raw(rev,p+name+'.preservation-before.json.gz'));b=gzip.decompress(raw(rev,p+name+'.preservation-after.json.gz'));assert a==b
+  inv=json.loads(a); assert inv['head']==C and len([r for r in inv['rows'] if r['path'].startswith('.nizam/')])==239
+  for stream in ('stdout','stderr'):
+   value=raw(rev,p+name+'.'+stream+'.txt');assert sha(value)==f[stream]['sha256'] and len(value)==f[stream]['bytes']
+  argv=f['argv'];effective=argv[2:] if argv[:2]==['env','TMPDIR=/tmp'] else argv
+  if name!='idle-close':commands.append(effective)
+  print(json.dumps({'set':dirname,'name':name,'revision':C,'actual_exit':0,'pid':f['child_pid'],'argv':argv,'physical_rows':len(inv['rows']),'installed_rows':239,'preservation_equal':True}))
+contract=obj(C,'.agent/contracts/129.json');expected=[shlex.split(v['command'].removeprefix('PYTHONDONTWRITEBYTECODE=1 ')) for v in contract['verification']]
+assert len(commands)==11 and sorted(commands)==sorted(expected)
+failed=obj('73961d78b9b3eba221e1bd0951befc1a8aa08dfd','.agent/evidence/129/implementation3/validation1/printing.execution.json');assert failed['actual_exit']==2
+for name,exit,pid in [('source3-generator-root-admission1',1,38762),('source3-generator-root-admission2',0,107774)]:
+ f=obj('6ed588f91ec452ef154612102fdaeda28d11f327','.agent/evidence/129/'+name+'/admission.execution.json');assert f['actual_exit']==exit and f['child_pid']==pid
+print('EXACT_ALL11_COMMAND_COVERAGE; ALL12_PASS_FRAMES_PINNED_AND_FULL_INDEX_HASHED; ORIGINAL_PRINTING2_AND_ROOT_BOOKKEEPING_FAILURE_RETAINED; NO_NEW_RUNTIME_OR_QA_RUN')
