@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "021-receipt-input-maintenance",
+  "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": null,
-  "status": "complete",
-  "updated_at": "2026-10-16T04:39:06.268354+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-16T04:41:30.221280+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2855,7 +2855,7 @@
     "133-pr105-hosted-delivery": {
       "attempts": 2,
       "limit": 3,
-      "status": "ci2-all6-success-root-admitted-awaiting-freshpremerge",
+      "status": "normally-merged-with-tested-tree-proof",
       "head": "19efbca54be6b2d58f637b22ee4b4185cf32b342",
       "observer": "/root/qa133 CIobserveronly",
       "first_attempt": {
@@ -2867,7 +2867,9 @@
       "scope": "Freshall6exactheadCI/clearfeedback before normalmerge, matchingmain5 afterwards. No rerun/cancel/forcepush orRoot020branchpush. Sourceunchanged, originalbudgetfailedandnewsupplementpending.",
       "compliance_run": 38842030473,
       "closeout_run": 38842030197,
-      "proof": ".agent/evidence/133/ci/pr105-terminal2/report.json"
+      "proof": ".agent/evidence/133/ci/pr105-terminal2/report.json",
+      "normal_merge": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+      "merge_proof": ".agent/evidence/133/ci/pr105-merge1/merge-proof.json"
     },
     "129-implementation-preparation": {
       "attempts": 1,
@@ -3039,6 +3041,14 @@
       "evidence": ".agent/evidence/133/ci/positive-admission1/admission.execution.json",
       "indexed_files": 172,
       "frames": 42
+    },
+    "133-main-hosted-delivery": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-matching-main-observer",
+      "merge_revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+      "owner": "/root/qa133 CI observer only",
+      "scope": "Observe actual main compliance run at exact bfd15d10. Collect whole terminal qualified logs and five successful jobs, source receipts/current pins/full default and fixture coverage/cleanup. No watcher or CI restarts on observation failures; retain all actual frames. Not QA rerun or current-controls-ready claim."
     }
   },
   "history": [
@@ -8911,6 +8921,11 @@
       "at": "2026-10-16T04:39:06.268354+00:00",
       "event": "133-ci2-successful-delivery-evidence-root-admitted",
       "detail": "Rootactual0/PID3644369 at79df43ca verifies172indexedfiles/42actualframes/full534528Bqualifiedlog/physicalSource9/pins/6successfulchecks. Originalwatch1/static1negativeframespreserved. Exact19ef/c8synthetic77fparents/treeverified. No oldQAorSource123proofrebinding; currentRootcontrolsadoptionnotclaimed. FreshactualPR/feedbackrecheck andnormalmerge remain."
+    },
+    {
+      "at": "2026-10-16T04:41:30.221280+00:00",
+      "event": "PR105-normal-merge-and-actual-phase020-activation",
+      "detail": "Normal merge bfd15d10 has parents c8/19ef and exact tested tree8f9ac668; verification actual0/PID3646985. Applied exact independently approved2508 four-file proposal after canonical before-hash recheck. H-PHASE-020 applies unchanged7350/9555 allocation. Archived original0213024 failed budget plus pending disjoint delivery costs; no reset or headroom transfer. All129\u2013132 still pending. Main observer released at exact actual merge; new integration must await all five jobs. Source129 remains a separate imminent release."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -9083,66 +9098,20 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 2000,
-    "ceiling_130pct": 2600,
-    "total_lines_changed": 3024,
-    "per_feature": [
-      {
-        "id": "133",
-        "estimated": 2000,
-        "actual": 3024,
-        "actual_kind": "Conservative maximum of unchanged frozen endpoint+authored overlay2792 and explicit chronological authored changes3024, not their sum.",
-        "product_lines": 414,
-        "source_lines": 83,
-        "independent_test_lines": 331,
-        "process_overhead_lines": 2610,
-        "frozen_budget_lines": 1493,
-        "authored_snapshot_overlay": 1299,
-        "frozen_evidence_lines": 103444,
-        "evidence_lines": 86569,
-        "excluded_lines": 1021,
-        "range": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04..462f30f21a280f7dec7e7aab1f68979a900dbf78",
-        "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
-        "evidence": ".agent/evidence/133/scope-final/scope-report.json",
-        "report_sha256": "291a25fdf8f8d3601dc1f108c851b47815e0a897a5149b9d4f0647b169770235",
-        "baseline": {
-          "prior_features": [],
-          "first_feature_exception": true,
-          "flagged": false
-        },
-        "cumulative_ceiling_exceeded": true,
-        "category_estimates_unchanged": {
-          "source_and_docs": 150,
-          "tests": 450,
-          "process": 1400
-        },
-        "legacy018_post_endpoint_authored_at_snapshot": 916,
-        "limitations": "Root coordination excluded under frozen rule; no invented token/time/terminal-only authoring counts. Exact source copies deduped, failed/overwritten authored versions in chronological supplement, raw observations distinct."
-      }
-    ],
-    "phase_base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-    "authorization_revision": "d9af57777452b8252ecb9d61639502154d64992d",
-    "counting_rule": "One final immutable measurement after canonical closure/current docs. Include actual maintained attribution/preparation once; preserve legacy018 post-snapshot integration administration as disjoint retained costs, never free evidence or a new018 budget pass.",
-    "measurement_status": "Final once-only immutable endpoint462f30f2; frozen1493+authored snapshot1299=2792, conservative chronological authored3024 selected. Later measurement/CI/current-view administration retained separately, never a second baseline.",
-    "evidence_lines_total": 86569,
-    "excluded_lines_total": 1021,
-    "last_measured_at": "2026-10-16T00:33:01.654703+00:00",
-    "budget_gate_passed": false,
-    "ceiling_exceeded": true,
-    "delivery_exception": {
-      "scope": "Finish already verified133/021 documentation, CI and ordinary merge/main delivery only. Preserve failed2000/2600 budget and actual3024; no new allowance/rebaseline, other-phase activation or future gate waiver.",
-      "operator_authority": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.",
-      "strategic_reason": "All product/independent behavioral/preservation gates passed. Preserve424 over ceiling and1210 process variance explicitly while completing this delivery; prioritize reducing repeated process work in later separately reviewed planning. Future implementation requires its own scope/allocation disposition.",
-      "budget_gate_passed": false,
-      "debt_register_note": "Planner post-accounting factual note released; no existing debt row or original allowance rewritten.",
-      "portability_recovery": "Standinguserauthority appliednarrowlyperE133/ci-portability1/recovery-plan.json; preservefailedbaseline andnewcostsupplement, all6newCI+main5 beforedeliveryclaim."
-    },
-    "post_endpoint_delivery": {
-      "status": "bounded test-portability recovery; disjoint supplement pending",
-      "historical_endpoint_actual": 3024,
-      "historical_endpoint": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
-      "counting": "Retainallnew133deliveryauthoredwork separately andcountdisjointnewworkonceafterboundedrecovery; no rerunoldmeasurement, rebaseline, budgetpass orfreework. Currenttotalnotyetfullymeasured.",
-      "recovery_plan": ".agent/evidence/133/ci-portability1/recovery-plan.json"
+    "original_estimate_lines": 7350,
+    "ceiling_130pct": 9555,
+    "total_lines_changed": 0,
+    "per_feature": [],
+    "phase_base_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
+    "authorization_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
+    "counting_rule": "Count all product/tests/process and disjoint carried 020/129 preparation once. Preserve all original failed/revised preparation events, 529-line analysis and56-line delta. Reconcile explicit historical refs/path ranges at final measurement with frozen classification; no133/legacy018 transfer or free work.",
+    "measurement_status": "Allocated but unmeasured. Initialized zero does not mean zero preparation cost. Pre-activation129 contracts/tests/reviews/baseline/interface and020 intake/activation preparation are carried inside the same allocation.",
+    "preparation_accounting_ref": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
+    "activation_ref": ".agent/evidence/phase020-preflight/activation-decision.json",
+    "budget_categories": {
+      "product": 1850,
+      "independent_tests": 1750,
+      "process": 3750
     }
   },
   "blocked_features": [],
@@ -9398,7 +9367,7 @@
       }
     ]
   },
-  "last_action": "Exactconditional020activationproposal2508a717strict-approvedandfrozen; actualactivation/129Sourcewait105cleanremote normalmerge. CI2samehead19efdefault48live.",
+  "last_action": "PR105 normally merged with matching tested tree; reviewed phase020 activation/allocation applied. Main observation released; separate129 Source release follows pin recheck.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -10117,9 +10086,73 @@
   "phase020_preparation_allocation": {
     "path": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
     "sha256": "dd8b38718aed7ef5dd28fca712869aac61ca0b2908e2fc105745cc58b8014715",
-    "status": "selected-for-preparation-only; canonical activation deferred",
+    "status": "applied by actual H-PHASE-020 activation",
     "original": 7350,
     "ceiling": 9555,
-    "process": 3750
+    "process": 3750,
+    "activation_ref": ".agent/evidence/phase020-preflight/activation-decision.json"
+  },
+  "phase_021_scope_budget_final": {
+    "original_estimate_lines": 2000,
+    "ceiling_130pct": 2600,
+    "total_lines_changed": 3024,
+    "per_feature": [
+      {
+        "id": "133",
+        "estimated": 2000,
+        "actual": 3024,
+        "actual_kind": "Conservative maximum of unchanged frozen endpoint+authored overlay2792 and explicit chronological authored changes3024, not their sum.",
+        "product_lines": 414,
+        "source_lines": 83,
+        "independent_test_lines": 331,
+        "process_overhead_lines": 2610,
+        "frozen_budget_lines": 1493,
+        "authored_snapshot_overlay": 1299,
+        "frozen_evidence_lines": 103444,
+        "evidence_lines": 86569,
+        "excluded_lines": 1021,
+        "range": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04..462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "evidence": ".agent/evidence/133/scope-final/scope-report.json",
+        "report_sha256": "291a25fdf8f8d3601dc1f108c851b47815e0a897a5149b9d4f0647b169770235",
+        "baseline": {
+          "prior_features": [],
+          "first_feature_exception": true,
+          "flagged": false
+        },
+        "cumulative_ceiling_exceeded": true,
+        "category_estimates_unchanged": {
+          "source_and_docs": 150,
+          "tests": 450,
+          "process": 1400
+        },
+        "legacy018_post_endpoint_authored_at_snapshot": 916,
+        "limitations": "Root coordination excluded under frozen rule; no invented token/time/terminal-only authoring counts. Exact source copies deduped, failed/overwritten authored versions in chronological supplement, raw observations distinct."
+      }
+    ],
+    "phase_base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+    "authorization_revision": "d9af57777452b8252ecb9d61639502154d64992d",
+    "counting_rule": "One final immutable measurement after canonical closure/current docs. Include actual maintained attribution/preparation once; preserve legacy018 post-snapshot integration administration as disjoint retained costs, never free evidence or a new018 budget pass.",
+    "measurement_status": "Final once-only immutable endpoint462f30f2; frozen1493+authored snapshot1299=2792, conservative chronological authored3024 selected. Later measurement/CI/current-view administration retained separately, never a second baseline.",
+    "evidence_lines_total": 86569,
+    "excluded_lines_total": 1021,
+    "last_measured_at": "2026-10-16T00:33:01.654703+00:00",
+    "budget_gate_passed": false,
+    "ceiling_exceeded": true,
+    "delivery_exception": {
+      "scope": "Finish already verified133/021 documentation, CI and ordinary merge/main delivery only. Preserve failed2000/2600 budget and actual3024; no new allowance/rebaseline, other-phase activation or future gate waiver.",
+      "operator_authority": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.",
+      "strategic_reason": "All product/independent behavioral/preservation gates passed. Preserve424 over ceiling and1210 process variance explicitly while completing this delivery; prioritize reducing repeated process work in later separately reviewed planning. Future implementation requires its own scope/allocation disposition.",
+      "budget_gate_passed": false,
+      "debt_register_note": "Planner post-accounting factual note released; no existing debt row or original allowance rewritten.",
+      "portability_recovery": "Standinguserauthority appliednarrowlyperE133/ci-portability1/recovery-plan.json; preservefailedbaseline andnewcostsupplement, all6newCI+main5 beforedeliveryclaim."
+    },
+    "post_endpoint_delivery": {
+      "status": "bounded test-portability recovery; disjoint supplement pending",
+      "historical_endpoint_actual": 3024,
+      "historical_endpoint": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+      "counting": "Retainallnew133deliveryauthoredwork separately andcountdisjointnewworkonceafterboundedrecovery; no rerunoldmeasurement, rebaseline, budgetpass orfreework. Currenttotalnotyetfullymeasured.",
+      "recovery_plan": ".agent/evidence/133/ci-portability1/recovery-plan.json"
+    }
   }
 }
