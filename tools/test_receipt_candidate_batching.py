@@ -306,7 +306,8 @@ def main():
         tree = ast.parse(Path(__file__).with_name('workflow_assurance.py').read_bytes())
         target = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_receipt_candidate')
         target.body = []
-        require(sha(ast.dump(tree, include_attributes=False).encode()) == MASKED_AST, 'product AST outside _receipt_candidate body changed')
+        dump_options = {'show_empty': True} if sys.version_info >= (3, 13) else {}
+        require(sha(ast.dump(tree, include_attributes=False, **dump_options).encode()) == MASKED_AST, 'product AST outside _receipt_candidate body changed')
         global api
         import workflow_assurance as api
         actions = dict(zip(CHECKS, (count_reduction, semantics, mutations, literal_paths)))
