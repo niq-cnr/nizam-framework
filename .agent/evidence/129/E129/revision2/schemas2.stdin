@@ -1,0 +1,20 @@
+from pathlib import Path
+import hashlib,json,subprocess
+import jsonschema
+root=Path.cwd();p=root/'.agent/qa/129-contract-review.json';v=json.loads(p.read_text())
+for rel in ['schema/contract_review.schema.json','.nizam/schema/contract_review.schema.json']:
+ jsonschema.Draft202012Validator(json.loads((root/rel).read_text())).validate(v);print('VERDICT_SCHEMA_PASS',rel)
+assert v['feature']==v['final_verdict']['feature']=='129' and v['final_verdict']['approved'] is True
+assert all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+assert v['attempt']==2 and v['revision_reviewed']==1
+assert subprocess.check_output(['git','diff','--name-only','HEAD']).decode().splitlines()==['.agent/qa/129-contract-review.json']
+paths=subprocess.check_output(['git','ls-files','--others','--exclude-standard','-z']).decode().split('\0')
+assert all(not p or p.startswith('.agent/evidence/129/E129/revision2/') for p in paths)
+for path,pin in v['inputs'].items(): assert hashlib.sha256((root/path).read_bytes()).hexdigest()==pin['sha256'],path
+for rel in subprocess.check_output(['git','ls-files','.agent/evidence/129/E129']).decode().splitlines():
+ assert (root/rel).read_bytes()==subprocess.check_output(['git','show','ba0f00a177cb214361fc3a510ba437a269de4a88:'+rel]),rel
+subprocess.run(['git','diff','--check'],check=True)
+print('VERDICT_SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+print('STRICT_AGF_GATE approved=true; issues=[]; missing_acceptance_coverage=[]; unsupported_claims=[]')
+print('SCOPE_PASS only own canonical review and new revision2 raw evidence; old evidence/product/runner/installed/CI/Rootstate unchanged')
+print('NO_RUNTIME acceptance/preflight/probe/controller/SBCL/install commands not executed; stopped at contract-review gate')

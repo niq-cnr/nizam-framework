@@ -1,0 +1,46 @@
+from pathlib import Path
+import ast,hashlib,json,subprocess
+import jsonschema
+root=Path.cwd();base='3e2f5c95cd6721fd78e0a53a06c26966d8b044ce';proposal='3bbafe0dae4b2189a8a5bf972ce34037ee5cfb4a'
+def git(*args): return subprocess.check_output(['git',*args])
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+assert git('rev-parse','HEAD').decode().strip()==base
+assert git('remote','get-url','origin').decode().strip()=='https://github.com/niq-cnr/nizam-framework.git'
+p='.agent/contracts/129.json';raw=(root/p).read_bytes();c=json.loads(raw)
+assert sha(raw)=='fcebeec5520ea8616e14e8059503358f76c5c91ddfea779041bd4a0a04c8ce85'
+assert raw==git('show',proposal+':'+p)
+old=json.loads(git('show','872bb3bb611834d1f3e9ec76b8dc9e8f018aab81:'+p))
+assert old['verification'][:7]==c['verification'][:7]
+f=json.loads((root/'.agent/feature_list_020.json').read_text())['features'][0]
+assert [v['command'] for v in c['verification'][:7]]==f['acceptance_tests']
+assert len(c['verification'])==11 and c['verification'][7]['command']==c['red_admission']['command']
+assert c['verification'][8:]==old['verification'][7:]
+assert c['implementation_obligations']==old['implementation_obligations'] and c['non_goals']==old['non_goals'] and c['budget']==old['budget']
+state=json.loads((root/'.agent/run_state.json').read_text())['circuit_breaker']['129-precode']
+assert state['attempts']==2 and state['limit']==3 and state['proposal_sha256']==sha(raw)
+print('ROLE Evaluator129 attempt2 structural interface review; static only')
+print('RELEASE',base,'PROPOSAL',proposal,'ORIGIN',git('remote','get-url','origin').decode().strip())
+print('STATE',json.dumps({k:state[k] for k in ['attempts','limit','status','proposal_revision','proposal_sha256']}))
+for p in ['.agent/contracts/129.json','.agent/product_spec_020.md','.agent/feature_list_020.json','tools/runtime_session.py','tools/test_runtime_session.py','methodology/10_live_runtime_sessions.md','methodology/11_sbcl_runtime_binding.md','docs/nips/NIP-0003-live-runtime-sessions.md','.nizam/methodology/01_execution.md','.nizam/methodology/02_adversarial_tdd.md','.nizam/schema/contract_review.schema.json','schema/contract_review.schema.json']:
+ print('PIN',p,git('rev-parse','HEAD:'+p).decode().strip(),sha((root/p).read_bytes()))
+for p in ['schema/contract.schema.json','.nizam/schema/contract.schema.json']:
+ jsonschema.Draft202012Validator(json.loads((root/p).read_text())).validate(c);print('CONTRACT_SCHEMA_PASS',p)
+runner=(root/'tools/test_runtime_session.py').read_bytes()
+assert runner==git('show','599d7c5aa0c0c80ce8da596c7aeae2924d7dca04:tools/test_runtime_session.py')
+tree=ast.parse(runner);leaves=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='CORE_LEAVES' for t in n.targets))
+assert len(leaves)==14;print('CORE14',json.dumps(leaves))
+assert not (root/'tools/sbcl_session_loop.lisp').exists()
+for p in ['tools/runtime_session.py','tools/test_runtime_session.py','.agent/product_spec_020.md','.agent/feature_list_020.json','methodology/10_live_runtime_sessions.md','methodology/11_sbcl_runtime_binding.md','docs/nips/NIP-0003-live-runtime-sessions.md']:
+ assert (root/p).read_bytes()==git('show','a6ddbee2cef7097b1b6747017d987b4f1aec24e7:'+p),p
+oldverdict=git('show','ba0f00a177cb214361fc3a510ba437a269de4a88:.agent/qa/129-contract-review.json')
+assert sha(oldverdict)=='01b32e958ebfb29b2cafc4816b7b414c7b93ed9c47a8c5628a40507ea29181b0'
+assert (root/'.agent/qa/129-contract-review.json').read_bytes()==oldverdict
+print('PRESERVATION unchanged product/runner/normative/plan and old rejection; old raw evidence retained by original paths and revision')
+for k,v in c['red_admission'].items(): print('RED_ADMISSION',k,v)
+print('TEST_FREEZE',c['test_obligations']['freeze'])
+for first,last in [(48,59),(73,75),(153,160),(293,304),(898,907)]:
+ lines=(root/'tools/runtime_session.py').read_text().splitlines()
+ for i in range(first,last+1): print(f'tools/runtime_session.py:{i}: {lines[i-1]}')
+print('REVIEW_FINDING corrected admission-deficiency target is statically reachable before open-session creates state: closed keys -> insist -> usage envelope -> product64. Valid omitted-runtime nonce controls remain admitted. Direct SBCL preflight does not assert baseline SBCL dispatch. Deep semantics remain final real-SBCL checks plus executable negative controls after backend delivery.')
+print('ANTIPATTERNS none of five forbidden command forms in eleven direct argv commands; concrete future selector assertions still require distinct frozen-bundle review. Actual future product64 and selector1 must remain separate; exact response and successful paired controls required, not bare nonzero.')
+print('NO_RUNTIME no product/runner/SBCL/preflight/acceptance/compliance/install/probe execution')
