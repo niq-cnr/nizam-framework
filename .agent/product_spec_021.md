@@ -104,8 +104,10 @@ All nine actual mandatory attempts remain recorded, including original command 7
 exit 1; this is neither a single-head run nor an all-attempts-pass claim.
 The valid focused readset measured **168 → 8 real Git launches**; Source SHA-256 is
 `5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d`.
-Both long suites retained all 48 cases in order plus one auxiliary observer message;
-the fixture suite retained 166 files and separately ran four new hook checks.
+Default check 5 ran all 48 cases in order plus one auxiliary observer message.
+Fixture check 6 ran the two selected Workflow Assurance cases `ci-candidate-bound`
+and `ci-blocker-rejected`, one auxiliary observer message, 166 fixture files and
+four new hook checks.
 Root capture exited 0 with 14,645 physical rows and 239 installed rows unchanged;
 QA preservation was 14,553/239 or 14,595/239 at its respective revisions.
 These local observations establish no elapsed-time speedup or comparative result.
