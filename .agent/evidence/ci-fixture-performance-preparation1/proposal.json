@@ -1,0 +1,144 @@
+{
+  "status": "HELD future maintenance proposal; no phase/feature activation, implementation, benchmark or gate verdict",
+  "role": "Independent Planner, ci-fixture-performance-preparation attempt1/3",
+  "source_revision": "3e98e043eed552b733374cab377098d5444c94a8",
+  "authority": {
+    "scope": "niq-cnr/nizam-framework only, outside any ecosystem",
+    "release_counter": ".agent/run_state.json#/circuit_breaker/ci-fixture-performance-preparation",
+    "counter_observed": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-read-only-adjacent-performance-planning"
+    },
+    "governance": "Installed .nizam/NIZAM.json then .nizam/tools/SKILL.md; installed standard/AGF.md and methodology/00_planning.md; root AGENTS.md; current approved129 scope inspected. No shared Root file changed."
+  },
+  "decision": "One narrow candidate: remove only the transient full materialization of ControlsFixture.exp before its existing sparse readset is applied. Keep ControlsFixture.root fully materialized. Exact safe Git command sequence is deliberately left to the separately reviewed contract and independent tests.",
+  "static_findings": [
+    {
+      "ref": "fixture",
+      "finding": "Fresh root uses shared object clone --no-checkout, then full checkout before private F0/F1. F0 has ambient parent and only adds the meaningful UTF8 private input; F1 has only F0 parent, changes that input and optional designated source-contract mutation. Do not change these anchors or tree assertions."
+    },
+    {
+      "ref": "assessment_and_proof",
+      "finding": "assess_repository enumerates every anchored tracked blob, validates full index path set and rejects unknown untracked/ignored paths, then reads every physical tracked file and its executable mode. Explicit unknown_dependencies must be empty. Full root materialization is therefore required by actual115 semantics; earlier sparse root checkout is unsound."
+    },
+    {
+      "ref": "fixture",
+      "finding": "Seed variants reuse the positive root, check origin/ancestry and every source_paths regular nonsymlink file, and independently recheck assessed physical bytes/modes. source-contract variants intentionally bypass seed and get fresh root assessment. Neither source_paths nor physical assertions may be narrowed."
+    },
+    {
+      "ref": "fixture",
+      "finding": "The separate exp worktree currently gets a full worktree add checkout, immediately followed by sparse-checkout of /tools/, /schema/, /.github/, the prompt template, /.agent/contracts/, /.agent/run_state.json and CONTROL_PREFIX. Only this transient extra materialization is the candidate. No code executes between these two calls, but final worktree index/config/readset still need equivalence proof."
+    },
+    {
+      "ref": "assessment_and_proof",
+      "finding": "Actual A10 verify/transition APIs execute against exp. Their _receipt_candidate checks current protected source/tests/tools bytes/modes and unowned contract bytes as well as Git ancestry/tree/origin. Existing exp patterns include those physical inputs. Object-only ref resolution elsewhere does not authorize removing physical checks."
+    },
+    {
+      "ref": "fixture",
+      "finding": "stage_checkout independently commits exact capture/verify fixed CLI selection on root. exp commits only experiment-prefix outputs; packet creation, three trial representations, provenance refs, inventory and real bundle ancestry remain actual Git operations. Intermediate protected-mode/source drift, unreachable pack objects and malformed transport negatives must stay effective."
+    },
+    {
+      "ref": "fixture",
+      "finding": "controls_snapshot walks root and parent (including exp), recording file bytes/full modes/nlinks, root status/HEAD/refs and outside sentinel. Every positive/negative observation compares snapshots; controls_variant removes its exp, restores the original positive prefix/selection, commits, and reverifies. No snapshot filtering or assertion waiver is proposed."
+    },
+    {
+      "ref": "assessment_and_proof",
+      "finding": "_ControlsProof.raw deliberately rechecks physical path components/type/link count on every call despite per-instance immutable object caches. Existing receipt fresh-mutation tests and all physical negatives remain mandatory. No passed-verdict, cross-call/root cache or hardlink reuse is proposed."
+    }
+  ],
+  "proposed_scope": {
+    "change": "Fixture setup for the later exp worktree only; create its existing sparse physical state directly instead of materializing and deleting unrelated ambient files first. Preserve complete object history/index/tree and same actual_source anchor, assessed inputs, final included paths and modes. Worktree configuration must not contaminate seed/root sparse settings.",
+    "non_goals": [
+      "No sparse initial root, Source omission, reduction of unknown dependency observations, physical assertion weakening, hardlink/reflink-based shared write assumptions or hidden retained evidence.",
+      "No product API/cache/receipt semantics, snapshot/inventory/seed lifecycle changes, runner pass reuse, test skipping, selector reordering, workflow scheduling/job changes or changing the immutable installed payload.",
+      "No product-facing workflow additions, new current controls-ready proof, speedup claim, cost ceiling, new phase134/022, current020 dependency or budget transfer."
+    ]
+  },
+  "one_bounded_future_measurement": {
+    "entry_gate": "Only after reviewed planning/contract/allocation, two independent pre-code gates and independently frozen focused controls. No workload runs in this preparation. Pin exact baseline and one candidate diff, ambient Git tree/history, Git/Python/OS versions, environment, command argv, host, start/end, PID and actual exit before launch. Fresh isolated owned directories; no concurrent benchmark, passed cache or retry loop.",
+    "bound": "One matched baseline/candidate pair of focused real ControlsFixture construction with one positive, one seed-backed deliberate negative followed by restored positive, and one source-contract fresh-root discriminator per arm. Same selected cases and actual ambient data; compare complete output/provenance invariants while allowing predeclared namespace/path/commit-time differences. This is a setup measurement, not synthetic latency standing in for the full bank.",
+    "materialization_metric": "For baseline capture exp filesystem inventory immediately after worktree add and after sparse setup; for treatment capture immediately after its first materialization and after setup. Record regular file count, actual byte sum, modes/nlinks/parents and included/excluded path sets, keeping inventory output outside fixtures. Require treatment never materializes the ambient paths omitted by the unchanged final sparse patterns, and require final sparse path/byte/mode inventory equality. Same full root source_paths must exist in both arms. Do not count .git object sharing as worktree file savings.",
+    "time_and_cost_metric": "Measure constructor, exp setup and whole focused command with monotonic wall time and actual process CPU/I/O where observable, naming which children/counters are included. Retain raw per-arm data and measurement overhead. A single pair can demonstrate fewer transient materialized paths/bytes and report observed local latency; it cannot establish stable hosted speedup, billed cost or comparative superiority. If latency does not improve, state it; no extrapolation from bytes alone.",
+    "negative_controls": "Independent control must make one currently required exp physical input absent and show the intended missing/current-input failure; a root unknown tracked-file byte/mode drift and unknown untracked/ignored input must still fail assessment. Delete a nonselected root source_paths entry before seed reuse and require the unchanged seed assertion to fail. Restore and require actual positives. Exercise source-contract nonseed branch. Setup failures remain exit2, never semantic rejection or intended red.",
+    "acceptance_after_focused_pair": "Before promotion, separately authorized fresh acceptance must retain exact ordered default48 plus its auxiliary; fixture shell runs its two named WA cases plus auxiliary and 166/166 file accounting; both hosted shell invocations must preserve 166/166 and the four separate receipt controls (real-git-count-reduction, semantic-equivalence, fresh-mutations, literal-paths-and-modes). Retain nine maintenance Source pins, current explicit contracts/seed discrimination, all unknown-input and physical mutations, full trial/checkout/pack provenance, cache freshness, original/restore checks and existing scope guards except the explicitly reviewed fixture delta. Independent test-author/review gates must refresh that frozen delta; no edit to acceptance by the implementation author.",
+    "preservation": "Per actual command capture complete tracked/ignored/untracked physical bytes, full modes/nlinks and parent types, installed payload inventory, HEAD/tree/origin/refs/status and outside sentinel before/after using the existing capture discipline by immutable reference. Fresh owned fixtures may mutate; exercised checkout and outside files must be equal. Retain stdout/stderr/exits and exact exercised revision by path. All existing provenance assertions must execute; no normalized success verdict or cached passing result.",
+    "stop": "If sparse configuration changes root/seed settings, any physical/provenance discriminator disappears, no materialization reduction occurs or unknown required path is encountered: reject candidate and return to review. No automatic repair/retry or broader optimization."
+  },
+  "existing_observations_and_limits": {
+    "profile": "Existing attribution1 is exactly one cProfile ci-candidate-bound run at5667864732b40d79a0ddf5d98e20175a82d88f5d, actual0,3077.414943652926s. It reports148 ControlsFixture constructions and654 snapshots; this is the candidate selector including its variants, not default48 or whole CI. Parent cumulative waits overlap and are not child CPU or per-checkout attribution. It does not measure this proposed intervention.",
+    "CI": "Retained run38842030473/head19efbca54be6b2d58f637b22ee4b4185cf32b342 fixture job succeeded02:45:13-04:18:03UTC. Shell02:45:38-03:31:45 and default48 step03:31:45-04:18:01 on2026-10-16. These uncontrolled aggregate observations motivate investigation only; no causal checkout attribution or speedup follows. Current run38851734070 is unqueried here; parent owns its disposition.",
+    "unknown": "Actual transient omitted file bytes and checkout-specific time/cost at this revision are unmeasured. No current337MB figure or current retained artifact size was measured. Git no-checkout/sparse setup behavior and worktree-local configuration must be observed by later independent controls; this proposal does not assert an executable command sequence."
+  },
+  "DAG_placement": "Held independent future maintenance candidate outside normative020/129-132 dependencies. It must not delay independent129 fixture recovery or waive current CI. A later operator/Orchestrator decision may authorize a reviewed plan, independent contract gates, budget and isolated implementation; actual integration waits for current delivery and its own required complete gates. No feature id or canonical DAG is allocated here.",
+  "accounting": "This proposal, its static preparation and later review/capture are separate unmeasured/unallocated future-maintenance preparation, not free work and not charged to133 or129/020. Preserve historical133 original2000/ceiling2600 failed cost6220 throughc3345ff4a7a4a1c61673fa046a4801cf13a19f03 unchanged. Any future allocation counts preparation and process once; no rebaseline/headroom transfer.",
+  "pinned_references": {
+    "fixture": {
+      "path": "tools/test_workflow_assurance.py",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13",
+      "locator": "1591-1644; 1685-1692; 1716-1739; 1786-1831; 1889-1906; 1956-2136; 2340-2386; 2448-2501"
+    },
+    "assessment_and_proof": {
+      "path": "tools/workflow_assurance.py",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+      "locator": "128-136; 170-180; 193-250; 813-883; 1351-1454"
+    },
+    "fixture_banks": {
+      "path": "tools/fixtures_self_test.sh",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+      "locator": "1096-1175"
+    },
+    "receipt_controls": {
+      "path": "tools/test_receipt_candidate_batching.py",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "d4d2e4df39ffabc24135d414e478c417bfab28a8914aaa6d91a90fe0ebb0bc44",
+      "locator": "18; 164-299"
+    },
+    "source9_and_CI": {
+      "path": ".github/workflows/compliance.yml",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "040b5ab4b40643050102c1c70379a18f33be8a60256ec6a5419a2c270e53197b",
+      "locator": "74-103; 112-131"
+    },
+    "capture": {
+      "path": ".agent/evidence/123/fresh-qa-capture1.py",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+      "locator": "48-94"
+    },
+    "historical_profile": {
+      "path": ".agent/evidence/performance-maintenance/attribution1/report.json",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "7b7314e0477fff5affd6d92e00d4d23f4db6f34ac7d8f0a74f9d24c4311a066d",
+      "locator": "whole report; exact candidate-profile1.execution.json is adjacent raw frame"
+    },
+    "historical_CI": {
+      "path": ".agent/evidence/133/ci/pr105-terminal2/terminal-jobs.stdout.txt",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "ad7d4835e69652deec68204cd1e5c055aefb50ad5e1fbc6048539176d032c617",
+      "locator": "jobs[name=fixtures_self_test], steps7/8"
+    },
+    "coverage_correction": {
+      "path": ".agent/validator/133-closeoutdocs2.json",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "7e83b48b814e176d8796bb3b49755a7aad8c6f41a9ebc8ec2498d685df252595",
+      "locator": "whole verdict"
+    },
+    "contract_boundary": {
+      "path": ".agent/contracts/123.json",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5",
+      "locator": "scope; independent acceptance"
+    },
+    "current_contract": {
+      "path": ".agent/contracts/129.json",
+      "revision": "3e98e043eed552b733374cab377098d5444c94a8",
+      "sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+      "locator": "approved scope and non_goals"
+    }
+  },
+  "checkpoint": "Static source analysis only. One own proposal file; no benchmarks, full banks, native probes, network, source edits, canonical planning/contract/budget/lifecycle/counter edits or installed edits."
+}
