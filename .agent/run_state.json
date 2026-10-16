@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T06:09:52.141937+00:00",
+  "updated_at": "2026-10-16T06:10:53.596884+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3272,11 +3272,35 @@
       "root_admission": ".agent/evidence/129/recovery-root-admission1/admission.execution.json"
     },
     "133-main-root-admission": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "released-observed-receipt-field-correction2",
+      "proof_revision": "b29d32f01bc4000fc1584231b66584e615bd2a73",
+      "scope": "Read-only strict307rawindex/76frames/qualified541370-byte3190-line log/currentpins/5success/fullcoverage andnormalmerge proof. Preserve originalwatchactual1 asobservationfailure. No log/test/CIrerun or currentcontrolsready/lifecycle/releaseclaim. Later postc334admin explicitlyunmeasured; originalfailed3024+3196=6220 unchanged.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "released-exact-terminal-main-proof-admission",
+          "proof_revision": "b29d32f01bc4000fc1584231b66584e615bd2a73",
+          "scope": "Read-only strict307rawindex/76frames/qualified541370-byte3190-line log/currentpins/5success/fullcoverage andnormalmerge proof. Preserve originalwatchactual1 asobservationfailure. No log/test/CIrerun or currentcontrolsready/lifecycle/releaseclaim. Later postc334admin explicitlyunmeasured; originalfailed3024+3196=6220 unchanged."
+        }
+      ],
+      "failure1": {
+        "actual_exit": 1,
+        "pid": 3929774,
+        "frame": ".agent/evidence/133/ci/main-root-admission1/admission.execution.json",
+        "reason": "Root receipt parser assumed checkout; actual unchanged Source9 receipt field is checkout_sha. Passed307rawhash/76frame/log checks before KeyError. No CI/log/test rerun."
+      },
+      "strategy": "Correct only observed Source9field checkout\u2192checkout_sha in staticadmission; preserve all old frame/input/output and all strict checks."
+    },
+    "129-postsource-group-fixture-native-qualification": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-exact-terminal-main-proof-admission",
-      "proof_revision": "b29d32f01bc4000fc1584231b66584e615bd2a73",
-      "scope": "Read-only strict307rawindex/76frames/qualified541370-byte3190-line log/currentpins/5success/fullcoverage andnormalmerge proof. Preserve originalwatchactual1 asobservationfailure. No log/test/CIrerun or currentcontrolsready/lifecycle/releaseclaim. Later postc334admin explicitlyunmeasured; originalfailed3024+3196=6220 unchanged."
+      "status": "released-one-fixed-native-S1-qualification-after-candidate-commit",
+      "owner": "separate Evaluator author2",
+      "scope": "One direct SBCL no-init qualification of exact committed new private owned-descendant spawn expression only. Prove real native primitive/process PID/PPID/PGID/nonce/TERM-ignore readiness and bounded owned-group TERM/KILL/death within15s, unrelatedsentinel survives and fullcheckout/installed preservation. No runtime/controller/selector run, Source repair or acceptance verdict. Preserve original exhaustednative3/3; new bounded postsourcearchitectural S1fixture qualification under standinguserstrategicself-improvement authority, not silent fourth originalattempt. Stop unexpectedfailure for Root.",
+      "accounting": "Counts existing020test/process once; no allowance/rebaseline or budgetpass."
     }
   },
   "history": [
