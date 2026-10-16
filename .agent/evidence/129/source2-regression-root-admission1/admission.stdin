@@ -1,0 +1,15 @@
+
+from pathlib import Path
+import json,hashlib,gzip,subprocess
+r=Path.cwd();b=r/'.agent/evidence/129/source2-regression-red1';sha=lambda x:hashlib.sha256(x).hexdigest();load=lambda n:json.loads((b/n).read_text());assert sha((b/'report.json').read_bytes())=='3bda1f9596be908106961723ccc8dc0651418c73e32b009c0b11bdcf5cc71503' and sha((b/'index.json').read_bytes())=='fd6aee8c372b0254bd3b04d1952e46861d62bb3d8205907ece756ba914a173f5'
+for p,h in load('index.json').items():assert sha((r/p).read_bytes())==h
+v=load('report.json');rev='fde4115b4468b7b9da412b1078294345a4f4a442';assert v['candidate']==rev
+for p,h in v['bindings_sha256'].items():assert sha(subprocess.check_output(['git','show',rev+':'+p]))==h
+for name,exitcode,pid in [('admission',0,3995648),('admission-driver',0,3995549),('group-death',0,4000632),('group-death-driver',1,4000574)]:
+ f=load(name+'.execution.json');assert f['actual_exit']==exitcode and f['child_pid']==pid and f['exercised_revision']==rev and not f['timed_out']
+ for k in ['stdout','stderr']:
+  x=(b/Path(f[k]['path']).name).read_bytes();assert sha(x)==f[k]['sha256'] and len(x)==f[k]['bytes']
+for name in ['admission','group-death']:
+ x=json.loads(gzip.decompress((b/(name+'.preservation-before.json.gz')).read_bytes()));y=json.loads(gzip.decompress((b/(name+'.preservation-after.json.gz')).read_bytes()));assert x==y and x['head']==rev and x['status']=='' and len(x['rows'])==16355 and sum(p['path'].startswith('.nizam/') for p in x['rows'])==239
+assert (b/'group-death.stderr.txt').read_bytes()==b'' and (b/'group-death.stdout.txt').read_text().rstrip().endswith('PASS termination-ends-generation')
+print(json.dumps({'admitted':'actual Source2 admissiongreen and unexpected terminationpositive only','selector_exits':[0,0],'driver_exits':[0,1],'S1_semantic_red':False,'S2_executed':False,'Source3_released':False},sort_keys=True))
