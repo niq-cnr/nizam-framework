@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T05:21:21.997571+00:00",
+  "updated_at": "2026-10-16T05:29:39.161329+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3105,14 +3105,25 @@
     "133-delivery-supplement-measurement": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-once-only-disjoint-measurement1",
+      "status": "raw-measurement-and-Root-admission-passed",
       "endpoint": "c3345ff4a7a4a1c61673fa046a4801cf13a19f03",
       "heads": [],
       "inventory": ".agent/evidence/133/delivery-supplement1/final-inventory.json",
       "inventory_sha256": "0b02c39e6d9f06fbb0922136328b9229c5bd2435edfb3c53a89f31464a0daeed",
       "helper": ".agent/evidence/133/delivery-supplement1/measure-v2.py",
       "helper_sha256": "6080ad601b9afadf187e85eebe759c63b60db7d056eff12a3008717230a160a4",
-      "scope": "One actual helper main execution at exact END using reviewed inventory; frozen old measurement NEVER rerun. Derive max disjoint snapshot/chronological133 views, add once to historical3024; retain failed budget/original2000/2600. Fail closed unknown/nonautomatic merge or attribution; no silent helper/inventory repair/rerun. Raw report/capture outside frozen clone, full preservation. Later admin remains separate unmeasured."
+      "scope": "One actual helper main execution at exact END using reviewed inventory; frozen old measurement NEVER rerun. Derive max disjoint snapshot/chronological133 views, add once to historical3024; retain failed budget/original2000/2600. Fail closed unknown/nonautomatic merge or attribution; no silent helper/inventory repair/rerun. Raw report/capture outside frozen clone, full preservation. Later admin remains separate unmeasured.",
+      "raw_revision": "e5cfb3bbaf2b89f64663fd95319fd3dab9d3c4cc",
+      "actual_exit": 0,
+      "pid": 3733617,
+      "root_admission": ".agent/evidence/133/delivery-supplement1/root-admission1/admission.execution.json",
+      "root_actual_exit": 0,
+      "root_pid": 3765385,
+      "snapshot": 3180,
+      "chronological": 3196,
+      "disjoint_supplement": 3196,
+      "cumulative_retained_lines": 6220,
+      "report_sha256": "388ebd62e35c83c7b727db10c79c82f3c8771e8672406095d49d3d5dabe3ab9b"
     },
     "129-postsource-fixture-recovery-review": {
       "attempts": 1,
@@ -9041,6 +9052,11 @@
       "at": "2026-10-16T05:21:21.997571+00:00",
       "event": "129-postsource-frozen-fixture-false-fail-review-released",
       "detail": "Root read frozen live_runtime_guards uses stub.home/release-stub while CLI root is stub.state, and originalfe59/current2e8 both require gate path within root. Actual submit PID3731082 exit64, selector2. Preserve all original completed3/3 author/review history. New bounded post-source diagnosis addresses newly reached branch; no actor/counter rename to hide a fourth retry. Author correction/review/refreeze/refreshed actual baseline would follow only a source-backed independent finding."
+    },
+    {
+      "at": "2026-10-16T05:29:39.161329+00:00",
+      "event": "133-disjoint-cost-supplement-admitted-without-budget-reset",
+      "detail": "Single actual measurement0/PID3733617 at c3345ff4; Root admission0/PID3765385 verified12 indexed artifacts, raw report/input, 50 empty automatic merges,2454 rows,15810/239 equal preservation. max(snapshot3180, chronological3196)=3196; immutable historical3024 plus supplement once=6220 throughEND. Original2000/2600 failed gate and3024 historical total preserved; archive adds separate supplementary fields only. Later admin/main proof remains unmeasured; current020 allocation untouched."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10263,11 +10279,17 @@
       "portability_recovery": "Standinguserauthority appliednarrowlyperE133/ci-portability1/recovery-plan.json; preservefailedbaseline andnewcostsupplement, all6newCI+main5 beforedeliveryclaim."
     },
     "post_endpoint_delivery": {
-      "status": "bounded test-portability recovery; disjoint supplement pending",
+      "status": "disjoint repair/delivery supplement measured; later administration remains unmeasured",
       "historical_endpoint_actual": 3024,
       "historical_endpoint": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
       "counting": "Retainallnew133deliveryauthoredwork separately andcountdisjointnewworkonceafterboundedrecovery; no rerunoldmeasurement, rebaseline, budgetpass orfreework. Currenttotalnotyetfullymeasured.",
-      "recovery_plan": ".agent/evidence/133/ci-portability1/recovery-plan.json"
+      "recovery_plan": ".agent/evidence/133/ci-portability1/recovery-plan.json",
+      "endpoint": "c3345ff4a7a4a1c61673fa046a4801cf13a19f03",
+      "supplement": 3196,
+      "cumulative_retained_lines_through_endpoint": 6220,
+      "ceiling_overage_through_endpoint": 3620,
+      "evidence": ".agent/evidence/133/delivery-supplement1/measurement1/receipt.json",
+      "later_administration": "Final inventory/capture/admission, main CI evidence and later docs/administration are separate post-endpoint unmeasured work. No recursive baseline, new allowance or full eventual-cost claim."
     }
   }
 }
