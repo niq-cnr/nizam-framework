@@ -21,6 +21,9 @@ def metadata():
     quote = state['handover']['dogfooding_authorization_verbatim']
     assert quote in (ROOT / 'docs/planning/HANDOVER-2026-10-16.md').read_text()
     assert quote in (ROOT / 'docs/planning/HANDOVER.md').read_text()
+    bar = state['handover']['delivery_bar_verbatim']
+    for name in ['HANDOVER.md', 'HANDOVER-2026-10-16.md']:
+        assert bar in (ROOT / 'docs/planning' / name).read_text()
     schema = json.loads((ROOT / '.nizam/schema/frontmatter.schema.json').read_text())
     for name in ['HANDOVER.md', 'HANDOVER-2026-10-16.md', 'ROADMAP.md']:
         raw = (ROOT / 'docs/planning' / name).read_text()
