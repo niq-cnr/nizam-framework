@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-16T15:24:01Z",
+  "updated_at": "2026-10-16T15:24:31Z",
   "circuit_breaker": {
     "130-contract": {
       "attempts": 2,
@@ -13,6 +13,12 @@
       "mode_a_verdict": ".agent/validator/130-mode-a.json",
       "mode_a_r2_verdict": ".agent/validator/130-mode-a-r2.json",
       "contract_review": ".agent/qa/130-contract-review.json"
+    },
+    "130-implementation": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "in-progress",
+      "scope": "Implement only the approved contract 130 files. No sixth 129 source attempt and no budget increase."
     },
     "000-contract": {
       "attempts": 1,
@@ -10123,6 +10129,13 @@
       "contract_id": "130",
       "attempt": 2,
       "detail": "Mode A round 2 .agent/validator/130-mode-a-r2.json and contract review .agent/qa/130-contract-review.json both have final_verdict.approved true and empty issues, missing_acceptance_coverage, and unsupported_claims. Contract 130 status is approved. Revisions stay 1. Implementation has not started. Allocation 650/2100/7350/9555 is not raised. Full-live qualification remains 131/132."
+    },
+    {
+      "at": "2026-10-16T15:24:31Z",
+      "event": "130-implementation-attempt-started",
+      "contract_id": "130",
+      "attempt": 1,
+      "detail": "Implementation attempt 1 of 3 starts from approved contract 130 at 92484282. Scope is tools/runtime_session.py and tools/test_runtime_session.py only, plus implementation evidence under .agent/evidence/130/. Feature 129 behaviors stay intact. Allocation is not raised. Full-live qualification remains 131/132."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10578,7 +10591,7 @@
       }
     ]
   },
-  "last_action": "Approved contract 130 after Mode A round 2 and the independent contract review. Implementation has not started.",
+  "last_action": "Started feature 130 implementation attempt 1 of 3 against approved contract 130.",
   "completed_contract_ids": [
     "099",
     "103",
