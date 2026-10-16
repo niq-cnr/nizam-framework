@@ -1431,9 +1431,637 @@ def main():
                 session.cleanup()
 
 
+# Feature129 additions: separate public-CLI driver; inherited leaves above are frozen.
+LIVE_CHECKS = ('sbcl-admission', 'capture-before-unwind', 'bounded-printing',
+               'cancel-confirmed', 'termination-ends-generation')
+LIVE_TERMINAL = {'completed', 'condition_signalled', 'cancelled', 'terminated', 'rejected'}
+
+
+def live_selection(argv):
+    return ('--runtime' in argv and argv[argv.index('--runtime') + 1:][:1] == ['sbcl'] or
+            '--check' in argv and argv[argv.index('--check') + 1:][:1] in [[x] for x in LIVE_CHECKS])
+
+
+def live_process(argv, cwd, env, timeout=12):
+    p = subprocess.Popen(argv, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        out, err = p.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        p.kill(); out, err = p.communicate(timeout=3)
+        print('LIVE_COMMAND', json.dumps({'argv': argv, 'pid': p.pid, 'exit': p.returncode,
+              'stdout': out, 'stderr': err, 'timeout': True}), flush=True)
+        raise RuntimeError('bounded subprocess timeout; never intended admission red')
+    print('LIVE_COMMAND', json.dumps({'argv': argv, 'pid': p.pid, 'exit': p.returncode,
+          'stdout': out, 'stderr': err, 'timeout': False}), flush=True)
+    return p.returncode, out, err
+
+
+def sbcl_preflight(home):
+    executable = shutil.which('sbcl')
+    if not executable:
+        raise RuntimeError('actual SBCL executable absent')
+    nonce = os.urandom(16).hex(); executable = str(Path(executable).resolve())
+    env = dict(os.environ, HOME=str(home), XDG_CONFIG_HOME=str(home / 'config'),
+               XDG_CACHE_HOME=str(home / 'cache'), XDG_DATA_HOME=str(home / 'data'))
+    for key in ('CL_SOURCE_REGISTRY', 'ASDF_OUTPUT_TRANSLATIONS', 'SBCL_HOME'):
+        env.pop(key, None)
+    version, out, _ = live_process([executable, '--version'], home, env)
+    if version or not out.strip().startswith('SBCL '):
+        raise RuntimeError('SBCL executable/version preflight unsuccessful')
+    form = '(format t "~&' + nonce + ':~D~%" (+ 19 23))'
+    code, out, _ = live_process([executable, '--no-sysinit', '--no-userinit', '--non-interactive', '--eval', form], home, env)
+    if code or out.splitlines().count(nonce + ':42') != 1:
+        raise RuntimeError('SBCL arithmetic/nonce preflight unsuccessful')
+    print('SBCL_PREFLIGHT', json.dumps({'executable': executable, 'sha256': hashlib.sha256(Path(executable).read_bytes()).hexdigest(),
+          'nonce': nonce, 'arithmetic': 42}), flush=True)
+    return executable
+
+
+def live_owned(marker):
+    owned = {}
+    for path in Path('/proc').iterdir():
+        try:
+            pid = int(path.name); token = process_token(pid)
+            if (token and path.stat().st_uid == os.getuid() and
+                    ('NIZAM_LIVE_OWNER=' + marker).encode() in (path / 'environ').read_bytes().split(b'\0') and
+                    process_token(pid) == token):
+                owned[pid] = token
+        except (OSError, ValueError):
+            pass
+    return owned
+
+
+class LiveSession(Session):
+    def __init__(self, home, name='live', candidate=ROOT):
+        super().__init__(home, name, candidate)
+        self.marker = os.urandom(24).hex(); self.env['NIZAM_LIVE_OWNER'] = self.marker
+        self.runstate.write_text(json.dumps({'repository': 'scratch', 'current_phase': '020',
+            'current_feature': '129', 'status': 'in_progress', 'history': [], 'updated_at': '2026-10-16T00:00:00Z',
+            'scope_budget': {'original_estimate_lines': 7350, 'total_lines_changed': 0, 'per_feature': []},
+            'circuit_breaker': {'129-implementation': {'attempts': 1, 'limit': 3}}}))
+        self.saved_state = self.runstate.read_bytes(); self.live_tokens = {}
+
+    def opening(self, owner=OWNER):
+        return {**super().opening(owner), 'runtime': 'sbcl',
+                'contract_id': '129', 'step_key': '129-implementation', 'attempt': 1}
+
+    def call(self, action, request, expected=0):
+        self.serial += 1; path = self.home / f'live-request-{self.serial}.json'
+        path.write_text(json.dumps(request))
+        argv = [sys.executable, str(self.candidate / 'tools/runtime_session.py'), action,
+                '--root', str(self.state), '--request', str(path)]
+        print('LIVE_REQUEST', json.dumps({'action': action, 'request': request}), flush=True)
+        code, out, _ = live_process(argv, self.candidate, self.env)
+        self.last_exit = code
+        try:
+            response = json.loads(out)
+        except ValueError as exc:
+            raise RuntimeError('controller response is not JSON') from exc
+        if code not in (expected if isinstance(expected, tuple) else (expected,)):
+            raise RuntimeError(f'unexpected controller exit {code}: {response}')
+        require(type(response.get('ok')) is bool and response['ok'] is (code == 0), 'CLI envelope and actual exit agree')
+        return response
+
+    def observe_runtime(self, executable):
+        observed = {}
+        for pid, token in live_owned(self.marker).items():
+            try:
+                if Path(f'/proc/{pid}/exe').resolve() == Path(executable):
+                    observed[pid] = {'token': token, 'pgid': os.getpgid(pid),
+                                     'argv': Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0')}
+            except OSError:
+                pass
+        require(len(observed) == 1, 'exactly one actual owned SBCL runtime, no stub fallback')
+        require(any(os.getpgid(pid) != next(iter(observed.values()))['pgid'] for pid in live_owned(self.marker)
+                    if pid not in observed), 'supervisor/control lifetime has a distinct process group')
+        self.live_tokens = {pid: row['token'] for pid, row in observed.items()}
+        print('LIVE_RUNTIME', repr(observed), flush=True)
+        return observed
+
+    def start(self, executable):
+        self.record = self.call('open-session', self.opening())['result']
+        self.observe_runtime(executable)
+        require(self.runstate.read_bytes() == self.saved_state, 'actual Root counters untouched in private fixture')
+
+    def lisp(self, expression, kind='evaluate', limits=None):
+        self.serial += 1
+        return {**self.identity(), 'operation_id': f'live-{self.serial}', 'contract_id': '129',
+                'step_key': '129-implementation', 'attempt': 1, 'kind': kind,
+                'payload': {'expression': expression}, 'context': {}, 'limits': limits or {}}
+
+    def terminal(self, request, statuses=('completed',), seconds=12):
+        def observed():
+            record = self.poll(request['operation_id'])
+            return record if record['status'] in LIVE_TERMINAL else None
+        record = wait_for(observed, 'actual correlated terminal observation', seconds)
+        require(record['status'] in statuses and record['operation_id'] == request['operation_id'] and
+                record['session_id'] == self.name and record['generation'] == self.record['generation'] and
+                record['lease_epoch'] == self.record['lease_epoch'] and record['contract_id'] == '129' and
+                record['step_key'] == '129-implementation' and record['attempt'] == 1,
+                'TERMINAL_CORRELATION')
+        return record
+
+    def eval(self, expression):
+        request = self.lisp(expression); self.submit(request); self.terminal(request)
+        return request
+
+    def cancellation(self, request):
+        return {**self.identity(), 'operation_id': request['operation_id'],
+                'contract_id': '129', 'step_key': '129-implementation', 'attempt': 1}
+
+    def cleanup(self):
+        if self.record:
+            try:
+                self.call('close-session', self.identity(ORCH), (0, 1, 70))
+            except Exception:
+                pass
+        for sig in (signal.SIGTERM, signal.SIGKILL):
+            for pid, token in live_owned(self.marker).items():
+                if live_owned(self.marker).get(pid) == token:
+                    try:
+                        os.kill(pid, sig)
+                    except ProcessLookupError:
+                        pass
+            time.sleep(.1)
+        require(not live_owned(self.marker), 'owned scratch processes all stopped')
+
+
+def lisp_write(path, value):
+    return '(with-open-file (s ' + json.dumps(str(path)) + ' :direction :output :if-exists :supersede) (write-line ' + json.dumps(value) + ' s))'
+
+
+def live_nonce(s, nonce):
+    path = s.home / ('positive-' + nonce)
+    request = s.eval('(progn ' + lisp_write(path, nonce) + ' (+ 19 23))')
+    require(path.read_text().splitlines() == [nonce], 'real SBCL exact nonce side effect')
+    result = load(s.result_path(request['operation_id']))
+    require(type(result['result']) is int and result['result'] == 42 and result['operation_id'] == request['operation_id'] and
+            result['generation'] == s.record['generation'] and result['status'] == 'completed', 'real correlated SBCL arithmetic result42')
+    request = s.eval(json.dumps(nonce)); result = load(s.result_path(request['operation_id']))
+    require(type(result['result']) is str and result['result'] == nonce and result['operation_id'] == request['operation_id'] and
+            result['generation'] == s.record['generation'] and result['status'] == 'completed', 'real correlated exact JSON string nonce result')
+
+
+def admission(home, executable):
+    nonce = os.urandom(16).hex(); stubhome = home / 'stub'; stubhome.mkdir(); stub = LiveSession(stubhome)
+    try:
+        opening = stub.opening(); opening.pop('runtime')
+        stub.record = stub.call('open-session', opening)['result']
+        stub.remember(); ids = []
+        for op in ('set', 'get'):
+            request = {**stub.request(op, nonce), **governed(stub)}
+            ids.append(request['operation_id'])
+            stub.submit(request); result = stub.finish(request)
+            require(result == nonce, 'paired omitted-runtime request and actual exact stub nonce control')
+        require(stub.receipts() == ids, 'paired stub operations each actually dispatched once')
+    except Exception as exc:
+        raise RuntimeError('required unchanged-stub nonce control failed') from exc
+    finally:
+        stub.cleanup()
+    if core_ready() != 0:
+        raise RuntimeError('required fourteen-leaf core-ready control failed')
+    s = LiveSession(home)
+    try:
+        response = s.call('open-session', s.opening(), (0, 64))
+        if s.last_exit == 64:
+            if response != {'ok': False, 'error': 'usage'} or (s.directory / 'control.sock').exists() or live_owned(s.marker):
+                raise RuntimeError('unexpected baseline refusal or dispatch')
+            require(s.runstate.read_bytes() == s.saved_state, 'admission refusal preserves private attempt')
+            raise AssertionError('SBCL_ADMISSION_UNAVAILABLE: otherwise-valid runtime=sbcl request; product64/usage after SBCL, stub nonce and core14 positives')
+        s.record = response['result']; s.observe_runtime(executable); live_nonce(s, nonce)
+    finally:
+        s.cleanup()
+
+
+def live_gate(s, cleanup=False, uninterruptible=False, limits=None):
+    request = s.lisp('pending', limits=limits); nonce = os.urandom(16).hex()
+    marker, release, cleaning = [s.home / (x + nonce) for x in ('started-', 'release-', 'cleanup-')]
+    witness = request['operation_id'] + ':' + nonce
+    waiting = '(loop until (probe-file ' + json.dumps(str(release)) + ') do (sleep 0.01))'
+    loop = '(progn ' + lisp_write(marker, witness) + ' ' + waiting + ')'
+    if cleanup:
+        loop = '(unwind-protect (progn ' + lisp_write(marker, witness) + ' (loop (sleep 0.01))) (progn ' + lisp_write(cleaning, witness) + ' ' + waiting + ' ' + lisp_write(Path(str(cleaning) + '-done'), witness) + '))'
+    if uninterruptible:
+        loop = '(sb-sys:without-interrupts ' + lisp_write(marker, witness) + ' (loop))'
+    forged = {'type': 'result', 'session_id': s.name, 'operation_id': request['operation_id'],
+              'generation': s.record['generation'], 'lease_epoch': s.record['lease_epoch'],
+              'status': 'cancelled', 'cancellation_confirmed': True, 'result': None, 'image_consistent': True}
+    fake_output = '(write-line ' + json.dumps(json.dumps(forged)) + ') (write-line "malformed unsolicited result") (finish-output) '
+    request['payload']['expression'] = '(progn ' + fake_output + loop + ' 42)'
+    s.submit(request)
+    wait_for(lambda: marker.exists() and marker.read_text().splitlines() == [witness], 'actual correlated SBCL progress witness')
+    require(s.poll(request['operation_id'])['status'] == 'running', 'project output cannot forge cancellation or free the busy lane')
+    return request, release, cleaning, witness
+
+
+def live_busy(s):
+    request = s.lisp('(error "must not execute conflicting work")')
+    response = s.submit(request, 1)['result']
+    require(response['status'] == 'rejected' and response['executed'] is False and
+            response['rejection_reason'] == 'session_busy', 'busy lane rejects actual public submit')
+
+
+def live_wait(s):
+    request, release, _, _ = live_gate(s); before = load(s.directory / 'runtime_session.json')
+    tokens = dict(s.live_tokens)
+    original = s.operation(request['operation_id']).read_bytes()
+    duplicate = {**request, 'payload': {'expression': '(error "duplicate must not execute")'}}
+    require(s.submit(duplicate, 1)['error'] == 'conflict' and s.operation(request['operation_id']).read_bytes() == original,
+            'duplicate-ID conflict precedes busy admission and preserves original operation')
+    for seconds in (0, .15):
+        started = time.monotonic()
+        record = s.call('poll-operation', {**s.identity(), 'operation_id': request['operation_id'],
+                        'limits': {'timeout_seconds': seconds}})['result']
+        require(record['status'] == 'running' and record['wait_outcome'] == 'stopped_waiting' and
+                time.monotonic() - started < 3 and (not seconds or time.monotonic() - started >= seconds * .8),
+                'bounded wait stops waiting only, while real Lisp continues')
+        live_busy(s)
+    path = s.home / 'disconnect-request.json'
+    path.write_text(json.dumps({**s.identity(), 'operation_id': request['operation_id'], 'limits': {'timeout_seconds': 3}}))
+    argv = [sys.executable, str(s.candidate / 'tools/runtime_session.py'), 'poll-operation', '--root', str(s.state), '--request', str(path)]
+    child = subprocess.Popen(argv, cwd=s.candidate, env=s.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        def connected():
+            try:
+                sockets = {os.readlink(p)[8:-1] for p in Path(f'/proc/{child.pid}/fd').iterdir()
+                           if os.readlink(p).startswith('socket:[')}
+                return any(len(row) > 6 and row[5] == '03' and row[6] in sockets
+                           for row in (line.split() for line in Path('/proc/net/unix').read_text().splitlines()[1:]))
+            except OSError:
+                return False
+        wait_for(connected, 'fresh waiting client connected before disconnect')
+        live_busy(s); require(child.poll() is None, 'waiting client has not completed')
+        child.terminate(); out, err = child.communicate(timeout=3)
+        print('LIVE_DISCONNECT', repr({'argv': argv, 'pid': child.pid, 'exit': child.returncode, 'stdout': out, 'stderr': err}), flush=True)
+        require(child.returncode < 0, 'owned client actually disconnected')
+    finally:
+        if child.poll() is None:
+            child.kill(); child.communicate(timeout=3)
+    record = s.poll(request['operation_id'])
+    require(record['status'] == 'running' and all(process_token(p) == t for p, t in tokens.items()) and
+            load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] == before['outstanding_operation_ref'],
+            'disconnection preserves actual runtime identity and pending work')
+    live_busy(s); release.touch(); s.terminal(request); live_nonce(s, os.urandom(16).hex())
+    require(s.runstate.read_bytes() == s.saved_state, 'wait/disconnect never resets attempt')
+
+
+def live_reattach(s):
+    inputs = source_inputs(s.home); repo = Path(inputs['workspace_path'])
+    for name, expression in [('set.json', '(defparameter *n129-replay* 42)'), ('get.json', '*n129-replay*')]:
+        template = {'kind': 'evaluate', 'payload': {'expression': expression}, 'context': {}, 'limits': {}}
+        (repo / name).write_text(json.dumps(template))
+    git_fixture(repo, 'add', '--', '.'); git_fixture(repo, '-c', 'user.name=Acceptance Fixture',
+                '-c', 'user.email=acceptance@example.invalid', 'commit', '-qm', 'committed SBCL handoff templates')
+    inputs['source_revision'] = git_fixture(repo, 'rev-parse', 'HEAD')
+    for row in inputs['source_manifest']:
+        row['sha256'] = hashlib.sha256((repo / row['path']).read_bytes()).hexdigest()
+    request, release, _, _ = live_gate(s); before = load(s.directory / 'runtime_session.json'); tokens = dict(s.live_tokens)
+    attach = attachment(s, inputs)
+    s.record = s.call('reattach-session', attach)['result']  # Every call is a new OS client process.
+    for key in ('owner', 'generation', 'lease_epoch', 'outstanding_operation_ref'):
+        require(s.record.get(key) == before.get(key), 'reattach recovers checked live identity and pending operation')
+    require(all(process_token(p) == t for p, t in tokens.items()), 'reattach preserves actual live SBCL process')
+    for key, value, reason in [('requester', OTHER, 'foreign_owner'), ('expected_lease_epoch', before['lease_epoch'] + 1, 'stale_lease'),
+            ('expected_generation', {'counter': 0, 'nonce': '0' * 32}, 'stale_generation'),
+            ('expected_outstanding_operation_ref', 'wrong-operation', 'continuity_mismatch')]:
+        response = s.call('reattach-session', {**attach, key: value}, 1)
+        require(response['error'] == reason, 'stale/foreign/mismatched continuity refused')
+    path = s.directory / 'runtime_session.json'; original = path.read_bytes(); changed = json.loads(original)
+    changed['outstanding_operation_ref'] = 'unrelated-pending-operation'; path.write_text(json.dumps(changed))
+    try:
+        response = s.call('reattach-session', attachment(s, inputs), 70)
+        require(response['error'] in ('infrastructure', 'ambiguous_state') and
+                all(process_token(p) == t for p, t in tokens.items()), 'ambiguous continuity refuses reattachment without replacing runtime')
+    finally:
+        path.write_bytes(original)
+    live_busy(s); release.touch(); s.terminal(request); live_nonce(s, os.urandom(16).hex())
+    require(s.runstate.read_bytes() == s.saved_state, 'reattach preserves governed attempt')
+
+
+def live_cancel(s, executable):
+    request, release, cleaning, witness = live_gate(s, cleanup=True); control = s.cancellation(request)
+    for key, value in [('operation_id', 'unknown'), ('expected_generation', {'counter': 0, 'nonce': '0' * 32}),
+                       ('expected_lease_epoch', 100), ('requester', OTHER)]:
+        response = s.call('cancel-operation', {**control, key: value}, 1)
+        require(response['ok'] is False and s.poll(request['operation_id'])['status'] == 'running',
+                'uncorrelated cancellation cannot stop actual pending work')
+    response = s.call('cancel-operation', control)['result']
+    require(response['status'] == 'cancel_requested' and response.get('cancellation_confirmed') is False,
+            'CANCEL_REQUEST_IS_UNCONFIRMED')
+    wait_for(lambda: cleaning.exists() and cleaning.read_text().splitlines() == [witness], 'real unwind-protect cleanup starts')
+    response = s.poll(request['operation_id'])
+    require(response['status'] in ('cancel_requested', 'unknown') and response.get('cancellation_confirmed') is not True,
+            'cleanup still blocked; runtime has not stopped')
+    live_busy(s); s.call('cancel-operation', control); release.touch()
+    terminal = s.terminal(request, ('cancelled',))
+    require(terminal['cancellation_confirmed'] is True and cleaning.read_text().splitlines() == [witness] and
+            Path(str(cleaning) + '-done').is_file() and Path(str(cleaning) + '-done').read_text().splitlines() == [witness],
+            'only finished correlated cleanup permits confirmed cancellation')
+    with tempfile.TemporaryDirectory(prefix='completion-race-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            completed = peer.eval('42'); before = peer.operation(completed['operation_id']).read_bytes()
+            require(peer.call('cancel-operation', peer.cancellation(completed))['result']['status'] == 'completed' and
+                    peer.operation(completed['operation_id']).read_bytes() == before, 'completion-winning cancellation is immutable')
+        finally:
+            peer.cleanup()
+    require(s.runstate.read_bytes() == s.saved_state, 'cancellation does not reset attempt')
+
+
+def live_terminate(s, executable):
+    request, _, _, _ = live_gate(s, uninterruptible=True); tokens = dict(s.live_tokens)
+    sentinel_marker = s.home / 'unrelated-runtime'
+    argv = [executable, '--no-sysinit', '--no-userinit', '--non-interactive', '--eval',
+            '(progn ' + lisp_write(sentinel_marker, 'unrelated') + ' (sleep 60))']
+    sentinel = subprocess.Popen(argv, cwd=s.home, env={**os.environ}, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        wait_for(sentinel_marker.exists, 'unrelated SBCL positive control started')
+        s.call('cancel-operation', s.cancellation(request)); terminal = s.terminal(request, ('terminated',), 30)
+        require(terminal['image_consistent'] is False and terminal.get('cancellation_confirmed') is not True and
+                all(process_token(p) != t for p, t in tokens.items()), 'terminated only after actual owned runtime death')
+        require(sentinel.poll() is None, 'unrelated SBCL survives owned-group termination')
+        stale_marker = s.home / 'forbidden-stale-execution'
+        stale = s.lisp('(progn ' + lisp_write(stale_marker, 'forbidden') + ' 42)')
+        before = dict(s.record); rejected = s.call('submit-operation', stale, (1, 70))
+        require(rejected['ok'] is False and not any(process_token(p) == t for p, t in tokens.items()),
+                'old generation cannot execute or silently auto-restart')
+        s.record = s.call('open-session', s.opening())['result']
+        require(s.record['generation']['counter'] > before['generation']['counter'] and
+                s.record['generation']['nonce'] != before['generation']['nonce'], 'NEW_GENERATION')
+        require(s.call('submit-operation', {**stale, 'operation_id': 'stale-after-reconstruction'}, 1)['error'] == 'stale_generation' and not stale_marker.exists(),
+                'old-generation work cannot execute after explicit reconstruction')
+        s.observe_runtime(executable); live_nonce(s, os.urandom(16).hex())
+        require(s.runstate.read_bytes() == s.saved_state, 'reconstruction preserves governed attempt')
+    finally:
+        sentinel.terminate(); out, err = sentinel.communicate(timeout=3)
+        print('LIVE_UNRELATED_CONTROL', repr({'argv': argv, 'pid': sentinel.pid, 'exit': sentinel.returncode,
+              'stdout': out, 'stderr': err}), flush=True)
+
+
+def diagnostic(s, record, budget=16384, full=False):
+    """Proposed interface-intent1 adapter; joint independent bundle/API review required."""
+    require(record.get('condition_capture') == 'before_unwind', 'CAPTURE_BEFORE_UNWIND')
+    path = Path(record['condition_ref']); directory = s.directory / 'diagnostics'
+    require(path.is_absolute() and path.is_file() and not path.is_symlink() and
+            path.resolve().is_relative_to(directory.resolve()), 'diagnostic reference resolves inside this private session')
+    relative = path.relative_to(directory)
+    require(all(not p.is_symlink() for p in [path, *path.parents] if p.is_relative_to(s.directory)),
+            'diagnostic reference has no symlink components')
+    require(record['operation_id'] in [p.split('.')[0] for p in relative.parts], 'diagnostic artifact keyed to this operation')
+    require(0 < path.stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    with path.open('rb') as stream:
+        data = stream.read(budget + 1)
+    require(0 < len(data) <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    print('LIVE_DIAGNOSTIC', json.dumps({'operation_id': record['operation_id'], 'condition_ref': str(path),
+          'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data), 'content': data.decode('utf-8')}), flush=True)
+    if data == b'0':
+        require(not full, 'FULL_CAPTURE_NOT_OMISSION_SENTINEL')
+        return None
+    value = json.loads(data)
+    require(type(value) is dict and set(value) == {'condition', 'backtrace', 'restarts', 'truncated', 'capture_failed'},
+            'diagnostic structured sections and explicit capture markers')
+    condition = value['condition']
+    require(type(condition) is dict and set(condition) == {'type', 'text', 'fallback'} and
+            all(type(condition[k]) is str for k in ('type', 'text')) and type(condition['fallback']) is bool and
+            all(type(value[k]) is bool for k in ('truncated', 'capture_failed')), 'typed condition identity and bounded fallback markers')
+    require(type(value['backtrace']) is list and type(value['restarts']) is list, 'structural backtrace/restart arrays')
+    previous = -1
+    for frame in value['backtrace']:
+        require(type(frame) is dict and set(frame) == {'index', 'frame'} and type(frame['index']) is int and
+                frame['index'] > previous and type(frame['frame']) is str, 'actual ordered bounded backtrace entries')
+        previous = frame['index']
+    for restart in value['restarts']:
+        require(type(restart) is dict and set(restart) == {'name', 'description'} and
+                (restart['name'] is None or type(restart['name']) is str) and type(restart['description']) is str,
+                'serialized restart descriptions, not invocable objects')
+    return value
+
+
+def condition_fixture(s, kind='evaluate', report=None, restart_report=None):
+    request = s.lisp('pending', kind); nonce = os.urandom(12).hex().upper()
+    condition, frame, restart = ['N129-' + name + '-' + nonce for name in ('CONDITION', 'FRAME', 'RESTART')]
+    progress, cleanup, invoked = [s.home / (prefix + nonce) for prefix in ('condition-progress-', 'unwound-', 'restart-invoked-')]
+    witness = request['operation_id'] + ':' + nonce
+    body = ('(define-condition ' + condition + ' (error) () (:report (lambda (c stream) (declare (ignore c)) ' +
+            (report or '(write-string "plain-condition-identity" stream)') + '))) ' +
+            '(declaim (optimize (debug 3) (speed 0)) (notinline ' + frame + ')) ' +
+            '(defun ' + frame + ' () (restart-case (error (quote ' + condition + ')) (' + restart +
+            ' () :report ' + (restart_report or '"active-restart-description"') + ' ' + lisp_write(invoked, witness) + '))) ' +
+            lisp_write(progress, witness) + ' (unwind-protect (' + frame + ') ' + lisp_write(cleanup, witness) + ')')
+    if kind == 'compile_source':
+        body = '(eval-when (:compile-toplevel :load-toplevel :execute) ' + body + ')'
+    request['payload']['expression'] = body
+    return request, progress, cleanup, invoked, witness, (condition, frame, restart)
+
+
+def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omission_required=False, restart_report=None):
+    request, progress, cleanup, invoked, witness, names = condition_fixture(s, kind, report, restart_report)
+    request['limits'] = limits or {}; before = sum(p.stat().st_size for p in s.directory.glob('child.*.log'))
+    started = time.monotonic(); s.submit(request); record = s.terminal(request, ('condition_signalled',))
+    require(progress.read_text().splitlines() == [witness] and cleanup.read_text().splitlines() == [witness],
+            'correlated project progress and actual unwind happened; setup is successful')
+    require(not invoked.exists(), 'no arbitrary or durable restart automatically invoked')
+    if kind in ('load_source', 'compile_source'):
+        require(record['image_consistent'] is False, 'partial load/compile never claims rollback or image consistency')
+    budget = min(16384, request['limits'].get('output_bytes', 16384))
+    value = diagnostic(s, record, budget, full)
+    delta = sum(p.stat().st_size for p in s.directory.glob('child.*.log')) - before
+    require(delta >= 0 and delta + Path(record['condition_ref']).stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    require(time.monotonic() - started < 3, 'diagnostic time bound includes hostile printers')
+    if value is not None:
+        require(value['condition']['type'].rsplit(':', 1)[-1].upper() == names[0], 'actual captured condition identity')
+    if full:
+        symbols = lambda text: [word.rsplit(':', 1)[-1].upper() for word in re.findall(r'[A-Za-z0-9_:+*/<>=!?-]+', text)]
+        require(any(names[1] in symbols(item['frame']) for item in value['backtrace']), 'CAPTURE_ACTIVE_FRAME')
+        require(any(item['name'] is not None and item['name'].rsplit(':', 1)[-1].upper() == names[2]
+                    for item in value['restarts']), 'CAPTURE_ACTIVE_RESTART')
+    elif omission_required:
+        require(value is None or value['condition']['fallback'] or value['truncated'] or value['capture_failed'],
+                'hostile/omitted rendering has explicit fallback, truncation or capture failure')
+    if kind in ('load_source', 'compile_source'):
+        response = s.call('submit-operation', s.lisp('42'), 1)['result']
+        require(response['status'] == 'rejected' and response['executed'] is False, 'inconsistent image is quarantined')
+    validate_records(s)
+
+
+def live_capture(s, executable):
+    live_condition(s)
+    with tempfile.TemporaryDirectory(prefix='compile-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex()); live_condition(peer, 'compile_source')
+        finally:
+            peer.cleanup()
+
+
+def live_printing(s, executable):
+    reports = [
+        ('(write (loop repeat 100 collect (loop repeat 100 collect (list 1 2 3))) :stream stream)', {'output_bytes': 2048}),
+        ('(let ((x (list 1))) (setf (cdr x) x) (write x :stream stream))', {'output_bytes': 2048}),
+        ('(write-string (make-string 200000 :initial-element #\\x) stream)', {'output_bytes': 2048}),
+        ('(error "hostile report callback")', {'output_bytes': 2048}),
+        ('(loop (sleep 0.01))', {'output_bytes': 2048, 'timeout_seconds': .1}),
+        ('(loop (sleep 0.01))', {'output_bytes': 1}),
+        ('(loop (sleep 0.01))', {'output_bytes': 2048, 'timeout_seconds': 0}),
+        ('(progn (defclass n129-unsafe-printer () ()) (defmethod print-object ((obj n129-unsafe-printer) out) '
+         '(declare (ignore obj out)) (loop (sleep 0.01))) (write (make-instance (quote n129-unsafe-printer)) :stream stream))',
+         {'output_bytes': 2048, 'timeout_seconds': .1})]
+    for index, (report, limits) in enumerate(reports):
+        with tempfile.TemporaryDirectory(prefix='printer-', dir=s.home) as temp:
+            peer = LiveSession(Path(temp), candidate=s.candidate)
+            try:
+                peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                live_condition(peer, report=report, limits=limits, full=False, omission_required=index != 1)
+            finally:
+                peer.cleanup()
+    with tempfile.TemporaryDirectory(prefix='restart-printer-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            live_condition(peer, limits={'output_bytes': 2048, 'timeout_seconds': .1}, full=False,
+                           restart_report='(lambda (out) (declare (ignore out)) (loop (sleep 0.01)))')
+        finally:
+            peer.cleanup()
+    with tempfile.TemporaryDirectory(prefix='tiny-result-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            marker = peer.home / 'scalar-dispatched'; request = peer.lisp('(progn ' + lisp_write(marker, '42') + ' 42)', limits={'output_bytes': 1})
+            peer.submit(request); wait_for(marker.exists, 'tiny scalar actually dispatched')
+            record = wait_for(lambda: (r if (r := peer.poll(request['operation_id']))['status'] != 'running' else None), 'truthful tiny scalar outcome')
+            require(record['status'] in ('condition_signalled', 'unknown', 'terminated'), 'unrepresentable scalar never becomes altered completed value')
+        finally:
+            peer.cleanup()
+
+
+def live_control_candidate(home, fault):
+    """Disposable observation mutant: real backend runs; only public observations change.
+
+    Never used for baseline admission, production repair, or an accepted candidate.
+    Diagnostic mutations use proposed interface-intent1, reviewed with this bundle.
+    """
+    candidate = home / 'candidate'; (candidate / 'tools/fixtures/runtime_session').mkdir(parents=True)
+    for relative in ('tools/sbcl_session_loop.lisp', 'tools/fixtures/runtime_session/stub_runtime.py'):
+        shutil.copyfile(ROOT / relative, candidate / relative)
+    shutil.copyfile(ROOT / 'tools/runtime_session.py', candidate / 'tools/real_runtime_session.py')
+    wrapper = '''import json, subprocess, sys
+from pathlib import Path
+fault = FAULT
+p = subprocess.Popen([sys.executable, str(Path(__file__).with_name('real_runtime_session.py')), *sys.argv[1:]], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+out, err = p.communicate(timeout=35)
+print(json.dumps({'control_real_cli_pid': p.pid, 'actual_exit': p.returncode, 'original_stdout': out, 'original_stderr': err}), file=sys.stderr, flush=True)
+response = json.loads(out); record = response.get('result', {})
+if isinstance(record, dict):
+ if fault == 'premature-cancel' and sys.argv[1] == 'cancel-operation' and record.get('status') == 'cancel_requested':
+  record.update(status='cancelled', cancellation_confirmed=True)
+ if fault == 'mismatched-cancel' and record.get('status') == 'cancelled': record['operation_id'] = 'wrong-correlated-operation'
+ if record.get('status') == 'condition_signalled':
+  if fault == 'late-capture': record['condition_capture'] = 'after_unwind'
+  if fault in ('missing-restart', 'missing-frame'):
+   path = Path(record['condition_ref']); value = json.loads(path.read_text())
+   value['restarts' if fault == 'missing-restart' else 'backtrace'] = []
+   path.write_text(json.dumps(value))
+  if fault == 'unbounded':
+   directory = Path(sys.argv[sys.argv.index('--root') + 1]) / record['session_id']
+   path = Path(record['condition_ref']); path = path if path.is_absolute() else directory / path
+   path.write_bytes(path.read_bytes() + b' ' * 65536)
+ if fault == 'generation-reuse' and sys.argv[1] == 'open-session' and response.get('ok'):
+  path = Path(sys.argv[sys.argv.index('--root') + 1]) / 'control-first-generation.json'
+  if path.exists(): record['generation'] = json.loads(path.read_text())
+  else: path.write_text(json.dumps(record['generation']))
+print(json.dumps(response), flush=True)
+sys.exit(p.returncode)
+'''.replace('FAULT', repr(fault))
+    (candidate / 'tools/runtime_session.py').write_text(wrapper)
+    print('LIVE_MUTANT', json.dumps({'fault': fault, 'candidate': str(candidate),
+          'real_product_sha256': hashlib.sha256((candidate / 'tools/real_runtime_session.py').read_bytes()).hexdigest(),
+          'wrapper_sha256': hashlib.sha256(wrapper.encode()).hexdigest()}), flush=True)
+    return candidate
+
+
+def live_scenario(selection, home, executable, candidate=ROOT):
+    s = LiveSession(home, candidate=candidate)
+    try:
+        s.start(executable); live_nonce(s, os.urandom(16).hex())
+        if selection == 5:
+            live_wait(s)
+        elif selection == 6:
+            live_reattach(s)
+        elif selection == 'cancel-confirmed':
+            live_cancel(s, executable)
+        elif selection == 'termination-ends-generation':
+            live_terminate(s, executable)
+            with tempfile.TemporaryDirectory(prefix='zero-deadline-', dir=home) as temp:
+                peer = LiveSession(Path(temp), candidate=candidate)
+                try:
+                    peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                    request, _, _, _ = live_gate(peer, uninterruptible=True, limits={'timeout_seconds': 0})
+                    tokens = dict(peer.live_tokens); started = time.monotonic()
+                    response = peer.call('cancel-operation', peer.cancellation(request), (0, 70))
+                    require(response['result']['status'] != 'cancelled', 'zero confirmation deadline never fabricates clean cancellation')
+                    peer.terminal(request, ('terminated',), 5)
+                    require(time.monotonic() - started < 4 and all(process_token(p) != t for p, t in tokens.items()),
+                            'zero requested deadline leads to bounded observed owned-process death')
+                finally:
+                    peer.cleanup()
+        elif selection == 'capture-before-unwind':
+            live_capture(s, executable)
+        elif selection == 'bounded-printing':
+            live_printing(s, executable)
+        elif selection == 4:
+            live_condition(s, 'load_source')
+        else:
+            raise RuntimeError('unknown deep selector; never intended semantic red')
+    finally:
+        s.cleanup()
+
+
+def live_negative_controls(selection, home, executable):
+    controls = {'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
+                                   ('mismatched-cancel', 'TERMINAL_CORRELATION')],
+                'termination-ends-generation': [('generation-reuse', 'NEW_GENERATION')],
+                'capture-before-unwind': [('late-capture', 'CAPTURE_BEFORE_UNWIND'), ('missing-restart', 'CAPTURE_ACTIVE_RESTART'),
+                                          ('missing-frame', 'CAPTURE_ACTIVE_FRAME')],
+                'bounded-printing': [('unbounded', 'DIAGNOSTIC_BYTE_BUDGET')]}
+    for fault, expected in controls.get(selection, []):
+        with tempfile.TemporaryDirectory(prefix='mutant-', dir=home) as temp:
+            scratch = Path(temp); candidate = live_control_candidate(scratch, fault)
+            fixture = scratch / 'fixture'; fixture.mkdir()
+            try:
+                live_scenario(selection, fixture, executable, candidate)
+            except AssertionError as exc:
+                require(str(exc) == 'BEHAVIOR_ASSERTION: ' + expected, 'targeted mutant must fail the exact intended assertion')
+                print('LIVE_NEGATIVE_CONTROL', json.dumps({'fault': fault, 'expected_assertion': expected,
+                      'observed_assertion': str(exc), 'result': 'rejected', 'accepted_product': False}), flush=True)
+            else:
+                raise AssertionError('BEHAVIOR_ASSERTION: targeted faulty observation escaped its assertion')
+
+
+def live_main():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    choice = parser.add_mutually_exclusive_group(required=True)
+    choice.add_argument('--check', choices=LIVE_CHECKS); choice.add_argument('--case', type=int, choices=(4, 5, 6))
+    parser.add_argument('--runtime', choices=('sbcl',)); parser.add_argument('--require-sbcl', action='store_true')
+    args = parser.parse_args()
+    if args.case is not None and args.runtime != 'sbcl' or args.check and args.runtime:
+        parser.error('SBCL cases require --runtime sbcl; named checks select SBCL intrinsically')
+    if not (ROOT / 'tools/runtime_session.py').is_file():
+        raise RuntimeError('controller source absent, never intended admission red')
+    with tempfile.TemporaryDirectory(prefix='n129-') as temp:
+        home = Path(temp); executable = sbcl_preflight(home)
+        if args.check == 'sbcl-admission':
+            admission(home, executable)
+        else:
+            live_scenario(args.check or args.case, home, executable)
+            live_negative_controls(args.check or args.case, home, executable)
+        print('PASS', args.check or f'case{args.case}/sbcl')
+        return 0
+
+
 if __name__ == '__main__':
     try:
-        sys.exit(main())
+        sys.exit(live_main() if live_selection(sys.argv[1:]) else main())
     except AssertionError as exc:
         print(str(exc), file=sys.stderr)
         sys.exit(1)
