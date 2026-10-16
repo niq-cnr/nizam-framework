@@ -1,0 +1,9 @@
+
+from pathlib import Path
+import json,hashlib
+r=Path.cwd();b=r/'.agent/evidence/129/source2-recovery3';v=json.loads((r/'.agent/validator/129-source2-recovery3.json').read_text());assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+assert 'diagnostic assessment only' in v['approval_scope']
+for n,row in json.loads((b/'index.json').read_text()).items():
+ x=(b/n).read_bytes();assert hashlib.sha256(x).hexdigest()==row['sha256'] and len(x)==row['bytes']
+f=json.loads((b/'static1.execution.json').read_text());assert f['actual_exit']==0 and f['child_pid']==4033695 and not f['timed_out']
+print(json.dumps({'admitted':'independent interpretation of unexpected S1positive and bounded public-close witness proposal only','S1_red':False,'Source3_released':False}))

@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T06:39:24.977099+00:00",
+  "updated_at": "2026-10-16T06:41:15.375841+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3284,7 +3284,7 @@
     "129-source2-recovery-review": {
       "attempts": 3,
       "limit": 3,
-      "status": "released-read-only-unexpected-S1-positive-cause-and-minimal-witness-assessment",
+      "status": "diagnostic-only-assessment-admitted-not-S1red-or-productapproval",
       "owner": "independent Validator session",
       "candidate_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49",
       "evidence_revision": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
@@ -3327,10 +3327,10 @@
         "cause": "Helper parsed all LIVE_COMMAND stdout as JSON, including direct SBCL version/plain/empty output. subprocess.run capture omitted PID; retain limitation, never invent."
       },
       "strategy": "Use frozen capture execute() or Popen actualPID. Parse JSON only for actual runtime_session.py publicCLI argv; retain nonCLI output counts/line refs and enforce all candidate CLI responses. Correct only static evidence parser/capture; no source/test repair, runtime/test rerun or weakened diagnosis. Preserve static1 artifacts; emit strict durable assessment with both capture statuses.",
-      "revision": "cc7fae9161e9a07999b18f6edeb0d46c137d98b8",
-      "verdict": ".agent/validator/129-source2-recovery1.json",
+      "revision": "675a2da61803a0769ae489c782eecf8f60cb45ec",
+      "verdict": ".agent/validator/129-source2-recovery3.json",
       "verdict_sha256": "46a4a9899cc5880a154423236b01c580f6fbd2b5dc412e40105a489d1e2c0482",
-      "root_admission": ".agent/evidence/129/recovery-root-admission1/admission.execution.json"
+      "root_admission": ".agent/evidence/129/source2-recovery3-root-admission1/admission.execution.json"
     },
     "133-main-root-admission": {
       "attempts": 2,
@@ -3441,14 +3441,14 @@
       "frame": ".agent/evidence/129/fixture-root-admission4/admission.execution.json"
     },
     "129-source2-architectural-regression-red": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3,
-      "status": "actual-S2-semanticred-Root-admitted-S1-positive-remains",
+      "status": "released-single-public-idle-close-S1-diagnostic-with-frozen-bundle-unchanged",
       "owner": "independent Evaluator, never Source/testauthor/bundlereviewer",
       "source2_parent": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
       "bundle": ".agent/evidence/129/frozen-bundle3.json",
-      "scope": "Preserveactualadmission0/groupselector0/expectedred-driver1; no S1redclaim. OnEXACTsamefde/unchangedaae6+2ad3+d186 runONLY not-yet-executed cancel-confirmed once, expectedsemantic1 CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME with allworkingpath/acceptedfd/durablepending/cleanup/fullpreservationproof. No groupselector/admissionrerun, acceptancechanges orSource3. WrongresultstopforRoot. ParallelreadonlyS1causereview must distinguishcurrentlycoveredpath fromsuspectedleader-early-exit path; newdiagnostic requiresseparatereview/release, frozenbundle3unchanged.",
-      "accounting": "Allownwork once129/020allocation, no headroomtransfer/rebaseline/freework.",
+      "scope": "One independentEvaluator-owned extra evidence diagnostic on unchangedSource2 aae6/2ad3 +frozend186helpers. Publicopen/nonce\u2192alreadyqualified completed descendantspawn\u2192idle/nooutstanding\u2192publicclose. No uninterruptiblegate/newSBCLprimitive/monkeypatch/testedit. Actual closedack+deadoriginalleader+same live advancing owneddescendant BEFOREcleanup is targetsemantic1 OWNED_RUNTIME_GROUP_CLOSE_DEATH_BEYOND_LEADER; ifbothdie retainpositive0/noforcedred; ambiguoussetupwrongresponse classifyinfra andstop. Preserveunrelatedprocess/sentinel/attempt andallphysical239/cleanseparateclone. Commitownprobeinputbeforeexecution, fullactualargv/PIDs/stdin/streams/exercisedrevision/ownershipandcleanup. Neverreusefinallycleanup asproductdeathproof. NoSource3untilRootadmission; no4thstageattempt orfullbundle4/reviewcounterreset.",
+      "accounting": "Allownprobe/preparation/evidence onceexisting129/020allocation; no newallowance/rebaseline.",
       "prior_attempts": [
         {
           "attempts": 1,
@@ -3459,6 +3459,24 @@
           "bundle": ".agent/evidence/129/frozen-bundle3.json",
           "scope": "Freshisolated Source2actualancestry + mergeexactRootrelease, verify unchangedaae6/2ad3 product andd186runner/contract/interface, commitactualmergecandidate beforeexecution. Exactlyone admission expected0; onpositive only two independentlyowned fresh selectors termination-ends-generation and cancel-confirmed expected1 at exact OWNED_RUNTIME_GROUP_DEATH_BEYOND_LEADER and CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME. Eachmustretain actualhealthySBCLnonce/pending/ownership/targetwitness/cleanup/fullpreservation. Setup2/timeout/wrongassertion notintendedred, stopunexpected forRoot; no repair/rerun or Source3. Allthreeactualframes/exercisedcandidate/rawbytes required. Baseline3andRootadmission nowprecede this release.",
           "accounting": "Allownwork once129/020allocation, no headroomtransfer/rebaseline/freework."
+        },
+        {
+          "attempts": 2,
+          "limit": 3,
+          "status": "actual-S2-semanticred-Root-admitted-S1-positive-remains",
+          "owner": "independent Evaluator, never Source/testauthor/bundlereviewer",
+          "source2_parent": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
+          "bundle": ".agent/evidence/129/frozen-bundle3.json",
+          "scope": "Preserveactualadmission0/groupselector0/expectedred-driver1; no S1redclaim. OnEXACTsamefde/unchangedaae6+2ad3+d186 runONLY not-yet-executed cancel-confirmed once, expectedsemantic1 CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME with allworkingpath/acceptedfd/durablepending/cleanup/fullpreservationproof. No groupselector/admissionrerun, acceptancechanges orSource3. WrongresultstopforRoot. ParallelreadonlyS1causereview must distinguishcurrentlycoveredpath fromsuspectedleader-early-exit path; newdiagnostic requiresseparatereview/release, frozenbundle3unchanged.",
+          "accounting": "Allownwork once129/020allocation, no headroomtransfer/rebaseline/freework.",
+          "candidate_revision": "fde4115b4468b7b9da412b1078294345a4f4a442",
+          "evidence_revision": "d8415499577f9f23ff93a9475ffa409b1028379e",
+          "root_admission": ".agent/evidence/129/source2-regression-root-admission1/admission.execution.json",
+          "S2_evidence_revision": "00cddc71fffca59fbc4c70a6a5e4cc47e81bf660",
+          "S2_report": ".agent/evidence/129/source2-partial-frame-red1/report.json",
+          "S2_root_admission": ".agent/evidence/129/source2-partial-frame-root-admission1/admission.execution.json",
+          "S2_actual_exit": 1,
+          "S2_pid": 4027177
         }
       ],
       "candidate_revision": "fde4115b4468b7b9da412b1078294345a4f4a442",
@@ -3468,7 +3486,9 @@
       "S2_report": ".agent/evidence/129/source2-partial-frame-red1/report.json",
       "S2_root_admission": ".agent/evidence/129/source2-partial-frame-root-admission1/admission.execution.json",
       "S2_actual_exit": 1,
-      "S2_pid": 4027177
+      "S2_pid": 4027177,
+      "diagnostic_basis": ".agent/validator/129-source2-recovery3.json",
+      "frozen_bundle_boundary": "ExistingterminationselectorPASS remainsvalid/historical; entirebundle3unchanged. This is an independently proposed PUBLICidle-close branch witness within approved lifecycle/group obligations, not modification of acceptance to force a red."
     }
   },
   "history": [
@@ -9446,6 +9466,11 @@
       "at": "2026-10-16T06:34:59.814457+00:00",
       "event": "129-unexpected-S1-positive-retained-and-S2-first-capture-released",
       "detail": "Exactfde admission0PID3995648 and group0PID4000632; expectedred driver1PID4000574, all16355/239physicalequal. Do not forcefailure or edit frozenbundle to matchstaticexpectation. Reuse exactsamecandidateadmission, captureS2firsttime, readonlyS1causeassessment. CurrentSource2/3counterunchanged and noSource3yet."
+    },
+    {
+      "at": "2026-10-16T06:41:15.375841+00:00",
+      "event": "129-independent-S1-branch-assessment-admitted-public-close-diagnostic-released",
+      "detail": "Strict675a diagnostic-only approval preservesactualgroupPASS andnoeventtracechronologyclaim. Existingqualifiedspawn+idlepublicclose can distinguishclosedleader-dead/descendant-live beforecleanup withoutrewritingfrozend186runner ornewnativeprimitive. Onebounded thirdregressionstageattempt; both-sourceproduct andallhistoriespreserved."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -9887,7 +9912,7 @@
       }
     ]
   },
-  "last_action": "Actual S2 deadline semanticred admitted; S1 covered termination pathpassed, independent idle-close witness assessment pending Rootadmission. Frozenbundle3/Source2product unchanged, noSource3release.",
+  "last_action": "S2actualred admitted, S1existingterminationpositive retained. Independently reviewed single public idle-close branch diagnostic released with unchangedfrozenbundle/product; Source3stillheld.",
   "completed_contract_ids": [
     "099",
     "103",
