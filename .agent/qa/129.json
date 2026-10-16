@@ -1,0 +1,119 @@
+{
+  "feature_id": "129",
+  "role": "canonical feature-scope QA publication of already executed contract 129 receipts",
+  "exercised_revision": "2ad650ba8c4c4c2e98697c5434fb79163696277b",
+  "source_candidate": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "adoption_revision": "ea30d229fc667c32eee0f451394694d6652620ee",
+  "approved_contract_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+  "product_blobs": {
+    "tools/runtime_session.py": "65f3452358fa2a488be0e9bb64879a0e1ebc9fe6",
+    "tools/sbcl_session_loop.lisp": "ba9f42fa441e2047480be1895434bea011ac92d4"
+  },
+  "product_content_sha256": {
+    "tools/runtime_session.py": "37edd39f59dda792e83f392845b95e0e46bb48013514facd1e88c24312f122c5",
+    "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"
+  },
+  "runner_sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
+  "checks_basis": "Recorded exits read from .agent/qa/129-source5.json, .agent/evidence/129/qa5/command01.json through command11.json, and .agent/evidence/129/adoption-rerun1/summary.json. Those receipts are on the admitted product blobs, which are unchanged at HEAD. This publication did not re-execute the commands.",
+  "qa_pass": true,
+  "checks_run": 11,
+  "checks_passed": 11,
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command01.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command02.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmed",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command03.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check termination-ends-generation",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command04.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command05.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command06.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command07.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check sbcl-admission --require-sbcl",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command08.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command09.json"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command10.json"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/129/qa5/command11.json"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "target": "129-B1",
+    "result": "pass",
+    "evidence": ".agent/evidence/129/qa5/b1-result.json",
+    "description": "Recorded stale-attempt split-read refused with ambiguous_state before execution. This publication did not re-execute the adversarial check."
+  },
+  "evidence_files": [
+    ".agent/qa/129-source5.json",
+    ".agent/evidence/129/adoption-rerun1/summary.json",
+    ".agent/evidence/129/qa5/toolchain.json",
+    ".agent/evidence/129/qa5/summary.json",
+    ".agent/evidence/129/qa5/command01.json",
+    ".agent/evidence/129/qa5/command02.json",
+    ".agent/evidence/129/qa5/command03.json",
+    ".agent/evidence/129/qa5/command04.json",
+    ".agent/evidence/129/qa5/command05.json",
+    ".agent/evidence/129/qa5/command06.json",
+    ".agent/evidence/129/qa5/command07.json",
+    ".agent/evidence/129/qa5/command08.json",
+    ".agent/evidence/129/qa5/command09.json",
+    ".agent/evidence/129/qa5/command10.json",
+    ".agent/evidence/129/qa5/command11.json",
+    ".agent/evidence/129/qa5/b1-result.json",
+    ".agent/evidence/129/qa-canonical/publication.json"
+  ],
+  "attempts": {
+    "recorded": 5,
+    "limit": 5,
+    "sixth_source_attempt_authorized": false
+  },
+  "scope": "Feature-scope acceptance of contract 129 only. This publication does not mark feature 129 complete, does not start feature 130, and does not claim full-live, working conformance, or the seventeen-row or thirteen-case qualification.",
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature-scope acceptance of contract 129 only. Recorded exits for all eleven contract verification commands on the admitted product blobs are 0, and the recorded 129-B1 adversarial receipt passed. Full-live qualification remains features 131 and 132. This publication did not re-execute the commands."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
