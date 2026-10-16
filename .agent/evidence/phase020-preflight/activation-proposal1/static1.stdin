@@ -1,0 +1,86 @@
+import hashlib, json, subprocess
+from pathlib import Path
+import jsonschema, yaml
+base = '48087acf7e66f3be1c1da2897b487905406fc439'
+def prior(path):
+    return subprocess.check_output(['git', 'show', base + ':' + path])
+def jprior(path):
+    return json.loads(prior(path))
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+def validate(data, name):
+    schema = json.loads(Path('.nizam/schema/' + name + '.schema.json').read_text())
+    jsonschema.Draft202012Validator(schema).validate(data)
+    print('SCHEMA_PASS', name)
+spec = Path('.agent/product_spec_020.md').read_text()
+front = yaml.safe_load(spec.split('---', 2)[1])
+front = json.loads(json.dumps(front, default=str))
+fl = json.loads(Path('.agent/feature_list_020.json').read_text())
+phase = yaml.safe_load(Path('docs/planning/phase_020.yaml').read_text())
+manifest = json.loads(Path('docs/planning/manifest.json').read_text())
+for data, name in [(front, 'frontmatter'), (fl, 'feature_list'), (phase, 'phase'), (manifest, 'manifest')]:
+    validate(data, name)
+assert front['version'] == fl['spec_version'] == '0.2.0'
+assert front['status'] == 'active' and fl['phase_status'] == phase['status'] == 'in_progress'
+oldfl = jprior('.agent/feature_list_020.json')
+assert {k:v for k,v in fl.items() if k not in ['spec_version','phase_status','activation_prerequisites']} == {k:v for k,v in oldfl.items() if k not in ['spec_version','phase_status','activation_prerequisites']}
+assert fl['activation_prerequisites'][1:] == oldfl['activation_prerequisites'][1:]
+assert fl['features'] == oldfl['features']
+features = {f['id']: f for f in fl['features']}
+assert list(features) == ['129','130','131','132']
+assert all(f['status'] == 'pending' and f['passes'] is False for f in features.values())
+order = []
+def visit(n, active):
+    assert n in features and n not in active
+    if n in order:
+        return
+    for dep in features[n]['dependencies']:
+        visit(dep, active | {n})
+    order.append(n)
+for n in features:
+    visit(n, set())
+assert order == ['129','130','131','132']
+assert sum(f['estimated_lines'] for f in features.values()) == fl['original_estimate_lines'] == 7350
+assert fl['ceiling_130pct'] == 9555
+assert fl['budget_categories'] == {'product':1850,'tests':1750,'process':3750}
+assert [s['id'] for s in phase['steps']] == order and all(s['status'] == 'PENDING' for s in phase['steps'])
+oldphase = yaml.safe_load(prior('docs/planning/phase_020.yaml'))
+assert phase['steps'] == oldphase['steps']
+assert {k:v for k,v in phase.items() if k not in ['status','description']} == {k:v for k,v in oldphase.items() if k not in ['status','description']}
+oldmanifest = jprior('docs/planning/manifest.json')
+assert {k:v for k,v in manifest.items() if k not in ['current_phase','updated_at','phases']} == {k:v for k,v in oldmanifest.items() if k not in ['current_phase','updated_at','phases']}
+assert manifest['current_phase'] == phase['id']
+assert len(manifest['phases']) == len(oldmanifest['phases'])
+for old, new in zip(oldmanifest['phases'], manifest['phases']):
+    assert old['id'] == new['id']
+    if old['id'] == phase['id']:
+        assert new['status'] == 'in_progress' and new['activation_state'] == 'active'
+        assert {k:v for k,v in old.items() if k not in ['status','activation_state','note']} == {k:v for k,v in new.items() if k not in ['status','activation_state','note']}
+    else:
+        assert old == new
+refs = []
+def check_refs(obj):
+    if isinstance(obj, dict):
+        if {'path','revision','sha256'} <= obj.keys():
+            raw = subprocess.check_output(['git','show',obj['revision'] + ':' + obj['path']])
+            assert sha(raw) == obj['sha256'], obj
+            refs.append(obj)
+        for item in obj.values():
+            check_refs(item)
+    elif isinstance(obj, list):
+        for item in obj:
+            check_refs(item)
+check_refs(fl)
+assert 'Phase 018 requires feature 127 only' in spec
+assert 'current Source 133 API 5f' in spec and 'historical 123 API 2579' in spec
+assert 'New integration waits PR 105 main all five' in spec
+assert 'intended red-before-repair' in spec and 'independent bundle' in spec
+assert 'This activation delta takes effect only after' in spec
+allocation = json.loads(Path('.agent/evidence/phase020-preflight/preparation-allocation1.json').read_text())
+assert allocation['selected_phase_original'] == 7350 and allocation['selected_phase_ceiling'] == 9555
+assert allocation['categories'] == {'product':1850,'independent_tests':1750,'process':3750}
+changed = subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines()
+assert set(changed) == {'.agent/product_spec_020.md','.agent/feature_list_020.json','docs/planning/phase_020.yaml','docs/planning/manifest.json'}
+print('PASS conditional activation structure; unchanged four-feature objects/DAG/budgets/lanes/matrix/prerequisite refs; verified immutable refs:',len(refs))
+print('PASS other phases/manifests/state/history/source/tests/installed payload unchanged; no runtime/CI/activation claim')
+print('TOPOLOGICAL_ORDER',json.dumps(order))
