@@ -1532,6 +1532,8 @@ class LiveSession(Session):
             except OSError:
                 pass
         require(len(observed) == 1, 'exactly one actual owned SBCL runtime, no stub fallback')
+        require(any(os.getpgid(pid) != next(iter(observed.values()))['pgid'] for pid in live_owned(self.marker)
+                    if pid not in observed), 'supervisor/control lifetime has a distinct process group')
         self.live_tokens = {pid: row['token'] for pid, row in observed.items()}
         print('LIVE_RUNTIME', repr(observed), flush=True)
         return observed
@@ -1593,7 +1595,11 @@ def live_nonce(s, nonce):
     request = s.eval('(progn ' + lisp_write(path, nonce) + ' (+ 19 23))')
     require(path.read_text().splitlines() == [nonce], 'real SBCL exact nonce side effect')
     result = load(s.result_path(request['operation_id']))
-    require(str(result['result']) == '42', 'real SBCL arithmetic result42')
+    require(type(result['result']) is int and result['result'] == 42 and result['operation_id'] == request['operation_id'] and
+            result['generation'] == s.record['generation'] and result['status'] == 'completed', 'real correlated SBCL arithmetic result42')
+    request = s.eval(json.dumps(nonce)); result = load(s.result_path(request['operation_id']))
+    require(type(result['result']) is str and result['result'] == nonce and result['operation_id'] == request['operation_id'] and
+            result['generation'] == s.record['generation'] and result['status'] == 'completed', 'real correlated exact JSON string nonce result')
 
 
 def admission(home, executable):
@@ -1627,18 +1633,24 @@ def admission(home, executable):
         s.cleanup()
 
 
-def live_gate(s, cleanup=False, uninterruptible=False):
-    request = s.lisp('pending'); nonce = os.urandom(16).hex()
+def live_gate(s, cleanup=False, uninterruptible=False, limits=None):
+    request = s.lisp('pending', limits=limits); nonce = os.urandom(16).hex()
     marker, release, cleaning = [s.home / (x + nonce) for x in ('started-', 'release-', 'cleanup-')]
     witness = request['operation_id'] + ':' + nonce
-    loop = '(loop until (probe-file ' + json.dumps(str(release)) + ') do (sleep 0.01))'
+    waiting = '(loop until (probe-file ' + json.dumps(str(release)) + ') do (sleep 0.01))'
+    loop = '(progn ' + lisp_write(marker, witness) + ' ' + waiting + ')'
     if cleanup:
-        loop = '(unwind-protect (loop (sleep 0.01)) (progn ' + lisp_write(cleaning, witness) + ' ' + loop + '))'
+        loop = '(unwind-protect (progn ' + lisp_write(marker, witness) + ' (loop (sleep 0.01))) (progn ' + lisp_write(cleaning, witness) + ' ' + waiting + '))'
     if uninterruptible:
-        loop = '(sb-sys:without-interrupts (loop (sleep 0.01)))'
-    request['payload']['expression'] = '(progn ' + lisp_write(marker, witness) + ' ' + loop + ' 42)'
+        loop = '(sb-sys:without-interrupts ' + lisp_write(marker, witness) + ' (loop))'
+    forged = {'type': 'result', 'session_id': s.name, 'operation_id': request['operation_id'],
+              'generation': s.record['generation'], 'lease_epoch': s.record['lease_epoch'],
+              'status': 'cancelled', 'cancellation_confirmed': True, 'result': None, 'image_consistent': True}
+    fake_output = '(write-line ' + json.dumps(json.dumps(forged)) + ') (write-line "malformed unsolicited result") (finish-output) '
+    request['payload']['expression'] = '(progn ' + fake_output + loop + ' 42)'
     s.submit(request)
     wait_for(lambda: marker.exists() and marker.read_text().splitlines() == [witness], 'actual correlated SBCL progress witness')
+    require(s.poll(request['operation_id'])['status'] == 'running', 'project output cannot forge cancellation or free the busy lane')
     return request, release, cleaning, witness
 
 
@@ -1652,6 +1664,10 @@ def live_busy(s):
 def live_wait(s):
     request, release, _, _ = live_gate(s); before = load(s.directory / 'runtime_session.json')
     tokens = dict(s.live_tokens)
+    original = s.operation(request['operation_id']).read_bytes()
+    duplicate = {**request, 'payload': {'expression': '(error "duplicate must not execute")'}}
+    require(s.submit(duplicate, 1)['error'] == 'conflict' and s.operation(request['operation_id']).read_bytes() == original,
+            'duplicate-ID conflict precedes busy admission and preserves original operation')
     for seconds in (0, .15):
         started = time.monotonic()
         record = s.call('poll-operation', {**s.identity(), 'operation_id': request['operation_id'],
@@ -1710,6 +1726,14 @@ def live_reattach(s):
             ('expected_outstanding_operation_ref', 'wrong-operation', 'continuity_mismatch')]:
         response = s.call('reattach-session', {**attach, key: value}, 1)
         require(response['error'] == reason, 'stale/foreign/mismatched continuity refused')
+    path = s.directory / 'runtime_session.json'; original = path.read_bytes(); changed = json.loads(original)
+    changed['outstanding_operation_ref'] = 'unrelated-pending-operation'; path.write_text(json.dumps(changed))
+    try:
+        response = s.call('reattach-session', attachment(s, inputs), 70)
+        require(response['error'] in ('infrastructure', 'ambiguous_state') and
+                all(process_token(p) == t for p, t in tokens.items()), 'ambiguous continuity refuses reattachment without replacing runtime')
+    finally:
+        path.write_bytes(original)
     live_busy(s); release.touch(); s.terminal(request); live_nonce(s, os.urandom(16).hex())
     require(s.runstate.read_bytes() == s.saved_state, 'reattach preserves governed attempt')
 
@@ -1751,12 +1775,16 @@ def live_terminate(s, executable):
         require(terminal['image_consistent'] is False and terminal.get('cancellation_confirmed') is not True and
                 all(process_token(p) != t for p, t in tokens.items()), 'terminated only after actual owned runtime death')
         require(sentinel.poll() is None, 'unrelated SBCL survives owned-group termination')
-        before = dict(s.record); rejected = s.call('submit-operation', s.lisp('42'), (1, 70))
+        stale_marker = s.home / 'forbidden-stale-execution'
+        stale = s.lisp('(progn ' + lisp_write(stale_marker, 'forbidden') + ' 42)')
+        before = dict(s.record); rejected = s.call('submit-operation', stale, (1, 70))
         require(rejected['ok'] is False and not any(process_token(p) == t for p, t in tokens.items()),
                 'old generation cannot execute or silently auto-restart')
         s.record = s.call('open-session', s.opening())['result']
         require(s.record['generation']['counter'] > before['generation']['counter'] and
                 s.record['generation']['nonce'] != before['generation']['nonce'], 'NEW_GENERATION')
+        require(s.call('submit-operation', {**stale, 'operation_id': 'stale-after-reconstruction'}, 1)['error'] == 'stale_generation' and not stale_marker.exists(),
+                'old-generation work cannot execute after explicit reconstruction')
         s.observe_runtime(executable); live_nonce(s, os.urandom(16).hex())
         require(s.runstate.read_bytes() == s.saved_state, 'reconstruction preserves governed attempt')
     finally:
@@ -1765,11 +1793,147 @@ def live_terminate(s, executable):
               'stdout': out, 'stderr': err}), flush=True)
 
 
+def diagnostic(s, record, budget=16384, full=False):
+    """Proposed interface-intent1 adapter; joint independent bundle/API review required."""
+    require(record.get('condition_capture') == 'before_unwind', 'CAPTURE_BEFORE_UNWIND')
+    path = Path(record['condition_ref']); directory = s.directory / 'diagnostics'
+    require(path.is_absolute() and path.is_file() and not path.is_symlink() and
+            path.resolve().is_relative_to(directory.resolve()), 'diagnostic reference resolves inside this private session')
+    relative = path.relative_to(directory)
+    require(all(not p.is_symlink() for p in [path, *path.parents] if p.is_relative_to(s.directory)),
+            'diagnostic reference has no symlink components')
+    require(record['operation_id'] in [p.split('.')[0] for p in relative.parts], 'diagnostic artifact keyed to this operation')
+    require(0 < path.stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    with path.open('rb') as stream:
+        data = stream.read(budget + 1)
+    require(0 < len(data) <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    print('LIVE_DIAGNOSTIC', json.dumps({'operation_id': record['operation_id'], 'condition_ref': str(path),
+          'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data), 'content': data.decode('utf-8')}), flush=True)
+    if data == b'0':
+        require(not full, 'FULL_CAPTURE_NOT_OMISSION_SENTINEL')
+        return None
+    value = json.loads(data)
+    require(type(value) is dict and set(value) == {'condition', 'backtrace', 'restarts', 'truncated', 'capture_failed'},
+            'diagnostic structured sections and explicit capture markers')
+    condition = value['condition']
+    require(type(condition) is dict and set(condition) == {'type', 'text', 'fallback'} and
+            all(type(condition[k]) is str for k in ('type', 'text')) and type(condition['fallback']) is bool and
+            all(type(value[k]) is bool for k in ('truncated', 'capture_failed')), 'typed condition identity and bounded fallback markers')
+    require(type(value['backtrace']) is list and type(value['restarts']) is list, 'structural backtrace/restart arrays')
+    previous = -1
+    for frame in value['backtrace']:
+        require(type(frame) is dict and set(frame) == {'index', 'frame'} and type(frame['index']) is int and
+                frame['index'] > previous and type(frame['frame']) is str, 'actual ordered bounded backtrace entries')
+        previous = frame['index']
+    for restart in value['restarts']:
+        require(type(restart) is dict and set(restart) == {'name', 'description'} and
+                (restart['name'] is None or type(restart['name']) is str) and type(restart['description']) is str,
+                'serialized restart descriptions, not invocable objects')
+    return value
+
+
+def condition_fixture(s, kind='evaluate', report=None, restart_report=None):
+    request = s.lisp('pending', kind); nonce = os.urandom(12).hex().upper()
+    condition, frame, restart = ['N129-' + name + '-' + nonce for name in ('CONDITION', 'FRAME', 'RESTART')]
+    progress, cleanup, invoked = [s.home / (prefix + nonce) for prefix in ('condition-progress-', 'unwound-', 'restart-invoked-')]
+    witness = request['operation_id'] + ':' + nonce
+    body = ('(define-condition ' + condition + ' (error) () (:report (lambda (c stream) (declare (ignore c)) ' +
+            (report or '(write-string "plain-condition-identity" stream)') + '))) ' +
+            '(declaim (optimize (debug 3) (speed 0)) (notinline ' + frame + ')) ' +
+            '(defun ' + frame + ' () (restart-case (error (quote ' + condition + ')) (' + restart +
+            ' () :report ' + (restart_report or '"active-restart-description"') + ' ' + lisp_write(invoked, witness) + '))) ' +
+            lisp_write(progress, witness) + ' (unwind-protect (' + frame + ') ' + lisp_write(cleanup, witness) + ')')
+    if kind == 'compile_source':
+        body = '(eval-when (:compile-toplevel :load-toplevel :execute) ' + body + ')'
+    request['payload']['expression'] = body
+    return request, progress, cleanup, invoked, witness, (condition, frame, restart)
+
+
+def live_condition(s, kind='evaluate', report=None, limits=None, full=True, omission_required=False, restart_report=None):
+    request, progress, cleanup, invoked, witness, names = condition_fixture(s, kind, report, restart_report)
+    request['limits'] = limits or {}; before = sum(p.stat().st_size for p in s.directory.glob('child.*.log'))
+    started = time.monotonic(); s.submit(request); record = s.terminal(request, ('condition_signalled',))
+    require(progress.read_text().splitlines() == [witness] and cleanup.read_text().splitlines() == [witness],
+            'correlated project progress and actual unwind happened; setup is successful')
+    require(not invoked.exists(), 'no arbitrary or durable restart automatically invoked')
+    if kind in ('load_source', 'compile_source'):
+        require(record['image_consistent'] is False, 'partial load/compile never claims rollback or image consistency')
+    budget = min(16384, request['limits'].get('output_bytes', 16384))
+    value = diagnostic(s, record, budget, full)
+    delta = sum(p.stat().st_size for p in s.directory.glob('child.*.log')) - before
+    require(delta >= 0 and delta + Path(record['condition_ref']).stat().st_size <= budget, 'DIAGNOSTIC_BYTE_BUDGET')
+    require(time.monotonic() - started < 3, 'diagnostic time bound includes hostile printers')
+    if value is not None:
+        require(value['condition']['type'].rsplit(':', 1)[-1].upper() == names[0], 'actual captured condition identity')
+    if full:
+        symbols = lambda text: [word.rsplit(':', 1)[-1].upper() for word in re.findall(r'[A-Za-z0-9_:+*/<>=!?-]+', text)]
+        require(any(names[1] in symbols(item['frame']) for item in value['backtrace']), 'CAPTURE_ACTIVE_FRAME')
+        require(any(item['name'] is not None and item['name'].rsplit(':', 1)[-1].upper() == names[2]
+                    for item in value['restarts']), 'CAPTURE_ACTIVE_RESTART')
+    elif omission_required:
+        require(value is None or value['condition']['fallback'] or value['truncated'] or value['capture_failed'],
+                'hostile/omitted rendering has explicit fallback, truncation or capture failure')
+    if kind in ('load_source', 'compile_source'):
+        response = s.call('submit-operation', s.lisp('42'), 1)['result']
+        require(response['status'] == 'rejected' and response['executed'] is False, 'inconsistent image is quarantined')
+    validate_records(s)
+
+
+def live_capture(s, executable):
+    live_condition(s)
+    with tempfile.TemporaryDirectory(prefix='compile-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex()); live_condition(peer, 'compile_source')
+        finally:
+            peer.cleanup()
+
+
+def live_printing(s, executable):
+    reports = [
+        ('(write (loop repeat 100 collect (loop repeat 100 collect (list 1 2 3))) :stream stream)', {'output_bytes': 2048}),
+        ('(let ((x (list 1))) (setf (cdr x) x) (write x :stream stream))', {'output_bytes': 2048}),
+        ('(write-string (make-string 200000 :initial-element #\\x) stream)', {'output_bytes': 2048}),
+        ('(error "hostile report callback")', {'output_bytes': 2048}),
+        ('(loop (sleep 0.01))', {'output_bytes': 2048, 'timeout_seconds': .1}),
+        ('(loop (sleep 0.01))', {'output_bytes': 1}),
+        ('(loop (sleep 0.01))', {'output_bytes': 2048, 'timeout_seconds': 0}),
+        ('(progn (defclass n129-unsafe-printer () ()) (defmethod print-object ((obj n129-unsafe-printer) out) '
+         '(declare (ignore obj out)) (loop (sleep 0.01))) (write (make-instance (quote n129-unsafe-printer)) :stream stream))',
+         {'output_bytes': 2048, 'timeout_seconds': .1})]
+    for index, (report, limits) in enumerate(reports):
+        with tempfile.TemporaryDirectory(prefix='printer-', dir=s.home) as temp:
+            peer = LiveSession(Path(temp), candidate=s.candidate)
+            try:
+                peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                live_condition(peer, report=report, limits=limits, full=False, omission_required=index != 1)
+            finally:
+                peer.cleanup()
+    with tempfile.TemporaryDirectory(prefix='restart-printer-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            live_condition(peer, limits={'output_bytes': 2048, 'timeout_seconds': .1}, full=False,
+                           restart_report='(lambda (out) (declare (ignore out)) (loop (sleep 0.01)))')
+        finally:
+            peer.cleanup()
+    with tempfile.TemporaryDirectory(prefix='tiny-result-', dir=s.home) as temp:
+        peer = LiveSession(Path(temp), candidate=s.candidate)
+        try:
+            peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+            marker = peer.home / 'scalar-dispatched'; request = peer.lisp('(progn ' + lisp_write(marker, '42') + ' 42)', limits={'output_bytes': 1})
+            peer.submit(request); wait_for(marker.exists, 'tiny scalar actually dispatched')
+            record = wait_for(lambda: (r if (r := peer.poll(request['operation_id']))['status'] != 'running' else None), 'truthful tiny scalar outcome')
+            require(record['status'] in ('condition_signalled', 'unknown', 'terminated'), 'unrepresentable scalar never becomes altered completed value')
+        finally:
+            peer.cleanup()
+
+
 def live_control_candidate(home, fault):
     """Disposable observation mutant: real backend runs; only public observations change.
 
     Never used for baseline admission, production repair, or an accepted candidate.
-    Diagnostic section mutations await the explicit bundle/API convention.
+    Diagnostic mutations use proposed interface-intent1, reviewed with this bundle.
     """
     candidate = home / 'candidate'; (candidate / 'tools/fixtures/runtime_session').mkdir(parents=True)
     for relative in ('tools/sbcl_session_loop.lisp', 'tools/fixtures/runtime_session/stub_runtime.py'):
@@ -1788,6 +1952,10 @@ if isinstance(record, dict):
  if fault == 'mismatched-cancel' and record.get('status') == 'cancelled': record['operation_id'] = 'wrong-correlated-operation'
  if record.get('status') == 'condition_signalled':
   if fault == 'late-capture': record['condition_capture'] = 'after_unwind'
+  if fault in ('missing-restart', 'missing-frame'):
+   path = Path(record['condition_ref']); value = json.loads(path.read_text())
+   value['restarts' if fault == 'missing-restart' else 'backtrace'] = []
+   path.write_text(json.dumps(value))
   if fault == 'unbounded':
    directory = Path(sys.argv[sys.argv.index('--root') + 1]) / record['session_id']
    path = Path(record['condition_ref']); path = path if path.is_absolute() else directory / path
@@ -1818,8 +1986,27 @@ def live_scenario(selection, home, executable, candidate=ROOT):
             live_cancel(s)
         elif selection == 'termination-ends-generation':
             live_terminate(s, executable)
+            with tempfile.TemporaryDirectory(prefix='zero-deadline-', dir=home) as temp:
+                peer = LiveSession(Path(temp), candidate=candidate)
+                try:
+                    peer.start(executable); live_nonce(peer, os.urandom(16).hex())
+                    request, _, _, _ = live_gate(peer, uninterruptible=True, limits={'timeout_seconds': 0})
+                    tokens = dict(peer.live_tokens); started = time.monotonic()
+                    response = peer.call('cancel-operation', peer.cancellation(request), (0, 70))
+                    require(response['result']['status'] != 'cancelled', 'zero confirmation deadline never fabricates clean cancellation')
+                    peer.terminal(request, ('terminated',), 5)
+                    require(time.monotonic() - started < 4 and all(process_token(p) != t for p, t in tokens.items()),
+                            'zero requested deadline leads to bounded observed owned-process death')
+                finally:
+                    peer.cleanup()
+        elif selection == 'capture-before-unwind':
+            live_capture(s, executable)
+        elif selection == 'bounded-printing':
+            live_printing(s, executable)
+        elif selection == 4:
+            live_condition(s, 'load_source')
         else:
-            raise RuntimeError('diagnostic observation convention pending independent bundle/API review')
+            raise RuntimeError('unknown deep selector; never intended semantic red')
     finally:
         s.cleanup()
 
@@ -1827,7 +2014,10 @@ def live_scenario(selection, home, executable, candidate=ROOT):
 def live_negative_controls(selection, home, executable):
     controls = {'cancel-confirmed': [('premature-cancel', 'CANCEL_REQUEST_IS_UNCONFIRMED'),
                                    ('mismatched-cancel', 'TERMINAL_CORRELATION')],
-                'termination-ends-generation': [('generation-reuse', 'NEW_GENERATION')]}
+                'termination-ends-generation': [('generation-reuse', 'NEW_GENERATION')],
+                'capture-before-unwind': [('late-capture', 'CAPTURE_BEFORE_UNWIND'), ('missing-restart', 'CAPTURE_ACTIVE_RESTART'),
+                                          ('missing-frame', 'CAPTURE_ACTIVE_FRAME')],
+                'bounded-printing': [('unbounded', 'DIAGNOSTIC_BYTE_BUDGET')]}
     for fault, expected in controls.get(selection, []):
         with tempfile.TemporaryDirectory(prefix='mutant-', dir=home) as temp:
             scratch = Path(temp); candidate = live_control_candidate(scratch, fault)
