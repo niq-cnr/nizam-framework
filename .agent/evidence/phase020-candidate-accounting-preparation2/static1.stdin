@@ -1,0 +1,80 @@
+import gzip,hashlib,json,subprocess
+from pathlib import Path
+area=Path('.agent/evidence/phase020-candidate-accounting-preparation2');delta=json.loads((area/'delta.json').read_bytes());sha=lambda b:hashlib.sha256(b).hexdigest();cache={}
+def read(ref):
+ key=(ref['revision'],ref['path'])
+ if key not in cache:cache[key]=subprocess.check_output(['git','show',ref['revision']+':'+ref['path']])
+ raw=cache[key];assert sha(raw)==ref['sha256'],ref
+ return raw
+def collect(v):
+ if isinstance(v,dict):
+  if {'revision','path','sha256'}<=v.keys():read(v)
+  for z in v.values():collect(z)
+ elif isinstance(v,list):
+  for z in v:collect(z)
+collect(delta)
+base=json.loads(read(delta['base_closure']));review=json.loads(read(delta['canonical_review']));policy=json.loads(read(delta['Root_policy']))
+assert delta['base_closure']['sha256']=='1299b2275f2f7479d31615bb7abbbc9b1c5457d33c6bcf8c6cfa910f487ed290'
+assert review['final_verdict']['approved'] is False and {i['id'] for i in review['issues']}=={'C1','C2'}
+assert 'Onlyexplicitapproved020spec/carry' in policy['decision'] and 'SelectreviewedA8' in policy['interface']
+assert {x['id'] for x in delta['accepted_by_reference']}=={'A1','A2','A3','A4','A5','A6','A7'}
+assert all(x['bound_original_closure_sha256']==delta['base_closure']['sha256'] for x in delta['accepted_by_reference'])
+for x in delta['accepted_by_reference']:
+ i=int(x['decision']['pointer'].rsplit('/',1)[1]);assert review['approved_decisions'][i]['id']==x['id']
+shared_ref=delta['joint_doc_overrides'][0]['patch_source'];shared=json.loads(gzip.decompress(read(shared_ref)))
+old_rejected={(x['commit'],x['path']) for x in base['shared_proposals'] if x['state']=='PENDING-joint-common-overhead'}
+assert old_rejected=={(x['commit'],x['path']) for x in delta['joint_doc_overrides']}
+effective={};signed_by_event={}
+for d in delta['joint_doc_overrides']:
+ key=(d['commit'],d['path']);source=next(s for s in shared if (s['commit'],s['path'])==key);assert source['parent']==d['parent'] and source['patch_sha256']==d['patch_sha256']
+ assert subprocess.check_output(['git','show','-s','--format=%P',d['commit']]).decode().split()==[d['parent']]
+ for rev,expected in ((d['parent'],d['before_sha256']),(d['commit'],d['after_sha256'])):assert sha(subprocess.check_output(['git','show',rev+':'+d['path']]))==expected
+ signed=[l for l in source['patch'].splitlines() if l[:1] in ('+','-') and not l.startswith(('+++ ','--- '))];signed_by_event[key]=signed;owners=[];cursor=0
+ for block in d['ordered_blocks']:
+  assert block['selector_start']==cursor and block['owner']=='historical-joint' and block['adapter_owner']=='foreign'
+  end=block['selector_end_exclusive'];hashes=[sha(l.encode()) for l in signed[cursor:end]]
+  assert sha(json.dumps(hashes,sort_keys=True,separators=(',',':')).encode())==block['ordered_signed_line_hashes_sha256']
+  assert block['hunk_header'] in source['patch'].splitlines();owners.extend(['historical-joint']*(end-cursor));cursor=end
+ assert cursor==len(signed);effective[key]=owners
+observations=json.loads(Path('.agent/evidence/phase020-candidate-accounting-review1/observations.json').read_bytes())
+for c in observations['foreign_line_counterexamples']:
+ key=(c['commit'],c['path']);i=c['selector_index'];assert sha(signed_by_event[key][i].encode())==c['signed_line_sha256'] and effective[key][i]=='historical-joint'
+assert any('7020' in line and '017' in line for rows in signed_by_event.values() for line in rows)
+assert any('WA017' in line or 'WA phase 017' in line for rows in signed_by_event.values() for line in rows)
+mixed=False
+for key,lines in signed_by_event.items():
+ for i,line in enumerate(lines):
+  if any(token in line for token in ('→','NIP3','aliases','alias')):
+   assert effective[key][i]=='historical-joint';mixed=True
+assert mixed
+# Each current original joint record is resolved by exact bound original membership and explicit Root family policy.
+known_paths=set(delta['joint_family_policy']['retained_joint_original_families']['paths']);prefixes=delta['joint_family_policy']['retained_joint_original_families']['prefixes'];bound={(e['commit'],e['path'],e['after_sha256']) for e in base['joint_intake_pending']}
+def current_joint_owner(commit,path,digest):
+ if (commit,path,digest) not in bound:return 'HELD-unknown'
+ return 'historical-joint' if path in known_paths or any(path.startswith(p) for p in prefixes) else 'HELD-unknown'
+assert all(current_joint_owner(e['commit'],e['path'],e['after_sha256'])=='historical-joint' for e in base['joint_intake_pending'])
+assert current_joint_owner('unknown','.agent/evidence/workflow-016-planning/new-020-7020.py','unknown')=='HELD-unknown'
+assert current_joint_owner('unknown','unknown-020-7020','unknown')=='HELD-unknown'
+# Named canonical020carry stays intact; no original joint total is added or subtracted.
+assert json.loads(read(delta['historical_joint_view']['cost']))['counted_lines']==2315
+for e in delta['named_carry_refs']:
+ original=json.loads(read(e['decision']));i=int(e['decision']['pointer'].rsplit('/',1)[1]);d=original['event_decisions'][i]
+ assert d['key']==e['key'] and d['disposition']=='charge-authored' and d['category']=='process'
+ assert e['disposition']=='preserve-named020carry-once' and d['before_sha256']==e['before_sha256'] and d['after_sha256']==e['after_sha256']
+assert any(e['key'].endswith(':.agent/product_spec_020.md') for e in delta['named_carry_refs'])
+assert any('activation-readiness-analysis1.json' in e['key'] for e in delta['named_carry_refs'])
+assert any('activation-readiness-analysis2.json' in e['key'] for e in delta['named_carry_refs'])
+registrations=delta['joint_family_policy']['explicit_named020carry']['canonical_registration_activation'];assert registrations
+for ref in registrations:
+ original=json.loads(read(ref));s=original['shared_proposals'][int(ref['pointer'].rsplit('/',1)[1])]
+ assert s['path']=='docs/planning/manifest.json' and any(l['owner']=='020' for l in s['split_lines'])
+for e in delta['interface_overrides']:
+ assert e['disposition']=='charge-authored' and e['owner']=='020' and e['copy_deduction'] is False and e['independent_authorship_claim'] is False
+ assert subprocess.check_output(['git','show','-s','--format=%P',e['commit']]).decode().split()==[e['parent']]
+ assert sha(subprocess.check_output(['git','show',e['commit']+':'+e['path']]))==e['after_sha256']
+assert {e['commit'] for e in delta['interface_overrides']}=={'24c6092f8d8284d2e37590edd56aeb07f665b7c4','99c4d7e9bece2e71ebf6e3af10e501c950a5d475'}
+state=json.loads(Path('.agent/run_state.json').read_bytes());assert state['circuit_breaker']['020-candidate-accounting-closure-preparation']['attempts']==2
+assert state['scope_budget']['original_estimate_lines']==7350 and state['scope_budget']['ceiling_130pct']==9555
+assert delta['pending'] and 'NOT AUTHORIZED' in delta['adapter_binding']['numeric_execution']
+p=subprocess.run(['git','diff','--check'],capture_output=True);assert p.returncode==0 and not p.stdout and not p.stderr
+print(json.dumps({'result':'PASS focused static attribution regression only','delta_sha256':sha((area/'delta.json').read_bytes()),'foreign7020_and_WA017018_retained_joint':True,'mixed_order_alias_citations_retained_joint':True,'named020canonical_carry_preserved':True,'original_joint2315_unchanged_not_added_or_subtracted':True,'interface_actual_events_both_charged_no_authorship_inference':True,'unknown_joint_event_held':True,'acceptedA1_A7_exact_original_hash_reused':True,'whole_union_merge_derivation_reruns':False,'numeric_accounting_adapter_native_controller_tests':False,'future_END_heads_snapshot_tail':'PENDING'},sort_keys=True))
