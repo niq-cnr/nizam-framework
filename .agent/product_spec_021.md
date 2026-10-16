@@ -1,11 +1,14 @@
 ---
 id: nizam-phase021-product-spec
 title: "Phase 021 — Receipt Input Read Maintenance"
-description: "Locally completed per-call immutable receipt input maintenance; final accounting and exact-head PR/main delivery remain."
-version: 0.1.2
+description: "Locally completed per-call immutable receipt input maintenance; exact-head PR/main delivery remain."
+version: 0.1.3
 status: active
 authoritative_source: .agent/product_spec_021.md
 change_log:
+  - version: "0.1.3"
+    date: "2026-10-16"
+    summary: "Record immutable133 cost variance and bounded delivery exception; preserve budgets and history, and distinguish successful old main CI from pending new delivery."
   - version: "0.1.2"
     date: "2026-10-16"
     summary: "Record local133/021 QA and Root capture closure; preserve pending final accounting and PR/main delivery, all requirements and original allowance."
@@ -27,7 +30,7 @@ and [Root capture](evidence/133/evidence-capture.json), under the recorded
 merged normally at `c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7`. Root selected
 2000/2600 under operator delegation; these are not verbatim operator figures.
 Independent frozen tests, renewed bundle review, intended old reduction failure,
-implementation repair and Mode B preceded fresh QA. Final accounting and exact-head
+implementation repair and Mode B preceded fresh QA. Exact-head
 PR/merge/main delivery remain; no new PR exists at this snapshot.
 Features 129–132 remain phase 020; profiles 124–125 remain phase 019. Preserve the
 existing 017 → 016 → 018 → 020 → 019 plan and all original allowances. Root may select
@@ -112,12 +115,24 @@ Root capture exited 0 with 14,645 physical rows and 239 installed rows unchanged
 QA preservation was 14,553/239 or 14,595/239 at its respective revisions.
 These local observations establish no elapsed-time speedup or comparative result.
 Old main [38817712498](https://github.com/niq-cnr/nizam-framework/actions/runs/38817712498)
-at merge `c8ef3cd4` remained running at the 00:10 UTC snapshot; all five main jobs
-must succeed before new integration. The installed public v1.5.0 payload is unchanged.
+at merge `c8ef3cd4` [passed all five jobs](evidence/123/main-terminal1/report2.json)
+on 2026-10-16 00:24:45Z. Original watch/parser failures remain recorded; this old
+integration does not assess Source 133. The installed public v1.5.0 payload is unchanged.
 
 ## Selected cost and accounting
 
-Final scope remains unmeasured; initialized zero is not zero preparation cost.
+[Once-only scope accounting](evidence/133/scope-final/scope-report.json) at immutable
+endpoint `462f30f21a280f7dec7e7aab1f68979a900dbf78` selected **3,024**:
+frozen classifier 1,493 + authored endpoint overlay 1,299 = 2,792; the conservative
+chronological authored total is 3,024. Select max(2,792, 3,024), never their sum.
+Product 414 comprises source/docs 83 + independent tests 331; process 2,610 exceeds
+its 1,400 estimate. Original 2,000/2,600 stays unchanged: cumulative gate failed,
+424 over ceiling; first feature has no rolling baseline. Root's recorded
+`scope_budget.delivery_exception` under standing delegated self-improvement authority
+covers current delivery only, without a new allowance, rebaseline or future approval.
+Subsequent measurement/current-position/CI/merge administration is retained separately,
+not a second baseline. Dedicated old 123 authored 916 at the endpoint, plus later
+legacy terminal administration, remains separate; archived 018 is unchanged.
 Root selected **2000 lines**, ceiling **2600**: product 150, independent tests 450,
 process 1400. Process includes carried attribution preparation/report/release/index
 budget 300, this planning pair 220, contract 170, independent reviews 300,
