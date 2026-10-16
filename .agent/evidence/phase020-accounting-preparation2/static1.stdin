@@ -1,0 +1,72 @@
+import hashlib,json,subprocess
+from pathlib import Path
+root=Path.cwd();area=root/'.agent/evidence/phase020-accounting-preparation2'
+method=json.loads((area/'method.json').read_bytes());ledger=json.loads((area/'ledger.json').read_bytes())
+assert method['base_revision']==ledger['base']=='83fb1bd5a1f8b395729e6fea65ad3ecfd9b4d1db'
+assert all(v is None for k,v in method['closure'].items() if k.endswith('endpoint') or k.endswith('heads'))
+assert 'BEFORE fresh QA' in ' '.join(method['checkpoint_sequence'])
+assert 'NO counting/helper main' in method['checkpoint_sequence'][0]
+assert '.agent/run_state.json'==ledger['run_state_boundary']['path']
+assert 'No sharedstate hunk charge is authorized' in method['policy_boundary']['run_state']
+assert not any(e['path']=='.agent/run_state.json' for e in ledger['events'])
+sha=lambda b:None if b is None else hashlib.sha256(b).hexdigest()
+requests={};pins=[]
+def collect(v):
+ if isinstance(v,dict):
+  if all(k in v for k in ('revision','path','sha256')):
+   pins.append(v);requests[v['revision']+':'+v['path']]=None
+  for z in v.values():collect(z)
+ elif isinstance(v,list):
+  for z in v:collect(z)
+collect(method);collect(ledger)
+for e in ledger['events']:
+ assert e['owner']=='020' and e['category'] in ('product','independent_tests','process')
+ assert e['disposition'] in ('charge-authored','derived-observation-held-for-independent-review')
+ assert all(k in e for k in ('commit','parent','block','provenance','before_sha256','after_sha256'))
+ requests[e['parent']+':'+e['path']]=None;requests[e['commit']+':'+e['path']]=None
+argv=['git','cat-file','--batch'];process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+raw,err=process.communicate(('\n'.join(requests)+'\n').encode());assert process.returncode==0 and not err
+pos=0
+for ref in requests:
+ end=raw.index(b'\n',pos);header=raw[pos:end];pos=end+1
+ if header.endswith(b' missing'):value=None
+ else:
+  kind,size=header.rsplit(b' ',2)[-2:];assert kind==b'blob';size=int(size)
+  value=raw[pos:pos+size];pos+=size;assert raw[pos:pos+1]==b'\n';pos+=1
+ requests[ref]=value
+assert pos==len(raw)
+for v in pins:assert sha(requests[v['revision']+':'+v['path']])==v['sha256'],v
+for e in ledger['events']:
+ assert sha(requests[e['parent']+':'+e['path']])==e['before_sha256'],e
+ assert sha(requests[e['commit']+':'+e['path']])==e['after_sha256'],e
+assert len({(e['commit'],e['path'],e['block']) for e in ledger['events']})==len(ledger['events'])
+prior=json.loads((root/'.agent/evidence/phase020-accounting-preparation1/method.json').read_bytes())
+assert method['allocation_unchanged']==prior['allocation']
+spec=(root/'.agent/product_spec_020.md').read_text();assert 'raw evidence/run_state excluded; unclassified fails closed' in spec
+state=json.loads((root/'.agent/run_state.json').read_bytes())
+assert state['circuit_breaker']['020-final-accounting-preparation']['attempts']==2
+assert state['scope_budget']['original_estimate_lines']==7350 and state['scope_budget']['ceiling_130pct']==9555
+bad=next(e for e in ledger['events'] if e['path'].endswith('development-native-fixtures3-outer.stdin'))
+assert bad['disposition']=='charge-authored' and bad['category']=='process'
+for f in ledger['failed_corrected_frames']:
+ v=json.loads(requests[f['frame']['revision']+':'+f['frame']['path']]);assert (v['actual_exit'],v['child_pid'],v['exercised_revision'])==(f['actual_exit'],f['child_pid'],f['exercised_revision'])
+frame_map={Path(f['frame']['path']).parent.name:f['actual_exit'] for f in ledger['failed_corrected_frames']}
+assert frame_map['fixture-root-admission3']==1 and frame_map['fixture-root-admission4']==0
+for d in ledger['derivations']:
+ if d['id'].startswith('qualified-fixtures'):
+  manifest=json.loads(requests[d['manifest']['revision']+':'+d['manifest']['path']])
+  for row in d['outputs']:
+   i=int(row['manifest_pointer'].rsplit('/',1)[1]);assert manifest['sources'][i]==row['exact_parameters']
+   assert row['sha256']==sha((root/row['path']).read_bytes())
+  actual=json.loads(requests[d['actual_native_frame']['revision']+':'+d['actual_native_frame']['path']]);assert actual['actual_exit']==0 and actual['child_pid']==d['actual_native_pid']
+ elif d['id']=='native-group-expression':
+  text=requests[d['actual_stdout']['revision']+':'+d['actual_stdout']['path']].decode()
+  value=json.loads(next(v.split(' ',1)[1] for v in text.splitlines() if v.startswith('NATIVE_START ')))
+  assert value==d['parameters'];args=value['argv'];form=args[args.index('--eval')+1]
+  assert (form+'\n').encode()==requests[d['output']['revision']+':'+d['output']['path']]
+ else:
+  f=json.loads(requests[d['actual_frame']['revision']+':'+d['actual_frame']['path']]);assert f['input_sha256']==d['output']['sha256']
+archive=next(e for e in ledger['events'] if e['commit']=='a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24')
+p=subprocess.run(['git','merge-base','--is-ancestor',archive['commit'],archive['provenance']['accepted']],capture_output=True);assert p.returncode==1 and not p.stdout and not p.stderr
+p=subprocess.run(['git','diff','--check'],capture_output=True);assert p.returncode==0 and not p.stdout and not p.stderr
+print(json.dumps({'result':'PASS static provenance/rule verification only','method_sha256':sha((area/'method.json').read_bytes()),'ledger_sha256':sha((area/'ledger.json').read_bytes()),'event_and_reference_hashes_verified':True,'run_state_exclusion_preserved':True,'failed_invalid_inputs_retained':True,'generated_exclusions_held_for_independent_review':True,'archive_nonancestor_verified':True,'candidate_checkpoint_before_freshQA_and_final_closure_distinct':True,'no_measurement_or_native_or_test_execution':True,'final_endpoints_heads_merge_proofs_and_QA_admin_closure':'PENDING'},sort_keys=True))
