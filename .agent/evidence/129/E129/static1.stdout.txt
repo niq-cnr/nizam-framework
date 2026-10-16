@@ -1,0 +1,151 @@
+ROLE Evaluator129 independent contract review; static only; no controller, SBCL, runner, acceptance or compliance command executed
+REVISION a6ddbee2cef7097b1b6747017d987b4f1aec24e7 PROPOSAL 872bb3bb611834d1f3e9ec76b8dc9e8f018aab81 ORIGIN https://github.com/niq-cnr/nizam-framework.git
+PIN .agent/contracts/129.json c9aacac3a95cdea4a2621a46e0416d4644fe8251 4ac4353b7087336b86fab01baf5ba04c28e4260cb40f43849aec270a4901844f
+PIN .agent/product_spec_020.md 42d3e7f5832504f4e13d1c167b5b08f9aa53232c ff9e2de8b72d3f877b346ceba52025bb44d28e6f72acda2287acd72c0320fda0
+PIN .agent/feature_list_020.json 3f929348f739e9321126a8c586fe9689c9c605ad 4c6e7adc494b5c362fcea016d2c58d6d23cb7d79c623ae689e58ec691461ca65
+PIN .agent/evidence/phase020-preflight/intake-current-context1.json f7eccbb2ea586adb15a0b88b88b3eaa820da32da 8a67ae305d9726242a1e44b1ff7e075fd6bd5fb1c76d42ef5fed6d9e8f315cdf
+PIN .agent/validator/phase020-intake-context1.json 811610cfc04c72527411180a4775612baf8159a5 2b1967a74ddcb3fc944ac156b7569ebbd0df3b0b3ce4fb0981bcd986628698b2
+PIN tools/runtime_session.py 25e5c134e27d78077a3f91e4fb74a0315e98124e fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345
+PIN tools/test_runtime_session.py 13ca2d24af89bf173c9d2bd4548ba4e808cfd27f 005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534
+PIN methodology/10_live_runtime_sessions.md 48a862570306b2a03ad35579119a14b652f76939 70d992c04cad63dcac27d469fab4ebfeeb900ccc08e12462cfbf3f15688dc0de
+PIN methodology/11_sbcl_runtime_binding.md 279ad8a1a8873e0c2e13503a025f0c75cca62b2f 36a0014e478ff8e73163df869c80431bdbb4bc64271965662bc1648ed86cbbf7
+PIN docs/nips/NIP-0003-live-runtime-sessions.md 7f53201b3fe8c42ded4894a6d72f6af41a461c5c 6560c6dcb22dfd92b825003275168fa15cb926e2861782d7e1fa67238d3d3d5e
+PIN .nizam/schema/contract_review.schema.json 2c2c1af31168388466c3d41555ea8b38d24f6aba a169df1771ecc30e61bcc4c3e08cc870ce430b85b4a087320f49b7308c957082
+PIN schema/contract_review.schema.json 2c2c1af31168388466c3d41555ea8b38d24f6aba a169df1771ecc30e61bcc4c3e08cc870ce430b85b4a087320f49b7308c957082
+CONTRACT_SCHEMA_PASS .nizam/schema/contract.schema.json
+CONTRACT_SCHEMA_PASS schema/contract.schema.json
+COVERAGE seven planned acceptance commands exact, plus core-ready and two compliance commands; estimate2100 with proposed1000process
+READ_ONLY_PRECODE_STATE {"attempts": 1, "evaluator_owner": "separate Evaluator129 session", "limit": 3, "mode_a_owner": "/root/validator133", "proposal_revision": "872bb3bb611834d1f3e9ec76b8dc9e8f018aab81", "proposal_sha256": "4ac4353b7087336b86fab01baf5ba04c28e4260cb40f43849aec270a4901844f", "scope": "Read-only independent contract reviews and own verdict/static evidence only. No Source/tests/runtime probes/phaseactivation/allocation/install. Same exact proposal; both strict approvals required, rejection returns to Generator bounded revision.", "status": "released-two-independent-contract-reviews"}
+INHERITED_CORE_LEAVES [["--check", "lifecycle-no-evaluation"], ["--check", "record-schema"], ["--check", "fixture-claim-registered"], ["--case", "1", "--runtime", "stub"], ["--case", "2", "--runtime", "stub"], ["--case", "3", "--runtime", "stub"], ["--case", "9", "--runtime", "stub"], ["--case", "13", "--runtime", "stub"], ["--case", "8", "--runtime", "stub", "--layer", "policy"], ["--check", "cancel-confirmation-required"], ["--check", "handoff-source-bound"], ["--case", "5", "--runtime", "stub"], ["--case", "6", "--runtime", "stub"], ["--case", "10", "--runtime", "stub"]]
+HISTORICAL_RUNNER_SAME_BYTES 005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534
+LISP_LOOP_EXISTS False
+CONTRACT_IMPLEMENTATION admission Keep seven existing calls. Add closed optional open-session request runtime=stub|sbcl, default stub; persist selection in controller metadata and reject mismatched reopen. No arbitrary runtime_command or caller executable. Resolve actual SBCL on explicit sbcl selection; absent/failed startup is nonzero, never fallback. Start fixed repository Lisp loop without user/system init, using SBCL built-ins and Python standard library only.
+CONTRACT_IMPLEMENTATION payload Existing payload.expression remains a nonempty string: stub retains its JSON set/get/gate grammar; SBCL accepts Lisp source forms under the requested existing kind. Defer runtime-specific parsing until selection is known; source-bound handoff templates validate under the selected runtime. No lifecycle evaluation, shell interpretation or admission bypass. Establish package/readtable/printer and correlated operation bindings inside each worker thread.
+CONTRACT_IMPLEMENTATION transport Adapt existing private bounded transport as needed for built-in-only SBCL, with separate diagnostic output. Preserve strict frame limits/types, owner/generation/lease/attempt guards, duplicate-ID precedence, atomic records and one busy lane. Accept results only from the current correlated operation/runtime; malformed, stale or unsolicited frames cannot manufacture completion or free busy state.
+CONTRACT_TEST behavior Real SBCL subprocesses prove pre-unwind restarts/backtrace, partial load effects, nested/cyclic/oversized and hostile reporting, delayed unwind confirmation, withheld confirmation escalation, bounded waits and live reattachment. Each negative has a real working-path positive control and correlated dispatch/progress witness; missing source/selectors/SBCL/setup is infrastructure, never intended semantic red.
+CONTRACT_TEST preservation New --check selectors exercise real SBCL fail-closed, as do cases4/5/6 with --runtime sbcl --require-sbcl. Preserve all fourteen stub selections and core-ready semantics, single existing harness/claim row and historical receipts; review and run inherited core-ready as regression proof. No full-matrix, isolation or fresh-build claim follows from these seven leaves.
+CONTRACT_TEST freeze Seal new whole-runner Git object/SHA256 and applicable control/fixture identities. Distinct reviewer freezes exact bundle before intended semantic red is captured on unmodified product. Red identifies the contracted behavioral defect with successful setup/control; CLI/setup failures do not qualify. Product repair begins only after Root admits that evidence.
+tools/runtime_session.py:73: def object_keys(value, required, optional=()):
+tools/runtime_session.py:74:     insist(type(value) is dict and set(required) <= value.keys()
+tools/runtime_session.py:75:            and value.keys() <= set(required) | set(optional))
+tools/runtime_session.py:76: 
+tools/runtime_session.py:153: def validate_request(action, request):
+tools/runtime_session.py:154:     if action == 'open-session':
+tools/runtime_session.py:155:         required = {'session_id', 'requester', 'owner', 'purpose', 'run_state_path', *BINDING}
+tools/runtime_session.py:156:         object_keys(request, required, {'expected_generation', 'expected_lease_epoch'})
+tools/runtime_session.py:157:         principal(request['owner'])
+tools/runtime_session.py:158:         insist(string(request['purpose']) and string(request['run_state_path'])
+tools/runtime_session.py:159:                and Path(request['run_state_path']).is_absolute())
+tools/runtime_session.py:160:         insist(('expected_generation' in request) == ('expected_lease_epoch' in request))
+tools/runtime_session.py:161:     else:
+tools/runtime_session.py:191: def operation_data(request):
+tools/runtime_session.py:192:     insist(isinstance(request['kind'], str) and request['kind'] in KINDS)
+tools/runtime_session.py:193:     context = request['context']
+tools/runtime_session.py:194:     object_keys(context, set(), {'working_dir', 'namespace', 'reader_config_ref', 'test_config_ref'})
+tools/runtime_session.py:195:     insist(all(string(value) for value in context.values()))
+tools/runtime_session.py:196:     limits = request['limits']
+tools/runtime_session.py:197:     object_keys(limits, set(), {'timeout_seconds', 'output_bytes'})
+tools/runtime_session.py:198:     if 'timeout_seconds' in limits:
+tools/runtime_session.py:199:         value = limits['timeout_seconds']
+tools/runtime_session.py:200:         insist(type(value) in (int, float) and math.isfinite(value) and value >= 0)
+tools/runtime_session.py:201:     if 'output_bytes' in limits:
+tools/runtime_session.py:202:         insist(integer(limits['output_bytes'], 1))
+tools/runtime_session.py:203:     payload = request['payload']
+tools/runtime_session.py:204:     object_keys(payload, {'expression'})
+tools/runtime_session.py:205:     insist(string(payload['expression']))
+tools/runtime_session.py:206:     expression = parse_json(payload['expression'])
+tools/runtime_session.py:207:     insist(type(expression) is dict and isinstance(expression.get('op'), str))
+tools/runtime_session.py:208:     op = expression['op']
+tools/runtime_session.py:209:     insist(op in ('set', 'get', 'gate'))
+tools/runtime_session.py:210:     object_keys(expression, {'op', 'release_path'} if op == 'gate'
+tools/runtime_session.py:211:                 else {'op', 'name', 'value'} if op == 'set' else {'op', 'name'})
+tools/runtime_session.py:212:     insist(string(expression['release_path' if op == 'gate' else 'name']))
+tools/runtime_session.py:489:         read_fd, write_fd = os.pipe()
+tools/runtime_session.py:490:         def child_fd3():
+tools/runtime_session.py:491:             os.dup2(write_fd, 3)
+tools/runtime_session.py:492:         stub = Path(__file__).resolve().parent / 'fixtures/runtime_session/stub_runtime.py'
+tools/runtime_session.py:493:         try:
+tools/runtime_session.py:494:             self.child = subprocess.Popen(
+tools/runtime_session.py:495:                 [sys.executable, str(stub)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+tools/runtime_session.py:496:                 stderr=subprocess.PIPE, pass_fds=tuple({write_fd, 3}), preexec_fn=child_fd3,
+tools/runtime_session.py:497:                 cwd=self.root, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
+tools/runtime_session.py:498:         finally:
+tools/runtime_session.py:499:             os.close(write_fd)
+tools/runtime_session.py:500:         self.meta['child_pid'] = self.child.pid
+tools/runtime_session.py:501:         atomic_json(meta_path, self.meta)
+tools/runtime_session.py:502:         for fd, channel in ((read_fd, 'protocol'), (self.child.stdout.fileno(), 'stdout'),
+tools/test_runtime_session.py:1392: def main():
+tools/test_runtime_session.py:1393:     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+tools/test_runtime_session.py:1394:     selection = parser.add_mutually_exclusive_group(required=True)
+tools/test_runtime_session.py:1395:     selection.add_argument('--check', choices=(*CHECKS, 'core-ready'))
+tools/test_runtime_session.py:1396:     selection.add_argument('--case', type=int, choices=CASES)
+tools/test_runtime_session.py:1397:     parser.add_argument('--runtime', choices=('stub',))
+tools/test_runtime_session.py:1398:     parser.add_argument('--layer', choices=('policy',))
+tools/test_runtime_session.py:1399:     parser.add_argument('--require-sbcl', action='store_true')
+tools/test_runtime_session.py:1400:     parser.add_argument('--require-isolation', action='store_true')
+tools/test_runtime_session.py:1401:     args = parser.parse_args()
+tools/test_runtime_session.py:1402:     if args.require_sbcl or args.require_isolation:
+tools/test_runtime_session.py:1403:         parser.error('requested capability proof is unavailable in this partial stub suite; no skip permitted')
+tools/test_runtime_session.py:1404:     if (args.case is not None) != (args.runtime == 'stub') or (args.layer == 'policy') != (args.case == 8):
+tools/test_runtime_session.py:1405:         parser.error('cases require --runtime stub; case8 requires --layer policy only')
+tools/test_runtime_session.py:1406:     if not (ROOT / 'tools/runtime_session.py').is_file():
+tools/test_runtime_session.py:1407:         print('SETUP_FAILURE: controller source absent; this is not semantic red', file=sys.stderr)
+tools/test_runtime_session.py:1408:         return 2
+docs/nips/NIP-0003-live-runtime-sessions.md:548: | 4 | A load fails after earlier forms have executed | Reported as incomplete; the image is not claimed consistent | Valid: a `load_source` operation in `condition_signalled` with the image marked not consistent. Negative: a failed load that claims consistency. | SBCL |
+docs/nips/NIP-0003-live-runtime-sessions.md:549: | 5 | A request times out while execution continues | No conflicting operation starts until the outcome is resolved | Valid: `running` with `wait_outcome: stopped_waiting`, and a concurrent submit `rejected` as busy. Negative: a timeout recorded as `cancelled`. | Stub and SBCL |
+docs/nips/NIP-0003-live-runtime-sessions.md:550: | 6 | The agent disconnects and reconnects | Pending-operation and ownership state are recovered accurately | Valid: a session record after `reattach-session` that keeps its generation and outstanding operation reference. | Stub and SBCL |
+methodology/11_sbcl_runtime_binding.md:90: source/operation identity and known partial effects. They MUST NOT claim rollback
+methodology/11_sbcl_runtime_binding.md:91: or image consistency merely because control returned. If consistency cannot be
+methodology/11_sbcl_runtime_binding.md:92: established, quarantine the image and reconstruct from committed inputs before
+methodology/11_sbcl_runtime_binding.md:93: further development claims. Reconstructing does not reset the governed attempt.
+methodology/11_sbcl_runtime_binding.md:94: 
+methodology/11_sbcl_runtime_binding.md:95: ## 5. Conditions and restarts
+methodology/11_sbcl_runtime_binding.md:96: 
+methodology/11_sbcl_runtime_binding.md:97: Consumers MUST capture condition identity, bounded diagnostics and applicable
+methodology/11_sbcl_runtime_binding.md:98: restarts **before unwind**, using `handler-bind` or the documented
+methodology/11_sbcl_runtime_binding.md:99: `sb-ext:*invoke-debugger-hook*` when debugger entry is the appropriate boundary.
+methodology/11_sbcl_runtime_binding.md:100: `handler-case` transfers control and unwinds before its matching clause runs;
+methodology/11_sbcl_runtime_binding.md:101: that clause cannot recover the original dynamic restart context. The debugger
+methodology/11_sbcl_runtime_binding.md:102: hook does not replace handlers for conditions that never enter the debugger.
+methodology/11_sbcl_runtime_binding.md:103: 
+methodology/11_sbcl_runtime_binding.md:104: Restarts established by `restart-case` or `restart-bind` have dynamic extent.
+methodology/11_sbcl_runtime_binding.md:105: Serialize bounded restart descriptions while applicable; durable descriptions
+methodology/11_sbcl_runtime_binding.md:106: are not invocable restart objects. Consumers MUST NOT automatically invoke an
+methodology/11_sbcl_runtime_binding.md:107: arbitrary restart or replay a saved restart object after its context has ended.
+methodology/11_sbcl_runtime_binding.md:108: Any authorized restart selection belongs to the correlated active operation.
+methodology/11_sbcl_runtime_binding.md:109: 
+methodology/11_sbcl_runtime_binding.md:110: Diagnostic printing MUST bound depth, length, total bytes and execution/time
+methodology/11_sbcl_runtime_binding.md:111: budget. Bind appropriate printer controls, including `*print-level*`,
+methodology/11_sbcl_runtime_binding.md:112: `*print-length*` and `*print-circle*`, but do not assume they bound custom
+methodology/11_sbcl_runtime_binding.md:113: `print-object` or condition-report callbacks. Avoid recursively invoking unsafe
+methodology/11_sbcl_runtime_binding.md:114: project printers; use a trusted minimal type/identity fallback and report
+methodology/11_sbcl_runtime_binding.md:115: truncation or capture failure explicitly. A stuck reporting callback remains
+methodology/11_sbcl_runtime_binding.md:116: execution subject to the timeout and busy-lane rules below.
+methodology/11_sbcl_runtime_binding.md:117: 
+methodology/11_sbcl_runtime_binding.md:118: ## 6. Image drift
+methodology/11_sbcl_runtime_binding.md:119: 
+methodology/11_sbcl_runtime_binding.md:120: Deleting or renaming a function or deleting a `defmethod` from source does not
+methodology/11_sbcl_runtime_binding.md:121: remove its old live definition. Reloading `defvar` retains an existing bound
+methodology/11_sbcl_runtime_binding.md:122: value, so a changed initializer may never run. Consumers MUST treat these drift
+methodology/11_sbcl_runtime_binding.md:123: classes as a reason to reconstruct when source/image consistency is uncertain;
+methodology/11_sbcl_runtime_binding.md:146: 
+methodology/11_sbcl_runtime_binding.md:147: Consumers MUST account for outstanding worker threads, shared REPL clients and
+methodology/11_sbcl_runtime_binding.md:148: external resource handles before ownership transfer, image reuse or
+methodology/11_sbcl_runtime_binding.md:149: reconstruction. Their identities and unresolved effects remain in provenance;
+methodology/11_sbcl_runtime_binding.md:150: a worker completing does not by itself establish image consistency.
+methodology/11_sbcl_runtime_binding.md:151: 
+methodology/11_sbcl_runtime_binding.md:152: ## 8. Timeouts and cancellation
+methodology/11_sbcl_runtime_binding.md:153: 
+methodology/11_sbcl_runtime_binding.md:154: `join-thread :timeout` bounds waiting, not execution. On timeout, consumers MUST
+methodology/11_sbcl_runtime_binding.md:155: record `wait_outcome: stopped_waiting` and preserve the observed `running`,
+methodology/11_sbcl_runtime_binding.md:156: `cancel_requested` or `unknown` status. The operation lane stays busy until its
+methodology/11_sbcl_runtime_binding.md:157: outcome is resolved; stopping a wait cannot authorize a conflicting submit.
+methodology/11_sbcl_runtime_binding.md:158: 
+methodology/11_sbcl_runtime_binding.md:159: `interrupt-thread` and `terminate-thread` are asynchronous mechanisms with
+methodology/11_sbcl_runtime_binding.md:160: `unwind-protect`, cleanup and reentrancy hazards. A cancellation request MUST NOT
+methodology/11_sbcl_runtime_binding.md:161: be treated as confirmed cancellation. Consumers MUST observe execution stopping
+methodology/11_sbcl_runtime_binding.md:162: under the correlated operation/session/generation/lease identity before recording
+methodology/11_sbcl_runtime_binding.md:163: `cancelled`, and assess remaining effects and consistency separately. Confirmed
+methodology/11_sbcl_runtime_binding.md:164: termination does not undo already executed forms or release every resource.
+methodology/11_sbcl_runtime_binding.md:165: 
+STATIC_FINDING: runtime selection and Lisp payload are rejected before dispatch; only fixed Python stub is launched and Lisp loop is absent. Frozen-red gate requires successful actual SBCL dispatch/control before any product repair; no staged bootstrap or approved alternate red target is specified.
