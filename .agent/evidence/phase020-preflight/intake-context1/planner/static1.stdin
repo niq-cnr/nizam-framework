@@ -1,0 +1,30 @@
+from pathlib import Path
+import json,hashlib,subprocess
+import yaml,jsonschema
+base='06056e9abc8290b58f47e3225f7413ac992c8d6c';paths=['.agent/product_spec_020.md','.agent/feature_list_020.json','.agent/evidence/phase020-preflight/intake-current-context1.json']
+assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==base
+assert sorted(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())==sorted(paths)
+assert not subprocess.check_output(['git','diff','--name-only'],text=True)
+f=json.loads(Path(paths[1]).read_text());prior=json.loads(subprocess.check_output(['git','show',base+':'+paths[1]],text=True))
+for k in f:
+ if k not in ['spec_version','cross_phase_prerequisites','activation_prerequisites']:assert f[k]==prior[k],k
+assert f['spec_version']=='0.1.2' and f['phase_status']=='pending'
+for x,y in zip(f['cross_phase_prerequisites'],prior['cross_phase_prerequisites']):
+ x=dict(x);y=dict(y);x.pop('authority');y.pop('authority');assert x==y
+assert f['activation_prerequisites'][0]==prior['activation_prerequisites'][0]
+for prefix in ['', '.nizam/']:
+ jsonschema.validate(f,json.loads(Path(prefix+'schema/feature_list.schema.json').read_text()))
+ jsonschema.validate(yaml.safe_load(Path(paths[0]).read_text().split('---',2)[1]),json.loads(Path(prefix+'schema/frontmatter.schema.json').read_text()))
+marker='## Full counted proposed budget';oldspec=subprocess.check_output(['git','show',base+':'+paths[0]],text=True);assert Path(paths[0]).read_text().split(marker,1)[1]==oldspec.split(marker,1)[1]
+x=json.loads(Path(paths[2]).read_text());assert len(Path(paths[2]).read_text().splitlines())<=60
+for r in x['refs']:
+ assert r['revision']==base
+ assert hashlib.sha256(Path(r['path']).read_bytes()).hexdigest()==r['sha256']
+ assert subprocess.check_output(['git','show',base+':'+r['path']])==Path(r['path']).read_bytes()
+assert hashlib.sha256(Path(x['source_current']['path']).read_bytes()).hexdigest()==x['source_current']['sha256']=='5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d'
+assert hashlib.sha256(subprocess.check_output(['git','show','599d7c5aa0c0c80ce8da596c7aeae2924d7dca04:tools/workflow_assurance.py'])).hexdigest()==x['historical123_api_sha256']
+runs=json.loads(Path('.agent/evidence/133/ci/observations1/runs1.stdout.txt').read_text());assert {r['databaseId']:r['status'] for r in runs}=={38831271485:'in_progress',38831271516:'completed'}
+assert json.loads(Path('.agent/evidence/123/main-terminal1/report2.json').read_text())['conclusion']=='success'
+subprocess.run(['git','diff','--cached','--check'],check=True)
+for p in paths:print(p,hashlib.sha256(Path(p).read_bytes()).hexdigest())
+print('PASS exact three-file planning scope; root+installed schemas; feature objects/acceptance/matrix/lanes/budgets unchanged; immutable source/proof/integration refs; pending lifecycle; compact delta; whitespace. Static only, no tests, activation or scope count.')
