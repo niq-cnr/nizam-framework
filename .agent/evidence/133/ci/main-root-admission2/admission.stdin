@@ -1,0 +1,37 @@
+
+import pathlib,json,hashlib,subprocess
+r=pathlib.Path.cwd();b=r/'.agent/evidence/133/ci/main-terminal1';load=lambda n:json.loads((b/n).read_text());sha=lambda x:hashlib.sha256(x).hexdigest();head='bfd15d10eb718d2cf18272b35c1bb5857af71f3f';parent='c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7';pr='19efbca54be6b2d58f637b22ee4b4185cf32b342'
+assert sha((b/'report.json').read_bytes())=='d6b6c0b556e29c54cc9866b9117e984025b18aea536375bc5ea18cfefd03e667'
+index=(b/'capture-index.sha256').read_bytes();assert sha(index)=='12b668fe00e88d3d56fd57684b9a678e12c3d7285c067af28fedc8c4d5bfdde2'
+names=[]
+for line in index.decode().splitlines():
+ h,n=line.split(maxsplit=1);assert pathlib.Path(n).name==n and sha((b/n).read_bytes())==h,n;names.append(n)
+assert len(names)==len(set(names))==307
+v=load('report.json');expected={'validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'};assert v['observation_complete'] is True and v['all_five_main_jobs_succeeded'] is True and v['head']==head and v['run_id']==38851734070 and v['workflow_conclusion']=='success' and set(v['jobs'])==expected
+run=load('terminal-run.stdout.txt');jobs=load('terminal-jobs.stdout.txt')['jobs'];assert run['id']==38851734070 and run['head_sha']==head and run['head_branch']=='main' and run['event']=='push' and run['status']=='completed' and run['conclusion']=='success'
+assert len(jobs)==5 and {j['name'] for j in jobs}==expected and all(j['status']=='completed' and j['conclusion']=='success' and j['head_sha']==head and j['run_id']==38851734070 for j in jobs)
+frames=list(b.glob('*.execution.json'));assert len(frames)==76
+for p in frames:
+ f=json.loads(p.read_text());assert f['actual_exit']==(1 if p.name=='watch.execution.json' else 0) and f['timed_out'] is False and f['child_pid']>0 and f['exercised_revision']==head
+ for k in ['stdout','stderr','stdin']:
+  if f.get(k):
+   x=(b/pathlib.Path(f[k]['path']).name).read_bytes();assert sha(x)==f[k]['sha256'] and len(x)==f[k]['bytes']
+assert load('static-observation.execution.json')['child_pid']==3913911
+raw=(b/'terminal-logs.stdout.txt').read_bytes();assert len(raw)==541370 and len(raw.splitlines())==3190 and sha(raw)==v['qualified_log']['sha256']=='d771df8e5dfbc51ff7c28ad136509b333b462e14c4959eae11abe3da6cc5f8a4'
+rows=[]
+for line in raw.decode().splitlines():
+ j,s,t=line.split('\t',2);rows.append((j,s,t.partition(' ')[2]))
+assert {j for j,s,t in rows if t=='Cleaning up orphan processes'}==expected and sum(t=='Cleaning up orphan processes' for j,s,t in rows)==5
+receipts=[json.loads(t.split('=',1)[1]) for j,s,t in rows if t.startswith('MAINTENANCE_CHECKOUT_RECEIPT={')];assert len(receipts)==2
+for x in receipts:assert x['checkout_sha']==head and x['source_sha256']==v['physical_source9_hashes'] and len(x['source_sha256'])==9
+for p,h in {**v['immutable_checkout_pins'],**v['physical_source9_hashes']}.items():assert sha(subprocess.check_output(['git','show',head+':'+p]))==h
+coverage=v['coverage'];cases=coverage['default_ordered_cases'];aux=coverage['auxiliary_pass_literals'];assert len(cases)==len(set(cases))==48 and len(aux)==1
+passes=[t[5:] for j,s,t in rows if j=='fixtures_self_test' and s=='Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py' and t.startswith('PASS ')];assert [x for x in passes if x in cases]==cases and [x for x in passes if x not in cases]==aux
+for job,step in [('fixtures_self_test','Run bash tools/fixtures_self_test.sh'),('convergent_review','Run fixture self-test')]:
+ payload=[t for j,s,t in rows if j==job and s==step];assert payload.count('SELF-TEST OK: 166/166 fixtures accounted for, 0 failed')==1
+ checks=coverage['new_ordered_checks_per_shell_job'];assert len(checks)==4 and [t[5:] for t in payload if t.startswith('PASS ') and t[5:] in checks]==checks and payload.count('OK   receipt-candidate-batching four focused checks')==1
+ for case in ['ci-candidate-bound','ci-blocker-rejected']:assert payload.count('PASS '+case)==1 and payload.count('OK   workflow-assurance '+case)==1
+commit=(b/'checkout-commit.stdout.txt').read_bytes();assert hashlib.sha1(b'commit '+str(len(commit)).encode()+b'\0'+commit).hexdigest()==head
+headers=commit.split(b'\n\n',1)[0].decode().splitlines();assert [x[7:] for x in headers if x.startswith('parent ')]==[parent,pr] and headers[0]=='tree '+subprocess.check_output(['git','rev-parse',pr+'^{tree}']).decode().strip()
+assert v['unknown_step_associations']==[] and sha(pathlib.Path('/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh').read_bytes())==v['qualified_log']['collector_cli_sha256']
+print(json.dumps({'admitted':'matching merged main CI delivery proof','jobs':5,'indexed_files':307,'frames':76,'log_bytes':541370,'default_cases':48,'auxiliary':1,'fixture_files_per_shell':166,'source_receipts':2,'historical_watch_exit':1,'current_controls_ready':False},sort_keys=True))

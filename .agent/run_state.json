@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T06:10:53.596884+00:00",
+  "updated_at": "2026-10-16T06:11:13.818961+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3045,10 +3045,15 @@
     "133-main-hosted-delivery": {
       "attempts": 1,
       "limit": 3,
-      "status": "released-matching-main-observer",
+      "status": "all-five-main-success-proof-Root-admitted",
       "merge_revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
       "owner": "/root/qa133 CI observer only",
-      "scope": "Observe actual main compliance run at exact bfd15d10. Collect whole terminal qualified logs and five successful jobs, source receipts/current pins/full default and fixture coverage/cleanup. No watcher or CI restarts on observation failures; retain all actual frames. Not QA rerun or current-controls-ready claim."
+      "scope": "Observe actual main compliance run at exact bfd15d10. Collect whole terminal qualified logs and five successful jobs, source receipts/current pins/full default and fixture coverage/cleanup. No watcher or CI restarts on observation failures; retain all actual frames. Not QA rerun or current-controls-ready claim.",
+      "proof_revision": "b29d32f01bc4000fc1584231b66584e615bd2a73",
+      "run_id": 38851734070,
+      "report": ".agent/evidence/133/ci/main-terminal1/report.json",
+      "report_sha256": "d6b6c0b556e29c54cc9866b9117e984025b18aea536375bc5ea18cfefd03e667",
+      "root_admission": ".agent/evidence/133/ci/main-root-admission2/admission.execution.json"
     },
     "129-source": {
       "attempts": 2,
@@ -3274,7 +3279,7 @@
     "133-main-root-admission": {
       "attempts": 2,
       "limit": 3,
-      "status": "released-observed-receipt-field-correction2",
+      "status": "passed-exact-terminal-main-proof-admission2",
       "proof_revision": "b29d32f01bc4000fc1584231b66584e615bd2a73",
       "scope": "Read-only strict307rawindex/76frames/qualified541370-byte3190-line log/currentpins/5success/fullcoverage andnormalmerge proof. Preserve originalwatchactual1 asobservationfailure. No log/test/CIrerun or currentcontrolsready/lifecycle/releaseclaim. Later postc334admin explicitlyunmeasured; originalfailed3024+3196=6220 unchanged.",
       "prior_attempts": [
@@ -3292,7 +3297,10 @@
         "frame": ".agent/evidence/133/ci/main-root-admission1/admission.execution.json",
         "reason": "Root receipt parser assumed checkout; actual unchanged Source9 receipt field is checkout_sha. Passed307rawhash/76frame/log checks before KeyError. No CI/log/test rerun."
       },
-      "strategy": "Correct only observed Source9field checkout\u2192checkout_sha in staticadmission; preserve all old frame/input/output and all strict checks."
+      "strategy": "Correct only observed Source9field checkout\u2192checkout_sha in staticadmission; preserve all old frame/input/output and all strict checks.",
+      "actual_exit": 0,
+      "pid": 3931344,
+      "evidence": ".agent/evidence/133/ci/main-root-admission2/admission.execution.json"
     },
     "129-postsource-group-fixture-native-qualification": {
       "attempts": 1,
@@ -9258,6 +9266,11 @@
       "at": "2026-10-16T06:03:50.308470+00:00",
       "event": "129-architectural-recovery-findings-admitted-fixture-author2-released",
       "detail": "Strictfalse4issues atcc7fae91 retained with Rootactualadmission0. Permit conservativequarantine; fixdiagnosedfixtureassumptions and independently author focused contracted regressions. Entire amendedbundle review/refreeze/baseline+Source2semanticred precede finalSource3. Main hostedobserver independentlyreportsall5success, terminalproofpending."
+    },
+    {
+      "at": "2026-10-16T06:11:13.818961+00:00",
+      "event": "133-matching-main-delivery-proof-admitted",
+      "detail": "38851734070 exactbfd all5success;307indexedfiles/76actualframes/541370bytes3190lines, originalwatch1 retained, physicalSource9x2/default48+aux/both166+fournew/selectedWA/footer/pins independentlyverified. RootreceiptfieldKeyError retained, corrected staticadmission2 actual0. Meets newintegration upstreamCIcondition, not Source129completion/currentcontrols-ready/comparison proof. Postc334administration unmeasured; original3024failed+3196=6220 endpoint unchanged."
     }
   ],
   "phase_001_scope_budget_final": {
