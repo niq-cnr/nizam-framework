@@ -1,0 +1,180 @@
+{
+  "pr_number": 105,
+  "root_release": "06056e9abc8290b58f47e3225f7413ac992c8d6c",
+  "run_id": 38831271485,
+  "run_attempt": 1,
+  "head": "441d292559eacb95c778b4e20bcc62350e9f31a8",
+  "base": "c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7",
+  "workflow_conclusion": "failure",
+  "terminal_at": "2026-10-16T01:31:11Z",
+  "jobs": {
+    "e2e_bootstrap": {
+      "id": 116750359900,
+      "conclusion": "success"
+    },
+    "convergent_review": {
+      "id": 116750360170,
+      "conclusion": "failure"
+    },
+    "self_governance": {
+      "id": 116750360174,
+      "conclusion": "success"
+    },
+    "validate": {
+      "id": 116750360211,
+      "conclusion": "success"
+    },
+    "fixtures_self_test": {
+      "id": 116750360230,
+      "conclusion": "failure"
+    }
+  },
+  "required_checks": {
+    "validate": "SUCCESS",
+    "closeout": "SUCCESS",
+    "e2e_bootstrap": "SUCCESS",
+    "fixtures_self_test": "FAILURE",
+    "convergent_review": "FAILURE",
+    "self_governance": "SUCCESS"
+  },
+  "failure_evidence": [
+    {
+      "job": "fixtures_self_test",
+      "step": "Run bash tools/fixtures_self_test.sh",
+      "diagnostic": "ASSERTION_FAILURE: product AST outside _receipt_candidate body changed",
+      "accounted_fixture_files": "166/166",
+      "new_named_passes": 0
+    },
+    {
+      "job": "convergent_review",
+      "step": "Run fixture self-test",
+      "diagnostic": "ASSERTION_FAILURE: product AST outside _receipt_candidate body changed",
+      "accounted_fixture_files": "166/166",
+      "new_named_passes": 0
+    }
+  ],
+  "coverage": {
+    "expected_default_cases": 48,
+    "actual_separate_default48": "skipped",
+    "expected_new_checks": [
+      "real-git-count-reduction",
+      "semantic-equivalence",
+      "fresh-mutations",
+      "literal-paths-and-modes"
+    ],
+    "actual_new_check_passes_per_shell_job": 0,
+    "fixture_file_accounting_per_shell_job": "166/166 accounted; suite failed"
+  },
+  "actual_checkout": "0a830707aebee1773e0feeb107cc3b42ab9fca53",
+  "checkout_tree": "2fed7183379d93073246bbf504712b41967f3d8a",
+  "checkout_parents": [
+    "c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7",
+    "441d292559eacb95c778b4e20bcc62350e9f31a8"
+  ],
+  "checkout_commit_bytes_retained": "checkout-commit.stdout.txt",
+  "immutable_checkout_pins": {
+    "tools/workflow_assurance.py": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+    "tools/test_receipt_candidate_batching.py": "b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e"
+  },
+  "physical_source9_hashes": {
+    ".github/scripts/test_c13_cleanup.py": "2011512c6561428ebe56d3e6cfd774bfac6b83bc7a5837307f9ca71e58bff149",
+    ".github/scripts/test_sandbox_boundaries.py": "09ab83c3c9a73e11e03a7c7856a06ae35dbddd6337251a6b3ca12cfa014924e4",
+    ".github/workflows/compliance.yml": "040b5ab4b40643050102c1c70379a18f33be8a60256ec6a5419a2c270e53197b",
+    "standard/AGF.md": "8be73efde73d4c2e830c17bed3e619cb9ae038621433bdcefd7e85ebfcd95e84",
+    "templates/AGENTS.md": "c448e983cd3461d08ec4615ad86916da8fe4638d72095e8033f9e0456f8b328f",
+    "tools/README.md": "1ce67e199c6fe0fa5adbe33eee65460f87dc45ca4b94bcaad9d5ac63ce76c65d",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+    "tools/test_convergent_review.py": "a4fa85869ccb1d0f63d2bea3062efb13db2ed3a042fe82ae2fea1da8d119c662",
+    "tools/validate.sh": "843ba358154b88df16c0854040548f80c37a6bf6de99e3f052b20e2a5255fa72"
+  },
+  "pin_scope": "Two physical receipts cover their explicit nine paths; API and runner hashes bind immutable checkout Git blobs.",
+  "collector_revision": "cc1a73c97f770573bd26239f6978c001341ac783",
+  "own_evidence_context": "06056e9abc8290b58f47e3225f7413ac992c8d6c",
+  "runtime": {
+    "hosted_python": "3.14.8",
+    "retained_local_qa_python": "3.12.3",
+    "frozen_masked_ast_sha256": "09e5fe17512b479669de145a8498cf0ba0d25dea60e43ecbc486cff62f79cbc9"
+  },
+  "diagnostic_inference": "A runtime-dependent AST representation is a likely frozen-test portability defect; exact causal normalization still requires independent diagnosis. No repair or alternate runtime execution performed here.",
+  "qualified_log": {
+    "path": "terminal-logs.stdout.txt",
+    "bytes": 425394,
+    "sha256": "c7103a0d443dc83a34e850cbce6e32a60522189e48c97ed105ab800b0442e8ea",
+    "lines": 2723,
+    "observed_cleanup_footer_labels": {
+      "e2e_bootstrap": "Complete job",
+      "convergent_review": "Complete job",
+      "self_governance": "Complete job",
+      "validate": "Complete job",
+      "fixtures_self_test": "Complete job"
+    },
+    "collector_cli_sha256": "5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075"
+  },
+  "verified_frames": [
+    {
+      "path": "checkout-commit.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "feedback1.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "feedback2.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "fetch-merge.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "status1.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-checks.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-feedback.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-jobs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-logs.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "terminal-run.execution.json",
+      "actual_exit": 0
+    },
+    {
+      "path": "watch.execution.json",
+      "actual_exit": 1
+    }
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "PR105 is blocked by two required CI job failures at the frozen runner AST guard; no merge authorization inferred."
+  },
+  "issues": [
+    "Both capable shell jobs failed the new static AST guard under hosted CPython3.14.8."
+  ],
+  "missing_acceptance_coverage": [
+    "Separate ordered default48 plus auxiliary did not run after shell failure.",
+    "None of the new four named checks completed in either capable shell job."
+  ],
+  "unsupported_claims": [],
+  "scope": "Read-only terminal triage. Original workflow/watch failure and complete logs retained; no CI rerun, Source/test/state edit, historical proof rebinding or integration-success claim.",
+  "feedback_snapshot": {
+    "clear": true,
+    "pagination_complete": true,
+    "observed_at": "2026-10-16T01:32:45.046110+00:00",
+    "execution": "terminal-feedback.execution.json",
+    "scope": "Empty captured snapshot only. Root subsequently reported its nonblocking triage status comment6206053425; current emptiness is not asserted."
+  }
+}
