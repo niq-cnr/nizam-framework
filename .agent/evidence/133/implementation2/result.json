@@ -1,0 +1,73 @@
+{
+  "role": "Generator",
+  "feature": "133",
+  "attempt": 2,
+  "root_release": "0fc9bb2c",
+  "product_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+  "prior_product_revision": "12532d6c814b2d9c1ad5f250cc5eb0c471eccf4c",
+  "rejection_revision": "f05f1b40fe23d457589302fadbb84eaa06ab6d39",
+  "approved_contract_sha256": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
+  "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+  "frozen_runner_sha256": "b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024",
+  "frozen_hook_sha256": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+  "capture_driver": ".agent/evidence/123/fresh-qa-capture1.py",
+  "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+  "original_output": "/home/cnross/.tmp/nizam-133-generator-implementation2-capture",
+  "preservation": {
+    "rows": 14517,
+    "installed": 239,
+    "all_equal": true
+  },
+  "checks": [
+    {
+      "selector": "real-git-count-reduction",
+      "execution": "check-1.execution.json",
+      "actual_exit": 0,
+      "preservation_equal": true
+    },
+    {
+      "selector": "semantic-equivalence",
+      "execution": "check-2.execution.json",
+      "actual_exit": 0,
+      "preservation_equal": true
+    },
+    {
+      "selector": "fresh-mutations",
+      "execution": "check-3.execution.json",
+      "actual_exit": 0,
+      "preservation_equal": true
+    },
+    {
+      "selector": "literal-paths-and-modes",
+      "execution": "check-4.execution.json",
+      "actual_exit": 0,
+      "preservation_equal": true
+    }
+  ],
+  "observed_count_metric": {
+    "counts": {
+      "optimized": {
+        "by_verb": {
+          "cat-file": 1,
+          "ls-tree": 2,
+          "merge-base": 1,
+          "remote": 1,
+          "rev-parse": 3
+        },
+        "total": 8
+      },
+      "oracle": {
+        "by_verb": {
+          "cat-file": 56,
+          "ls-tree": 56,
+          "rev-parse": 56
+        },
+        "total": 168
+      }
+    },
+    "full_candidate_denominator": true,
+    "identity_classification": "merge-base/remote/tree rev-parse are fixed; commit-resolution rev-parse includes fixed identity and immutable reads; nothing excluded",
+    "readset_pairs": 56
+  },
+  "scope": "Structural repair only within target body: bounded literal path chunks with actual E2BIG subdivision; no assessed selection cap. Four frozen controls unchanged; no large-candidate stress, wall-time or hosted qualification claim. Renewed independent ModeB and fresh QA remain."
+}

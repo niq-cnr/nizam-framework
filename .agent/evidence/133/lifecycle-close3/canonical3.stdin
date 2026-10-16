@@ -1,0 +1,10 @@
+import json,yaml,jsonschema
+from pathlib import Path
+p=Path('docs/planning/phase_021.yaml'); raw=p.read_text(); v=yaml.safe_load(raw)
+assert v['status']=='in_progress' and v['steps'][0]['status']=='IN_PROGRESS'
+r=json.loads(Path('.agent/evidence/133/evidence-capture.json').read_bytes()); assert r['capture_complete'] is True and r['capture_execution']['actual_exit']==0
+v['status']='complete'; v['steps'][0].update({'status':'COMPLETED','evidence':'.agent/evidence/133/evidence-capture.json','docs_updated':'tools/README.md','changelog_entry':'Batch immutable receipt candidate inputs per invocation while preserving fresh physical and receipt checks.'})
+v['description']='Feature133 local implementation, independent Mode B, fresh QA and Root evidence capture completed. Final scope accounting, reviewed current documentation and exact-head PR/merge/main delivery remain separately gated; original failed attempts retained.'
+for base in ('','.nizam/'): jsonschema.validate(v,json.loads(Path(base+'schema/phase.schema.json').read_bytes()))
+assert p.read_text()==raw; p.write_text(yaml.safe_dump(v,sort_keys=False))
+print(json.dumps({'canonical_phase':'complete','canonical_step':'COMPLETED','evidence':v['steps'][0]['evidence'],'schemas':'root+installed valid','derived_updates':'not yet executed'}))

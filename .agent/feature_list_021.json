@@ -1,0 +1,73 @@
+{
+  "phase": "021-receipt-input-maintenance",
+  "spec_version": "0.1.3",
+  "phase_status": "complete",
+  "activation_state": "active",
+  "original_estimate_lines": 2000,
+  "ceiling_130pct": 2600,
+  "budget_categories": {
+    "product": 150,
+    "process": 1400,
+    "tests": 450
+  },
+  "features": [
+    {
+      "id": "133",
+      "name": "Batch immutable receipt candidate input reads per invocation",
+      "description": "Reduce deterministic real Git process counts inside _receipt_candidate using existing blobs while retaining all current receipt predicates and fresh materialized observations.",
+      "status": "complete",
+      "passes": true,
+      "dependencies": [],
+      "estimated_lines": 2000,
+      "budget_categories": {
+        "product": 150,
+        "process": 1400,
+        "tests": 450
+      },
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check real-git-count-reduction",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check semantic-equivalence",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check fresh-mutations",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check literal-paths-and-modes",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+        "bash tools/fixtures_self_test.sh",
+        "bash tools/validate.sh",
+        "bash tools/validate.sh --payload"
+      ],
+      "acceptance_requirements": {
+        "real-git-count-reduction": "Same valid synthetic multi-path readset: at least 50% fewer actual immutable-input Git child processes than unchanged _entry_blob oracle; all counted operations execute real Git, identical bytes/modes and positive receipt result; no timing threshold.",
+        "semantic-equivalence": "Isolated valid/reject controls for exact commit/tree/ancestor/origin, missing/nonblob/mode/digest, canonical ownership and environment; preserve actual intended rejection categories, not setup failures.",
+        "fresh-mutations": "Repeat calls around physical bytes/mode/type/symlink changes, owned/unowned record mutations, environment changes and restoration; no stale cross-call/cross-root cache; integrated hardlink rejection remains covered at its existing boundary.",
+        "literal-paths-and-modes": "Independent synthetic paths with spaces, tabs/newlines, non-ASCII and leading dashes when valid under existing relative_path; exact per-path identity/mode/type, no pathspec alias or directory/submodule substitution.",
+        "existing-bank": "All original 48 ordered cases and 166 fixture checks retained; strengthen coverage if needed and record actual resulting counts honestly.",
+        "delivery": "All currently required exact-head capable-CI jobs, independent Mode B/fresh QA/one additional adversarial check, Root capture, merge and main CI; historical 123 proof is not current 133 proof."
+      },
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_receipt_candidate_batching.py",
+        "tools/README.md",
+        "CHANGELOG.md"
+      ],
+      "product_boundary": "Only _receipt_candidate implementation changes; existing blobs and _entry_blob retain behavior. Use the existing frozen capture driver by reference; no new orchestration subsystem.",
+      "evidence": ".agent/evidence/133/evidence-capture.json",
+      "delivery_status": "Local QA/capture complete; final scope/currentdocs/exact-head PR/merge/main delivery pending."
+    }
+  ],
+  "external_prerequisites": {
+    "planning_and_contract_reviews": "May overlap frozen PR 104 CI; no implementation before Root activation/budget disposition and both independent pre-code gates.",
+    "implementation": "PR 104 normally merged after all six required checks; independent source work may overlap its main CI.",
+    "integration": "Old PR 104 main CI all five success before new maintenance integration/merge. Existing 129\u2013132/020 and 124\u2013125/019 unchanged; 133 is not their prerequisite."
+  },
+  "measurement_basis": {
+    "revision": "0193deb10f82281220f352f5e6c006a6a5967c65",
+    "path": ".agent/evidence/performance-maintenance/attribution1/report.json",
+    "sha256": "7b7314e0477fff5affd6d92e00d4d23f4db6f34ac7d8f0a74f9d24c4311a066d"
+  },
+  "baseline": {
+    "candidate_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+    "source_sha256": "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8",
+    "tests_sha256": "06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13"
+  },
+  "accounting": "Root selected2000/2600 under standing delegated authority in activation-decision.json; actual maintenance preparation and closure count once. Historical018 costs/failed budget/exception preserved separately; no prior rebaseline. Initial total0 is unmeasured initialization, not a zero-preparation-cost claim.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

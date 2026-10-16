@@ -1,0 +1,51 @@
+{
+  "role": "Planner; future maintenance preparation only",
+  "status": "proposed; execution requires a separate concrete Root release",
+  "objective": "Measure actual parent stages, fixture construction/preservation and child-process waiting before selecting an optimization; support balanced real-task correctness, recovery, delivery time/cost and usability.",
+  "candidate_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+  "protected_source_revision": "9886e5fadad31845349e54235820edac71c7b7fb",
+  "inputs": {
+    "static_analysis": {"path": ".agent/evidence/123/proof-observation-performance-analysis.json","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "d7e41782dc16ac87a0a8d5ebdb4cf242f38faf2a704afac2b7873908f983cb78"},
+    "scope_report": {"path": ".agent/evidence/123/scope-final/scope-report.json","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "19835a4b3186f849b335b730c60337671fbbc5f230c098f40bad48738743869a"},
+    "capture_driver": {"path": ".agent/evidence/123/fresh-qa-capture1.py","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0"},
+    "source": {"path": "tools/workflow_assurance.py","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8"},
+    "tests": {"path": "tools/test_workflow_assurance.py","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13"}
+  },
+  "retained_timings": [
+    {"workload": "candidate","elapsed_seconds": 2595.0808751279255,"actual_exit": 0,"ref": {"path": ".agent/evidence/123/fresh-qa1/candidate/candidate.execution.json","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "d398eb634010e399385fe82141da70c79ea6a12f1c75494c04e1638412a1b863"}},
+    {"workload": "default48","elapsed_seconds": 2989.628450887045,"actual_exit": 0,"ref": {"path": ".agent/evidence/123/fresh-qa1/default48/default48.execution.json","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "c04a002e0bb58a1a27809f2aa8c698b96b5bb58ae400831e0c2841e573971754"}},
+    {"workload": "fixture","elapsed_seconds": 2898.12955391407,"actual_exit": 0,"ref": {"path": ".agent/evidence/123/fresh-qa1/fixture/fixture.execution.json","revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256": "958f6c08cf3508c12bd43f855e578e640a48172888ff3713405adcee57471e39"}}
+  ],
+  "timing_limit": "These are separate prior workloads run concurrently under CPython3.12.3; elapsed differences do not establish a bottleneck, causal component cost, profiling overhead or speedup.",
+  "accounting_context": {"measurement_revision": "769fdd8ab59c28605506c675083b54a3a728ac8b","frozen_feature_lines": 2685,"authored_source_overlay_lines": 5002,"phase_source_only_lower_bound": 11990,"phase_conservative_total": 26657,"original_phase_estimate": 7200,"phase_ceiling": 9360,"interpretation": "Both totals exceed the unchanged ceiling. These are preserved historical 123 measurements, not an allocation for this proposal."},
+  "execution_dag": [
+    "Root reviews this concrete plan and separately releases one profiling attempt with absolute paths, runtime identity, unchanged driver hash, timeout and evidence destination; Planner does not execute.",
+    "Fresh executor makes an entirely independent clone at candidate_revision with exact HTTPS.git origin, no alternates/hardlinked source files or Root shared Git metadata, and checks Source/test pins and clean status before capture.",
+    "Run the unchanged representative ci-candidate-bound selector once under stdlib cProfile, using the existing frozen generic capture driver unchanged; save profile and all evidence outside the checkout.",
+    "Read the completed profile statically with stdlib pstats; retain machine-readable function/caller counts and exclusive/cumulative times, plus bounded top-call views. Independently verify actual outcome and physical preservation before proposing any optimization."
+  ],
+  "profile_command": [
+    "python3",
+    "-m",
+    "cProfile",
+    "-o",
+    "<outside-output>/candidate.pstats",
+    "tools/test_workflow_assurance.py",
+    "--case",
+    "ci-candidate-bound"
+  ],
+  "capture_parameters": {"driver_ref": "inputs.capture_driver","repo": "<new-independent-clone>","output": "<new-outside-output>","sentinel": "<new-outside-sentinel>","name": "candidate-profile1","expected_exit": 0,"timeout_seconds": 7200,"environment": "PYTHONDONTWRITEBYTECODE=1; preserve actual inherited environment and record interpreter/platform, Git version and host load; do not impersonate hosted runtime."},
+  "preservation": "Use the existing full before/after inventory: tracked and untracked physical bytes, full modes/nlinks, parent directories, installed 239, HEAD/tree/origin/all refs/status and outside sentinel. Verify unchanged protected 537 inputs against their frozen map. Outputs stay outside; never narrow snapshot scope, remove failures, alter Source/tests/assertions or treat setup errors as semantic evidence.",
+  "profile_analysis": [
+    "Attribute observed calls to fixture construction, controls_variant, controls_call/controls_snapshot, _ControlsProof parsing/import/verification and inherited Git/process helpers using exact file/line/function and caller edges; preserve unknown attribution explicitly.",
+    "Report exclusive parent time, inclusive call-chain time and call counts separately. Subprocess waits belong to parent-observed elapsed intervals; do not add overlapping cumulative times or identify child CPU/Git command argv from cProfile alone.",
+    "Record total execution elapsed and profile size/hash. Profiled-run overhead is unmeasured without a separately approved comparable control; prior QA timings are context only. pstats top views at most 100 rows each; skip analysis of a profile over 256 MiB and retain it as incomplete, without rerunning.",
+    "If child waits dominate or essential stage boundaries are absent, report that evidence gap. Any child tracing or controlled intervention needs another explicit bounded Root release; no automatic second run or instrumentation expansion."
+  ],
+  "success": "Actual selector exit 0, no timeout, full preservation and valid profile permit candidate-only attribution. Any nonzero/setup/timeout/partial profile is retained with its actual outcome and no automatic retry. This is never QA, final CI, main CI, runtime acceptance or a comparative benchmark pass.",
+  "concurrency": "Root may release this read-only candidate observation concurrently with PR 104 CI in its independent clone; record local contention. Current tested 599d7c5a branch stays frozen. All six current PR checks must pass before merge and all five main CI jobs remain mandatory. No profiling result can substitute for them.",
+  "invalidation": "If protected Source/tests change during delivery, preserve this capture as candidate 599d7c5a only and invalidate it as a future optimization basis until Root reviews the new candidate; never silently rebind receipts.",
+  "smallest_reusable_tooling_improvement": "After observation, consider one reviewed portable capture entry point based on the already exercised generic driver, one small command-manifest schema and its stable execution/preservation result shape. Keep feature-specific assertions in existing independent tests. Prefer reuse over another bespoke orchestration engine; do not implement during profiling. The 5002 authored source overlay contains multiple helpers and attempts, not 5002 proven removable duplicate lines.",
+  "future_accounting": "Record this plan, executor glue, reviews and any later maintained tool/schema/test/docs as a separately selected maintenance tranche, charged once with its actual base and endpoint; distinguish raw observations from authored process. No free-evidence allowance, new feature/debt ID, retroactive 123 remeasurement, phase allocation or activation follows. Current 123 overrun disposition remains Root/operator authority.",
+  "boundaries": "No current branch/state/planning-view edit, push/merge, installed upgrade, product optimization, weakened gates, paid model, runtime canary or comparative/superiority claim. Root alone decides execution and eventual integration."
+}

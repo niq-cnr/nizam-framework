@@ -1,0 +1,71 @@
+import ast,gzip,hashlib,json,shlex,subprocess
+from pathlib import Path
+import jsonschema
+E=Path('.agent/evidence/133')
+def sha(b): return hashlib.sha256(b).hexdigest()
+def read(p): return json.loads(Path(p).read_bytes())
+def strict(q):
+ assert q['final_verdict']['approved'] is True
+ assert all(q[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
+def schema(q,f):
+ for base in ('','.nizam/'): jsonschema.validate(q,read(base+'schema/'+f+'.schema.json'))
+q=read('.agent/qa/133.json'); strict(q); schema(q,'qa_verdict')
+assert sha(Path('.agent/qa/133.json').read_bytes())=='c771723ec77a3c3a32c3c38e85ae9238b55ba05ef9d23cee7b40e40ce643bdf8'
+for p in ('.agent/validator/133-planning.json','.agent/validator/133-mode-a.json','.agent/qa/133-contract-review.json','.agent/qa/133-bundle-review1.json','.agent/validator/133-mode-b.json'):
+ v=read(p); strict(v); schema(v,'contract_review')
+c=read('.agent/contracts/133.json'); assert c['status']=='approved'
+for p,h in q['source_bindings'].items(): assert sha(Path(p).read_bytes())==h,p
+for r in (q['reviewed_revision'],q['compliance_and_extra_revision']):
+ for p,h in q['source_bindings'].items(): assert sha(subprocess.check_output(['git','show',r+':'+p]))==h,(r,p)
+indices=[]
+for p in (E/'qa1/capture-index.sha256',E/'qa1/capture-index-long.sha256',E/'qa2/capture-index.sha256'):
+ rows=p.read_text().splitlines()
+ for line in rows:
+  h,name=line.split('  ',1); assert sha((p.parent/name).read_bytes())==h,(p,name)
+ indices.append({'path':str(p),'sha256':sha(p.read_bytes()),'files':len(rows)})
+assert [x['files'] for x in indices]==[35,14,22]
+assert q['checks_run']==q['checks_passed']==len(q['checks'])==8
+assert q['actual_mandatory_attempts']==len(q['all_attempts'])==9
+assert q['actual_mandatory_exit_zero']==sum(x['exit_code']==0 for x in q['all_attempts'])==8
+for p in q['evidence_files']: assert Path(p).is_file(),p
+selected=[]
+for n,row in enumerate(q['checks'],1):
+ assert row['command']==c['verification'][n-1]['command'] and row['exit_code']==0
+ selected.append(row['evidence'])
+extra=q['adversarial_check']['execution']; assert q['additional_adversarial_attempts']==q['adversarial']['logical_checks']==1
+frames=[]
+for row in q['all_attempts']+[{'evidence':extra,'exit_code':0,'command':'PYTHONDONTWRITEBYTECODE=1 python3 -','exercised_revision':q['compliance_and_extra_revision']}]:
+ p=Path(row['evidence']); f=read(p); base=str(p).removesuffix('.execution.json'); summary=read(base+'.capture-summary.json')
+ assert f['actual_exit']==row['exit_code'] and f['timed_out'] is False and f['child_pid']>0
+ assert f['exercised_revision']==row['exercised_revision']
+ assert f['argv']==shlex.split(row['command'].removeprefix('PYTHONDONTWRITEBYTECODE=1 '))
+ for kind in ('stdout','stderr','stdin'):
+  v=f.get(kind)
+  if v:
+   raw=(p.parent/Path(v['path']).name).read_bytes(); assert len(raw)==v['bytes'] and sha(raw)==v['sha256'],(p,kind)
+ inventories=[]
+ for side in ('before','after'):
+  v=summary[side]; raw=(p.parent/Path(v['path']).name).read_bytes(); assert sha(raw)==v['sha256']
+  inv=json.loads(gzip.decompress(raw)); inventories.append(inv)
+  assert inv['head']==f['exercised_revision'] and inv['tree']==f['checkout_tree']
+  assert inv['origin']=='https://github.com/niq-cnr/nizam-framework.git' and inv['status']=='' and inv['untracked']==[]
+  assert len(inv['rows'])==v['rows'] and sum(x['path'].startswith('.nizam/') for x in inv['rows'])==v['installed']==239
+ assert inventories[0]==inventories[1] and summary['preservation_equal'] is True
+ assert summary['actual_exit']==f['actual_exit']
+ assert summary['success'] is (f['actual_exit']==0)
+ frames.append({'path':str(p),'sha256':sha(p.read_bytes()),'actual_exit':f['actual_exit'],'revision':f['exercised_revision'],'rows':len(inventories[0]['rows']),'installed':239,'preservation_equal':True})
+raw=Path('.agent/evidence/123/fresh-qa1/finalize2.py').read_text(); node=next(x for x in ast.parse(raw).body if isinstance(x,ast.FunctionDef) and x.name=='inventory_ast')
+ns={'ast':ast}; exec(compile(ast.Module(body=[node],type_ignores=[]),'reused immutable inventory_ast','exec'),ns)
+expected=ns['inventory_ast'](Path('tools/test_workflow_assurance.py').read_text())
+assert len(expected)==48 and expected==q['coverage']['default48_order']
+lines=(E/'qa1/check-5.stdout.txt').read_text().splitlines(); passed=[x[5:] for x in lines if x.startswith('PASS ')]
+aux=q['coverage']['default_auxiliary']; assert len(aux)==1
+assert [x for x in passed if x not in aux]==expected and len(passed)==49 and all(passed.count(x)==1 for x in aux)
+fixture=(E/'qa1/check-6.stdout.txt').read_text().splitlines()
+assert fixture.count('SELF-TEST OK: 166/166 fixtures accounted for, 0 failed')==1
+for name in q['coverage']['new_hook_checks']: assert fixture.count('PASS '+name)==1
+assert len(q['coverage']['new_hook_checks'])==4
+for name in ('ci-candidate-bound','ci-blocker-rejected'): assert fixture.count('PASS '+name)==1
+assert fixture.count('OK   receipt-candidate-batching four focused checks')==1
+assert read('.agent/qa/133-qa1-failure.json')['final_verdict']['approved'] is False
+print(json.dumps({'role':'Root Orchestrator evidence admission','feature_id':'133','capture_complete':True,'qa_revision':'5151517e459e0575209ca7851709de3ebc661588','selected_commands':8,'actual_mandatory_attempts':9,'mandatory_exit_zero':8,'extra_checks':1,'indices':indices,'frames':frames,'default_cases':48,'default_auxiliary':1,'fixture_files':166,'new_hook_checks':4,'source_bindings':q['source_bindings'],'limitations':'Local evidence admission only; canonical closure, final scope, exact-head PR CI, merge and main CI remain. No historical proof rebinding.'},sort_keys=True))

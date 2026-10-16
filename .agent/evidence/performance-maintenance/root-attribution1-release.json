@@ -1,0 +1,52 @@
+{
+  "role": "Root Orchestrator",
+  "kind": "separate read-only candidate performance observation",
+  "at": "2026-10-15T20:42:54.163303+00:00",
+  "plan_ref": {
+    "path": ".agent/evidence/performance-maintenance/attribution-plan1.json",
+    "revision": "83292ceb163ef43f73d3f426cca54296fdf125de",
+    "sha256": "834bcf3b765c26b8b1b5318e457525a31fb743c21d946d9ffd7463c263d94ba8"
+  },
+  "candidate_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+  "protected_source_revision": "9886e5fadad31845349e54235820edac71c7b7fb",
+  "checkout_base": "This release commit; candidate-only administrative descendants preserve537protected Source/test/contract/workflow/installedinputs.",
+  "checkout": "/home/cnross/.tmp/nizam-performance-attribution1",
+  "output": "/home/cnross/.tmp/nizam-performance-attribution1-run",
+  "argv": [
+    "python3",
+    "-m",
+    "cProfile",
+    "-o",
+    "/home/cnross/.tmp/nizam-performance-attribution1-run/candidate.pstats",
+    "tools/test_workflow_assurance.py",
+    "--case",
+    "ci-candidate-bound"
+  ],
+  "capture_driver": ".agent/evidence/123/fresh-qa-capture1.py",
+  "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+  "name": "candidate-profile1",
+  "expected_exit": 0,
+  "timeout_seconds": 7200,
+  "sentinel": "/home/cnross/.tmp/nizam-performance-attribution1-run/outside-sentinel.txt",
+  "preflight": {
+    "protected_files": 537,
+    "installed_files": 239,
+    "own_git_metadata": true,
+    "no_alternates_or_source_hardlinks": true,
+    "origin": "https://github.com/niq-cnr/nizam-framework.git",
+    "actual_python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-142-generic-x86_64-with-glibc2.39",
+    "git": "git version 2.43.0",
+    "cpu_count": 16,
+    "host_load": [
+      2.85205078125,
+      2.6298828125,
+      2.591796875
+    ]
+  },
+  "executor": "/root/fresh_qa123; independent of product implementation, no Source edits",
+  "concurrency": "Separate diagnostic may overlap currentPR104CI38802791707 at599d7c5a; Root currenttestedbranch untouched. All6PRchecks/cleanmerge/main5jobs remain mandatory. Localcontention/runtime/profilingoverhead limit interpretation.",
+  "boundaries": "No QA/CI/runtimeacceptance reuse, no paidmodel/canary/comparativebenchmark, Source/test/assertion/gate/phase/installedchanges or newIDs/allocation. Actualpartial/setup/nonzero results retained; no automatic retry.",
+  "future_accounting": "This plan/release/executor/report and later tooling are a separate maintenance tranche, once on future intake; do not remeasure123 or transfer its delivery exception.",
+  "invalidation": "If protected Source/tests change during delivery, preserve this capture as candidate 599d7c5a only and invalidate it as a future optimization basis until Root reviews the new candidate; never silently rebind receipts."
+}

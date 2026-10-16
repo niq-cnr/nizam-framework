@@ -1,0 +1,282 @@
+{
+  "feature_id": "133",
+  "qa_pass": true,
+  "checks_run": 8,
+  "checks_passed": 8,
+  "checks_counting_scope": "Eight distinct contracted commands, selected successful outcomes. All nine actual mandatory attempts are listed separately, including original command7 failure.",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check real-git-count-reduction",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-1.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check semantic-equivalence",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-2.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check fresh-mutations",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-3.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check literal-paths-and-modes",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-4.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-5.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-6.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa2/check-7.execution.json",
+      "exercised_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "qa_attempt": 2
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa2/check-8.execution.json",
+      "exercised_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "qa_attempt": 2
+    }
+  ],
+  "all_attempts": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check real-git-count-reduction",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-1.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check semantic-equivalence",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-2.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check fresh-mutations",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-3.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check literal-paths-and-modes",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-4.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-5.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-6.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 1,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-7.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "qa_attempt": 1
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa2/check-7.execution.json",
+      "exercised_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "qa_attempt": 2
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa2/check-8.execution.json",
+      "exercised_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "qa_attempt": 2
+    }
+  ],
+  "actual_mandatory_attempts": 9,
+  "actual_mandatory_exit_zero": 8,
+  "additional_adversarial_attempts": 1,
+  "adversarial": {
+    "performed": true,
+    "logical_checks": 1,
+    "actual_exit": 0
+  },
+  "adversarial_check": {
+    "description": "One real valid assessed repository beyond host argv capacity, exact literal chunk readsets, committed late-chunk rejection and restoration.",
+    "result": "pass",
+    "evidence": ".agent/evidence/133-qa-adversarial.txt",
+    "execution": ".agent/evidence/133/qa2/adversarial.execution.json",
+    "host_arg_max": 2097152,
+    "generated_path_argument_bytes_lower_bound": 2162844,
+    "total_source_paths": 9884,
+    "per_revision_ls_tree_chunks": 69
+  },
+  "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+  "reviewed_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+  "compliance_and_extra_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+  "approved_contract_sha256": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
+  "source_bindings": {
+    "tools/workflow_assurance.py": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+    "tools/test_workflow_assurance.py": "06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13",
+    "tools/test_receipt_candidate_batching.py": "b6ca0247e3392b445fa3ae81e52b871bf39afc6e1f360dc77913a8d7eac3e024",
+    "tools/fixtures_self_test.sh": "098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e",
+    ".agent/contracts/133.json": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
+    ".agent/evidence/123/fresh-qa-capture1.py": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0"
+  },
+  "preservation": {
+    "command1_to6_rows": 14553,
+    "command7_to8_and_extra_rows": 14595,
+    "installed": 239,
+    "all_equal": true
+  },
+  "coverage": {
+    "default48_order": [
+      "identity-positive",
+      "invalidate-source",
+      "invalidate-contract",
+      "invalidate-tests",
+      "invalidate-tool",
+      "invalidate-environment",
+      "invalidate-unknown",
+      "record-continuity",
+      "reject-unowned-field",
+      "reject-history-edit",
+      "allow-owned-append",
+      "reject-self-review",
+      "reject-seal-change",
+      "reject-missing-red",
+      "reject-setup-as-red",
+      "independent-handoff",
+      "accepted-entry",
+      "reject-foreign-repo",
+      "reject-stale-pin",
+      "reject-role-write",
+      "approve-empty",
+      "advisory-visible",
+      "block-carried",
+      "reject-issues",
+      "reject-missing-coverage",
+      "reject-unsupported",
+      "reject-missing-operator",
+      "reject-wrong-candidate",
+      "reject-unrun",
+      "reject-setup",
+      "reject-pending",
+      "reject-running",
+      "reject-failed",
+      "reject-invalidated",
+      "idempotent-replay",
+      "reject-double-advance",
+      "recover-missing-receipt",
+      "independent-lanes",
+      "shared-state-serialized",
+      "reject-terminal-spoof",
+      "reject-fourth",
+      "owned-rollback",
+      "infrastructure-failed",
+      "semantic-failed",
+      "reject-cause-relabel",
+      "counter-continuity",
+      "ci-candidate-bound",
+      "ci-blocker-rejected"
+    ],
+    "default_auxiliary": [
+      "SYNTHETIC foreign-local-runtime observation; historical capture and verify Env unchanged"
+    ],
+    "fixture_files": 166,
+    "new_hook_checks": [
+      "real-git-count-reduction",
+      "semantic-equivalence",
+      "fresh-mutations",
+      "literal-paths-and-modes"
+    ]
+  },
+  "recovery": {
+    "original_negative_verdict": ".agent/qa/133-qa1-failure.json",
+    "metadata_repair_revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61",
+    "root_targeted_release": "b225e55182ceee05bbc482badb61499f1a395cac",
+    "scope": "Carry product1\u20136 at cb5; retry7 and first8/extra at metadata-repaired b225. Product/tests/hook/contract bytes identical; all actual revisions/failures retained. No all-attempts-pass or single-head claim."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All eight selected command outcomes and exactly one independent extra passed with full preservation; original schema failure retained under authorized targeted metadata recovery."
+  },
+  "evidence_files": [
+    ".agent/evidence/133/qa1/check-1.execution.json",
+    ".agent/evidence/133/qa1/check-2.execution.json",
+    ".agent/evidence/133/qa1/check-3.execution.json",
+    ".agent/evidence/133/qa1/check-4.execution.json",
+    ".agent/evidence/133/qa1/check-5.execution.json",
+    ".agent/evidence/133/qa1/check-6.execution.json",
+    ".agent/evidence/133/qa1/check-7.execution.json",
+    ".agent/evidence/133/qa2/check-7.execution.json",
+    ".agent/evidence/133/qa2/check-8.execution.json",
+    ".agent/evidence/133-qa-adversarial.txt",
+    ".agent/evidence/133/qa2/adversarial.execution.json",
+    ".agent/evidence/133/qa1/capture-index.sha256",
+    ".agent/evidence/133/qa1/capture-index-long.sha256",
+    ".agent/evidence/133/qa2/capture-index.sha256"
+  ],
+  "notes": [
+    "Both long suite stderr files retain the same151-byte deliberate duplicate proof.bundle ZIP warning; actual exits0.",
+    "Generated-path2162844-byte value is a lower bound before special paths/tests/tools/contracts/fixed argv. No historical Source1 stress execution or wall-time/hosted/comparative claim.",
+    "This is local QA only; Root evidence capture, lifecycle/accounting and exact-head PR/merge/main integration gates remain. Historical123 proof is not rebound."
+  ],
+  "reviewer": "/root/qa133",
+  "executed_at": "2026-10-16T00:03:01.607977+00:00"
+}

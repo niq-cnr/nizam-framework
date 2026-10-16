@@ -811,6 +811,7 @@ def _receipt_policy(root, policy):
 
 
 def _receipt_candidate(root, candidate, revision=None):
+    import errno
     validate_identity(candidate)
     anchor = candidate['source_commit']
     require(git(root, 'rev-parse', '--verify', anchor + '^{commit}').decode().strip() == anchor, 'receipt candidate exact commit')
@@ -820,23 +821,58 @@ def _receipt_candidate(root, candidate, revision=None):
     require(git(root, 'rev-parse', '--verify', revision + '^{commit}').decode().strip() == revision, 'receipt executed exact commit')
     git(root, 'merge-base', '--is-ancestor', anchor, revision)
     require(git(root, 'remote', 'get-url', 'origin').decode().strip() == candidate['repository'], 'receipt actual repository')
+    ownership = candidate['record_ownership']
+    protected = [entry for category in ('source', 'tests', 'tools') for entry in candidate['assessed_inputs'][category]]
+    paths = {anchor: {entry['path'] for entry in candidate['assessed_inputs']['contracts']} | set(ownership)}
+    for commit in (anchor, revision):
+        paths.setdefault(commit, set()).update(entry['path'] for entry in protected)
+    entries = {}
+    for commit, requested in paths.items():
+        chunks = []; chunk = []; size = 0
+        for path in sorted(requested):
+            cost = len(os.fsencode(path)) + 9
+            if chunk and size + cost > 32768:
+                chunks.append(chunk); chunk = []; size = 0
+            chunk.append(path); size += cost
+        if chunk: chunks.append(chunk)
+        pending = list(reversed(chunks))
+        observed = set()
+        while pending:
+            chunk = pending.pop()
+            try:
+                rows = git(root, '--literal-pathspecs', 'ls-tree', '-z', commit, '--', *chunk).split(b'\0')
+            except AssuranceError as exc:
+                if isinstance(exc.__cause__, OSError) and exc.__cause__.errno == errno.E2BIG and len(chunk) > 1:
+                    middle = len(chunk) // 2
+                    pending.extend((chunk[middle:], chunk[:middle])); continue
+                raise
+            require(rows[-1] == b'', 'unsafe entry Git input')
+            selected = set(chunk)
+            for row in rows[:-1]:
+                metadata, name = row.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
+                path = name.decode()
+                require(path in selected and path not in observed and kind == 'blob' and mode in ('100644', '100755'),
+                        'unsafe entry Git input')
+                observed.add(path); entries[commit, path] = (oid, mode == '100755')
+        for path in sorted(requested):
+            require(path in observed, 'missing entry Git input: ' + path)
+    values = blobs(root, [oid for oid, executable in entries.values()])
     for category in ('source', 'tests', 'tools'):
         for entry in candidate['assessed_inputs'][category]:
             for commit in (anchor, revision):
-                data, executable = _entry_blob(root, commit, entry['path'])
+                oid, executable = entries[commit, entry['path']]; data = values[oid]
                 require(sha(data) == entry['sha256'] and executable is entry['executable'], 'receipt protected Git input changed')
             target = regular_file(root, entry['path'])
             require(sha(target.read_bytes()) == entry['sha256'] and bool(target.stat().st_mode & 0o111) is entry['executable'],
                     'receipt protected current input changed')
-    ownership = candidate['record_ownership']
     for entry in candidate['assessed_inputs']['contracts']:
-        data, executable = _entry_blob(root, anchor, entry['path'])
+        oid, executable = entries[anchor, entry['path']]; data = values[oid]
         digest = sha(canonical(parse_json(data))) if entry['path'] in ownership else sha(data)
         require(digest == entry['sha256'] and executable is entry['executable'], 'receipt contract assessed digest')
         if entry['path'] not in ownership:
             require(regular_file(root, entry['path']).read_bytes() == data, 'receipt unowned contract changed')
     for path, fields in ownership.items():
-        data, executable = _entry_blob(root, anchor, path); target = regular_file(root, path)
+        oid, executable = entries[anchor, path]; data = values[oid]; target = regular_file(root, path)
         require(bool(target.stat().st_mode & 0o111) is executable, 'receipt record mode changed')
         verify_record_update(parse_json(data), parse_json(target.read_bytes()), fields)
     environment = {'runtime': {'implementation': platform.python_implementation(), 'version': platform.python_version(),

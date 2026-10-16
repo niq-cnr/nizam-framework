@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "gh",
+    "api",
+    "graphql",
+    "-f",
+    "query=query { repository(owner:\"niq-cnr\",name:\"nizam-framework\") { pullRequest(number:105) { state isDraft headRefOid baseRefOid mergeable mergeStateStatus reviews(first:100) { nodes { databaseId state body author { login } } pageInfo { hasNextPage endCursor } } comments(first:100) { nodes { id body author { login } } pageInfo { hasNextPage endCursor } } reviewThreads(first:100) { nodes { id isResolved isOutdated comments(first:100) { nodes { id body author { login } } pageInfo { hasNextPage endCursor } } } pageInfo { hasNextPage endCursor } } } } }"
+  ],
+  "child_pid": 3038803,
+  "cwd": "/home/cnross/.tmp/nizam-133-delivery-preflight1",
+  "exercised_revision": "cc1a73c97f770573bd26239f6978c001341ac783",
+  "started_at": "2026-10-16T00:57:52.516612+00:00"
+}

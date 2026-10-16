@@ -1,0 +1,32 @@
+from pathlib import Path
+import hashlib,json,re,subprocess
+import jsonschema,yaml
+base='546fe8ed4be054e4eaf45667134f81bfa8273eb4';paths=['.agent/product_spec_021.md','.agent/product_spec_018.md','.agent/feature_list_021.json','docs/planning/ROADMAP.md','docs/planning/HANDOVER.md','docs/planning/DEBT.md']
+assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==base
+assert sorted(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())==sorted(paths)
+assert not subprocess.check_output(['git','diff','--name-only'],text=True)
+def old(p):return subprocess.check_output(['git','show',base+':'+p],text=True)
+for name in paths:
+ p=Path(name);s=p.read_text()
+ if name.endswith('.md'):
+  for schema in ['schema/frontmatter.schema.json','.nizam/schema/frontmatter.schema.json']:jsonschema.validate(yaml.safe_load(s.split('---',2)[1]),json.loads(Path(schema).read_text()))
+  marker='## Historical snapshot — '
+  if marker in s:assert s[s.index(marker):]==old(name)[old(name).index(marker):]
+  current=s.split(marker,1)[0]
+  for target in re.findall(r'\]\(([^)]+)\)',current):
+   if not target.startswith('https:'):assert (p.parent/target).exists(),(name,target)
+ print(name,hashlib.sha256(p.read_bytes()).hexdigest())
+f=json.loads(Path(paths[2]).read_text());prior=json.loads(old(paths[2]));assert f.pop('spec_version')=='0.1.3';prior.pop('spec_version');assert f==prior
+jsonschema.validate(json.loads(Path(paths[2]).read_text()),json.loads(Path('schema/feature_list.schema.json').read_text()))
+debt=Path(paths[5]).read_text();before=old(paths[5]);assert [s for s in debt.splitlines() if s.startswith('| NDEBT-')]==[s for s in before.splitlines() if s.startswith('| NDEBT-')]
+assert debt.split('## Resolved',1)[1]==before.split('## Resolved',1)[1]
+assert len([s for s in debt.split('## Open',1)[1].split('## Resolved',1)[0].splitlines() if s.startswith('| NDEBT-')])==2
+for path,digest in [('.agent/evidence/133/scope-final/scope-report.json','291a25fdf8f8d3601dc1f108c851b47815e0a897a5149b9d4f0647b169770235'),('.agent/evidence/123/main-terminal1/report2.json','d671371dc09f5abbe8f541f7d01935a3b812f47feb5ec4d7b45f692602b14633')]:assert hashlib.sha256(Path(path).read_bytes()).hexdigest()==digest
+scope=json.loads(Path('.agent/evidence/133/scope-final/scope-report.json').read_text());assert scope['actual_conservative']==max(scope['snapshot_total'],scope['authored_chronological_total'])==3024 and scope['budget_gate_passed'] is False
+assert scope['frozen_budget']+scope['authored_snapshot_overlay']==2792
+state=json.loads(Path('.agent/run_state.json').read_text());assert state['scope_budget']['total_lines_changed']==3024 and state['scope_budget']['delivery_exception']['budget_gate_passed'] is False
+main=json.loads(Path('.agent/evidence/123/main-terminal1/report2.json').read_text());assert main['conclusion']=='success' and len(main['jobs'])==5 and all(j['conclusion']=='success' for j in main['jobs'].values())
+for name in paths[1:2]:
+ marker='## Full counted proposed budget';assert Path(name).read_text().split(marker,1)[1]==old(name).split(marker,1)[1]
+subprocess.run(['git','diff','--cached','--check'],check=True)
+print('PASS six-file scope; schemas/spec-only sync; historical bodies/all debt rows unchanged; exactly two Open rows; immutable cost/main receipts and facts;018budget; links/whitespace. Static only, no tests or measurement.')

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "018-workflow-assurance-controls",
+  "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-15T20:32:22.742613+00:00",
+  "updated_at": "2026-10-16T00:43:03.892529+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1644,10 +1644,12 @@
     "123-ci-final-integration": {
       "attempts": 1,
       "limit": 3,
-      "status": "released",
+      "status": "pr-passed-merged-main-running",
       "strategy": "Root freezes candidate/inputs and producer session before each bounded hosted dispatch; retain every actual failure",
       "release": ".agent/evidence/123/root-final-integration1-release.json",
-      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb"
+      "source_commit": "9886e5fadad31845349e54235820edac71c7b7fb",
+      "receipt": ".agent/evidence/123/final-integration1-receipt.json",
+      "main_run": 38817712498
     },
     "123-author-static": {
       "attempts": 4,
@@ -2027,6 +2029,484 @@
       "actual_exit": 0,
       "measurement_revision": "769fdd8ab59c28605506c675083b54a3a728ac8b",
       "evidence": ".agent/evidence/123/scope-final/scope-report.json"
+    },
+    "maintenance-performance-attribution": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "complete",
+      "release": ".agent/evidence/performance-maintenance/root-attribution1-release.json",
+      "admission": ".agent/evidence/performance-maintenance/root-attribution1-admission.json"
+    },
+    "133-contract": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved",
+      "plan_revision": "29bfc9aa4aab5e58641bf7ff9d9b80b9fd2378a5",
+      "scope": "Contract proposal only; no implementation before activation, dual approval and clean PR104 merge.",
+      "gate_refs": {
+        ".agent/validator/133-mode-a.json": {
+          "revision": "2673b12ee0933a157a3eee00222d67788459508b",
+          "sha256": "dfaf54e99e9d72713c57cc4900e4f7a3c6e4c6ac3bf0e02f930e3deaf8160af2"
+        },
+        ".agent/qa/133-contract-review.json": {
+          "revision": "a6842b5f073ae30f3dad6f225f63a787eb674625",
+          "sha256": "3089658ca6912db004f5543ccd7ec504e0b6dac2088710ed02e505a79a19dbc5"
+        }
+      }
+    },
+    "123-ci-terminal-static-admission": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "passed",
+      "original_actual_exit": 1,
+      "original_frame": "/home/cnross/.tmp/nizam-feature123-final-integration1/terminal-admission.execution.json",
+      "scope": "Static CLI footer label reconciliation only; actual workflow remains attempt1 success. Preserve original parser1/streams/frame, all substantive gates and original premature log1."
+    },
+    "133-test-authoring": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "frozen-awaiting-independent-bundle-review",
+      "scope": "Evaluator authors/freezes new runner and minimal additive fixture hook only; no product changes or acceptance execution before independent bundle review and separate red release.",
+      "revision": "2f851cb8d75b7dfc6b614c7d2199aae28cc40478"
+    },
+    "133-currentdocs": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "reviewed-complete",
+      "scope": "Planner current-view factual refresh only: spec018, ROADMAP and HANDOVER; phase018 budget pointers now archive, actual104merge/main snapshot and021active133 test-authoring. No product/acceptance change.",
+      "revision": "e070b109325e0e972bb5113dd44f61f5518a0945",
+      "verdict_revision": "644265ba984b1195d16b151dd039f60c0fae4e68"
+    },
+    "133-bundle-review": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved",
+      "bundle_revision": "2f851cb8d75b7dfc6b614c7d2199aae28cc40478",
+      "owner": "/root/validator133",
+      "scope": "Independent contract/full-regression-bundle static review; no product import or behavioral execution before separate Root baseline release.",
+      "verdict_revision": "ca6b6bd70a5ef88be710b62e8e3ebd32eca7971c",
+      "verdict_path": ".agent/qa/133-bundle-review1.json"
+    },
+    "133-count-baseline": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "intended-red-admitted",
+      "scope": "Exactly one real-git-count-reduction check against unchanged API2579 and frozen runnerb6ca/hook098641. Expected actual1 specifically >=50% reduction assertion; setup2 or preservation mismatch is not intended red. No automatic retries.",
+      "workspace": "/home/cnross/.tmp/nizam-133-red1",
+      "output": "/home/cnross/.tmp/nizam-133-red1-capture",
+      "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+      "actual_exit": 1,
+      "evidence": ".agent/evidence/133/count-baseline1/root-admission.json"
+    },
+    "133-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "locally-complete-mode-b2-and-fresh-qa-approved",
+      "owner": "/root/generator133",
+      "scope": "Only _receipt_candidate body plus toolsREADME and CHANGELOG, approvedcontract133; no frozen assertion/hook/state/installed edits. Focused four controls expected0; ModeB then freshQAall8+one extra remain.",
+      "product_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+      "evidence_revision": "61a0aa3855cf614f77efc41206081d91c1ed3bb2",
+      "evidence": ".agent/evidence/133/implementation2/result.json",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "focused-controls-passed-awaiting-mode-b",
+          "owner": "/root/generator133",
+          "scope": "Only _receipt_candidate body plus toolsREADME and CHANGELOG, approvedcontract133; no frozen assertion/hook/state/installed edits. Focused four controls expected0; ModeB then freshQAall8+one extra remain.",
+          "product_revision": "12532d6c814b2d9c1ad5f250cc5eb0c471eccf4c",
+          "evidence_revision": "c9537a3b134c4934ae97aefedf761ec3a2ac6596",
+          "evidence": ".agent/evidence/133/implementation1/result.json"
+        }
+      ],
+      "strategy": "Attempt2 structural transport analysis: bound actual subprocess payloads while preserving arbitrary valid assessed selections, literal per-revision path/type/mode/blob checks and all original physical/record/environment predicates. Frozen assertions and helpers unchanged; no blanket cap or silent timeout retry."
+    },
+    "133-mode-b": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "approved",
+      "owner": "/root/validator133",
+      "scope": "Independent full implementation diff versus84a1e19a, frozen2f bundle, product12532d6c/evidencec953. No fresh QA advancement until strict approval.",
+      "verdict_revision": "03f96db1426a75edb34cc89a6955b11e530b0ea2",
+      "issue": "133-MB1-ARGV",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "rejected-large-input-argv",
+          "owner": "/root/validator133",
+          "scope": "Independent full implementation diff versus84a1e19a, frozen2f bundle, product12532d6c/evidencec953. No fresh QA advancement until strict approval.",
+          "verdict_revision": "f05f1b40fe23d457589302fadbb84eaa06ab6d39",
+          "issue": "133-MB1-ARGV"
+        }
+      ],
+      "reviewed_product": "6d9556402eb7d3321de77be4572b85931573180e",
+      "strategy": "Independent structural transport review of bounded payload and real E2BIG subdivision while preserving all input/physical/ownership predicates; no focused rerun needed before freshQA.",
+      "verdict_path": ".agent/validator/133-mode-b.json"
+    },
+    "comparative-design-preflight": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "reviewed-held-separate-unpublished",
+      "owner": "/root/currentdocs133",
+      "scope": "Held separate unpublished design delta over existing approved agentic-excellence/smoke audit; verify official current competitor pins and propose balanced real-task execution DAG. No model/benchmark/install/activation or133dependency. Actual maintained preparation attributed future comparison separately, never free or charged133.",
+      "revision": "8123a34215ec04956cc37d61094a9d5d3bab8a38",
+      "branch": "plan/balanced-comparison-design1",
+      "workspace": "/home/cnross/.tmp/nizam-comparison-design1",
+      "prepared_revision": "caf81e6a2949d060120dc135fdf585e6f8a460a2",
+      "prepared_branch": "plan/balanced-comparison-prepared"
+    },
+    "133-fresh-qa": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "approved-awaiting-root-evidence-capture",
+      "owner": "/root/qa133",
+      "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
+      "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+      "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+      "scope": "All8 exact contract commands, each actual0/full preservation, plus exactlyONE independent large valid realGit readset beyond OSargv limit, late-chunk defect/recovery. Earlier planned hook probe never executed and replaced before release. Long5/6 independentseparateGitclones samefrozenrevision mayparallel; otherchecksserialperclone. No automaticretries/testrepair/Sourceedits.",
+      "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+      "timeout_seconds": {
+        "focused": 1200,
+        "compliance": 1800,
+        "full48": 10800,
+        "fixture": 10800,
+        "one_extra": 1800
+      },
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+      "long_commands": [
+        {
+          "command_number": 5,
+          "child_pid": 990977,
+          "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/default48/check-5.started.json",
+          "argv": [
+            "python3",
+            "tools/test_workflow_assurance.py"
+          ]
+        },
+        {
+          "command_number": 6,
+          "child_pid": 991647,
+          "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/fixtures/check-6.started.json",
+          "argv": [
+            "bash",
+            "tools/fixtures_self_test.sh"
+          ]
+        }
+      ],
+      "long_commands_disposition": "Original5/6 completed actual0 with full14553/239 preservation; exact48 ordered plusoneaux/166fixtures+newfour verified. Selected8all0, originalfailed7retained; no single-head claim.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "stopped-c11-review-record-schema",
+          "owner": "/root/qa133",
+          "context_revision": "ba7581e86626417fa9830d2176a3fa038943ecd7",
+          "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+          "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+          "scope": "All8 exact contract commands, each actual0/full preservation, plus exactlyONE independent large valid realGit readset beyond OSargv limit, late-chunk defect/recovery. Earlier planned hook probe never executed and replaced before release. Long5/6 independentseparateGitclones samefrozenrevision mayparallel; otherchecksserialperclone. No automaticretries/testrepair/Sourceedits.",
+          "capture_driver_sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0",
+          "timeout_seconds": {
+            "focused": 1200,
+            "compliance": 1800,
+            "full48": 10800,
+            "fixture": 10800,
+            "one_extra": 1800
+          },
+          "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+          "long_commands": [
+            {
+              "command_number": 5,
+              "child_pid": 990977,
+              "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/default48/check-5.started.json",
+              "argv": [
+                "python3",
+                "tools/test_workflow_assurance.py"
+              ]
+            },
+            {
+              "command_number": 6,
+              "child_pid": 991647,
+              "started_record": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/fixtures/check-6.started.json",
+              "argv": [
+                "bash",
+                "tools/fixtures_self_test.sh"
+              ]
+            }
+          ],
+          "actual_failed_command": 7,
+          "actual_exit": 1,
+          "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json",
+          "long_commands_disposition": "Preserve already-live5/6 atcb5; no cancellation or restart. Additional8/extra unexecuted."
+        }
+      ],
+      "strategy": "Structural schema/artifact-boundary recovery: preserve actual product checks1-6 at cb5 (long5/6 remain live), rerun only failed compliance7 and unexecuted8 plus first/only extra at new repaired-metadata revision. Whole Source/tests/hook/contract byte-identical. Original failure and every actual revision remain; new exact-headCI still required.",
+      "partial_failure_revision": "9a0272d309690c2e1e18134d2302c6935ece7f87",
+      "record_repair_revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61",
+      "execution_contexts": {
+        "product_checks_1_to_6": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+        "repaired_compliance_7_8_and_one_extra": "b225e55182ceee05bbc482badb61499f1a395cac"
+      },
+      "selected_passed_commands": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "pending_commands": [],
+      "completed_mandatory_attempts": 9,
+      "completed_mandatory_exit_zero": 8,
+      "additional_adversarial_checks_executed": 1,
+      "additional_adversarial_actual_exit": 0,
+      "recovery_evidence_revision": "cc033afd95fc16202a2d0881aff27dd8d7b19173",
+      "recovery_evidence_index_sha256": "43bb5466d74e7f300cafa8184dae6a92805d3ba68ac16e7b235f7e6d76c4790f",
+      "original_failure": {
+        "actual_failed_command": 7,
+        "actual_exit": 1,
+        "failure_execution": "/home/cnross/.tmp/nizam-133-fresh-qa1-capture/core/check-7.execution.json"
+      },
+      "latest_execution_revision": "b225e55182ceee05bbc482badb61499f1a395cac",
+      "verdict_revision": "5151517e459e0575209ca7851709de3ebc661588",
+      "verdict_path": ".agent/qa/133.json",
+      "verdict_sha256": "c771723ec77a3c3a32c3c38e85ae9238b55ba05ef9d23cee7b40e40ce643bdf8"
+    },
+    "comparative-design-review": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved-planning-only",
+      "owner": "/root/validator133",
+      "proposal_revision": "8123a34215ec04956cc37d61094a9d5d3bab8a38",
+      "scope": "Independent static planning/factual review of149line held futurecomparison delta; no integration into133 or benchmark/phase/resource approval. Review/evidence maintainedcost futurecomparison separately.",
+      "verdict_revision": "dab7d961f413f88487a69431e9a5dc05bbc4efa8",
+      "verdict_sha256": "e94be2bb2f1bcba6c2aa0a95f08d46b0df86f0f5f666964d697b6ad40c322fed"
+    },
+    "133-bundle-record-repair": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "schema-complete-admitted",
+      "owner": "/root/validator133",
+      "scope": "Only add required feature133 and final_verdict.summary to own original133-bundle-review1.json; schema-complete record, preserve load-bearing four verdict fields/evidence/frozen reviewed bundle. Root+installed contract_review schemas actual0. No Source/assertion/contract/installed/oldraw change. Preserve originalca6b bytes by immutable Ref.",
+      "revision": "b8e5c459428734a83ae73a00d8f085d4d3bc4f61",
+      "record_sha256": "b96bbbcff17edafa73959812db5b76b900d73e38e60df130baba5b7262d12737"
+    },
+    "comparative-checkout-footprint": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "approved-held-separate-unpublished",
+      "owner": "/root/currentdocs133",
+      "assessed_authored_revision": "fbc686c5522875c6fbaf1bf9576dcae0b5a0dfc5",
+      "assessed_release_revision": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+      "scope": "Future comparison preparation only: exact immutable Git blob count/bytes and bootstrap clone/injection path observations in separate held branch. No install/networkclone/model/task/benchmark, source edit or133line-scope measurement. Never infer packed transfer bytes/installtime/speedup from blob bytes. Preserve installed pin/trust and active133/020/019 gates.",
+      "accounting": "Future comparison maintained preparation separately, never free or charged133.",
+      "observation_revision": "9c2383e441c30e6ecc3f7176fcea2a40879c1847",
+      "observation_path": ".agent/evidence/comparative-preflight/checkout-footprint1.json",
+      "observation_sha256": "272386b247b23adbb1d5364e60d7f2228b3cbf066f50acd59a25ade66d6b7756",
+      "held_workspace": "/home/cnross/.tmp/nizam-comparison-design1",
+      "held_branch": "plan/checkout-footprint1",
+      "review_owner": "/root/validator133",
+      "review_static_admission": {
+        "attempts": 2,
+        "limit": 3,
+        "status": "passed-after-object-transport-recovery",
+        "original_failure": {
+          "actual_exit": 1,
+          "frame": "/home/cnross/.tmp/nizam-checkout-footprint-review1/review.execution.json",
+          "cause": "owned review clone lacks exact immutable assessed object; actual git128 inside static checker1"
+        },
+        "strategy": "Fetch exact fbc686c5 object locally from Root, preserve original raw; use explicit byte delimiters in unexercised aggregation, then one bounded static admission2. No observation numbers/source repair or133scope measurement.",
+        "actual_exit": 0,
+        "frame": "/home/cnross/.tmp/nizam-checkout-footprint-review1/review2.execution.json"
+      },
+      "review_revision": "287f23f348dce6b01436fd95669062334bddc8d6",
+      "review_verdict_path": ".agent/evidence/comparative-preflight/checkout-footprint-review1.json",
+      "review_verdict_sha256": "f55017a77c8381e2760c16f8f69f0d0be537ebc2ba57eef5af3451dc2bea4551",
+      "correction_scope": "Only explicitly qualify extinctpilot100 trigger and fullfile://genesis vs shallowtag adjacent scenarios. All numeric/raw/bootstrap/debt bytes unchanged; no timing/install/transport claim. Own heldfuturebranch, no activeSource133 edits.",
+      "corrected_revision": "7407ba97909fbd1765b372b10fc09e181cec3e3b",
+      "corrected_sha256": "d8d7a28af8625f7a16b8ac982df0b0ec6d1533aa51b94380a430742421692250",
+      "approved_review_revision": "69cc3e0babc97d15f46893c45568ea6ffab749f5",
+      "approved_review_sha256": "5e8e2da12f81ec74571df1a08c8653570125bb62c8dc78386cd90b5a58738406",
+      "prepared_revision": "108c8921b0486c59642c7742749b9091fde67a10",
+      "prepared_branch": "plan/balanced-comparison-prepared"
+    },
+    "133-evidence-capture": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "admitted",
+      "owner": "Root Orchestrator",
+      "stdin_sha256": "642b89dadbb794c6792da301aeb6f78722dfa0d88ea2b020e11e9ca1f7feea5b",
+      "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture2-input.py",
+      "workspace": "/home/cnross/.tmp/nizam-133-root-capture2",
+      "external_output": "/home/cnross/.tmp/nizam-133-root-capture2-run",
+      "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "released-read-only",
+          "owner": "Root Orchestrator",
+          "stdin_sha256": "100b7293de69edde455e3c20d6db629f7bd6bf96af8a1eed6f34bb85d61f90f0",
+          "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture1-input.py",
+          "workspace": "/home/cnross/.tmp/nizam-133-root-capture1",
+          "external_output": "/home/cnross/.tmp/nizam-133-root-capture1-run",
+          "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0."
+        }
+      ],
+      "original_actual_exit": 1,
+      "original_evidence": ".agent/evidence/133/root-capture1/capture.execution.json",
+      "strategy": "Structural verdict-family routing: all gates retain strict AGF4field checks. Planning and post-code Validator records have no mandatory contract-review schema; pin each exact immutable SHA. ModeA and actualQA precode reviews remain root+installed contract-review validated; finalQA bothQA schemas. Original capture1 actual1 is Root mistaken schema mapping, not product or QA failure. No Source/test/verdict edits or waived required checks.",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/133/evidence-capture.json",
+      "evidence_sha256": "0c1c8b38005e9e8126800aff0d5c0cd0d5f8383e6389ba4d6503bb3551300fb8",
+      "preservation_rows": 14645,
+      "installed": 239
+    },
+    "133-lifecycle-close": {
+      "attempts": 3,
+      "limit": 3,
+      "status": "canonical-and-derived-closed",
+      "prior_attempts": [
+        {
+          "attempt": 1,
+          "actual_tool_exit": 1,
+          "effect": "prewrite guard: COMPLETE invalid enum; no file written",
+          "command_pid": null
+        },
+        {
+          "attempt": 2,
+          "actual_tool_exit": 1,
+          "effect": "prewrite guard: COMPLETED requires evidence; no file written",
+          "command_pid": null
+        }
+      ],
+      "capture_limitation": "Prior prewrite guards returned actual tool exit1; command PID not captured. No fabricated execution frames.",
+      "strategy": "Read full authoritative root/installed phase schemas and actual prior phase shape. Third transition uses COMPLETED plus existing captured evidence, toolsREADME and CHANGELOG metadata. Validate complete candidate before canonical write, then separately derive feature/run_state/manifest; no Source edits.",
+      "canonical_evidence": ".agent/evidence/133/evidence-capture.json",
+      "canonical_capture": "canonical3.execution.json",
+      "setup_observation": "Initial third-attempt capture wrapper failed before launching a child because its output directory was absent; canonical file unchanged. Directory prepared and exact released mutation child launched once, actual0. No fourth canonical mutation or reset."
+    },
+    "133-closeout-docs": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "approved-and-integrated",
+      "owner": "/root/currentdocs133",
+      "base_revision": "3a13b72ebf843d91f8b2295e8c2f9bdfc0bfe1c6",
+      "scope": "Current local-closeout truth only in spec021/spec018/ROADMAP/HANDOVER plus featurelist021.spec_version sync. Preserve historical bodies/acceptance/estimates/lifecycle and failed018budget exactly. LocalQA/capture complete; finalscope/hosted delivery pending; no current123proof rebinding or comparative win.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "released-planner-current-view-only",
+          "owner": "/root/currentdocs133",
+          "base_revision": "3a13b72ebf843d91f8b2295e8c2f9bdfc0bfe1c6",
+          "scope": "Current local-closeout truth only in spec021/spec018/ROADMAP/HANDOVER plus featurelist021.spec_version sync. Preserve historical bodies/acceptance/estimates/lifecycle and failed018budget exactly. LocalQA/capture complete; finalscope/hosted delivery pending; no current123proof rebinding or comparative win."
+        }
+      ],
+      "original_proposal_revision": "a8c821962082a55ed48a853ef3528be32f9ac316",
+      "rejection_revision": "60407ff13bab5d08a86e23aa158851c4da13f761",
+      "rejection_path": ".agent/validator/133-closeoutdocs1.json",
+      "rejection_sha256": "e5f8976dd5886ad6a583196c44bf84b61b0e444d8264876aec4dcfbe49d964c5",
+      "strategy": "Structural suite-inventory distinction: onlydefault5 runs all48ordered+oneaux; fixture6 runs two namedCI cases+oneaux,166filesandfournewchecks. Repair prose only in spec021/ROADMAP/HANDOVER, preserve all other draft/source/QA/history/budget bytes. Independent second accuracy review before merge/scope.",
+      "corrected_proposal_revision": "f5ee665e6a8fb0c73c0b945144ca7c620a6e6666",
+      "approved_review_revision": "e116c39d373fa2303404f5b19b27e9b20240ca04",
+      "approved_review_sha256": "7e83b48b814e176d8796bb3b49755a7aad8c6f41a9ebc8ec2498d685df252595",
+      "retained_static_root": ".agent/evidence/133/closeoutdocs/",
+      "static_actual_exits": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "123-main-terminal-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "admitted-main-all5-success",
+      "owner": "/root/qa133",
+      "run_id": 38817712498,
+      "expected_head": "c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7",
+      "scope": "Observe same required oldmain run; after terminal all5success collect complete qualified logs and Source9 checkout receipts/48+oneaux/166 fixturebank. Preserve original observernetworkfailure and status captures. No CI restart/cancel/test rerun or123proof rebinding. Frozen collector d139 untouched; separate outputs/own evidence branch, no Rootstate writes.",
+      "static_admission": {
+        "attempts": 2,
+        "limit": 3,
+        "original_actual_exit": 1,
+        "original_frame": "/home/cnross/.tmp/nizam-feature123-main-terminal1/admission.execution.json",
+        "original_stdin_sha256": "f27c833acf62228331bffc192c6ffab7e160380c8448380f44aa952b19930c80",
+        "strategy": "Structural grammar correction: extract exact bounded Python heredoc from already-observed shell workflow before ast.parse. Preserve originalhelper/stdin/frame1 and all raw logs/metadata; allow original1 in frame inventory. No CI rerun/logrecollection/test/source/assertion weakening.",
+        "status": "passed",
+        "actual_exit": 0
+      },
+      "observed_workflow_status": "completed/success",
+      "observed_jobs_success": 5,
+      "actual_exit": 0,
+      "evidence_revision": "10e7d141119412cb55ba11ff7159fc899a89f0bf",
+      "evidence": ".agent/evidence/123/main-terminal1/report2.json",
+      "report_sha256": "d671371dc09f5abbe8f541f7d01935a3b812f47feb5ec4d7b45f692602b14633",
+      "completed_at": "2026-10-16T00:24:45Z",
+      "root_verified_indexed_files": 81
+    },
+    "133-final-scope": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "measured-overrun-recorded",
+      "base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+      "approved_endpoint": "This release commit, resolved before isolated clone creation.",
+      "helper": ".agent/evidence/133/root-final-scope1.py",
+      "helper_sha256": "a93677bc96c02f48082b1739a19bc715c60e5e0f19de726892dcb10f251e29b8",
+      "workspace": "/home/cnross/.tmp/nizam-133-final-scope1",
+      "external_output": "/home/cnross/.tmp/nizam-133-final-scope1-run",
+      "method": "Unchanged frozen endpoint classifier once, plus explicit authored evidence overlay. Separate conservative chronological authored view sums nonmerge mutations once to include failed/overwritten versions; choose max of two alternative views, never add them twice. Retain raw observations separately, canonical inline copies deduped by hash. Dedicated oldE123 administration separately attributed, old018 archive untouched; Root coordination excluded under existing frozen rule. No intermediate or later second baseline.",
+      "original_estimate": 2000,
+      "ceiling": 2600,
+      "interpretation": "Actual0 means completed accounting, not budget pass. Preserve any overrun/flags; no allowance reset or claim of exhaustive token/time/agent-work cost.",
+      "actual_exit": 0,
+      "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+      "actual_conservative": 3024,
+      "budget_gate_passed": false,
+      "evidence": ".agent/evidence/133/scope-final/scope-report.json"
+    },
+    "133-post-accounting-docs": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved-and-integrated",
+      "owner": "/root/currentdocs133",
+      "scope": "Record actual3024/2600 failed budget and bounded existing-delivery exception, immutable endpoint/supplement semantics and oldmainall5success in currentplanningviews; log dated variance in DEBT without new architecture/debtrow/allowance/history/source changes. Post-endpoint administration retained separately, no scope rerun.",
+      "proposal_revision": "06070c9d459968971694b2155a1ad6b716d25a5d",
+      "review_revision": "603e7c382f5ac0dd53986129d040a0adf66bcc36",
+      "review_sha256": "5036e48e6f7ddc16e8d2551aa9042523ebb8ccaf67e38e30161776cac4c60e12",
+      "static_actual_exits": [
+        0,
+        0
+      ],
+      "retained_static_root": ".agent/evidence/133/post-accounting-docs/"
+    },
+    "133-ci-final-integration": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "released-pr-exact-head-delivery",
+      "owner": "Root Orchestrator",
+      "candidate_head": "This release commit resolved before preflight/push.",
+      "branch": "phase/021-receipt-performance",
+      "pr_required_checks": [
+        "validate",
+        "e2e_bootstrap",
+        "fixtures_self_test",
+        "convergent_review",
+        "self_governance",
+        "closeout"
+      ],
+      "main_required_jobs": [
+        "validate",
+        "e2e_bootstrap",
+        "fixtures_self_test",
+        "convergent_review",
+        "self_governance"
+      ],
+      "previous_main_required": "Admitted38817712498/c8all5success, E123/main-terminal1/report2.json",
+      "predicate": "Current product pins/frozenassertions unchanged; currenthead compliance and installedpin preflight; ordinarypush+readyPR, all6required exact-headchecks successful with complete qualifiedlogs/default48+oneaux/166fixturefiles+newfour hooklabels; clearfeedback; normalmerge atfrozenhead; matching mainall5success. gh exit0 alone notpass. No CIcancel/forcepush/historicalproofrebind or newrelease/install."
     }
   },
   "history": [
@@ -7534,6 +8014,201 @@
       "at": "2026-10-15T20:32:22.742613+00:00",
       "event": "123-final-integration1-release",
       "detail": "Separate actualCIattempt1/3, no completedcapture/verifyrerun.537protected/239installed reverified unchanged; selectionabsent; all6PRchecks/mergecommit/main5 required. Finalscopebudgetflag remains acceptedexception, notpass."
+    },
+    {
+      "at": "2026-10-15T20:42:54.163303+00:00",
+      "event": "maintenance-performance-attribution1-released",
+      "detail": "Separate ownGitcandidateclone; single existingselector understdlibcProfile/frozencapture7200s. Read-onlydiagnostic notfeatureactivation/QA/CIpass. CurrentPR104head599d unchanged; explicitfutureintakeaccounting."
+    },
+    {
+      "at": "2026-10-15T21:46:47.925401+00:00",
+      "event": "maintenance-performance-attribution1-admitted",
+      "detail": ".agent/evidence/performance-maintenance/root-attribution1-admission.json; actual0, full preservation and all16 retained hashes independently verified. Diagnostic only; no feature activation or current CI verdict."
+    },
+    {
+      "at": "2026-10-15T21:54:37.056498+00:00",
+      "event": "receipt-maintenance-standing-authority-applied",
+      "detail": "User instruction, verbatim: Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach. Root selects measured per-call receipt Git-read maintenance as proposed optional021/133, using actual profile0193 and independently validated canonical draft29bfc9aa. This records authority for planning/contract preparation, not a claim the user approved the proposed numeric allowance, phase activation, old budget pass or comparative superiority."
+    },
+    {
+      "at": "2026-10-15T21:54:37.056498+00:00",
+      "event": "133-contract-proposal1-released",
+      "detail": "Planner pair schema/DAG/profile-reference checks actual0; independent planning accuracy review pending. Generator may propose bounded133 contract, incorporating review findings before approval. Planner-to-Generator role change explicitly disclosed; independent ModeA/Evaluator gates remain. Current phase018 complete, no active feature/contract or allowance change; current PR104 frozen599d."
+    },
+    {
+      "at": "2026-10-15T22:07:52.623114+00:00",
+      "event": "133-contract-approved",
+      "detail": "Both independent pre-code JSON gates strict-approved with empty arrays at exact proposal d1503834/SHA9d912e25, schemas and immutable verdict bindings independently verified. Contract133 promoted; phase021 remains proposed and budget unallocated. No active feature/contract or Source implementation release; await clean PR104 merge before activation and independent frozen bundle/red control."
+    },
+    {
+      "at": "2026-10-15T22:09:43.628443+00:00",
+      "event": "phase021-proposal-registered",
+      "detail": "Canonical pending phase_021.yaml first, then appended pending/proposed manifest mirror of accepted plan29bfc9aa and independent reviewa3e09599. Contract133 dual-approved5dcf5d38; currentphase018 remainscomplete, currentfeaturenull, no activation/allowance/implementation. Optional serialized maintenance preserves020/019 and129\u2013132."
+    },
+    {
+      "at": "2026-10-15T22:17:23.396853+00:00",
+      "event": "phase021-delegated-selection-recorded",
+      "detail": ".agent/evidence/133/activation-decision.json; Root selects reviewed133/2000/2600 under standing self-improvement delegation, explicitly not direct numeric user approval. Conditional activation only after clean PR104 merge; no currentphase/feature/budget allocation change. Prior018 overrun/exception retained."
+    },
+    {
+      "at": "2026-10-15T22:30:27.173986+00:00",
+      "event": "123-terminal-static-admission2-released",
+      "detail": "Actual six checks success at599d/run38802791707 attempt1. Original terminal-admission.py returned1 at assumed alljob Complete job label; actual retained full log has3 UNKNOWN STEP/2 Complete job cleanupfooters. Release exact observed footer mapping and originalfailure classification only; no Source/API/test/CI rerun or gate reduction."
+    },
+    {
+      "at": "2026-10-15T22:35:56.543327+00:00",
+      "event": "123-final-integration-pr-merged",
+      "detail": ".agent/evidence/123/final-integration1-receipt.json; exact599d all6success/default48/166fixtureinventory; ready0 then guarded normalmerge0 c8ef3cd4 with exact[79811,599d]parents/tree. Actual main38817712498 running, all5success remainsrequired. Original observation1/static1 retained; static2 only label reconciliation0."
+    },
+    {
+      "at": "2026-10-15T22:38:10.857508+00:00",
+      "event": "phase021-activated",
+      "detail": "Applied prior delegated decision d9af5777 after exact PR104 six-check success/normalmerge c8ef3cd4. Canonical phase021 first, derived active spec/list/manifest, then Root state. Selected2000/2600; archived entire018 scope budget verbatim with failure/exception intact. Approved133 contract5dcf5d38; independent test authoring attempt1 released. Product waits frozen bundle/independent review/intended red; old main38817712498 all5 must pass before new integration."
+    },
+    {
+      "at": "2026-10-15T22:44:08.641133+00:00",
+      "event": "133-currentdocs1-released",
+      "detail": "After021activation, old018 current-doc cost pointers must use phase_018_scope_budget_final, not new scope_budget initialization. Planner may refresh only current labels/facts in three established views, preserving historical bodies/budgets/requirements and pending fullruntime/comparisons."
+    },
+    {
+      "at": "2026-10-15T22:51:17.184033+00:00",
+      "event": "133-role-sessions-resumed",
+      "detail": "Prior agent sessions absent from live registry after continuation; existing uncommitted authoring checkout resumed by independent Evaluator acceptance133, currentdocs1 resumed by Planner currentdocs133, separate Validator133 initialized. Same authoring/currentdocs attempt1, no behavioral command or product retry. Lost exec handle94739 did not stop underlying main watcher PID891381: ps confirmed live and actual run38817712498 remains in_progress at mergedc8; no restart/cancel."
+    },
+    {
+      "at": "2026-10-15T22:52:50.801670+00:00",
+      "event": "133-independent-test-bundle-frozen-review1-released",
+      "detail": "Root verified all frozen source/static hashes and actual0 frame, exact seven paths; normally merged2f851cb8. Independent bundle review1 only; first real red and implementation remain held."
+    },
+    {
+      "at": "2026-10-15T22:59:56.750986+00:00",
+      "event": "133-bundle-and-currentdocs-admitted-first-red1-released",
+      "detail": "Strict independent JSON approvals ca6b6bd7/644265ba with all arrays empty; raw hashes and actual static0 verified. Current-doc-only update integrated preserving historical bodies and018 archive. Release one unchanged-Source realcount check under frozen capture; implementation remains held pending actual intendedred1 and full preservation."
+    },
+    {
+      "at": "2026-10-15T23:00:48.529648+00:00",
+      "event": "133-real-count-red1-admitted-implementation1-released",
+      "detail": "Actual1 intended reduction assertion, unchanged candidate173 realGit versus oracle168, both traces actual0 and all14471/239preserved; raw copied/hashverified. No setup2/retry/threshold change. Generator bounded body implementation1 released; old main still required before new integration."
+    },
+    {
+      "at": "2026-10-15T23:07:20.779137+00:00",
+      "event": "133-implementation1-focused-admitted-modeb1-released",
+      "detail": "Root actual capture-index30 hashes and allfour0/full14480+239 preservation verified. Candidate8/oracle168 realGit, no time/hosted claim. Initial Root static import used nonexistent index.sha256 (git128/Python1); normalmerge occurred before that check completed, with no gate approval inferred. Correct capture-index.sha256 independently checked actual0 before this release; no product/test rerun or reset. Canonical133 now IN_PROGRESS; independent ModeB then freshQAall8+one extra remain."
+    },
+    {
+      "at": "2026-10-15T23:15:01.693933+00:00",
+      "event": "133-modeb1-rejected-implementation2-released",
+      "detail": "Strict independent f05f1b40 has high133-MB1-ARGV; actual OS transport E2BIG probe only, not full candidate result. Source1/four focused0 remain historical, inadequate for all valid selections. Retain original rejection/raw and max3 counters; release structural bounded-payload repair2, then focusedcontrols/renewedModeB/freshQA. No assertions relaxed or gate bypassed."
+    },
+    {
+      "at": "2026-10-15T23:15:01.693933+00:00",
+      "event": "balanced-comparison-future-design-preflight-released",
+      "detail": "Separate Planner branch plan/balanced-comparison-design1 from3b1e6193, future delta only over discovered accepted proposal/smoke audit. Verify official current pins without installation/run, propose realtask correctness/recovery/time-cost/usability comparison and dependencies. No evidence of superiority or change to active133/020/019 gates/budgets."
+    },
+    {
+      "at": "2026-10-15T23:21:05.844670+00:00",
+      "event": "133-implementation2-focused-admitted-modeb2-released",
+      "detail": "Source6d955640 bounds argument batches without total candidate cap and subdivides actual E2BIG only; unchanged four frozen controls actual0 at committedproduct, all30indexedhashes/full14517+239verified. Source1/rejection remain. Renew independent ModeB2; freshQAandlargevaildinputextraheld until strictapproval. Futurecomparison single149lineproposal8123 heldseparate, notdeliveredbenchmark/activation."
+    },
+    {
+      "at": "2026-10-15T23:23:18.335516+00:00",
+      "event": "133-modeb2-admitted-fresh-qa1-released",
+      "detail": "Strictindependent03f96db1 approval with threeemptyarrays; exactSource6d/contract and all5statichashes/actual0 verified. Release8mandatory0 andexactlyonefreshlargevaildinput extra; no actualstressresult or QApass yet. Independent two long suites mayparallel on isolated same-revision clones. Oldmain38817712498 stillmustpass before newintegration; no cancel/rerun."
+    },
+    {
+      "at": "2026-10-15T23:24:34.453333+00:00",
+      "event": "133-fresh-qa1-live-independent-clones-and-future-plan-review",
+      "detail": "Actual started records and liveps bind cb5aa36d long5 PID990977/long6 PID991647; sameSource but independentGitclones/outsidecaptures. Observationtimeoutnevermeansrestart. Futurecomparisonproposal8123 separate planning-only accuracyreview1 released whileQA runs; no Source/gate/budget change or modeltaskexecution."
+    },
+    {
+      "at": "2026-10-15T23:28:36.756653+00:00",
+      "event": "balanced-comparison-design-reviewed-held-separate",
+      "detail": "Strict independent dab7d961 planning-only approval with allarrays empty. Rootverified15rawhashes/threeactual0frames/siximmutableprimaryfiles; proposal8123+review normalancestors of preparedcaf81e6a in /home/cnross/.tmp/nizam-comparison-design1. No merge into133/main/activeplans, benchmark/model/install/resource/phase approval or superiority. Existing strategy/corpus requirements, repeat/resource ambiguity and020/019 fullqualification prerequisites remain; next bounded EX-P1 contract remains future. Allactualmaintainedpreparation/review cost separatelyfuturecomparison, neverfree or133."
+    },
+    {
+      "at": "2026-10-15T23:32:57.087827+00:00",
+      "event": "133-fresh-qa1-c11-failure-bundle-record-repair1-released",
+      "detail": "Actualcheck7exit1/full14553+239preserved; C11 requiresfeature in own bundle-review QA record, schema also requires final_verdict.summary. Independentfocused1-4pass; long5/6confirmedlive,8andoneextra unexecuted. Release independent Validator metadata-only repair1, not Sourceimplementation3, no gate bypass/thresholdchange. OriginalQAraw/ca6bverdictpreserved; Root will release targetedcompliance recovery only after exactschemafixverified, keeping all real revision bindings."
+    },
+    {
+      "at": "2026-10-15T23:35:56.318971+00:00",
+      "event": "133-record-schema-repair-admitted-targeted-qa2-released",
+      "detail": "Root verified negative9a067/all35rawhashes and exactb8e5 twofield metadata repair, root+installedschema0. Diff fromcb5 contains onlyRootstate/roleevidence/twoQA records; product/frozenrunner/hook/oldtests/approvedcontract byte-identical. Original ca6b approval and failed QA1 remain immutable. Under delegated strategic recovery, revise Root one-context preference to honestlyboundtwo contexts: retain1-6 actualcb5, only7/8/oneextra newmetadata context, no healthy cancellation/broad rerun/Source3 or waived gate. FinalQA must separately report selectedeight outcomes, allactualattempts inclfailed7 and per-command revisions; no allsamehead claim. ExactnewPRCI/merge/main gates unchanged."
+    },
+    {
+      "at": "2026-10-15T23:41:41.357494+00:00",
+      "event": "133-targeted-compliance-and-largevalidinput-extra-admitted",
+      "detail": "Root verified22rawhashes and exactb225 frames: compliance7actual0/16gates,8actual0/payload12; soleextraactual0. Full14595/239preserved for each. LargevalidactualGit9884sourcepaths/generatedargumentlowerbound2162844>host2097152;69chunksperrevision, positive/specificlateGitdefectreject/restoredpositive verified. OriginalQA1fail kept; sixselectedmandatory0/oneextra0, twooriginalcb5suitesstilllivePIDs990977/991647. No finalQA/lifecycle/scope/merge/speedup/comparative claim. Actualoldmainstatus3 capture hasfourjobssuccess andfixturepending; mainwatchPID891381live, neverrestart/cancel."
+    },
+    {
+      "at": "2026-10-15T23:42:45.838348+00:00",
+      "event": "123-main-observer-network-timeout-corrected-same-run-live",
+      "detail": "Correction to preceding48e513e3 history: ps listed onlyQA PIDs990977/991647; its omitted891381 was incorrectly labelled live. Actual retained watch.execution.json shows observerexit1 at23:29:17, TCP readtimeout (not capture timeout or workflow failure). Direct status4 actual0 at same run38817712498/headc8 confirms in_progress/fourjobssuccess/fixturepending. No CI restart/rerun/cancel or newwatch; continue authoritative API observation of same run. Original failedobserver streams/frame hashes independentlyverified and preserved outside at /home/cnross/.tmp/nizam-feature123-main-integration1 for final import."
+    },
+    {
+      "at": "2026-10-15T23:45:14.723123+00:00",
+      "event": "133-qa-coordination-recovery-fields-normalized",
+      "detail": "Read current counter revealed inherited QA1 actual_exit1 and 8/extra-unexecuted text alongside current successful recovery. Moved original failure fields intact under original_failure (also retained in prior_attempts/raw9a), and corrected current disposition to actual6selected0/oneextra0/two live suites. No result changed, new command, counter reset or QA approval."
+    },
+    {
+      "at": "2026-10-15T23:48:34.534382+00:00",
+      "event": "comparison-checkout-footprint1-readonly-preparation-released",
+      "detail": "Actual bootstrap run_install clones pinned tag before module injection. Planner may quantify exact checkedout Gitblobcount/bytes at fbc686c5 and immutablev1.5pin, checking existing plans first; propose bounded separatelyreviewed distribution task only if warranted. Ownheldfuturecomparison branch, no current133Source/state/gate/budget changes byPlanner. Byteinventory is distinct from prohibited intermediate133line-scope measurement; no timing/network/benchmark claim."
+    },
+    {
+      "at": "2026-10-15T23:58:25.150376+00:00",
+      "event": "comparison-checkout-footprint-observation-held-review-requested",
+      "detail": "Planner9c2383e4 remains separate/unpublished over preparedcaf81e6a. Candidatefbc686c5 tracked logical bytes337426810, evidence325762342; immutablev1.5pin12537280 total. Four realGit captures0, aggregation/static0; no transfer/install/time/speedup inference. ExistingNDEBT034 condition retained. IndependentValidator factual review requested in ownheldbranch, no Source133 merge/activation/budget change. Same oldmain status6 actual0 confirms fourjobssuccess/fixturefullbanklive; QA PIDs990977/991647 remain active with intended ZIPwarning only. No test/CI restart or approval."
+    },
+    {
+      "at": "2026-10-16T00:05:04.972089+00:00",
+      "event": "133-independent-qa-approved-root-capture1-released",
+      "detail": "Strict5151517e QAsha c771723e/root+installedschemas verified and normalmergedae4fcb04. Both originals5/6 actual0/full14553/239; selected8all0, original7failure retained. Root frozen-driver isolated capture1 released with exact71line stdin hash; canonical state remains inprogress until capture passes. Separately authorize futurefootprint review static2 local object transport recovery after preserved actual1/innergit128; no source/observation repair or active budget change."
+    },
+    {
+      "at": "2026-10-16T00:06:45.729376+00:00",
+      "event": "133-root-capture1-schema-routing-failure-capture2-released",
+      "detail": "Actualcapture1 failed on planning review missingcontractreview.review; full14635/239 preservationequal. Structural family diagnostic found ModeB similarly uses AGF finalapproval without contractreview.summary. Neither Validator path is a C11QA schema route. Pin original planning9bdb60/ModeB8c7486 and enforce strict4fields, keep actualModeA/QA schemas. Frozen71line failedstdin/raw retained; newisolatedcapture2 finalstdinSHA642b89da released. No Source/assertion/verdict repair or QA rerun; counter2/3."
+    },
+    {
+      "at": "2026-10-16T00:08:31.778934+00:00",
+      "event": "133-evidence-admitted-canonical-schema-driven-close-released",
+      "detail": "Captured actual0 atdb7bf7d5 verifies8selected/9actualmandatory+oneextra and allraw/pins/preservation; receiptSHA0c1c8b38. Root lifecycle preparation guards returned1 twice before writing: wrong COMPLETE enum then missingevidence. Full installedschema nowread; third transition requires COMPLETED+existingevidence, separate derivedupdates. PID absent for guards explicitly recorded, not fabricated. Future287f23f3 rejection contextonly admitted; Planner correction2 may touch debtcontext qualifications only, all numeric/raw unchanged; future branch stays separate."
+    },
+    {
+      "at": "2026-10-16T00:09:58.029928+00:00",
+      "event": "phase021-local-complete-after-independent-qa-and-root-capture",
+      "detail": "Canonical phase021 step133 COMPLETED with external captureevidence written/dual-schema validated first, then derived feature/run_state/manifest separately. Capture2 actual0, originalcapture1 and QA1failure retained. Third lifecycle schema-driven child actual0 after two prewrite guardfailures; capturewrapper missing-outputdir failed before child launch and was repaired without another canonical mutation. Local closure is distinct from pending finalscope/currentdocs/new exact-headCI/merge/main. Historical018budget unchanged; no current123proof rebind, release/install,020activation or superiority."
+    },
+    {
+      "at": "2026-10-16T00:11:08.145754+00:00",
+      "event": "133-local-closeout-currentdocs1-planner-released",
+      "detail": "Normalmerged8fbf0016 closure to3a13b72e after Rootcapturereceipt0c1c8b38 actual0. Planner may update only currentfactualviews/specversion sync; no lifecycle/source/assertion/history/cost measurement. Counts:8selected0,9actualmandatory including old7failure1, oneextra0, default48+oneaux,166fixture+newfour; mixedper-command revisions explicit. Oldmain38817712498 latest4/5success remainsdeliverygate. Separate futurebranches neverSource133 product scope."
+    },
+    {
+      "at": "2026-10-16T00:13:39.282779+00:00",
+      "event": "123-main-terminal1-readonly-collector-released",
+      "detail": "Evaluatorqa133, after completed133QA, may observe exact sameoldmain38817712498/c8 and collect full logs only when terminal using qualifiedghSHA5eb17f67. All5success, exact actualcheckout/sourceAPI2579 and48+oneaux/166 in bothshelljobs required. SourceRootAPI5f not rebound intooldmain. Preserve watch1 actualnetworkfailure and all metadata snapshots; one bounded rawcollection, no CI rerun or newSource tests. Root independently admits before new maintenanceintegration."
+    },
+    {
+      "at": "2026-10-16T00:22:24.818183+00:00",
+      "event": "133-closeoutdocs1-count-rejection-correction2-released",
+      "detail": "Strict60407ff1 SHAe5f8976d rejected drafta8c atthreeprosesites: default48+aux versus fixturetwoCIcases+aux/166/newfour. Draft/review objects retained but notmergedintoRootSource; Planner narrowcorrection2 thenindependentreview2 required. No test/behavior/source/count/budgetchange or interimscope. Separately strict69cc3e0b approves corrected futurefootprint7407; normallyprepared108c8921 staysheld/unpublished outsideSource133. Originalcontextrejection/numericraw/objecttransportfailure retained."
+    },
+    {
+      "at": "2026-10-16T00:28:17.002567+00:00",
+      "event": "133-reviewed-currentdocs-final-scope1-released-oldmain-static2",
+      "detail": "Strict e116c39d SHA7e83b48b approved narrowcountfixf5ee; normalmerged currentdocs/rejections only, four static captures imported/hashed. Canonical133closed and QA/Rootcapture verified; finalScope1 on599d..release nowauthorized with frozenendpoint+explicit conservativeauthorchronology, no prior measurement. Oldmain38817712498 actualcompleted/success/all5, qualifiedlogs0; terminalhelper1 actual1/PID2992840 parsed shellheredoc asPython. Static2 onlyextractobservedPythonbody; original retained, no CI/product rerun. Budget interpretation remains pending actual measurement."
+    },
+    {
+      "at": "2026-10-16T00:33:01.654703+00:00",
+      "event": "133-final-accounting-overrun-retained-oldmain-admitted",
+      "detail": "FrozenScope1actual0/full14694/239 preservation at462f30f2; unchangedclassifier1493 plusauthoredendpoint1299=2792, chronologicalfullauthored3024 selected conservatively, notaddedagain. Source/docs83/tests331/process2610; original2000/2600 untouched, cumulativefail424. Rootstandingauthority permitsverifiedexistingdelivery only, newfeatureallocationseparate; Plannerlogactualvariance/currentfactsaspostendpointadministration, no remeasurement. Legacy018dedicatedauthored916 atendpointseparate; oldarchive unchanged. Strict10e7d141 main38817712498/c8all5success fullyRootverified81rawhashes/actualframes/exact48+aux/two166/Source9andoldAPI2579, normalmergeparents/tree; oldwatch/parser1failures retained. Legacyterminaladminpostendpoint separate from133QA."
+    },
+    {
+      "at": "2026-10-16T00:43:03.892529+00:00",
+      "event": "133-post-accounting-docs-approved-exact-head-pr-delivery-released",
+      "detail": "Strict603e7c38 SHA5036e48e approves06070factual six-filecloseout/DEBTnote; normalmerged, planner/reviewactual0raw imported. Originalbudget/old018/history/default48vsfixturetwo/newfour preserved; postmeasurementadmin explicit, no scope rerun. Release ordinaryreadyPRaftercurrentmetadata/payload/selfadoptionpreflight; freeze this Sourcehead, require6newPRchecks/clearfeedback/normalmerge andmatching5mainjobs. Alloldmain5successadmitted; no newfeature/release/install or comparativeclaim."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7706,183 +8381,58 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 7200,
-    "ceiling_130pct": 9360,
-    "total_lines_changed": 26657,
-    "evidence_lines_total": 805963,
-    "excluded_lines_total": 2466,
+    "original_estimate_lines": 2000,
+    "ceiling_130pct": 2600,
+    "total_lines_changed": 3024,
     "per_feature": [
       {
-        "id": "119",
-        "estimated": 1000,
-        "actual": 722,
-        "product_lines": 230,
-        "source_lines": 71,
-        "independent_test_lines": 159,
-        "process_overhead_lines": 492,
-        "evidence_lines": 23008,
-        "excluded_lines": 381,
-        "range": "fcd0584146fd836df0080292cc2cf10180bb9f31..667b9886d2c0dd6aee7a09d41a44cf18a3596169",
-        "evidence": ".agent/evidence/119/scope-measurement-final.txt",
-        "measurement_status": "final counted119 beforePR100; replaces interim522 row exactlyonce",
+        "id": "133",
+        "estimated": 2000,
+        "actual": 3024,
+        "actual_kind": "Conservative maximum of unchanged frozen endpoint+authored overlay2792 and explicit chronological authored changes3024, not their sum.",
+        "product_lines": 414,
+        "source_lines": 83,
+        "independent_test_lines": 331,
+        "process_overhead_lines": 2610,
+        "frozen_budget_lines": 1493,
+        "authored_snapshot_overlay": 1299,
+        "frozen_evidence_lines": 103444,
+        "evidence_lines": 86569,
+        "excluded_lines": 1021,
+        "range": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04..462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "measurement_revision": "462f30f21a280f7dec7e7aab1f68979a900dbf78",
+        "evidence": ".agent/evidence/133/scope-final/scope-report.json",
+        "report_sha256": "291a25fdf8f8d3601dc1f108c851b47815e0a897a5149b9d4f0647b169770235",
         "baseline": {
           "prior_features": [],
           "first_feature_exception": true,
           "flagged": false
         },
-        "measurement_revision": "667b9886d2c0dd6aee7a09d41a44cf18a3596169",
-        "capture_revision": "13c4a4fb45bbe21e42e5893c46ec4fb70eb92c6a",
-        "merge_revision": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
-      },
-      {
-        "id": "120",
-        "estimated": 2750,
-        "actual": 1397,
-        "product_lines": 740,
-        "source_lines": 305,
-        "independent_test_lines": 435,
-        "process_overhead_lines": 657,
-        "evidence_lines": 37567,
-        "excluded_lines": 334,
-        "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
-        "evidence": ".agent/evidence/120/scope-measurement-final.txt",
-        "measurement_status": "final counted120 before PR101; replaces interim row once",
-        "baseline": {
-          "prior_features": [
-            "119"
-          ],
-          "rolling_average": 722.0,
-          "three_times_threshold": 2166.0,
-          "first_feature_exception": false,
-          "flagged": false
-        },
-        "note": "Whole120 from immutable PR100 merge once, including all contract/review/fixture/helper recoveries, independent acceptance, Source/docs305, tests435, final QA/capture/closure and current planning. Raw canary planning and transport remain evidence, no implementation claim.119722 and archived0165179/0175203 preserved.",
-        "measurement_revision": "2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
-        "capture_revision": "62cad89939a26d4608df543e4d84c2fa09699049",
-        "merge_revision": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb"
-      },
-      {
-        "id": "121",
-        "estimated": 1300,
-        "actual": 1245,
-        "product_lines": 470,
-        "source_lines": 194,
-        "independent_test_lines": 276,
-        "process_overhead_lines": 775,
-        "evidence_lines": 215346,
-        "excluded_lines": 336,
-        "range": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..3846826ff3feace78d2866eb58433c8c65c425b2",
-        "evidence": ".agent/evidence/121/scope-measurement-final.txt",
-        "measurement_status": "final whole121 before PR102, appended once",
-        "measurement_revision": "3846826ff3feace78d2866eb58433c8c65c425b2",
-        "capture_revision": "8e3189afe71a4377f5231aa09d35ceca79bdb798",
-        "baseline": {
-          "prior_features": [
-            "119",
-            "120"
-          ],
-          "rolling_average": 1059.5,
-          "three_times_threshold": 3178.5,
-          "first_feature_exception": false,
-          "flagged": false
-        },
+        "cumulative_ceiling_exceeded": true,
         "category_estimates_unchanged": {
-          "source_and_docs": 300,
+          "source_and_docs": 150,
           "tests": 450,
-          "process": 550
+          "process": 1400
         },
-        "process_variance_from_estimate": 225,
-        "note": "Whole121 once from actualPR101merge, including all gates/recoveries, adjacent append-only120archive review, Source/docs194, tests276, QA/capture/closure/current planning. Original1300 total and category estimates retained; no new allowance or prior119/120/016/017 rebaseline. Raw evidence and run_state use unchanged classifier exclusions.",
-        "merge_revision": "3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03"
-      },
-      {
-        "id": "122",
-        "estimated": 950,
-        "actual": 939,
-        "product_lines": 432,
-        "source_lines": 153,
-        "independent_test_lines": 279,
-        "process_overhead_lines": 507,
-        "evidence_lines": 401152,
-        "excluded_lines": 442,
-        "range": "3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03..092a305b54fd9c14aee4374cd7dcf602cec91c98",
-        "evidence": ".agent/evidence/122/scope-measurement-final.txt",
-        "measurement_status": "final whole122 before PR103, append once",
-        "measurement_revision": "092a305b54fd9c14aee4374cd7dcf602cec91c98",
-        "baseline": {
-          "prior_features": [
-            "119",
-            "120",
-            "121"
-          ],
-          "rolling_average": 1121.3333333333333,
-          "three_times_threshold": 3364.0,
-          "first_feature_exception": false,
-          "flagged": false
-        },
-        "note": "Includes all contract/review/fixture/hosted-failure recoveries, current controls, QA/capture/canonical closure and independently reviewed current docs.42 adjacent prior-feature evidence files remain counted as raw evidence, exact attribution preserved. Original7200/9360 unchanged.",
-        "capture_revision": "0621062b2f985e3ec510ed7986a07d494527c613",
-        "merge_revision": "79811ef76df950b8151e2af62637ab7d1df34305"
-      },
-      {
-        "id": "123",
-        "estimated": 1200,
-        "actual": 22354,
-        "actual_kind": "Conservative immutable file-delta snapshot; known source-only lower bound is separately recorded.",
-        "product_lines": 2094,
-        "source_lines": 1212,
-        "independent_test_lines": 882,
-        "process_overhead_lines": 20260,
-        "evidence_lines": 128890,
-        "frozen_budget_lines": 2685,
-        "frozen_evidence_lines": 148559,
-        "authored_process_overlay": 19669,
-        "known_authored_source_only_overlay": 5002,
-        "excluded_lines": 973,
-        "range": "79811ef76df950b8151e2af62637ab7d1df34305..769fdd8ab59c28605506c675083b54a3a728ac8b",
-        "measurement_revision": "769fdd8ab59c28605506c675083b54a3a728ac8b",
-        "evidence": ".agent/evidence/123/scope-final/scope-report.json",
-        "measurement_status": "Final once-only whole123 endpoint after capture/canonicalclosure/reviewedcurrentdocs/actualselectionpreparation. No prior remeasurement.",
-        "baseline": {
-          "prior_features": [
-            "120",
-            "121",
-            "122"
-          ],
-          "three_times_threshold": 3581,
-          "first_feature_exception": false,
-          "flagged": true
-        },
-        "phase_source_only_lower_bound": 11990,
-        "ceiling_exceeded": true,
-        "disposition": "Recorded delivery exception under explicit operator self-improvement/blocker-bypass authority; not a budget pass, new allowance or rebaseline. Full known source cost alone exceeds original ceiling. Preserve all failed proof and finish verified delivery; prioritize process cost reduction next.",
-        "limitations": "Mixed non-frame JSON conservatively charged in full; mechanical exact source copies charged once. Snapshot excludes later measurement/integration administration, retained explicitly as subsequent records, so this is not an exhaustive token/time/all-agent-work total."
+        "legacy018_post_endpoint_authored_at_snapshot": 916,
+        "limitations": "Root coordination excluded under frozen rule; no invented token/time/terminal-only authoring counts. Exact source copies deduped, failed/overwritten authored versions in chronological supplement, raw observations distinct."
       }
     ],
-    "phase_level_items": [],
-    "counting_rule": {
-      "spec_ref": ".agent/product_spec_018.md Full counted budget; unchanged frozen phase014 classifier",
-      "script": ".agent/evidence/scope-budget-014/measure.py",
-      "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
-      "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
-      "evidence_total": ".agent/evidence/** including verification helpers, plus any non-JSON file under .agent/validator/ (row 4a, spec 1.1.6); tracked separately, never gated",
-      "excluded": ".agent/run_state.json (coordination churn)",
-      "unclassified": "fail closed: listed, measure.py exits 3"
-    },
-    "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
-    "authorization_revision": "51f4380",
-    "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
-    "last_measured_at": "2026-10-15T20:31:32.408299+00:00",
-    "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6",
-    "feature121_measurement_base": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb",
-    "feature123_frozen_classifier_output": ".agent/evidence/123/scope-final/frozen.stdout.txt",
-    "feature123_accounting_overlay": "Transparent reallocation of19669 frozen evidence lines to process; original classifier output unchanged. Known authoredsource-only overlay5002 yields phase lowerbound11990; conservative fullreport charge yields26657. Prior119-122 actual4303 unchanged.",
+    "phase_base_revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+    "authorization_revision": "d9af57777452b8252ecb9d61639502154d64992d",
+    "counting_rule": "One final immutable measurement after canonical closure/current docs. Include actual maintained attribution/preparation once; preserve legacy018 post-snapshot integration administration as disjoint retained costs, never free evidence or a new018 budget pass.",
+    "measurement_status": "Final once-only immutable endpoint462f30f2; frozen1493+authored snapshot1299=2792, conservative chronological authored3024 selected. Later measurement/CI/current-view administration retained separately, never a second baseline.",
+    "evidence_lines_total": 86569,
+    "excluded_lines_total": 1021,
+    "last_measured_at": "2026-10-16T00:33:01.654703+00:00",
+    "budget_gate_passed": false,
+    "ceiling_exceeded": true,
     "delivery_exception": {
-      "scope": "Completed feature123/phase018 delivery only; retain measured flags and unchanged7200/9360. No new implementation scope, phase activation, new debt/allocation, gate reduction or paid runtime/model work.",
+      "scope": "Finish already verified133/021 documentation, CI and ordinary merge/main delivery only. Preserve failed2000/2600 budget and actual3024; no new allowance/rebaseline, other-phase activation or future gate waiver.",
       "operator_authority": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.",
-      "strategic_reason": "All protected implementation and independent behavioral/provenance/physical gates passed. Deleting valid proof or rebaselining would conceal the cost; preserving explicit failed budget and completing final CI/merge is superior. The next tranche must reduce bespoke verification/report overhead using observed costs.",
+      "strategic_reason": "All product/independent behavioral/preservation gates passed. Preserve424 over ceiling and1210 process variance explicitly while completing this delivery; prioritize reducing repeated process work in later separately reviewed planning. Future implementation requires its own scope/allocation disposition.",
       "budget_gate_passed": false,
-      "final_ci_required": true
+      "debt_register_note": "Planner post-accounting factual note released; no existing debt row or original allowance rewritten."
     }
   },
   "blocked_features": [],
@@ -8138,7 +8688,7 @@
       }
     ]
   },
-  "last_action": "Actualfinalintegration1 released afterall123gates/reviewedcurrentdocs/selectionprep/onceaccounting with explicitrecordedoverrunexception. Ordinarypush thenexacthead6PRchecks, cleanmergecommit, main5jobs required.",
+  "last_action": "133/021 local implementation/QA/capture/currentdocs/accounting complete; failed3024/2600 retained under bounded deliveryexception, DEBTnote reviewed. Previousmain all5 admitted. ReadyPR exact-head integration1 released.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -8165,7 +8715,8 @@
     "120",
     "121",
     "122",
-    "123"
+    "123",
+    "133"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
@@ -8672,5 +9223,185 @@
       "rule": "Feature126 actual is precode range plus implementation_base..final capture. The intervening39-line public planning projection is charged separately once; do not measure a single607..final range and add39 again."
     },
     "feature127_measurement_base": "c2b95a1262d49ebd615dcd0d577fad584712dc40"
+  },
+  "phase_018_scope_budget_final": {
+    "original_estimate_lines": 7200,
+    "ceiling_130pct": 9360,
+    "total_lines_changed": 26657,
+    "evidence_lines_total": 805963,
+    "excluded_lines_total": 2466,
+    "per_feature": [
+      {
+        "id": "119",
+        "estimated": 1000,
+        "actual": 722,
+        "product_lines": 230,
+        "source_lines": 71,
+        "independent_test_lines": 159,
+        "process_overhead_lines": 492,
+        "evidence_lines": 23008,
+        "excluded_lines": 381,
+        "range": "fcd0584146fd836df0080292cc2cf10180bb9f31..667b9886d2c0dd6aee7a09d41a44cf18a3596169",
+        "evidence": ".agent/evidence/119/scope-measurement-final.txt",
+        "measurement_status": "final counted119 beforePR100; replaces interim522 row exactlyonce",
+        "baseline": {
+          "prior_features": [],
+          "first_feature_exception": true,
+          "flagged": false
+        },
+        "measurement_revision": "667b9886d2c0dd6aee7a09d41a44cf18a3596169",
+        "capture_revision": "13c4a4fb45bbe21e42e5893c46ec4fb70eb92c6a",
+        "merge_revision": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
+      },
+      {
+        "id": "120",
+        "estimated": 2750,
+        "actual": 1397,
+        "product_lines": 740,
+        "source_lines": 305,
+        "independent_test_lines": 435,
+        "process_overhead_lines": 657,
+        "evidence_lines": 37567,
+        "excluded_lines": 334,
+        "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "evidence": ".agent/evidence/120/scope-measurement-final.txt",
+        "measurement_status": "final counted120 before PR101; replaces interim row once",
+        "baseline": {
+          "prior_features": [
+            "119"
+          ],
+          "rolling_average": 722.0,
+          "three_times_threshold": 2166.0,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "note": "Whole120 from immutable PR100 merge once, including all contract/review/fixture/helper recoveries, independent acceptance, Source/docs305, tests435, final QA/capture/closure and current planning. Raw canary planning and transport remain evidence, no implementation claim.119722 and archived0165179/0175203 preserved.",
+        "measurement_revision": "2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "capture_revision": "62cad89939a26d4608df543e4d84c2fa09699049",
+        "merge_revision": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb"
+      },
+      {
+        "id": "121",
+        "estimated": 1300,
+        "actual": 1245,
+        "product_lines": 470,
+        "source_lines": 194,
+        "independent_test_lines": 276,
+        "process_overhead_lines": 775,
+        "evidence_lines": 215346,
+        "excluded_lines": 336,
+        "range": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb..3846826ff3feace78d2866eb58433c8c65c425b2",
+        "evidence": ".agent/evidence/121/scope-measurement-final.txt",
+        "measurement_status": "final whole121 before PR102, appended once",
+        "measurement_revision": "3846826ff3feace78d2866eb58433c8c65c425b2",
+        "capture_revision": "8e3189afe71a4377f5231aa09d35ceca79bdb798",
+        "baseline": {
+          "prior_features": [
+            "119",
+            "120"
+          ],
+          "rolling_average": 1059.5,
+          "three_times_threshold": 3178.5,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "category_estimates_unchanged": {
+          "source_and_docs": 300,
+          "tests": 450,
+          "process": 550
+        },
+        "process_variance_from_estimate": 225,
+        "note": "Whole121 once from actualPR101merge, including all gates/recoveries, adjacent append-only120archive review, Source/docs194, tests276, QA/capture/closure/current planning. Original1300 total and category estimates retained; no new allowance or prior119/120/016/017 rebaseline. Raw evidence and run_state use unchanged classifier exclusions.",
+        "merge_revision": "3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03"
+      },
+      {
+        "id": "122",
+        "estimated": 950,
+        "actual": 939,
+        "product_lines": 432,
+        "source_lines": 153,
+        "independent_test_lines": 279,
+        "process_overhead_lines": 507,
+        "evidence_lines": 401152,
+        "excluded_lines": 442,
+        "range": "3ee2b39b75fa5e2bc645e52c7b02f185d5d84e03..092a305b54fd9c14aee4374cd7dcf602cec91c98",
+        "evidence": ".agent/evidence/122/scope-measurement-final.txt",
+        "measurement_status": "final whole122 before PR103, append once",
+        "measurement_revision": "092a305b54fd9c14aee4374cd7dcf602cec91c98",
+        "baseline": {
+          "prior_features": [
+            "119",
+            "120",
+            "121"
+          ],
+          "rolling_average": 1121.3333333333333,
+          "three_times_threshold": 3364.0,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "note": "Includes all contract/review/fixture/hosted-failure recoveries, current controls, QA/capture/canonical closure and independently reviewed current docs.42 adjacent prior-feature evidence files remain counted as raw evidence, exact attribution preserved. Original7200/9360 unchanged.",
+        "capture_revision": "0621062b2f985e3ec510ed7986a07d494527c613",
+        "merge_revision": "79811ef76df950b8151e2af62637ab7d1df34305"
+      },
+      {
+        "id": "123",
+        "estimated": 1200,
+        "actual": 22354,
+        "actual_kind": "Conservative immutable file-delta snapshot; known source-only lower bound is separately recorded.",
+        "product_lines": 2094,
+        "source_lines": 1212,
+        "independent_test_lines": 882,
+        "process_overhead_lines": 20260,
+        "evidence_lines": 128890,
+        "frozen_budget_lines": 2685,
+        "frozen_evidence_lines": 148559,
+        "authored_process_overlay": 19669,
+        "known_authored_source_only_overlay": 5002,
+        "excluded_lines": 973,
+        "range": "79811ef76df950b8151e2af62637ab7d1df34305..769fdd8ab59c28605506c675083b54a3a728ac8b",
+        "measurement_revision": "769fdd8ab59c28605506c675083b54a3a728ac8b",
+        "evidence": ".agent/evidence/123/scope-final/scope-report.json",
+        "measurement_status": "Final once-only whole123 endpoint after capture/canonicalclosure/reviewedcurrentdocs/actualselectionpreparation. No prior remeasurement.",
+        "baseline": {
+          "prior_features": [
+            "120",
+            "121",
+            "122"
+          ],
+          "three_times_threshold": 3581,
+          "first_feature_exception": false,
+          "flagged": true
+        },
+        "phase_source_only_lower_bound": 11990,
+        "ceiling_exceeded": true,
+        "disposition": "Recorded delivery exception under explicit operator self-improvement/blocker-bypass authority; not a budget pass, new allowance or rebaseline. Full known source cost alone exceeds original ceiling. Preserve all failed proof and finish verified delivery; prioritize process cost reduction next.",
+        "limitations": "Mixed non-frame JSON conservatively charged in full; mechanical exact source copies charged once. Snapshot excludes later measurement/integration administration, retained explicitly as subsequent records, so this is not an exhaustive token/time/all-agent-work total."
+      }
+    ],
+    "phase_level_items": [],
+    "counting_rule": {
+      "spec_ref": ".agent/product_spec_018.md Full counted budget; unchanged frozen phase014 classifier",
+      "script": ".agent/evidence/scope-budget-014/measure.py",
+      "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
+      "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
+      "evidence_total": ".agent/evidence/** including verification helpers, plus any non-JSON file under .agent/validator/ (row 4a, spec 1.1.6); tracked separately, never gated",
+      "excluded": ".agent/run_state.json (coordination churn)",
+      "unclassified": "fail closed: listed, measure.py exits 3"
+    },
+    "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
+    "authorization_revision": "51f4380",
+    "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
+    "last_measured_at": "2026-10-15T20:31:32.408299+00:00",
+    "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6",
+    "feature121_measurement_base": "f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb",
+    "feature123_frozen_classifier_output": ".agent/evidence/123/scope-final/frozen.stdout.txt",
+    "feature123_accounting_overlay": "Transparent reallocation of19669 frozen evidence lines to process; original classifier output unchanged. Known authoredsource-only overlay5002 yields phase lowerbound11990; conservative fullreport charge yields26657. Prior119-122 actual4303 unchanged.",
+    "delivery_exception": {
+      "scope": "Completed feature123/phase018 delivery only; retain measured flags and unchanged7200/9360. No new implementation scope, phase activation, new debt/allocation, gate reduction or paid runtime/model work.",
+      "operator_authority": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.",
+      "strategic_reason": "All protected implementation and independent behavioral/provenance/physical gates passed. Deleting valid proof or rebaselining would conceal the cost; preserving explicit failed budget and completing final CI/merge is superior. The next tranche must reduce bespoke verification/report overhead using observed costs.",
+      "budget_gate_passed": false,
+      "final_ci_required": true
+    }
   }
 }
