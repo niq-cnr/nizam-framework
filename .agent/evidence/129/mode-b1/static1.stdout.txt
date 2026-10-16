@@ -1,0 +1,2282 @@
+EXACT_CANDIDATE_PINS {".agent/contracts/129.json": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6", "tools/runtime_session.py": "e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce", "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9", "tools/test_runtime_session.py": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431"}
+ROOT_BASELINE_DISTINCT_FROM_REVIEWED_CANDIDATE; INSTALLED_DIFF_EMPTY
+SEALED_PROBE_ONLY_APPROVED_DIGEST_REPLACEMENTS {"authority": ".agent/evidence/129/source-release3.json sealed_close_probe", "bindings": {"tools/runtime_session.py": {"new": "e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce", "old": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5"}, "tools/sbcl_session_loop.lisp": {"new": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9", "old": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"}}, "candidate_product_revision": "a9114bcbe16fba76dbdba1147ea76db8a5a6b39d", "derived_sha256": "30598dae5be5d63cd196bb86102ed6bb88983acbf9b26a9b8adc8a3f179eebf1", "original": ".agent/evidence/129/source2-close-diagnostic1/probe.py", "original_sha256": "c88dd71e20ecd1006b8c07c1f5025815c9dca168006fb75a2ea2df54bbb5beaa", "role": "Generator mechanical candidate metadata binding only", "runner_sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431", "transformation": "Exact replace of each unique PINS product digest literal only; Lisp digest unchanged. No other bytes or logic changed; original and runner immutable. Same-depth copy preserves ROOT resolution."}
+PREVIOUS_GATE .agent/validator/129-mode-a.json 26475f2d8d26a1b5d55f94d3815bf15eba20faf899000d14ba0c56820bca96c3
+PREVIOUS_GATE .agent/qa/129-contract-review.json 2c66cd9c5b753d5dc3c3622bfadc709261efed4ab0115af85e9b96e33b77538f
+PREVIOUS_GATE .agent/validator/129-source3-architecture2.json 25ac0bafd648ae8e8eb1377093c578f979954fff7f61b73480cca8ccc5c3e7b8
+PREVIOUS_GATE .agent/validator/129-source3-environment1.json 5b62956368ec191884be8d0a30df0b1580631ca32e79b0b6c41b2e617b89c9ba
+ARCHITECTURE_ERRATUM {"independent_resolution": "Prior review is independently verified at10ee9b2406df5141b2aed9aaa1a022416ad74117, identical to current durable report; Root run_state.circuit_breaker.129-source3-architecture-review.revision records that correct object. Therefore this documentary typo does not leave A1/A2 or current planning authority unproved. Plan bytes remain unchanged; this erratum must accompany their use.", "location": "proposal:8", "observation": "This39-character citation does not resolve; negative Git lookup actualexit128 captured. It is not used as authority or certified as a valid object.", "text_reference": "0ee9b2406df5141b2aed9aaa1a022416ad74117"}
+SOURCE_COMMIT ee1ce1dfb6b0f235c23eae439e00328645098c42 tools/runtime_session.py
+tools/sbcl_session_loop.lisp
+
+SOURCE_COMMIT 2e8c92d11c36525c3b73b8cfb23822c4507835cb .agent/evidence/129/implementation2/startup1.py
+tools/sbcl_session_loop.lisp
+
+SOURCE_COMMIT a9114bcbe16fba76dbdba1147ea76db8a5a6b39d tools/runtime_session.py
+
+STATIC_ONLY_NO_PRODUCT_IMPORT_OR_EXECUTION
+REVIEWED_SOURCE_LINES 1144 1147
+1144:    def verified_attempt(self, request):
+1145:        if self.runtime == 'stub':
+1146:            return attempt_matches(self.meta, request)
+1147:        return self.verification is not None and self.verification['attempt_ok']
+REVIEWED_SOURCE_LINES 1208 1216
+1208:            if action == 'submit-operation':
+1209:                path = self.operation_path(request['operation_id'])
+1210:                if path.exists() or path.with_suffix('.result.json').exists():
+1211:                    self.reply(connection, response_error('conflict'))
+1212:                    return
+1213:            if action == 'poll-operation':
+1214:                self.apply_request(connection, None)
+1215:            else:
+1216:                self.start_job(connection)
+REVIEWED_SOURCE_LINES 1250 1260
+1250:    def verification_files(self, request):
+1251:        paths = [self.directory / 'runtime_session.json', self.directory / 'controller.json',
+1252:                 Path(self.meta['run_state_path'])]
+1253:        paths.extend((self.directory / 'operations').glob('*.json'))
+1254:        handoff = self.directory / 'handoff.json'
+1255:        if handoff.exists():
+1256:            paths.append(handoff)
+1257:        if 'handoff' in request:
+1258:            repo = Path(request['handoff']['workspace_path'])
+1259:            paths.extend(repo / item['path'] for item in request['handoff']['source_manifest'])
+1260:        return paths
+REVIEWED_SOURCE_LINES 1296 1302
+1296:                def send(value):
+1297:                    raw = encode(value)
+1298:                    if len(raw) > FRAME_LIMIT:
+1299:                        raw = encode({'type': 'job-result', 'job': nonce, 'ok': False,
+1300:                                      'error': 'infrastructure'})
+1301:                    while raw:
+1302:                        raw = raw[os.write(result_write, raw):]
+REVIEWED_SOURCE_LINES 1308 1326
+1308:                result = {'type': 'job-result', 'job': nonce, 'ok': True}
+1309:                try:
+1310:                    attempt_ok = attempt_matches(self.meta, request) if action in (
+1311:                        'submit-operation', 'cancel-operation', 'reattach-session', 'open-session') else True
+1312:                    self.check_live()
+1313:                    provenance = (source_provenance(request['handoff'], self.runtime)
+1314:                                  if action == 'reattach-session' and attempt_ok
+1315:                                  and self.identity_reason(request) is None else None)
+1316:                    # Digests bind the bytes read/validated by this job; stamps
+1317:                    # let the parent revalidate those inputs incrementally.
+1318:                    files = []
+1319:                    for path in self.verification_files(request):
+1320:                        before = file_stamp(path)
+1321:                        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+1322:                        after = file_stamp(path)
+1323:                        if before != after:
+1324:                            fail(70, 'ambiguous_state')
+1325:                        files.append([str(path), after, digest])
+1326:                    result.update(attempt_ok=attempt_ok, provenance=provenance, files=files)
+REVIEWED_SOURCE_LINES 1430 1467
+1430:            result = job['result']
+1431:            if result and result['ok'] and not job['failure']:
+1432:                # Read-only jobs carry exact input digests; a changed stamp or
+1433:                # supervisor transition invalidates them before publication.
+1434:                if job['version'] != self.version:
+1435:                    job['failure'] = 'ambiguous_state'
+1436:                else:
+1437:                    files = result['files']
+1438:                    try:
+1439:                        for _ in range(4):
+1440:                            index = job['files_checked']
+1441:                            if index >= len(files):
+1442:                                break
+1443:                            path, stamp, digest = files[index]
+1444:                            if file_stamp(path) != stamp or len(digest) != 64:
+1445:                                fail(70, 'ambiguous_state')
+1446:                            job['files_checked'] += 1
+1447:                    except (OSError, SessionError, ValueError):
+1448:                        job['failure'] = 'ambiguous_state'
+1449:                    if not job['failure'] and job['files_checked'] < len(files):
+1450:                        continue
+1451:            connection = job['connection']
+1452:            try:
+1453:                self.selector.unregister(job['reader'])
+1454:            except KeyError:
+1455:                pass
+1456:            os.close(job['reader'])
+1457:            if job['ack'] is not None:
+1458:                os.close(job['ack'])
+1459:            del self.jobs[nonce]
+1460:            if connection not in self.clients:
+1461:                continue
+1462:            if job['failure']:
+1463:                self.reply(connection, response_error(job['failure']))
+1464:            elif result and not result['ok']:
+1465:                self.reply(connection, response_error(result['error']))
+1466:            elif result:
+1467:                self.apply_request(connection, result)
+FULL_PRODUCT_AND_ACCEPTANCE_DIFF
+diff --git a/tools/runtime_session.py b/tools/runtime_session.py
+index 25e5c134..a2e8daca 100644
+--- a/tools/runtime_session.py
++++ b/tools/runtime_session.py
+@@ -19,6 +19,7 @@ import secrets
+ import select
+ import selectors
+ import signal
++import shutil
+ import socket
+ import subprocess
+ import sys
+@@ -150,10 +151,11 @@ def atomic_json(path, value):
+             os.unlink(temporary)
+ 
+ 
+-def validate_request(action, request):
++def validate_request(action, request, runtime=None):
+     if action == 'open-session':
+         required = {'session_id', 'requester', 'owner', 'purpose', 'run_state_path', *BINDING}
+-        object_keys(request, required, {'expected_generation', 'expected_lease_epoch'})
++        object_keys(request, required, {'expected_generation', 'expected_lease_epoch', 'runtime'})
++        insist(request.get('runtime', 'stub') in ('stub', 'sbcl'))
+         principal(request['owner'])
+         insist(string(request['purpose']) and string(request['run_state_path'])
+                and Path(request['run_state_path']).is_absolute())
+@@ -185,10 +187,10 @@ def validate_request(action, request):
+         insist(ref is None or string(ref))
+         handoff_shape(request['handoff'])
+     if action == 'submit-operation':
+-        operation_data(request)
++        operation_data(request, runtime)
+ 
+ 
+-def operation_data(request):
++def operation_data(request, runtime=None):
+     insist(isinstance(request['kind'], str) and request['kind'] in KINDS)
+     context = request['context']
+     object_keys(context, set(), {'working_dir', 'namespace', 'reader_config_ref', 'test_config_ref'})
+@@ -203,6 +205,8 @@ def operation_data(request):
+     payload = request['payload']
+     object_keys(payload, {'expression'})
+     insist(string(payload['expression']))
++    if runtime != 'stub':
++        return  # Runtime grammar is checked only after selection is known.
+     expression = parse_json(payload['expression'])
+     insist(type(expression) is dict and isinstance(expression.get('op'), str))
+     op = expression['op']
+@@ -241,7 +245,7 @@ def handoff_shape(value):
+             insist(string(resource['reset_command_ref']))
+ 
+ 
+-def source_provenance(value):
++def source_provenance(value, runtime='stub'):
+     repo = Path(value['workspace_path'])
+     env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+     env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
+@@ -275,7 +279,7 @@ def source_provenance(value):
+             fail(1, 'source_mismatch')
+         template = parse_json(contents[name])
+         object_keys(template, {'kind', 'payload', 'context', 'limits'})
+-        operation_data(template)
++        operation_data(template, runtime)
+     return {key: copy.deepcopy(value[key]) for key in SOURCE_KEYS}
+ 
+ 
+@@ -321,6 +325,22 @@ def receive_line(source, deadline):
+             return parse_json(data)
+ 
+ 
++def lisp_frame(value):
++    """Private data only: no reader evaluation, caller executable or shell."""
++    if type(value) is dict:
++        return '(' + ' '.join(':' + k.replace('_', '-') + ' ' + lisp_frame(v)
++                              for k, v in value.items()) + ')'
++    if isinstance(value, str):
++        return '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
++    if value is None:
++        return 'nil'
++    if type(value) is bool:
++        return 't' if value else 'nil'
++    if type(value) in (int, float):
++        return repr(value).replace('e', 'd')
++    raise ValueError('unsupported internal frame value')
++
++
+ def live_token(pid):
+     try:
+         fields = Path(f'/proc/{pid}/stat').read_text().split(') ', 1)[1].split()
+@@ -329,6 +349,95 @@ def live_token(pid):
+         return None
+ 
+ 
++def process_identity(pid):
++    """Linux group/session identity; zombies have stopped executing."""
++    path = Path('/proc') / str(pid)
++    fields = (path / 'stat').read_text().split(') ', 1)[1].split()
++    return {'pid': pid, 'state': fields[0], 'pgid': int(fields[2]), 'sid': int(fields[3]),
++            'token': fields[19], 'uid': path.stat().st_uid}
++
++
++def owned_group(pid, token):
++    row = process_identity(pid)
++    if (row['token'] != token or row['pgid'] != pid or row['sid'] != pid
++            or row['uid'] != os.getuid() or pid == os.getpgrp()):
++        fail(70, 'infrastructure')
++    return dict(row, dead=False, phase=None)
++
++
++def group_members(group):
++    """A complete namespace observation, not leader liveness or kill success.
++
++    The setsid-created PGID/SID remains reserved by surviving group members.
++    Changed ownership, an obscured namespace, or a reused leader is uncertainty.
++    Never signal after a trusted empty observation has ended this group.
++    """
++    if group['dead']:
++        return {}
++    members = {}
++    end = time.monotonic() + .05
++    try:
++        for path in Path('/proc').iterdir():
++            if not path.name.isdecimal():
++                continue
++            if time.monotonic() >= end:
++                return None
++            try:
++                row = process_identity(int(path.name))
++            except (FileNotFoundError, ProcessLookupError):
++                continue
++            if row['pgid'] != group['pgid']:
++                continue
++            if (row['sid'] != group['sid'] or row['uid'] != group['uid']
++                    or int(row['token']) < int(group['token'])
++                    or row['pid'] == group['pid'] and row['token'] != group['token']):
++                return None
++            if row['state'] not in ('Z', 'X'):
++                members[row['pid']] = row['token']
++        return members
++    except (OSError, ValueError, IndexError):
++        return None
++
++
++def stop_group(group):
++    """Advance finite TERM/KILL/death observation without waiting on a child."""
++    if group['dead']:
++        return True
++    now = time.monotonic()
++    members = group_members(group)
++    if members == {}:
++        group['dead'] = True
++        return True
++    if group['phase'] is None:
++        group.update(phase='term', kill_at=now + .20, observe_end=now + 1.20)
++        if members is not None:
++            try:
++                os.killpg(group['pgid'], signal.SIGTERM)
++            except ProcessLookupError:
++                pass  # Observe the boundary; ESRCH alone is not proof.
++            except OSError:
++                group['phase'] = 'unknown'
++    elif group['phase'] == 'term' and now >= group['kill_at']:
++        group['phase'] = 'kill'
++        if members is not None:
++            try:
++                os.killpg(group['pgid'], signal.SIGKILL)
++            except ProcessLookupError:
++                pass
++            except OSError:
++                group['phase'] = 'unknown'
++        else:
++            group['phase'] = 'unknown'
++    if now >= group['observe_end']:
++        group['phase'] = 'unknown'
++    return False
++
++
++def file_stamp(path):
++    info = Path(path).stat()
++    return [info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns]
++
++
+ class Supervisor:
+     def __init__(self, root, request, lock_fd):
+         self.root, self.request, self.lock_fd = root, request, lock_fd
+@@ -343,6 +452,17 @@ class Supervisor:
+         self.server = None
+         self.log_truncated = set()
+         self.waiters = {}
++        self.runtime = request.get('runtime', 'stub')
++        self.cancel_deadline = None
++        self.quarantined = False
++        self.group = None
++        self.clients = {}
++        self.jobs = {}
++        self.version = 0
++        self.verification = None
++        self.closing = False
++        self.close_clients = []
++        self.job_cursor = 0
+ 
+     def clear_transition(self):
+         self.session.pop('transition', None)
+@@ -351,6 +471,7 @@ class Supervisor:
+                 del self.session[key]
+ 
+     def session_write(self):
++        self.version += 1
+         atomic_json(self.directory / 'runtime_session.json', self.session)
+ 
+     def operation_path(self, operation_id):
+@@ -371,6 +492,8 @@ class Supervisor:
+                 fail(70, 'ambiguous_state')
+ 
+     def check_live(self):
++        if self.verification is not None:
++            return
+         if (read_json(self.directory / 'runtime_session.json') != self.session
+                 or read_json(self.directory / 'controller.json') != self.meta):
+             fail(70, 'ambiguous_state')
+@@ -431,8 +554,9 @@ class Supervisor:
+                     generation(result['generation'])
+                     if (result['type'] != 'result' or result['operation_id'] != oid
+                             or result['generation'] != record['generation']
+-                            or result['status'] != status or result['image_consistent'] is not True
+-                            or record.get('image_consistent') is not True):
++                            or result['status'] != status or type(result['image_consistent']) is not bool
++                            or result['image_consistent'] != record.get('image_consistent')
++                            or status == 'completed' and result['image_consistent'] is not True):
+                         fail(70, 'ambiguous_state')
+                     if status == 'cancelled' and (result['session_id'] != record['session_id']
+                             or type(result['lease_epoch']) is not int or result['lease_epoch'] != record['lease_epoch']
+@@ -453,6 +577,8 @@ class Supervisor:
+         meta_path = self.directory / 'controller.json'
+         previous_meta = read_json(meta_path) if meta_path.exists() else None
+         if previous:
++            if previous_meta and previous_meta.get('runtime', 'stub') != self.runtime:
++                fail(1, 'runtime_mismatch')
+             if (request.get('expected_generation') != previous['generation']
+                     or request.get('expected_lease_epoch') != previous['lease_epoch']):
+                 fail(1, 'stale_generation')
+@@ -474,7 +600,7 @@ class Supervisor:
+                         'generation': {'counter': counter, 'nonce': secrets.token_hex(16)},
+                         'outstanding_operation_ref': None}
+         self.meta = {key: request[key] for key in (*BINDING, 'run_state_path')}
+-        self.meta.update(supervisor_pid=os.getpid(), supervisor_pgid=os.getpgrp(),
++        self.meta.update(runtime=self.runtime, ended=False, supervisor_pid=os.getpid(), supervisor_pgid=os.getpgrp(),
+                          supervisor_token=live_token(os.getpid()), child_pid=None,
+                          generation=self.session['generation'],
+                          previous_generation=previous['generation'] if previous else None)
+@@ -490,21 +616,33 @@ class Supervisor:
+         def child_fd3():
+             os.dup2(write_fd, 3)
+         stub = Path(__file__).resolve().parent / 'fixtures/runtime_session/stub_runtime.py'
++        executable = shutil.which('sbcl') if self.runtime == 'sbcl' else None
++        if self.runtime == 'sbcl' and not executable:
++            fail(70, 'infrastructure')
++        command = ([executable, '--noinform', '--no-sysinit', '--no-userinit', '--disable-debugger',
++                    '--script', str(Path(__file__).resolve().with_name('sbcl_session_loop.lisp'))]
++                   if self.runtime == 'sbcl' else [sys.executable, str(stub)])
+         try:
+             self.child = subprocess.Popen(
+-                [sys.executable, str(stub)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
++                command, start_new_session=self.runtime == 'sbcl', stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                 stderr=subprocess.PIPE, pass_fds=tuple({write_fd, 3}), preexec_fn=child_fd3,
+                 cwd=self.root, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
+         finally:
+             os.close(write_fd)
+         self.meta['child_pid'] = self.child.pid
++        self.meta['child_token'] = live_token(self.child.pid)
++        if self.runtime == 'sbcl':
++            self.group = owned_group(self.child.pid, self.meta['child_token'])
++            self.meta['runtime_group'] = {k: self.group[k] for k in ('pid', 'token', 'pgid', 'sid', 'uid')}
++            os.set_blocking(self.child.stdin.fileno(), False)
++            self.outbound = bytearray()
+         atomic_json(meta_path, self.meta)
+         for fd, channel in ((read_fd, 'protocol'), (self.child.stdout.fileno(), 'stdout'),
+                             (self.child.stderr.fileno(), 'stderr')):
+             os.set_blocking(fd, False)
+             self.selector.register(fd, selectors.EVENT_READ, channel)
+-        self.child.stdin.write(encode({'type': 'init', 'generation': self.session['generation']}))
+-        self.child.stdin.flush()
++        self.send({'type': 'init', 'generation': self.session['generation'],
++                   **({'directory': str(self.directory) + '/'} if self.runtime == 'sbcl' else {})})
+         end = time.monotonic() + CONTROL_SECONDS
+         while not self.ready and not self.broken and time.monotonic() < end:
+             self.pump(min(.1, max(0, end - time.monotonic())))
+@@ -516,9 +654,36 @@ class Supervisor:
+         self.server = socket.socket(socket.AF_UNIX)
+         self.server.bind(str(endpoint))
+         self.server.listen(16)
++        if self.runtime == 'sbcl':
++            self.server.setblocking(False)
+         self.selector.register(self.server, selectors.EVENT_READ, 'server')
+ 
++    def send(self, value):
++        raw = ((lisp_frame(value) + '\n').encode() if self.runtime == 'sbcl' else encode(value))
++        insist(len(raw) <= FRAME_LIMIT)
++        if self.runtime == 'sbcl':
++            if len(self.outbound) + len(raw) > FRAME_LIMIT * 2:
++                fail(70, 'infrastructure')
++            self.outbound.extend(raw)
++            try:
++                self.selector.modify(self.child.stdin.fileno(), selectors.EVENT_WRITE, 'runtime-write')
++            except KeyError:
++                self.selector.register(self.child.stdin.fileno(), selectors.EVENT_WRITE, 'runtime-write')
++        else:
++            self.child.stdin.write(raw)
++            self.child.stdin.flush()
++
+     def log(self, channel, data):
++        if self.runtime == 'sbcl':
++            # The worker's bounded stream already shares its budget with results
++            # and diagnostics. Startup output has no project attribution.
++            if not self.outstanding:
++                return
++            path = self.directory / f'child.{channel}.log'
++            with path.open('ab') as stream:
++                stream.write(data[:self.render_remaining])
++            self.render_remaining = max(0, self.render_remaining - len(data))
++            return
+         path = self.directory / f'child.{channel}.log'
+         size = path.stat().st_size if path.exists() else 0
+         marker = b'\n[diagnostic output truncated]\n'
+@@ -530,14 +695,20 @@ class Supervisor:
+                 self.log_truncated.add(channel)
+ 
+     def protocol_fault(self):
++        self.version += 1
+         self.broken = True
+         self.protocol.clear()
+         if self.outstanding:
+             record = read_json(self.operation_path(self.outstanding))
+             record.update(status='unknown', image_consistent=False)
+             atomic_json(self.operation_path(self.outstanding), record)
++            if self.runtime == 'sbcl' and self.cancel_deadline is None:
++                self.cancel_deadline = time.monotonic() + min(1.0, record['limits'].get('timeout_seconds', 1.0))
+ 
+     def frame(self, data):
++        if self.runtime == 'sbcl' and self.ready:
++            self.sbcl_result(data)
++            return
+         if self.broken:
+             return
+         try:
+@@ -578,8 +749,123 @@ class Supervisor:
+         except (SessionError, ValueError, KeyError, TypeError):
+             self.protocol_fault()
+ 
++    def sbcl_result(self, data):
++        if self.broken:
++            return
++        try:
++            value = parse_json(data)
++            object_keys(value, {'type', 'session_id', 'operation_id', 'generation', 'lease_epoch',
++                                'status', 'result', 'image_consistent', 'cancellation_confirmed', 'diagnostic'})
++            generation(value['generation'])
++            insist(value['type'] == 'result' and self.outstanding is not None
++                   and value['operation_id'] == self.outstanding
++                   and value['session_id'] == self.session['session_id']
++                   and value['generation'] == self.session['generation']
++                   and type(value['lease_epoch']) is int and value['lease_epoch'] == self.session['lease_epoch']
++                   and type(value['image_consistent']) is bool
++                   and type(value['cancellation_confirmed']) is bool
++                   and value['status'] in ('completed', 'cancelled', 'condition_signalled'))
++            # One bounded read per stream; never drain an unbounded producer.
++            for stream, channel in ((self.child.stdout, 'stdout'), (self.child.stderr, 'stderr')):
++                try:
++                    chunk = os.read(stream.fileno(), FRAME_LIMIT + 1)
++                except BlockingIOError:
++                    continue
++                if chunk:
++                    self.log(channel, chunk)
++            path = self.operation_path(self.outstanding)
++            record = read_json(path)
++            status = value['status']
++            insist(status != 'completed' or value['image_consistent'] is True)
++            insist(status != 'cancelled' or (record['status'] == 'cancel_requested'
++                   and value['cancellation_confirmed'] is True and value['result'] is None))
++            insist(status == 'cancelled' or value['cancellation_confirmed'] is False)
++            if status == 'condition_signalled':
++                raw = value['diagnostic']
++                insist(isinstance(raw, str) and 0 < len(raw.encode()) <= self.render_remaining + 1)
++                parse_json(raw)
++                directory = self.directory / 'diagnostics'
++                directory.mkdir(mode=0o700, exist_ok=True)
++                diagnostic = directory / (self.outstanding + '.json')
++                insist(not diagnostic.exists() and not diagnostic.is_symlink())
++                with diagnostic.open('xb') as stream:
++                    stream.write(raw.encode())
++                record.update(condition_ref=str(diagnostic), condition_capture='before_unwind')
++            else:
++                insist(value['diagnostic'] is None)
++                result = {k: value[k] for k in ('type', 'operation_id', 'generation', 'status',
++                                               'result', 'image_consistent')}
++                if status == 'cancelled':
++                    result.update({k: value[k] for k in ('session_id', 'lease_epoch', 'cancellation_confirmed')})
++                atomic_json(path.with_suffix('.result.json'), result)
++            record.update(status=status, image_consistent=value['image_consistent'])
++            if status == 'cancelled':
++                record['cancellation_confirmed'] = True
++            if 'wait_outcome' in record:
++                record['wait_outcome'] = 'completed_wait'
++            atomic_json(path, record)
++            self.quarantined |= not value['image_consistent']
++            self.cancel_deadline = None
++            self.outstanding = None
++            self.session['outstanding_operation_ref'] = None
++            self.clear_transition()
++            self.session_write()
++        except (SessionError, ValueError, KeyError, TypeError, OSError):
++            self.protocol_fault()
++
++    def end_generation(self):
++        self.broken = True
++        self.quarantined = True
++        self.cancel_deadline = None
++        if self.group and self.group['phase'] is None:
++            stop_group(self.group)
++        if not self.group or not self.group['dead']:
++            return
++        self.child.poll()  # Reap the leader separately from group observation.
++        if self.outstanding:
++            path = self.operation_path(self.outstanding)
++            record = read_json(path)
++            record.update(status='terminated', image_consistent=False)
++            if 'wait_outcome' in record:
++                record['wait_outcome'] = 'completed_wait'
++            atomic_json(path, record)
++            self.outstanding = None
++            self.session['outstanding_operation_ref'] = None
++            self.clear_transition()
++            self.session_write()
++        if not self.meta.get('ended'):
++            self.meta['ended'] = True
++            atomic_json(self.directory / 'controller.json', self.meta)
++            self.version += 1
++
+     def pump(self, seconds):
+-        for key, _ in self.selector.select(seconds):
++        if self.runtime == 'sbcl':
++            self.tick()
++            seconds = min(seconds, .01)
++        if self.cancel_deadline is not None:
++            seconds = min(seconds, max(0, self.cancel_deadline - time.monotonic()))
++        for key, events in self.selector.select(seconds):
++            if self.runtime == 'sbcl':
++                self.tick()
++                if isinstance(key.data, tuple):
++                    kind, value = key.data
++                    if kind == 'client':
++                        self.client_event(value, events)
++                    else:
++                        self.job_event(value)
++                    continue
++                if key.data == 'runtime-write':
++                    try:
++                        count = os.write(key.fd, self.outbound[:FRAME_LIMIT])
++                        del self.outbound[:count]
++                        if not self.outbound:
++                            self.selector.unregister(key.fd)
++                    except BlockingIOError:
++                        pass
++                    except OSError:
++                        self.selector.unregister(key.fd)
++                        self.protocol_fault()
++                    continue
+             if key.data == 'waiter':
+                 self.finish_waiter(key.fileobj, None)
+                 continue
+@@ -611,6 +897,10 @@ class Supervisor:
+                 self.protocol_fault()
+             if self.broken:
+                 self.protocol.clear()
++        if self.runtime == 'sbcl' and self.cancel_deadline is not None and time.monotonic() >= self.cancel_deadline:
++            self.end_generation()
++        if self.runtime == 'sbcl':
++            self.tick()
+         for connection, (request, end) in list(self.waiters.items()):
+             record = read_json(self.operation_path(request['operation_id']))
+             if record['status'] in TERMINAL or record['status'] == 'unknown' or time.monotonic() >= end:
+@@ -647,9 +937,21 @@ class Supervisor:
+         return None
+ 
+     def dispatch(self, action, request):
++        if action == 'open-session' and self.runtime == 'sbcl' and self.meta.get('ended'):
++            validate_request(action, request)
++            if (not lifecycle(request['requester']) or request['owner'] != self.session['owner']
++                    or request.get('expected_generation') != self.session['generation']
++                    or request.get('expected_lease_epoch') != self.session['lease_epoch']
++                    or request.get('runtime', 'stub') != self.runtime
++                    or not self.verified_attempt(request)):
++                fail(1, 'stale_generation')
++            if self.jobs:
++                fail(70, 'infrastructure')
++            self.closing = True
++            return {'ok': True, 'result': {'closed': True}}
+         if action not in ACTIONS or action == 'open-session':
+             fail(1, 'unsupported')
+-        validate_request(action, request)
++        validate_request(action, request, self.runtime)
+         if request['session_id'] != self.session['session_id']:
+             fail(1, 'foreign_owner')
+         if action == 'submit-operation':
+@@ -659,16 +961,18 @@ class Supervisor:
+             reason = self.identity_reason(request)
+             if not reason and not permitted_owner(request['requester']):
+                 reason = 'foreign_owner'
+-            if not reason and not attempt_matches(self.meta, request):
++            if not reason and not self.verified_attempt(request):
+                 reason = 'attempt_mismatch'
+             if not reason and self.outstanding:
+                 reason = 'session_busy'
++            if not reason and self.quarantined:
++                reason = 'inconsistent_image'
+             if not reason and self.broken:
+                 fail(70, 'infrastructure')
+             if not reason:
+                 self.check_live()
+-            expression = parse_json(request['payload']['expression'])
+-            if expression['op'] == 'gate':
++            expression = parse_json(request['payload']['expression']) if self.runtime == 'stub' else {}
++            if expression.get('op') == 'gate':
+                 release = Path(expression['release_path'])
+                 insist(release.is_absolute() and release.resolve().is_relative_to(self.root))
+             record = self.operation_record(request, reason)
+@@ -680,9 +984,9 @@ class Supervisor:
+             self.clear_transition()
+             self.session_write()
+             try:
+-                self.child.stdin.write(encode({'type': 'execute', 'request': request,
+-                                              'generation': self.session['generation']}))
+-                self.child.stdin.flush()
++                self.render_budget = min(16384, request['limits'].get('output_bytes', 16384))
++                self.render_remaining = max(0, self.render_budget - 1)
++                self.send({'type': 'execute', 'request': request, 'generation': self.session['generation']})
+             except (BrokenPipeError, OSError):
+                 self.protocol_fault()
+                 fail(70, 'infrastructure')
+@@ -695,7 +999,7 @@ class Supervisor:
+         if action in ('cancel-operation', 'reattach-session'):
+             if not permitted_owner(request['requester']):
+                 fail(1, 'foreign_owner')
+-            if not attempt_matches(self.meta, request):
++            if not self.verified_attempt(request):
+                 fail(1, 'attempt_mismatch')
+             self.check_live()
+             if action == 'reattach-session':
+@@ -712,9 +1016,15 @@ class Supervisor:
+                 fail(70, 'ambiguous_state')
+             record.update(status='cancel_requested', cancellation_confirmed=False)
+             atomic_json(path, record)
+-            self.child.stdin.write(encode({'type': 'cancel', 'session_id': record['session_id'],
+-                'operation_id': self.outstanding, 'generation': record['generation'], 'lease_epoch': record['lease_epoch']}))
+-            self.child.stdin.flush()
++            self.version += 1
++            if self.runtime == 'sbcl':
++                self.cancel_deadline = time.monotonic() + min(1.0, record['limits'].get('timeout_seconds', 1.0))
++            try:
++                self.send({'type': 'cancel', 'session_id': record['session_id'],
++                           'operation_id': self.outstanding, 'generation': record['generation'],
++                           'lease_epoch': record['lease_epoch']})
++            except (BrokenPipeError, OSError):
++                self.protocol_fault()
+             return {'ok': True, 'result': record}
+         if not lifecycle(request['requester'], self.session['owner']):
+             fail(1, 'foreign_owner')
+@@ -731,7 +1041,20 @@ class Supervisor:
+                                 owner=request['new_owner'], lease_epoch=self.session['lease_epoch'] + 1)
+             self.session_write()
+             return {'ok': True, 'result': self.session}
+-        self.stop_child()
++        if self.runtime == 'sbcl':
++            self.closing = True
++            self.version += 1
++            self.close_clients.append(self.current_client)
++            self.clients[self.current_client]['phase'] = 'close'
++            for job in self.jobs.values():
++                job['failure'] = 'infrastructure'
++                job['abandoned'] = True
++            self.end_generation()
++            return None
++        dead = self.stop_child()
++        if not dead:
++            self.protocol_fault()
++            fail(70, 'infrastructure')
+         if self.outstanding:
+             record = read_json(self.operation_path(self.outstanding))
+             record.update(status='terminated', image_consistent=False)
+@@ -750,7 +1073,8 @@ class Supervisor:
+             fail(70, 'infrastructure')
+         if request['expected_outstanding_operation_ref'] != self.session.get('outstanding_operation_ref'):
+             fail(1, 'continuity_mismatch')
+-        provenance = source_provenance(request['handoff'])
++        provenance = (self.verification['provenance'] if self.runtime == 'sbcl'
++                      else source_provenance(request['handoff'], self.runtime))
+         if self.meta.get('source_provenance', provenance) != provenance:
+             fail(1, 'source_mismatch')
+         snapshot = {k: copy.deepcopy(self.session[k]) for k in
+@@ -793,6 +1117,9 @@ class Supervisor:
+             connection.close()
+ 
+     def serve(self):
++        if self.runtime == 'sbcl':
++            self.accept_client()
++            return
+         connection, _ = self.server.accept()
+         connection.settimeout(CONTROL_SECONDS)
+         try:
+@@ -814,7 +1141,374 @@ class Supervisor:
+             response = response_error('infrastructure')
+         self.finish_waiter(connection, response)
+ 
++    def verified_attempt(self, request):
++        if self.runtime == 'stub':
++            return attempt_matches(self.meta, request)
++        return self.verification is not None and self.verification['attempt_ok']
++
++    def accept_client(self):
++        try:
++            connection, _ = self.server.accept()
++        except BlockingIOError:
++            return
++        connection.setblocking(False)
++        if len(self.clients) >= 32 or self.closing:
++            connection.close()
++            return
++        self.clients[connection] = {'phase': 'input', 'input': bytearray(),
++                                    'end': time.monotonic() + CONTROL_SECONDS}
++        self.selector.register(connection, selectors.EVENT_READ, ('client', connection))
++
++    def drop_client(self, connection):
++        self.clients.pop(connection, None)
++        try:
++            self.selector.unregister(connection)
++        except (KeyError, ValueError):
++            pass
++        connection.close()
++
++    def reply(self, connection, response):
++        if connection not in self.clients:
++            return
++        self.clients[connection].update(phase='reply', output=bytearray(encode(response)),
++                                        end=time.monotonic() + CONTROL_SECONDS)
++        self.selector.modify(connection, selectors.EVENT_WRITE, ('client', connection))
++
++    def client_event(self, connection, events):
++        state = self.clients.get(connection)
++        if state is None:
++            return
++        try:
++            if state['phase'] == 'reply':
++                count = connection.send(state['output'][:FRAME_LIMIT])
++                del state['output'][:count]
++                if not state['output']:
++                    self.drop_client(connection)
++                return
++            data = connection.recv(FRAME_LIMIT + 1)
++            if not data:
++                self.drop_client(connection)
++                return  # A disconnect abandons a wait, never runtime execution.
++            if state['phase'] != 'input':
++                self.reply(connection, response_error('usage'))
++                return
++            state['input'].extend(data)
++            insist(len(state['input']) <= FRAME_LIMIT)
++            if b'\n' not in state['input']:
++                return
++            insist(state['input'].count(b'\n') == 1 and state['input'].endswith(b'\n'))
++            envelope = parse_json(state['input'])
++            object_keys(envelope, {'action', 'request'})
++            action, request = envelope['action'], envelope['request']
++            insist(isinstance(action, str))
++            if action not in ACTIONS:
++                fail(1, 'unsupported')
++            validate_request(action, request, self.runtime)
++            state.update(action=action, request=request)
++            if action == 'submit-operation':
++                path = self.operation_path(request['operation_id'])
++                if path.exists() or path.with_suffix('.result.json').exists():
++                    self.reply(connection, response_error('conflict'))
++                    return
++            if action == 'poll-operation':
++                self.apply_request(connection, None)
++            else:
++                self.start_job(connection)
++        except BlockingIOError:
++            pass
++        except SessionError as exc:
++            self.reply(connection, response_error(exc.reason))
++        except (OSError, KeyError, ValueError, TypeError):
++            self.reply(connection, response_error('infrastructure'))
++
++    def apply_request(self, connection, verification):
++        state = self.clients.get(connection)
++        if state is None:
++            return
++        self.verification = verification
++        self.current_client = connection
++        try:
++            action, request = state['action'], state['request']
++            response = self.dispatch(action, request)
++            if response is None:
++                return
++            if action == 'poll-operation' and 'limits' in request:
++                seconds = request['limits']['timeout_seconds']
++                if seconds and response['ok'] and response['result']['status'] not in TERMINAL:
++                    state.update(phase='poll', end=time.monotonic() + seconds)
++                    return
++                response = self.poll_response(request, expired=True)
++            self.reply(connection, response)
++        except SessionError as exc:
++            self.reply(connection, response_error(exc.reason))
++        except (OSError, KeyError, ValueError, TypeError):
++            self.reply(connection, response_error('infrastructure'))
++        finally:
++            self.verification = None
++            self.current_client = None
++
++    def verification_files(self, request):
++        paths = [self.directory / 'runtime_session.json', self.directory / 'controller.json',
++                 Path(self.meta['run_state_path'])]
++        paths.extend((self.directory / 'operations').glob('*.json'))
++        handoff = self.directory / 'handoff.json'
++        if handoff.exists():
++            paths.append(handoff)
++        if 'handoff' in request:
++            repo = Path(request['handoff']['workspace_path'])
++            paths.extend(repo / item['path'] for item in request['handoff']['source_manifest'])
++        return paths
++
++    def start_job(self, connection):
++        state = self.clients.get(connection)
++        if state is None:
++            return
++        if self.closing or any(job.get('uncertain') for job in self.jobs.values()):
++            self.reply(connection, response_error('infrastructure'))
++            return
++        request, action = state['request'], state['action']
++        nonce = secrets.token_hex(16)
++        result_read, result_write = os.pipe()
++        ack_read, ack_write = os.pipe()
++        version = self.version
++        pid = os.fork()
++        if pid == 0:
++            # Fork references are kernel ownership: explicitly remove EVERY
++            # inherited lock/listener/client/runtime/protocol/selector/job FD.
++            # Only this job's result writer, start-authorization reader and
++            # deliberately rebound standard streams survive before work.
++            try:
++                os.setsid()
++                signal.signal(signal.SIGTERM, signal.SIG_DFL)
++                null = os.open(os.devnull, os.O_RDWR)
++                for target in (0, 1, 2):
++                    os.dup2(null, target)
++                keep = {0, 1, 2, result_write, ack_read}
++                for name in os.listdir('/proc/self/fd'):
++                    fd = int(name)
++                    if fd not in keep:
++                        try:
++                            os.close(fd)
++                        except OSError:
++                            pass
++                os.set_inheritable(result_write, False)
++                os.set_inheritable(ack_read, False)
++                def send(value):
++                    raw = encode(value)
++                    if len(raw) > FRAME_LIMIT:
++                        raw = encode({'type': 'job-result', 'job': nonce, 'ok': False,
++                                      'error': 'infrastructure'})
++                    while raw:
++                        raw = raw[os.write(result_write, raw):]
++                send({'type': 'job-ready', 'job': nonce, 'pid': os.getpid(),
++                      'token': live_token(os.getpid())})
++                authorization = receive_line(ack_read, time.monotonic() + CONTROL_SECONDS)
++                if authorization != {'job': nonce}:
++                    os._exit(71)
++                result = {'type': 'job-result', 'job': nonce, 'ok': True}
++                try:
++                    attempt_ok = attempt_matches(self.meta, request) if action in (
++                        'submit-operation', 'cancel-operation', 'reattach-session', 'open-session') else True
++                    self.check_live()
++                    provenance = (source_provenance(request['handoff'], self.runtime)
++                                  if action == 'reattach-session' and attempt_ok
++                                  and self.identity_reason(request) is None else None)
++                    # Digests bind the bytes read/validated by this job; stamps
++                    # let the parent revalidate those inputs incrementally.
++                    files = []
++                    for path in self.verification_files(request):
++                        before = file_stamp(path)
++                        digest = hashlib.sha256(path.read_bytes()).hexdigest()
++                        after = file_stamp(path)
++                        if before != after:
++                            fail(70, 'ambiguous_state')
++                        files.append([str(path), after, digest])
++                    result.update(attempt_ok=attempt_ok, provenance=provenance, files=files)
++                except SessionError as exc:
++                    result.update(ok=False, error=exc.reason)
++                except (OSError, KeyError, TypeError, ValueError):
++                    result.update(ok=False, error='infrastructure')
++                send(result)
++            finally:
++                os._exit(0)
++        os.close(result_write)
++        os.close(ack_read)
++        os.set_blocking(result_read, False)
++        os.set_blocking(ack_write, False)
++        self.jobs[nonce] = {'pid': pid, 'token': live_token(pid), 'group': None,
++                            'reader': result_read, 'ack': ack_write, 'buffer': bytearray(),
++                            'end': time.monotonic() + CONTROL_SECONDS, 'version': version,
++                            'connection': connection, 'result': None, 'failure': None,
++                            'eof': False, 'reaped': False, 'files_checked': 0}
++        state.update(phase='job', end=time.monotonic() + CONTROL_SECONDS + 1.3)
++        self.selector.register(result_read, selectors.EVENT_READ, ('job', nonce))
++
++    def job_event(self, nonce):
++        job = self.jobs.get(nonce)
++        if job is None:
++            return
++        try:
++            part = os.read(job['reader'], FRAME_LIMIT + 1)
++            if not part:
++                self.selector.unregister(job['reader'])
++                job['eof'] = True
++                if job['result'] is None:
++                    job['failure'] = 'infrastructure'
++                return
++            job['buffer'].extend(part)
++            if len(job['buffer']) > FRAME_LIMIT * 2:
++                fail(70, 'infrastructure')
++            for _ in range(2):
++                if b'\n' not in job['buffer']:
++                    break
++                end = job['buffer'].index(b'\n') + 1
++                if end > FRAME_LIMIT:
++                    fail(70, 'infrastructure')
++                frame = parse_json(bytes(job['buffer'][:end]))
++                del job['buffer'][:end]
++                if frame.get('job') != nonce:
++                    fail(70, 'infrastructure')
++                if frame.get('type') == 'job-ready' and job['group'] is None:
++                    object_keys(frame, {'type', 'job', 'pid', 'token'})
++                    insist(frame['pid'] == job['pid'] and frame['token'] == job['token'])
++                    job['group'] = owned_group(job['pid'], job['token'])
++                    os.write(job['ack'], encode({'job': nonce}))
++                    os.close(job['ack'])
++                    job['ack'] = None
++                elif frame.get('type') == 'job-result' and job['group'] and job['result'] is None:
++                    object_keys(frame, {'type', 'job', 'ok'}, {'error', 'attempt_ok', 'provenance', 'files'})
++                    insist(type(frame['ok']) is bool)
++                    job['result'] = frame
++                else:
++                    fail(70, 'infrastructure')
++        except (SessionError, OSError, ValueError, KeyError, TypeError):
++            job['failure'] = 'infrastructure'
++
++    def tick_jobs(self):
++        # A bounded round-robin batch prevents many pending provenance jobs
++        # from occupying an entire cancellation/TERM-to-KILL interval.
++        keys = list(self.jobs)
++        if not keys:
++            return
++        self.job_cursor %= len(keys)
++        nonce = keys[self.job_cursor]
++        self.job_cursor += 1
++        for nonce, job in [(nonce, self.jobs[nonce])]:
++            now = time.monotonic()
++            if now >= job['end'] or job.get('abandoned'):
++                job['failure'] = 'infrastructure'
++            group = job['group']
++            if group is None:
++                # No descendants can start before the isolated handshake is
++                # authorized. An unacknowledged child can only be stopped by
++                # its retained fork PID/start token, never an unproven group.
++                if job['failure'] and live_token(job['pid']) == job['token']:
++                    try:
++                        os.kill(job['pid'], signal.SIGKILL)
++                    except ProcessLookupError:
++                        pass
++                dead = live_token(job['pid']) is None
++            else:
++                members = group_members(group)
++                if members == {}:
++                    group['dead'] = True
++                elif job['failure'] or job['eof'] or group['phase'] is not None:
++                    stop_group(group)
++                dead = group['dead']
++                if group['phase'] == 'unknown' and not dead:
++                    job['uncertain'] = True
++            if not dead:
++                continue
++            if not job['reaped']:
++                try:
++                    reaped, _ = os.waitpid(job['pid'], os.WNOHANG)
++                    job['reaped'] = bool(reaped)
++                except ChildProcessError:
++                    job['reaped'] = True
++            if not job['reaped'] or not (job['eof'] or job['failure']):
++                continue
++            result = job['result']
++            if result and result['ok'] and not job['failure']:
++                # Read-only jobs carry exact input digests; a changed stamp or
++                # supervisor transition invalidates them before publication.
++                if job['version'] != self.version:
++                    job['failure'] = 'ambiguous_state'
++                else:
++                    files = result['files']
++                    try:
++                        for _ in range(4):
++                            index = job['files_checked']
++                            if index >= len(files):
++                                break
++                            path, stamp, digest = files[index]
++                            if file_stamp(path) != stamp or len(digest) != 64:
++                                fail(70, 'ambiguous_state')
++                            job['files_checked'] += 1
++                    except (OSError, SessionError, ValueError):
++                        job['failure'] = 'ambiguous_state'
++                    if not job['failure'] and job['files_checked'] < len(files):
++                        continue
++            connection = job['connection']
++            try:
++                self.selector.unregister(job['reader'])
++            except KeyError:
++                pass
++            os.close(job['reader'])
++            if job['ack'] is not None:
++                os.close(job['ack'])
++            del self.jobs[nonce]
++            if connection not in self.clients:
++                continue
++            if job['failure']:
++                self.reply(connection, response_error(job['failure']))
++            elif result and not result['ok']:
++                self.reply(connection, response_error(result['error']))
++            elif result:
++                self.apply_request(connection, result)
++            else:
++                self.reply(connection, response_error('infrastructure'))
++
++    def tick(self):
++        now = time.monotonic()
++        if self.cancel_deadline is not None and now >= self.cancel_deadline:
++            self.end_generation()
++        if self.group and self.group['phase'] is not None:
++            stop_group(self.group)
++            self.end_generation()
++        self.tick_jobs()
++        for connection, state in list(self.clients.items()):
++            if state['phase'] == 'poll':
++                record = read_json(self.operation_path(state['request']['operation_id']))
++                if record['status'] in TERMINAL or record['status'] == 'unknown' or now >= state['end']:
++                    self.reply(connection, self.poll_response(state['request'], expired=True))
++            elif state['phase'] not in ('job', 'close') and now >= state['end']:
++                if state['phase'] == 'input':
++                    self.reply(connection, response_error('infrastructure'))
++                else:
++                    self.drop_client(connection)
++        if self.closing and self.group and self.group['dead'] and not self.jobs:
++            for connection in self.close_clients:
++                self.reply(connection, {'ok': True, 'result': {'closed': True, 'session_id': self.session['session_id']}})
++            self.close_clients.clear()
++            # Discard unrelated partial clients; they cannot retain a closed
++            # session, its flock, or an ended generation's supervisor.
++            for connection, state in list(self.clients.items()):
++                if state['phase'] != 'reply':
++                    self.drop_client(connection)
++            if not self.clients:
++                self.stop = True
++
+     def stop_child(self):
++        if self.runtime == 'sbcl':
++            if not self.group:
++                return self.child is None or self.child.poll() is not None
++            end = time.monotonic() + 1.3
++            while time.monotonic() < end:
++                if stop_group(self.group):
++                    self.child.poll()
++                    return True
++                time.sleep(.005)
++            return False
+         if self.child and self.child.poll() is None:
+             self.child.terminate()
+             try:
+@@ -822,8 +1516,23 @@ class Supervisor:
+             except subprocess.TimeoutExpired:
+                 self.child.kill()
+                 self.child.wait(timeout=2)
++        return True
+ 
+     def cleanup(self):
++        if self.runtime == 'sbcl':
++            for job in self.jobs.values():
++                job['failure'] = 'infrastructure'
++                job['abandoned'] = True
++            end = time.monotonic() + 1.3
++            while self.jobs and time.monotonic() < end:
++                self.tick_jobs()
++                time.sleep(.005)
++            # Unresolved ownership keeps this supervisor/lock alive.
++            while self.jobs or self.group and not self.stop_child():
++                self.tick_jobs()
++                time.sleep(.01)
++            for connection in list(self.clients):
++                self.drop_client(connection)
+         for connection in list(self.waiters):
+             self.finish_waiter(connection, None)
+         self.stop_child()
+@@ -843,11 +1552,28 @@ def open_session(root, request):
+         fail(1, 'attempt_mismatch')
+     directory = root / request['session_id']
+     directory.mkdir(parents=True, exist_ok=True)
++    metadata_path = directory / 'controller.json'
++    metadata = read_json(metadata_path) if metadata_path.exists() else None
++    if metadata and metadata.get('runtime', 'stub') != request.get('runtime', 'stub'):
++        fail(1, 'runtime_mismatch')
+     lock_fd = os.open(directory / 'supervisor.lock', os.O_CREAT | os.O_RDWR, 0o600)
+     try:
+         fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+     except BlockingIOError:
+         os.close(lock_fd)
++        if metadata and metadata.get('runtime') == 'sbcl' and metadata.get('ended'):
++            with socket.socket(socket.AF_UNIX) as connection:
++                connection.connect(str(directory / 'control.sock'))
++                connection.sendall(encode({'action': 'open-session', 'request': request}))
++                response = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
++            if not response['ok']:
++                return response
++            end = time.monotonic() + CONTROL_SECONDS
++            while live_token(metadata['supervisor_pid']) == metadata['supervisor_token']:
++                if time.monotonic() >= end:
++                    fail(70, 'infrastructure')
++                time.sleep(.01)
++            return open_session(root, request)
+         fail(1, 'session_busy')
+     read_fd, write_fd = os.pipe()
+     supervisor_pid = os.fork()
+diff --git a/tools/sbcl_session_loop.lisp b/tools/sbcl_session_loop.lisp
+new file mode 100644
+index 00000000..ba9f42fa
+--- /dev/null
++++ b/tools/sbcl_session_loop.lisp
+@@ -0,0 +1,280 @@
++;;;; Fixed built-ins-only SBCL worker. Private input is data, with reader eval off.
++;;;; The control stream is independent of all project output streams.
++(defpackage :nizam-session (:use :cl))
++(in-package :nizam-session)
++
++(defstruct json-object pairs)
++(defun object (&rest pairs) (make-json-object :pairs pairs))
++(defun truth (value) (if value :true :false))
++(defun utf8-width (char)
++  (let ((code (char-code char)))
++    (cond ((< code 128) 1) ((< code 2048) 2) ((< code 65536) 3) (t 4))))
++
++;;; A bounded sink prevents a single WRITE-STRING or project printer from
++;;; accumulating unbounded output. Strict sinks abort internal JSON rendering;
++;;; project sinks discard excess bytes without pretending a scalar succeeded.
++(defclass bounded-stream (sb-gray:fundamental-character-output-stream)
++  ((buffer :initform (make-array 0 :element-type 'character :adjustable t :fill-pointer 0)
++           :accessor buffer)
++   (limit :initarg :limit :reader byte-limit)
++   (bytes :initform 0 :accessor byte-count)
++   (strict :initarg :strict :initform nil :reader strict-p)
++   (truncated :initform nil :accessor truncated-p)))
++(defmethod sb-gray:stream-write-char ((stream bounded-stream) char)
++  (let ((width (utf8-width char)))
++    (if (<= (+ (byte-count stream) width) (byte-limit stream))
++        (progn (vector-push-extend char (buffer stream)) (incf (byte-count stream) width))
++        (progn (setf (truncated-p stream) t)
++               (when (strict-p stream) (error "Rendering budget exhausted")))))
++  char)
++(defmethod sb-gray:stream-write-string ((stream bounded-stream) text &optional (start 0) end)
++  (loop for index from start below (or end (length text))
++        while (or (strict-p stream) (not (truncated-p stream)))
++        do (sb-gray:stream-write-char stream (char text index)))
++  text)
++(defmethod sb-gray:stream-line-column ((stream bounded-stream)) (declare (ignore stream)) nil)
++(defmethod sb-gray:stream-force-output ((stream bounded-stream)) (declare (ignore stream)) nil)
++(defmethod sb-gray:stream-finish-output ((stream bounded-stream)) (declare (ignore stream)) nil)
++
++(defun json-string (text stream)
++  (write-char #\" stream)
++  (loop for char across text do
++    (case char
++      (#\" (write-string "\\\"" stream))
++      (#\\ (write-string "\\\\" stream))
++      (#\Newline (write-string "\\n" stream))
++      (#\Return (write-string "\\r" stream))
++      (#\Tab (write-string "\\t" stream))
++      (otherwise (if (< (char-code char) 32)
++                     (format stream "\\u~4,'0X" (char-code char))
++                     (write-char char stream)))))
++  (write-char #\" stream))
++(defun json-write (value stream)
++  (cond ((eq value :true) (write-string "true" stream))
++        ((eq value :false) (write-string "false" stream))
++        ((null value) (write-string "null" stream))
++        ((stringp value) (json-string value stream))
++        ((integerp value) (format stream "~D" value))
++        ((typep value 'json-object)
++         (write-char #\{ stream)
++         (loop for (key item) on (json-object-pairs value) by #'cddr for first = t then nil do
++           (unless first (write-char #\, stream))
++           (json-string key stream) (write-char #\: stream) (json-write item stream))
++         (write-char #\} stream))
++        ((and (vectorp value) (not (stringp value)))
++         (write-char #\[ stream)
++         (loop for item across value for first = t then nil do
++           (unless first (write-char #\, stream)) (json-write item stream))
++         (write-char #\] stream))
++        (t (error "Value has no supported exact JSON scalar representation"))))
++(defun json-text (value limit)
++  (let ((stream (make-instance 'bounded-stream :limit limit :strict t)))
++    (json-write value stream)
++    (copy-seq (buffer stream))))
++(defun generation-json (generation)
++  (object "counter" (getf generation :counter) "nonce" (getf generation :nonce)))
++
++(defvar *wire* (sb-sys:make-fd-stream 3 :output t :element-type 'character
++                                     :external-format :utf-8 :buffering :none :auto-close nil))
++(defun send-frame (frame)
++  (write-string (json-text frame 65535) *wire*)
++  (terpri *wire*) (finish-output *wire*))
++(defun receive-frame ()
++  (let ((*read-eval* nil) (*package* (find-package :keyword))
++        (quoted nil) (escaped nil) (bytes 0)
++        (text (make-array 0 :element-type 'character :adjustable t :fill-pointer 0)))
++    ;; A source string may contain literal newlines. Only an unquoted newline
++    ;; terminates the private data frame; escaping cannot enable reader eval.
++    (loop for char = (read-char *standard-input* nil nil) do
++      (unless char (sb-ext:exit :code 0))
++      (incf bytes (utf8-width char))
++      (when (> bytes 65536) (error "Oversized private frame"))
++      (when (and (char= char #\Newline) (not quoted)) (return))
++      (vector-push-extend char text)
++      (cond (escaped (setf escaped nil))
++            ((and quoted (char= char #\\)) (setf escaped t))
++            ((char= char #\") (setf quoted (not quoted)))))
++    (multiple-value-bind (value end) (read-from-string text nil nil)
++      (unless (and (listp value) (= end (length text))) (error "Malformed private frame"))
++      value)))
++
++;;; Trusted names only: no condition-report, restart-report, PRINT-OBJECT,
++;;; arguments or arbitrary objects are dispatched while collecting metadata.
++;;; Actual rendering paths bind depth6/length32/circleT. Metadata strings are
++;;; capped too, including names obtained from project-created symbols.
++(defun bounded-name (value &optional (depth 0))
++  (cond ((>= depth *print-level*) "...")
++        ((symbolp value)
++         (let ((name (symbol-name value))) (subseq name 0 (min 256 (length name)))))
++        ((stringp value) (subseq value 0 (min 256 (length value))))
++        ((consp value)
++         (format nil "(~{~A~^ ~})"
++                 (loop for item in value for index below *print-length*
++                       collect (bounded-name item (1+ depth)))))
++        (t "<opaque>")))
++(defun minimal-diagnostic (condition failed)
++  (object "condition" (object "type" (bounded-name (type-of condition))
++                              "text" "Trusted condition identity; project report omitted"
++                              "fallback" :true)
++          "backtrace" #() "restarts" #() "truncated" :true "capture_failed" (truth failed)))
++(defun capture-condition (condition seconds remaining)
++  ;; Capture is executed by HANDLER-BIND in the signalling worker, before
++  ;; THROW unwinds it. A finite timer covers introspection and all encoding.
++  ;; Expiry abandons capture; no unsafe rendering is retried in the fallback.
++  (let ((*print-level* 6) (*print-length* 32) (*print-circle* t)
++        (*print-pretty* nil) (*print-readably* nil)
++        (answer nil))
++    (when (and (> seconds 0) (> remaining 1))
++      (handler-case
++          (sb-ext:with-timeout seconds
++            (let ((frames nil) (restarts nil) (index 0))
++              ;; Exported SB-DI zero/one-argument API, qualified on actual
++              ;; SBCL with an active named frame and restart before unwind.
++              (loop for frame = (sb-di:top-frame) then (sb-di:frame-down frame)
++                    while frame for count below 32 do
++                      (push (object "index" index "frame"
++                                    (bounded-name (sb-di:debug-fun-name (sb-di:frame-debug-fun frame)))) frames)
++                      (incf index))
++              (loop for restart in (compute-restarts condition) for count below 32 do
++                (let ((name (restart-name restart)))
++                  (push (object "name" (and name (bounded-name name))
++                                "description" "Active restart; project report omitted") restarts)))
++              (setf answer
++                    (json-text
++                     (object "condition" (object "type" (bounded-name (type-of condition))
++                                                 "text" "Trusted condition identity; project report omitted"
++                                                 "fallback" :true)
++                             "backtrace" (coerce (nreverse frames) 'vector)
++                             "restarts" (coerce (nreverse restarts) 'vector)
++                             "truncated" :true "capture_failed" :false)
++                     remaining))))
++        (error () nil)))
++    ;; One ASCII byte is always reserved, even when project output used the
++    ;; rest of B. No callback or introspection is attempted on this path.
++    (or answer "0")))
++
++(defvar *generation*)
++(defvar *directory*)
++(defvar *worker* nil)
++(defvar *request* nil)
++(defvar *outcome* nil)
++(defvar *cancel-tag* nil)
++(defvar *output* *standard-output*)
++(defvar *operation-id* nil)
++(defvar *operation-generation* nil)
++(defvar *operation-lease* nil)
++
++(defun evaluate-source (source kind)
++  (cond ((string= kind "compile_source")
++         (let* ((base (merge-pathnames (concatenate 'string (getf *request* :operation-id) ".source.lisp") *directory*))
++                (output (make-pathname :type "fasl" :defaults base)))
++           (unwind-protect
++                (progn
++                  (with-open-file (stream base :direction :output :if-exists :error
++                                              :external-format :utf-8)
++                    (write-string source stream))
++                  (multiple-value-bind (path warnings failure) (compile-file base :output-file output)
++                    (declare (ignore warnings))
++                    (when failure (error "Source compilation failed"))
++                    (namestring path)))
++             (when (probe-file base) (delete-file base))
++             (when (probe-file output) (delete-file output)))))
++        (t
++         ;; Read/evaluate incrementally: a later reader or execution failure
++         ;; preserves earlier effects and cannot claim rollback.
++         (with-input-from-string (stream source)
++           (loop with result = nil for form = (read stream nil stream)
++                 until (eq form stream) do (setf result (eval form))
++                 finally (return result))))))
++
++(defun run-operation (request tag)
++  (let* ((*package* (or (and (getf (getf request :context) :namespace)
++                            (find-package (getf (getf request :context) :namespace)))
++                       (find-package :cl-user)))
++         (*readtable* (copy-readtable nil)) (*read-eval* t)
++         (*print-level* 6) (*print-length* 32) (*print-circle* t)
++         (*print-pretty* nil) (*print-readably* nil)
++         (*operation-id* (getf request :operation-id))
++         (*operation-generation* *generation*)
++         (*operation-lease* (getf request :expected-lease-epoch))
++         (*default-pathname-defaults*
++           (if (getf (getf request :context) :working-dir)
++               (pathname (getf (getf request :context) :working-dir)) *default-pathname-defaults*))
++         (limits (getf request :limits))
++         (budget (min 16384 (or (getf limits :output-bytes) 16384)))
++         (seconds (min .25 (or (getf limits :timeout-seconds) .25)))
++         (stream (make-instance 'bounded-stream :limit (max 0 (1- budget))))
++         (*standard-output* stream) (*error-output* stream) (*trace-output* stream)
++         (*debug-io* (make-two-way-stream (make-string-input-stream "") stream))
++         (*query-io* *debug-io*) (*terminal-io* *debug-io*)
++         (diagnostic nil) (status "cancelled") (result nil) (consistent nil))
++    (catch tag
++      (block execution
++        (handler-bind
++            ((error (lambda (condition)
++                      ;; Prevent recursive capture on trusted metadata failures.
++                      (let ((raw (handler-case
++                                     (capture-condition condition seconds (- budget (byte-count stream)))
++                                   (error () "0"))))
++                        (setf diagnostic raw status "condition_signalled")
++                        (return-from execution nil)))))
++          (setf result (evaluate-source (getf (getf request :payload) :expression) (getf request :kind)))
++          ;; Rendering uses the same finite timer and remaining byte budget.
++          ;; Unsupported/oversized values signal within the original context.
++          (if (<= seconds 0)
++              (error "Result rendering deadline exhausted")
++              (sb-ext:with-timeout seconds (json-text result (- budget (byte-count stream)))))
++          (when (truncated-p stream) (error "Project output truncated"))
++          (setf status "completed" consistent t))))
++    ;; Reaching here means every project UNWIND-PROTECT has completed. The main
++    ;; control thread waits for actual worker death before emitting this value.
++    (list :status status :result (if (string= status "completed") result nil)
++          :diagnostic diagnostic :consistent consistent
++          :output (copy-seq (buffer stream)))))
++
++(defun publish-completion ()
++  (when (and *worker* (not (sb-thread:thread-alive-p *worker*)))
++    (sb-thread:join-thread *worker*)
++    (let ((request *request*) (outcome *outcome*))
++      ;; Project output has already been bounded in the worker. Emit before
++      ;; protocol completion so the supervisor can drain it before publication.
++      (write-string (getf outcome :output) *output*) (finish-output *output*)
++      (send-frame
++       (object "type" "result" "session_id" (getf request :session-id)
++               "operation_id" (getf request :operation-id) "generation" (generation-json *generation*)
++               "lease_epoch" (getf request :expected-lease-epoch)
++               "status" (getf outcome :status) "result" (getf outcome :result)
++               "image_consistent" (truth (getf outcome :consistent))
++               "cancellation_confirmed" (truth (string= (getf outcome :status) "cancelled"))
++               "diagnostic" (getf outcome :diagnostic)))
++      (setf *worker* nil *outcome* nil *cancel-tag* nil))))
++
++(defun main ()
++  (let ((init (receive-frame)))
++    (unless (string= (getf init :type) "init") (error "Expected init"))
++    (setf *generation* (getf init :generation) *directory* (pathname (getf init :directory)))
++    (send-frame (object "type" "ready" "generation" (generation-json *generation*))))
++  (loop
++    (publish-completion)
++    (when (listen *standard-input*)
++      (let ((frame (receive-frame)))
++        (unless (equal (getf frame :generation) *generation*) (error "Wrong generation"))
++        (cond
++          ((string= (getf frame :type) "execute")
++           (when *worker* (error "Worker busy"))
++           (let ((request (getf frame :request)) (tag (gensym "CANCEL")))
++             (setf *request* request *cancel-tag* tag)
++             (setf *worker*
++                   (sb-thread:make-thread
++                    (lambda () (setf *outcome* (run-operation request tag)))
++                    :name "nizam-operation"))))
++          ((string= (getf frame :type) "cancel")
++           (when (and *worker* (sb-thread:thread-alive-p *worker*)
++                      (equal (getf frame :session-id) (getf *request* :session-id))
++                      (equal (getf frame :operation-id) (getf *request* :operation-id))
++                      (eql (getf frame :lease-epoch) (getf *request* :expected-lease-epoch)))
++             (let ((tag *cancel-tag*))
++               (sb-thread:interrupt-thread *worker* (lambda () (throw tag nil))))))
++          (t (error "Invalid private frame")))))
++    (sleep .005)))
++(main)
+diff --git a/tools/test_runtime_session.py b/tools/test_runtime_session.py
+index 4411aee2..5af7a9f5 100644
+--- a/tools/test_runtime_session.py
++++ b/tools/test_runtime_session.py
+@@ -1703,7 +1703,7 @@ def live_runtime_guards(s, executable):
+                 control = {**stub.request(op, nonce), **governed(stub)}
+                 stub.submit(control); require(stub.finish(control) == nonce, 'explicit stub exact nonce positive')
+             live_selection_refusals(stub, 'stub')
+-            release = stub.home / 'release-stub'
++            release = stub.state / 'release-stub'
+             request = {**stub.request('gate', release), **governed(stub)}
+             stub.submit(request)
+             wait_for(lambda: request['operation_id'] in stub.receipts(), 'explicit stub actual gate dispatch')
+@@ -1826,7 +1826,99 @@ def live_cancel(s, executable):
+     require(s.runstate.read_bytes() == s.saved_state, 'cancellation does not reset attempt')
+ 
+ 
++def group_descendant_fixture(home, operation_id, nonce):
++    """Exact private native spawn form; finite lifetime is a cleanup backstop."""
++    ready, pulse = [Path(home) / (prefix + nonce) for prefix in ('group-ready-', 'group-pulse-')]
++    program = ("import json, os, signal, time\nfrom pathlib import Path\n"
++               "os.setpgid(0, os.getpgid(os.getppid()))\n"
++               "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
++               "ready=Path(" + repr(str(ready)) + "); pulse=Path(" + repr(str(pulse)) + ")\n"
++               "ready.write_text(json.dumps({'pid':os.getpid(),'ppid':os.getppid(),'pgid':os.getpgid(0),"
++               "'nonce':" + repr(nonce) + ",'operation_id':" + repr(operation_id) + "}))\n"
++               "end=time.monotonic()+45; count=0\n"
++               "while time.monotonic()<end:\n count+=1; tmp=pulse.with_suffix('.tmp'); tmp.write_text(str(count)); tmp.replace(pulse); time.sleep(.02)\n")
++    program_literal = '"' + program.replace(chr(92), chr(92) * 2).replace('"', chr(92) + '"') + '"'
++    form = ('(progn (sb-ext:run-program ' + json.dumps(sys.executable) + ' (list "-c" ' + program_literal +
++            ') :search nil :wait nil :input nil :output nil :error nil) 42)')
++    return form, ready, pulse
++
++
++def live_group_descendant(s):
++    request = s.lisp('pending'); nonce = os.urandom(16).hex()
++    form, ready, pulse = group_descendant_fixture(s.home, request['operation_id'], nonce)
++    request['payload']['expression'] = form; s.submit(request); s.terminal(request)
++    wait_for(lambda: ready.is_file() and pulse.is_file(), 'actual runtime-spawned descendant readiness')
++    witness = load(ready); pid = witness['pid']; token = process_token(pid)
++    leader, leader_token = next(iter(s.live_tokens.items())); group = os.getpgid(leader)
++    require(witness == {'pid': pid, 'ppid': leader, 'pgid': group, 'nonce': nonce,
++                        'operation_id': request['operation_id']} and token is not None and
++            process_token(leader) == leader_token and group == leader and
++            group != os.getpgrp() and live_owned(s.marker).get(pid) == token and os.getpgid(pid) == group,
++            'actual descendant belongs to the proven owned runtime group')
++    before = int(pulse.read_text()); os.kill(pid, signal.SIGTERM)
++    wait_for(lambda: process_token(pid) == token and int(pulse.read_text()) > before,
++             'actual descendant continues progress after TERM')
++    print('LIVE_GROUP_DESCENDANT', json.dumps({**witness, 'token': token, 'leader_token': leader_token,
++          'term_ignored_with_progress': True, 'spawn_form_sha256': hashlib.sha256(form.encode()).hexdigest()}), flush=True)
++    return pid, token
++
++
++def live_partial_frame_deadline(s, executable):
++    """An accepted incomplete request cannot defer an existing cancellation."""
++    s.start(executable); live_nonce(s, os.urandom(16).hex())
++    request, _, _, _ = live_gate(s, uninterruptible=True, limits={'timeout_seconds': 1})
++    tokens = dict(s.live_tokens); meta = load(s.directory / 'controller.json')
++    supervisor = meta['supervisor_pid']; supervisor_token = process_token(supervisor)
++    require(supervisor_token and live_owned(s.marker).get(supervisor) == supervisor_token and s.owns_lock(supervisor),
++            'deadline control proves private supervisor identity and lock')
++    response = s.call('cancel-operation', s.cancellation(request))['result']; durable_at = time.monotonic()
++    durable = load(s.operation(request['operation_id']))
++    require(response['status'] == durable['status'] == 'cancel_requested' and
++            durable.get('cancellation_confirmed') is False and
++            load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] == str(s.operation(request['operation_id']).resolve()) and
++            all(process_token(pid) == token for pid, token in tokens.items()),
++            'deadline control begins after durable unconfirmed cancellation of actual pending work')
++    def sockets():
++        try:
++            return {link[8:-1] for fd in Path(f'/proc/{supervisor}/fd').iterdir()
++                    if (link := os.readlink(fd)).startswith('socket:[')}
++        except OSError:
++            return set()
++    before = sockets()
++    with socket.socket(socket.AF_UNIX) as client:
++        client.settimeout(1); client.connect(str(s.directory / 'control.sock')); client.sendall(b'{')
++        def accepted():
++            connected = {row[6] for line in Path('/proc/net/unix').read_text().splitlines()[1:]
++                         if len(row := line.split()) > 6 and row[5] == '03'}
++            return sorted((sockets() - before) & connected)
++        inodes = wait_for(accepted, 'private supervisor accepted the incomplete client frame', .6)
++        require(process_token(supervisor) == supervisor_token and s.owns_lock(supervisor) and
++                load(s.operation(request['operation_id']))['status'] == 'cancel_requested' and
++                any(process_token(pid) == token for pid, token in tokens.items()),
++                'accepted partial frame overlaps actual unresolved cancellation')
++        # Contract1s + TERM-to-KILL.25s + death observation1s + scheduling.25s.
++        bound = 2.5
++        while time.monotonic() - durable_at < bound:
++            durable = load(s.operation(request['operation_id']))
++            if durable['status'] == 'terminated' and all(process_token(pid) != token for pid, token in tokens.items()):
++                break
++            time.sleep(.01)
++        elapsed = time.monotonic() - durable_at
++        print('LIVE_PARTIAL_FRAME_DEADLINE', json.dumps({'operation_id': request['operation_id'],
++              'supervisor_pid': supervisor, 'supervisor_token': supervisor_token, 'accepted_socket_inodes': inodes,
++              'runtime_tokens': tokens, 'elapsed_seconds': elapsed, 'bound_seconds': bound,
++              'durable_status': durable['status'], 'runtime_still_live': [pid for pid, token in tokens.items() if process_token(pid) == token]}), flush=True)
++        require(durable['status'] == 'terminated' and durable.get('cancellation_confirmed') is not True and
++                durable['image_consistent'] is False and elapsed <= bound + .05 and
++                all(process_token(pid) != token for pid, token in tokens.items()),
++                'CANCEL_DEADLINE_SERVICED_DURING_PARTIAL_FRAME')
++    s.terminal(request, ('terminated',))
++    require(load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] is None and
++            s.runstate.read_bytes() == s.saved_state, 'deadline resolution clears only observed dead work and preserves attempt')
++
++
+ def live_terminate(s, executable):
++    descendant, descendant_token = live_group_descendant(s)
+     request, _, _, _ = live_gate(s, uninterruptible=True); tokens = dict(s.live_tokens)
+     sentinel_marker = s.home / 'unrelated-runtime'
+     argv = [executable, '--no-sysinit', '--no-userinit', '--non-interactive', '--eval',
+@@ -1837,6 +1929,7 @@ def live_terminate(s, executable):
+         s.call('cancel-operation', s.cancellation(request)); terminal = s.terminal(request, ('terminated',), 30)
+         require(terminal['image_consistent'] is False and terminal.get('cancellation_confirmed') is not True and
+                 all(process_token(p) != t for p, t in tokens.items()), 'terminated only after actual owned runtime death')
++        require(process_token(descendant) != descendant_token, 'OWNED_RUNTIME_GROUP_DEATH_BEYOND_LEADER')
+         require(sentinel.poll() is None, 'unrelated SBCL survives owned-group termination')
+         stale_marker = s.home / 'forbidden-stale-execution'
+         stale = s.lisp('(progn ' + lisp_write(stale_marker, 'forbidden') + ' 42)')
+@@ -1995,7 +2088,7 @@ def live_unresolved_capture(s, request, progress, cleanup, invoked, witness):
+         require(record['status'] in ('running', 'unknown', 'cancel_requested') and
+                 record.get('cancellation_confirmed') is not True and not invoked.exists(), 'HOSTILE_CAPTURE_REMAINS_UNRESOLVED')
+         before = load(s.directory / 'runtime_session.json')
+-        require(before['outstanding_operation_ref'] == request['operation_id'] and
++        require(before['outstanding_operation_ref'] == str(s.operation(request['operation_id']).resolve()) and
+                 any(process_token(pid) == token for pid, token in tokens.items()), 'unresolved capture retains actual runtime and outstanding work')
+         live_busy(s)
+         s.call('cancel-operation', s.cancellation(request), (0, 70))
+@@ -2241,6 +2334,12 @@ def live_scenario(selection, home, executable, candidate=ROOT):
+             live_reattach(s)
+         elif selection == 'cancel-confirmed':
+             live_cancel(s, executable)
++            with tempfile.TemporaryDirectory(prefix='partial-frame-deadline-', dir=home) as temp:
++                peer = LiveSession(Path(temp), candidate=candidate)
++                try:
++                    live_partial_frame_deadline(peer, executable)
++                finally:
++                    peer.cleanup()
+         elif selection == 'termination-ends-generation':
+             live_terminate(s, executable)
+             with tempfile.TemporaryDirectory(prefix='zero-deadline-', dir=home) as temp:
+@@ -2297,7 +2396,15 @@ def live_rendered_overflow_control(home, executable):
+                         raise AssertionError('BEHAVIOR_ASSERTION: common rendering guard accepted overflow')
+                 finally:
+                     path.unlink()
+-            live_nonce(s, os.urandom(16).hex())
++            # A real evaluate condition may conservatively quarantine its image.
++            # The subsequent execution positive belongs to a fresh private image.
++            with tempfile.TemporaryDirectory(prefix='overflow-positive-', dir=s.home) as fresh:
++                peer = LiveSession(Path(fresh), candidate=s.candidate)
++                try:
++                    peer.start(executable); live_nonce(peer, os.urandom(16).hex())
++                    require(peer.runstate.read_bytes() == peer.saved_state, 'fresh overflow positive preserves governed attempt')
++                finally:
++                    peer.cleanup()
+             require(s.runstate.read_bytes() == s.saved_state, 'overflow control preserves governed attempt')
+         finally:
+             s.cleanup()
+
+ALL_DELTA_PATHS
+A	.agent/evidence/129/baseline-admission2/admission-red.capture-summary.json
+A	.agent/evidence/129/baseline-admission2/admission-red.execution.json
+A	.agent/evidence/129/baseline-admission2/admission-red.preservation-after.json.gz
+A	.agent/evidence/129/baseline-admission2/admission-red.preservation-before.json.gz
+A	.agent/evidence/129/baseline-admission2/admission-red.started.json
+A	.agent/evidence/129/baseline-admission2/admission-red.stderr.txt
+A	.agent/evidence/129/baseline-admission2/admission-red.stdout.txt
+A	.agent/evidence/129/baseline-admission2/driver.execution.json
+A	.agent/evidence/129/baseline-admission2/driver.started.json
+A	.agent/evidence/129/baseline-admission2/driver.stderr.txt
+A	.agent/evidence/129/baseline-admission2/driver.stdout.txt
+A	.agent/evidence/129/baseline-admission2/index.json
+A	.agent/evidence/129/baseline-admission2/report.json
+A	.agent/evidence/129/baseline-admission2/sentinel
+A	.agent/evidence/129/baseline-admission2/setup.json
+A	.agent/evidence/129/baseline-admission3/admission-red.capture-summary.json
+A	.agent/evidence/129/baseline-admission3/admission-red.execution.json
+A	.agent/evidence/129/baseline-admission3/admission-red.preservation-after.json.gz
+A	.agent/evidence/129/baseline-admission3/admission-red.preservation-before.json.gz
+A	.agent/evidence/129/baseline-admission3/admission-red.started.json
+A	.agent/evidence/129/baseline-admission3/admission-red.stderr.txt
+A	.agent/evidence/129/baseline-admission3/admission-red.stdout.txt
+A	.agent/evidence/129/baseline-admission3/driver.execution.json
+A	.agent/evidence/129/baseline-admission3/driver.started.json
+A	.agent/evidence/129/baseline-admission3/driver.stderr.txt
+A	.agent/evidence/129/baseline-admission3/driver.stdout.txt
+A	.agent/evidence/129/baseline-admission3/index.json
+A	.agent/evidence/129/baseline-admission3/report.json
+A	.agent/evidence/129/baseline-admission3/sentinel
+A	.agent/evidence/129/baseline-admission3/setup.json
+A	.agent/evidence/129/baseline-root-admission2/admission.execution.json
+A	.agent/evidence/129/baseline-root-admission2/admission.started.json
+A	.agent/evidence/129/baseline-root-admission2/admission.stderr.txt
+A	.agent/evidence/129/baseline-root-admission2/admission.stdin
+A	.agent/evidence/129/baseline-root-admission2/admission.stdout.txt
+A	.agent/evidence/129/baseline-root-admission3/admission.execution.json
+A	.agent/evidence/129/baseline-root-admission3/admission.started.json
+A	.agent/evidence/129/baseline-root-admission3/admission.stderr.txt
+A	.agent/evidence/129/baseline-root-admission3/admission.stdin
+A	.agent/evidence/129/baseline-root-admission3/admission.stdout.txt
+A	.agent/evidence/129/baseline-root-admission4/admission.execution.json
+A	.agent/evidence/129/baseline-root-admission4/admission.started.json
+A	.agent/evidence/129/baseline-root-admission4/admission.stderr.txt
+A	.agent/evidence/129/baseline-root-admission4/admission.stdin
+A	.agent/evidence/129/baseline-root-admission4/admission.stdout.txt
+A	.agent/evidence/129/fixture-correction1/raw-index.json
+A	.agent/evidence/129/fixture-correction1/receipt.json
+A	.agent/evidence/129/fixture-correction1/static1.execution.json
+A	.agent/evidence/129/fixture-correction1/static1.started.json
+A	.agent/evidence/129/fixture-correction1/static1.stderr.txt
+A	.agent/evidence/129/fixture-correction1/static1.stdin
+A	.agent/evidence/129/fixture-correction1/static1.stdout.txt
+A	.agent/evidence/129/fixture-correction2/native-expression.lisp
+A	.agent/evidence/129/fixture-correction2/native1.capture-summary.json
+A	.agent/evidence/129/fixture-correction2/native1.execution.json
+A	.agent/evidence/129/fixture-correction2/native1.preservation-after.json.gz
+A	.agent/evidence/129/fixture-correction2/native1.preservation-before.json.gz
+A	.agent/evidence/129/fixture-correction2/native1.started.json
+A	.agent/evidence/129/fixture-correction2/native1.stderr.txt
+A	.agent/evidence/129/fixture-correction2/native1.stdin
+A	.agent/evidence/129/fixture-correction2/native1.stdout.txt
+A	.agent/evidence/129/fixture-correction2/raw-index.json
+A	.agent/evidence/129/fixture-correction2/receipt.json
+A	.agent/evidence/129/fixture-correction2/static1.execution.json
+A	.agent/evidence/129/fixture-correction2/static1.started.json
+A	.agent/evidence/129/fixture-correction2/static1.stderr.txt
+A	.agent/evidence/129/fixture-correction2/static1.stdin
+A	.agent/evidence/129/fixture-correction2/static1.stdout.txt
+A	.agent/evidence/129/fixture-root-admission2/admission.execution.json
+A	.agent/evidence/129/fixture-root-admission2/admission.started.json
+A	.agent/evidence/129/fixture-root-admission2/admission.stderr.txt
+A	.agent/evidence/129/fixture-root-admission2/admission.stdin
+A	.agent/evidence/129/fixture-root-admission2/admission.stdout.txt
+A	.agent/evidence/129/fixture-root-admission3/admission.execution.json
+A	.agent/evidence/129/fixture-root-admission3/admission.started.json
+A	.agent/evidence/129/fixture-root-admission3/admission.stderr.txt
+A	.agent/evidence/129/fixture-root-admission3/admission.stdin
+A	.agent/evidence/129/fixture-root-admission3/admission.stdout.txt
+A	.agent/evidence/129/fixture-root-admission4/admission.execution.json
+A	.agent/evidence/129/fixture-root-admission4/admission.started.json
+A	.agent/evidence/129/fixture-root-admission4/admission.stderr.txt
+A	.agent/evidence/129/fixture-root-admission4/admission.stdin
+A	.agent/evidence/129/fixture-root-admission4/admission.stdout.txt
+A	.agent/evidence/129/frozen-bundle2.json
+A	.agent/evidence/129/frozen-bundle3.json
+A	.agent/evidence/129/implementation1/admission.capture-summary.json
+A	.agent/evidence/129/implementation1/admission.execution.json
+A	.agent/evidence/129/implementation1/admission.preservation-after.json.gz
+A	.agent/evidence/129/implementation1/admission.preservation-before.json.gz
+A	.agent/evidence/129/implementation1/admission.started.json
+A	.agent/evidence/129/implementation1/admission.stderr.txt
+A	.agent/evidence/129/implementation1/admission.stdout.txt
+A	.agent/evidence/129/implementation1/raw-index.json
+A	.agent/evidence/129/implementation1/receipt.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1.py
+A	.agent/evidence/129/implementation1/startup-diagnosis1/raw-index.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/receipt.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.capture-summary.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.execution.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.preservation-after.json.gz
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.preservation-before.json.gz
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.started.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.stderr.txt
+A	.agent/evidence/129/implementation1/startup-diagnosis1/startup.stdout.txt
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.execution.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.protocol
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.started.json
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.stderr
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.stdin
+A	.agent/evidence/129/implementation1/startup-diagnosis1/worker.stdout
+A	.agent/evidence/129/implementation2/native-api.capture-summary.json
+A	.agent/evidence/129/implementation2/native-api.execution.json
+A	.agent/evidence/129/implementation2/native-api.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/native-api.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/native-api.started.json
+A	.agent/evidence/129/implementation2/native-api.stderr.txt
+A	.agent/evidence/129/implementation2/native-api.stdout.txt
+A	.agent/evidence/129/implementation2/native-api1.lisp
+A	.agent/evidence/129/implementation2/public-validation1/admission.capture-summary.json
+A	.agent/evidence/129/implementation2/public-validation1/admission.execution.json
+A	.agent/evidence/129/implementation2/public-validation1/admission.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/public-validation1/admission.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/public-validation1/admission.started.json
+A	.agent/evidence/129/implementation2/public-validation1/admission.stderr.txt
+A	.agent/evidence/129/implementation2/public-validation1/admission.stdout.txt
+A	.agent/evidence/129/implementation2/public-validation1/raw-index.json
+A	.agent/evidence/129/implementation2/public-validation1/receipt.json
+A	.agent/evidence/129/implementation2/public-validation2/admission.capture-summary.json
+A	.agent/evidence/129/implementation2/public-validation2/admission.execution.json
+A	.agent/evidence/129/implementation2/public-validation2/admission.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/admission.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/admission.started.json
+A	.agent/evidence/129/implementation2/public-validation2/admission.stderr.txt
+A	.agent/evidence/129/implementation2/public-validation2/admission.stdout.txt
+A	.agent/evidence/129/implementation2/public-validation2/capture.capture-summary.json
+A	.agent/evidence/129/implementation2/public-validation2/capture.execution.json
+A	.agent/evidence/129/implementation2/public-validation2/capture.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/capture.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/capture.started.json
+A	.agent/evidence/129/implementation2/public-validation2/capture.stderr.txt
+A	.agent/evidence/129/implementation2/public-validation2/capture.stdout.txt
+A	.agent/evidence/129/implementation2/public-validation2/printing.capture-summary.json
+A	.agent/evidence/129/implementation2/public-validation2/printing.execution.json
+A	.agent/evidence/129/implementation2/public-validation2/printing.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/printing.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/public-validation2/printing.started.json
+A	.agent/evidence/129/implementation2/public-validation2/printing.stderr.txt
+A	.agent/evidence/129/implementation2/public-validation2/printing.stdout.txt
+A	.agent/evidence/129/implementation2/public-validation2/raw-index.json
+A	.agent/evidence/129/implementation2/public-validation2/receipt.json
+A	.agent/evidence/129/implementation2/raw-index.json
+A	.agent/evidence/129/implementation2/receipt.json
+A	.agent/evidence/129/implementation2/startup.capture-summary.json
+A	.agent/evidence/129/implementation2/startup.execution.json
+A	.agent/evidence/129/implementation2/startup.preservation-after.json.gz
+A	.agent/evidence/129/implementation2/startup.preservation-before.json.gz
+A	.agent/evidence/129/implementation2/startup.started.json
+A	.agent/evidence/129/implementation2/startup.stderr.txt
+A	.agent/evidence/129/implementation2/startup.stdout.txt
+A	.agent/evidence/129/implementation2/startup1.py
+A	.agent/evidence/129/implementation2/worker.execution.json
+A	.agent/evidence/129/implementation2/worker.protocol
+A	.agent/evidence/129/implementation2/worker.started.json
+A	.agent/evidence/129/implementation2/worker.stderr
+A	.agent/evidence/129/implementation2/worker.stdin
+A	.agent/evidence/129/implementation2/worker.stdout
+A	.agent/evidence/129/implementation3-close-probe1/binding.json
+A	.agent/evidence/129/implementation3-close-probe1/probe.py
+A	.agent/evidence/129/implementation3/architecture-preparation1.json
+A	.agent/evidence/129/postsource-fixture-review1/check.py
+A	.agent/evidence/129/postsource-fixture-review1/index.json
+A	.agent/evidence/129/postsource-fixture-review1/static1.execution.json
+A	.agent/evidence/129/postsource-fixture-review1/static1.started.json
+A	.agent/evidence/129/postsource-fixture-review1/static1.stderr.txt
+A	.agent/evidence/129/postsource-fixture-review1/static1.stdout.txt
+A	.agent/evidence/129/postsource-fixture-review2/check.py
+A	.agent/evidence/129/postsource-fixture-review2/index.json
+A	.agent/evidence/129/postsource-fixture-review2/static1.execution.json
+A	.agent/evidence/129/postsource-fixture-review2/static1.started.json
+A	.agent/evidence/129/postsource-fixture-review2/static1.stderr.txt
+A	.agent/evidence/129/postsource-fixture-review2/static1.stdout.txt
+A	.agent/evidence/129/postsource-fixture-review3/check.py
+A	.agent/evidence/129/postsource-fixture-review3/index.json
+A	.agent/evidence/129/postsource-fixture-review3/static1.execution.json
+A	.agent/evidence/129/postsource-fixture-review3/static1.started.json
+A	.agent/evidence/129/postsource-fixture-review3/static1.stderr.txt
+A	.agent/evidence/129/postsource-fixture-review3/static1.stdout.txt
+A	.agent/evidence/129/recovery-root-admission1/admission.execution.json
+A	.agent/evidence/129/recovery-root-admission1/admission.started.json
+A	.agent/evidence/129/recovery-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/recovery-root-admission1/admission.stdin
+A	.agent/evidence/129/recovery-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source-release1.json
+A	.agent/evidence/129/source-release3.json
+A	.agent/evidence/129/source2-close-diagnostic1/driver.execution.json
+A	.agent/evidence/129/source2-close-diagnostic1/driver.started.json
+A	.agent/evidence/129/source2-close-diagnostic1/driver.stderr.txt
+A	.agent/evidence/129/source2-close-diagnostic1/driver.stdout.txt
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.capture-summary.json
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.execution.json
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.preservation-after.json.gz
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.preservation-before.json.gz
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.started.json
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.stderr.txt
+A	.agent/evidence/129/source2-close-diagnostic1/idle-close.stdout.txt
+A	.agent/evidence/129/source2-close-diagnostic1/index.json
+A	.agent/evidence/129/source2-close-diagnostic1/probe.py
+A	.agent/evidence/129/source2-close-diagnostic1/report.json
+A	.agent/evidence/129/source2-close-diagnostic1/sentinel
+A	.agent/evidence/129/source2-close-diagnostic1/setup.json
+A	.agent/evidence/129/source2-close-root-admission1/admission.execution.json
+A	.agent/evidence/129/source2-close-root-admission1/admission.started.json
+A	.agent/evidence/129/source2-close-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/source2-close-root-admission1/admission.stdin
+A	.agent/evidence/129/source2-close-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source2-partial-frame-red1/driver.execution.json
+A	.agent/evidence/129/source2-partial-frame-red1/driver.started.json
+A	.agent/evidence/129/source2-partial-frame-red1/driver.stderr.txt
+A	.agent/evidence/129/source2-partial-frame-red1/driver.stdout.txt
+A	.agent/evidence/129/source2-partial-frame-red1/index.json
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.capture-summary.json
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.execution.json
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.preservation-after.json.gz
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.preservation-before.json.gz
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.started.json
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.stderr.txt
+A	.agent/evidence/129/source2-partial-frame-red1/partial-frame.stdout.txt
+A	.agent/evidence/129/source2-partial-frame-red1/report.json
+A	.agent/evidence/129/source2-partial-frame-red1/sentinel
+A	.agent/evidence/129/source2-partial-frame-red1/setup.json
+A	.agent/evidence/129/source2-partial-frame-root-admission1/admission.execution.json
+A	.agent/evidence/129/source2-partial-frame-root-admission1/admission.started.json
+A	.agent/evidence/129/source2-partial-frame-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/source2-partial-frame-root-admission1/admission.stdin
+A	.agent/evidence/129/source2-partial-frame-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source2-recovery1/index.json
+A	.agent/evidence/129/source2-recovery1/static.execution.json
+A	.agent/evidence/129/source2-recovery1/static.stderr.txt
+A	.agent/evidence/129/source2-recovery1/static.stdin
+A	.agent/evidence/129/source2-recovery1/static.stdout.txt
+A	.agent/evidence/129/source2-recovery1/static2.execution.json
+A	.agent/evidence/129/source2-recovery1/static2.started.json
+A	.agent/evidence/129/source2-recovery1/static2.stderr.txt
+A	.agent/evidence/129/source2-recovery1/static2.stdin
+A	.agent/evidence/129/source2-recovery1/static2.stdout.txt
+A	.agent/evidence/129/source2-recovery3-root-admission1/admission.execution.json
+A	.agent/evidence/129/source2-recovery3-root-admission1/admission.started.json
+A	.agent/evidence/129/source2-recovery3-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/source2-recovery3-root-admission1/admission.stdin
+A	.agent/evidence/129/source2-recovery3-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source2-recovery3/index.json
+A	.agent/evidence/129/source2-recovery3/static1.execution.json
+A	.agent/evidence/129/source2-recovery3/static1.started.json
+A	.agent/evidence/129/source2-recovery3/static1.stderr.txt
+A	.agent/evidence/129/source2-recovery3/static1.stdin
+A	.agent/evidence/129/source2-recovery3/static1.stdout.txt
+A	.agent/evidence/129/source2-regression-red1/admission-driver.execution.json
+A	.agent/evidence/129/source2-regression-red1/admission-driver.started.json
+A	.agent/evidence/129/source2-regression-red1/admission-driver.stderr.txt
+A	.agent/evidence/129/source2-regression-red1/admission-driver.stdout.txt
+A	.agent/evidence/129/source2-regression-red1/admission.capture-summary.json
+A	.agent/evidence/129/source2-regression-red1/admission.execution.json
+A	.agent/evidence/129/source2-regression-red1/admission.preservation-after.json.gz
+A	.agent/evidence/129/source2-regression-red1/admission.preservation-before.json.gz
+A	.agent/evidence/129/source2-regression-red1/admission.started.json
+A	.agent/evidence/129/source2-regression-red1/admission.stderr.txt
+A	.agent/evidence/129/source2-regression-red1/admission.stdout.txt
+A	.agent/evidence/129/source2-regression-red1/group-death-driver.execution.json
+A	.agent/evidence/129/source2-regression-red1/group-death-driver.started.json
+A	.agent/evidence/129/source2-regression-red1/group-death-driver.stderr.txt
+A	.agent/evidence/129/source2-regression-red1/group-death-driver.stdout.txt
+A	.agent/evidence/129/source2-regression-red1/group-death.capture-summary.json
+A	.agent/evidence/129/source2-regression-red1/group-death.execution.json
+A	.agent/evidence/129/source2-regression-red1/group-death.preservation-after.json.gz
+A	.agent/evidence/129/source2-regression-red1/group-death.preservation-before.json.gz
+A	.agent/evidence/129/source2-regression-red1/group-death.started.json
+A	.agent/evidence/129/source2-regression-red1/group-death.stderr.txt
+A	.agent/evidence/129/source2-regression-red1/group-death.stdout.txt
+A	.agent/evidence/129/source2-regression-red1/index.json
+A	.agent/evidence/129/source2-regression-red1/report.json
+A	.agent/evidence/129/source2-regression-red1/sentinel
+A	.agent/evidence/129/source2-regression-red1/setup.json
+A	.agent/evidence/129/source2-regression-root-admission1/admission.execution.json
+A	.agent/evidence/129/source2-regression-root-admission1/admission.started.json
+A	.agent/evidence/129/source2-regression-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/source2-regression-root-admission1/admission.stdin
+A	.agent/evidence/129/source2-regression-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source3-architecture-review1/index.json
+A	.agent/evidence/129/source3-architecture-review1/static1.execution.json
+A	.agent/evidence/129/source3-architecture-review1/static1.started.json
+A	.agent/evidence/129/source3-architecture-review1/static1.stderr.txt
+A	.agent/evidence/129/source3-architecture-review1/static1.stdin
+A	.agent/evidence/129/source3-architecture-review1/static1.stdout.txt
+A	.agent/evidence/129/source3-architecture-review2/index.json
+A	.agent/evidence/129/source3-architecture-review2/static1.execution.json
+A	.agent/evidence/129/source3-architecture-review2/static1.started.json
+A	.agent/evidence/129/source3-architecture-review2/static1.stderr.txt
+A	.agent/evidence/129/source3-architecture-review2/static1.stdin
+A	.agent/evidence/129/source3-architecture-review2/static1.stdout.txt
+A	.agent/evidence/129/source3-architecture-root-admission1/admission.execution.json
+A	.agent/evidence/129/source3-architecture-root-admission1/admission.started.json
+A	.agent/evidence/129/source3-architecture-root-admission1/admission.stderr.txt
+A	.agent/evidence/129/source3-architecture-root-admission1/admission.stdin
+A	.agent/evidence/129/source3-architecture-root-admission1/admission.stdout.txt
+A	.agent/evidence/129/source3-architecture-root-admission2/admission.execution.json
+A	.agent/evidence/129/source3-architecture-root-admission2/admission.started.json
+A	.agent/evidence/129/source3-architecture-root-admission2/admission.stderr.txt
+A	.agent/evidence/129/source3-architecture-root-admission2/admission.stdin
+A	.agent/evidence/129/source3-architecture-root-admission2/admission.stdout.txt
+A	.agent/evidence/129/source3-release-preflight1.json
+A	.agent/evidence/133/ci/main-root-admission1/admission.execution.json
+A	.agent/evidence/133/ci/main-root-admission1/admission.started.json
+A	.agent/evidence/133/ci/main-root-admission1/admission.stderr.txt
+A	.agent/evidence/133/ci/main-root-admission1/admission.stdin
+A	.agent/evidence/133/ci/main-root-admission1/admission.stdout.txt
+A	.agent/evidence/133/ci/main-root-admission2/admission.execution.json
+A	.agent/evidence/133/ci/main-root-admission2/admission.started.json
+A	.agent/evidence/133/ci/main-root-admission2/admission.stderr.txt
+A	.agent/evidence/133/ci/main-root-admission2/admission.stdin
+A	.agent/evidence/133/ci/main-root-admission2/admission.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/capture-index.sha256
+A	.agent/evidence/133/ci/main-terminal1/checkout-commit.execution.json
+A	.agent/evidence/133/ci/main-terminal1/checkout-commit.started.json
+A	.agent/evidence/133/ci/main-terminal1/checkout-commit.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/checkout-commit.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/discover-runs.execution.json
+A	.agent/evidence/133/ci/main-terminal1/discover-runs.started.json
+A	.agent/evidence/133/ci/main-terminal1/discover-runs.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/discover-runs.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/report.json
+A	.agent/evidence/133/ci/main-terminal1/selection.json
+A	.agent/evidence/133/ci/main-terminal1/static-observation.execution.json
+A	.agent/evidence/133/ci/main-terminal1/static-observation.started.json
+A	.agent/evidence/133/ci/main-terminal1/static-observation.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/static-observation.stdin
+A	.agent/evidence/133/ci/main-terminal1/static-observation.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status1.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status1.started.json
+A	.agent/evidence/133/ci/main-terminal1/status1.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status1.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status10.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status10.started.json
+A	.agent/evidence/133/ci/main-terminal1/status10.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status10.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status11.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status11.started.json
+A	.agent/evidence/133/ci/main-terminal1/status11.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status11.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status12.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status12.started.json
+A	.agent/evidence/133/ci/main-terminal1/status12.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status12.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status13.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status13.started.json
+A	.agent/evidence/133/ci/main-terminal1/status13.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status13.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status14.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status14.started.json
+A	.agent/evidence/133/ci/main-terminal1/status14.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status14.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status15.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status15.started.json
+A	.agent/evidence/133/ci/main-terminal1/status15.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status15.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status16.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status16.started.json
+A	.agent/evidence/133/ci/main-terminal1/status16.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status16.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status17.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status17.started.json
+A	.agent/evidence/133/ci/main-terminal1/status17.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status17.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status18.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status18.started.json
+A	.agent/evidence/133/ci/main-terminal1/status18.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status18.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status19.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status19.started.json
+A	.agent/evidence/133/ci/main-terminal1/status19.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status19.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status2.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status2.started.json
+A	.agent/evidence/133/ci/main-terminal1/status2.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status2.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status20.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status20.started.json
+A	.agent/evidence/133/ci/main-terminal1/status20.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status20.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status21.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status21.started.json
+A	.agent/evidence/133/ci/main-terminal1/status21.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status21.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status22.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status22.started.json
+A	.agent/evidence/133/ci/main-terminal1/status22.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status22.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status23.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status23.started.json
+A	.agent/evidence/133/ci/main-terminal1/status23.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status23.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status24.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status24.started.json
+A	.agent/evidence/133/ci/main-terminal1/status24.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status24.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status25.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status25.started.json
+A	.agent/evidence/133/ci/main-terminal1/status25.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status25.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status26.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status26.started.json
+A	.agent/evidence/133/ci/main-terminal1/status26.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status26.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status27.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status27.started.json
+A	.agent/evidence/133/ci/main-terminal1/status27.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status27.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status28.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status28.started.json
+A	.agent/evidence/133/ci/main-terminal1/status28.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status28.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status29.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status29.started.json
+A	.agent/evidence/133/ci/main-terminal1/status29.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status29.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status3.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status3.started.json
+A	.agent/evidence/133/ci/main-terminal1/status3.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status3.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status30.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status30.started.json
+A	.agent/evidence/133/ci/main-terminal1/status30.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status30.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status31.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status31.started.json
+A	.agent/evidence/133/ci/main-terminal1/status31.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status31.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status32.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status32.started.json
+A	.agent/evidence/133/ci/main-terminal1/status32.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status32.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status33.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status33.started.json
+A	.agent/evidence/133/ci/main-terminal1/status33.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status33.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status34.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status34.started.json
+A	.agent/evidence/133/ci/main-terminal1/status34.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status34.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status35.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status35.started.json
+A	.agent/evidence/133/ci/main-terminal1/status35.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status35.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status36.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status36.started.json
+A	.agent/evidence/133/ci/main-terminal1/status36.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status36.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status37.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status37.started.json
+A	.agent/evidence/133/ci/main-terminal1/status37.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status37.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status38.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status38.started.json
+A	.agent/evidence/133/ci/main-terminal1/status38.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status38.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status39.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status39.started.json
+A	.agent/evidence/133/ci/main-terminal1/status39.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status39.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status4.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status4.started.json
+A	.agent/evidence/133/ci/main-terminal1/status4.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status4.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status40.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status40.started.json
+A	.agent/evidence/133/ci/main-terminal1/status40.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status40.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status41.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status41.started.json
+A	.agent/evidence/133/ci/main-terminal1/status41.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status41.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status42.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status42.started.json
+A	.agent/evidence/133/ci/main-terminal1/status42.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status42.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status43.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status43.started.json
+A	.agent/evidence/133/ci/main-terminal1/status43.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status43.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status44.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status44.started.json
+A	.agent/evidence/133/ci/main-terminal1/status44.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status44.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status45.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status45.started.json
+A	.agent/evidence/133/ci/main-terminal1/status45.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status45.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status46.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status46.started.json
+A	.agent/evidence/133/ci/main-terminal1/status46.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status46.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status47.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status47.started.json
+A	.agent/evidence/133/ci/main-terminal1/status47.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status47.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status48.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status48.started.json
+A	.agent/evidence/133/ci/main-terminal1/status48.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status48.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status49.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status49.started.json
+A	.agent/evidence/133/ci/main-terminal1/status49.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status49.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status5.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status5.started.json
+A	.agent/evidence/133/ci/main-terminal1/status5.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status5.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status50.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status50.started.json
+A	.agent/evidence/133/ci/main-terminal1/status50.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status50.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status51.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status51.started.json
+A	.agent/evidence/133/ci/main-terminal1/status51.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status51.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status52.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status52.started.json
+A	.agent/evidence/133/ci/main-terminal1/status52.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status52.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status53.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status53.started.json
+A	.agent/evidence/133/ci/main-terminal1/status53.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status53.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status54.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status54.started.json
+A	.agent/evidence/133/ci/main-terminal1/status54.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status54.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status55.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status55.started.json
+A	.agent/evidence/133/ci/main-terminal1/status55.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status55.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status56.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status56.started.json
+A	.agent/evidence/133/ci/main-terminal1/status56.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status56.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status57.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status57.started.json
+A	.agent/evidence/133/ci/main-terminal1/status57.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status57.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status58.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status58.started.json
+A	.agent/evidence/133/ci/main-terminal1/status58.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status58.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status59.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status59.started.json
+A	.agent/evidence/133/ci/main-terminal1/status59.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status59.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status6.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status6.started.json
+A	.agent/evidence/133/ci/main-terminal1/status6.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status6.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status60.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status60.started.json
+A	.agent/evidence/133/ci/main-terminal1/status60.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status60.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status61.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status61.started.json
+A	.agent/evidence/133/ci/main-terminal1/status61.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status61.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status62.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status62.started.json
+A	.agent/evidence/133/ci/main-terminal1/status62.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status62.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status63.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status63.started.json
+A	.agent/evidence/133/ci/main-terminal1/status63.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status63.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status64.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status64.started.json
+A	.agent/evidence/133/ci/main-terminal1/status64.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status64.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status65.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status65.started.json
+A	.agent/evidence/133/ci/main-terminal1/status65.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status65.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status66.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status66.started.json
+A	.agent/evidence/133/ci/main-terminal1/status66.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status66.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status67.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status67.started.json
+A	.agent/evidence/133/ci/main-terminal1/status67.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status67.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status68.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status68.started.json
+A	.agent/evidence/133/ci/main-terminal1/status68.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status68.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status69.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status69.started.json
+A	.agent/evidence/133/ci/main-terminal1/status69.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status69.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status7.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status7.started.json
+A	.agent/evidence/133/ci/main-terminal1/status7.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status7.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status8.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status8.started.json
+A	.agent/evidence/133/ci/main-terminal1/status8.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status8.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/status9.execution.json
+A	.agent/evidence/133/ci/main-terminal1/status9.started.json
+A	.agent/evidence/133/ci/main-terminal1/status9.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/status9.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-jobs.execution.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-jobs.started.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-jobs.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-jobs.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-logs.execution.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-logs.started.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-logs.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-logs.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-run.execution.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-run.started.json
+A	.agent/evidence/133/ci/main-terminal1/terminal-run.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/terminal-run.stdout.txt
+A	.agent/evidence/133/ci/main-terminal1/watch.execution.json
+A	.agent/evidence/133/ci/main-terminal1/watch.started.json
+A	.agent/evidence/133/ci/main-terminal1/watch.stderr.txt
+A	.agent/evidence/133/ci/main-terminal1/watch.stdout.txt
+A	.agent/evidence/133/ci/pr-closeout4/before.execution.json
+A	.agent/evidence/133/ci/pr-closeout4/before.started.json
+A	.agent/evidence/133/ci/pr-closeout4/before.stderr.txt
+A	.agent/evidence/133/ci/pr-closeout4/before.stdout.txt
+A	.agent/evidence/133/ci/pr-closeout4/readback.execution.json
+A	.agent/evidence/133/ci/pr-closeout4/readback.started.json
+A	.agent/evidence/133/ci/pr-closeout4/readback.stderr.txt
+A	.agent/evidence/133/ci/pr-closeout4/readback.stdout.txt
+A	.agent/evidence/133/ci/pr-closeout4/receipt.json
+A	.agent/evidence/133/ci/pr-closeout4/update.execution.json
+A	.agent/evidence/133/ci/pr-closeout4/update.started.json
+A	.agent/evidence/133/ci/pr-closeout4/update.stderr.txt
+A	.agent/evidence/133/ci/pr-closeout4/update.stdout.txt
+A	.agent/evidence/133/ci/pr-description3.md
+A	.agent/evidence/133/ci/pr-description4.md
+A	.agent/evidence/133/ci/pr105-closeout-readback2/comment.execution.json
+A	.agent/evidence/133/ci/pr105-closeout-readback2/comment.started.json
+A	.agent/evidence/133/ci/pr105-closeout-readback2/comment.stderr.txt
+A	.agent/evidence/133/ci/pr105-closeout-readback2/comment.stdout.txt
+A	.agent/evidence/133/ci/pr105-success-comment.md
+A	.agent/evidence/133/ci/raw/pr105-body-update3.json
+A	.agent/evidence/133/ci/raw/pr105-success-comment-create.json
+A	.agent/evidence/133/ci/raw/pr105-success-comment-readback.json
+A	.agent/evidence/133/delivery-supplement1/final-inventory.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/capture-index.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/input-inventory.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.capture-summary.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.execution.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.preservation-after.json.gz
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.preservation-before.json.gz
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.started.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.stderr.txt
+A	.agent/evidence/133/delivery-supplement1/measurement1/measurement.stdout.txt
+A	.agent/evidence/133/delivery-supplement1/measurement1/outside-sentinel.txt
+A	.agent/evidence/133/delivery-supplement1/measurement1/receipt.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/setup.json
+A	.agent/evidence/133/delivery-supplement1/measurement1/supplement-report.json
+A	.agent/evidence/133/delivery-supplement1/root-admission1.py
+A	.agent/evidence/133/delivery-supplement1/root-admission1/admission.execution.json
+A	.agent/evidence/133/delivery-supplement1/root-admission1/admission.started.json
+A	.agent/evidence/133/delivery-supplement1/root-admission1/admission.stderr.txt
+A	.agent/evidence/133/delivery-supplement1/root-admission1/admission.stdout.txt
+A	.agent/evidence/ci-fixture-performance-preparation1/proposal.json
+A	.agent/evidence/phase020-accounting-preparation1/method.json
+M	.agent/feature_list_020.json
+M	.agent/run_state.json
+A	.agent/validator/129-postsource-fixture1.json
+A	.agent/validator/129-postsource-fixture2.json
+A	.agent/validator/129-postsource-fixture3.json
+A	.agent/validator/129-source2-recovery1.json
+A	.agent/validator/129-source2-recovery3.json
+A	.agent/validator/129-source3-architecture1.json
+A	.agent/validator/129-source3-architecture2.json
+M	tools/runtime_session.py
+A	tools/sbcl_session_loop.lisp
+M	tools/test_runtime_session.py
+
