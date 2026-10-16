@@ -4,11 +4,7 @@
   "phase_status": "in_progress",
   "original_estimate_lines": 7350,
   "ceiling_130pct": 9555,
-  "budget_categories": {
-    "product": 1850,
-    "tests": 1750,
-    "process": 3750
-  },
+  "budget_categories": {"product": 1850, "tests": 1750, "process": 3750},
   "features": [
     {
       "id": "129",
@@ -18,11 +14,7 @@
       "passes": false,
       "dependencies": [],
       "estimated_lines": 2100,
-      "budget_categories": {
-        "product": 650,
-        "tests": 450,
-        "process": 1000
-      },
+      "budget_categories": {"product": 650, "tests": 450, "process": 1000},
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing",
@@ -32,11 +24,7 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl"
       ],
-      "future_output_targets": [
-        "tools/sbcl_session_loop.lisp",
-        "tools/test_runtime_session.py",
-        "tools/runtime_session.py"
-      ]
+      "future_output_targets": ["tools/sbcl_session_loop.lisp", "tools/test_runtime_session.py", "tools/runtime_session.py"]
     },
     {
       "id": "130",
@@ -44,15 +32,9 @@
       "description": "Archive committed source into private root; fresh no-init SBCL, private HOME/XDG and empty build cache, ignored inherited ASDF source/output resolution, actual toolchain/lock/core provenance; reject session-only, stale-cache and deleted-definition drift.",
       "status": "pending",
       "passes": false,
-      "dependencies": [
-        "129"
-      ],
+      "dependencies": ["129"],
       "estimated_lines": 2600,
-      "budget_categories": {
-        "product": 750,
-        "tests": 650,
-        "process": 1200
-      },
+      "budget_categories": {"product": 750, "tests": 650, "process": 1200},
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
@@ -67,10 +49,7 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl"
       ],
-      "future_output_targets": [
-        "tools/runtime_session.py",
-        "tools/test_runtime_session.py"
-      ]
+      "future_output_targets": ["tools/runtime_session.py", "tools/test_runtime_session.py"]
     },
     {
       "id": "131",
@@ -78,15 +57,9 @@
       "description": "Only after SBCL/fresh runner exists, add required sixth fail-closed live_session_conformance job; prove real endpoint confinement through unchanged isolated_trial_adapter, all runtime/layer obligations, doc truth and py/lisp path resolution.",
       "status": "pending",
       "passes": false,
-      "dependencies": [
-        "130"
-      ],
+      "dependencies": ["130"],
       "estimated_lines": 1600,
-      "budget_categories": {
-        "product": 300,
-        "tests": 500,
-        "process": 800
-      },
+      "budget_categories": {"product": 300, "tests": 500, "process": 800},
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check full-case-map",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ci-candidate-bound",
@@ -95,16 +68,7 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check py-lisp-path-resolution",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime ci --layer mechanism --require-sbcl --require-isolation"
       ],
-      "future_output_targets": [
-        ".github/workflows/compliance.yml",
-        "standard/definition_of_done.md",
-        ".github/PULL_REQUEST_TEMPLATE.md",
-        "tools/validate.sh",
-        "tools/README.md",
-        "methodology/10_live_runtime_sessions.md",
-        "methodology/11_sbcl_runtime_binding.md",
-        "tools/test_runtime_session.py"
-      ]
+      "future_output_targets": [".github/workflows/compliance.yml", "standard/definition_of_done.md", ".github/PULL_REQUEST_TEMPLATE.md", "tools/validate.sh", "tools/README.md", "methodology/10_live_runtime_sessions.md", "methodology/11_sbcl_runtime_binding.md", "tools/test_runtime_session.py"]
     },
     {
       "id": "132",
@@ -112,236 +76,25 @@
       "description": "Full live proof is prerequisite, then independent QA and evidence capture; future release number/tag/operator release and consumer upgrade remain separate.",
       "status": "pending",
       "passes": false,
-      "dependencies": [
-        "131"
-      ],
+      "dependencies": ["131"],
       "estimated_lines": 1050,
-      "budget_categories": {
-        "product": 150,
-        "tests": 150,
-        "process": 750
-      },
+      "budget_categories": {"product": 150, "tests": 150, "process": 750},
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check live-readiness",
         "bash tools/validate.sh",
         "bash tools/validate.sh --payload"
       ],
-      "future_output_targets": [
-        ".agent/evidence/132/release-readiness.md",
-        "docs/planning/phase_020.yaml"
-      ]
+      "future_output_targets": [".agent/evidence/132/release-readiness.md", "docs/planning/phase_020.yaml"]
     }
   ],
-  "future_interfaces": [
-    {
-      "path": "tools/test_runtime_session.py",
-      "owner": "126",
-      "availability": "existing-bounded-partial-core; future independently owned expansion",
-      "source_ref": {
-        "path": "tools/test_runtime_session.py",
-        "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-        "sha256": "005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534"
-      },
-      "qualification_refs": [
-        {
-          "path": ".agent/evidence/128/evidence-capture.json",
-          "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-          "sha256": "08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c"
-        },
-        {
-          "path": ".agent/evidence/128/ci-new-runner-2-receipt.json",
-          "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-          "sha256": "279a07fa127bfec56cc33dd4d6a573d878bd9dec035d6e8c66a4125edd4000d3"
-        }
-      ],
-      "qualification": "Fresh QA fourteen-leaf aggregate and hosted fourteen separate leaves; no full SBCL/fresh 17-row conformance."
-    },
-    {
-      "path": "tools/validate.sh",
-      "owner": "115",
-      "availability": "existing-reused"
-    }
-  ],
-  "case_matrix": [
-    {
-      "case": 4,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "129",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 5,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "129",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 6,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "129",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 7,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "130",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 10,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "130",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 11,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "130",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 12,
-      "runtime": "sbcl",
-      "layer": "live",
-      "owner": "130",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl",
-      "proof_kind": "future-live"
-    },
-    {
-      "case": 8,
-      "runtime": "ci",
-      "layer": "mechanism",
-      "owner": "131",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime ci --layer mechanism --require-sbcl --require-isolation",
-      "proof_kind": "future-live"
-    }
-  ],
-  "cross_phase_prerequisites": [
-    {
-      "phase": "016-runtime-controller-core",
-      "requires": [
-        "128"
-      ],
-      "evidence": [
-        ".agent/evidence/128/evidence-capture.json"
-      ],
-      "authority": "Captured 128 bounded partial stub core; actual hosted leaf and fresh aggregate qualification remain distinct. Root rechecks current inputs/integration at 020 intake.",
-      "evidence_refs": [
-        {
-          "path": ".agent/evidence/128/evidence-capture.json",
-          "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-          "sha256": "08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c"
-        }
-      ]
-    },
-    {
-      "phase": "018-workflow-assurance-controls",
-      "requires": [
-        "119",
-        "120",
-        "123"
-      ],
-      "evidence": [
-        ".agent/evidence/119/evidence-capture.json",
-        ".agent/evidence/120/evidence-capture.json",
-        ".agent/evidence/123/evidence-capture.json"
-      ],
-      "authority": "Captured119/120/123 and complete018 remain historical prerequisites; old PR104 main38817712498/c8 now allfive success. Current Source133 API5f differs from old123 API2579; local133 gates/capture complete, PR105/merge/main pending at intake snapshot. Root120 migration remains unapplied. Review current inputs under intake-current-context1; no old-proof rebinding or new normative133 dependency.",
-      "evidence_refs": [
-        {
-          "path": ".agent/evidence/119/evidence-capture.json",
-          "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-          "sha256": "b8a2d72c84f7fa6a34547a0116dfeaa35e245ea15d363a5b538d50dbfffcce62"
-        },
-        {
-          "path": ".agent/evidence/120/evidence-capture.json",
-          "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
-          "sha256": "78143b787d1d73ac144f2cd30b19fd3e323f52d5d048402e44172292cdc0af8b"
-        },
-        {
-          "path": ".agent/evidence/123/evidence-capture.json",
-          "revision": "8ba3fad4586c4230a084cbc348ab595820b222ff",
-          "sha256": "e8c61746c648b68faccec08024ee14dc3ed446fd89a1d9244e84b696d635228a"
-        }
-      ]
-    }
-  ],
-  "shared_file_lanes": [
-    {
-      "path": "tools/test_runtime_session.py",
-      "owners": [
-        "126",
-        "127",
-        "128",
-        "129",
-        "130",
-        "131",
-        "132"
-      ],
-      "order": [
-        "126",
-        "127",
-        "128",
-        "129",
-        "130",
-        "131",
-        "132"
-      ]
-    },
-    {
-      "path": "tools/runtime_session.py",
-      "owners": [
-        "126",
-        "127",
-        "128",
-        "129",
-        "130",
-        "131",
-        "132"
-      ],
-      "order": [
-        "126",
-        "127",
-        "128",
-        "129",
-        "130",
-        "131",
-        "132"
-      ]
-    }
-  ],
-  "existing_inputs": [
-    "Completed015 normative110-114; completed014 sandbox/CI/fixture ownership103-105; Open040/034; immutable installedv1.5.0."
-  ],
-  "activation_prerequisites": [
-    "Activation takes effect only after PR105 normalmerge, independent activationreview and Root H-PHASE-020 decision applying unchanged selected7350/9555 allocation and external captured prerequisites; no live case working before full capable CI acceptance.",
-    "Root separately reviews current Source and pendingPR105 delivery at intake-current-context1; planning/pre-code may overlap105CI only under separate release. Implementation waits approved H-PHASE-020/allocation, dual-approved contract, independent bundle and105normalmerge; new integration waits105main allfive. Optional133 is not a new normative feature dependency; no activation/allocation is inferred."
-  ],
+  "future_interfaces": [{"path": "tools/test_runtime_session.py", "owner": "126", "availability": "existing-bounded-partial-core; future independently owned expansion", "source_ref": {"path": "tools/test_runtime_session.py", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534"}, "qualification_refs": [{"path": ".agent/evidence/128/evidence-capture.json", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c"}, {"path": ".agent/evidence/128/ci-new-runner-2-receipt.json", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "279a07fa127bfec56cc33dd4d6a573d878bd9dec035d6e8c66a4125edd4000d3"}], "qualification": "Fresh QA fourteen-leaf aggregate and hosted fourteen separate leaves; no full SBCL/fresh 17-row conformance."}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
+  "case_matrix": [{"case": 4, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 5, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 6, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 7, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 10, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 11, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 12, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 8, "runtime": "ci", "layer": "mechanism", "owner": "131", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime ci --layer mechanism --require-sbcl --require-isolation", "proof_kind": "future-live"}],
+  "cross_phase_prerequisites": [{"phase": "016-runtime-controller-core", "requires": ["128"], "evidence": [".agent/evidence/128/evidence-capture.json"], "authority": "Captured 128 bounded partial stub core; actual hosted leaf and fresh aggregate qualification remain distinct. Root rechecks current inputs/integration at 020 intake.", "evidence_refs": [{"path": ".agent/evidence/128/evidence-capture.json", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c"}]}, {"phase": "018-workflow-assurance-controls", "requires": ["119", "120", "123"], "evidence": [".agent/evidence/119/evidence-capture.json", ".agent/evidence/120/evidence-capture.json", ".agent/evidence/123/evidence-capture.json"], "authority": "Captured119/120/123 and complete018 remain historical prerequisites; old PR104 main38817712498/c8 now allfive success. Current Source133 API5f differs from old123 API2579; local133 gates/capture complete, PR105/merge/main pending at intake snapshot. Root120 migration remains unapplied. Review current inputs under intake-current-context1; no old-proof rebinding or new normative133 dependency.", "evidence_refs": [{"path": ".agent/evidence/119/evidence-capture.json", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "b8a2d72c84f7fa6a34547a0116dfeaa35e245ea15d363a5b538d50dbfffcce62"}, {"path": ".agent/evidence/120/evidence-capture.json", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "78143b787d1d73ac144f2cd30b19fd3e323f52d5d048402e44172292cdc0af8b"}, {"path": ".agent/evidence/123/evidence-capture.json", "revision": "8ba3fad4586c4230a084cbc348ab595820b222ff", "sha256": "e8c61746c648b68faccec08024ee14dc3ed446fd89a1d9244e84b696d635228a"}]}],
+  "shared_file_lanes": [{"path": "tools/test_runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}, {"path": "tools/runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}],
+  "existing_inputs": ["Completed015 normative110-114; completed014 sandbox/CI/fixture ownership103-105; Open040/034; immutable installedv1.5.0."],
+  "activation_prerequisites": ["Activation takes effect only after PR105 normalmerge, independent activationreview and Root H-PHASE-020 decision applying unchanged selected7350/9555 allocation and external captured prerequisites; no live case working before full capable CI acceptance.", "Root separately reviews current Source and pendingPR105 delivery at intake-current-context1; planning/pre-code may overlap105CI only under separate release. Implementation waits approved H-PHASE-020/allocation, dual-approved contract, independent bundle and105normalmerge; new integration waits105main allfive. Optional133 is not a new normative feature dependency; no activation/allocation is inferred."],
   "acceptance_availability": "Existing 126\u2013128 runner has bounded fourteen-leaf qualification only; all 129\u2013132 commands/full 17-row/13-case live coverage remain future acceptance. Shape fixtures, sessions, local versions and older hosted environments cannot establish it.",
-  "preparation_refs": [
-    {
-      "path": ".agent/evidence/phase020-preflight/activation-readiness-analysis1.json",
-      "revision": "30d9ce89a31a6ab5b36687727c60839fab63c542",
-      "sha256": "7bd767c8bb8970af6ca668c699c4f59328016020caf7d9e78d0fa186f96bd104"
-    },
-    {
-      "path": ".agent/evidence/phase020-preflight/activation-readiness-analysis2.json",
-      "revision": "3b4c0348b41b8014ad8b04dfac59c09a562541c1",
-      "sha256": "532d57d1fcea1076ea2e8b884af281965c217c8fe1b85769838dd93fbbd178e1"
-    }
-  ],
+  "preparation_refs": [{"path": ".agent/evidence/phase020-preflight/activation-readiness-analysis1.json", "revision": "30d9ce89a31a6ab5b36687727c60839fab63c542", "sha256": "7bd767c8bb8970af6ca668c699c4f59328016020caf7d9e78d0fa186f96bd104"}, {"path": ".agent/evidence/phase020-preflight/activation-readiness-analysis2.json", "revision": "3b4c0348b41b8014ad8b04dfac59c09a562541c1", "sha256": "532d57d1fcea1076ea2e8b884af281965c217c8fe1b85769838dd93fbbd178e1"}],
   "preparation_accounting": "Prior 529-line analysis, 56-line delta, this two-file refresh and independent review count once on explicit future 020 intake inside existing 3750 process/7350 total. Preserve disjoint original refs/ranges; no 133 or retroactive 123 charge, free-evidence allowance, prior-feature baseline or remeasurement.",
   "optional_runtime_preparation": "EX-P1 metadata/sidecar preparation remains separate and optional; no cryptographic/executable/runtime qualification, SBCL dependency or cost transfer follows.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
