@@ -1,0 +1,89 @@
+from pathlib import Path
+import hashlib,importlib.util,json,subprocess
+root=Path('/home/cnross/.tmp/nizam-e129-acceptance-author1-20261016');p=root/'.agent/evidence/123/fresh-qa-capture1.py'
+release='082f2386ed1e2e41902b36ce4a45310770e64edb'
+state=json.loads(subprocess.check_output(['git','-C','/home/cnross/workspace02/nizam-framework','show',release+':.agent/run_state.json']))['circuit_breaker']['129-native-fixture-preflight']
+assert state['attempts']==3 and state['status']=='released-final-architectural-native-program3'
+assert (root/'tools/test_runtime_session.py').read_bytes()==subprocess.check_output(['git','show','1d1d1be9fa172c8f7ea19053a9a9fe9758e05c1a:tools/test_runtime_session.py'],cwd=root)
+code=r'''from pathlib import Path
+import ast,hashlib,importlib.util,json,os,shutil,subprocess,tempfile
+root=Path.cwd(); runner=root/'tools/test_runtime_session.py'; raw=runner.read_bytes()
+s=importlib.util.spec_from_file_location('acceptance',runner); a=importlib.util.module_from_spec(s); s.loader.exec_module(a)
+executable=str(Path(shutil.which('sbcl')).resolve()); tree=ast.parse(raw)
+reports=ast.literal_eval(next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='live_printing').body[0].value)
+outdir=root/'.agent/evidence/129/E129/author1'
+with tempfile.TemporaryDirectory(prefix='n129-native3-') as temp:
+ home=Path(temp); session=a.LiveSession(home)
+ session.record={'owner':a.OWNER,'generation':{'counter':1,'nonce':'0'*32},'lease_epoch':0}
+ sources=[]; active=[]
+ for index,(report,limits) in enumerate(reports):
+  request,*_=a.condition_fixture(session,report=report); path=home/f'report{index}.lisp';path.write_text(request['payload']['expression']);sources.append(path)
+ for kind in ('evaluate','load_source','compile_source'):
+  request,progress,cleanup,invoked,witness,names=a.condition_fixture(session,kind=kind)
+  path=home/(kind+'.lisp');path.write_text(request['payload']['expression']);sources.append(path)
+  if kind!='load_source': active.append((kind,path,progress,cleanup,invoked,witness,names))
+ program='''(in-package :cl-user)
+(defun qualify-source-read (path)
+  (let ((eof (list :end)) (forms 0) (*read-eval* nil))
+    (with-open-file (stream path)
+      (loop for form = (read stream nil eof)
+            until (eq form eof) do (incf forms)))
+    (assert (plusp forms))
+    (format t "~&FIXTURE_READ ~A~%" path)))
+(defun qualify-active (kind path expected-type expected-frame expected-restart)
+  (let ((captures 0) (unexpected nil))
+    (catch 'native-stop
+      (handler-bind
+          ((error
+             (lambda (condition)
+               (if (and (symbolp (type-of condition))
+                        (string= (symbol-name (type-of condition)) expected-type))
+                   (let ((restart (find-restart (intern expected-restart :cl-user) condition))
+                         (frames (with-output-to-string (stream)
+                                   (sb-debug:print-backtrace :count 64 :stream stream))))
+                     (if (and restart (search expected-frame frames :test #'char-equal))
+                         (progn
+                           (incf captures)
+                           (format t "~&ACTIVE_CAPTURE ~A ~A ~A ~A~%"
+                                   kind expected-type expected-frame (restart-name restart))
+                           (write-string frames))
+                         (setf unexpected :missing-active-context)))
+                   (setf unexpected (type-of condition)))
+               (throw 'native-stop t))))
+        (if (string= kind "compile_source") (compile-file path) (load path))))
+    (assert (and (plusp captures) (null unexpected)))
+    (format t "~&ACTIVE_DONE ~A~%" kind)))
+'''
+ for path in sources: program+='(qualify-source-read '+json.dumps(str(path))+')\n'
+ for kind,path,progress,cleanup,invoked,witness,names in active:
+  program+='(qualify-active '+' '.join(json.dumps(str(x)) for x in (kind,path,*names))+')\n'
+ program_path=outdir/'native-fixtures3.lisp';assert not program_path.exists();program_path.write_text(program)
+ reader='''(let ((*read-eval* nil) (eof (list :end)))
+  (with-open-file (stream PROGRAM_PATH)
+    (loop for form = (read stream nil eof) until (eq form eof)))
+  (write-line "NATIVE_PROGRAM_STRUCTURAL_READ_OK"))
+'''.replace('PROGRAM_PATH',json.dumps(str(program_path)))
+ reader_path=outdir/'native-reader3.lisp';assert not reader_path.exists();reader_path.write_text(reader)
+ env={**os.environ,'HOME':str(home),'XDG_CONFIG_HOME':str(home/'config'),'XDG_CACHE_HOME':str(home/'cache'),'XDG_DATA_HOME':str(home/'data')}
+ flags=[executable,'--noinform','--no-sysinit','--no-userinit','--non-interactive']
+ print('NATIVE3_RELEASE 082f2386ed1e2e41902b36ce4a45310770e64edb attempt3/3; runner candidate1d1d1be9; original failures retained',flush=True)
+ for path in sources: print('NATIVE3_SOURCE',str(path),hashlib.sha256(path.read_bytes()).hexdigest(),flush=True)
+ rc,out,err=a.live_process([*flags,'--load',str(reader_path)],home,env)
+ assert rc==0 and out.splitlines()==['NATIVE_PROGRAM_STRUCTURAL_READ_OK']
+ rc,out,err=a.live_process([*flags,'--load',str(program_path)],home,env)
+ expected=['FIXTURE_READ '+str(path) for path in sources]
+ observed=[line for line in out.splitlines() if line.startswith('FIXTURE_READ ')]
+ print('NATIVE3_READ_RECORDS',json.dumps({'expected':expected,'observed':observed,'actual_exit':rc}),flush=True)
+ assert rc==0 and observed==expected
+ for kind,path,progress,cleanup,invoked,witness,names in active:
+  capture='ACTIVE_CAPTURE '+' '.join((kind,*names));done='ACTIVE_DONE '+kind
+  assert capture in out.splitlines() and done in out.splitlines()
+  assert progress.read_text().splitlines()==[witness] and cleanup.read_text().splitlines()==[witness] and not invoked.exists()
+  print('NATIVE3_ACTIVE_PASS',kind,hashlib.sha256(path.read_bytes()).hexdigest(),flush=True)
+ print('NATIVE3_PASS direct native fixture semantics only; no controller/SBCL backend or accepted semantic red',flush=True)
+print('RUNNER_SHA256',hashlib.sha256(raw).hexdigest())
+'''
+compile(code,'native3','exec')
+assert hashlib.sha256(p.read_bytes()).hexdigest()=='e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0'
+s=importlib.util.spec_from_file_location('capture',p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+r=m.execute(root,root/'.agent/evidence/129/E129/author1','development-native-fixtures3',['python3','-'],60,code.encode());print(json.dumps({'actual_exit':r['actual_exit'],'stdout':r['stdout']['path'],'stderr':r['stderr']['path'],'timed_out':r['timed_out']}))
