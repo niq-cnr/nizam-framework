@@ -1,0 +1,24 @@
+import ast,hashlib,json,pathlib,subprocess,os
+r=pathlib.Path.cwd()
+def sha(b): return hashlib.sha256(b).hexdigest()
+def blob(rev,path): return subprocess.check_output(['git','show',rev+':'+path])
+rev='0697bfe5e121543b2aa8ed8c8607d0c50e99b413'
+refs={
+ 'candidate_python':(rev,'tools/runtime_session.py','e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce'),
+ 'candidate_lisp':(rev,'tools/sbcl_session_loop.lisp','2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9'),
+ 'runner':(rev,'tools/test_runtime_session.py','d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431'),
+ 'contract':('HEAD','.agent/contracts/129.json','71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6'),
+ 'architecture':('956c28bf6a36783c6b4a2fabd8d30d0f45f610ad','.agent/evidence/129/implementation4/architecture-preparation1.json','a3d9831d2e5fc65c8bb523b9b2c5fe87a7a84060bd3510643fbe0bd9e52cbdc0'),
+ 'probe':('bccaef268ef2f385a8b14acac47f5d61a0e41216','.agent/evidence/129/source3-semantic-diagnostics1/probe.py','f5b4184aa275058436abb7290dacdf396f16597777b6ee37cb3b445a549486bc'),
+ 'intent':('bccaef268ef2f385a8b14acac47f5d61a0e41216','.agent/evidence/129/source3-semantic-diagnostics1/intent.json','7ffe78852566c5540e313839548c515a59a71e86c33bbf04d6bb5a49d3761ff4'),
+ 'capture':('599d7c5aa0c0c80ce8da596c7aeae2924d7dca04','.agent/evidence/123/fresh-qa-capture1.py','e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0')}
+for name,(revision,path,expected) in refs.items():
+ raw=blob(revision,path);actual=sha(raw);assert actual==expected,(name,actual)
+ if name not in ('candidate_python','candidate_lisp','runner'): assert (r/path).read_bytes()==raw,path
+ if path.endswith('.py'):ast.parse(raw)
+ if path.endswith('.json'):json.loads(raw)
+ print(json.dumps({'binding':name,'revision':revision,'path':path,'sha256':actual},sort_keys=True))
+for label,path,lo,hi in [('runner','tools/test_runtime_session.py',1433,1587),('source','tools/runtime_session.py',1248,1334),('publication','tools/runtime_session.py',1427,1468),('attempt','tools/runtime_session.py',1137,1152)]:
+ lines=blob(rev,path).decode().splitlines();print('EXCERPT',label,path,lo,hi)
+ for n in range(lo,hi+1):print(str(n)+':'+lines[n-1])
+print(json.dumps({'review_base':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'pid':os.getpid(),'installed_files':sum(p.is_file() for p in (r/'.nizam').rglob('*')),'probe_imported_or_executed':False,'scope':'static pins, JSON, AST, exact Git excerpts only; no runtime/selector/counting; charged once original020'},sort_keys=True))
