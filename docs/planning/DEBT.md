@@ -2,10 +2,13 @@
 id: nizam-debt
 title: Technical Debt Register — nizam-framework
 description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
-version: 0.75.0
+version: 0.75.1
 status: active
 authoritative_source: nizam-framework/docs/planning/DEBT.md
 change_log:
+  - version: "0.75.1"
+    date: "2026-10-16"
+    summary: "Record immutable133 cost variance and bounded delivery exception; preserve budgets and history, and distinguish successful old main CI from pending new delivery."
   - version: "0.75.0"
     date: "2026-10-14"
     summary: "Resolve only NDEBT-054 after reviewed recovery, actual feature118 QA and Root capture."
@@ -98,6 +101,8 @@ change_log:
 # Technical Debt Register
 
 ## Open
+
+**2026-10-16 — feature 133 cost variance.** [Once-only accounting](../../.agent/evidence/133/scope-final/scope-report.json) at immutable endpoint `462f30f21a280f7dec7e7aab1f68979a900dbf78` records original **2,000/2,600**, actual **3,024**, exceeding the ceiling by **424**; the cumulative gate remains failed. Root recorded a bounded exception under standing delegated self-improvement authority for current delivery only, without a new allowance, rebaseline or future feature approval. Subsequent measurement/current-position/CI/merge administration is retained separately; no second baseline is taken. This dated observation adds no debt ID or row and leaves the two Open entries unchanged.
 
 | ID | Date | Severity | Description | Notes |
 |----|------|----------|-------------|-------|
