@@ -5,13 +5,14 @@
   "status": "proposed",
   "spec_ref": ".agent/product_spec_022.md",
   "proposal": {
-    "attempt": 3,
-    "limit": 3,
+    "attempt": 4,
+    "limit": 4,
+    "human_authorized_extension": ".agent/evidence/134/recovery-authorization.json",
     "root_release": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
     "workspace": "/home/cnross/code/workspace/worktrees/nizam-framework/PORTABLE-OCR-1016",
     "branch": "feat/portable-review-sandbox-2026-10-16",
     "role": "Orchestrator-authored proposal on Planner artifacts; Loop 1 gates independent",
-    "note": "Revision 3 after second Mode A rejection: authoritative fail-closed assertion with correct image-absent stub, digest-binding verification rewritten against durable evidence bytes (no dangling selectors), manifest purpose reworded to update-not-append."
+    "note": "Revision 4 (human-authorized recovery attempt, limit 3->4): applies exactly the three attempt-3 reviewer prescriptions — (1) verification[7] grep target corrected to .agent/evidence/134/02-forced-docker.txt (including the same entry's expected_exit path mention); (2) verification[8] teardown leg rewritten fail-closed on docker CLI error (leftovers=$(docker ps ...) && test -z \"$leftovers\"); (3) test_sandbox_boundaries.py files_modify purpose names --adapter. Nothing else changed; revisions 1-3 history preserved in .agent/evidence/134-contract-circuit/. Prior note (revision 3): Revision 3 after second Mode A rejection: authoritative fail-closed assertion with correct image-absent stub, digest-binding verification rewritten against durable evidence bytes (no dangling selectors), manifest purpose reworded to update-not-append."
   },
   "planning_refs": [
     {
@@ -68,7 +69,7 @@
       },
       {
         "path": ".github/scripts/test_sandbox_boundaries.py",
-        "purpose": "Adapter-capability probe abstraction (native unshare probe unchanged; Docker daemon+image+smoke probe); auto-selection native-first; explicit --isolation-adapter override honored before unittest passthrough; the five sandbox-dependent tests execute under the selected adapter with adapter-flavored exercises and Docker-specific live regression guards (CapEff zero, no daemon socket, fresh PID ns, ambient-file host-exists/inside-unreadable, ambient environment marker absent with only the wrapper's fixed minimal environment present); Docker omission controls (exec-permitted mutant 42, bad-interpreter 53, mounted-sibling 40, in-container loopback 41) as ephemeral scratch-data QA containers only; UNSUPPORTED reason text and required-conformance exit semantics preserved."
+        "purpose": "Adapter-capability probe abstraction (native unshare probe unchanged; Docker daemon+image+smoke probe); auto-selection native-first; explicit --adapter PATH override honored before unittest passthrough; the five sandbox-dependent tests execute under the selected adapter with adapter-flavored exercises and Docker-specific live regression guards (CapEff zero, no daemon socket, fresh PID ns, ambient-file host-exists/inside-unreadable, ambient environment marker absent with only the wrapper's fixed minimal environment present); Docker omission controls (exec-permitted mutant 42, bad-interpreter 53, mounted-sibling 40, in-container loopback 41) as ephemeral scratch-data QA containers only; UNSUPPORTED reason text and required-conformance exit semantics preserved."
       },
       {
         "path": ".github/workflows/compliance.yml",
@@ -168,14 +169,14 @@
     },
     {
       "acceptance_test": "trust-and-provenance: evaluator/selection output binds the Docker adapter by digest",
-      "command": "H=$(python3 -c \"import hashlib;print(hashlib.sha256(open('tools/docker_trial_sandbox.sh','rb').read()).hexdigest())\") && grep -q \"$H\" evidence/134/02-forced-docker.txt && echo \"adapter digest bound: $H\"",
-      "expected_exit": "0; the forced-Docker run (verification 2) prints the selected adapter path and its sha256, and that digest equals the wrapper's sha256; captured bytes live durably in evidence/134/02-forced-docker.txt",
+      "command": "H=$(python3 -c \"import hashlib;print(hashlib.sha256(open('tools/docker_trial_sandbox.sh','rb').read()).hexdigest())\") && grep -q \"$H\" .agent/evidence/134/02-forced-docker.txt && echo \"adapter digest bound: $H\"",
+      "expected_exit": "0; the forced-Docker run (verification 2) prints the selected adapter path and its sha256, and that digest equals the wrapper's sha256; captured bytes live durably in .agent/evidence/134/02-forced-docker.txt",
       "evidence": "evidence/134/08-adapter-digest.txt"
     },
     {
       "acceptance_test": "no-capability-session-socket-regressions live guards and bounded teardown: in-sandbox environment, capability, socket, PID-namespace checks and post-run container absence",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh && docker ps -aq --filter name=nizam-review-trial- | wc -l | grep -qx 0",
-      "expected_exit": "0; the adapter-flavored suite includes live in-sandbox guards (CapEff zero, no daemon socket, fresh PID namespace, ambient marker variable absent, only the wrapper's fixed minimal environment present, host-existing ambient file unreadable inside) and no nizam-review-trial- container remains after the run",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh && leftovers=$(docker ps -aq --filter name=nizam-review-trial-) && test -z \"$leftovers\"",
+      "expected_exit": "0; the adapter-flavored suite includes live in-sandbox guards (CapEff zero, no daemon socket, fresh PID namespace, ambient marker variable absent, only the wrapper's fixed minimal environment present, host-existing ambient file unreadable inside) and no nizam-review-trial- container remains after the run; the teardown leg fails closed (non-zero) if the docker CLI itself errors",
       "evidence": "evidence/134/09-guards-teardown.txt"
     },
     {
