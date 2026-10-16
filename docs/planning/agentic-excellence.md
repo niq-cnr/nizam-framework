@@ -2,10 +2,13 @@
 id: nizam-agentic-excellence-proposal
 title: "Agentic Excellence — Measured Delivery Proposal"
 description: "Repository-local strategy and reproducible comparison design for balanced correctness, recovery, time, cost, and ease of use."
-version: 0.1.0
+version: 0.1.1
 status: draft
 authoritative_source: docs/planning/agentic-excellence.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-16"
+    summary: "Record checkout of the preregistered Superpowers, BMAD stable, and Spec Kit pins and the entrypoint results. No scored smoke and no match claim."
   - version: "0.1.0"
     date: "2026-10-14"
     summary: "Record current primary-source observations, local overhead, and a proposed comparison with explicit promotion criteria."
@@ -15,8 +18,15 @@ change_log:
 
 This proposal serves the operator's balanced real-task performance priority for
 **niq-cnr/nizam-framework only**. It does not activate a phase, change a contract,
-or claim that Nizam surpasses another framework. No competitor was installed or
-executed. Independent review and contracted implementation precede execution.
+or claim that Nizam surpasses another framework. On 2026-10-16 the
+preregistered pins were checked out and their entrypoints were invoked. The
+receipt is
+`.agent/evidence/agentic-excellence/pin-execution.json`. README bytes match
+`primary-sources.json`. That checkout is not a scored smoke, pilot, or
+confirmation run, and it does not support a match or superiority sentence.
+The twenty assigned smoke runs remain unstarted because the task manifest,
+hidden oracles, common model snapshot, and budget ceiling are still unfrozen.
+Proposed thresholds remain targets, not results.
 
 ## Evidence and current comparison
 
