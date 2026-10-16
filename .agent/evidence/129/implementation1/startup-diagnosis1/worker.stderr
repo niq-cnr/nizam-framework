@@ -1,0 +1,31 @@
+Unhandled SB-C::INPUT-ERROR-IN-LOAD in thread #<SB-THREAD:THREAD "main thread" RUNNING
+                                                 {1001348003}>:
+  READ error during LOAD:
+
+    The symbol "MAP-BACKTRACE" is not external in the SB-DEBUG package.
+
+      Line: 121, Column: 37, File-Position: 6340
+
+      Stream: #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>
+
+Backtrace for: #<SB-THREAD:THREAD "main thread" RUNNING {1001348003}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK SB-EXT:*INVOKE-DEBUGGER-HOOK* #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+2: (INVOKE-DEBUGGER #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+3: (ERROR #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+4: (SB-C:COMPILER-ERROR SB-C::INPUT-ERROR-IN-LOAD :CONDITION #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "The symbol ~S is not external in the ~A package." {1001C606A3}> :STREAM #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+5: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {100136074B}> #<SB-C::SOURCE-INFO {1001360713}> SB-C::INPUT-ERROR-IN-LOAD)
+6: (SB-INT:LOAD-AS-SOURCE #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> :VERBOSE NIL :PRINT NIL :CONTEXT "loading")
+7: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> NIL)
+8: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {767699D8782B}> #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> NIL #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+9: (LOAD #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+10: ((FLET SB-IMPL::LOAD-SCRIPT :IN SB-IMPL::PROCESS-SCRIPT) #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+11: ((FLET SB-UNIX::BODY :IN SB-IMPL::PROCESS-SCRIPT))
+12: ((FLET "WITHOUT-INTERRUPTS-BODY-11" :IN SB-IMPL::PROCESS-SCRIPT))
+13: (SB-IMPL::PROCESS-SCRIPT "/tmp/nizam-source129-1/tools/sbcl_session_loop.lisp")
+14: (SB-IMPL::TOPLEVEL-INIT)
+15: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+16: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+17: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting
