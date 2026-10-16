@@ -1,0 +1,18 @@
+import json,yaml,jsonschema
+from pathlib import Path
+from datetime import datetime,timezone
+phase=yaml.safe_load(Path('docs/planning/phase_021.yaml').read_text()); assert phase['status']=='complete' and phase['steps'][0]['status']=='COMPLETED' and Path(phase['steps'][0]['evidence']).is_file()
+paths=['.agent/feature_list_021.json','.agent/run_state.json','docs/planning/manifest.json']; raw={p:Path(p).read_bytes() for p in paths}; values={p:json.loads(b) for p,b in raw.items()}; f,s,m=[values[p] for p in paths];now=datetime.now(timezone.utc).isoformat()
+assert f['features'][0]['id']=='133' and s['circuit_breaker']['133-lifecycle-close']['attempts']==3
+f['phase_status']='complete';f['features'][0].update({'status':'complete','passes':True,'evidence':phase['steps'][0]['evidence'],'delivery_status':'Local QA/capture complete; final scope/currentdocs/exact-head PR/merge/main delivery pending.'})
+s.update({'current_feature':None,'status':'complete','active_contract_id':None,'updated_at':now,'last_action':'133/021 local lifecycle complete after independent QA and Rootcapture; final accounting/currentdocs and exact-head PR/merge/main delivery pending. Oldmain38817712498 still required; future020/comparison held separately.'})
+assert '133' not in s['completed_contract_ids'];s['completed_contract_ids'].append('133')
+s['circuit_breaker']['133-lifecycle-close'].update({'status':'canonical-and-derived-closed','canonical_evidence':'.agent/evidence/133/evidence-capture.json','canonical_capture':'canonical3.execution.json','setup_observation':'Initial third-attempt capture wrapper failed before launching a child because its output directory was absent; canonical file unchanged. Directory prepared and exact released mutation child launched once, actual0. No fourth canonical mutation or reset.'})
+s['circuit_breaker']['133-implementation']['status']='locally-complete-mode-b2-and-fresh-qa-approved'
+s['history'].append({'at':now,'event':'phase021-local-complete-after-independent-qa-and-root-capture','detail':'Canonical phase021 step133 COMPLETED with external captureevidence written/dual-schema validated first, then derived feature/run_state/manifest separately. Capture2 actual0, originalcapture1 and QA1failure retained. Third lifecycle schema-driven child actual0 after two prewrite guardfailures; capturewrapper missing-outputdir failed before child launch and was repaired without another canonical mutation. Local closure is distinct from pending finalscope/currentdocs/new exact-headCI/merge/main. Historical018budget unchanged; no current123proof rebind, release/install,020activation or superiority.'})
+row=next(r for r in m['phases'] if r['id']==phase['id']);assert row['status']=='in_progress';row.update({'status':'complete','finished_at':now,'note':'Feature133 local implementation/independent ModeB/freshQA/Rootcapture complete. Selected8 commands+oneextra passed; originalfailed7 preserved. Finalscope/currentdocs/exact-head PR/merge/main delivery pending. Oldmain104 all5success required before new integration. Selected2000/2600 retained/unmeasured; no020dependency or historical018reset.'});m['updated_at']=now
+for p,family in zip(paths,['feature_list','run_state','manifest']):
+ for base in ('','.nizam/'): jsonschema.validate(values[p],json.loads(Path(base+'schema/'+family+'.schema.json').read_bytes()))
+for p in paths: assert Path(p).read_bytes()==raw[p]
+for p in paths: Path(p).write_text(json.dumps(values[p],indent=2)+'\n')
+print(json.dumps({'canonical':'complete/COMPLETED','derived':['feature133 complete/passes','run complete/null active feature','manifest021 complete'],'schemas':'root+installed valid','delivery':'pending'}))

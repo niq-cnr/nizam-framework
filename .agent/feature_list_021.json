@@ -1,7 +1,7 @@
 {
   "phase": "021-receipt-input-maintenance",
   "spec_version": "0.1.1",
-  "phase_status": "in_progress",
+  "phase_status": "complete",
   "activation_state": "active",
   "original_estimate_lines": 2000,
   "ceiling_130pct": 2600,
@@ -15,8 +15,8 @@
       "id": "133",
       "name": "Batch immutable receipt candidate input reads per invocation",
       "description": "Reduce deterministic real Git process counts inside _receipt_candidate using existing blobs while retaining all current receipt predicates and fresh materialized observations.",
-      "status": "in_progress",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": [],
       "estimated_lines": 2000,
       "budget_categories": {
@@ -48,7 +48,9 @@
         "tools/README.md",
         "CHANGELOG.md"
       ],
-      "product_boundary": "Only _receipt_candidate implementation changes; existing blobs and _entry_blob retain behavior. Use the existing frozen capture driver by reference; no new orchestration subsystem."
+      "product_boundary": "Only _receipt_candidate implementation changes; existing blobs and _entry_blob retain behavior. Use the existing frozen capture driver by reference; no new orchestration subsystem.",
+      "evidence": ".agent/evidence/133/evidence-capture.json",
+      "delivery_status": "Local QA/capture complete; final scope/currentdocs/exact-head PR/merge/main delivery pending."
     }
   ],
   "external_prerequisites": {
