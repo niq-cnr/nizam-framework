@@ -1,15 +1,15 @@
 {
   "repository": "nizam-framework",
   "current_phase": "020-sbcl-fresh-acceptance",
-  "current_feature": "130",
+  "current_feature": "131",
   "status": "in_progress",
-  "updated_at": "2026-10-16T15:24:31Z",
+  "updated_at": "2026-10-16T16:11:49Z",
   "circuit_breaker": {
     "130-contract": {
       "attempts": 2,
       "limit": 3,
       "status": "approved",
-      "scope": "Contract 130 is approved. Implementation has not started.",
+      "scope": "Contract 130 is approved. Implementation attempt 1 later passed feature-scope QA.",
       "mode_a_verdict": ".agent/validator/130-mode-a.json",
       "mode_a_r2_verdict": ".agent/validator/130-mode-a-r2.json",
       "contract_review": ".agent/qa/130-contract-review.json"
@@ -17,8 +17,12 @@
     "130-implementation": {
       "attempts": 1,
       "limit": 3,
-      "status": "in-progress",
-      "scope": "Implement only the approved contract 130 files. No sixth 129 source attempt and no budget increase."
+      "status": "feature-scope-complete-not-full-live",
+      "scope": "Implement only the approved contract 130 files. No sixth 129 source attempt and no budget increase.",
+      "implementation_revision": "ef3eb5aa25ddd8dad92e3f8048843cf5b33fa56b",
+      "qa_revision": "11205747e51fbcf11ad4e38b9919a6fb5802ca73",
+      "mode_b": ".agent/validator/130-mode-b.json",
+      "qa": ".agent/qa/130.json"
     },
     "000-contract": {
       "attempts": 1,
@@ -10136,6 +10140,13 @@
       "contract_id": "130",
       "attempt": 1,
       "detail": "Implementation attempt 1 of 3 starts from approved contract 130 at 92484282. Scope is tools/runtime_session.py and tools/test_runtime_session.py only, plus implementation evidence under .agent/evidence/130/. Feature 129 behaviors stay intact. Allocation is not raised. Full-live qualification remains 131/132."
+    },
+    {
+      "at": "2026-10-16T16:11:49Z",
+      "event": "130-feature-scope-complete",
+      "contract_id": "130",
+      "attempt": 1,
+      "detail": "Mode B .agent/validator/130-mode-b.json and QA .agent/qa/130.json both have final_verdict.approved true and empty issues, missing_acceptance_coverage, and unsupported_claims. Implementation is ef3eb5aa. QA receipts are 11205747. Classifier PRODUCT_LINES=901, PROCESS_OVERHEAD_LINES=1143, BUDGET_COUNTED_LINES=2044. Product 901 exceeds feature product estimate 750 and remaining phase product headroom 632. Cumulative 3888 stays under 7350 and 9555. Allocation is not raised. Feature 130 is feature-scope complete. Full-live qualification remains 131/132. current_feature advances to 131. Feature 131 has not started."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10310,7 +10321,7 @@
   "scope_budget": {
     "original_estimate_lines": 7350,
     "ceiling_130pct": 9555,
-    "total_lines_changed": 1844,
+    "total_lines_changed": 3888,
     "per_feature": [
       {
         "id": "129",
@@ -10324,12 +10335,25 @@
         "measurement_range": "d19f090e48399ff2c508d1935789567e53f07183..ea30d229fc667c32eee0f451394694d6652620ee",
         "classifier_sha256": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973",
         "complete": true
+      },
+      {
+        "id": "130",
+        "estimated": 2600,
+        "actual": 2044,
+        "flag": "CATEGORY VARIANCE (non-halting): classifier PRODUCT_LINES 901 exceed the feature product estimate 750 by 151 and the remaining phase product headroom 632 by 269. Phase product consumed is 2119 against category 1850. Feature budget-counted 2044 is under the feature estimate 2600. Cumulative 3888 is under phase original 7350 and ceiling 9555. One prior 020 feature is not a three-feature rolling baseline, and 2044 is below 3x of 1844. Allocation 650/2100/7350/9555 is not raised. The approved contract required this overrun to be recorded at measurement.",
+        "note": "Range e2c13af6..11205747. Frozen classifier sha256 3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973. PRODUCT_LINES=901 from tools/runtime_session.py and tools/test_runtime_session.py. PROCESS_OVERHEAD_LINES=1143. EVIDENCE_LINES=791 are not gated. This is not the whole-phase historical assembler. The carried 529-line analysis and 56-line delta stay unassembled. Feature 130 feature-scope is complete. Full-live qualification remains 131/132.",
+        "product_lines": 901,
+        "process_overhead_lines": 1143,
+        "evidence_lines": 791,
+        "measurement_range": "e2c13af6039dbd2d4f565e9e910e6d3a96938225..11205747e51fbcf11ad4e38b9919a6fb5802ca73",
+        "classifier_sha256": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973",
+        "complete": true
       }
     ],
     "phase_base_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
     "authorization_revision": "047dcf5955895a5935c42dda4603f060e4c13d87",
     "counting_rule": "Count all product/tests/process and disjoint carried 020/129 preparation once. Preserve all original failed/revised preparation events, 529-line analysis and56-line delta. Reconcile explicit historical refs/path ranges at final measurement with frozen classification; no133/legacy018 transfer or free work.",
-    "measurement_status": "Adoption diff d19f090e..ea30d229 measured at 1844 budget-counted lines. Carried 020/129 preparation, including the 529-line analysis and 56-line delta, remains unassembled inside the same allocation. Allocation not raised. Feature 129 feature-scope is complete. Full-live qualification remains 131/132.",
+    "measurement_status": "Feature 129 adoption diff remains 1844. Feature 130 range e2c13af6..11205747 is 2044 budget-counted lines. Sum 3888. Carried 020/129 preparation, including the 529-line analysis and 56-line delta, remains unassembled inside the same allocation. Allocation not raised. Features 129 and 130 are feature-scope complete. Full-live qualification remains 131/132.",
     "preparation_accounting_ref": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
     "activation_ref": ".agent/evidence/phase020-preflight/activation-decision.json",
     "budget_categories": {
@@ -10519,7 +10543,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "130",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -10591,7 +10615,7 @@
       }
     ]
   },
-  "last_action": "Started feature 130 implementation attempt 1 of 3 against approved contract 130.",
+  "last_action": "Marked feature 130 feature-scope complete from QA .agent/qa/130.json. Full-live remains 131/132. Feature 131 has not started.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -10620,7 +10644,8 @@
     "122",
     "123",
     "133",
-    "129"
+    "129",
+    "130"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
