@@ -338,6 +338,7 @@
     <li><a href="#problem-solution">Problem &rarr; Solution</a></li>
     <li><a href="#quickstart">Quickstart</a></li>
     <li><a href="#adoption-paths">Adoption Paths</a></li>
+    <li><a href="#start-paths">Start paths</a></li>
     <li><a href="#execution-loop">Execution Loop</a></li>
     <li><a href="#anatomy">Anatomy</a></li>
     <li><a href="#modules">Modules</a></li>
@@ -453,6 +454,59 @@
       the complete contract-first Generator/Validator/Evaluator cycle described in
       <code>methodology/01_execution.md</code>, end to end.</li>
     </ul>
+  </section>
+
+  <section id="start-paths" aria-labelledby="start-paths-heading">
+    <h2 id="start-paths-heading">Start paths</h2>
+    <p>Three ways to begin work, using the same Planner, Generator, Validator, and
+    Evaluator roles as the execution loop below. The feature path is that full
+    loop. The bug-fix path and the small-change path are shorter routes over those
+    roles, not a second process. The paths below name their artifacts and the
+    point at which implementation may begin. Opening <code>methodology/</code> is
+    not required to choose one.</p>
+    <p>The feature path covers Spec Kit's specify-before-build sequence and
+    Superpowers' design-then-plan entry. The bug-fix path covers Spec Kit's
+    assessed cause, scoped fix, and recorded verification. The small-change path
+    covers BMAD Method's right-sized process and Superpowers' quick task. These
+    sentences name documented properties. They do not rank this framework against
+    those projects. A comparison sentence belongs only beside a recorded run of
+    the preregistered study in <code>docs/planning/agentic-excellence.md</code>.
+    That study has not been executed.</p>
+
+    <h3>New feature</h3>
+    <p>Specify what to build and agree the design before planning the implementation.</p>
+    <ul>
+      <li><code>.agent/product_spec.md</code> and <code>.agent/feature_list.json</code> — the specification.</li>
+      <li><code>.agent/contracts/NNN.json</code> — scope, non-goals, and verification commands, starting at <code>status: "proposed"</code>.</li>
+      <li>An independent pre-code verdict under <code>.agent/validator/</code> and a contract-review verdict under <code>.agent/qa/</code>.</li>
+      <li>After implementation, an independent post-implementation check under <code>.agent/validator/</code> and a recorded verification result under <code>.agent/qa/</code>, with command output under <code>.agent/evidence/</code>.</li>
+    </ul>
+    <p>Implementation may begin only after the contract is approved. The feature is
+    not done until that independent post-implementation check and that recorded
+    verification result both exist. The loop below is this path. Each verdict
+    counts only when <code>approved</code> is true and <code>issues</code>,
+    <code>missing_acceptance_coverage</code>, and <code>unsupported_claims</code>
+    are empty.</p>
+
+    <h3>Bug fix</h3>
+    <p>Record an assessed cause, a scoped fix, and a recorded verification result.</p>
+    <ul>
+      <li><code>.agent/evidence/&lt;id&gt;-cause.json</code> — the assessed cause.</li>
+      <li><code>.agent/evidence/&lt;id&gt;-scope.json</code> — the scoped fix: the files in scope and the non-goals.</li>
+      <li><code>.agent/qa/&lt;id&gt;.json</code> — the recorded verification result, with command output under <code>.agent/evidence/</code>.</li>
+    </ul>
+    <p>Implementation may begin once the assessed cause and the scoped fix are both
+    recorded. The bug fix is not done until the recorded verification result
+    exists. A repair that stays inside an already approved contract does not open
+    a new feature specification or repeat the feature path's pre-code contract gates.</p>
+
+    <h3>Small unambiguous change</h3>
+    <p>Record the intent, make the change, and record a verification result.</p>
+    <ul>
+      <li><code>.agent/evidence/&lt;id&gt;-intent.json</code> — the intent.</li>
+      <li><code>.agent/qa/&lt;id&gt;.json</code> — the recorded verification result, with command output under <code>.agent/evidence/</code>.</li>
+    </ul>
+    <p>Implementation may begin once the intent is recorded. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.</p>
   </section>
 
   <section id="execution-loop" aria-labelledby="execution-loop-heading">
