@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.12
+version: 0.65.13
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.13"
+    date: "2026-10-16"
+    summary: "Publish current020 handover, verbatim dogfooding authority and rejected Source3; preserve held recovery/accounting checkpoints and historical snapshots."
   - version: "0.65.12"
     date: "2026-10-16"
     summary: "Record immutable133 cost variance and bounded delivery exception; preserve budgets and history, and distinguish successful old main CI from pending new delivery."
@@ -243,7 +246,26 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — locally complete 021 / delivery pending, 2026-10-16
+## Current handover — phase020 / feature129 recovery, 2026-10-16
+
+Read the [current handover packet](HANDOVER-2026-10-16.md) for the verbatim
+**dogfooding/self-improvement authorization**, exact resume instructions and refs.
+Phase020 is active; 129 is in progress and 130–132 remain pending. Source3's eleven
+Generator commands and sealed idle-close regression passed, but independent ModeB
+rejected its stale-validation race and history-size cancellation/close failure.
+Source4 architecture and the bounded B2 diagnostic are committed preparations,
+not reviewed or executed; B1 has static evidence with explicit reproduction limits.
+Root has not adopted Source3. Installed v1.5.0/239-file governance remains immutable.
+
+PR105 normally merged as `bfd15d10eb718d2cf18272b35c1bb5857af71f3f`; its matching
+main run38851734070 passed all five jobs. Phase020 cost is unmeasured against
+unchanged7350/9555. Held accounting closure and recovery gates are listed in the
+packet. No freshQA, full-live readiness, new release or comparative superiority
+follows. Earlier sections are historical snapshots; current coordination is in
+[run_state](../../.agent/run_state.json).
+
+
+## Historical snapshot — position — locally complete 021 / delivery pending, 2026-10-16
 
 Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
 Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).
