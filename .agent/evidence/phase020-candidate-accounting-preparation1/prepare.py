@@ -3,14 +3,15 @@ import gzip,hashlib,json,re,subprocess
 from pathlib import Path
 BASE='7278cd902ec0209766e9e06f1f72587ff2a1a45c'
 FLOOR='a63cf0c513ad645a9771a69af00dca5d0a45474d'
-HEADS=[BASE,'73961d78b9b3eba221e1bd0951befc1a8aa08dfd','0697bfe5e121543b2aa8ed8c8607d0c50e99b413','a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24','205b5152dfc18cbab2c42ea25cd39ce92a295038']
+HEADS=[BASE,'73961d78b9b3eba221e1bd0951befc1a8aa08dfd','0697bfe5e121543b2aa8ed8c8607d0c50e99b413','a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24','205b5152dfc18cbab2c42ea25cd39ce92a295038','d8415499577f9f23ff93a9475ffa409b1028379e','93f8d98df5315f595f72529af866b003b2a81f30']
 AREA=Path('.agent/evidence/phase020-candidate-accounting-preparation1')
 def sha(b):return hashlib.sha256(b).hexdigest()
 def git(*args):return subprocess.check_output(['git',*args])
 def packed(path,value):
  raw=json.dumps(value,sort_keys=True,separators=(',',':')).encode();path.write_bytes(gzip.compress(raw,mtime=0));return {'path':str(path),'sha256':sha(path.read_bytes()),'decoded_sha256':sha(raw)}
 def main():
- assert git('rev-parse','HEAD').decode().strip()==BASE
+ assert subprocess.run(['git','merge-base','--is-ancestor',BASE,'HEAD']).returncode==0
+ assert all(p.startswith(str(AREA)+'/') for p in git('diff','--name-only',BASE,'HEAD').decode().splitlines())
  previous=json.loads(Path('.agent/evidence/phase020-accounting-preparation2/ledger.json').read_bytes())
  overrides={(e['commit'],e['path']):e for e in previous['events']}
  test_events=set(git('rev-list','--no-merges','d66ff730248dec4f086365be55eb4ad060a350c5..abc822f1cca7d246c82557e9181f051fb40f6cfc','--','tools/test_runtime_session.py').decode().split())|{'a3dffed6e895ae6a3e039f36d5d2f95e6bbcfe24'}
@@ -18,12 +19,19 @@ def main():
  commits=git('rev-list','--reverse','--topo-order','--parents',*HEADS,'^'+FLOOR).decode().splitlines()
  foreign_merge_report=Path('.agent/evidence/133/delivery-supplement1/measurement1/supplement-report.json')
  prior_merges={m['commit']:(i,m) for i,m in enumerate(json.loads(foreign_merge_report.read_bytes())['merges'])}
+ prior_capture_revision='3e6fb8ea922f750d843a947566f12eddedea789e'
+ prior_capture_raw=git('show',prior_capture_revision+':'+str(AREA/'merges.json.gz'))
+ prior_captured={m['commit']:(i,m) for i,m in enumerate(json.loads(gzip.decompress(prior_capture_raw)))}
  events=[];ancestry=[];merges=[];shared=[];objects=set();pending=[]
  version=git('--version').decode().strip()
  for line in commits:
   rev,*parents=line.split();tree=git('rev-parse',rev+'^{tree}').decode().strip();ancestry.append({'commit':rev,'parents':parents,'tree':tree})
   if len(parents)!=1:
-   if rev in prior_merges:
+   if rev in prior_captured:
+    i,p=prior_captured[rev];assert p['parents']==parents and p['tree']==tree
+    merges.append(dict(p,reuse_existing_capture={'revision':prior_capture_revision,'path':str(AREA/'merges.json.gz'),'sha256':sha(prior_capture_raw),'decoded_pointer':'/'+str(i)}))
+    if p['disposition'].startswith('PENDING'):pending.append({'kind':'merge','commit':rev,'reason':p['disposition']})
+   elif rev in prior_merges:
     i,p=prior_merges[rev];assert p['parents']==parents and p['tree']==tree and p['actual_exit']==0 and p['stdout']['bytes']==p['stderr']['bytes']==0
     assert p['parent_trees']==[git('rev-parse',v+'^{tree}').decode().strip() for v in parents]
     merges.append({'commit':rev,'parents':parents,'tree':tree,'disposition':'verified-automatic-by-reference','canonical':{'revision':BASE,'path':str(foreign_merge_report),'sha256':sha(foreign_merge_report.read_bytes()),'pointer':'/merges/'+str(i)},'original_actual_child_pid':p['child_pid'],'original_actual_exit':p['actual_exit'],'original_argv':p['argv']})
