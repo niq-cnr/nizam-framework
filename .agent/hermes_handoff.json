@@ -1,12 +1,25 @@
 {
-  "status": "complete",
+  "status": "blocked",
   "tests_passed": true,
   "proof_of_work": {
-    "default_mode": "bash tools/validate.sh\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] PASS bootstrap-sanity\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY: 8 passed, 0 failed",
-    "payload_mode_edge_case": "Simulated consumer repo with repo-root tools/README.md at version 9.0.0 and a .nizam/ payload whose tools/README.md is version 1.0.0. Ran bash ../tools/validate.sh --payload from inside .nizam/. C8 correctly skipped .nizam/tools/README.md because git show HEAD:.nizam/tools/README.md found no tracked file, avoiding the false downgrade failure against the repo-root tools/README.md. Output:\nMODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY (payload mode): 7 passed, 0 failed",
-    "target_mode": "bash tools/validate.sh --target standard/NDS.md\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep",
-    "code_change": "tools/validate.sh: check_c8_version_changelog() now computes git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo \"\") and calls git show \"HEAD:${git_prefix}${f}\" so payload-mode paths resolve relative to the repo root."
+    "governance": "validate.sh 16/16 and .nizam payload 12/12 green at blocked terminal state (.agent/evidence/134-contract-circuit/lane-exit-captures.txt)",
+    "circuit": ".agent/evidence/134-contract-circuit/{summary,attempt1-mode-a-verdict,attempt1-contract-testability-verdict,attempt2-mode-a-verdict,attempt3-mode-a-verdict,lane-exit-captures}.txt",
+    "prior_complete_record_preserved": {
+      "default_mode": "bash tools/validate.sh\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] PASS bootstrap-sanity\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY: 8 passed, 0 failed",
+      "payload_mode_edge_case": "Simulated consumer repo with repo-root tools/README.md at version 9.0.0 and a .nizam/ payload whose tools/README.md is version 1.0.0. Ran bash ../tools/validate.sh --payload from inside .nizam/. C8 correctly skipped .nizam/tools/README.md because git show HEAD:.nizam/tools/README.md found no tracked file, avoiding the false downgrade failure against the repo-root tools/README.md. Output:\nMODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY (payload mode): 7 passed, 0 failed",
+      "target_mode": "bash tools/validate.sh --target standard/NDS.md\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep",
+      "code_change": "tools/validate.sh: check_c8_version_changelog() now computes git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo \"\") and calls git show \"HEAD:${git_prefix}${f}\" so payload-mode paths resolve relative to the repo root."
+    },
+    "source_files_changed": "none (contract never approved; implementation never began)"
   },
-  "blockers": [],
-  "new_dependencies_discovered": []
+  "blockers": [
+    "Feature 134 step 134-contract circuit breaker TRIPPED: three concluded independent Mode A rejections (attempts 1-3), contract-testability review also rejected attempt 1. Attempt 4 forbidden by .nizam/methodology/03_circuit_breaker.md Sec 4; step BLOCKED in docs/planning/phase_022.yaml (canonical) and run_state.json (derived); NDEBT-055 open. Human review required per Sec 6 to reset or redirect."
+  ],
+  "new_dependencies_discovered": [
+    "Pinned public image digests for rolling tags are garbage-collected upstream (audit-time python:3-alpine digest unresolvable 2026-10-16); any resumed Docker-adapter work needs an explicit re-pin policy (recorded in NDEBT-055 notes).",
+    "Landlock rules opened through the OverlayFS merged view cover only upper-layer inodes: interpreter binaries in a container image base layer need explicit per-file EXECUTE rules (empirically verified in pre-contract probes; design implication for any equivalent adapter)."
+  ],
+  "prior_handoff_status": "complete",
+  "prior_tests_passed": true,
+  "prior_blockers": []
 }

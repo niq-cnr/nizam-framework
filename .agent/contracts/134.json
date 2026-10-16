@@ -1,0 +1,234 @@
+{
+  "contract_id": "134",
+  "feature_id": "134",
+  "name": "Portable Docker trial-sandbox adapter and adapter-specific conformance selection",
+  "status": "proposed",
+  "spec_ref": ".agent/product_spec_022.md",
+  "proposal": {
+    "attempt": 3,
+    "limit": 3,
+    "root_release": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+    "workspace": "/home/cnross/code/workspace/worktrees/nizam-framework/PORTABLE-OCR-1016",
+    "branch": "feat/portable-review-sandbox-2026-10-16",
+    "role": "Orchestrator-authored proposal on Planner artifacts; Loop 1 gates independent",
+    "note": "Revision 3 after second Mode A rejection: authoritative fail-closed assertion with correct image-absent stub, digest-binding verification rewritten against durable evidence bytes (no dangling selectors), manifest purpose reworded to update-not-append."
+  },
+  "planning_refs": [
+    {
+      "path": ".agent/product_spec_022.md",
+      "revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+      "sha256": "83d175ef94f3ed272437b9c2fcbf1fd730be0f05a0e7dd0c9201e13c55776c67"
+    },
+    {
+      "path": ".agent/feature_list_022.json",
+      "revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+      "sha256": "a71e0eefeb37274d41a7e9483043ff9e36252b56f4b8b3d29923dec43004a7fd"
+    }
+  ],
+  "feasibility": {
+    "note": "Pre-contract empirical probes on the restrictive QA host (apparmor_restrict_unprivileged_userns=1, Docker 29.9, kernel 6.8) verified: Landlock ABI 4 reachable inside a digest-pinned python:3-alpine container under --network none --cap-drop ALL --security-opt no-new-privileges --read-only; bind-mounted exec works; /usr tree Landlock rules cover only upper-layer inodes, so explicit interpreter file rules (env, sh, musl loader) are required and were verified sufficient; env-shebang trusted runner executes end-to-end; chmod+exec of a trial-root file is denied EACCES for the Landlock reason; docker.sock absent; CapEff zero; fresh PID namespace.",
+    "pinned_image": "docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213",
+    "pinned_image_note": "python:3-alpine (Python 3.15.0, Alpine) as pulled 2026-10-16; digest-pinned constant; prior audit-time digest for this rolling tag was already garbage-collected upstream, recorded in DEBT as the re-pin policy risk."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/docker_trial_sandbox.sh",
+        "purpose": "Trusted Docker-controller equivalent adapter implementing ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS...; digest-pinned image constant; --network none --cap-drop ALL --security-opt no-new-privileges --read-only --user uid:gid --stop-timeout; same-path bind mounts (trial root rw, runner ro, inner adapter ro); fixed minimal container env; bounded teardown (--rm, named force-remove trap, outer timeout); --probe and --print-image modes; fail-closed distinct exits for unreachable daemon / absent pinned image / invalid arguments."
+      },
+      {
+        "path": ".agent/evidence/134/*",
+        "purpose": "Role-owned evidence: feasibility probes, capability selection output, all verification command captures with actual exits, CI results, scope accounting."
+      },
+      {
+        "path": ".agent/validator/134-mode-a.json",
+        "purpose": "Independent Mode A pre-code verdict (never Generator-authored)."
+      },
+      {
+        "path": ".agent/qa/134-contract-review.json",
+        "purpose": "Independent contract-testability review verdict."
+      },
+      {
+        "path": ".agent/validator/134-mode-b.json",
+        "purpose": "Independent Mode B post-code verdict."
+      },
+      {
+        "path": ".agent/qa/134.json",
+        "purpose": "Fresh independent QA verdict executing verification commands."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/isolated_trial_adapter.py",
+        "purpose": "Additive only: optional repeatable --interpreter PATH argument granting READ|EXECUTE file rules before restriction. No behavior change when absent (native path identical)."
+      },
+      {
+        "path": "tools/test_convergent_review.py",
+        "purpose": "Adapter-capability probe abstraction (native unshare probe unchanged; Docker daemon+image+smoke probe); auto-selection native-first; explicit --isolation-adapter override honored before unittest passthrough; the five sandbox-dependent tests execute under the selected adapter with adapter-flavored exercises and Docker-specific live regression guards (CapEff zero, no daemon socket, fresh PID ns, ambient-file host-exists/inside-unreadable); Docker omission controls (exec-permitted mutant 42, bad-interpreter 53, mounted-sibling 40, in-container loopback 41); UNSUPPORTED reason text and required-conformance exit semantics preserved."
+      },
+      {
+        "path": ".github/scripts/test_sandbox_boundaries.py",
+        "purpose": "Adapter-capability probe abstraction (native unshare probe unchanged; Docker daemon+image+smoke probe); auto-selection native-first; explicit --isolation-adapter override honored before unittest passthrough; the five sandbox-dependent tests execute under the selected adapter with adapter-flavored exercises and Docker-specific live regression guards (CapEff zero, no daemon socket, fresh PID ns, ambient-file host-exists/inside-unreadable, ambient environment marker absent with only the wrapper's fixed minimal environment present); Docker omission controls (exec-permitted mutant 42, bad-interpreter 53, mounted-sibling 40, in-container loopback 41) as ephemeral scratch-data QA containers only; UNSUPPORTED reason text and required-conformance exit semantics preserved."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "convergent_review job only: add pinned-image pull step and Docker-adapter boundary/conformance steps. Do not touch validate/e2e_bootstrap/fixtures_self_test/self_governance jobs, the sysctl-enablement step, SBCL steps, capability-receipt steps, or any WA123 capture/verify step."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Register the Docker adapter, pinned-image requirement and fail-closed behavior, adapter-specific conformance selection, and honest-unsupported semantics."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "tools key_documents gains tools/docker_trial_sandbox.sh (authored product index only; installed .nizam payload untouched)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased entry for feature 134."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Record the pinned-image digest garbage-collection/re-pin policy debt and the preserved live-model gap."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Update the existing planner-authored phase 022 entry (status/note/timestamps) once gates and QA pass; current_phase is already set by the planner; no append; no historical edits."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Orchestrator-owned: current phase/feature, 134 circuit counters, preserving all historical fields."
+      },
+      {
+        "path": "docs/planning/phase_022.yaml",
+        "purpose": "Complete/extend the existing planner-authored phase record (step status/evidence paths) once gates and QA pass; no historical edits."
+      }
+    ]
+  },
+  "non_goals": [
+    "No evaluator (evaluate_convergent_review_prompt.py) changes; its --isolation-adapter flag already exists and its no-follow/exclusive/revalidation/convergence/replay/publication semantics stay byte-identical.",
+    "No schema, packet, ledger, replay, suppression, or template changes; no consumer-facing surface change.",
+    "No host security-control changes (sysctl/seccomp/AppArmor/userns) locally or in CI; the existing CI sysctl step is neither used as authority nor altered. The production adapter surface creates only restrict-only containers (--network none, cap-drop all, no-new-privileges, read-only rootfs, no host/PID/shared mounts, no daemon socket mounted, no ambient environment/config/home forwarding). Omission-control containers exist only inside the test suite as short-lived ephemeral QA containers over scratch data with no daemon socket, no host mounts and no sysctl/seccomp/apparmor change \u2014 they are labelled mutant controls proving each boundary layer load-bearing, not production surface.",
+    "No untrusted-input-selectable image/mount/flags; no auto-pull inside the adapter (explicit reviewed pull step only); no ad hoc local wrapper outside the repo.",
+    "No live model observation runner, no runtime-session broker, no no-network relaxation, no reminting of fixture observations as canonical trials; the shared qualification gap (trusted released installation + selected-runtime controls + original model/packet/replay evidence) is explicitly not claimed by this feature.",
+    "No removal, renaming, or weakening of the five native obligations; unsupported stays nonzero; no manufactured green; no edits to installed .nizam payload; no merge, tag, or release; no historical evidence rewriting."
+  ],
+  "signatures": [
+    "docker_trial_sandbox.sh --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS... -> runner exit code via container wait; setup failures exit 2 (arguments), 3 (daemon/pinned image), 4 (inner setup)",
+    "docker_trial_sandbox.sh --probe -> 0 when daemon reachable and pinned image present locally, non-zero otherwise, printing a one-line reason",
+    "docker_trial_sandbox.sh --print-image -> prints the pinned digest reference",
+    "isolated_trial_adapter.py [--interpreter PATH]... --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS... (no --interpreter: byte-identical current behavior)",
+    "tools/test_convergent_review.py [--isolation-adapter PATH] [unittest args] (selection recorded on stderr as one line naming the selected adapter path and its sha256; UNSUPPORTED semantics unchanged)"
+  ],
+  "dependencies": [
+    "Docker daemon reachable by the invoking user on hosts selecting the Docker adapter",
+    "Digest-pinned image docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213 available locally (explicit pull step in CI; fail-closed elsewhere)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py (auto-selection; restrictive QA host must print CONFORMANCE: FULL via Docker adapter, exit 0)",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "expected_exit": "0 with CONFORMANCE: FULL and an explicit selected-adapter line (docker) on the restrictive QA host; 0 with native selection on userns-capable hosts",
+      "evidence": "evidence/134/01-auto-selection.txt"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh (forced Docker; same FULL/exit 0)",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh",
+      "expected_exit": "0 with CONFORMANCE: FULL; zero UNSUPPORTED lines; all five sandbox-dependent tests executed under the Docker adapter",
+      "evidence": "evidence/134/02-forced-docker.txt"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh (adapter-flavored live boundary suite, exit 0)",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh",
+      "expected_exit": "0; live listener proven reachable outside and refused inside; EACCES-only generated-exec denial; omission controls 40/41/42/53 observed",
+      "evidence": "evidence/134/03-boundary-suite.txt"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/linux_trial_sandbox.sh (forced native on restrictive host: exactly the five UNSUPPORTED lines, CONFORMANCE: NOT FULL, exit 1 \u2014 unsupported obligation preserved; on a native-capable host this same command must exit 0 with CONFORMANCE: FULL)",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/linux_trial_sandbox.sh",
+      "expected_exit": "1 on the restrictive QA host with exactly five UNSUPPORTED lines and CONFORMANCE: NOT FULL (documented expected outcome, not a failure); 0 with CONFORMANCE: FULL on native-capable hosts",
+      "evidence": "evidence/134/04-forced-native-honest.txt"
+    },
+    {
+      "acceptance_test": "bash tools/docker_trial_sandbox.sh --probe && bash tools/docker_trial_sandbox.sh --print-image (capability probe and pinned-image introspection)",
+      "command": "bash tools/docker_trial_sandbox.sh --probe && bash tools/docker_trial_sandbox.sh --print-image",
+      "expected_exit": "0; --print-image prints the pinned digest reference exactly",
+      "evidence": "evidence/134/05-probe.txt"
+    },
+    {
+      "acceptance_test": "trust-and-provenance failure path: untrusted runtime-option rejection (flag-shaped/unrecognized argument exits 2)",
+      "command": "bash tools/docker_trial_sandbox.sh --root /nonexistent-root-134 --runner /nonexistent-runner-134 --privileged -- /usr/bin/true; test $? -eq 2",
+      "expected_exit": "0 overall (inner wrapper call exits 2 with one-line reason; no docker invocation occurs)",
+      "evidence": "evidence/134/06-reject-untrusted-flag.txt"
+    },
+    {
+      "acceptance_test": "trust-and-provenance failure path: daemon-unreachable and image-absent fail closed with the distinct setup exit and one-line reason (host-safe simulation: scratch PATH docker stub; no host change, no image pull/removal)",
+      "command": "S=$(mktemp -d); printf '#!/bin/sh\\nexit 1\\n' > \"$S/docker\"; chmod +x \"$S/docker\"; PATH=\"$S:$PATH\" bash tools/docker_trial_sandbox.sh --probe; A=$?; printf '#!/bin/sh\\n[ \\\"$1\\\" = image ] && exit 1\\nexit 0\\n' > \"$S/docker\"; PATH=\"$S:$PATH\" bash tools/docker_trial_sandbox.sh --probe; B=$?; rm -rf \"$S\"; test \"$A\" -eq 3 -a \"$B\" -eq 3",
+      "expected_exit": "0 overall; each simulated probe failure (daemon-unreachable; image-absent) exits 3 with a one-line reason captured in evidence; the trailing test is the final authoritative command",
+      "evidence": "evidence/134/07-failclosed.txt"
+    },
+    {
+      "acceptance_test": "trust-and-provenance: evaluator/selection output binds the Docker adapter by digest",
+      "command": "H=$(python3 -c \"import hashlib;print(hashlib.sha256(open('tools/docker_trial_sandbox.sh','rb').read()).hexdigest())\") && grep -q \"$H\" evidence/134/02-forced-docker.txt && echo \"adapter digest bound: $H\"",
+      "expected_exit": "0; the forced-Docker run (verification 2) prints the selected adapter path and its sha256, and that digest equals the wrapper's sha256; captured bytes live durably in evidence/134/02-forced-docker.txt",
+      "evidence": "evidence/134/08-adapter-digest.txt"
+    },
+    {
+      "acceptance_test": "no-capability-session-socket-regressions live guards and bounded teardown: in-sandbox environment, capability, socket, PID-namespace checks and post-run container absence",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh && docker ps -aq --filter name=nizam-review-trial- | wc -l | grep -qx 0",
+      "expected_exit": "0; the adapter-flavored suite includes live in-sandbox guards (CapEff zero, no daemon socket, fresh PID namespace, ambient marker variable absent, only the wrapper's fixed minimal environment present, host-existing ambient file unreadable inside) and no nizam-review-trial- container remains after the run",
+      "evidence": "evidence/134/09-guards-teardown.txt"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+      "expected_exit": "0",
+      "evidence": "evidence/134/10-c13.txt"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh",
+      "command": "bash tools/fixtures_self_test.sh",
+      "expected_exit": "0",
+      "evidence": "evidence/134/11-fixtures.txt"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "expected_exit": "0",
+      "evidence": "evidence/134/12-workflow-assurance.txt"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh",
+      "command": "bash tools/validate.sh",
+      "expected_exit": "0; C11 validates this contract against schema/contract.schema.json",
+      "evidence": "evidence/134/13-validate.txt"
+    },
+    {
+      "acceptance_test": "bash .nizam/tools/validate.sh --payload",
+      "command": "bash .nizam/tools/validate.sh --payload",
+      "expected_exit": "0",
+      "evidence": "evidence/134/14-payload.txt"
+    }
+  ],
+  "estimated_lines": 1100,
+  "evidence_dir": ".agent/evidence/134",
+  "evidence_convention": "One text file per verification command under .agent/evidence/134/, command line + captured output + actual exit status; raw terminal output never inlined into JSON/YAML state files; evidence-capture.json index written before completion; text-only artifacts (no binaries) with control bytes sanitized at source.",
+  "testability": {
+    "mode_a_checks": [
+      "Contract names every create/modify file with purpose",
+      "Non-goals exclude evaluator/schema/host-control/gate changes",
+      "Each acceptance test maps to exactly one verification command",
+      "Estimated lines and evidence convention declared",
+      "Fail-closed exits and pinned provenance specified"
+    ],
+    "contract_review_checks": [
+      "Every acceptance requirement in .agent/feature_list_022.json acceptance_tests has a verification command here",
+      "No unsupported claim: live boundary, omission controls, five obligations, unsupported-honesty, trust/provenance, existing-bank, delivery each covered",
+      "Host-restriction compliance: no prohibited primitive appears in scope",
+      "Selection semantics: native precedence, forced override fail-closed, unsupported preserved"
+    ]
+  },
+  "qa": {
+    "mode": "independent fresh execution of every verification command on the restrictive QA host, plus one additional adversarial check of the reviewer's choosing",
+    "verdict_path": ".agent/qa/134.json"
+  }
+}

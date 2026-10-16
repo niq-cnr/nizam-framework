@@ -1,0 +1,76 @@
+{
+  "phase": "022-portable-review-sandbox-adapter",
+  "spec_version": "0.1.0",
+  "phase_status": "in_progress",
+  "activation_state": "active",
+  "original_estimate_lines": 1100,
+  "ceiling_130pct": 1430,
+  "budget_categories": {
+    "product": 200,
+    "process": 300,
+    "tests": 600
+  },
+  "features": [
+    {
+      "id": "134",
+      "name": "Portable Docker trial-sandbox adapter with adapter-specific conformance selection",
+      "description": "Add one canonical trusted Docker-backed equivalent adapter implementing ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS... (digest-pinned image, network none, cap-drop all, no-new-privileges, read-only rootfs, same-path bind mounts, inner Landlock via the existing isolated_trial_adapter.py extended with an optional interpreter allowlist), and make sandbox conformance capability selection adapter-specific in the test suite so the five sandbox-dependent obligations exercise for real through the selected adapter while unsupported-stays-nonzero is preserved.",
+      "status": "in_progress",
+      "passes": false,
+      "dependencies": [],
+      "estimated_lines": 1100,
+      "budget_categories": {
+        "product": 200,
+        "process": 300,
+        "tests": 600
+      },
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py (auto-selection; restrictive QA host must print CONFORMANCE: FULL via Docker adapter, exit 0)",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh (forced Docker; same FULL/exit 0)",
+        "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh (adapter-flavored live boundary suite, exit 0)",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/linux_trial_sandbox.sh (forced native on restrictive host: exactly the five UNSUPPORTED lines, CONFORMANCE: NOT FULL, exit 1 — unsupported obligation preserved; on a native-capable host this same command must exit 0 with CONFORMANCE: FULL)",
+        "bash tools/docker_trial_sandbox.sh --probe && bash tools/docker_trial_sandbox.sh --print-image (capability probe and pinned-image introspection)",
+        "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+        "bash tools/fixtures_self_test.sh",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+        "bash tools/validate.sh",
+        "bash .nizam/tools/validate.sh --payload"
+      ],
+      "acceptance_requirements": {
+        "live-boundary-not-static": "Allowed work really runs: the hermetic fake runner completes three evaluator trials through the Docker adapter (receipt verified). Forbidden work fails for the boundary reason: exec of a chmod-executable file inside the trial root fails EACCES (not ENOENT); a host-existing sibling/ambient file is unreadable inside; a listener proven reachable outside is refused inside. Each layer proven load-bearing by omission controls (exec-permitted mutant exits 42; bad interpreter exits 53; mounted-sibling control reads 40; in-container loopback control connects 41). Static flag checks alone do not satisfy this.",
+        "no-capability-session-socket-regressions": "Live guards inside the sandboxed trial: effective capabilities zero, no Docker daemon socket path, fresh PID namespace (small pid / container pid 1), and no ambient environment forwarding. The observer receives no runtime-session or control endpoint.",
+        "five-obligations-exercised": "All five previously UNSUPPORTED evaluator/adapter properties execute under the Docker adapter on the restrictive QA host: three isolated validated trials; per-trial packet copies; cross-trial file and network denial; generated-execution denial; runner substitution rejection.",
+        "unsupported-honesty": "Forced-native run on the restrictive host still reports exactly the five UNSUPPORTED outcomes, CONFORMANCE: NOT FULL, and exits non-zero; no renamed steps, no metadata resets, no manufactured green. On native-capable hosts the native path remains the default and unchanged.",
+        "trust-and-provenance": "Wrapper accepts no image/mount/flag input from untrusted sources; image reference is a digest-pinned constant; daemon-unreachable or image-absent fails closed with distinct exits; evaluator receipt still digests the adapter.",
+        "existing-bank": "All existing component tests, fixture self-test, workflow assurance, validator checks, and the payload validation remain green with no removed assertions.",
+        "delivery": "Docs/index/CHANGELOG/DEBT/manifest updated; independent Mode A and contract-testability review approved with empty issue arrays before implementation; Mode B, fresh adversarial QA and evidence capture after; bounded draft PR; no merge or release."
+      },
+      "future_output_targets": [
+        "tools/docker_trial_sandbox.sh",
+        "tools/isolated_trial_adapter.py",
+        "tools/test_convergent_review.py",
+        ".github/scripts/test_sandbox_boundaries.py",
+        ".github/workflows/compliance.yml",
+        "tools/README.md",
+        "NIZAM.json",
+        "CHANGELOG.md",
+        "docs/planning/DEBT.md",
+        "docs/planning/manifest.json"
+      ],
+      "product_boundary": "One new trusted wrapper adapter, an additive optional interpreter-rule flag on the existing inner adapter, adapter-specific capability selection and boundary exercises in the shipped test suite, envelope/CI/docs/index registration. No evaluator/schema/packet/replay/publication changes; no orchestration layer; no host-control changes.",
+      "evidence": ".agent/evidence/134/evidence-capture.json",
+      "delivery_status": "In progress."
+    }
+  ],
+  "external_prerequisites": [
+    "Reachable Docker daemon with the digest-pinned public image reference available locally (pulled by an explicit reviewed step; the adapter fails closed when absent)",
+    "The five required Docker-adapter conformance controls must run without any host security relaxation"
+  ],
+  "measurement_basis": "Live command evidence on the restrictive QA host (apparmor_restrict_unprivileged_userns=1) proving the boundary, the omission controls, and the five obligations; plus the unchanged existing bank green.",
+  "baseline": {
+    "candidate_revision": "bfd15d10eb718d2cf18272b35c1bb5857af71f3f",
+    "notes": "Baseline validate.sh 16/16 PASS captured pre-change."
+  },
+  "accounting": "Estimate 1100 lines over product 200 / process 300 / tests 600; ceiling 1430. Historical counters preserved; no rebaseline.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
