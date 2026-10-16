@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "022-portable-review-sandbox-adapter",
   "current_feature": "134",
-  "status": "blocked",
-  "updated_at": "2026-10-16T14:02:00+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-16T19:15:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2510,7 +2510,14 @@
     },
     "134-contract": {
       "attempts": 3,
-      "limit": 3
+      "limit": 4,
+      "status": "contract-approved-at-authorized-recovery-attempt-4",
+      "human_authorized_extension": ".agent/evidence/134/recovery-authorization.json",
+      "gate_evidence": {
+        "mode_a": ".agent/validator/134-recovery1-mode-a.json",
+        "contract_review": ".agent/qa/134-recovery1-contract-review.json"
+      },
+      "note": "Operator authorized recovery 2026-10-16 (verbatim recorded in the authorization file); revision 4 applied exactly the three attempt-3 prescriptions; both independent Loop 1 gates approved with empty arrays; contract status approved. The 3 concluded rejection attempts are preserved (no reset) in .agent/evidence/134-contract-circuit/. The Section 4.1 attempt-workspace isolation deviation stands recorded, not relabeled."
     },
     "134-implementation": {
       "attempts": 0,
@@ -8217,6 +8224,11 @@
       "at": "2026-10-16T00:43:03.892529+00:00",
       "event": "133-post-accounting-docs-approved-exact-head-pr-delivery-released",
       "detail": "Strict603e7c38 SHA5036e48e approves06070factual six-filecloseout/DEBTnote; normalmerged, planner/reviewactual0raw imported. Originalbudget/old018/history/default48vsfixturetwo/newfour preserved; postmeasurementadmin explicit, no scope rerun. Release ordinaryreadyPRaftercurrentmetadata/payload/selfadoptionpreflight; freeze this Sourcehead, require6newPRchecks/clearfeedback/normalmerge andmatching5mainjobs. Alloldmain5successadmitted; no newfeature/release/install or comparativeclaim."
+    },
+    {
+      "at": "2026-10-16T19:15:00Z",
+      "event": "134-contract-recovery-approved",
+      "detail": "Operator authorized recovery of BLOCKED step 134-contract (verbatim: 'reocover PR #108 — feature 134. approved, proceed with the logical next steps.'), recorded in .agent/evidence/134/recovery-authorization.json with disclosed narrow interpretation: exactly one contract revision (attempt 4) applying the three attempt-3 reviewer prescriptions, limit 3->4, no reset of the 3 concluded rejections, no fifth attempt implied. Revision 4 landed at 8a3f2c06 and passed both independent Loop 1 gates with empty verdict arrays: Mode A .agent/validator/134-recovery1-mode-a.json (scope guard clean; all three prescriptions verified; teardown leg simulated fail-closed on CLI error) and evaluator contract review .agent/qa/134-recovery1-contract-review.json (14/14 verification executability; coverage 1:1; teardown branches verified). Contract 134 status proposed->approved with approvals.revisions=4. NDEBT-055 moved to Resolved (DEBT.md 0.75.3); phase_022.yaml step 134 BLOCKED->CONTRACT_APPROVED, phase in_progress; manifest phase 022 unblocked. Trip record, Section 4.1 workspace-isolation deviation, and all prior verdicts preserved unchanged. Implementation NOT started (134-implementation 0/3); Loop 2 is next per the approved contract."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -8696,7 +8708,7 @@
       }
     ]
   },
-  "last_action": "133/021 local implementation/QA/capture/currentdocs/accounting complete; failed3024/2600 retained under bounded deliveryexception, DEBTnote reviewed. Previousmain all5 admitted. ReadyPR exact-head integration1 released.",
+  "last_action": "134-contract recovered and approved: operator-authorized attempt 4 of 4 (.agent/evidence/134/recovery-authorization.json) applied exactly the three attempt-3 prescriptions; Mode A (.agent/validator/134-recovery1-mode-a.json) and contract review (.agent/qa/134-recovery1-contract-review.json) both approved with empty arrays; contract 134 status approved; NDEBT-055 moved to Resolved; phase 022 unblocked to in_progress (step CONTRACT_APPROVED). Implementation has NOT started: 134-implementation 0/3. Next: Loop 2 implementation per approved contract, then Mode B, fresh QA, evidence capture.",
   "completed_contract_ids": [
     "099",
     "103",

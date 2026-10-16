@@ -1,0 +1,19 @@
+{
+  "gate": "contract-review",
+  "contract_id": "134",
+  "revision": 4,
+  "reviewed_revision": "8a3f2c06d064bc4453f8da7aeba7147232ac6375",
+  "reviewer": "independent-evaluator-recovery1",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "teardown_fail_closed_analysis": {
+    "cli_error": "non-zero",
+    "zero_leftovers": "zero",
+    "leftovers_present": "non-zero"
+  },
+  "summary": "Revision 4 (HEAD 8a3f2c06) applies exactly the three operator-authorized recovery prescriptions and nothing else: git diff e1b499dc..HEAD touches only .agent/contracts/134.json and .agent/evidence/134/recovery-authorization.json; the contract diff is precisely verification[7] grep target corrected to .agent/evidence/134/02-forced-docker.txt (command and expected_exit), verification[8] teardown leg rewritten to 'leftovers=$(docker ps -aq --filter name=nizam-review-trial-) && test -z \"$leftovers\"', and the test_sandbox_boundaries.py files_modify purpose naming --adapter PATH, plus the attempt/limit 3->4 metadata the authorization itself records. Teardown leg simulated on all three branches: docker CLI error -> command substitution exit 1 short-circuits the && (non-zero, fail-closed, empirically confirmed with a daemon-down stub); zero leftovers -> test -z '' exits 0; leftover IDs present -> test -z non-empty exits non-zero. Schema validation against schema/contract.schema.json passes and tools/validate.sh dogfood is 16/16 green. All 14 verification commands run from repo root with deterministic expected exits and evidence destinations resolving under declared evidence_dir .agent/evidence/134 (per-entry 'evidence/134/NN.txt' values are the contract's uniform shorthand suffix of the declared dir, unchanged since revision 1 and consistent with evidence_convention). All 10 feature_list_022.json acceptance_tests map 1:1 onto verification commands, and the spec's seven acceptance_requirements (live-boundary, regressions guards, five obligations, unsupported-honesty, trust-and-provenance, existing-bank, delivery) are each covered; feasibility probes remain labeled pre-contract observations, not canonical claims. NDEBT-040 respected: no fixed-anchor byte guards (verification[7] computes the adapter digest live from the file). No attempt-1/2 findings regressed; tools/test_convergent_review.py --isolation-adapter interface not re-litigated."
+}

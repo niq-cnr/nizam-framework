@@ -4,16 +4,20 @@ description: Feature 134 local implementation, independent gates, fresh QA and R
   capture for one canonical trusted Docker-backed equivalent sandbox adapter plus
   adapter-specific conformance selection. Host security controls remain unchanged;
   unsupported-stays-nonzero is preserved; the live-model observation gap is not claimed.
-status: blocked
+status: in_progress
 steps:
 - id: '134'
   description: Portable Docker trial-sandbox adapter with adapter-specific conformance selection
-  status: BLOCKED
+  status: CONTRACT_APPROVED
   evidence: .agent/evidence/134/evidence-capture.json
   docs_updated: tools/README.md, NIZAM.json, CHANGELOG.md, docs/planning/DEBT.md
-  blocked_reason: Circuit breaker tripped on step 134-contract after three concluded
-    independent Mode A rejections (.agent/evidence/134-contract-circuit/summary.txt);
-    attempt 4 forbidden; awaiting human review per methodology/03_circuit_breaker.md Sec 6.
+  blocked_reason: RESOLVED 2026-10-16 — operator authorized a recovery epoch
+    (.agent/evidence/134/recovery-authorization.json); revision 4 applied exactly
+    the three attempt-3 prescriptions and was approved by both independent Loop 1
+    gates (.agent/validator/134-recovery1-mode-a.json, .agent/qa/134-recovery1-contract-review.json,
+    all verdict arrays empty). Contract 134 status approved; implementation not started;
+    134-implementation circuit 0/3. Trip record preserved at
+    .agent/evidence/134-contract-circuit/.
   changelog_entry: Add the Docker-backed equivalent trial-sandbox adapter and adapter-specific
     conformance selection; five sandbox obligations exercisable on userns-restricted hosts
     with a reachable Docker daemon; native path and unsupported semantics unchanged.
