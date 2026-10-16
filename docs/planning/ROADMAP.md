@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.13
+version: 0.65.14
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.14"
+    date: "2026-10-16"
+    summary: "Refresh stopped recovery handover with verified B2 and monitor failures, provisional alternatives and unexecuted accounting assembly."
   - version: "0.65.13"
     date: "2026-10-16"
     summary: "Publish current020 handover, verbatim dogfooding authority and rejected Source3; preserve held recovery/accounting checkpoints and historical snapshots."
@@ -253,9 +256,15 @@ Read the [current handover packet](HANDOVER-2026-10-16.md) for the verbatim
 Phase020 is active; 129 is in progress and 130–132 remain pending. Source3's eleven
 Generator commands and sealed idle-close regression passed, but independent ModeB
 rejected its stale-validation race and history-size cancellation/close failure.
-Source4 architecture and the bounded B2 diagnostic are committed preparations,
-not reviewed or executed; B1 has static evidence with explicit reproduction limits.
-Root has not adopted Source3. Installed v1.5.0/239-file governance remains immutable.
+B2 was reproduced after151 completed history operations: public submit and idle
+close returned70; native controls, cleanup and preservation passed. Source4 then
+failed native qualification: shared mmap writes escaped directory/inode watches
+and timestamps. Its unexecuted draft is quarantined, attempts4/4 are preserved,
+and no further product release exists. Replacement architecture and accounting
+assembly are stopped, unreviewed/unexecuted preparations as detailed in the packet.
+B1 remains static evidence. Root has not adopted Source3 or the Source4 draft.
+Installed v1.5.0/239-file governance remains immutable. The current task is handover;
+the comparative bar is preserved as future direction, with no superiority claim.
 
 PR105 normally merged as `bfd15d10eb718d2cf18272b35c1bb5857af71f3f`; its matching
 main run38851734070 passed all five jobs. Phase020 cost is unmeasured against
