@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T05:43:18.915624+00:00",
+  "updated_at": "2026-10-16T05:47:26.968617+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3190,6 +3190,18 @@
       "scope": "Exactly one frozen amended sbcl-admission command against unchanged fe59/noLisp; capture dedicated red1/product64 and all required positives/fullpreservation. No Source/product repair, test changes or finalQA verdict. Original baseline1 immutable; never rebind old evidence to amended runner.",
       "bundle": ".agent/evidence/129/frozen-bundle2.json",
       "bundle_identity_sha256": "342a1e113346bdbc071dc28008bef0c843b72c5d9464ec5db7dad0b14670fcb2"
+    },
+    "129-baseline2-root-admission": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "released-static-admission2-with-observed-child_pid-field",
+      "failure1": {
+        "actual_exit": 1,
+        "pid": 3807677,
+        "frame": ".agent/evidence/129/baseline-root-admission2/admission.execution.json",
+        "cause": "Root assumed old driver pid field; actual current frozen capture execute() frame uses child_pid. KeyError before runtime evidence admission. Baseline actual command is unchanged and not rerun."
+      },
+      "strategy": "Observed actual driver execution frame, correct only the driver PID field lookup to child_pid and rerun static evidence verification. Preserve original failed helper/frame/streams. No baseline/runtime/test rerun, evidence rewriting or acceptance change."
     }
   },
   "history": [
