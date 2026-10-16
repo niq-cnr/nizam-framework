@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T06:34:59.814457+00:00",
+  "updated_at": "2026-10-16T06:39:24.977099+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3443,7 +3443,7 @@
     "129-source2-architectural-regression-red": {
       "attempts": 2,
       "limit": 3,
-      "status": "unexpected-S1-positive-admitted-unexecuted-S2-only-released",
+      "status": "actual-S2-semanticred-Root-admitted-S1-positive-remains",
       "owner": "independent Evaluator, never Source/testauthor/bundlereviewer",
       "source2_parent": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
       "bundle": ".agent/evidence/129/frozen-bundle3.json",
@@ -3463,7 +3463,12 @@
       ],
       "candidate_revision": "fde4115b4468b7b9da412b1078294345a4f4a442",
       "evidence_revision": "d8415499577f9f23ff93a9475ffa409b1028379e",
-      "root_admission": ".agent/evidence/129/source2-regression-root-admission1/admission.execution.json"
+      "root_admission": ".agent/evidence/129/source2-regression-root-admission1/admission.execution.json",
+      "S2_evidence_revision": "00cddc71fffca59fbc4c70a6a5e4cc47e81bf660",
+      "S2_report": ".agent/evidence/129/source2-partial-frame-red1/report.json",
+      "S2_root_admission": ".agent/evidence/129/source2-partial-frame-root-admission1/admission.execution.json",
+      "S2_actual_exit": 1,
+      "S2_pid": 4027177
     }
   },
   "history": [
@@ -9882,7 +9887,7 @@
       }
     ]
   },
-  "last_action": "Unexpected Source2 terminationpositive admitted honestly; S1notreproduced. Only unexecuted partial-frame selector released, parallel readonly S1path assessment; Source3remainsheld.",
+  "last_action": "Actual S2 deadline semanticred admitted; S1 covered termination pathpassed, independent idle-close witness assessment pending Rootadmission. Frozenbundle3/Source2product unchanged, noSource3release.",
   "completed_contract_ids": [
     "099",
     "103",
