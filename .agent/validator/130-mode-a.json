@@ -1,0 +1,142 @@
+{
+  "review": "Independent Validator Mode A for proposed contract 130. Static comparison only. No implementation and no git diff.",
+  "feature": "130",
+  "contract_id": "130",
+  "feature_id": "130",
+  "mode": "A",
+  "status": "REJECTED",
+  "risk_level": "high",
+  "revision_reviewed": 0,
+  "contract_path": ".agent/contracts/130.json",
+  "contract_sha256": "6a2be47b5d0891d4bbbf84b2121cc3083e8d9766c126407ed9ecbb9c4ae5daf3",
+  "schema_validation": {
+    "contract_schema": "schema/contract.schema.json",
+    "contract_schema_errors": 0,
+    "verdict_schema": null,
+    "verdict_schema_note": "No Mode A validator verdict schema exists. schema/contract_review.schema.json applies to .agent/qa/NNN-contract-review.json, and schema/qa_verdict.schema.json applies to post-code .agent/qa/NNN.json. Neither was used as this file's schema."
+  },
+  "approvals_left_unchanged": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 0
+  },
+  "observations": [
+    "All twelve feature 130 acceptance commands are present exactly once as verification command strings and match .agent/feature_list_020.json feature 130 acceptance_tests. missing_acceptance_coverage is empty because no required command is missing or altered.",
+    "The seven feature 129 acceptance commands in preservation.frozen_feature_129_acceptance_commands match feature 129 exactly and are not rewritten as feature 130 acceptance tests.",
+    "The contract denies that feature 130 checks already pass, limits product implementation to tools/runtime_session.py and tools/test_runtime_session.py, and its non-goals keep full-live and the seventeen-row/thirteen-case matrix on 131/132, forbid attempt 6, installed .nizam/ edits, an origin/main retarget, public schema or public API expansion, a budget increase, Source4 currentness-through-publication, and merging quarantine 5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c.",
+    "Section 9 obligations required by this review are present: git archive of committed source, fresh sbcl --no-sysinit --no-userinit --non-interactive, private HOME/XDG, empty private ASDF output cache, explicit configs containing :ignore-inherited-configuration, toolchain/lock/core provenance, and failure for unsaved definitions, inherited fasl or shared cache, and deleted definitions. The Lisp forms are called illustrative, not a launcher. A fresh process is not a fresh build. Empty environment variables are not sufficient.",
+    "Budget figures 750, 650, 1200, and 2600, phase 7350, and ceiling 9555 match the feature list and the spec table. The contract records 1218 counted product lines, remaining headroom 632, and an excess of 118, and it says that variance does not raise 7350 or 9555 and is not a free allowance, transfer, or rebaseline.",
+    "contract-basis1.json records feature 130 status pending. feature_list_020.json feature 130 is now in_progress and passes false. The proposed contract does not repeat the pending claim.",
+    "verification also names bash tools/validate.sh and bash tools/validate.sh --payload once each, labeled as additional compliance rather than feature 130 acceptance tests. They do not duplicate or replace the twelve commands.",
+    "scope.files_create lists .agent/evidence/130/* for future receipts and says this proposal creates none. implementation_files_only remains the two Python files.",
+    "Section 9 also says to load the new products, execute the recorded tests, and verify actual dependency resolution and emitted or loaded artifact paths. Those sentences are not separate contract clauses. They are not additional rejection items because this review's enumerated section 9 set is present and the contract must not satisfy them by inventing a case narrative."
+  ],
+  "issues": [
+    {
+      "issue": "The contract assigns NIP-0003 scenarios to cases 7, 10, 11, and 12 that the allowed sources do not define.",
+      "severity": "blocker",
+      "location": ".agent/contracts/130.json implementation_obligations.cases and verification[8] through verification[11]",
+      "source_evidence": "feature_list_020.json case_matrix line 91 records only case, runtime, layer, owner 130, command, and proof_kind future-live. product_spec_020.md lines 40-45 and methodology/11_sbcl_runtime_binding.md lines 174-188 state the hermetic obligations and failure modes without case numbers. contract-basis1.json lines 69-110 lists those obligations and says feature 130 owns cases 7, 10, 11, and 12, but it does not define a per-case scenario.",
+      "why_this_fails": "Case ownership and the twelve command strings are sourced. The narratives are not. Case 10 adds a handoff replay with fixtures and commands sufficient to reproduce a result, which section 9, the feature 130 description, the architecture paragraph, and the planner basis do not state. Cases 7, 11, and 12 attach sourced failure modes to particular case numbers and add unsourced wording (unsaved REPL; a change that works only because of that definition; stale fasl as case 11; deleted definition as case 12). The executor would implement a case map the allowed sources do not establish.",
+      "required_fix": "Keep each of the twelve feature 130 acceptance commands exactly once. Keep the section 9 failure modes on implementation_obligations.must_fail and on the named checks, without claiming a case number for each mode. Delete the NIP-0003 scenario sentences from implementation_obligations.cases and from the four case verification requirements, including handoff, fixtures, REPL, and any statement that a specific case number is the unsaved-definition, fasl, or deleted-definition case. Do not replace that text with another case-to-scenario map unless one of the allowed sources states it."
+    },
+    {
+      "issue": "proposal_basis.circuit_breaker_130_contract_attempts asserts the value 1, which none of the allowed sources record.",
+      "severity": "minor",
+      "location": ".agent/contracts/130.json proposal_basis.circuit_breaker_130_contract_attempts",
+      "source_evidence": "contract-basis1.json has no contract-attempt counter. feature_list_020.json feature 130, product_spec_020.md, methodology/11_sbcl_runtime_binding.md section 9, and schema/contract.schema.json do not record it. approvals.revisions being 0 does not establish attempt 1.",
+      "why_this_fails": "The attempt count is an asserted external fact with no evidence in the comparison set.",
+      "required_fix": "Remove circuit_breaker_130_contract_attempts from the proposed contract, or leave the attempt count to orchestrator state. Do not assert a number the allowed sources do not contain."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [
+    {
+      "claim": "NIP-0003 case 7 is a change that works only because of an unsaved REPL definition and is rejected by fresh-process acceptance.",
+      "location": "implementation_obligations.cases.7 and verification[8].requirement",
+      "why": "Section 9 lines 177-178 require that an unsaved definition must not make acceptance pass, and the feature 130 description says reject session-only drift. Neither source, the architecture paragraph, the case matrix, nor contract-basis1.json says this is case 7, uses REPL, or says a change that works only because of an unsaved REPL definition."
+    },
+    {
+      "claim": "NIP-0003 case 10 is a handoff replayed in a fresh environment whose committed source, fixtures, and commands are sufficient to reproduce the result.",
+      "location": "implementation_obligations.cases.10 and verification[9].requirement",
+      "why": "The allowed sources do not mention a handoff replay, fixtures, or commands sufficient to reproduce a result for case 10. Section 9 says compile committed source and dependencies afresh, load the new products, and execute the recorded tests. That sentence is not this claim. The sourced parts are only that feature 130 owns case 10 and that case 10 is not the seventeen-row or thirteen-case matrix."
+    },
+    {
+      "claim": "NIP-0003 case 11 is a stale fasl in a shared cache, including one compiled against an unsaved macro, and that behavior is what case 11 means.",
+      "location": "implementation_obligations.cases.11 and verification[10].requirement",
+      "why": "Section 9 lines 177-178 and 186-188 require failure for a fasl compiled against an unsaved macro and for inherited fasls or shared build caches. The feature description says stale-cache drift. No allowed source binds that failure mode to case 11."
+    },
+    {
+      "claim": "NIP-0003 case 12 is a definition deleted from source that remains live only in the development image.",
+      "location": "implementation_obligations.cases.12 and verification[11].requirement",
+      "why": "Section 9 lines 177-178 and product_spec_020.md line 44 require a deleted definition surviving in the development image to fail. No allowed source binds that failure mode to case 12."
+    },
+    {
+      "claim": "The feature 130 contract circuit-breaker attempt count is 1.",
+      "location": "proposal_basis.circuit_breaker_130_contract_attempts",
+      "why": "None of the five comparison files records this counter."
+    }
+  ],
+  "required_fixes": [
+    "Keep each of the twelve feature 130 acceptance commands exactly once. Keep the section 9 failure modes on implementation_obligations.must_fail and on the named checks, without claiming a case number for each mode. Delete the NIP-0003 scenario sentences from implementation_obligations.cases and from the four case verification requirements, including handoff, fixtures, REPL, and any statement that a specific case number is the unsaved-definition, fasl, or deleted-definition case. Do not replace that text with another case-to-scenario map unless one of the allowed sources states it.",
+    "Remove circuit_breaker_130_contract_attempts from the proposed contract, or leave the attempt count to orchestrator state. Do not assert a number the allowed sources do not contain."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "mode": "A",
+    "contract_id": "130",
+    "feature_id": "130",
+    "risk_level": "high",
+    "summary": "Reject proposed contract 130. Acceptance commands, feature 129 preservation, enumerated section 9 obligations, budget variance, and unflipped approvals are in place, but the contract asserts unsourced NIP-0003 case scenarios and a contract-attempt count.",
+    "issues": [
+      {
+        "issue": "The contract assigns NIP-0003 scenarios to cases 7, 10, 11, and 12 that the allowed sources do not define.",
+        "severity": "blocker",
+        "location": ".agent/contracts/130.json implementation_obligations.cases and verification[8] through verification[11]",
+        "source_evidence": "feature_list_020.json case_matrix line 91 records only case, runtime, layer, owner 130, command, and proof_kind future-live. product_spec_020.md lines 40-45 and methodology/11_sbcl_runtime_binding.md lines 174-188 state the hermetic obligations and failure modes without case numbers. contract-basis1.json lines 69-110 lists those obligations and says feature 130 owns cases 7, 10, 11, and 12, but it does not define a per-case scenario.",
+        "why_this_fails": "Case ownership and the twelve command strings are sourced. The narratives are not. Case 10 adds a handoff replay with fixtures and commands sufficient to reproduce a result, which section 9, the feature 130 description, the architecture paragraph, and the planner basis do not state. Cases 7, 11, and 12 attach sourced failure modes to particular case numbers and add unsourced wording (unsaved REPL; a change that works only because of that definition; stale fasl as case 11; deleted definition as case 12). The executor would implement a case map the allowed sources do not establish.",
+        "required_fix": "Keep each of the twelve feature 130 acceptance commands exactly once. Keep the section 9 failure modes on implementation_obligations.must_fail and on the named checks, without claiming a case number for each mode. Delete the NIP-0003 scenario sentences from implementation_obligations.cases and from the four case verification requirements, including handoff, fixtures, REPL, and any statement that a specific case number is the unsaved-definition, fasl, or deleted-definition case. Do not replace that text with another case-to-scenario map unless one of the allowed sources states it."
+      },
+      {
+        "issue": "proposal_basis.circuit_breaker_130_contract_attempts asserts the value 1, which none of the allowed sources record.",
+        "severity": "minor",
+        "location": ".agent/contracts/130.json proposal_basis.circuit_breaker_130_contract_attempts",
+        "source_evidence": "contract-basis1.json has no contract-attempt counter. feature_list_020.json feature 130, product_spec_020.md, methodology/11_sbcl_runtime_binding.md section 9, and schema/contract.schema.json do not record it. approvals.revisions being 0 does not establish attempt 1.",
+        "why_this_fails": "The attempt count is an asserted external fact with no evidence in the comparison set.",
+        "required_fix": "Remove circuit_breaker_130_contract_attempts from the proposed contract, or leave the attempt count to orchestrator state. Do not assert a number the allowed sources do not contain."
+      }
+    ],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [
+      {
+        "claim": "NIP-0003 case 7 is a change that works only because of an unsaved REPL definition and is rejected by fresh-process acceptance.",
+        "location": "implementation_obligations.cases.7 and verification[8].requirement",
+        "why": "Section 9 lines 177-178 require that an unsaved definition must not make acceptance pass, and the feature 130 description says reject session-only drift. Neither source, the architecture paragraph, the case matrix, nor contract-basis1.json says this is case 7, uses REPL, or says a change that works only because of an unsaved REPL definition."
+      },
+      {
+        "claim": "NIP-0003 case 10 is a handoff replayed in a fresh environment whose committed source, fixtures, and commands are sufficient to reproduce the result.",
+        "location": "implementation_obligations.cases.10 and verification[9].requirement",
+        "why": "The allowed sources do not mention a handoff replay, fixtures, or commands sufficient to reproduce a result for case 10. Section 9 says compile committed source and dependencies afresh, load the new products, and execute the recorded tests. That sentence is not this claim. The sourced parts are only that feature 130 owns case 10 and that case 10 is not the seventeen-row or thirteen-case matrix."
+      },
+      {
+        "claim": "NIP-0003 case 11 is a stale fasl in a shared cache, including one compiled against an unsaved macro, and that behavior is what case 11 means.",
+        "location": "implementation_obligations.cases.11 and verification[10].requirement",
+        "why": "Section 9 lines 177-178 and 186-188 require failure for a fasl compiled against an unsaved macro and for inherited fasls or shared build caches. The feature description says stale-cache drift. No allowed source binds that failure mode to case 11."
+      },
+      {
+        "claim": "NIP-0003 case 12 is a definition deleted from source that remains live only in the development image.",
+        "location": "implementation_obligations.cases.12 and verification[11].requirement",
+        "why": "Section 9 lines 177-178 and product_spec_020.md line 44 require a deleted definition surviving in the development image to fail. No allowed source binds that failure mode to case 12."
+      },
+      {
+        "claim": "The feature 130 contract circuit-breaker attempt count is 1.",
+        "location": "proposal_basis.circuit_breaker_130_contract_attempts",
+        "why": "None of the five comparison files records this counter."
+      }
+    ],
+    "required_fixes": [
+      "Keep each of the twelve feature 130 acceptance commands exactly once. Keep the section 9 failure modes on implementation_obligations.must_fail and on the named checks, without claiming a case number for each mode. Delete the NIP-0003 scenario sentences from implementation_obligations.cases and from the four case verification requirements, including handoff, fixtures, REPL, and any statement that a specific case number is the unsaved-definition, fasl, or deleted-definition case. Do not replace that text with another case-to-scenario map unless one of the allowed sources states it.",
+      "Remove circuit_breaker_130_contract_attempts from the proposed contract, or leave the attempt count to orchestrator state. Do not assert a number the allowed sources do not contain."
+    ]
+  }
+}

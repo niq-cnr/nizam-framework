@@ -3,8 +3,17 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-16T14:57:34Z",
+  "updated_at": "2026-10-16T15:24:01Z",
   "circuit_breaker": {
+    "130-contract": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "approved",
+      "scope": "Contract 130 is approved. Implementation has not started.",
+      "mode_a_verdict": ".agent/validator/130-mode-a.json",
+      "mode_a_r2_verdict": ".agent/validator/130-mode-a-r2.json",
+      "contract_review": ".agent/qa/130-contract-review.json"
+    },
     "000-contract": {
       "attempts": 1,
       "limit": 3
@@ -10092,6 +10101,28 @@
       "at": "2026-10-16T14:57:34Z",
       "event": "129-feature-scope-complete",
       "detail": "Canonical QA .agent/qa/129.json republishes the eleven recorded contract exits of 0 and the recorded 129-B1 adversarial receipt. final_verdict.approved is true and issues, missing_acceptance_coverage, and unsupported_claims are empty. This publication did not re-execute the commands. Feature 129 is feature-scope complete. Full-live qualification remains 131/132. Attempts remain 5 of limit 5. Allocation 650/2100/7350/9555 is not raised. current_feature advances to 130 for contract negotiation. Feature 130 implementation has not started."
+    },
+    {
+      "at": "2026-10-16T15:03:31Z",
+      "event": "130-contract-attempt-started",
+      "contract_id": "130",
+      "attempt": 1,
+      "detail": "Feature 129 is feature-scope complete, so feature 130 may enter contract negotiation. Planner record .agent/evidence/130/contract-basis1.json is the handoff. Generator attempt 1 of 3 proposes .agent/contracts/130.json with status proposed. No implementation. Allocation 650/2100/7350/9555 is not raised. Product headroom 632 versus product estimate 750 is recorded and is not a rebaseline. Full-live qualification remains 131/132."
+    },
+    {
+      "at": "2026-10-16T15:13:34Z",
+      "event": "130-contract-mode-a-rejected",
+      "contract_id": "130",
+      "attempt": 1,
+      "verdict": ".agent/validator/130-mode-a.json",
+      "detail": "Mode A final_verdict.approved is false. issues and unsupported_claims are non-empty. missing_acceptance_coverage is empty. The twelve acceptance commands stay. Revision attempt 2 of 3 removes the unsourced NIP-0003 case scenarios and the contract attempt-count field. No implementation. Allocation is not raised."
+    },
+    {
+      "at": "2026-10-16T15:24:01Z",
+      "event": "130-contract-approved",
+      "contract_id": "130",
+      "attempt": 2,
+      "detail": "Mode A round 2 .agent/validator/130-mode-a-r2.json and contract review .agent/qa/130-contract-review.json both have final_verdict.approved true and empty issues, missing_acceptance_coverage, and unsupported_claims. Contract 130 status is approved. Revisions stay 1. Implementation has not started. Allocation 650/2100/7350/9555 is not raised. Full-live qualification remains 131/132."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10475,7 +10506,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "130",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -10547,7 +10578,7 @@
       }
     ]
   },
-  "last_action": "Marked feature 129 feature-scope complete from canonical QA .agent/qa/129.json. Full-live remains 131/132. Feature 130 contract lifecycle is next.",
+  "last_action": "Approved contract 130 after Mode A round 2 and the independent contract review. Implementation has not started.",
   "completed_contract_ids": [
     "099",
     "103",

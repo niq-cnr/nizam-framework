@@ -1,0 +1,144 @@
+{
+  "review": "Independent Evaluator pre-code contract review of proposed contract 130 revision 1. Static comparison only. The twelve feature 130 acceptance commands were not executed, and this verdict does not claim they pass.",
+  "feature": "130",
+  "feature_id": "130",
+  "contract_id": "130",
+  "revision_reviewed": 1,
+  "contract_path": ".agent/contracts/130.json",
+  "contract_sha256": "3a3d113b407b2cab1b142de241f162d57b75ad8808b32fc15fdc5ea6948c0c0a",
+  "reviewed_at": "2026-10-16T15:22:56Z",
+  "executed_at": "2026-10-16T15:22:56Z",
+  "branch": "phase/020-130-contract-basis",
+  "head": "e2c13af6039dbd2d4f565e9e910e6d3a96938225",
+  "qa_pass": true,
+  "qa_pass_scope": "pre-code contract-review gate only. qa_pass does not record implementation QA and does not claim that the twelve feature 130 acceptance commands pass.",
+  "verdict": "pass",
+  "verdict_scope": "Contract review approved. Not an execution result for the twelve feature 130 acceptance commands.",
+  "checks_run": 0,
+  "checks_passed": 0,
+  "acceptance_commands_executed": false,
+  "acceptance_commands_claimed_passing": false,
+  "adversarial": {
+    "performed": true,
+    "description": "Static adversarial comparison of .agent/contracts/130.json against the feature 130 acceptance list, feature 129 preservation, methodology section 9, the product-variance record, and the two round-1 rejection causes. Searched the contract for duplicated or missing acceptance commands, an affirmative pass claim, a sixth feature 129 source attempt, an installed .nizam edit, full-live or seventeen-row/thirteen-case ownership inside feature 130, a raise of 7350 or 9555, illustrative Lisp forms treated as a launcher, a fresh process treated as a fresh build, empty environment variables treated as sufficient, implementation_obligations.cases, proposal_basis.circuit_breaker_130_contract_attempts, and NIP-0003 scenario assignments to cases 7, 10, 11, or 12. Verification commands are named runner checks, not negated greps or unpinned sorts. The twelve acceptance commands were not executed.",
+    "result": "No blocking defect. Each of the twelve feature-list commands is one verification command. Case requirements name the command and case number only. The removed round-1 keys are absent.",
+    "acceptance_commands_executed": false
+  },
+  "evidence_files": [],
+  "evidence_files_note": "Empty because no feature 130 acceptance command was executed and no terminal transcript was produced. Comparison anchors are the existing source paths below.",
+  "comparison_anchors": [
+    {
+      "path": ".agent/contracts/130.json",
+      "sha256": "3a3d113b407b2cab1b142de241f162d57b75ad8808b32fc15fdc5ea6948c0c0a",
+      "role": "artifact under review"
+    },
+    {
+      "path": ".agent/feature_list_020.json",
+      "sha256": "45fee8584a9586d101b5e2ef0b9b6283757f49e5ec01dc2324e70356bb9036ee",
+      "role": "external acceptance commands, case matrix, budgets, and feature 129 preservation"
+    },
+    {
+      "path": ".agent/product_spec_020.md",
+      "sha256": "e4df80a6ebeb2c06d8a9cffb457d71fa55eb38f525ffaf6471bb7fea0dba5560",
+      "role": "feature 130 architecture paragraph and budget table"
+    },
+    {
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "sha256": "36a0014e478ff8e73163df869c80431bdbb4bc64271965662bc1648ed86cbbf7",
+      "role": "section 9 fresh-environment acceptance"
+    },
+    {
+      "path": ".agent/evidence/130/contract-basis1.json",
+      "sha256": "df6ceec094b881f36f660c394d06479cc491a6fca8c9242fc556b067ba432f01",
+      "role": "planner contract basis"
+    },
+    {
+      "path": ".agent/validator/130-mode-a.json",
+      "sha256": "344b4b4cc9778da1197db900ec126faed36826942ade93d8848efa46210b03bd",
+      "role": "round 1 rejection, not the approval basis"
+    },
+    {
+      "path": ".agent/validator/130-mode-a-r2.json",
+      "sha256": "ef397022ba4b40e946127687a40d9a2a2eb81815f700b7580d66fcb1cb4f4691",
+      "role": "round 2 Mode A verdict, read and not treated as this approval"
+    }
+  ],
+  "schema_validation": {
+    "contract_schema": "schema/contract.schema.json",
+    "contract_schema_errors": 0,
+    "validator": "jsonschema 4.26.0 Draft 2020-12",
+    "qa_shape": "Evolved schema/qa_verdict.schema.json fields are used with checks_run 0 because this is a contract review and the twelve acceptance commands were not re-run. schema/contract_review.schema.json also applies to this path. Neither shape is a license to claim the acceptance commands pass.",
+    "mode_a_r2_contract_sha256_matches": true
+  },
+  "static_checks": [
+    {
+      "criterion": "Each of the twelve feature 130 acceptance commands appears exactly once as a verification command, in feature-list order.",
+      "result": "pass",
+      "evidence": "verification[0] through verification[11] command strings equal .agent/feature_list_020.json feature 130 acceptance_tests. No command is repeated in the command list. acceptance_test repeats the same string inside that single entry because the feature-list acceptance test is the command."
+    },
+    {
+      "criterion": "The contract does not claim those twelve checks already pass.",
+      "result": "pass",
+      "evidence": "proposal_basis.checks_already_pass is false and proposal_basis.implemented is false. Every pass-related sentence denies a current pass. The twelve check names are absent from tools/test_runtime_session.py and tools/runtime_session.py. The commands were not executed."
+    },
+    {
+      "criterion": "Feature 129 behaviors stay intact, and the contract does not authorize a sixth source attempt or an installed .nizam edit.",
+      "result": "pass",
+      "evidence": "preservation.frozen_feature_129_acceptance_commands equals feature 129 acceptance_tests. not_authorized and non_goals forbid a sixth feature 129 source attempt and installed .nizam edits. dod_ref only names .nizam/standard/definition_of_done.md. run_state circuit_breaker.129-source is attempts 5, limit 5, status attempt5-feature-scope-complete-not-full-live."
+    },
+    {
+      "criterion": "Full-live qualification and the seventeen-row/thirteen-case matrix stay on features 131 and 132.",
+      "result": "pass",
+      "evidence": "non_goals say full-live qualification remains features 131 and 132, and the seventeen-row or thirteen-case live matrix remains 131/132. Feature 130 owns cases 7, 10, 11, and 12 only. Feature 132 live-readiness is not a verification command."
+    },
+    {
+      "criterion": "Product variance is recorded as 1218 already counted, headroom 632, estimate 750, excess 118, with no raise of 7350 or 9555.",
+      "result": "pass",
+      "evidence": "budget fields match. 1850 - 1218 = 632 and 750 - 632 = 118. measurement_rule and non_goals say the overrun does not raise 7350 or 9555 and is not a free allowance, transfer, or rebaseline. run_state scope_budget feature 129 product_lines is 1218, original_estimate_lines is 7350, and ceiling_130pct is 9555."
+    },
+    {
+      "criterion": "Section 9 obligations are stated without treating illustrative Lisp forms as a tested launcher, a fresh process as a fresh build, or empty environment variables as sufficient.",
+      "result": "pass",
+      "evidence": "implementation_obligations and the named check requirements state git archive of committed source compiled afresh, fresh sbcl --no-sysinit --no-userinit --non-interactive, private HOME and XDG locations, a newly created empty private ASDF output directory, explicit CL_SOURCE_REGISTRY and ASDF_OUTPUT_TRANSLATIONS configurations that each contain :ignore-inherited-configuration and use private roots, toolchain lock and core provenance including the profile clean core and pinned toolchain, distinct ASDF no-op and genuine failure controls, and must_fail for unsaved definitions, a fasl compiled against an unsaved macro, inherited fasl or shared build cache, and a deleted definition that survives only in a development image. The three distortions are explicitly denied."
+    },
+    {
+      "criterion": "implementation_obligations.cases and proposal_basis.circuit_breaker_130_contract_attempts are absent.",
+      "result": "pass",
+      "evidence": "No object key named cases exists. The text circuit_breaker_130_contract_attempts does not occur. Round 1 required both removals."
+    },
+    {
+      "criterion": "Cases 7, 10, 11, and 12 are not assigned unsourced NIP-0003 scenarios.",
+      "result": "pass",
+      "evidence": "The four case requirements say only that the command is the feature 130 acceptance command for that case number and that the proposal does not claim the check already passes. The contract text contains no NIP-0003, handoff, fixture, or scenario narrative. must_fail is not mapped to a case number. The case matrix records those four commands with owner 130 and no scenario."
+    },
+    {
+      "criterion": "Proposed contract 130 validates against schema/contract.schema.json.",
+      "result": "pass",
+      "evidence": "jsonschema 4.26.0 Draft 2020-12 reported zero errors. status is proposed. approvals.revisions is 1. validator_mode_a and evaluator_contract_review remain false. approved_at is absent."
+    }
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "Each of the twelve command strings also appears in the acceptance_test field of the same verification entry. That is one entry whose acceptance test text is the command, not a second acceptance command. The verification command list contains each command once.",
+    "verification also names bash tools/validate.sh and bash tools/validate.sh --payload once each, labeled as repository compliance and not as feature 130 acceptance tests. They do not replace the twelve commands, do not authorize an installed .nizam edit, and do not adopt feature 132 live-readiness.",
+    "Section 9 also says to load the new products, execute the recorded tests, and verify actual dependency resolution and emitted or loaded artifact paths. The recorded tests are the twelve commands, and compile-afresh is stated. Load and artifact-path verification are not separate contract sentences. They are not acceptance criteria in the feature list or the feature 130 architecture paragraph, and they are not rejection items.",
+    "The contract leaves validator_mode_a and evaluator_contract_review false. This review does not edit the contract, run state, or product files.",
+    "Mode A round 2 was read. Its prose was not the approval basis. The contract bytes match the sha256 recorded in .agent/validator/130-mode-a-r2.json.",
+    "Working-tree feature 130 differs from HEAD only by status pending to in_progress. The architecture paragraph and the twelve acceptance commands are unchanged. The contract does not repeat the historical pending claim."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "130",
+    "contract_id": "130",
+    "feature_id": "130",
+    "mode": "contract-review",
+    "summary": "Approve proposed contract 130 revision 1. The twelve feature 130 acceptance commands are present once each and are not claimed to pass. Feature 129 stays intact, attempt 6 and installed .nizam edits stay unauthorized, and full-live plus the seventeen-row/thirteen-case matrix stay on features 131 and 132. The product variance is 1218 counted, headroom 632, estimate 750, excess 118, without raising 7350 or 9555. Section 9 obligations are stated without treating the illustrative Lisp forms as a launcher, a fresh process as a fresh build, or empty environment variables as sufficient. implementation_obligations.cases and proposal_basis.circuit_breaker_130_contract_attempts are gone, and cases 7, 10, 11, and 12 have no unsourced NIP-0003 scenario. issues, missing_acceptance_coverage, and unsupported_claims are empty. The twelve acceptance commands were not executed.",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": []
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

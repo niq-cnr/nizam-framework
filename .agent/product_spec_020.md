@@ -96,7 +96,7 @@ and main delivery. That historical snapshot is not current delivery proof.
 Before applying activation, Root rechecks the actual current PR 105 head, all six
 required checks, clear feedback and normal merge. No current controls-ready/live
 Root 120 adoption is claimed.
-129 remains pending until separate Root implementation release. Under separate
+At the historical PR 105 activation snapshot, 129 remained pending until separate Root implementation release. Feature 129 is now feature-scope complete, so that historical pending state does not block feature 130 contract negotiation. Under separate
 Root release, planning/pre-code may overlap PR 105 CI; implementation waits approved
 activation/allocation, dual-approved contract, independent bundle and PR 105 normal merge.
 New integration waits PR 105 main all five. Optional 133 is not a new normative dependency.

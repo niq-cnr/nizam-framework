@@ -1,0 +1,201 @@
+{
+  "review": "Independent Validator Mode A round 2 for revised proposed contract 130. Static comparison only. No implementation and no git diff. Round 1 file .agent/validator/130-mode-a.json was left unchanged.",
+  "feature": "130",
+  "contract_id": "130",
+  "feature_id": "130",
+  "mode": "A",
+  "status": "APPROVED",
+  "risk_level": "high",
+  "revision_reviewed": 1,
+  "contract_path": ".agent/contracts/130.json",
+  "contract_sha256": "3a3d113b407b2cab1b142de241f162d57b75ad8808b32fc15fdc5ea6948c0c0a",
+  "schema_validation": {
+    "contract_schema": "schema/contract.schema.json",
+    "contract_schema_errors": 0,
+    "validator": "jsonschema 4.26.0 Draft 2020-12",
+    "verdict_schema": null,
+    "verdict_schema_note": "No Mode A validator verdict schema exists. schema/contract_review.schema.json applies to .agent/qa/NNN-contract-review.json, and schema/qa_verdict.schema.json applies to post-code .agent/qa/NNN.json. Neither was used as this file's schema."
+  },
+  "approvals_left_unchanged": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 1,
+    "approved_at": "absent"
+  },
+  "round1_rejection_causes": [
+    {
+      "cause": "implementation_obligations.cases and unsourced NIP-0003 case scenarios",
+      "verdict": "removed",
+      "evidence": "implementation_obligations has no cases key. Verification requirements for cases 7, 10, 11, and 12 say only that each command is the feature 130 acceptance command for its own case number and that the proposal does not claim the check already passes. The contract text contains no NIP-0003, handoff, fixture, or REPL narrative, and it does not say that a case number is the unsaved-definition, fasl, or deleted-definition case."
+    },
+    {
+      "cause": "proposal_basis.circuit_breaker_130_contract_attempts",
+      "verdict": "removed",
+      "evidence": "The key is absent from proposal_basis and from the rest of the contract."
+    }
+  ],
+  "observations": [
+    "All twelve feature 130 acceptance commands are present exactly once as verification command strings and match .agent/feature_list_020.json feature 130 acceptance_tests. missing_acceptance_coverage is empty.",
+    "Saying that a command is the feature 130 acceptance command for its own case number is sourced by the feature list and the case matrix, which name cases 7, 10, 11, and 12 and their commands without a scenario.",
+    "The seven feature 129 acceptance commands in preservation.frozen_feature_129_acceptance_commands match feature 129 exactly and are not rewritten as feature 130 acceptance tests.",
+    "The contract denies that feature 130 checks already pass, limits product implementation to tools/runtime_session.py and tools/test_runtime_session.py, and its non-goals keep full-live and the seventeen-row/thirteen-case matrix on 131/132, forbid attempt 6, installed .nizam/ edits, an origin/main retarget, public schema or public API expansion, a budget increase, Source4 currentness-through-publication, and merging quarantine 5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c.",
+    "Section 9 obligations remain on implementation_obligations and the named checks: git archive of committed source, fresh sbcl --no-sysinit --no-userinit --non-interactive, private HOME/XDG, empty private ASDF output cache, explicit configs containing :ignore-inherited-configuration, toolchain/lock/core provenance, and distinct ASDF no-op and genuine failure controls. Failure modes for unsaved definitions, a fasl compiled against an unsaved macro, inherited fasl or shared build cache, and a deleted definition that survives only in a development image remain on must_fail and are not mapped to case numbers. The Lisp forms are called illustrative, not a launcher. A fresh process is not a fresh build. Empty environment variables are not sufficient.",
+    "Budget figures 750, 650, 1200, and 2600, phase 7350, and ceiling 9555 match the feature list and the spec table. The contract records 1218 counted product lines, remaining headroom 632, and an excess of 118, and it says that the overrun is recorded at measurement and does not raise 7350 or 9555 and is not a free allowance, transfer, or rebaseline.",
+    "Status is proposed. validator_mode_a and evaluator_contract_review are false. approvals.revisions is 1. approved_at is absent.",
+    "verification also names bash tools/validate.sh and bash tools/validate.sh --payload once each, labeled as additional compliance rather than feature 130 acceptance tests. They do not duplicate or replace the twelve commands.",
+    "scope.files_create lists .agent/evidence/130/* for future receipts and says this proposal creates none. implementation_files_only remains the two Python files. No new product scope was added in this revision.",
+    "schema/contract.schema.json validates the revised contract with zero errors. additionalProperties is allowed, and approved_at is optional."
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "evidence_summary": [
+    {
+      "claim": "Contract 130 is proposed for feature 130, Hermetic committed-source acceptance, with both approval flags false, revisions 1, and no approved_at.",
+      "source_evidence": ".agent/contracts/130.json status line 4; approvals lines 167-171. schema/contract.schema.json status enum lines 20-24 and optional approved_at line 108.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Feature 130 is the active in_progress feature, passes false, depends on complete feature 129, and its twelve acceptance commands and cases 7, 10, 11, and 12 are exactly the contracted commands.",
+      "source_evidence": ".agent/feature_list_020.json feature 129 lines 10-27; feature 130 lines 30-52; case_matrix line 91.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Product scope is the two future output targets, hermetic committed-source acceptance, and the section 9 obligations, without a case-to-scenario map.",
+      "source_evidence": ".agent/feature_list_020.json future_output_targets line 52 and description line 32; .agent/product_spec_020.md lines 40-45; methodology/11_sbcl_runtime_binding.md lines 172-193; .agent/evidence/130/contract-basis1.json lines 42-106 and 119-124.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Section 9 failure modes stay on must_fail and are not assigned to case 7, 10, 11, or 12.",
+      "source_evidence": ".agent/contracts/130.json implementation_obligations.must_fail line 56 and verification lines 117-136. methodology/11_sbcl_runtime_binding.md lines 177-187. .agent/product_spec_020.md line 44.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Budget records product 750, tests 650, process 1200, estimated lines 2600, phase 7350, ceiling 9555, counted product 1218, headroom 632, excess 118, and measurement without raising the allocation.",
+      "source_evidence": ".agent/contracts/130.json lines 148-163. .agent/feature_list_020.json lines 4-7 and 36-37. .agent/product_spec_020.md lines 111-119. .agent/evidence/130/contract-basis1.json lines 126-141.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The two bash tools/validate.sh commands are labeled extra compliance and are not feature 130 acceptance tests.",
+      "source_evidence": ".agent/contracts/130.json verification lines 137-146. .agent/feature_list_020.json feature 130 acceptance_tests lines 38-51 do not include them; feature 132 lines 82-85 does, and this contract does not adopt that feature.",
+      "verdict": "supported"
+    },
+    {
+      "claim": "implementation_obligations.cases and proposal_basis.circuit_breaker_130_contract_attempts are absent.",
+      "source_evidence": ".agent/contracts/130.json implementation_obligations lines 48-58 and proposal_basis lines 173-184. Round 1 required fixes in .agent/validator/130-mode-a.json lines 41 and 49.",
+      "verdict": "supported"
+    }
+  ],
+  "acceptance_criteria_coverage": [
+    {
+      "criterion_id": "committed-source-archive",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 39",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "no-init-process",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 40",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "private-home-xdg",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 41",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check private-home-xdg",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "empty-output-cache",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 42",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check empty-output-cache",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "ignore-inherited-resolution",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 43",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ignore-inherited-resolution",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "toolchain-lock-core-bound",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 44",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check toolchain-lock-core-bound",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "asdf-noop-control",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 45",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-noop-control",
+      "test_type": "acceptance command",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "asdf-failure-control",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 46",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+      "test_type": "negative control",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-7",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 47 and case_matrix line 91",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
+      "test_type": "acceptance command for case 7; no scenario narrative",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-10",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 48 and case_matrix line 91",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
+      "test_type": "acceptance command for case 10; no scenario narrative",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-11",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 49 and case_matrix line 91",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
+      "test_type": "acceptance command for case 11; no scenario narrative",
+      "verdict": "covered"
+    },
+    {
+      "criterion_id": "case-12",
+      "source": ".agent/feature_list_020.json feature 130 acceptance_tests line 50 and case_matrix line 91",
+      "covered_by_contract_verification": "verification command PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl",
+      "test_type": "acceptance command for case 12; no scenario narrative",
+      "verdict": "covered"
+    }
+  ],
+  "verification_checklist": {
+    "contract_identity_valid": true,
+    "feature_mapping_valid": true,
+    "scope_within_active_feature_boundary": true,
+    "signatures_match_specification": true,
+    "deliverables_concrete_and_architecture_aligned": true,
+    "verification_covers_every_acceptance_criterion": true,
+    "negative_boundary_tests_included": true,
+    "dependencies_complete_valid_justified": true,
+    "executor_can_proceed_without_guessing_beyond_sourced_case_commands": true,
+    "no_unsupported_assumptions_or_hallucinated_requirements": true,
+    "anti_gaming_checks_pass": true
+  },
+  "final_verdict": {
+    "approved": true,
+    "mode": "A",
+    "contract_id": "130",
+    "feature_id": "130",
+    "risk_level": "high",
+    "summary": "Approve revised proposed contract 130. Both round 1 rejection causes are removed, and the acceptance commands, feature 129 preservation, section 9 obligations, budget variance, unflipped approvals, and product boundary still hold.",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": []
+  }
+}
