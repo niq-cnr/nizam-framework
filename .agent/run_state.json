@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-16T03:42:54.855469+00:00",
+  "updated_at": "2026-10-16T03:44:47.092649+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2731,7 +2731,7 @@
     "133-ci-portability-repair": {
       "attempts": 1,
       "limit": 3,
-      "status": "ordinary-pushed-new-exacthead-ci2-pending",
+      "status": "local-reviewed-delivery-ancestry-admitted-remote-CI2-default48-pending",
       "owner": "/root/qa133",
       "approved_source_base": "441d292559eacb95c778b4e20bcc62350e9f31a8",
       "plan": ".agent/evidence/133/ci-portability1/recovery-plan.json",
@@ -2746,7 +2746,8 @@
       "fresh_qa_owner": "/root/portability_freshqa133",
       "fresh_qa_revision": "ab2ad3d6a352d5482867bcd0d06341843708d921",
       "delivery_head": "19efbca54be6b2d58f637b22ee4b4185cf32b342",
-      "ordinary_push_frame": ".agent/evidence/133/ci-portability1/delivery-preflight1/ordinary-push.execution.json"
+      "ordinary_push_frame": ".agent/evidence/133/ci-portability1/delivery-preflight1/ordinary-push.execution.json",
+      "local_delivery_ancestry_admitted": "19efbca54be6b2d58f637b22ee4b4185cf32b342"
     },
     "129-native-fixture-preflight": {
       "attempts": 3,
@@ -8765,6 +8766,11 @@
       "at": "2026-10-16T03:42:54.855469+00:00",
       "event": "129-complete-bundle-strictly-approved-frozen-baseline-red1-release",
       "detail": "Review7dc/3a003stricttrueemptyarrays;5rawhashes/actual0PID3461488/streams/wholebundlepins admitted. Bundleidentity923cc4fa recomputedcompactcanonicalJSON. No newnative rerun; native2carriedwithunchangedAST. FreshEvaluator executesexactadmissionselector oncewithfullpreservation; intendednewcapabsenceonlyafterallpositives, no deepsemanticclaim/Source. All105/020/ModeB/finalQA gates preserved."
+    },
+    {
+      "at": "2026-10-16T03:44:47.092649+00:00",
+      "event": "133-reviewed-delivery-ancestry-imported-locally-only",
+      "detail": "Rootnormallyimportsownreviewed19efdeliverycommit/E133copyprovenance forlaterdisjointaccounting. ThisislocalbranchintegrationONLY, notGitHubPR105merge orCIcompletion. Samehostedhead19efremainingdefault48mustpassbeforeordinaryremote merge. Source129stillwaitsremote105merge/020activation/red; noRoot020push."
     }
   ],
   "phase_001_scope_budget_final": {
