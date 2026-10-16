@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "129",
   "status": "in_progress",
-  "updated_at": "2026-10-16T09:15:42.449567+00:00",
+  "updated_at": "2026-10-16T09:18:21.258322+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -10025,6 +10025,11 @@
       "at": "2026-10-16T09:15:42.449567+00:00",
       "event": "operator-goal-changed-to-handover-recovery2-checkpoints-stopped",
       "detail": "Prior long-term active goal cleared; current requested goal prepare project for handover. Both execution authors stopped and committed288/4869. Preserve dogfooding authority and comparative bar as future direction; no product/review/measurement work continues. Refresh current documentation, validate and package all committed recovery refs."
+    },
+    {
+      "at": "2026-10-16T09:18:21.258322+00:00",
+      "event": "recovery2-handover-verified-stopped-checkpoints-ready",
+      "detail": "At76c5a385 metadata/repository/payload actual0 PIDs437678/437681/437682. All239installed hashes/bytes/modes unchanged. Dogfooding authority/bar retained; source4failed/quarantined, replacementunreviewed, accountingunexecuted. All execution agents/worktrees stopped/clean. Bundle is finalized externally after this receipt commit."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10466,7 +10471,7 @@
       }
     ]
   },
-  "last_action": "Prepare recovery2 handover from stopped committed checkpoints",
+  "last_action": "Recovery2 handover documents and stopped checkpoints validated; package final committed checkpoint externally",
   "completed_contract_ids": [
     "099",
     "103",
@@ -11261,7 +11266,7 @@
     }
   },
   "handover": {
-    "status": "preparing-recovery2-committed-checkpoints",
+    "status": "ready-verified-committed-checkpoint",
     "requested_by": "Operator changed active goal to prepare the project for handover",
     "prepared_at": "2026-10-16T09:15:42.449567+00:00",
     "branch": "chore/handover-2026-10-16-recovery2",
@@ -11299,6 +11304,15 @@
     "Source4_draft_quarantined": true,
     "recovery_status": "Source3 rejected; actual B2 red admitted. Source4 native mmap currentness failure admitted; attempts4/4 retained and no further product release. Replacement architecture provisional/unreviewed.",
     "accounting_checkpoint": "288dd6c8cd154f1a8384e39bf697cee4b914f710",
-    "replacement_checkpoint": "4869cfebb4743fc8f4e379a4e39745a9a52271df"
+    "replacement_checkpoint": "4869cfebb4743fc8f4e379a4e39745a9a52271df",
+    "ready_at": "2026-10-16T09:18:21.258322+00:00",
+    "verified_document_revision": "76c5a3854f1d9bfd1e67926d99efdf3a6dc6a526",
+    "validation_receipt": ".agent/evidence/handover-2026-10-16-recovery2/receipt.json",
+    "checks_actual_exits": [
+      0,
+      0,
+      0
+    ],
+    "packaging_note": "Post-commit bundle hash and actual verification/restore results are recorded in external sibling manifest. Earlier bundle retained unchanged."
   }
 }
