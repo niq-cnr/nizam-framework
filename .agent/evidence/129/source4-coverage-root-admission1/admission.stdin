@@ -1,0 +1,21 @@
+import gzip,hashlib,json,subprocess
+from pathlib import Path
+p=Path('.agent/evidence/129/implementation4');sha=lambda b:hashlib.sha256(b).hexdigest()
+for row in json.loads((p/'qualification-index1.json').read_bytes())['files']:
+ b=Path(row['path']).read_bytes();assert len(b)==row['bytes'] and sha(b)==row['sha256']
+s=json.loads((p/'qualification-stop1.json').read_bytes());assert sha((p/'qualification-stop1.json').read_bytes())=='30a57829fe1a1291f45673642aa9fd793105585d0f14e60d449310c95f6fe55d'
+f=json.loads((p/'monitor-coverage2/native2.execution.json').read_bytes());assert f['actual_exit']==1 and f['child_pid']==404819 and not f['timed_out'] and f['exercised_revision']=='9458d9b558a7d2874f9ded2859bff6cdc5c6217c'
+assert f['argv']==['env','TMPDIR=/tmp','PYTHONDONTWRITEBYTECODE=1','python3','.agent/evidence/129/implementation4/monitor-coverage2/probe.py']
+for k in ['stdout','stderr']:
+ b=(p/'monitor-coverage2'/Path(f[k]['path']).name).read_bytes();assert sha(b)==f[k]['sha256'] and len(b)==f[k]['bytes']
+o=json.loads((p/'monitor-coverage2/native2.stdout.txt').read_bytes());assert o==s['coverage_counterexample']['actual_observation']
+assert bytes.fromhex(o['snapshot_hex'])==b'{"attempts":1}\n' and bytes.fromhex(o['current_hex'])==b'{"attempts":2}\n'
+assert o['events_after_shared_mapping_write']==[] and o['writer_still_open'] and o['mapping_still_open'] and o['positive_event_bytes']>0
+assert o['mtime_ns'][0]==o['mtime_ns'][1] and o['ctime_ns'][0]==o['ctime_ns'][1] and o['unobserved_authoritative_mutation']
+a=(p/'monitor-coverage2/native2.preservation-before.json.gz').read_bytes();b=(p/'monitor-coverage2/native2.preservation-after.json.gz').read_bytes();assert a==b
+inv=json.loads(gzip.decompress(a));assert len(inv['rows'])==16790 and sum(x['path'].startswith('.nizam/') for x in inv['rows'])==239
+assert inv['head']==f['exercised_revision'] and inv['tree']==f['checkout_tree']
+assert sha(subprocess.check_output(['git','show',s['draft_quarantine']['revision']+':tools/runtime_session.py']))==s['draft_quarantine']['sha256']
+assert next(x for x in inv['rows'] if x['path']=='tools/runtime_session.py')['sha256']==s['draft_quarantine']['sha256']
+for path,digest in s['protected_sha256'].items():assert sha(subprocess.check_output(['git','show','0ad5f4b5927d0bc78a3778a669b9bf754a299b68:'+path]))==digest
+print('Native mmap counterexample admitted: actual1 PID404819, bytes1->2, both watches silent, stable mt/ct timestamps, positive events144. All16790/239 preserved including UNEXECUTED draft at qualification time. Evidence branch restoredSource3; draft separately quarantined. Architecture completeness contradicted; no product/QA claim.')
