@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": "133",
   "status": "in_progress",
-  "updated_at": "2026-10-16T00:05:04.972089+00:00",
+  "updated_at": "2026-10-16T00:06:45.729376+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2321,15 +2321,31 @@
       }
     },
     "133-evidence-capture": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "released-read-only",
+      "status": "released-schema-routing-recovery",
       "owner": "Root Orchestrator",
-      "stdin_sha256": "100b7293de69edde455e3c20d6db629f7bd6bf96af8a1eed6f34bb85d61f90f0",
-      "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture1-input.py",
-      "workspace": "/home/cnross/.tmp/nizam-133-root-capture1",
-      "external_output": "/home/cnross/.tmp/nizam-133-root-capture1-run",
-      "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0."
+      "stdin_sha256": "642b89dadbb794c6792da301aeb6f78722dfa0d88ea2b020e11e9ca1f7feea5b",
+      "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture2-input.py",
+      "workspace": "/home/cnross/.tmp/nizam-133-root-capture2",
+      "external_output": "/home/cnross/.tmp/nizam-133-root-capture2-run",
+      "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0.",
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "released-read-only",
+          "owner": "Root Orchestrator",
+          "stdin_sha256": "100b7293de69edde455e3c20d6db629f7bd6bf96af8a1eed6f34bb85d61f90f0",
+          "stdin_preparation": "/home/cnross/.tmp/nizam-133-root-capture1-input.py",
+          "workspace": "/home/cnross/.tmp/nizam-133-root-capture1",
+          "external_output": "/home/cnross/.tmp/nizam-133-root-capture1-run",
+          "scope": "Reuse frozen123 driver by exact reference; static stdin verifies strict gate/schema/source pins, raw indices, actual8selected/9attempts+oneextra and fullpreservation, exact48+aux/166+four. No Source execution or lifecycle advancement before actual0."
+        }
+      ],
+      "original_actual_exit": 1,
+      "original_evidence": ".agent/evidence/133/root-capture1/capture.execution.json",
+      "strategy": "Structural verdict-family routing: all gates retain strict AGF4field checks. Planning and post-code Validator records have no mandatory contract-review schema; pin each exact immutable SHA. ModeA and actualQA precode reviews remain root+installed contract-review validated; finalQA bothQA schemas. Original capture1 actual1 is Root mistaken schema mapping, not product or QA failure. No Source/test/verdict edits or waived required checks."
     }
   },
   "history": [
@@ -7987,6 +8003,11 @@
       "at": "2026-10-16T00:05:04.972089+00:00",
       "event": "133-independent-qa-approved-root-capture1-released",
       "detail": "Strict5151517e QAsha c771723e/root+installedschemas verified and normalmergedae4fcb04. Both originals5/6 actual0/full14553/239; selected8all0, original7failure retained. Root frozen-driver isolated capture1 released with exact71line stdin hash; canonical state remains inprogress until capture passes. Separately authorize futurefootprint review static2 local object transport recovery after preserved actual1/innergit128; no source/observation repair or active budget change."
+    },
+    {
+      "at": "2026-10-16T00:06:45.729376+00:00",
+      "event": "133-root-capture1-schema-routing-failure-capture2-released",
+      "detail": "Actualcapture1 failed on planning review missingcontractreview.review; full14635/239 preservationequal. Structural family diagnostic found ModeB similarly uses AGF finalapproval without contractreview.summary. Neither Validator path is a C11QA schema route. Pin original planning9bdb60/ModeB8c7486 and enforce strict4fields, keep actualModeA/QA schemas. Frozen71line failedstdin/raw retained; newisolatedcapture2 finalstdinSHA642b89da released. No Source/assertion/verdict repair or QA rerun; counter2/3."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -8421,7 +8442,7 @@
       }
     ]
   },
-  "last_action": "Independent133 QA approved8selected/9actualattempts+oneextra; Root static evidence capture1 released. Oldmain4/5passed; futurefootprint review static2 transport recovery released.",
+  "last_action": "Root capture1 retained actual1 from over-broad schema routing; isolated capture2 released under correct AGF/QA families, all original proof and QA approval preserved.",
   "completed_contract_ids": [
     "099",
     "103",
