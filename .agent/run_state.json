@@ -3,7 +3,7 @@
   "current_phase": "021-receipt-input-maintenance",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-16T04:05:46.668655+00:00",
+  "updated_at": "2026-10-16T04:07:46.184259+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2882,16 +2882,16 @@
     "phase020-activation-preparation": {
       "attempts": 2,
       "limit": 3,
-      "status": "released-narrow-current-context-correction2",
+      "status": "correction2-qualified-proposed-not-applied",
       "owner": "separate Planner session",
       "scope": "Planner only: qualify original intake snapshot prose, preserve immutable historical refs and exact fourfileconditionalactivationdelta. ExplicitRoot actual currenthead/all6checks/clearfeedback/normalmerge verification beforeapplication. No futurefacts, scope/budget/acceptance/status/Sourcegate changes. Minimal staticqualification of changed prose; no fullsuite/runtime rerun. Own lean revisionreceipt; Rootstate/canonicalRootfiles untouched.",
       "numeric_allocation_ref": ".agent/evidence/phase020-preflight/preparation-allocation1.json",
       "accounting": "Existing020preparationwithin7350/9555including3750process; no newallowance/rebaseline, original0213024false+pendingdeliverysupplementpreserved.",
-      "workspace": "/home/cnross/.tmp/nizam-020-activation-proposal1-50q5lshn/repo",
-      "proposal_revision": "385f376fb8360db94242df2c33acdeaf1ab5f2df",
-      "evidence_revision": "5dd6e2c6cfbca1168c4b7e3ec4fa8433b92d27dd",
-      "receipt": ".agent/evidence/phase020-preflight/activation-proposal1/proposal.json",
-      "receipt_sha256": "4cab7c9e92c558594f3fc7da6c595d07007a09b7bde2d077bf086beba6bda790",
+      "workspace": "/home/cnross/.tmp/nizam-020-activation-proposal2-6204n171/repo",
+      "proposal_revision": "2508a71768111e015f36a87ddb08e7b0b135ecb7",
+      "evidence_revision": "32776089a9659fdeedb0c09ce388e9818293ce33",
+      "receipt": ".agent/evidence/phase020-preflight/activation-proposal2/proposal.json",
+      "receipt_sha256": "5ee43ccf5116b55731803110bc4f79e44ad0cb179a2ba109acb8eba07f1af584",
       "static_actual_exit": 0,
       "packaging_failure": "Toolactual1/chunk71816b/noPID: assumed18 instead observed9 refs; onlyreceiptcorrected, rawstatic0unchanged.",
       "prior_attempts": [
@@ -2976,19 +2976,37 @@
       "limitation": "Inherited core leaf records omit individual PIDs; all retained argv/output/exit/proof/cleanup checked. Narrow capability deficiency only, not final QA or Source release."
     },
     "phase020-activation-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
-      "status": "rejected-one-historical-wording-issue",
+      "status": "released-narrow-corrected-proposal-review2",
       "owner": "independent Validator session",
-      "proposal_revision": "385f376fb8360db94242df2c33acdeaf1ab5f2df",
+      "proposal_revision": "2508a71768111e015f36a87ddb08e7b0b135ecb7",
       "root_context_revision": "581623b5",
-      "scope": "Review only exact four-file conditional activation proposal, unchanged7350/9555 allocation, allfeature objects/prerequisites/acceptance/DAG/lane invariants and latest independently frozen bundle/narrowadmission. No actualactivation, lifecyclepromotion, Source or105mergeclaim. Rootmust independently bind current actual105normalmerge/clearCI and unchanged reviewedinputs beforeapplication. No canonicalproposal/contract/test/source/installed edits; ownlean strictJSONreview/evidence only.",
+      "scope": "Review exactspecparagraph correction plus unchanged4-fileactivationdelta/currentRootinputpins; retain allreview1invariants. Strictproposalverdict only, no actualactivation orfuture105success. Actualapplication requires Rootbindingofcurrentall6clearfeedbacknormalmergeandunchangedpins. No runtime/fullsuite/source/test/state/canonicaledits. Oneleanreview2 withactualstaticmetadataframe.",
       "reason": "Move independent proposal review off hostedCI criticalpath; actualactivation/implementation gates remain unchanged.",
       "revision": "5a08813eeaeafd4b81cbc642c369abcb99678ad7",
       "verdict": ".agent/validator/phase020-activation1.json",
       "verdict_sha256": "c3884c6353646b88ccfc902851e86c1f3260c29a482cd18a71086cfadbd7603a",
       "issues": [
         "P020-ACTIVATION1-CURRENT-CONTEXT"
+      ],
+      "prior_attempts": [
+        {
+          "attempts": 1,
+          "limit": 3,
+          "status": "rejected-one-historical-wording-issue",
+          "owner": "independent Validator session",
+          "proposal_revision": "385f376fb8360db94242df2c33acdeaf1ab5f2df",
+          "root_context_revision": "581623b5",
+          "scope": "Review only exact four-file conditional activation proposal, unchanged7350/9555 allocation, allfeature objects/prerequisites/acceptance/DAG/lane invariants and latest independently frozen bundle/narrowadmission. No actualactivation, lifecyclepromotion, Source or105mergeclaim. Rootmust independently bind current actual105normalmerge/clearCI and unchanged reviewedinputs beforeapplication. No canonicalproposal/contract/test/source/installed edits; ownlean strictJSONreview/evidence only.",
+          "reason": "Move independent proposal review off hostedCI criticalpath; actualactivation/implementation gates remain unchanged.",
+          "revision": "5a08813eeaeafd4b81cbc642c369abcb99678ad7",
+          "verdict": ".agent/validator/phase020-activation1.json",
+          "verdict_sha256": "c3884c6353646b88ccfc902851e86c1f3260c29a482cd18a71086cfadbd7603a",
+          "issues": [
+            "P020-ACTIVATION1-CURRENT-CONTEXT"
+          ]
+        }
       ]
     }
   },
@@ -8842,6 +8860,11 @@
       "at": "2026-10-16T04:05:46.668655+00:00",
       "event": "phase020-activation-proposal-review1-rejected-narrow-correction2-released",
       "detail": "Strictverdictfalse/oneissue parsed andrawindexverified. Routehistoricalintakewording correctiontoPlanner; unchangedallacceptance/DAG/7350allocation/gates confirmed. FrontloadedreviewbeforeCIcompletion reducesfuturecriticalpath; no actualactivationorSource."
+    },
+    {
+      "at": "2026-10-16T04:07:46.184259+00:00",
+      "event": "phase020-proposal2-evidence-retained-review2-released",
+      "detail": "Only6Planner evidencefilescopied from32776089; actual4canonicalactivationfilesnotapplied. Exactproposal2508a717 correctsoriginalsnapshotwordingandRootactualdeliverycheck. Fiveactualstaticrawhashesverified; actual0/PID3559269. Historicalintakeandallacceptance/DAG/budgetsunchanged. Separateindependentreview2releasedbeforeCIcompletion; normalmerge/Rootactivation/Sourcegatesremain."
     }
   ],
   "phase_001_scope_budget_final": {
