@@ -1,0 +1,80 @@
+{
+  "role": "Generator129 read-only architectural preparation1/3; proposed design only",
+  "authority": {
+    "root_release": "865ce2884acb2ea5576f983b5090b793da1d08fb",
+    "assessment": ".agent/validator/129-source2-recovery1.json@cc7fae91",
+    "source3_released": false,
+    "source_counter": "129-source remains2/3; architecture preparation is a separate authorized read-only step"
+  },
+  "provenance": {
+    "branch": "plan/129-source3-architecture1",
+    "parent_revision": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
+    "tested_product_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49",
+    "actual_source_ancestors": [
+      "ee1ce1dfb6b0f235c23eae439e00328645098c42",
+      "2e8c92d11c36525c3b73b8cfb23822c4507835cb"
+    ],
+    "product_sha256": {
+      "tools/runtime_session.py": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5",
+      "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"
+    }
+  },
+  "accepted_diagnosis": "F1 is a fixture false-fail: conservative evaluate-condition quarantine remains correct. F2 is a latent fixture reference mismatch. Neither justifies changing image consistency or the absolute operation-record reference. S1/S2 are independent static product defects awaiting focused intended-red proof.",
+  "S1_owned_group": [
+    "Reserve private group identity at actual setsid launch: generation, leader PID/start token, PGID, SID and uid. Verify PGID=SID=leader PID and separation from the supervisor group before recording ownership. Keep this identity after leader exit; do not treat Popen.poll/wait as group death.",
+    "Observe the complete /proc process set for live members of the exact reserved PGID and SID, retaining PID/start tokens and uid. Zombies are stopped execution, not live survivors. Revalidate observations around signalling. A vanished individual member is a normal race; inaccessible/inconsistent membership or identity ambiguity is unknown, never an empty proven group. Never match executable names or widen to another PGID/SID.",
+    "Use a monotonic group-stop state machine: TERM the proven group, continue observing despite leader exit, KILL remaining proven group members by group signal no later than0.25s after TERM, and observe the group for at most1.0s after escalation. No blocking Popen.wait and no early already-dead-leader success. Reap the Popen leader separately.",
+    "Publish terminated/image_consistent=false and ended=true only after a complete trusted observation establishes no live member in the owned group. Signal delivery, ESRCH on one PID, or leader death alone cannot clear busy. On observation failure retain unknown/outstanding/quarantine and refuse reconstruction; no signals after a group has been established dead or ownership becomes ambiguous."
+  ],
+  "S2_deadline_service": [
+    "Keep the single supervisor as the only lifecycle/publication owner. Convert accepted client sockets to nonblocking bounded buffers and selector read/write states. Accept never calls receive_line synchronously; response handling never calls blocking sendall. Retain FRAME_LIMIT, finite per-client CONTROL_SECONDS deadlines, closed-envelope validation and disconnected-client semantics.",
+    "Move source_provenance, Git subprocess waits, manifest/committed-body reads and full historical reconciliation into bounded read-only verification jobs outside selector callbacks. A forked private helper can call the existing functions and return only a bounded result over a selector-managed pipe; it inherits no runtime control writer/server ownership. No new public CLI/schema or arbitrary executable selection is introduced. The helper has a separate proven process group and finite cleanup; its wait/termination must itself be asynchronous.",
+    "Correlate each read-only job with a private state version and exact session/generation/owner/lease/outstanding reference/contract-step-attempt snapshot plus input digests. Before applying a successful result, recheck those identities and live attempt. If runtime completion/cancellation, transfer, reconstruction or a file disagreement invalidated the snapshot, refuse/revalidate; late helper output cannot publish handoff, execute work or free the lane. Helpers never publish session/operation records.",
+    "Queue execute/cancel frames on a nonblocking runtime stdin with bounded storage and selector writes; eliminate buffered write/flush blocking. Preserve durable running and cancel_requested(false) publication before queueing their respective frames. Arm min(1,operation timeout including0) from durable cancellation publication before any request verification, socket send, pipe write or helper cleanup.",
+    "At each event-loop turn service due cancellation/group-stop phases before client/provenance work, between bounded I/O batches and after every callback. Select timeout is the minimum of cancellation, TERM/KILL/death observation, client, poll and verification-job deadlines. Process bounded chunks rather than draining an attacker-controlled ready descriptor indefinitely.",
+    "Bounded local atomic record publication remains ordered and preserves crash-disagreement checks. No project-selected file/Git traversal, entire-history walk, blocking socket/pipe operation, child wait or sleep remains on an armed-deadline callback. If qualification finds a retained callback can exceed the nearest deadline, this architecture is incomplete and must return for assessment rather than declaring the selector timeout sufficient."
+  ],
+  "blocking_path_inventory": [
+    {
+      "paths": "serve/receive_line and finish_waiter/sendall",
+      "treatment": "nonblocking client read/write states, bounded buffers and deadlines"
+    },
+    {
+      "paths": "source_provenance subprocess.run, path/manifest reads and handoff validation",
+      "treatment": "bounded read-only helper jobs with stale-snapshot rejection; parent keeps servicing cancellation"
+    },
+    {
+      "paths": "check_live/reconcile_idle full operation history and attempt_matches read",
+      "treatment": "read-only verification work outside the event loop; bounded trusted current-record identity checks immediately before publication; no weakening of ambiguity checks"
+    },
+    {
+      "paths": "send child.stdin.write/flush",
+      "treatment": "bounded nonblocking frame queue; publication precedes dispatch"
+    },
+    {
+      "paths": "stop_child wait/kill/wait; close and cleanup",
+      "treatment": "shared nonblocking owned-group stop phases, including leader-already-dead path; close response requires observed stop"
+    },
+    {
+      "paths": "protocol/log drains, frame parsing/rendering, atomic_json/fsync",
+      "treatment": "bounded event batches and byte-bounded existing records/artifacts; service deadlines around publication without interrupting an atomic transition; preserve original failures if physical I/O prevents a claimed bound"
+    },
+    {
+      "paths": "open_session parent receive/wait and client receive/poll waits",
+      "treatment": "outside the live supervisor deadline loop; retain finite bounds and separate generation/ownership validation"
+    },
+    {
+      "paths": "SBCL worker computation, capture and unwind cleanup",
+      "treatment": "unchanged worker: capture stays before unwind, finite rendering budgets remain, and cleanup-blocked cancellation stays unconfirmed until observed stop or actual group death"
+    }
+  ],
+  "invariants": [
+    "Keep seven calls, one project execution lane, duplicate-ID precedence, strict owner/generation/lease/attempt guards and atomic crash-disagreement detection.",
+    "Keep conservative false consistency/quarantine, including all partial load/compile failures and uncertain cancellation. Do not invoke project printers or restarts.",
+    "Poll timeout/disconnect stops waiting only. Independent verification jobs do not evaluate project source or create another project lane.",
+    "Completion-winning races remain genuine completion. cancelled still requires correlated worker cleanup/death confirmation; group signals/death never count as cancellation.",
+    "Ended old generations reject submits and reattach. Explicit reconstruction after observed group death increments counter/nonce while preserving contract/step/attempt; no automatic restart."
+  ],
+  "future_validation": "After Root separately releases Source3: merge reviewed/refrozen corrected fixtures and focused S1/S2 tests with retained ancestry; require fresh baseline admission and actual targeted Source2 intended reds first. Commit repaired candidate before all eleven contracted Generator commands, S1/S2 leaves and subsequent independent ModeB/freshQA. No existing proof is rebound to the future candidate.",
+  "boundary": "Only this plan authored. No product/test/contract/state/installed edit and no runtime, diagnostic, native qualification or verification execution. Proposed implementation stays in the original two product files with Python standard library/SBCL built-ins; no new API/dependency/budget/allocation. Root independently measures all actual preparation and future cost once."
+}
