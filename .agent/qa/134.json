@@ -1,0 +1,91 @@
+{
+  "feature_id": "134",
+  "role": "canonical QA verdict at the contract-mandated path (.agent/contracts/134.json revision 4, qa.verdict_path), published from the already-executed independent Loop 2 fresh QA round; no new review round is recorded here",
+  "loop": 2,
+  "contract": ".agent/contracts/134.json revision 4",
+  "branch": "feat/portable-review-sandbox-2026-10-16",
+  "exercised_revision": "add11a99b21f17fd55eab4721fb90ccd13a7331f",
+  "source_verdict": ".agent/qa/134-loop2-qa.json",
+  "checks_basis": "Every check below was independently executed by the Loop 2 fresh QA round and is reproduced verbatim from .agent/qa/134-loop2-qa.json (checks, ambiguity_interpretations and notes). This publication did not re-execute the commands. The five contract verifications re-run by the Loop 2 evaluator (1, 3, 8, 9, 13) all exited 0 on the reviewed commit; verification 4's contracted exit-1 UNSUPPORTED-honesty path was observed live as the evaluator's initial verification-1 attempt; the loop-2 file's environmental caveat (pinned image transiently absent at review start on the shared host, re-pull by a process other than the reviewer) and its evidence-authenticity and scope-and-docs findings are inherited unchanged.",
+  "qa_pass": true,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "checks": [
+    {
+      "n": 1,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "independent_exit": 0,
+      "result": "CONFORMANCE: FULL, 54 tests OK, docker adapter auto-selected (sha256=19876966103efb6177eea22d6548dc6683ff596b337086b339dc6b8089a5cea5); matches evidence 01 modulo timings. First attempt exited 1 UNSUPPORTED because the pinned image was absent from the local daemon at that moment; passed after the image was re-present (see notes)."
+    },
+    {
+      "n": 3,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh",
+      "independent_exit": 0,
+      "result": "intact 0; omission controls 40/41/42/53 as expected; live listener reachable outside and refused inside; Docker live guards PASS. Output shape byte-matches evidence 03 except ephemeral listener port."
+    },
+    {
+      "n": 8,
+      "command": "H=$(python3 -c \"import hashlib;...\") && grep -q \"$H\" .agent/evidence/134/02-forced-docker.txt && echo \"adapter digest bound: $H\"",
+      "independent_exit": 0,
+      "result": "adapter digest bound: 19876966103efb6177eea22d6548dc6683ff596b337086b339dc6b8089a5cea5; digest also equals the sha256 recorded in evidence files 01/02/03/09 selected-adapter lines."
+    },
+    {
+      "n": 9,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh && leftovers=$(docker ps -aq --filter name=nizam-review-trial-) && test -z \"$leftovers\"",
+      "independent_exit": 0,
+      "result": "guards PASS; zero leftover nizam-review-trial- containers after the run. An earlier parallel attempt of mine observed a leftover that belonged to my own concurrently running verification-01 containers (reviewer-side race, not an implementation defect); the serial re-run passed cleanly."
+    },
+    {
+      "n": 13,
+      "command": "bash tools/validate.sh",
+      "independent_exit": 0,
+      "result": "SUMMARY: 16 passed, 0 failed, including C11 contract-schema validation; matches evidence 13."
+    },
+    {
+      "n": "adversarial",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter /nonexistent-adapter-134",
+      "independent_exit": 1,
+      "result": "fail-closed as contracted: SELECTED ISOLATION ADAPTER: none (unknown isolation adapter); exactly five UNSUPPORTED skips with preserved reason prefix; CONFORMANCE: NOT FULL; exit 1; no fallback to any working adapter."
+    },
+    {
+      "n": "evidence-authenticity",
+      "result": "No staged/fabricated evidence found. All 14 evidence files end in their claimed exit lines (04 correctly ends EXIT STATUS: 1 as the documented expected outcome); output formats reproduce byte-identically under my own runs; evidence-capture.json host metadata (kernel 6.8.0-142, docker 29.9.0, apparmor_restrict_unprivileged_userns=1) matches this host; dockerd journal corroborates the pinned image pull (2026-10-16 13:20) and net=none/net=host container activity (2026-10-16 18:47-18:48)."
+    },
+    {
+      "n": "scope-and-docs",
+      "result": "Commit touches only contract-scoped paths. CI changes confined to the convergent_review job (pinned-image pull + boundary + forced-conformance steps); no WA123/capability-receipt/sysctl/SBCL job edits. NDEBT-056 row present at docs/planning/DEBT.md 0.76.0 (digest GC/re-pin policy + preserved live-model gap, OPEN). tools/README.md 0.34.0 registers the adapter, fail-closed semantics, selection and honest-unsupported behavior. CHANGELOG Unreleased entry accurate. NIZAM.json key_documents gains tools/docker_trial_sandbox.sh. manifest.json/phase_022.yaml/run_state.json deliberately untouched, consistent with their contract purposes ('once gates and QA pass'; Orchestrator-owned run_state)."
+    }
+  ],
+  "ambiguity_interpretations_source": ".agent/qa/134-loop2-qa.json ambiguity_interpretations (mounted-sibling control 40 under Docker: honest; capget v2 fallback: honest; wrapper $@ passthrough: honest; deferral of manifest/phase_022/run_state updates: honest, closed by the Orchestrator after Mode B and QA)",
+  "environmental_caveat": "At review start (2026-10-17 ~05:05 UTC) the pinned image was NOT present in the local docker daemon despite the evidence capture minutes earlier; the daemon journal shows no rmi/prune record, and the image was re-pulled at 05:06:52 by a process other than this reviewer (shared host with concurrent third-party docker activity). The transient absence itself live-demonstrated the contracted fail-closed exit-3/no-auto-pull behavior.",
+  "adversarial": {
+    "performed": true,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter /nonexistent-adapter-134",
+    "independent_exit": 1,
+    "result": "pass",
+    "description": "Forced unknown isolation adapter must fail closed: exactly five UNSUPPORTED skips with preserved reason prefix, CONFORMANCE: NOT FULL, exit 1, no fallback. Executed by the Loop 2 QA round; reproduced here from .agent/qa/134-loop2-qa.json."
+  },
+  "evidence_files": [
+    ".agent/evidence/134/01-auto-selection.txt",
+    ".agent/evidence/134/02-forced-docker.txt",
+    ".agent/evidence/134/03-boundary-suite.txt",
+    ".agent/evidence/134/09-guards-teardown.txt",
+    ".agent/evidence/134/13-validate.txt",
+    ".agent/evidence/134/evidence-capture.json",
+    ".agent/qa/134-loop2-qa.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "attempts": {
+    "recorded": 1,
+    "limit": 3
+  },
+  "scope": "Loop 2 fresh QA of feature 134 implementation add11a99 against approved contract 134 revision 4 only. This publication does not claim merge/release gates, any release or tag, or the preserved live-model qualification gap.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent Loop 2 fresh QA of commit add11a99 approved with empty issues: five contract verifications independently re-run (1, 3, 8, 9, 13) all exited 0, the mandated adversarial selection-semantics check failed closed exactly as contracted, and evidence authenticity and scope/docs reviews found no staged or fabricated evidence. Canonical publication at the contract-mandated .agent/qa/134.json from the loop-2 record .agent/qa/134-loop2-qa.json; no command was re-executed for this publication."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
