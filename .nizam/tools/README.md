@@ -2,10 +2,61 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.17.0
+version: 0.33.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.33.0"
+    date: "2026-10-15"
+    summary: "Document per-call receipt input batching and four independent synthetic controls."
+  - version: "0.32.0"
+    date: "2026-10-15"
+    summary: "Document selected capable CI proof and read-only controls readiness."
+  - version: "0.31.0"
+    date: "2026-10-15"
+    summary: "Document read-only evidence-based failure routing and unchanged attempt budgets."
+  - version: "0.30.0"
+    date: "2026-10-14"
+    summary: "Document conflict assessments, isolated attempts and captured owned rollback."
+  - version: "0.29.1"
+    date: "2026-10-14"
+    summary: "Clarify literal repository bindings and the legacy Root integration boundary."
+  - version: "0.29.0"
+    date: "2026-10-14"
+    summary: "Document candidate-bound receipt gates, idempotent proposals and explicit proof recovery."
+  - version: "0.28.0"
+    date: "2026-10-14"
+    summary: "Document strict convergent AGF mapping and the historical foundation receipt boundary."
+  - version: "0.27.0"
+    date: "2026-10-14"
+    summary: "Document bounded partial-core aggregation and separate hosted fourteen-leaf proof."
+  - version: "0.26.0"
+    date: "2026-10-14"
+    summary: "Document bounded waits, confirmed cancellation, checked reattachment and explicit source replay with fourteen fixture checks."
+  - version: "0.25.0"
+    date: "2026-10-14"
+    summary: "Document the partial stub controller CLI and nine-case fixture-harness integration."
+  - version: "0.24.0"
+    date: "2026-10-14"
+    summary: "Document candidate-bound foundation readiness and independent current20 prerequisites."
+  - version: "0.23.0"
+    date: "2026-10-13"
+    summary: "Document active117 authorized-entry preflight, immutable dual-gate bindings and twenty current regression cases."
+  - version: "0.22.0"
+    date: "2026-10-13"
+    summary: "Document immutable independent acceptance bundles and case-specific positive/red evidence; retain local recorded-identity boundaries."
+  - version: "0.21.0"
+    date: "2026-10-13"
+    summary: "Document assessed-source identity and record continuity, with eleven permanent independent cases in the existing CI job."
+  - version: "0.20.0"
+    date: "2026-10-12"
+    summary: "Index the optional runtime-session adapter and source routing while retaining record-only and future live-proof boundaries."
+  - version: "0.19.0"
+    date: "2026-10-11"
+    summary: "Document ten C12 families and shared pure runtime-record relations; retain the record-only proof boundary."
+  - version: "0.18.0"
+    date: "2026-10-11"
+    summary: "Document the scoped payload help correction and maintenance regression/helper CI commands; capable-host test and closure proof remain pending at source intake."
   - version: "0.17.0"
     date: "2026-10-10"
     summary: "C15 calls both primitives: vlib_profiles_cover_roles (the 5<->5 coverage check) and the new vlib_profiles_map_roles, which parses the explicit Role column of standard/capability_profiles.md and fails a swapped profile-to-role mapping (phase-014 feature 109, NDEBT-026)."
@@ -58,6 +109,165 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
+## Development runtime controller — features 126–127
+
+`runtime_session.py` provides a detached supervisor and one stub child per
+session, using an exclusive lock, generation counter/nonce, explicit ownership
+and lease checks, and one outstanding operation. This coordinates declared
+identities; it does not authenticate callers or prove source/image equivalence.
+
+```bash
+python3 tools/runtime_session.py open-session --root /absolute/private/state --request /absolute/request
+```
+
+The other implemented actions are `submit-operation`, `poll-operation`,
+`transfer-session`, `close-session`, `cancel-operation` and `reattach-session`,
+with the same arguments. The JSON request
+includes session/requester identity; existing sessions require the current
+generation and lease. Open supplies owner, development purpose and a read-only
+run-state path binding contract/step/attempt. Submit adds operation ID, kind,
+payload, context and limits. Stub payload expressions are JSON data for set/get
+or a release-file gate; they are never Python evaluation. Only submit dispatches
+execution. Duplicate IDs return conflict without replacing prior records.
+
+Each response is one JSON object with `ok` and `result` or `error`; rejected
+submits reaching the supervisor also return their rejection record. Exit codes
+are 0 for successful/admitted work, 1 for refusal, 64 for malformed usage and 70
+for infrastructure failure. Admission is not completion: poll the operation.
+
+The private state root contains a directory per session: `controller.json` for
+process/attempt metadata, `runtime_session.json`, `supervisor.lock`, `control.sock`,
+operation records and separate child-result frames under `operations/`, and
+bounded `child.stdout.log`/`child.stderr.log` diagnostics. Child stdin and fd 3
+carry JSON lines. Atomic records are development provenance only. Public review
+trials receive no endpoint or record-writing access; the supervisor independently
+rejects trial requests delivered to it. Close observes process termination without
+claiming rollback of effects.
+
+A poll optionally supplies `limits: {"timeout_seconds": 0.25}` (finite 0–30).
+Without limits it returns an immediate snapshot. A deadline records
+`stopped_waiting`; execution stays pending and conflicting submits remain busy.
+Unknown outcomes return infrastructure exit 70. Completion replaces the wait
+outcome with `completed_wait`; a disconnected client never cancels work.
+
+Cancel adds operation ID and contract/step/attempt to current owner, generation
+and lease identity. It returns `cancel_requested` with confirmation false.
+Only a matching child acknowledgement of stopped execution produces `cancelled`
+and confirmation true. The stub gate cancels cooperatively; this promises no
+rollback. Already completed work retains its record and result unchanged.
+
+Reattach adds the same governed binding, the exact nullable
+`expected_outstanding_operation_ref`, and a closed `handoff` object with absolute
+`workspace_path`, committed `source_revision`, `source_manifest` entries
+(`path`, `sha256`), ordered `command_refs` and `external_resources`. Manifest
+files must match both Git HEAD and workspace bytes. Command references name
+committed JSON templates containing exactly `kind`, `payload`, `context`, `limits`.
+Paths are relative regular files without traversal or symlink escape. Resource
+objects use the existing runtime record schema. A successful check publishes
+`handoff.json` and a reattach session snapshot without changing owner, lease,
+generation, pending work or governed attempt. Partial publication fails closed.
+
+For replay, obtain the pinned inputs in a fresh private worktree, open a separate
+development session, read templates in order and submit each with fresh operation
+IDs and that session's actual owner/generation/lease and governed binding. Poll
+each outcome before continuing. Lifecycle calls never execute the templates.
+Handoff provenance does not prove source/heap equality or independent acceptance.
+
+`PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready`
+runs fourteen bounded leaf subprocesses, failing on any error or missing proof.
+Its partial stub scope is cases 1/2/3/5/6/8(policy)/9/10/13 and five named checks.
+`fixtures_self_test.sh` separately runs fourteen leaves in hosted CI; it does not
+run `core-ready`. Independent QA/capture still gate bounded core closure.
+SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
+The reserved `accept` action fails without side effects.
+
+## Conflict lanes and owned rollback — feature 121
+
+`assess_conflict_lanes` checks pinned current coordination and dispatch ownership;
+`verify_isolated_attempt` additionally observes a real detached Git worktree and
+all committed, staged, live and ignored changes. Conflicting file/state ownership
+serializes, and allocated attempts retain the existing maximum of three.
+`rollback_owned_attempt` removes only that validated owned worktree through Git,
+after external failure capture. The Orchestrator must ensure exclusive ownership
+and stopped processes; unrelated changes block removal. Assessments never reserve
+lanes or authenticate callers, and repository spellings must remain aligned.
+
+## Receipt gates and recovery — feature 120
+
+`verify_stage_receipt(repo, receipt, *, policy)` checks independently pinned
+operator/prerequisite authority, protected candidate inputs and actual command
+captures. Trusted callers supply policy and capture provenance; hashes and
+recorded producer names establish integrity, without authenticating execution.
+`plan_receipt_transition(repo, state, receipt, *, policy)` proposes one owned
+history/status update or an identical-receipt noop. Missing proof returns
+`rerun-required` or a verified `republish` proposal; callers must actually restore
+and revalidate the receipt. Both APIs preserve inputs and never execute recorded
+commands or write lifecycle state. Existing default acceptance includes37 cases.
+
+Policy, candidate and state must use the literal Git `origin` repository string,
+with consistently bound authority spelling; the APIs perform no alias normalization.
+Existing Root records use differing spellings and require explicitly reviewed
+compatibility or migration before live adoption; aligned synthetic fixtures prove
+library behavior only.
+
+Receipt candidate validation batches immutable inputs by exact revision and literal
+path, then reads their validated blobs through the existing Git batch helper.
+The observations live for one call; current files, modes and environment are read
+afresh. Ownership rules, origin and ancestry checks retain their existing meaning.
+`python3 tools/test_receipt_candidate_batching.py` runs four independent synthetic
+checks in order; `--check` selects `real-git-count-reduction`, `semantic-equivalence`,
+`fresh-mutations` or `literal-paths-and-modes`. The fixture shell suite invokes all
+four and retains its existing 166 fixture-file denominator and 48 Workflow Assurance
+cases. These checks establish real Git launch reduction, not a wall-time speedup
+or hosted qualification. Changed protected Source makes feature 123's existing
+current-readiness proof historical; this maintenance does not rebind that proof.
+
+## Convergent findings to AGF verdict — feature 119
+
+`convergent_agf_verdict(ledger, report, *, expected_repository, expected_head_sha)`
+validates the authoritative converged ledger and explicit bindings, returning
+independent copies of the verdict, three blocking arrays, fixes and minor advice.
+Active unsuppressed blocker/important findings append issues and fixes; minor
+findings remain advisory. Approval requires exact boolean true, empty blocking
+arrays and ledger approval. Existing blockers remain intact; malformed inputs
+raise `AssuranceError`. This pure API neither authenticates provenance nor advances
+workflow state. The default runner executes all twenty original and six new cases.
+
+## Evidence-based failure routing — feature 122
+
+`route_failed_attempt(repo, request, *, policy)` reads independently selected
+immutable authority, classification, capture and coordination references. It
+returns a failed infrastructure-diagnosis or semantic-repair proposal for allocated
+attempts one and two, or halt for attempt three. It preserves counters and the
+history prefix, accepting optional lane inventories only when identical.
+Semantic classification requires a schema-valid rejecting verdict; both causes
+require an actual nonzero outer wrapper capture, pinned output bytes/modes and
+candidate/environment bindings. Expected inner negatives do not clear outer
+failure. Missing, stale or relabeled proof raises `AssuranceError`.
+
+This API writes no state and authorizes no retry. Producer labels and hashes
+establish binding, not authentication or factual truth; the Orchestrator owns
+policy selection and counters. Fixture authority is synthetic. Root repository
+binding migration remains unapplied. Four selectors extend the default to 46;
+full controls readiness remains a separate feature123 obligation.
+
+## Foundation readiness — feature 118
+
+`verify_foundation_ready(repo, prerequisite)` observes the immutable SourceC,
+explicit current and historical input bytes/modes, distinct recorded evaluator
+identity, and all twenty exact case proofs. The permanent runner accepts
+`--check foundation-ready` using the canonical feature118 prerequisite receipt;
+its original twenty cases remain available independently alongside six AGF cases.
+The immutable receipt is checked at commit `8ac94f6808e8197111197c9acbf59b2aa92efc7c`;
+changed source/test inputs correctly reject that stale receipt. A record-only HEAD
+advance preserves readiness when the assessed inputs remain unchanged.
+
+Readiness supports the bounded foundation. Phase completion follows the live
+[phase017 record](../docs/planning/phase_017.yaml) and requires separate Mode B,
+fresh three-command QA plus an independent spot check, and Root evidence capture.
+The installed v1.5.0 payload remains unchanged; full WA controls, runtime and
+controller work require their separately authorized phases.
+
 
 # tools/
 
@@ -67,13 +277,92 @@ agent runtime through the same adapter contract — no per-runtime forks.
 
 | File | Purpose |
 |---|---|
-| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. |
+| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. The optional live_runtime_session requirement is false; adapter and SBCL binding capabilities route to their authoritative sources. |
 | [`SKILL.md`](SKILL.md) | The single instructions payload any agent runtime loads to act on the framework: when to load it, how to consume the framework by querying the root index rather than bulk-reading, a summary of the contract-first execution loop, the circuit-breaker and anti-hallucination obligations every role carries, the durable-state and evidence-by-path obligations, and the verdict JSON formats every gate produces. |
-| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the numbered Adapter Conformance Checklist an integrator ticks through. |
+| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the ten-item Adapter Conformance Checklist an integrator ticks through. Section 6 adds seven optional session calls and conditional S1–S9 for claiming adapters. |
 | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
 | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
 | [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |
 | [`test_convergent_review.py`](test_convergent_review.py) | Permanent stdlib `unittest` suite exercising the frozen 12-case corpus and adversarial blocker regressions, including controlled Git reads, absent-versus-error object lookup, mode-only changes, commit-header parsing, sandbox no-execute, evaluator substitution, replay ancestors, and publication visibility/durability. |
+
+The optional session surface routes through [the adapter interface](interface.md),
+[Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
+[SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md). Adapters without
+sessions remain conformant. Existing schemas/C12 validate declared records only;
+the partial stub controller proves only the bounded cases above. Full adapter/SBCL
+and remaining live proofs stay pending; installed v1.5.0 is unchanged.
+
+## Sealed independent acceptance bundles
+
+`verify_acceptance_bundle(repo, bundle, independent_review)` verifies a closed
+canonical seal over immutable Git baseline inputs, source-obligation snapshot,
+test/API/naive-control bytes and modes, observed environment, distinct recorded
+agent/session identities and each case's setup, positive control and intended red.
+The independent review is a separate nine-field record binding the same seal.
+Recorded commands are read as evidence; the verifier never executes them.
+
+Every case binds distinct actual positive/case input files and its operation hash.
+Setup and positive controls must exit 0; the red must exit 1 with the case-specific
+policy assertion and opposite observed accept/reject result. Missing API, import,
+transport or unrelated failures do not qualify. Changes to sealed bytes or
+observed environment require a new bundle and independent review. Implementation
+Source identity is separately assessed: a later record-only HEAD is allowed while
+sealed inputs still match their immutable Git blobs and actual current bytes.
+
+Prepare `WA_BUNDLE_FILE` and `WA_REVIEW_FILE` as complete absolute filenames of
+strict JSON inputs, with `WA_REPO_ROOT` the repository being observed:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py bundle --repo "$WA_REPO_ROOT" --bundle "$WA_BUNDLE_FILE" --review "$WA_REVIEW_FILE"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --base-cases
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+```
+
+The regression flag runs the eleven feature 115 cases; the default suite now runs
+those plus five feature 116 cases in the existing CI job. Use independently
+reviewed inputs and output evidence; local role records are not cryptographic
+authentication or runtime permission enforcement. Feature 117 entry checks and
+feature 118 foundation closure remain pending. Earlier feature 115 documentation
+below records its initial eleven-case suite; the current default count is sixteen.
+The authored tool does not upgrade installed v1.5.0.
+
+## Assessed-source identity and record continuity
+
+[`workflow_assurance.py`](workflow_assurance.py) provides a dependency-free,
+read-only API: `assess_repository`, `compare_identity` and `verify_record_update`.
+Assessments bind an explicit immutable Git commit/tree, observed origin, source,
+contract, test and tool bytes/modes, actual runtime identifiers and named environment
+variables. An input manifest declares nonempty `source`, `contracts`, `tests` and
+`tools` path lists plus `unknown_dependencies: []`.
+
+Every tracked path is checked against actual anchor blobs and current raw bytes,
+including staged content. Untracked and ignored files invalidate conservatively.
+Paths must be regular, canonical relative files with no symlink components.
+Explicit JSON record masks allow existing scalar leaves to change with the same
+JSON type and permit `/history` append only with its exact original prefix intact.
+All other parsed keys/values remain unchanged. Record-only commits can advance
+HEAD while the assessed anchor and every assessed input remain unchanged.
+
+Set `WA_REPO_ROOT` to the repository root and `WA_SOURCE_COMMIT` to the full
+immutable assessed commit. Set each task-specific `WA_*_FILE` variable below to
+the complete absolute filename of your prepared JSON input outside that
+repository. These variables are caller configuration, not observed evidence.
+
+```bash
+python3 tools/workflow_assurance.py assess --repo "$WA_REPO_ROOT" --source-commit "$WA_SOURCE_COMMIT" --inputs "$WA_INPUTS_FILE" --environment-names "$WA_ENV_NAMES_FILE" --record-ownership "$WA_RECORD_OWNERSHIP_FILE"
+python3 tools/workflow_assurance.py compare --before "$WA_BEFORE_IDENTITY_FILE" --after "$WA_AFTER_IDENTITY_FILE"
+python3 tools/workflow_assurance.py record --before "$WA_BEFORE_RECORD_FILE" --after "$WA_AFTER_RECORD_FILE" --owned-fields "$WA_OWNED_FIELDS_FILE"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+```
+
+The last command runs eleven independently authored feature 115 cases and is
+permanent in the existing `fixtures_self_test` CI job. Unknown cases, invalid JSON,
+missing observations and unsafe paths exit nonzero. Keep CLI input/output files
+outside the assessed repository unless they have a declared record mask.
+This local identity utility does not authenticate callers or authorize entry;
+sealed-bundle enforcement, entry/role checks and foundation closure belong to
+features 116–118. It implements no runtime controller or live acceptance and does
+not upgrade the installed v1.5.0 payload.
 
 ## Design Decision — DD-4: Unified Skill Payload
 
@@ -125,7 +414,7 @@ not durable.
 
 On a host that cannot prove user-namespace isolation (for example one whose kernel refuses `unshare --user --map-root-user true`, as with `kernel.apparmor_restrict_unprivileged_userns = 1`), the five sandbox-dependent tests are not run. Each is reported on its own result line as `UNSUPPORTED` (an explicit skip whose reason begins `UNSUPPORTED: user-namespace isolation unavailable`), the run prints `CONFORMANCE: NOT FULL`, and the command exits non-zero: the required gate never passes on a host that cannot prove isolation. `--allow-unsupported-isolation` is for local development only and CI never passes it; it turns that same outcome into exit 0 while still printing every `UNSUPPORTED` line and `CONFORMANCE: NOT FULL`, and it never masks any other failure. On an isolation-capable host the sandbox tests execute and the run prints `CONFORMANCE: FULL`. `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` are not relaxed by this mode and still fail closed; the suite never runs a trial outside the sandbox.
 
-CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
+CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` and `pyyaml` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
 
 ## Compliance Coverage — C1–C16
 
@@ -147,7 +436,7 @@ full default sweep reports `SUMMARY: 16 passed, 0 failed`:
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all eight routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest,runtime_session,runtime_operation}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all ten routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). Runtime records use shared `vlib_runtime_record_relations` for owner, generation, lease and continuity comparisons in both targeted validation and the sweep. Records prove no live runtime behavior; consumer sessions are not auto-swept. |
 | C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |
 | C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only. |
 | C15 | Capability-profile ↔ AGF-role mapping | C15 calls both `vlib_profiles_cover_roles` (5↔5 coverage: every profile identifier in `standard/capability_profiles.md` is present and each one's corresponding role is defined in `standard/AGF.md`) and `vlib_profiles_map_roles` (phase-014 feature 109, NDEBT-026), a primitive that parses the table's explicit `Role` column and fails unless each of the five profile rows names its own role — so a swapped profile-to-role mapping now fails C15. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; 109 adds the Role column and the mapping primitive; default sweep only. |
@@ -178,3 +467,69 @@ as its own CI job (`fixtures_self_test`) alongside `validate` and
 `e2e_bootstrap`.
 
 The completeness guard also consults a **claim map**, the `FIXTURE_CLAIMS` array in the script: every subdirectory of `tools/fixtures/` is claimed by exactly one owning suite, as one `<subdirectory>|<suite file>` row, and a file below a claimed subdirectory, at any depth, is accounted for by that claim. The guard fails on an unclaimed subdirectory, on a doubly-claimed subdirectory, on a claim naming a suite file that does not exist, and on a claim naming a subdirectory that is not on disk. The self-test demonstrates those four cases itself, in a private scratch area that the scratch helper confines outside the repository, and prints one `OK   claim-map` line for each. A claim proves ownership, not execution: that the owning suite runs is proven by its own CI job (`tools/test_convergent_review.py` owns the `convergent_review` subdirectory and runs as the `convergent_review` job). A future suite that adds a fixture subdirectory registers its row in this same map; there is no second registry.
+
+### Post-GA maintenance regression checks
+
+The C13 interruption helper `.github/scripts/test_c13_cleanup.py` exercises the
+actual fixture swap and owned cleanup; its `--source-ref` mode demonstrates the
+unrepaired baseline failure before cleanup repair. The required sandbox helper
+`.github/scripts/test_sandbox_boundaries.py` uses a real outside listener and
+isolated namespace, filesystem and executable-permission omissions. Setup errors
+cannot count as confinement; an incapable host reports `UNSUPPORTED` with exit64.
+
+The standing CI jobs run these helpers and the required suite with these commands:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
+```
+
+The existing jobs emit checkout SHA and source digest receipts. Actual capable CI
+and independent QA remain prerequisites to debt closure; local unsupported results
+are recorded as limitations. The installed v1.5.0 payload remains unchanged.
+
+
+## Authorized entry — feature 117
+
+`verify_authorized_entry(repo, entry)` checks actual repository origin and local
+phase authority, the released installed pin and critical index/skill/role bytes,
+the immutable proposal and both referenced independent approvals, and explicit
+role/path/field write intents. It uses the five installed AGF role/profile pairs.
+Approved local grants permit independent Evaluator test authorship; permission
+class defaults remain consumer-aspirational. The check observes intent and does
+not write files or authenticate recorded agents.
+
+The project preflight runs while approved feature 117 is active. It rejects after
+117 completes or during 118; portable cases retain real approved active snapshots.
+The current suite includes twenty cases, with `--pre-entry-cases` selecting the
+prior sixteen. Historical 115/116 QA and bundle receipts retain their assessed
+revisions; a changed shared runner does not reseal them.
+
+Set `WA_ENTRY_FILE` to the complete absolute filename of an entry JSON input.
+The file names the actual approved contract and immutable authority references;
+write grants come from that contract. Keep operator input files outside the
+assessed repository when using the separate identity commands.
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py entry --repo . --entry "$WA_ENTRY_FILE"
+```
+
+
+## Candidate-bound control proof
+
+`workflow_assurance_ci.py` composes the existing observation sandbox, convergence
+and receipt APIs in the existing `convergent_review` job. Root selects capture
+inputs first, then independently selects immutable captures for the matching
+runtime verify pass. Experiment output commits and bounded bundles keep the
+assessed source anchor distinct from each actual checkout and output revision.
+The observer checks changed workflow `continue-on-error` lines; its three enforced
+executions are bounded deterministic dogfood. Synthetic parser fixtures remain
+separate from actual hosted command, trial and artifact evidence.
+
+`verify_controls_ready(repo, evidence, *, policy)` observes Root-selected completed
+hosted proof without running historical receipt commands or comparing that
+runtime with the local interpreter. `--check controls-ready` retains the same
+boundary. Strict review, QA, evidence capture and canonical closure remain
+separate gates. The experiment configures its own selected Git transport; live
+Root binding migration and the installed payload remain unchanged.
