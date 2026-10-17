@@ -45,7 +45,7 @@ def verify(payload: Path) -> int:
         if kind != "blob" or mode not in ("100644", "100755"):
             raise GovernanceDrift(f"unsupported pinned file type: {path!r}")
         expected[path.decode()] = (mode, oid)
-    if len(expected) != 238 or "NIZAM.json" not in expected:
+    if len(expected) != 276 or "NIZAM.json" not in expected:
         raise GovernanceDrift("trusted payload tree is missing its expected inventory")
     actual: set[str] = set()
     for directory, dirs, files in os.walk(payload, followlinks=False):
