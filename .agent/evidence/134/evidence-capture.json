@@ -1,0 +1,137 @@
+{
+  "feature_id": "134",
+  "contract_id": "134",
+  "contract_revision": 4,
+  "branch": "feat/portable-review-sandbox-2026-10-16",
+  "captured_by": "Generator (feature 134 Loop 2 implementation)",
+  "captured_at": "2026-10-17",
+  "evidence_dir": ".agent/evidence/134",
+  "convention": "One text file per verification command: command line, raw output, actual exit status as the last line. Raw terminal output is not inlined here.",
+  "host": {
+    "kernel": "6.8.0-142-generic",
+    "apparmor_restrict_unprivileged_userns": 1,
+    "docker": "29.9.0",
+    "native_probe": "fails (unshare: write failed /proc/self/uid_map: Operation not permitted); Docker adapter auto-selected"
+  },
+  "pinned_image": "docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213",
+  "verifications": [
+    {
+      "n": 1,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "evidence": ".agent/evidence/134/01-auto-selection.txt",
+      "expected": "0 with CONFORMANCE: FULL and explicit selected-adapter line (docker) on the restrictive QA host",
+      "actual_exit": 0,
+      "observed": "SELECTED ISOLATION ADAPTER: tools/docker_trial_sandbox.sh sha256=19876966103efb6177eea22d6548dc6683ff596b337086b339dc6b8089a5cea5; CONFORMANCE: FULL; Ran 54 tests OK"
+    },
+    {
+      "n": 2,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh",
+      "evidence": ".agent/evidence/134/02-forced-docker.txt",
+      "expected": "0 with CONFORMANCE: FULL; zero UNSUPPORTED lines; all five sandbox-dependent tests executed under the Docker adapter",
+      "actual_exit": 0,
+      "observed": "CONFORMANCE: FULL; zero UNSUPPORTED lines; five sandbox-dependent tests plus Docker live guards executed under the Docker adapter (real containers)"
+    },
+    {
+      "n": 3,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh",
+      "evidence": ".agent/evidence/134/03-boundary-suite.txt",
+      "expected": "0; live listener reachable outside and refused inside; EACCES-only generated-exec denial; omission controls 40/41/42/53",
+      "actual_exit": 0,
+      "observed": "intact legs 0; mounted-sibling 40; host-network 41; exec-permitted 42; bad-interpreter 53; live listener proven outside; Docker live guards PASS"
+    },
+    {
+      "n": 4,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/linux_trial_sandbox.sh",
+      "evidence": ".agent/evidence/134/04-forced-native-honest.txt",
+      "expected": "1 on the restrictive QA host with exactly five UNSUPPORTED lines and CONFORMANCE: NOT FULL (documented expected outcome, not a failure)",
+      "actual_exit": 1,
+      "observed": "exactly five UNSUPPORTED skip lines (reason prefix 'UNSUPPORTED: user-namespace isolation unavailable'); CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5); required-conformance non-zero exit preserved"
+    },
+    {
+      "n": 5,
+      "command": "bash tools/docker_trial_sandbox.sh --probe && bash tools/docker_trial_sandbox.sh --print-image",
+      "evidence": ".agent/evidence/134/05-probe.txt",
+      "expected": "0; --print-image prints the pinned digest reference exactly",
+      "actual_exit": 0,
+      "observed": "probe success line; --print-image prints docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213"
+    },
+    {
+      "n": 6,
+      "command": "bash tools/docker_trial_sandbox.sh --root /nonexistent-root-134 --runner /nonexistent-runner-134 --privileged -- /usr/bin/true; test $? -eq 2",
+      "evidence": ".agent/evidence/134/06-reject-untrusted-flag.txt",
+      "expected": "0 overall (inner wrapper call exits 2 with one-line reason; no docker invocation occurs)",
+      "actual_exit": 0,
+      "observed": "inner wrapper exited 2 with one-line reason 'unknown argument: --privileged' before any docker call; trailing test passed"
+    },
+    {
+      "n": 7,
+      "command": "S=$(mktemp -d); printf '#!/bin/sh\\nexit 1\\n' > \"$S/docker\"; chmod +x \"$S/docker\"; PATH=\"$S:$PATH\" bash tools/docker_trial_sandbox.sh --probe; A=$?; printf '#!/bin/sh\\n[ \\\"$1\\\" = image ] && exit 1\\nexit 0\\n' > \"$S/docker\"; PATH=\"$S:$PATH\" bash tools/docker_trial_sandbox.sh --probe; B=$?; rm -rf \"$S\"; test \"$A\" -eq 3 -a \"$B\" -eq 3",
+      "evidence": ".agent/evidence/134/07-failclosed.txt",
+      "expected": "0 overall; each simulated probe failure (daemon-unreachable; image-absent) exits 3 with a one-line reason",
+      "actual_exit": 0,
+      "observed": "daemon-unreachable probe exited 3 ('docker daemon unreachable'); image-absent probe exited 3 ('pinned image absent locally: ...'); trailing authoritative test passed"
+    },
+    {
+      "n": 8,
+      "command": "H=$(python3 -c \"import hashlib;print(hashlib.sha256(open('tools/docker_trial_sandbox.sh','rb').read()).hexdigest())\") && grep -q \"$H\" .agent/evidence/134/02-forced-docker.txt && echo \"adapter digest bound: $H\"",
+      "evidence": ".agent/evidence/134/08-adapter-digest.txt",
+      "expected": "0; the forced-Docker run prints the selected adapter path and its sha256, equal to the wrapper's sha256, durably captured in 02-forced-docker.txt",
+      "actual_exit": 0,
+      "observed": "adapter digest bound: 19876966103efb6177eea22d6548dc6683ff596b337086b339dc6b8089a5cea5"
+    },
+    {
+      "n": 9,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh && leftovers=$(docker ps -aq --filter name=nizam-review-trial-) && test -z \"$leftovers\"",
+      "evidence": ".agent/evidence/134/09-guards-teardown.txt",
+      "expected": "0; live in-sandbox guards present; no nizam-review-trial- container remains; teardown leg fails closed on docker CLI error",
+      "actual_exit": 0,
+      "observed": "guards PASS (CapEff zero via capget, no daemon socket, fresh PID namespace, fixed minimal environment, ambient marker absent, host-existing ambient file unreadable inside); leftover container list empty; teardown leg fail-closed on docker CLI error preserved (leftovers=$(docker ps ...) && test -z ...)"
+    },
+    {
+      "n": 10,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+      "evidence": ".agent/evidence/134/10-c13.txt",
+      "expected": "0",
+      "actual_exit": 0
+    },
+    {
+      "n": 11,
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/134/11-fixtures.txt",
+      "expected": "0",
+      "actual_exit": 0,
+      "observed": "SELF-TEST OK: 166/166 fixtures accounted for, 0 failed"
+    },
+    {
+      "n": 12,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+      "evidence": ".agent/evidence/134/12-workflow-assurance.txt",
+      "expected": "0",
+      "actual_exit": 0
+    },
+    {
+      "n": 13,
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/134/13-validate.txt",
+      "expected": "0; C11 validates this contract against schema/contract.schema.json",
+      "actual_exit": 0,
+      "observed": "SUMMARY: 16 passed, 0 failed"
+    },
+    {
+      "n": 14,
+      "command": "bash .nizam/tools/validate.sh --payload",
+      "evidence": ".agent/evidence/134/14-payload.txt",
+      "expected": "0",
+      "actual_exit": 0,
+      "observed": "SUMMARY (payload mode): 12 passed, 0 failed"
+    }
+  ],
+  "new_debt_row": "NDEBT-056 (docs/planning/DEBT.md 0.76.0): pinned-image digest garbage-collection/re-pin policy plus the preserved live-model observation gap",
+  "notes": [
+    "Verification 4's actual exit 1 is the contract's documented expected outcome on the restrictive QA host (unsupported-stays-nonzero), not a failure.",
+    "The Docker legs ran real containers on this host (docker 29.9.0); teardown verified with no nizam-review-trial- leftovers.",
+    "tools/isolated_trial_adapter.py change is additive-only: with no --interpreter flag the native path is byte-identical.",
+    ".agent/contracts/release-v1.6.0.json (and sibling release-line artifacts) are another branch's untracked files: untouched and unreferenced by this feature.",
+    "Phase-completion files (docs/planning/manifest.json, docs/planning/phase_022.yaml, .agent/run_state.json) are deliberately NOT updated here: their contract purposes scope them to 'once gates and QA pass', which follows Mode B and fresh QA."
+  ]
+}

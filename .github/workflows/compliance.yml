@@ -140,6 +140,12 @@ jobs:
         run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
       - name: Run fixture self-test
         run: bash tools/fixtures_self_test.sh
+      - name: Pull pinned Docker trial-sandbox image
+        run: docker pull "$(bash tools/docker_trial_sandbox.sh --print-image)"
+      - name: Run Docker-adapter sandbox boundary suite
+        run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh
+      - name: Run Docker-adapter required conformance suite
+        run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh
 
       - name: Select Root CI operation
         id: wa123
