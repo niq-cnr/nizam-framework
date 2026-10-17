@@ -1,0 +1,60 @@
+CIRCUIT BREAKER TRIP RECORD - step release-v1.6.0-contract (v1.6.0 release, contract pair)
+Methodology: .nizam/methodology/03_circuit_breaker.md Section 4 breach procedure.
+Counters: circuit exhausted at attempts 4 of limit 4 (limit extended 3->4 under the recorded
+recovery authorization .agent/evidence/release-v1.6.0-contract/recovery-authorization.json,
+whose own terms state a round-4 rejection halts for operator decision and no fifth attempt
+is implied). All four attempts CONCLUDED with at least one independent gate rejection.
+
+Attempt timeline (all reviews by fresh independent spawns; no self-review; verdicts in place
+with round numbers):
+- Attempt 1 (initial draft): Mode A REJECTED (1 blocker: pre-tag/post-tag sequencing
+  contradiction — files_modify demanded observed tag facts while AT1-AT4 gate the tag;
+  3 major incl. changed-doc frontmatter sweep and feature-119 omission; 1 minor; 3 coverage
+  gaps). Contract review REJECTED (4 issues + 1 coverage + 2 claim inaccuracies, same
+  blocker class).
+- Attempt 2 (amendment revision 1): structural split into the v1.5.0 two-contract pattern
+  (release-v1.6.0-closeout.json created). Mode A REJECTED (5 issues: AT4 allowlist rejected
+  the closeout path — reintroduced defect class; closeout changelog assertion fail-open;
+  closeout missing manifest/README own-duty assertions; count language unenforced).
+  Contract review REJECTED (4 issues: same allowlist blocker; ROADMAP whole-file assertions
+  false-FAIL on change_log narration; HANDOVER check bound to a non-mandated heading;
+  unasserted own-duties).
+- Attempt 3 (amendment revision 2): Mode A REJECTED (2 major: ROADMAP section-scoping
+  overcorrection — later WITHDRAWN as a reviewer-side evaluation-shape error in round 4;
+  operator_gates/HANDOVER purposes crossed by the amendment; 2 minor). Contract review
+  REJECTED (4 issues: the crossed purposes; README installed-line selector false-FAIL;
+  'preparation' ban trips on sanctioned wording; frontmatter check vacuous).
+- Attempt 4 (amendment revision 3 + closeout revision 2, under the recorded recovery
+  authorization): Mode A REJECTED (1 blocker + 1 major). Contract review REJECTED (1 issue).
+  Both reviewers: every architectural finding across all four rounds is resolved and
+  mechanically verified; NO dishonest-pass path exists; the anchor surface is completely
+  and correctly assigned across both contracts with zero coverage gaps.
+
+Remaining defects at trip (BOTH one-line textual fixes, BOTH introduced by the
+Orchestrator's own amendments, BOTH with reviewer-agreed exact remedies):
+1. BLOCKER: release AT4's auxiliary() allowlist does not admit the recovery-authorization
+   evidence path .agent/evidence/release-v1.6.0-contract/recovery-authorization.json
+   (referenced by approvals.human_authorized_extension), so AT4 fails closed in both legs.
+   Remedy: add the exact path (or a .agent/evidence/release-v1.6.0-contract/ prefix
+   pattern) to auxiliary().
+2. BLOCKER/MAJOR: closeout AT3's frontmatter assertion 'v1.5.0' not in fm scans the whole
+   frontmatter block, which legitimately preserves historical change_log mentions of
+   v1.5.0 — satisfiable only by a prohibited historical rewrite.
+   Remedy: scope the assertion to the description: field only — assert 'v1.5.0' absent and
+   'v1.6.0' present in that field.
+
+State at trip:
+- Contracts uncommitted in the worktree: release-v1.6.0.json status proposed revisions 3;
+  release-v1.6.0-closeout.json status proposed revisions 2. Both schema-valid;
+  tools/validate.sh 16/16 green with both present.
+- Gate verdicts: .agent/validator/release-v1.6.0-mode-a.json (round 4),
+  .agent/qa/release-v1.6.0-contract-review.json (round 4).
+- No release mechanics executed: no version anchors touched, no tag, no merge.
+- Feature 134 (PR #108) is an independent parallel line and is NOT part of this trip.
+
+Escalation: attempt 5 is FORBIDDEN without explicit human authorization per the recovery
+authorization's own terms and methodology/03_circuit_breaker.md Section 4. Operator options:
+(a) authorize attempt 5 limited to the two enumerated one-line remedies (both reviewers
+state the contract pair should then pass without further architectural iteration);
+(b) keep the release contract halted and defer v1.6.0;
+(c) redirect (e.g., operator edits the contract directly, or disposes the release).
