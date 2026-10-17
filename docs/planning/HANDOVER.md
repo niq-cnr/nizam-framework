@@ -1,13 +1,16 @@
 ---
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
-description: "v1.6.0 release preparation status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.30
+description: "Current v1.6.0 release status and the historical phase-014 handover, with live canonical planning references."
+version: 1.0.31
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-16"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.31"
+    date: "2026-10-17"
+    summary: "Record the published v1.6.0 release: add the dated '## Current status — v1.6.0 released' heading directly under the H1, above the 2026-10-17 preparation note, with the observed facts (annotated tag v1.6.0 at reviewed PR #113 merge 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, release.yml run 39008222975 succeeded, GitHub Release published 2026-10-17T05:59:26Z and marked Latest, tag bootstrap rehearsal passed, .nizam/ re-pinned by the reviewed re-bootstrap); add ONE supersession marker line as the first line under the '## Current status — 2026-10-17' heading, pointing to the new section; refresh the frontmatter description anchor to name v1.6.0 as the current release. Historical bodies are unchanged except that single marker line; the 2026-10-17 preparation note body is otherwise byte-identical to version 1.0.30."
   - version: "1.0.30"
     date: "2026-10-17"
     summary: "Add a dated current-status note above the historical snapshots: v1.6.0 release in preparation (tag pending) on branch release/v1.6.0; the annotated tag and release publication remain the separate post-merge Orchestrator mechanic under H-FRAMEWORK-RELEASE and the installed v1.5.0 payload is unchanged. Refresh the frontmatter description anchor from the PR-#112-era v1.5.0 release-status wording to preparation wording. Historical bodies unchanged."
@@ -104,7 +107,21 @@ change_log:
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
 
+## Current status — v1.6.0 released
+
+v1.6.0 is released and published. The annotated tag `v1.6.0` points at reviewed
+PR #113 merge `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e`; `release.yml` run
+39008222975 succeeded and published the GitHub Release at
+`2026-10-17T05:59:26Z`, marked Latest; the tag bootstrap rehearsal passed
+(evidence `.agent/evidence/release-v1.6.0-tag/`). This repository's `.nizam/`
+install is re-pinned to the `v1.6.0` payload by the reviewed post-tag
+re-bootstrap. This note supersedes the preparation-time note below; the operator
+`H-GA` decision and its explicit evidence exceptions remain unchanged, and
+feature 129 remains feature-scope complete with full-live qualification in
+features 131/132.
+
 ## Current status — 2026-10-17
+**SUPERSEDED by the v1.6.0 release — see 'Current status — v1.6.0 released' above.**
 
 v1.6.0 release in preparation (tag pending). The dated release anchors and the
 CHANGELOG roll-up for the next MINOR are prepared on branch `release/v1.6.0`

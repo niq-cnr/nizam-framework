@@ -7,6 +7,25 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **v1.6.0 post-release ledger refresh** (framework-envelope only). v1.6.0 is
+  published: the annotated tag `v1.6.0` points at reviewed PR #113 merge
+  `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e`; `release.yml` run 39008222975
+  succeeded and published the GitHub Release at 2026-10-17T05:59:26Z (marked
+  Latest); the tag bootstrap rehearsal passed. This repository's `.nizam/`
+  install is re-pinned to the `v1.6.0` payload by the reviewed post-tag
+  re-bootstrap, and the planning ledgers (ROADMAP, operator_gates, HANDOVER,
+  manifest) and run_state record the observed facts. The self-governance record
+  (`docs/planning/SELF_GOVERNANCE.md`, 0.2.0) records the `v1.6.0` installation
+  as installed with commissioning not performed and retains the `v1.5.0`
+  commissioning as history; README states that commissioning of this release has
+  not been performed. The operator_gates `v1.6.0` PREPARED clause is superseded
+  by the EXECUTED record, and the only edit to an existing historical ledger
+  body is one supersession marker line on the HANDOVER 2026-10-17 preparation
+  note. No payload source or version anchor changes; feature 129 remains
+  feature-scope complete with full-live qualification remaining features 131/132.
+
 ## [1.6.0] - 2026-10-17
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): the Workflow

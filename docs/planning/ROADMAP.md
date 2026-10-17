@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.16
+version: 0.65.17
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.17"
+    date: "2026-10-17"
+    summary: "Post-release refresh (the 0.51.0 precedent): the Current position disposition line rolls from 'Release in preparation: v1.6.0' to 'Latest released tag: v1.6.0' carrying the observed facts -- annotated tag v1.6.0 at reviewed PR #113 merge 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, release.yml run 39008222975 succeeded, GitHub Release published 2026-10-17T05:59:26Z and marked Latest, tag bootstrap rehearsal passed. The v1.5.0 prior-release record and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.16"
     date: "2026-10-17"
     summary: "Record v1.6.0 release preparation: the Current position section gains the 'Release in preparation: v1.6.0' disposition line (preparation only; the annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.6.0' roll land only in the post-tag closeout). The v1.5.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
@@ -288,7 +291,7 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v1.6.0
+Latest released tag: v1.6.0 (MINOR) — RELEASED 2026-10-17 at `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e` (PR #113); `release.yml` run 39008222975 succeeded and the GitHub Release published at `2026-10-17T05:59:26Z` is marked Latest.
 
 
 ## Historical snapshot — position — locally complete 021 / delivery pending, 2026-10-16

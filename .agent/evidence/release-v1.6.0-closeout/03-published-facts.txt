@@ -1,0 +1,30 @@
+$ python3 - <<'CHECK'
+import json,subprocess,re
+from pathlib import Path
+sha=subprocess.check_output(['git','rev-parse','v1.6.0^{commit}'],text=True).strip()
+r=json.loads(Path('.agent/run_state.json').read_text()); e=[x for x in r['history'] if x.get('event')=='release_executed' and x.get('tag')=='v1.6.0'][-1]
+assert e['commit']==sha and e.get('workflow_run'),e
+road=Path('docs/planning/ROADMAP.md').read_text()
+sec=re.search(r'^## Current[^\n]*\n(.*?)(?=^## |\Z)',road,flags=re.M|re.S).group(1)
+assert sec.count('Latest released tag: v1.6.0')==1 and 'Release in preparation: v1.6.0' not in sec and sha in sec
+g=Path('docs/planning/operator_gates.md').read_text(); row=[x for x in g.splitlines() if x.startswith('| `H-FRAMEWORK-RELEASE`')][-1]; assert all(x in row for x in ['v1.6.0','EXECUTED',sha])
+h=Path('docs/planning/HANDOVER.md').read_text()
+fm=h.split('---',2)[1]; d=re.search(r'^description:\s*(.+)$',fm,flags=re.M); assert d and 'v1.5.0' not in d.group(1) and 'v1.6.0' in d.group(1),'frontmatter description must name v1.6.0 as current release with no stale v1.5.0 anchor'
+note=h.split('## Current status — v1.6.0 released',1)[1].split('\n## ',1)[0]
+assert 'v1.6.0' in note and sha in note and 'Release in preparation: v1.6.0' not in note
+rel=json.loads(subprocess.check_output(['gh','release','view','v1.6.0','--json','tagName,isDraft,isPrerelease,publishedAt'],text=True)); assert rel['tagName']=='v1.6.0' and not rel['isDraft'] and not rel['isPrerelease'] and rel['publishedAt']
+latest=json.loads(subprocess.check_output(['gh','api','repos/niq-cnr/nizam-framework/releases/latest'],text=True)); assert latest['tag_name']=='v1.6.0','GitHub must mark v1.6.0 the Latest release'
+prov=json.loads(Path('.nizam/provenance.json').read_text()); assert prov['resolved_sha']==sha,prov
+base=subprocess.check_output(['git','show','v1.6.0:CHANGELOG.md'],text=True); cur=Path('CHANGELOG.md').read_text()
+assert cur[cur.index('## [1.6.0]'):]==base[base.index('## [1.6.0]'):],'released [1.6.0] section must be byte-identical to the tag tail'
+readme=Path('README.md').read_text(); assert readme.count('v1.6.0')==8 and readme.count('v1.5.0')==0,(readme.count('v1.6.0'),readme.count('v1.5.0'))
+assert 'Commissioning passed at assessed source candidate' not in readme,'README must not claim commissioning passed'
+inst=[l for l in readme.splitlines() if '.nizam/' in l and re.search(r'v1\.(5|6)\.0',l)][0]; assert 'v1.6.0' in inst
+bm=json.loads(subprocess.check_output(['git','show','v1.6.0:docs/planning/manifest.json'],text=True)); m=json.loads(Path('docs/planning/manifest.json').read_text())
+ph=next(x for x in m['phases'] if x['id']=='021-receipt-input-maintenance'); o=next(x for x in bm['phases'] if x['id']=='021-receipt-input-maintenance')
+assert ph['note'].startswith(o['note']) and 'v1.6.0' in ph['note'][len(o['note']):] and sha in ph['note'][len(o['note']):]
+ph['note']=o['note']; assert m==bm,'manifest phases/steps otherwise identical to the tag'
+print('PASS published v1.6.0 facts, ledger rows, provenance re-pin, README re-pin and immutable released notes')
+CHECK
+PASS published v1.6.0 facts, ledger rows, provenance re-pin, README re-pin and immutable released notes
+EXIT:0

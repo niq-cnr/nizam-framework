@@ -1,0 +1,46 @@
+$ python3 - <<'CHECK'
+import json,re,subprocess
+from pathlib import Path
+import yaml,jsonschema
+def git(*args):
+    return subprocess.check_output(['git',*args],text=True)
+def split(doc):
+    assert doc.startswith('---\n'),'missing frontmatter'
+    end=doc.index('\n---\n',4)
+    return doc[4:end],doc[end+5:]
+text=Path('docs/planning/SELF_GOVERNANCE.md').read_text(encoding='utf-8')
+fm,body=split(text); tag_fm,tag_body=split(git('show','v1.6.0:docs/planning/SELF_GOVERNANCE.md'))
+meta=yaml.safe_load(fm); tag_meta=yaml.safe_load(tag_fm)
+jsonschema.validate(meta,json.loads(Path('schema/frontmatter.schema.json').read_text()))
+assert set(meta)==set(tag_meta)|{'installation'},sorted(meta)
+for key in ('id','title','description','authoritative_source','status'): assert meta[key]==tag_meta[key],key
+assert tuple(map(int,meta['version'].split('.')))>tuple(map(int,tag_meta['version'].split('.'))),meta['version']
+assert meta['change_log'][0]['version']==meta['version'] and meta['change_log'][1:]==tag_meta['change_log']
+start=lambda doc,pattern: re.search(pattern,doc,flags=re.M).start()
+assert fm[start(fm,r'^commissioning:\n'):]==tag_fm[start(tag_fm,r'^commissioning:\n'):],'v1.5.0 commissioning block must be byte-identical'
+assert fm[start(fm,r'^  - version: "0.1.1"'):start(fm,r'^installation:\n')]==tag_fm[start(tag_fm,r'^  - version: "0.1.1"'):start(tag_fm,r'^commissioning:\n')],'historical change_log entries must be byte-identical'
+assert meta['commissioning']==tag_meta['commissioning'] and meta['commissioning']['tag']=='v1.5.0'
+assert body.endswith(tag_body),'v1.5.0 body must be retained byte-for-byte'
+head=body[:-len(tag_body)]; lines=head.rstrip('\n').split('\n'); marker=lines[-1]
+assert head.endswith(marker+'\n') and marker.startswith('> **Historical record') and 'v1.5.0' in marker and head.count('> **Historical record')==1,'exactly one single-line historical marker'
+current='\n'.join(lines[:-1])
+sha=git('rev-parse','v1.6.0^{commit}').strip(); prov=json.loads(Path('.nizam/provenance.json').read_text())
+decision=[x for x in json.loads(Path('.agent/run_state.json').read_text())['history'] if x.get('event')=='operator_gate_decision' and x.get('gate')=='H-CONSUMER-UPGRADE' and x.get('tag')=='v1.6.0'][-1]
+count=len(git('ls-tree','-r','--name-only',sha,'--','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json').splitlines())
+inst=meta['installation']
+expected={'repository':'niq-cnr/nizam-framework','local_scope':['niq-cnr/nizam-framework'],'tag':'v1.6.0','resolved_sha':sha,'authorization_gate':'H-CONSUMER-UPGRADE','authorization_recorded_at':decision['at'],'authorization_verbatim':decision['verbatim'],'status':'installed','commissioning_performed':False,'released_file_count':count,'source_url':prov['source_url'],'installed_at':prov['installed_at']}
+assert set(inst)==set(expected)|{'evidence'},sorted(inst)
+for key,value in expected.items(): assert inst[key]==value,(key,inst[key],value)
+assert prov['tag']=='v1.6.0' and prov['resolved_sha']==sha and inst['status']!=tag_meta['commissioning']['status']
+assert sorted(inst['evidence'].values())==sorted(decision['evidence']) and len(decision['evidence'])==5 and all(e.startswith('.agent/evidence/release-v1.6.0-closeout/00') and Path(e).is_file() for e in decision['evidence'])
+for fact in (sha,prov['installed_at'],decision['at'],decision['verbatim'],str(count)+' released files','installed — commissioning not performed'): assert fact in ' '.join(current.split()),fact
+claims=[('current installation section',current),('change_log 0.2.0',meta['change_log'][0]['summary']),('installation block',fm[start(fm,r'^installation:\n'):start(fm,r'^commissioning:\n')])]
+for label,prose in claims:
+    assert not re.search(r'commissioned|commissioning (passed|complete|completed|succeeded|achieved)|(passed|completed) commissioning',prose,flags=re.I),(label,'claims commissioning')
+    for sentence in re.split(r'(?<=[.!?])\s+|\n\s*\n',prose):
+        sentence=' '.join(sentence.split())
+        if re.search(r'commission',sentence,flags=re.I) and not re.search(r'not performed|not been performed|not authorized|commissioning_performed: false',sentence,flags=re.I): raise AssertionError((label,'commissioning sentence lacks a not-performed marker',sentence))
+print('PASS SELF_GOVERNANCE.md: v1.6.0 installation facts equal observed values, stage installed with commissioning not performed, v1.5.0 commissioning block/body preserved byte-for-byte, frontmatter schema-valid')
+CHECK
+PASS SELF_GOVERNANCE.md: v1.6.0 installation facts equal observed values, stage installed with commissioning not performed, v1.5.0 commissioning block/body preserved byte-for-byte, frontmatter schema-valid
+EXIT:0

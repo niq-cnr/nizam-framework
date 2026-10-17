@@ -2,16 +2,39 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.1.1
+version: 0.2.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-17"
+    summary: "Record the v1.6.0 installation from observed facts: stage installed, commissioning not performed. The v1.5.0 installation record below is retained unchanged as history."
   - version: "0.1.1"
     date: "2026-10-10"
     summary: "Complete self-commissioning at fixed source candidate bfd475ff670e582cbbfc8f3187ae988dcf3c8baa: actual successful CI 38075479048, clean installed preflight PASS, immutable v1.5.0/candidate baseline and independent nine-check QA/evidence gate passed. Later documentation HEAD does not replace the assessed source candidate."
   - version: "0.1.0"
     date: "2026-10-10"
     summary: "Record the authentic public v1.5.0 installation and agent routing; committed-candidate CI and clean preflight/baseline commissioning remain pending."
+installation:
+  repository: niq-cnr/nizam-framework
+  local_scope:
+    - niq-cnr/nizam-framework
+  tag: v1.6.0
+  resolved_sha: 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e
+  authorization_gate: H-CONSUMER-UPGRADE
+  authorization_recorded_at: "2026-10-17T18:25:00Z"
+  authorization_verbatim: "instell the latest release of the nizam-framework into thei project, https://github.com/niq-cnr/nizam-framework/releases ."
+  status: installed
+  commissioning_performed: false
+  released_file_count: 276
+  evidence:
+    tree_identity: .agent/evidence/release-v1.6.0-closeout/00a-reinstall-tree-identity.txt
+    verify_self_governance: .agent/evidence/release-v1.6.0-closeout/00b-reinstall-verify-self-governance.txt
+    test_self_governance: .agent/evidence/release-v1.6.0-closeout/00c-reinstall-test-self-governance.txt
+    payload_validate: .agent/evidence/release-v1.6.0-closeout/00d-reinstall-payload-validate.txt
+    bootstrap_verify_only: .agent/evidence/release-v1.6.0-closeout/00e-reinstall-bootstrap-verify-only.txt
+  source_url: https://github.com/niq-cnr/nizam-framework.git
+  installed_at: "2026-10-17T06:06:58Z"
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
@@ -32,6 +55,39 @@ commissioning:
   source_url: https://github.com/niq-cnr/nizam-framework.git
   installed_at: "2026-10-10T18:12:44Z"
 ---
+
+# Current installation — `v1.6.0` (installed — commissioning not performed)
+
+This repository has installed the public immutable `v1.6.0` release under
+`.nizam/`. The stage is **installed — commissioning not performed**. Its machine
+values are `installation.status: installed` and
+`installation.commissioning_performed: false`. The clean installed preflight,
+baseline and independent QA that completed the `v1.5.0` commissioning have not been
+performed for `v1.6.0`. Commissioning of `v1.6.0` is not authorized by any decision
+recorded here.
+
+The pin is tag `v1.6.0`, resolved commit `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e`,
+installed at `2026-10-17T06:06:58Z` as recorded in `.nizam/provenance.json`. The
+installation contains 276 released files and that provenance record.
+
+The operator authorization is gate `H-CONSUMER-UPGRADE`, recorded in
+`.agent/run_state.json` at `2026-10-17T18:25:00Z`. The operator's verbatim text
+was: "instell the latest release of the nizam-framework into thei project,
+https://github.com/niq-cnr/nizam-framework/releases ." The authorization covers
+installation only, for this single repository. Ordering is disclosed: the
+re-bootstrap was prepared on PR #114 (commits `9a830aa4` and `05c070b4`) before this
+authorization was recorded, and the decision ratifies that prepared installation;
+it is not back-dated.
+
+Before the decision was recorded the installation was re-verified against the tag:
+the payload trees are identical to the tag, and `verify_self_governance.py`, its
+drift tests, `validate.sh --payload` and `bootstrap.sh --verify-only` all exited 0.
+Captures: `.agent/evidence/release-v1.6.0-closeout/00a-reinstall-tree-identity.txt`,
+`00b-reinstall-verify-self-governance.txt`, `00c-reinstall-test-self-governance.txt`,
+`00d-reinstall-payload-validate.txt` and `00e-reinstall-bootstrap-verify-only.txt`
+in the same directory.
+
+> **Historical record — the `v1.5.0` installation and its completed commissioning, retained unchanged below. It does not describe the current installation.**
 
 # Local adoption and commissioning
 
