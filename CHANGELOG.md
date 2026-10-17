@@ -7,6 +7,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-17
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the Workflow
+Assurance tranche lands as additive, new-optional capability — features 115–119
+(foundation readiness), 120–123 (receipt gates, conflict lanes, cause routing and
+capable CI controls), 126–128 (bounded partial runtime core) and 129 (SBCL loop and
+confirmed cancellation), plus receipt-input batching (feature 133). There is no schema
+narrowing, no removed or renamed shipped file and no breaking governance change;
+nothing that validated under v1.5.0 is invalidated. Feature 129's entry below states
+its explicit boundary: feature-scope complete, with full-live qualification
+deliberately remaining features 131/132. Everything else in this release is
+framework-envelope only (planning, maintenance and self-governance records), none of
+which `bootstrap.sh` injects. Upgrade path: consumers re-bootstrap from the `v1.6.0`
+tag to inherit the payload (`methodology/06_release_train.md` Section 5).
+
 ### Changed
 
 - **Receipt input batching (feature 133).** Batch immutable candidate Git inputs
@@ -42,6 +57,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Bounded partial core (feature 128).** Added independently authored `core-ready`
   over fourteen bounded leaf subprocesses. Hosted CI retains separate fourteen-leaf
   execution; SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
+
+- **SBCL loop and confirmed cancellation (feature 129).** Added the adopted Source5
+  SBCL session loop (`tools/sbcl_session_loop.lisp`), merged via PR #109 (`96cd3573`)
+  with approved canonical QA; the 129-source circuit reads 5/5 under the recorded
+  operator extension. Feature-scope complete only: full-live SBCL/runtime
+  qualification deliberately remains features 131/132 and is not claimed here.
 
 - **Stub operation semantics and handoff (feature 127).** Added bounded polling
   that stops waiting only, correlated cooperative cancellation confirmation and

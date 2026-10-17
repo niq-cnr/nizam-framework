@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.15
+version: 0.65.16
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.16"
+    date: "2026-10-17"
+    summary: "Record v1.6.0 release preparation: the Current position section gains the 'Release in preparation: v1.6.0' disposition line (preparation only; the annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.6.0' roll land only in the post-tag closeout). The v1.5.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.15"
     date: "2026-10-16"
     summary: "Refresh the current section after the 13-scope audit: the recovery2 handover is superseded by the operator's active directive ('audit the project and planning and ready for further development'); feature 129 is complete (PR #109 96cd3573, approved QA, Source5 adopted 5/5 under recorded authority) and feature 130 is active at pre-contract stage; 021/133 is delivered (PR105 bfd15d10, five-success main CI) under the retained budget exception. Historical snapshots preserved untouched."
@@ -284,6 +287,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v1.6.0
 
 
 ## Historical snapshot — position — locally complete 021 / delivery pending, 2026-10-16

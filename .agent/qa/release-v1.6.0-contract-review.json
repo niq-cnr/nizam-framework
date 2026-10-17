@@ -1,0 +1,42 @@
+{
+  "gate": "contract-review",
+  "contract_id": "release-v1.6.0",
+  "round": 5,
+  "reviewed_revision": "c6d01ee9db696b17e58b570ebec771959d6a96f6",
+  "reviewer": "independent-evaluator",
+  "final_verdict": {
+    "approved": true
+  },
+  "round4_disposition": [
+    {
+      "round4_finding": "issues[0] (blocking): closeout CHECK frontmatter assertion 'v1.5.0' not in fm scanned the whole frontmatter block and false-FAILed on compliant trees (4 preserved historical change_log summaries mention v1.5.0); prescription: scope to the description field, assert 'v1.5.0' absent AND 'v1.6.0' present.",
+      "disposition": "VERIFIED FIXED EXACTLY AS PRESCRIBED. release-v1.6.0-closeout.json AT3 CHECK now reads: fm=h.split('---',2)[1]; d=re.search(r'^description:\\s*(.+)$',fm,flags=re.M); assert d and 'v1.5.0' not in d.group(1) and 'v1.6.0' in d.group(1). Simulated against the live HANDOVER.md: on the current (pre-closeout) frontmatter the assertion correctly fails (description still names v1.5.0); on a compliant post-closeout tree (description renamed to v1.6.0 wording, historical change_log untouched) it passes with all four historical v1.5.0 mentions intact. Expected text updated to match ('frontmatter description names v1.6.0 with no stale v1.5.0 anchor'). Stricter and correct, not a weakening."
+    },
+    {
+      "round4_finding": "AT4 scope gap surfaced by the round-4 halt: the recovery-authorization evidence path referenced by approvals.human_authorized_extension (.agent/evidence/release-v1.6.0-contract/recovery-authorization.json and the attempt-5 record) would fail AT4 closed in both legs on the release PR.",
+      "disposition": "VERIFIED FIXED. release-v1.6.0.json AT4 auxiliary() gains 'or p.startswith('.agent/evidence/release-v1.6.0-contract/')' (amendment 4 recorded, citing the attempt-5 authorization). Simulated: auxiliary() returns True for recovery-authorization.json, recovery-authorization-attempt5.json and a generic capture under that prefix; still False for unrelated paths (tools/evil.py) and unchanged for the tag-evidence pattern. Non-blocking hygiene observation (not an array item): the new startswith clause lacks the '..' guard the tag-evidence regex clause carries — theoretical only, since both call sites consume git diff/ls-files output, which cannot contain '..' path components; noted for a future editorial pass."
+    },
+    {
+      "round4_finding": "Authorization chain completeness at the round-4 halt.",
+      "disposition": "VERIFIED. .agent/evidence/release-v1.6.0-contract/recovery-authorization-attempt5.json records the operator halt decision (repeated standing directive 'continue until the release is complete' read as option (a) of the trip record: attempt 5 limited to the two enumerated one-line remedies), from_limit 4 to_limit 5, precedents chained (111/123/129 pattern, disclosed interpretation). Both contracts remain schema-valid with the extensions on disk. Non-blocking bookkeeping observation: release-v1.6.0.json approvals.revisions remains 3 with human_authorized_extension citing the attempt-4 record, while amendment 4 cites the attempt-5 record — the chain is complete and cross-referenced on disk; counters were not reset."
+    }
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "anchor_surface_check": {
+    "anchors_found": [
+      "Pre-tag v1.5.0->v1.6.0 surface (release-v1.6.0.json revision 3 + amendment 4): NIZAM.json framework.version; CONTEXT.md frontmatter version + change_log[0]; README.md exactly 7 'v1.6.0' pins + 1 'v1.5.0' installed statement (7/1 simulated from the real base); docs/guide/index.html exactly 3 anchors / 0 '1.5.0'; CHANGELOG.md [1.6.0] section with feature-129 boundary; ROADMAP.md 'Release in preparation: v1.6.0' in the current-position section (placement explicit in purpose); operator_gates.md PREPARED row; HANDOVER.md prep note + description -> preparation wording; manifest.json PREPARED note (target phase 021 named)",
+      "Post-tag surface (release-v1.6.0-closeout.json revision 2 + amendment 3): ROADMAP.md 'Latest released tag: v1.6.0' roll in the same section (simulated pass); operator_gates.md H-FRAMEWORK-RELEASE EXECUTED facts (files_modify duty and CHECK row assertion aligned); HANDOVER.md '## Current status — v1.6.0 released' note (mandate and CHECK bind to the same file/literal) + description naming v1.6.0 (description-scoped assertion now verified non-vacuous and narration-immune); manifest.json 021 note with parsed-decomposition + whole-document equality vs the tag; README.md installed statement -> v1.6.0 giving exactly 8/0 (selector simulation: unique version-carrying match); .nizam/provenance.json resolved_sha",
+      "run_state convention (commit + workflow_run fields), provenance key shape, and static 'installed v1.5.0' status references verified in prior rounds and unchanged"
+    ],
+    "covered_by_contract": [
+      "release-v1.6.0.json: NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/operator_gates.md, docs/planning/HANDOVER.md, docs/planning/manifest.json",
+      "release-v1.6.0-closeout.json: docs/planning/ROADMAP.md, docs/planning/operator_gates.md, docs/planning/HANDOVER.md, docs/planning/manifest.json, README.md, .nizam/provenance.json, CHANGELOG.md"
+    ],
+    "missed": [
+      "None. The HANDOVER description anchor remains assigned exactly once per epoch; the README installed line is closeout-only; the recovery-authorization evidence prefix is now admitted by AT4 auxiliary(); every anchor that must move to 1.6.0 has a purpose, an executor contract and an executable assertion"
+    ]
+  },
+  "summary": "Round-5 contract review of release-v1.6.0.json (revision 3 + amendment 4) and release-v1.6.0-closeout.json (revision 2 + amendment 3) at worktree HEAD c6d01ee9, under the attempt-5 recovery authorization (4->5, operator halt decision recorded in recovery-authorization-attempt5.json). Both contracts re-validate against schema/contract.schema.json: PASS. The two enumerated round-4 remedies verify exactly as prescribed: (1) AT4 auxiliary() now admits the .agent/evidence/release-v1.6.0-contract/ prefix — simulated True for both recovery-authorization records and a generic capture under the prefix, still fail-closed on unrelated paths, so the authorization evidence no longer trips either AT4 leg; (2) the closeout CHECK's frontmatter assertion is description-scoped both directions ('v1.5.0' absent AND 'v1.6.0' present in the description field) — simulated: correctly fails on the current pre-closeout tree, passes on a compliant post-closeout tree with all four historical change_log v1.5.0 mentions preserved. All other CHECK legs confirmed unchanged (ROADMAP section extraction, operator_gates row, mandated HANDOVER heading, narrowed disposition-literal ban, README 8/0 + version-anchored selector, manifest 021 parsed decomposition, changelog tag-tail byte equality). VERDICT: APPROVED — all three arrays are empty for the first time in this review arc. Anchor-surface result: the full v1.5.0->v1.6.0 surface is completely and correctly assigned across the two contracts with correct epoch ownership (README installed line -> closeout only; HANDOVER description -> both, once per epoch), zero coverage gaps, and every anchor carrying both a purpose and an executable, simulation-verified assertion. Non-blocking observations recorded for the record (not array items): the new AT4 startswith clause lacks the theoretical '..' guard its regex sibling carries (unreachable via git output), and approvals.revisions/human_authorized_extension bookkeeping cites the attempt-4 record while amendment 4 cites attempt-5 (chain complete on disk, counters not reset). The contract pair is now testable end-to-end: the release contract gates the tag (AT1-AT4 on the candidate, AT5-AT8 on real tag/workflow/bootstrap), and the closeout contract independently gates the post-tag observed-fact ledger. Both independent pre-code gates have now approved; the Orchestrator may proceed to implementation under the contract's own implementation_gate."
+}
