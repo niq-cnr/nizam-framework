@@ -39,6 +39,7 @@ consumer repository without modification.
 | [`cross_repo_governance.md`](cross_repo_governance.md) | The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model. |
 | [`definition_of_done.md`](definition_of_done.md) | The canonical, layered Definition of Done -- aggregates the framework's eight done-layers by citing each layer's existing authority, never restating its mechanics. |
 | [`convergent_code_review.md`](convergent_code_review.md) | Runtime-neutral, prior-ledger-first automated review with trusted Git-object packet construction, authenticated old/current bytes and full-tree scope, three sandbox-isolated trials, deterministic lifecycle/verdict, human suppression, no-follow replay, and race-free publication. |
+| [`acceptance_bars.md`](acceptance_bars.md) | Comparator Acceptance Bars — comparator-based acceptance for quality-bearing deliverables: the named/fetchable/comparable bar tests, the fresh-context blind critic loop, cost tiering, the pin-and-reverify bar library, measurable-halves families, and the circuit-breaker interface. |
 
 ## Machine Validation
 

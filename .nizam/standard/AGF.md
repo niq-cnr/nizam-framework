@@ -2,10 +2,13 @@
 id: agent-governance-framework
 title: "Agent Governance Framework (AGF)"
 description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: standard/AGF.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-11"
+    summary: "Name both Evaluator stages: independent Loop 1 contract testability review and Loop 2 implementation verification; role permissions unchanged (A04a)."
   - version: "0.2.0"
     date: "2026-07-19"
     summary: "Define the Orchestrator role in Section 2 (coordination/state-ownership: sequences the execution roles, parses each gate verdict, owns run_state's run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker) — resolving NDEBT-010, the load-bearing-but-undefined role that capability_profiles.md, permission_classes.md, mcp_policy.md, and methodology/06_release_train.md all already referenced. Section heading generalised from 'Four Agent Roles'; Section 5 rule 4 now names the Orchestrator-owned coordination fields."
@@ -37,7 +40,7 @@ another's gate.
 | **Planner** | Expands a brief or request into product-level artifacts: an architecture/spec document and a feature list with acceptance criteria. Stays at high-level architecture; does not lock in low-level implementation detail. | A specification document, a feature list. |
 | **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
 | **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
-| **Evaluator** | Executes the verification plan (tests, checks) against the implementation and independently confirms pass/fail with evidence. | A pass/fail verdict with required fixes on failure. |
+| **Evaluator** | Independently reviews the verification plan and contract testability in Loop 1, then executes the verification plan against the implementation in Loop 2 and confirms pass/fail with evidence. | Independent contract-review and implementation-QA verdicts, with required fixes on failure. |
 
 ## 3. The Dual Validator Gate
 

@@ -125,37 +125,23 @@ Modes:
                       read only under --target and by the default sweep's
                       C12 ecosystem-fixture check.
 
-  --payload           Consumer-payload mode. Validates only the subset of
-                      checks relevant to a `bootstrap.sh`-injected consumer
-                      payload (standard/, templates/, schema/, tools/, and
-                      NIZAM.json). UNLIKE the default/--target modes (which
-                      evaluate the tree at CWD), --payload anchors to its own
-                      payload root -- the parent of the tools/ directory this
-                      script lives in -- so `bash .nizam/tools/validate.sh
-                      --payload` from a consumer repository root behaves
-                      identically to `cd .nizam && bash tools/validate.sh
-                      --payload` (NDEBT-012 / issue #18, feature 050).
-                      Framework-envelope files that are intentionally absent
-                      from consumer payloads (CONTEXT.md, README.md,
-                      CHANGELOG.md, bootstrap.sh, methodology/, registry/,
-                      docs/, ecosystem/) are not required; directory-qualified
-                      cross-references into those non-injected paths are
-                      carved out of C9 in payload mode (NDEBT-004) exactly as
-                      C4 carves them out of the NIZAM.json index.
-                      Runs C1-C5, C7-C11 with payload-appropriate file
-                      sets; C6 is skipped. C9 and C10 both sweep only the
-                      payload-doc set (standard/, templates/, and tools/
-                      excluding tools/fixtures/, plus schema/README.md) --
-                      docs/guide/index.html is never swept in --payload
-                      mode, so C10's version-anchor sub-check finds no
-                      anchor to check there and passes trivially (the
-                      framework-version anchor lives only in the guide,
-                      which bootstrap.sh does not inject). C11 passes
-                      trivially in --payload mode: `.agent/` governance
-                      state is never part of the bootstrap.sh payload, so
-                      C11 does not inspect the filesystem at all in this
-                      mode (see C11 below). Exits 0 only if every
-                      applicable check passed.
+  --payload           Consumer-payload mode. Validates the injected six modules
+                      (standard/, templates/, schema/, tools/, methodology/,
+                      ecosystem/) and NIZAM.json. Anchors to this script's own
+                      payload root, so invocation from a consumer repository
+                      root behaves identically to invocation inside .nizam/.
+                      Framework-envelope files (CONTEXT.md, README.md,
+                      CHANGELOG.md, bootstrap.sh, registry/, docs/) are absent
+                      from the injected payload; C4/C9 carve out references
+                      into non-injected paths. Runs 12 counted checks:
+                      C1-C5, C7-C11, C13 and C16; C6 is skipped. C9 and C10
+                      sweep the payload-doc set, including methodology/ and
+                      ecosystem/, excluding tools/fixtures/ and the guide.
+                      C11 and C16 pass trivially because .agent/ governance
+                      state is not injected. C13 requires each skill module
+                      to match a NIZAM.json authoritative_source in both modes,
+                      including modules whose path resolution is carved out.
+                      Exits 0 only if every applicable check passed.
 
   --help, -h          Prints this usage and exits 0.
 
@@ -354,12 +340,15 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the eight families -- the three shipped in features 037-039
+      each of the ten families -- the three shipped in features 037-039
       (baseline, preflight-verdict, engineering-finding), plus audit_delta
       (feature 057), ecosystem_membership (feature 075), the
       membership-run aggregate membership_result (feature 077), the
       reconciliation_plan (feature 080; NIP-0002 Stage 4), and the
-      release_train_manifest (feature 081; NIP-0002 Stage 4) --
+      release_train_manifest (feature 081; NIP-0002 Stage 4), plus
+      runtime_session and runtime_operation (feature 111) --
+      checks runtime record relations with the shared pure helper; no live
+      behavior or consumer .agent/sessions auto-sweep is implied. It
       validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
@@ -1583,6 +1572,7 @@ import glob
 import json
 import re
 import sys
+import subprocess
 
 import jsonschema
 
@@ -1595,6 +1585,8 @@ FAMILIES = {
     "membership_result": "schema/ecosystem_membership_result.schema.json",
     "reconciliation_plan": "schema/reconciliation_plan.schema.json",
     "release_train_manifest": "schema/release_train_manifest.schema.json",
+    "runtime_session": "schema/runtime_session.schema.json",
+    "runtime_operation": "schema/runtime_operation.schema.json",
 }
 
 
@@ -1813,6 +1805,11 @@ for family, schema_path in FAMILIES.items():
             is_valid = True
         except jsonschema.ValidationError:
             is_valid = False
+        if is_valid and family in ("runtime_session", "runtime_operation"):
+            relations = subprocess.run(
+                ["bash", "-c", 'source tools/verify_lib.sh; vlib_runtime_record_relations "$1" "$2"',
+                 "runtime-relations", family, path], capture_output=True, text=True)
+            is_valid = relations.returncode == 0
         # NDEBT-023: a schema-valid ecosystem_baseline that declares
         # inconsistent same-repository revisions is NOT a valid baseline; the
         # code-level check completes the schema's coverage so the negative
@@ -1867,7 +1864,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all eight families with a polarity/dormancy guard; this
+# EVERY fixture of all ten families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1884,6 +1881,7 @@ check_c12_target() {
   if out=$(python3 - "${target}" "${family}" <<'PY'
 import json
 import sys
+import subprocess
 
 import jsonschema
 
@@ -1898,6 +1896,8 @@ schema_paths = {
     "membership_result": "schema/ecosystem_membership_result.schema.json",
     "reconciliation_plan": "schema/reconciliation_plan.schema.json",
     "release_train_manifest": "schema/release_train_manifest.schema.json",
+    "runtime_session": "schema/runtime_session.schema.json",
+    "runtime_operation": "schema/runtime_operation.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1920,6 +1920,14 @@ try:
 except jsonschema.ValidationError as exc:
     print(f"{path}: schema violation ({family}): {exc.message}")
     sys.exit(1)
+
+if family in ("runtime_session", "runtime_operation"):
+    relations = subprocess.run(
+        ["bash", "-c", 'source tools/verify_lib.sh; vlib_runtime_record_relations "$1" "$2"',
+         "runtime-relations", family, path], capture_output=True, text=True)
+    if relations.returncode != 0:
+        print(relations.stdout.strip() or f"{path}: {family}:relation_helper_failed")
+        sys.exit(1)
 
 # NDEBT-023: same-repo revision-consistency is a code-level rule the schema
 # cannot express; mirror the full-sweep C12 check (and the capture tool's
@@ -2250,7 +2258,13 @@ ECOSYSTEM_BASELINE_KEYS = {
     "ci_references", "planning_references", "evidence_references",
 }
 
-if {"earlier", "later", "transitions"} <= doc.keys() and isinstance(doc.get("transitions"), dict):
+# Runtime records carry contract_id; their unique identity keys take priority.
+# Malformed recognizable records still reach C12 for an honest shape error.
+if "operation_id" in doc or "expected_generation" in doc:
+    print("ecosystem:runtime_operation")
+elif "session_id" in doc and ("purpose" in doc or "owner" in doc):
+    print("ecosystem:runtime_session")
+elif {"earlier", "later", "transitions"} <= doc.keys() and isinstance(doc.get("transitions"), dict):
     # Checked FIRST, and on the full required shape (earlier + later +
     # transitions), not a bare `transitions` key: audit_delta declares
     # additionalProperties: true, so a delta that also carried a stray
