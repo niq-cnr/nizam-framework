@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-18"
+    summary: "Clarify that comparator critic loops (standard/acceptance_bars.md) are subordinate to this 3-attempt hard cap and reference the CLI entry points tools/workflow_assurance.py route-failure and tools/start_path.py capture."
   - version: "0.4.0"
     date: "2026-10-15"
     summary: "Clarify evidenced cause routing with failed outcomes and unchanged max3 continuity."
@@ -40,6 +43,9 @@ retried after a failure, including but not limited to:
 - Loop 2 implementation reworks (`01_execution.md` Section 3) — a Generator
   reworking code after a Validator Mode B rejection, or after a failing QA
   verdict.
+- Comparator critic loops (`standard/acceptance_bars.md` Section 3) — any
+  comparator or taste loop is subordinate to this 3-attempt hard cap; if a blind
+  win is not achieved by attempt 3, the run halts and escalates.
 - Any subagent retry a pipeline performs after a malformed or empty subagent
   response.
 
@@ -113,12 +119,16 @@ bind that evidence but do not authenticate its truth. Missing or inconsistent
 proof fails closed. A successful nested expected-negative control cannot make a
 failed outer wrapper successful or retroactively turn a repair into a probe.
 
-The optional `route_failed_attempt` library proposes infrastructure diagnosis or
-semantic repair for allocated attempts one and two, and halt for attempt three.
-It neither executes nor authorizes a retry. The strategy ladder, three-attempt
-limit, isolation and Section 4 escalation duties remain binding for either cause.
-A handoff preserves counters, budgets and prior history; process, agent, session,
-generation or stage changes create no additional cause-specific allowance.
+The optional `route_failed_attempt` library (`tools/workflow_assurance.py
+route-failure`) proposes infrastructure diagnosis or semantic repair for
+allocated attempts one and two, and halt for attempt three. Exclusive per-attempt
+command captures (`tools/start_path.py capture`) distinguish `completed`
+(`success`, `failed`, `setup-error`) from `interrupted` runs and refuse to
+overwrite prior attempt evidence. `route_failed_attempt` neither executes nor
+authorizes a retry. The strategy ladder, three-attempt limit, isolation and
+Section 4 escalation duties remain binding for either cause. A handoff preserves
+counters, budgets and prior history; process, agent, session, generation or
+stage changes create no additional cause-specific allowance.
 
 ## 4. Attempt 4 Is Forbidden — The Breach Procedure
 

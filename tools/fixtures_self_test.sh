@@ -1157,6 +1157,22 @@ else
   fail=1
 fi
 
+# Start-path routing, evidence capture, status, and public-entry checks are
+# separate from the on-disk fixture-file denominator.
+if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py; then
+  echo "OK   start-path  task routing, preflight, capture, amendment, status, and resume checks"
+else
+  echo "FAIL start-path  task routing, preflight, capture, amendment, status, and resume checks"
+  fail=1
+fi
+
+if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py; then
+  echo "OK   public-entry public entry and start-path discoverability checks"
+else
+  echo "FAIL public-entry public entry and start-path discoverability checks"
+  fail=1
+fi
+
 total=${#ondisk[@]}
 accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
 echo "---"

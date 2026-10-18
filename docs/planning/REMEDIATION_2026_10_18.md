@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-18"
+    summary: "Record Slice 2 independent acceptance (3132337b1a46132a573a854a2db835b84081cc68) and Slice 3 (R5 + R6 + R7 + R8) implementation: 5-route task classification, trivial path, lightweight contract amendments, unified stopping rules, exclusive evidence capture, Option A repository-binding migration, receipt/resume CLI, and concise status view."
   - version: "0.2.0"
     date: "2026-10-18"
     summary: "Record Slice 2 (R3 + R4) bounded ControlsFixture/controls_snapshot timings and retirement of the default whole-module MASKED_AST freeze."
@@ -55,11 +58,11 @@ Each check family has exactly one authoritative CI job owner inside the existing
 |---|---|---|
 | `validate` | `bash tools/validate.sh` (full C1–C16 compliance sweep) | None |
 | `e2e_bootstrap` | `bash tools/e2e_bootstrap_test.sh` (end-to-end bootstrap, `--genesis`, multi-repo, stage-4, and `--payload` CWD-independence) | None |
-| `fixtures_self_test` | (1) `.github/scripts/test_c13_cleanup.py`, (2) `bash tools/fixtures_self_test.sh` (all 166 on-disk fixtures, claim-map completeness guard, 14 `test_runtime_session.py` leaves, and 4 `test_receipt_candidate_batching.py` behavioral checks), (3) `python3 tools/test_workflow_assurance.py` (full Workflow Assurance regression suite, including `ci-candidate-bound` and `ci-blocker-rejected` once) | Removed duplicate `ci-candidate-bound` and `ci-blocker-rejected` loop from `tools/fixtures_self_test.sh` |
+| `fixtures_self_test` | (1) `.github/scripts/test_c13_cleanup.py`, (2) `bash tools/fixtures_self_test.sh` (all 166 on-disk fixtures, claim-map completeness guard, 14 `test_runtime_session.py` leaves, 4 `test_receipt_candidate_batching.py` behavioral checks, `test_start_path.py`, and `test_public_entry.py`), (3) `python3 tools/test_workflow_assurance.py` (full Workflow Assurance regression suite, including `ci-candidate-bound` and `ci-blocker-rejected` once) | Removed duplicate `ci-candidate-bound` and `ci-blocker-rejected` loop from `tools/fixtures_self_test.sh` |
 | `convergent_review` | (1) `.github/scripts/test_sandbox_boundaries.py` (native + Docker adapter), (2) SBCL smoke verification, (3) `tools/test_convergent_review.py` required full-conformance isolation suite (native + Docker adapter), (4) conditional `WA123 capture` / `WA123 verify` | Removed duplicate `bash tools/fixtures_self_test.sh` step |
 | `self_governance` | (1) `.github/scripts/verify_self_governance.py`, (2) `.github/scripts/test_self_governance.py`, (3) `bash .nizam/tools/validate.sh --payload` | None |
 
-### 3.3 Post-R2 Measured Local Verification Timings (Slice 1)
+### 3.3 Post-R2 Measured Local Verification Timings (Slice 1 — Accepted at `30243037a4e8b085aa2ef8f493a3e93c56977f80`)
 
 - `bash tools/validate.sh`: **PASS** (`16/16` checks)
 - `bash tools/validate.sh --payload`: **PASS** (`12/12` checks)
@@ -68,7 +71,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
 - `python3 .github/scripts/test_c13_cleanup.py`: **PASS** in `4.16s` (after disabling Git 2.55 background `maintenance.auto` and skipping `.agent/evidence/` in the private C13 scratch copy)
 - `bash tools/fixtures_self_test.sh`: **PASS** (`166/166` fixtures accounted for, `14` runtime-session leaves, `4` receipt-candidate-batching checks) in **`1m28.46s`** (down from `42m33s` in `fixtures_self_test` and `35m03s` in `convergent_review` when `ci-candidate-bound` and `ci-blocker-rejected` were duplicated inside `fixtures_self_test.sh`).
 
-### 3.4 Post-R3/R4 Measured Local Verification Timings (Slice 2)
+### 3.4 Post-R3/R4 Measured Local Verification Timings (Slice 2 — Accepted at `3132337b1a46132a573a854a2db835b84081cc68`)
 
 - `ControlsFixture` index and working tree bounded (`git rm -rf --quiet --ignore-unmatch .` on orphan `synthetic-ambient` before checking out the 40 required tool/schema/contract/authority files), reducing `controls_snapshot` from **34,205 files** to **219 files** and single `controls_variant` execution from `13.34s` to `4.28s` while preserving every positive and negative assertion:
   - `python3 tools/test_workflow_assurance.py --case ci-blocker-rejected`: **PASS** (`12/12` negative variants + positive restorations) in **`57.36s`**
@@ -77,16 +80,28 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - `python3 tools/test_workflow_assurance.py --check controls-ready`: **PASS** in **`2.05s`** (with scratch clone detached at `evidence['candidate']['source_commit']`)
   - `python3 tools/test_receipt_candidate_batching.py`: **PASS** (`4/4` behavioral checks: `real-git-count-reduction`, `semantic-equivalence`, `fresh-mutations`, `literal-paths-and-modes`; historical whole-module `MASKED_AST` check gated behind `--check-historical-ast-freeze`) in **`1.91s`**
 
+### 3.5 Slice 3 Summary (`R5 + R6 + R7 + R8`)
+
+- **R5 (Task Routing, Blocking vs. Advisory Review Severity, Lightweight Amendments, and Unified Stopping Rules)**:
+  - Extended `tools/start_path.py` with semantic 5-route classification (`classify` across `trivial`, `bugfix`, `small-change`, `standard-feature`, `high-risk`), `trivial` start path (`begin|done trivial`), lightweight contract amendments (`amend-contract` with `--apply` for mechanical scope extensions and `"re_approval_required": true` for semantic scope changes), and `check-verdict` (reusing `convergent_agf_verdict` for convergent ledgers/reports and enforcing evidence-based blocking vs. `advisory_minor` separation).
+  - Updated `standard/acceptance_bars.md` (`v0.1.2`), `methodology/01_execution.md` (`v0.3.0`), `methodology/03_circuit_breaker.md` (`v0.4.1`), `tools/SKILL.md` (`v0.6.2`), and `AGENTS.md` (`v0.1.1`) so comparator rounds remain inside the 3-attempt breaker (`attempt <= 3`) unless an operator reset is recorded.
+- **R6 (Automated Safe Evidence Capture, Capability Preflight, and Failure Routing)**:
+  - Added `tools/start_path.py preflight` (inspecting Python/Git/pytest/SBCL/userns/Docker capabilities) and `tools/start_path.py capture` (exclusive `"xb"` file creation under `.agent/evidence/<task-id>/<run-id>/`, refusing silent overwrites, recording monotonic `duration_ms`, and distinguishing `completed` vs. `interrupted` runs).
+- **R7 (Repository-Binding Migration Option A and Operational Receipt/Resume Flow)**:
+  - Executed Option A from `.agent/evidence/120/repository-binding-decision-proposal.json`: created `.agent/evidence/120/authority-interpretation.json`, migrated `.agent/run_state.json` `repository` to `"https://github.com/niq-cnr/nizam-framework.git"` with append-only history event `wa120_repository_binding_migration_option_a`, and added `verify-receipt`, `plan-transition`, and `route-failure` CLI subcommands to `tools/workflow_assurance.py` plus `resume` to `tools/start_path.py`.
+- **R8 (Concise Generated Status / Readiness Views)**:
+  - Added `tools/start_path.py status --format json|markdown` reporting implemented, verified, independently accepted, merged, released, installed, and commissioned states without mutating repository files, and updated `tools/test_public_entry.py` to derive the expected `--tag v<framework_version>` dynamically from `NIZAM.json`.
+
 ## 4. Reconciled Backlog & Dependency Order (R0–R11)
 
 1. **Slice 1 (`R0` → `R1` → `R2` → independent acceptance)**:
    - `R0`: Mandate adoption, PR #115 (`134`) reconciliation, and backlog order adjustment.
    - `R1`: Suite ownership mapping and timing baseline.
    - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python (`3.12`) + shared `.github/requirements-ci.txt`.
-2. **Slice 2 (`R3` + `R4`)**:
+2. **Slice 2 (`R3` + `R4` → independent acceptance)**:
    - `R3`: Bound `ControlsFixture` and `controls_snapshot` in `tools/test_workflow_assurance.py` so synthetic parser tests use a small, deterministic repository tree instead of cloning/walking the entire growing `.agent/evidence/` history and traversing `f.root` twice.
    - `R4`: Retire the default whole-module `MASKED_AST` freeze in `tools/test_receipt_candidate_batching.py` (confining historical AST-freeze checks to an opt-in flag while keeping all four behavioral receipt-batching checks in default execution).
-3. **Slice 3 (`R5` + `R6` + `R7` + `R8`)**:
+3. **Slice 3 (`R5` + `R6` + `R7` + `R8` → independent acceptance)**:
    - `R5`: Task routing (`tools/start_path.py`, schemas, entry docs, `AGENTS.md`, `tools/SKILL.md`, `methodology/01_execution.md`), evidence-based blocking vs. advisory review severity (reusing `convergent_agf_verdict`), lightweight amendments, and unified stopping rules (`standard/acceptance_bars.md` and `methodology/03_circuit_breaker.md`).
    - `R6`: Automated safe evidence capture (exclusive per-execution paths, monotonic elapsed time, no silent overwrite, interrupted vs. completed distinction), capability preflight, and cause-based recovery routing.
    - `R7`: Bounded repository-binding migration (Option A from `.agent/evidence/120/repository-binding-decision-proposal.json`) and operational receipt/resume integration into the start/resume flow.

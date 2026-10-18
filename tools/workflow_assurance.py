@@ -2002,6 +2002,16 @@ def main():
         command = sub.add_parser(name)
         command.add_argument('--before', required=True); command.add_argument('--after', required=True)
         if name == 'record': command.add_argument('--owned-fields', required=True)
+    vrec = sub.add_parser('verify-receipt')
+    for name in ('repo', 'receipt', 'policy'):
+        vrec.add_argument('--' + name, required=True)
+    ptrans = sub.add_parser('plan-transition')
+    for name in ('repo', 'state', 'policy'):
+        ptrans.add_argument('--' + name, required=True)
+    ptrans.add_argument('--receipt')
+    rfail = sub.add_parser('route-failure')
+    for name in ('repo', 'request', 'policy'):
+        rfail.add_argument('--' + name, required=True)
     args = parser.parse_args()
     def read(path): return parse_json(Path(path).read_bytes())
     try:
@@ -2014,6 +2024,15 @@ def main():
         if args.command == 'assess':
             result = assess_repository(args.repo, args.source_commit, read(args.inputs), read(args.environment_names),
                                        read(args.record_ownership) if args.record_ownership else None)
+            print(canonical(result).decode()); return 0
+        if args.command == 'verify-receipt':
+            result = verify_stage_receipt(args.repo, read(args.receipt), policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'plan-transition':
+            result = plan_receipt_transition(args.repo, read(args.state), read(args.receipt) if args.receipt else None, policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'route-failure':
+            result = route_failed_attempt(args.repo, read(args.request), policy=read(args.policy))
             print(canonical(result).decode()); return 0
         before, after = read(args.before), read(args.after)
         if args.command == 'compare':
