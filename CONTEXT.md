@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.6.0
+version: 1.7.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.7.0"
+    date: "2026-10-18"
+    summary: "Prepare the v1.7.0 MINOR release: feature 134 (portable Docker trial-sandbox adapter tools/docker_trial_sandbox.sh and adapter-specific conformance selection), Phase 019 features 124-125 (generic repository/worktree assurance profile preregistration and shadow comparison/recommendation, with persistent-runtime SBCL profile claims remaining gated on Phase 020 features 130-132), and the 2026-10-18 critical quality and velocity remediation (R0-R11: 5-route semantic task classification, trivial start path, lightweight contract amendments, unified stopping rules, capability preflight, exclusive non-overwriting evidence capture, Option A repository-binding migration, operational receipt/resume CLI, concise read-only status views, and deduplicated/bounded CI verification) land as additive, new-optional capability with no schema narrowing, no removed or renamed shipped file, and no breaking governance change; nothing that validated under v1.6.0 is invalidated. The installed .nizam/ payload remains pinned to v1.6.0 until the reviewed post-tag re-bootstrap to v1.7.0. H-FRAMEWORK-RELEASE sign-off, tag, and pin authorization are recorded from the operator's 2026-10-18 instruction; the annotated tag act remains the separate post-merge Orchestrator mechanic (methodology/06_release_train.md Section 6)."
   - version: "1.6.0"
     date: "2026-10-17"
     summary: "Prepare the v1.6.0 MINOR release: the Workflow Assurance tranche (features 115-119 foundation readiness; 120-123 receipt gates, conflict lanes, cause routing and capable CI controls; 126-128 bounded partial runtime core; 129 SBCL loop and confirmed cancellation, feature-scope complete with full-live qualification deliberately remaining features 131/132; 133 receipt-input batching) plus the start-path gating land as additive, new-optional capability with no schema narrowing, no removed or renamed shipped file and no breaking governance change; nothing that validated under v1.5.0 is invalidated. Everything else since v1.5.0 is framework-envelope only (audit-readiness, planning, maintenance and self-governance records). The installed .nizam/ payload remains the commissioned v1.5.0 pin; it is refreshed only by a reviewed, operator-authorized re-bootstrap AFTER the v1.6.0 tag exists. H-FRAMEWORK-RELEASE preparation is complete; the annotated tag remains the separate post-merge Orchestrator mechanic (methodology/06_release_train.md Section 6) and no tag is created by the pipeline."

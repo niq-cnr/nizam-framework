@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-18T08:00:00Z",
+  "updated_at": "2026-10-18T09:28:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -10256,7 +10256,7 @@
       "authorized_by": "operator (explicit, per-case)",
       "detail": "Operator explicitly authorizes round 9 of the release-v1.6.0-closeout contract to resolve Mode B MB-2 by bringing docs/planning/SELF_GOVERNANCE.md into scope: record the v1.6.0 installation (pin, the operator's H-CONSUMER-UPGRADE authorization, stage installed-not-commissioned) while preserving the v1.5.0 commissioning as history, so README's unchanged self-governance sentence becomes true. Independent Mode A and evaluator contract review re-run; implementation attempt 2 then also fixes MB-1, MB-3, MB-4 within the approved scope. A round-9 rejection halts. Commissioning of v1.6.0 is not authorized.",
       "verbatim": "Update SELF_GOVERNANCE.md (Recommended)",
-      "verbatim_option_text": "Bring the record into the closeout: record the v1.6.0 install (pin, your authorization, stage 'installed — not commissioned') and keep the v1.5.0 commissioning as history. README's sentence then becomes true unchanged. Round 9 adds the file to the contract and AT4, then Mode A and the evaluator review it again.",
+      "verbatim_option_text": "Bring the record into the closeout: record the v1.6.0 install (pin, your authorization, stage 'installed \u2014 not commissioned') and keep the v1.5.0 commissioning as history. README's sentence then becomes true unchanged. Round 9 adds the file to the contract and AT4, then Mode A and the evaluator review it again.",
       "scope": "ONE further closeout-contract revision (round 9): (1) add docs/planning/SELF_GOVERNANCE.md to scope.files_modify with a purpose recording the v1.6.0 installation (tag, resolved SHA, installed_at from .nizam/provenance.json, H-CONSUMER-UPGRADE authorization verbatim/time, stage installed with commissioning not performed, reinstall evidence 00a-00e) and preserving the v1.5.0 commissioning record as history; (2) AT4 admits that path; (3) strictly tightening acceptance assertions that the record names the v1.6.0 pin and installed-not-commissioned stage, does not claim v1.6.0 commissioning, and preserves the v1.5.0 commissioning facts. README purpose unchanged. Nothing else changes.",
       "commissioning_authorized": false
     },
@@ -10322,7 +10322,7 @@
     {
       "at": "2026-10-16T19:15:00Z",
       "event": "134-contract-recovery-approved",
-      "detail": "Operator authorized recovery of BLOCKED step 134-contract (verbatim: 'reocover PR #108 — feature 134. approved, proceed with the logical next steps.'), recorded in .agent/evidence/134/recovery-authorization.json with disclosed narrow interpretation: exactly one contract revision (attempt 4) applying the three attempt-3 reviewer prescriptions, limit 3->4, no reset of the 3 concluded rejections, no fifth attempt implied. Revision 4 landed at 8a3f2c06 and passed both independent Loop 1 gates with empty verdict arrays: Mode A .agent/validator/134-recovery1-mode-a.json (scope guard clean; all three prescriptions verified; teardown leg simulated fail-closed on CLI error) and evaluator contract review .agent/qa/134-recovery1-contract-review.json (14/14 verification executability; coverage 1:1; teardown branches verified). Contract 134 status proposed->approved with approvals.revisions=4. NDEBT-055 moved to Resolved (DEBT.md 0.75.3); phase_022.yaml step 134 BLOCKED->CONTRACT_APPROVED, phase in_progress; manifest phase 022 unblocked. Trip record, Section 4.1 workspace-isolation deviation, and all prior verdicts preserved unchanged. Implementation NOT started (134-implementation 0/3); Loop 2 is next per the approved contract."
+      "detail": "Operator authorized recovery of BLOCKED step 134-contract (verbatim: 'reocover PR #108 \u2014 feature 134. approved, proceed with the logical next steps.'), recorded in .agent/evidence/134/recovery-authorization.json with disclosed narrow interpretation: exactly one contract revision (attempt 4) applying the three attempt-3 reviewer prescriptions, limit 3->4, no reset of the 3 concluded rejections, no fifth attempt implied. Revision 4 landed at 8a3f2c06 and passed both independent Loop 1 gates with empty verdict arrays: Mode A .agent/validator/134-recovery1-mode-a.json (scope guard clean; all three prescriptions verified; teardown leg simulated fail-closed on CLI error) and evaluator contract review .agent/qa/134-recovery1-contract-review.json (14/14 verification executability; coverage 1:1; teardown branches verified). Contract 134 status proposed->approved with approvals.revisions=4. NDEBT-055 moved to Resolved (DEBT.md 0.75.3); phase_022.yaml step 134 BLOCKED->CONTRACT_APPROVED, phase in_progress; manifest phase 022 unblocked. Trip record, Section 4.1 workspace-isolation deviation, and all prior verdicts preserved unchanged. Implementation NOT started (134-implementation 0/3); Loop 2 is next per the approved contract."
     },
     {
       "at": "2026-10-17T05:16:00Z",
@@ -10348,6 +10348,11 @@
       "at": "2026-10-18T08:00:00Z",
       "event": "remediation_2026_10_18_complete_r9_r11",
       "detail": "Completed Slices 1-5 (R0-R11) of the 2026-10-18 critical quality and velocity remediation (docs/planning/REMEDIATION_2026_10_18.md): Slice 1 (R0-R2) independently accepted at 30243037a4e8b085aa2ef8f493a3e93c56977f80; Slice 2 (R3-R4) independently accepted at 3132337b1a46132a573a854a2db835b84081cc68; Slice 3 (R5-R8) independently accepted at 14ae992fed5217f016e8ee7edb542c67725d9e48; Slice 4 (R9 Phase 019 features 124-125 generic repository/worktree assurance profile preregistration and shadow comparison/recommendation) verified via python3 tools/test_workflow_assurance.py --check profiles-ready (.agent/evidence/125/profiles-policy.json) and independently accepted at b99041dc948522a52832c8871fc3ec8e3c073091; Slice 5 (R10-R11) 15-task representative pilot across all five routes (trivial, bugfix, small-change, standard-feature, high-risk; 3/3 seeded blockers caught, 0 missed baseline blockers, 0 silent evidence overwrites) and clean disposable consumer checkout rehearsal at v1.6.0 recorded in .agent/evidence/remediation-2026-10-18/pilot-report.json. Temporary remediation override mode exits cleanly upon integrated PR delivery; Phase 020 feature 130 remains active at pre-contract stage."
+    },
+    {
+      "at": "2026-10-18T09:28:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-FRAMEWORK-RELEASE & H-CONSUMER-UPGRADE authorized for v1.7.0 MINOR release after PR #116 merged at 8815d311ea512d3bbd7dafddfc124a6197b38c72 (operator verbatim: 'Once the PR merges prepare the current build as the next release then tag/pin/release this as the latest verison.')."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -11619,7 +11624,7 @@
     "implementation_started": true,
     "diagnostic_started": true,
     "background_agents": "All execution agents stopped at committed checkpoints; no further development/investigation dispatched",
-    "next_action": "Dispositioned 2026-10-16T18:22:55Z under the supersession above: (1) independent review of replacement4869 vs original contract — no longer gates feature 129 (closed via the source5 path, 129-feature-scope-complete 14:57:34Z); retained as unpublished context for any future SBCL-loop rework; (2) Accounting288 assembler, exact END/heads and effective inventory review, separate measurement release — retained as unexecuted handover accounting, recorded as not gating feature 130; (3) fresh recorded authority before further product work — recorded via the standing dogfooding authority and the audit-readiness-2026-10-16 history event. Active next action: feature 130 contract negotiation (see last_action); feature 130 implementation has not started.",
+    "next_action": "Dispositioned 2026-10-16T18:22:55Z under the supersession above: (1) independent review of replacement4869 vs original contract \u2014 no longer gates feature 129 (closed via the source5 path, 129-feature-scope-complete 14:57:34Z); retained as unpublished context for any future SBCL-loop rework; (2) Accounting288 assembler, exact END/heads and effective inventory review, separate measurement release \u2014 retained as unexecuted handover accounting, recorded as not gating feature 130; (3) fresh recorded authority before further product work \u2014 recorded via the standing dogfooding authority and the audit-readiness-2026-10-16 history event. Active next action: feature 130 contract negotiation (see last_action); feature 130 implementation has not started.",
     "budget": "No020numericmeasurement/newallowance; handoverandallrecoverycountonce.",
     "portable_bundle": "/home/cnross/workspace02/handover-artifacts/nizam-framework-2026-10-16-recovery2.bundle",
     "goal": "SUPERSEDED 2026-10-16 by operator directive: audit the project and planning and ready for further development. Active line of work: branch fix/start-path-gates at HEAD 54c6a5f3; feature 130 at pre-contract stage; comparative bar remains preserved as future direction, unproven. Original text preserved: 'Current active goal is prepare the project for handover. Previous long-term active goal was cleared by operator; comparative bar remains preserved as future direction, unproven.'",

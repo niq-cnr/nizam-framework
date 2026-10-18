@@ -7,6 +7,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-18
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the portable
+Docker trial-sandbox adapter (feature 134), Phase 019 generic repository/worktree
+assurance profile preregistration and shadow comparison/recommendation (features
+124–125), and the 2026-10-18 critical quality and velocity remediation (`R0–R11`,
+including 5-route semantic task classification, `trivial` start path, lightweight
+contract amendments, unified stopping rules, `preflight` and exclusive `capture`,
+Option A repository-binding migration and operational receipt/resume CLI, and
+concise read-only `status` views) land as additive, new-optional capability. There
+is no schema narrowing, no removed or renamed shipped file, and no breaking
+governance change; nothing that validated under v1.6.0 is invalidated. Persistent-runtime
+SBCL profile claims remain explicitly gated on Phase 020 (`130–132`). Upgrade path:
+consumers re-bootstrap from the `v1.7.0` tag to inherit the payload
+(`methodology/06_release_train.md` Section 5).
+
 ### Added
 
 - **Portable Docker trial-sandbox adapter (feature 134).** Added one canonical
