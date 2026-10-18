@@ -1,0 +1,41 @@
+{
+  "gate": "contract-review",
+  "contract_id": "release-v1.6.0",
+  "round": 6,
+  "reviewed_revision": "c6d01ee9db696b17e58b570ebec771959d6a96f6",
+  "reviewer": "independent-evaluator",
+  "final_verdict": {
+    "approved": true
+  },
+  "round5_disposition": [
+    {
+      "round5_scope": "Round 5 approved both contracts with all arrays empty (the two round-4 remedies verified: AT4 auxiliary() admits the .agent/evidence/release-v1.6.0-contract/ prefix; closeout frontmatter assertion description-scoped both directions).",
+      "disposition": "UNCHANGED AND RE-VERIFIED. Round-6 drift check: every round-5 CHECK leg intact (ROADMAP section extraction, operator_gates row, mandated HANDOVER heading, narrowed disposition-literal ban, README 8/0 counts + version-anchored selector, manifest 021 parsed decomposition, changelog tag-tail byte equality, run_state and provenance legs); scope guard and AT1/AT2 unchanged; 'isLatest' fully removed from the closeout CHECK; both contracts re-validated against schema/contract.schema.json: PASS."
+    },
+    {
+      "round6_delta": "Closeout amendment 4 (pre-execution, disclosed for dual gate re-review): AT3 release-latest assertion replaced gh release view --json tagName,isDraft,isPrerelease,publishedAt,isLatest with the same view minus isLatest plus 'gh api repos/niq-cnr/nizam-framework/releases/latest' asserting tag_name=='v1.6.0', because the operator host's gh CLI rejects the isLatest field.",
+      "disposition": "VERIFIED NECESSARY, SEMANTICS-PRESERVING, AND LIVE-PASSING. (a) Premise confirmed live on this host: 'gh release view v1.5.0 --json tagName,isLatest' returns 'Unknown JSON field: \"isLatest\"' — the original leg could never exit 0 in the only environment where the closeout executes. (b) Replacement legs executed live against the real published v1.6.0 release (annotated tag object at commit 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, published 2026-10-17T05:59:26Z): 'gh release view v1.6.0 --json tagName,isDraft,isPrerelease,publishedAt' returns tagName=v1.6.0, isDraft=false, isPrerelease=false, publishedAt set — all assertions satisfied; 'gh api repos/niq-cnr/nizam-framework/releases/latest' returns tag_name=v1.6.0 — the Latest assertion passes. (c) Semantics equivalence: the /releases/latest endpoint returns whichever release GitHub marks Latest, so asserting tag_name=='v1.6.0' fails if any other release is Latest — equally strict, and fail-closed via check_output (non-zero rc raises; the leg also fails correctly pre-release, as it would have returned v1.5.0 before the tag existed). (d) The amendment's claim of live verification is literally accurate: v1.6.0 is published and Latest as of this review."
+    },
+    {
+      "round6_execution_progress": "Between round 5 and round 6 the release contract executed: status approved with both gate flags true, base_revision and the AT4 embedded placeholder substituted with the real d86e1160a60e21c485235741e30372facee0e9d9 (the designed placeholder mechanics working exactly as specified in design_notes.scope_base), revisions 4; the annotated v1.6.0 tag and published release now exist.",
+      "disposition": "CONFIRMED AS DESIGNED EXECUTION BOOKKEEPING, not drift: amendments still 4 with the round-4 prefix-fix text intact, AT3 companion guard intact, no scope/content changes beyond the placeholder substitution the contract itself mandates. Non-blocking process observation: the closeout contract's approvals show both gate flags true while its amendment 4 text says 'disclosed for dual gate re-review (round 6)' — the flags were set ahead of this round-6 verdict; my approval below validates the delta, and the Orchestrator should ensure verdict files land before or with the flag flips in future."
+    }
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "anchor_surface_check": {
+    "anchors_found": [
+      "Unchanged from round 5 and re-verified: full pre-tag v1.5.0->v1.6.0 surface in release-v1.6.0.json (NIZAM.json, CONTEXT.md, README 7 pins, guide 3 anchors, CHANGELOG [1.6.0] with feature-129 boundary, ROADMAP prep disposition in the current-position section, operator_gates PREPARED row, HANDOVER prep note + description, manifest PREPARED note) and post-tag surface in release-v1.6.0-closeout.json (ROADMAP roll, operator_gates EXECUTED row, HANDOVER released note + description, manifest 021 fact, README installed line, provenance resolved_sha)",
+      "Round-6 live confirmation that the pre-tag anchors shipped correctly: the published v1.6.0 release exists (tag object at 4e7db5a4, non-draft, non-prerelease, Latest), corroborating AT5/AT6 of the release contract; the closeout CHECK's release legs now execute green against it on this host"
+    ],
+    "covered_by_contract": [
+      "release-v1.6.0.json: unchanged from round 5 (execution bookkeeping only: status approved, base_revision substituted, revisions 4)",
+      "release-v1.6.0-closeout.json: unchanged from round 5 except amendment 4's two-leg release-latest check (verified live-passing and semantics-preserving)"
+    ],
+    "missed": [
+      "None; the amendment-4 substitution covers exactly the Latest invariant (GitHub's own latest-release endpoint naming v1.6.0) with equal strictness"
+    ]
+  },
+  "summary": "Round-6 targeted re-review of the single pre-execution delta to .agent/contracts/release-v1.6.0-closeout.json (amendment 4: gh-release-latest leg restructured for host CLI compatibility). VERDICT: APPROVED — all three arrays empty. The delta is verified three ways: (1) necessary — this host's gh CLI verifiably rejects the isLatest field ('Unknown JSON field: \"isLatest\"'), so the original leg could never exit 0 where the closeout executes; (2) semantics-preserving and equally strict — the replacement asserts tagName/isDraft/isPrerelease/publishedAt on the release view plus tag_name=='v1.6.0' on GitHub's own /releases/latest endpoint, which fails if any other release is marked Latest and is fail-closed via check_output; (3) live-verified — v1.6.0 is now genuinely published (annotated tag at 4e7db5a4, published 2026-10-17T05:59:26Z, non-draft, non-prerelease) and BOTH replacement legs execute green on this host against it, corroborating the amendment's claim literally. Drift check: every round-5 CHECK leg intact, 'isLatest' fully removed, scope guard and AT1/AT2 unchanged, both contracts schema-valid; the release contract's only changes are its designed execution bookkeeping (status approved, base_revision/AT4 placeholder substituted with the real d86e1160, revisions 4). Anchor-surface result: unchanged and complete from round 5, now corroborated by the live published release. Non-blocking observation recorded: the closeout approvals flags were set true ahead of this round-6 verdict despite amendment 4 requesting dual gate re-review — process ordering only; the substance of both gates now stands. The closeout contract is approved for execution: all preconditions (merged release PR, annotated tag, succeeded workflow, published Latest release, bootstrap rehearsal, run_state release_executed) are or can now be evidenced, and its ATs are executable end-to-end on the operator host."
+}

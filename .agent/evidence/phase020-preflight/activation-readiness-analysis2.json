@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "kind": "future-phase020-readiness-facts-delta",
+  "author": "/root/fresh_qa123; preparation-only fact refresh, no approval role",
+  "analysis_base": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04",
+  "observed_at": "2026-10-15T20:39:58.303355+00:00",
+  "status": "PREPARATORY; current integration pending; phase 020 remains pending and unapproved",
+  "refs": {
+    "prior_analysis": {"path":".agent/evidence/phase020-preflight/activation-readiness-analysis1.json","revision":"30d9ce89a31a6ab5b36687727c60839fab63c542","sha256":"7bd767c8bb8970af6ca668c699c4f59328016020caf7d9e78d0fa186f96bd104"},
+    "proposal_spec": {"path":".agent/product_spec_020.md","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"aceec888ce4516e8fbb089dc2559745449d61774932158cbb9807cba65d886ca"},
+    "proposal_features": {"path":".agent/feature_list_020.json","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"5ab9c09519f65b1dc1281c59a59280f0dd1ddaef8a363c8c8d4faa10f25e0e80"},
+    "proposal_phase": {"path":"docs/planning/phase_020.yaml","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"cc749311e8b41dc6debbcb6fc9eb27aa775c251d83ff0b2033415f09dfc405e6"},
+    "capture128": {"path":".agent/evidence/128/evidence-capture.json","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c"},
+    "hosted128": {"path":".agent/evidence/128/ci-new-runner-2-receipt.json","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"279a07fa127bfec56cc33dd4d6a573d878bd9dec035d6e8c66a4125edd4000d3"},
+    "canonical018": {"path":"docs/planning/phase_018.yaml","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"4e17e632f38bd16ff50758d3a528fd9694b5ddbc597921991a93104aac981e8f"},
+    "features018": {"path":".agent/feature_list_018.json","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"2a19e804d8e78b24e26ff0aaa6f2623ae9856f37cb00d2037eda6374571e5480"},
+    "qa123": {"path":".agent/qa/123.json","revision":"6046ad7ea084703c82b512697f520868b161d09f","sha256":"8e1aea3f193b2d051bf99116efcb97fd862a938beeb602462f78784536a21dae"},
+    "capture123": {"path":".agent/evidence/123/evidence-capture.json","revision":"8ba3fad4586c4230a084cbc348ab595820b222ff","sha256":"e8c61746c648b68faccec08024ee14dc3ed446fd89a1d9244e84b696d635228a"},
+    "current_docs": {"path":".agent/evidence/123/current-docs-verification1.json","revision":"d14b3a54b9a124af9b51aed7b0316c6b5c7f112a","sha256":"c81c12d03ef24e4ffbd1111525079228c06f2a11b9a90dd368d3ba0a14242c05"},
+    "overrun_disposition": {"path":".agent/run_state.json","revision":"a6826de87b7520cceed82ff286a20db82fdfced6","sha256":"f25f5f0322bfecaa418de4f5ac478ee3f5df6141b801461c3a12f46c1a65c4ec"},
+    "final_integration_release": {"path":".agent/evidence/123/root-final-integration1-release.json","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"5d1d7b9d2868d36bb3665a1c981c620b5c0d01be729ca9dcbd7879cd9aa1ef7a"},
+    "runner": {"path":"tools/test_runtime_session.py","revision":"599d7c5aa0c0c80ce8da596c7aeae2924d7dca04","sha256":"005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534"},
+    "EX_P1_metadata": {"path":".agent/evidence/agentic-excellence/runtime-signature-preparation1-report.json","revision":"a5a2aa8af7f6dc87d10320563ecb41593f1e5261","sha256":"d33d9f6cb0667f10ba29b0c83334da1346ba7428f59b5910e3fb1dd2fb5c97e1"}
+  },
+  "facts_delta": [
+    "Supersedes only stale facts in prior_analysis. Original proposal and unchanged acceptance/budget/authority boundaries remain authoritative; no duplication of the original analysis.",
+    "Feature 128 is captured bounded partial stub core: fresh QA aggregate 14 leaves and hosted 14 leaf commands are distinct executions. Hosted 38569054719 observed SBCL 2.2.9.debian/full isolation but did not execute core-ready or full SBCL conformance.",
+    "The actual runner already exists through 126-128 and its current bytes equal the pinned128 runner. Future 126-runner wording is stale; later acceptance expansion retains independent Evaluator ownership.",
+    "Canonical 018 and features 119-123 are complete, after strict fresh QA 6046ad7e and Root capture 8ba3; actual 123 A11/A10 capture/verify and selected read-only readiness are completed. This resolves the former uncaptured123 dependency, not live Root 120 repository-binding migration.",
+    "Planner current documents were independently approved at d14b3a54. PR 104 final integration 38802791707 at 599d7c5a remains pending in this analysis snapshot; no successful final run, merge or main-CI receipt is inferred.",
+    "a6826de8 preserves the measured phase 018 overrun and budget_gate_passed=false. Its delivery exception covers completing existing 123/final integration only; it supplies no phase 020 activation, budget increase, new implementation allowance or transferable headroom."
+  ],
+  "planner_refresh_when_intaken": [
+    "Replace absent 128/evidence-gate.txt and 123/evidence-gate.txt projections with actual immutable evidence-capture.json refs. Refresh future 119/120/123 and future 126-runner wording; preserve partial 128 versus full-runtime boundaries.",
+    "Keep 129 → 130 → 131 → 132 and shared runtime/test file serialization. Preserve the full 17-row/13-case live matrix, genuine case 8 policy/mechanism controls, and future required sixth job only in 131 after 129/130; no live-pass claim from installed SBCL/version or old leaves.",
+    "Retain 7350/9555 as an unchanged proposal, including 3750 process; current approval remains absent. Review feasibility using already observed 123 costs and reuse existing capture/review primitives to minimize bespoke reports; no new estimate, exception transfer or budget arithmetic is performed here."
+  ],
+  "runtime_snapshot": {
+    "observed_source": "Root retained final-run watch /home/cnross/.tmp/nizam-feature123-final-integration1/watch.stdout.txt; mutable outside capture, not an immutable qualification Ref",
+    "annotation_only": "Actual watch annotations announce ubuntu-latest migration to Ubuntu 26 starting 2026-10-19 and Node 20 actions forced to Node 24; no current failure, pin update or new gate follows from this observation.",
+    "future_binding": "Each actual phase 020 frozen run must observe ImageOS/ImageVersion, Python, SBCL and isolation. Runner labels and prior 128 or 123 environments cannot establish later conformance."
+  },
+  "EX_P1": {
+    "state": "a5a2aa8a is metadata/sidecar parsing and static source correlation only; not cryptographic authentication, executable identity or runtime qualification.",
+    "still_unproved": "Authenticated trust roots/time, artifact signature/certificate/transparency verification, archive/member/executable/helper identities and actual runtime/configuration/isolation/cancellation remain held. No binary download/extraction/execution or canary/model work occurs here.",
+    "placement": "Optional separately reviewed EX-P1 preparation; no automatic dependency on SBCL phase 020 correctness and no cost transfer into 123/020. Metadata trust must not become a passing runtime label."
+  },
+  "cheapest_next_steps": [
+    "1. Retain actual exact-head PR 104 final checks; merge by normal merge commit only when clean, then retain successful actual main five-job CI. Re-read these facts at intake.",
+    "2. Intake this compact delta and prior_analysis once; Planner narrowly refreshes existing phase 020 spec/feature prerequisites and runner facts, retaining pending status, original scope/DAG/acceptance and proposed budget.",
+    "3. Root records a concrete dependency-ready H-PHASE-020 authority/budget application under applicable standing authorization, with independent plan/activation review. Existing 018 delivery exception does not substitute; this report approves nothing.",
+    "4. Start only eligible 129 through the existing contract/independent gate/execution/QA/capture loop; then 130, 131, 132 in order. Profiles 019/comparison remain downstream of captured 132; no unsupported superiority or release/install claim."
+  ],
+  "accounting": "Charge prior_analysis and this maintained delta once to future 020 process/preparation on explicit intake using disjoint attribution; not free 123 raw evidence or an added allowance. No current ledger write, measurement/rebaseline or new budget calculation.",
+  "preservation": "One new artifact in an owned separate-Git clone/branch only. No current tested-branch/spec/feature-list/planning-view/Rootstate/Source/API/test/runtime/workflow/installed changes, network/canary/paid execution, new IDs/debt/allocation, push or merge."
+}

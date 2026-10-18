@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-10-16T18:22:55Z",
+  "branch": "fix/start-path-gates",
+  "head": "54c6a5f3",
+  "full_output": ".agent/evidence/audit-2026-10-16/head-green.txt",
+  "checks": [
+    {"name": "tools/validate.sh", "exit": 0, "note": "16 passed, 0 failed"},
+    {"name": "tools/test_start_path.py", "exit": 0},
+    {"name": "tools/test_runtime_session.py --check sbcl-admission --require-sbcl", "exit": 0, "note": "SBCL 2.2.9.debian present"},
+    {"name": "tools/test_convergent_review.py --allow-unsupported-isolation", "exit": 0, "note": "54 tests OK, 5 isolation-dependent skips; local flag per tools/README.md, CI must not pass it"},
+    {"name": "tools/test_smoke_preconditions.py", "exit": 0},
+    {"name": "tools/test_receipt_candidate_batching.py", "exit": 0}
+  ]
+}

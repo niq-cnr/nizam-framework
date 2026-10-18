@@ -1,0 +1,69 @@
+"""Focused read-only C1/C2 rereview; no accounting/native/product main."""
+import ast,functools,gzip,hashlib,json,subprocess
+from pathlib import Path
+sha=lambda b:hashlib.sha256(b).hexdigest()
+A=Path('.agent/evidence/phase020-candidate-accounting-preparation2');D=json.loads((A/'delta.json').read_bytes())
+assert sha((A/'delta.json').read_bytes())=='dfe9108e61ac50ec5fd1d776cb3fd199c37fc91d014db10dd5ac96d4af475dc9'
+@functools.lru_cache(None)
+def blob(r,p):return subprocess.check_output(['git','show',r+':'+p])
+def ref(x):
+ b=blob(x['revision'],x['path']);assert sha(b)==x['sha256'];return b
+def pointer(v,p):
+ for k in p.strip('/').split('/'):v=v[int(k)] if isinstance(v,list) else v[k]
+ return v
+for p,h in json.loads((A/'index.json').read_bytes()).items():assert sha(Path(p).read_bytes())==h
+base=json.loads(ref(D['base_closure']));old=json.loads(ref(D['canonical_review']));policy=json.loads(ref(D['Root_policy']))
+assert old['final_verdict']['approved'] is False and {e['id'] for e in old['issues']}=={'C1','C2'}
+assert 'historicaljointownership without020charge' in policy['decision'] and 'SelectreviewedA8' in policy['interface']
+assert {a['id'] for a in D['accepted_by_reference']}=={'A1','A2','A3','A4','A5','A6','A7'}
+for a in D['accepted_by_reference']:
+ assert a['bound_original_closure_sha256']==D['base_closure']['sha256'];assert pointer(json.loads(ref(a['decision'])),a['decision']['pointer'])['id']==a['id']
+# Previous proof payload/index and approved helper bytes must remain exact; reuse, do not rerun.
+P=Path('.agent/evidence/phase020-candidate-accounting-preparation1')
+for p,h in json.loads((P/'index.json').read_bytes()).items():assert sha(Path(p).read_bytes())==h
+for p,h in json.loads(Path('.agent/evidence/phase020-candidate-accounting-review1/index.json').read_bytes()).items():assert sha(Path(p).read_bytes())==h
+expected={(e['commit'],e['path']) for e in base['shared_proposals'] if e['state']=='PENDING-joint-common-overhead'}
+assert expected=={(e['commit'],e['path']) for e in D['joint_doc_overrides']}
+for e in D['joint_doc_overrides']:
+ shared=json.loads(gzip.decompress(ref(e['patch_source'])));source=next(s for s in shared if (s['commit'],s['path'])==(e['commit'],e['path']))
+ actual=subprocess.check_output(['git','-c','color.ui=false','diff','--no-ext-diff','--no-textconv','--no-renames','--unified=0',e['parent'],e['commit'],'--',e['path']])
+ assert sha(actual)==e['patch_sha256']==source['patch_sha256'] and actual.decode()==source['patch']
+ assert subprocess.check_output(['git','show','-s','--format=%P',e['commit']]).decode().split()==[e['parent']]
+ for r,k in ((e['parent'],'before_sha256'),(e['commit'],'after_sha256')):assert sha(blob(r,e['path']))==e[k]
+ previous=pointer(json.loads(ref(e['old_proposal'])),e['old_proposal']['pointer']);assert (previous['commit'],previous['path'])==(e['commit'],e['path'])
+ changed=[];hunks=[]
+ for line in actual.decode().splitlines():
+  if line.startswith('@@ '):hunks.append((line,len(changed)))
+  if line[:1] in ('+','-') and not line.startswith(('+++ ','--- ')):changed.append(sha(line.encode()))
+ assert len(hunks)==len(e['ordered_blocks'])
+ for i,(header,start) in enumerate(hunks):
+  block=e['ordered_blocks'][i];end=hunks[i+1][1] if i+1<len(hunks) else len(changed)
+  assert (block['hunk_header'],block['selector_start'],block['selector_end_exclusive'])==(header,start,end)
+  assert sha(json.dumps(changed[start:end],sort_keys=True,separators=(',',':')).encode())==block['ordered_signed_line_hashes_sha256']
+  assert (block['owner'],block['adapter_owner'],block['disposition'])==('historical-joint','foreign','retained-joint-without020charge')
+family=D['joint_family_policy']['retained_joint_original_families'];bound=pointer(json.loads(ref(family['bound_old_joint_records'])),family['bound_old_joint_records']['pointer'])
+assert bound==base['joint_intake_pending']
+for e in bound:assert e['path'] in family['paths'] or any(e['path'].startswith(p) for p in family['prefixes'])
+assert json.loads(ref(D['historical_joint_view']['cost']))['counted_lines']==2315
+ref(D['historical_joint_view']['measurement'])
+for e in D['named_carry_refs']:
+ canonical=pointer(json.loads(ref(e['decision'])),e['decision']['pointer']);assert canonical['key']==e['key'] and canonical['disposition']=='charge-authored'
+ r,p=e['key'].split(':',1);assert sha(blob(r,p))==e['after_sha256'];assert e['before_sha256']==canonical['before_sha256']
+ assert subprocess.check_output(['git','show','-s','--format=%P',r]).decode().split()==[e['parent']]
+for e in D['interface_overrides']:
+ assert (e['owner'],e['feature'],e['category'],e['disposition'])==('020','129','process','charge-authored')
+ assert e['copy_deduction'] is False and e['independent_authorship_claim'] is False and e['before_sha256'] is None
+ assert sha(blob(e['commit'],e['path']))==e['after_sha256']
+ assert subprocess.check_output(['git','show','-s','--format=%P',e['commit']]).decode().split()==[e['parent']]
+assert {e['commit'] for e in D['interface_overrides']}=={'24c6092f8d8284d2e37590edd56aeb07f665b7c4','99c4d7e9bece2e71ebf6e3af10e501c950a5d475'}
+adapter=ref(D['adapter_binding']['adapter']);tree=ast.parse(adapter);assert sha(adapter)==sha((P/'adapter.py').read_bytes())
+# Source inspection: main reads a future cfg, enforces strict closed-inventory review/hash and uses its row dispositions. Delta is not loaded or applied automatically.
+assert b"cfg_raw=read(release['inventory'])" in adapter and b"review['inventory_sha256']==sha(cfg_raw)" in adapter
+assert b"cfg['status']=='closed-and-independently-reviewed'" in adapter and b"not cfg['pending']" in adapter
+assert b"('charge-authored','excluded-state','derived-observation','proven-copy','foreign')" in adapter
+assert b'delta.json' not in adapter and D['pending'] and 'NOT AUTHORIZED' in D['adapter_binding']['numeric_execution']
+for path,pid in [(A/'static1.execution.json',332089),(Path('.agent/evidence/phase020-candidate-accounting-intake2/intake.execution.json'),370527)]:
+ f=json.loads(path.read_bytes());assert f['actual_exit']==0 and f['child_pid']==pid
+ for stream in ('stdin','stdout','stderr'):assert sha((path.parent/Path(f[stream]['path']).name).read_bytes())==f[stream]['sha256']
+s=json.loads(Path('.agent/run_state.json').read_bytes());assert s['circuit_breaker']['020-candidate-accounting-closure-review']['attempts']==2
+print(json.dumps({'result':'PASS focused C1/C2 current-decision review','delta_sha256':sha((A/'delta.json').read_bytes()),'nine_complete_ordered_hunk_overrides':True,'current_joint_membership_bound_not_future_prefix_exemption':True,'historical_joint_view_preserved':True,'named_carry_and_A1_A7_exact_proofs_preserved':True,'both_interface_events_charged_without_deduction':True,'adapter_sha256':sha(adapter),'adapter_automatically_applies_delta':False,'future_reviewed_inventory_must_apply_delta':True,'measurement_or_runtime_execution':False},sort_keys=True))

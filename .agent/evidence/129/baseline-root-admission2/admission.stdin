@@ -1,0 +1,29 @@
+
+import pathlib,json,hashlib,gzip,subprocess
+r=pathlib.Path.cwd();b=r/'.agent/evidence/129/baseline-admission2';load=lambda p:json.loads(p.read_text());sha=lambda x:hashlib.sha256(x).hexdigest();v=load(b/'report.json');rev='1224b566374b78b01d1e5ab70db18ea3f112edd3'
+assert sha((b/'report.json').read_bytes())=='9b231d2315bef1efd20ca810f675b54d06b37baedc758b1dae55d56869841553'
+assert sha((b/'index.json').read_bytes())=='5852a487ded1f185972df43ce2d8d38826fc8b1204a92fc58bdccd1c0ef49d6c'
+for p,h in load(b/'index.json').items():assert sha((r/p).read_bytes())==h,p
+assert v['exercised_revision']==rev and v['exercised_tree']==subprocess.check_output(['git','rev-parse',rev+'^{tree}']).decode().strip()
+for p,h in v['source_bindings_sha256'].items():assert sha((r/p).read_bytes())==h==sha(subprocess.check_output(['git','show',rev+':'+p])),p
+freeze=load(r/'.agent/evidence/129/frozen-bundle2.json');assert v['frozen_bundle_identity_sha256']==freeze['bundle_identity_sha256']==sha(json.dumps(freeze['bundle'],sort_keys=True,separators=(',',':')).encode())
+assert not (r/'tools/sbcl_session_loop.lisp').exists()
+for name,exitcode,pid,pidkey in [('admission-red',1,3800136,'child_pid'),('driver',0,3800093,'pid')]:
+ f=load(b/(name+'.execution.json'));assert f['actual_exit']==exitcode and f[pidkey]==pid and f['exercised_revision']==rev
+ assert not f.get('timed_out',False)
+ for key in ['stdout','stderr']:
+  x=(b/pathlib.Path(f[key]['path']).name).read_bytes();assert sha(x)==f[key]['sha256'] and len(x)==f[key]['bytes']
+f=load(b/'admission-red.execution.json');assert f['argv']==['python3','tools/test_runtime_session.py','--check','sbcl-admission','--require-sbcl']
+out=(b/'admission-red.stdout.txt').read_text();err=(b/'admission-red.stderr.txt').read_text();assert err.startswith('SBCL_ADMISSION_UNAVAILABLE:')
+commands=[json.loads(x.partition(' ')[2]) for x in out.splitlines() if x.startswith('LIVE_COMMAND ')];leaves=[json.loads(x.partition(' ')[2]) for x in out.splitlines() if x.startswith('CORE_LEAF ')]
+assert len(leaves)==14 and all(x['exit']==0 and x['proof'] is True and x['cleanup'] is True for x in leaves)
+assert 'PASS core-ready\n' in out and out.index('PASS core-ready')<out.rindex('LIVE_REQUEST ')
+for i,pid in [(0,3800138),(1,3800139)]:assert commands[i]['pid']==pid and commands[i]['exit']==0
+assert v['positive_controls']['direct_sbcl']['nonce']+':42' in commands[1]['stdout']
+product=commands[-1];assert product['pid']==3802357 and product['exit']==64 and not product['timeout'] and json.loads(product['stdout'])=={'error':'usage','ok':False} and product['stderr']==''
+requests=[json.loads(x.partition(' ')[2]) for x in out.splitlines() if x.startswith('LIVE_REQUEST ')];assert requests[-1]['request']['runtime']=='sbcl'
+before=json.loads(gzip.decompress((b/'admission-red.preservation-before.json.gz').read_bytes()));after=json.loads(gzip.decompress((b/'admission-red.preservation-after.json.gz').read_bytes()));assert before==after
+assert before['head']==rev and before['tree']==v['exercised_tree'] and before['status']=='' and before['origin']=='https://github.com/niq-cnr/nizam-framework.git'
+assert len(before['rows'])==15890 and len([x for x in before['rows'] if x['path'].startswith('.nizam/')])==239
+assert load(b/'admission-red.capture-summary.json')['success'] is True
+print(json.dumps({'admitted':'actual amended baseline admission deficiency only','bundle':freeze['bundle_identity_sha256'],'selector_exit':1,'product_exit':64,'core_positive_leaves':14,'physical_rows':15890,'installed_files':239,'backend_correctness':False},sort_keys=True))

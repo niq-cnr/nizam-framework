@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.6.0
+version: 0.6.1
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.6.1"
+    date: "2026-10-16"
+    summary: "Route bug-fix and small-change starts through tools/start_path.py. Feature loops stay mandatory."
   - version: "0.6.0"
     date: "2026-10-12"
     summary: "Route optional runtime sessions through the adapter interface, neutral protocol and SBCL binding without a new skill."
@@ -100,6 +103,12 @@ loading this skill must recognize its shape:
 
 Read `methodology/01_execution.md` before proposing, implementing, or
 reviewing any contract.
+
+A bug fix or a small unambiguous change is not a feature. Do not start one by
+skipping Loop 1 on a feature. `tools/start_path.py` decides whether that
+non-feature path may begin and whether its recorded verification result exists,
+as `methodology/01_execution.md` Section 2.1 specifies. No feature
+implementation may begin against a contract that is not `approved`.
 
 **Eval-Gated Promotion**: Model and prompt changes are treated as code changes and MUST pass through this exact execution loop, blocking promotion until role-specific evals pass per `methodology/07_eval_gated_promotion.md`.
 

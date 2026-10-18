@@ -1,0 +1,313 @@
+{"binding": "candidate_python", "path": "tools/runtime_session.py", "revision": "0697bfe5e121543b2aa8ed8c8607d0c50e99b413", "sha256": "e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce"}
+{"binding": "candidate_lisp", "path": "tools/sbcl_session_loop.lisp", "revision": "0697bfe5e121543b2aa8ed8c8607d0c50e99b413", "sha256": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9"}
+{"binding": "runner", "path": "tools/test_runtime_session.py", "revision": "0697bfe5e121543b2aa8ed8c8607d0c50e99b413", "sha256": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431"}
+{"binding": "contract", "path": ".agent/contracts/129.json", "revision": "HEAD", "sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6"}
+{"binding": "architecture", "path": ".agent/evidence/129/implementation4/architecture-preparation1.json", "revision": "956c28bf6a36783c6b4a2fabd8d30d0f45f610ad", "sha256": "a3d9831d2e5fc65c8bb523b9b2c5fe87a7a84060bd3510643fbe0bd9e52cbdc0"}
+{"binding": "probe", "path": ".agent/evidence/129/source3-semantic-diagnostics1/probe.py", "revision": "bccaef268ef2f385a8b14acac47f5d61a0e41216", "sha256": "f5b4184aa275058436abb7290dacdf396f16597777b6ee37cb3b445a549486bc"}
+{"binding": "intent", "path": ".agent/evidence/129/source3-semantic-diagnostics1/intent.json", "revision": "bccaef268ef2f385a8b14acac47f5d61a0e41216", "sha256": "7ffe78852566c5540e313839548c515a59a71e86c33bbf04d6bb5a49d3761ff4"}
+{"binding": "capture", "path": ".agent/evidence/123/fresh-qa-capture1.py", "revision": "599d7c5aa0c0c80ce8da596c7aeae2924d7dca04", "sha256": "e9e9417c39548919b892f0b7436b885b72a26b781d15455e62daebe9367c5ac0"}
+EXCERPT runner tools/test_runtime_session.py 1433 1587
+1433:
+1434:# Feature129 additions: separate public-CLI driver; inherited leaves above are frozen.
+1435:LIVE_CHECKS = ('sbcl-admission', 'capture-before-unwind', 'bounded-printing',
+1436:               'cancel-confirmed', 'termination-ends-generation')
+1437:LIVE_TERMINAL = {'completed', 'condition_signalled', 'cancelled', 'terminated', 'rejected'}
+1438:
+1439:
+1440:def live_selection(argv):
+1441:    return ('--runtime' in argv and argv[argv.index('--runtime') + 1:][:1] == ['sbcl'] or
+1442:            '--check' in argv and argv[argv.index('--check') + 1:][:1] in [[x] for x in LIVE_CHECKS])
+1443:
+1444:
+1445:def live_process(argv, cwd, env, timeout=12):
+1446:    p = subprocess.Popen(argv, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+1447:    try:
+1448:        out, err = p.communicate(timeout=timeout)
+1449:    except subprocess.TimeoutExpired:
+1450:        p.kill(); out, err = p.communicate(timeout=3)
+1451:        print('LIVE_COMMAND', json.dumps({'argv': argv, 'pid': p.pid, 'exit': p.returncode,
+1452:              'stdout': out, 'stderr': err, 'timeout': True}), flush=True)
+1453:        raise RuntimeError('bounded subprocess timeout; never intended admission red')
+1454:    print('LIVE_COMMAND', json.dumps({'argv': argv, 'pid': p.pid, 'exit': p.returncode,
+1455:          'stdout': out, 'stderr': err, 'timeout': False}), flush=True)
+1456:    return p.returncode, out, err
+1457:
+1458:
+1459:def sbcl_preflight(home):
+1460:    executable = shutil.which('sbcl')
+1461:    if not executable:
+1462:        raise RuntimeError('actual SBCL executable absent')
+1463:    nonce = os.urandom(16).hex(); executable = str(Path(executable).resolve())
+1464:    env = dict(os.environ, HOME=str(home), XDG_CONFIG_HOME=str(home / 'config'),
+1465:               XDG_CACHE_HOME=str(home / 'cache'), XDG_DATA_HOME=str(home / 'data'))
+1466:    for key in ('CL_SOURCE_REGISTRY', 'ASDF_OUTPUT_TRANSLATIONS', 'SBCL_HOME'):
+1467:        env.pop(key, None)
+1468:    version, out, _ = live_process([executable, '--version'], home, env)
+1469:    if version or not out.strip().startswith('SBCL '):
+1470:        raise RuntimeError('SBCL executable/version preflight unsuccessful')
+1471:    form = '(format t "~&' + nonce + ':~D~%" (+ 19 23))'
+1472:    code, out, _ = live_process([executable, '--no-sysinit', '--no-userinit', '--non-interactive', '--eval', form], home, env)
+1473:    if code or out.splitlines().count(nonce + ':42') != 1:
+1474:        raise RuntimeError('SBCL arithmetic/nonce preflight unsuccessful')
+1475:    print('SBCL_PREFLIGHT', json.dumps({'executable': executable, 'sha256': hashlib.sha256(Path(executable).read_bytes()).hexdigest(),
+1476:          'nonce': nonce, 'arithmetic': 42}), flush=True)
+1477:    return executable
+1478:
+1479:
+1480:def live_owned(marker):
+1481:    owned = {}
+1482:    for path in Path('/proc').iterdir():
+1483:        try:
+1484:            pid = int(path.name); token = process_token(pid)
+1485:            if (token and path.stat().st_uid == os.getuid() and
+1486:                    ('NIZAM_LIVE_OWNER=' + marker).encode() in (path / 'environ').read_bytes().split(b'\0') and
+1487:                    process_token(pid) == token):
+1488:                owned[pid] = token
+1489:        except (OSError, ValueError):
+1490:            pass
+1491:    return owned
+1492:
+1493:
+1494:class LiveSession(Session):
+1495:    def __init__(self, home, name='live', candidate=ROOT):
+1496:        super().__init__(home, name, candidate)
+1497:        self.marker = os.urandom(24).hex(); self.env['NIZAM_LIVE_OWNER'] = self.marker
+1498:        self.runstate.write_text(json.dumps({'repository': 'scratch', 'current_phase': '020',
+1499:            'current_feature': '129', 'status': 'in_progress', 'history': [], 'updated_at': '2026-10-16T00:00:00Z',
+1500:            'scope_budget': {'original_estimate_lines': 7350, 'total_lines_changed': 0, 'per_feature': []},
+1501:            'circuit_breaker': {'129-implementation': {'attempts': 1, 'limit': 3}}}))
+1502:        self.saved_state = self.runstate.read_bytes(); self.live_tokens = {}
+1503:
+1504:    def opening(self, owner=OWNER):
+1505:        return {**super().opening(owner), 'runtime': 'sbcl',
+1506:                'contract_id': '129', 'step_key': '129-implementation', 'attempt': 1}
+1507:
+1508:    def call(self, action, request, expected=0):
+1509:        self.serial += 1; path = self.home / f'live-request-{self.serial}.json'
+1510:        path.write_text(json.dumps(request))
+1511:        argv = [sys.executable, str(self.candidate / 'tools/runtime_session.py'), action,
+1512:                '--root', str(self.state), '--request', str(path)]
+1513:        print('LIVE_REQUEST', json.dumps({'action': action, 'request': request}), flush=True)
+1514:        code, out, _ = live_process(argv, self.candidate, self.env)
+1515:        self.last_exit = code
+1516:        try:
+1517:            response = json.loads(out)
+1518:        except ValueError as exc:
+1519:            raise RuntimeError('controller response is not JSON') from exc
+1520:        if code not in (expected if isinstance(expected, tuple) else (expected,)):
+1521:            raise RuntimeError(f'unexpected controller exit {code}: {response}')
+1522:        require(type(response.get('ok')) is bool and response['ok'] is (code == 0), 'CLI envelope and actual exit agree')
+1523:        return response
+1524:
+1525:    def observe_runtime(self, executable):
+1526:        observed = {}
+1527:        for pid, token in live_owned(self.marker).items():
+1528:            try:
+1529:                if Path(f'/proc/{pid}/exe').resolve() == Path(executable):
+1530:                    observed[pid] = {'token': token, 'pgid': os.getpgid(pid),
+1531:                                     'argv': Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0')}
+1532:            except OSError:
+1533:                pass
+1534:        require(len(observed) == 1, 'exactly one actual owned SBCL runtime, no stub fallback')
+1535:        require(any(os.getpgid(pid) != next(iter(observed.values()))['pgid'] for pid in live_owned(self.marker)
+1536:                    if pid not in observed), 'supervisor/control lifetime has a distinct process group')
+1537:        self.live_tokens = {pid: row['token'] for pid, row in observed.items()}
+1538:        print('LIVE_RUNTIME', repr(observed), flush=True)
+1539:        return observed
+1540:
+1541:    def start(self, executable):
+1542:        self.record = self.call('open-session', self.opening())['result']
+1543:        self.observe_runtime(executable)
+1544:        require(self.runstate.read_bytes() == self.saved_state, 'actual Root counters untouched in private fixture')
+1545:
+1546:    def lisp(self, expression, kind='evaluate', limits=None):
+1547:        self.serial += 1
+1548:        return {**self.identity(), 'operation_id': f'live-{self.serial}', 'contract_id': '129',
+1549:                'step_key': '129-implementation', 'attempt': 1, 'kind': kind,
+1550:                'payload': {'expression': expression}, 'context': {}, 'limits': limits or {}}
+1551:
+1552:    def terminal(self, request, statuses=('completed',), seconds=12):
+1553:        def observed():
+1554:            record = self.poll(request['operation_id'])
+1555:            return record if record['status'] in LIVE_TERMINAL else None
+1556:        record = wait_for(observed, 'actual correlated terminal observation', seconds)
+1557:        require(record['status'] in statuses and record['operation_id'] == request['operation_id'] and
+1558:                record['session_id'] == self.name and record['generation'] == self.record['generation'] and
+1559:                record['lease_epoch'] == self.record['lease_epoch'] and record['contract_id'] == '129' and
+1560:                record['step_key'] == '129-implementation' and record['attempt'] == 1,
+1561:                'TERMINAL_CORRELATION')
+1562:        return record
+1563:
+1564:    def eval(self, expression):
+1565:        request = self.lisp(expression); self.submit(request); self.terminal(request)
+1566:        return request
+1567:
+1568:    def cancellation(self, request):
+1569:        return {**self.identity(), 'operation_id': request['operation_id'],
+1570:                'contract_id': '129', 'step_key': '129-implementation', 'attempt': 1}
+1571:
+1572:    def cleanup(self):
+1573:        if self.record:
+1574:            try:
+1575:                self.call('close-session', self.identity(ORCH), (0, 1, 70))
+1576:            except Exception:
+1577:                pass
+1578:        for sig in (signal.SIGTERM, signal.SIGKILL):
+1579:            for pid, token in live_owned(self.marker).items():
+1580:                if live_owned(self.marker).get(pid) == token:
+1581:                    try:
+1582:                        os.kill(pid, sig)
+1583:                    except ProcessLookupError:
+1584:                        pass
+1585:            time.sleep(.1)
+1586:        require(not live_owned(self.marker), 'owned scratch processes all stopped')
+1587:
+EXCERPT source tools/runtime_session.py 1248 1334
+1248:            self.current_client = None
+1249:
+1250:    def verification_files(self, request):
+1251:        paths = [self.directory / 'runtime_session.json', self.directory / 'controller.json',
+1252:                 Path(self.meta['run_state_path'])]
+1253:        paths.extend((self.directory / 'operations').glob('*.json'))
+1254:        handoff = self.directory / 'handoff.json'
+1255:        if handoff.exists():
+1256:            paths.append(handoff)
+1257:        if 'handoff' in request:
+1258:            repo = Path(request['handoff']['workspace_path'])
+1259:            paths.extend(repo / item['path'] for item in request['handoff']['source_manifest'])
+1260:        return paths
+1261:
+1262:    def start_job(self, connection):
+1263:        state = self.clients.get(connection)
+1264:        if state is None:
+1265:            return
+1266:        if self.closing or any(job.get('uncertain') for job in self.jobs.values()):
+1267:            self.reply(connection, response_error('infrastructure'))
+1268:            return
+1269:        request, action = state['request'], state['action']
+1270:        nonce = secrets.token_hex(16)
+1271:        result_read, result_write = os.pipe()
+1272:        ack_read, ack_write = os.pipe()
+1273:        version = self.version
+1274:        pid = os.fork()
+1275:        if pid == 0:
+1276:            # Fork references are kernel ownership: explicitly remove EVERY
+1277:            # inherited lock/listener/client/runtime/protocol/selector/job FD.
+1278:            # Only this job's result writer, start-authorization reader and
+1279:            # deliberately rebound standard streams survive before work.
+1280:            try:
+1281:                os.setsid()
+1282:                signal.signal(signal.SIGTERM, signal.SIG_DFL)
+1283:                null = os.open(os.devnull, os.O_RDWR)
+1284:                for target in (0, 1, 2):
+1285:                    os.dup2(null, target)
+1286:                keep = {0, 1, 2, result_write, ack_read}
+1287:                for name in os.listdir('/proc/self/fd'):
+1288:                    fd = int(name)
+1289:                    if fd not in keep:
+1290:                        try:
+1291:                            os.close(fd)
+1292:                        except OSError:
+1293:                            pass
+1294:                os.set_inheritable(result_write, False)
+1295:                os.set_inheritable(ack_read, False)
+1296:                def send(value):
+1297:                    raw = encode(value)
+1298:                    if len(raw) > FRAME_LIMIT:
+1299:                        raw = encode({'type': 'job-result', 'job': nonce, 'ok': False,
+1300:                                      'error': 'infrastructure'})
+1301:                    while raw:
+1302:                        raw = raw[os.write(result_write, raw):]
+1303:                send({'type': 'job-ready', 'job': nonce, 'pid': os.getpid(),
+1304:                      'token': live_token(os.getpid())})
+1305:                authorization = receive_line(ack_read, time.monotonic() + CONTROL_SECONDS)
+1306:                if authorization != {'job': nonce}:
+1307:                    os._exit(71)
+1308:                result = {'type': 'job-result', 'job': nonce, 'ok': True}
+1309:                try:
+1310:                    attempt_ok = attempt_matches(self.meta, request) if action in (
+1311:                        'submit-operation', 'cancel-operation', 'reattach-session', 'open-session') else True
+1312:                    self.check_live()
+1313:                    provenance = (source_provenance(request['handoff'], self.runtime)
+1314:                                  if action == 'reattach-session' and attempt_ok
+1315:                                  and self.identity_reason(request) is None else None)
+1316:                    # Digests bind the bytes read/validated by this job; stamps
+1317:                    # let the parent revalidate those inputs incrementally.
+1318:                    files = []
+1319:                    for path in self.verification_files(request):
+1320:                        before = file_stamp(path)
+1321:                        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+1322:                        after = file_stamp(path)
+1323:                        if before != after:
+1324:                            fail(70, 'ambiguous_state')
+1325:                        files.append([str(path), after, digest])
+1326:                    result.update(attempt_ok=attempt_ok, provenance=provenance, files=files)
+1327:                except SessionError as exc:
+1328:                    result.update(ok=False, error=exc.reason)
+1329:                except (OSError, KeyError, TypeError, ValueError):
+1330:                    result.update(ok=False, error='infrastructure')
+1331:                send(result)
+1332:            finally:
+1333:                os._exit(0)
+1334:        os.close(result_write)
+EXCERPT publication tools/runtime_session.py 1427 1468
+1427:                    job['reaped'] = True
+1428:            if not job['reaped'] or not (job['eof'] or job['failure']):
+1429:                continue
+1430:            result = job['result']
+1431:            if result and result['ok'] and not job['failure']:
+1432:                # Read-only jobs carry exact input digests; a changed stamp or
+1433:                # supervisor transition invalidates them before publication.
+1434:                if job['version'] != self.version:
+1435:                    job['failure'] = 'ambiguous_state'
+1436:                else:
+1437:                    files = result['files']
+1438:                    try:
+1439:                        for _ in range(4):
+1440:                            index = job['files_checked']
+1441:                            if index >= len(files):
+1442:                                break
+1443:                            path, stamp, digest = files[index]
+1444:                            if file_stamp(path) != stamp or len(digest) != 64:
+1445:                                fail(70, 'ambiguous_state')
+1446:                            job['files_checked'] += 1
+1447:                    except (OSError, SessionError, ValueError):
+1448:                        job['failure'] = 'ambiguous_state'
+1449:                    if not job['failure'] and job['files_checked'] < len(files):
+1450:                        continue
+1451:            connection = job['connection']
+1452:            try:
+1453:                self.selector.unregister(job['reader'])
+1454:            except KeyError:
+1455:                pass
+1456:            os.close(job['reader'])
+1457:            if job['ack'] is not None:
+1458:                os.close(job['ack'])
+1459:            del self.jobs[nonce]
+1460:            if connection not in self.clients:
+1461:                continue
+1462:            if job['failure']:
+1463:                self.reply(connection, response_error(job['failure']))
+1464:            elif result and not result['ok']:
+1465:                self.reply(connection, response_error(result['error']))
+1466:            elif result:
+1467:                self.apply_request(connection, result)
+1468:            else:
+EXCERPT attempt tools/runtime_session.py 1137 1152
+1137:                response = self.poll_response(request, expired=True)
+1138:        except SessionError as exc:
+1139:            response = response_error(exc.reason)
+1140:        except (OSError, KeyError, TypeError):
+1141:            response = response_error('infrastructure')
+1142:        self.finish_waiter(connection, response)
+1143:
+1144:    def verified_attempt(self, request):
+1145:        if self.runtime == 'stub':
+1146:            return attempt_matches(self.meta, request)
+1147:        return self.verification is not None and self.verification['attempt_ok']
+1148:
+1149:    def accept_client(self):
+1150:        try:
+1151:            connection, _ = self.server.accept()
+1152:        except BlockingIOError:
+{"installed_files": 239, "pid": 298467, "probe_imported_or_executed": false, "review_base": "71e8dd60b8fbc27b2bb384f8dda4a347c39432a8", "scope": "static pins, JSON, AST, exact Git excerpts only; no runtime/selector/counting; charged once original020"}

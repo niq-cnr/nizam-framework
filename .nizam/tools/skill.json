@@ -1,6 +1,6 @@
 {
   "name": "nizam-governance",
-  "version": "0.4.0",
+  "version": "0.6.1",
   "description": "Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a single skill payload any agent runtime can load to plan, execute, gate, and durably record contract-first work.",
   "entry_point": "tools/SKILL.md",
   "capabilities": [
@@ -103,6 +103,21 @@
       "name": "ecosystem_ga_gate",
       "description": "The Promote-stage GA declaration protocol: evidence-gated preconditions, thresholds as acceptance requirements only, the gate ceremony, and an operator-only declaration under the operator gate H-GA; the framework never auto-declares GA.",
       "module": "ecosystem/08_ga_gate.md"
+    },
+    {
+      "name": "live_runtime_protocol",
+      "description": "Neutral consumer-aspirational runtime-session ownership, serialized operations, durable provenance and fresh acceptance definitions.",
+      "module": "methodology/10_live_runtime_sessions.md"
+    },
+    {
+      "name": "live_runtime_session",
+      "description": "Optional runtime-session adapter calls and conditional conformance; adapters without the capability remain conformant.",
+      "module": "tools/interface.md"
+    },
+    {
+      "name": "sbcl_runtime_binding",
+      "description": "Consumer-aspirational SBCL reference profile and fresh hermetic acceptance; executable enforcement and live proofs remain pending.",
+      "module": "methodology/11_sbcl_runtime_binding.md"
     }
   ],
   "runtime_requirements": {
@@ -117,6 +132,10 @@
     "structured_data_parsing": {
       "required": true,
       "description": "The host environment must be able to parse and emit JSON, and parse YAML frontmatter blocks and YAML phase/template documents."
+    },
+    "live_runtime_session": {
+      "required": false,
+      "description": "Optional live-runtime-session adapter capability. Only claiming adapters implement the seven calls and conditional S1-S9 checks; existing adapters remain conformant."
     }
   },
   "state_interface": {

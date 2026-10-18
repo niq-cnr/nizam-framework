@@ -1,0 +1,101 @@
+{
+  "role": "Root adoption-tree re-run of the eleven contract commands plus the public-entry test",
+  "at": "2026-10-16T12:58:12Z",
+  "revision": "ea30d229fc667c32eee0f451394694d6652620ee",
+  "parent": "d19f090e48399ff2c508d1935789567e53f07183",
+  "cwd": "/home/cnross/workspace02/nizam-framework",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/tmp"
+  },
+  "product_blobs": {
+    "tools/runtime_session.py": "65f3452358fa2a488be0e9bb64879a0e1ebc9fe6",
+    "tools/sbcl_session_loop.lisp": "ba9f42fa441e2047480be1895434bea011ac92d4",
+    "tools/test_runtime_session.py": "5af7a9f5683886dff6b607ec39f87490b9cddbd9"
+  },
+  "source_candidate": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "product_blobs_match_candidate": true,
+  "working_tree_note": "Only .agent/run_state.json was modified and unstaged. Product files matched the named revision. validate.sh therefore read that pre-admission run_state. A later validate.sh run is required after the admission edit.",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "commands": [
+    {
+      "index": 1,
+      "command": "python3 tools/test_runtime_session.py --check capture-before-unwind",
+      "exit": 0,
+      "stdout_sha256": "09ea9664b7e707bc34d6ab1b0888f53cf9a00457226f4a3a5827373d4785bffa"
+    },
+    {
+      "index": 2,
+      "command": "python3 tools/test_runtime_session.py --check bounded-printing",
+      "exit": 0,
+      "stdout_sha256": "aa3b3bbb7fded876f8ce10520e5b62c2a6e0f86a2a4b0be00a342d62db6f21ad"
+    },
+    {
+      "index": 3,
+      "command": "python3 tools/test_runtime_session.py --check cancel-confirmed",
+      "exit": 0,
+      "stdout_sha256": "da6ab7e40d739cd2ab74817bfb3e0a67479d24257bcfa3b9f65fd7e42b4aff14"
+    },
+    {
+      "index": 4,
+      "command": "python3 tools/test_runtime_session.py --check termination-ends-generation",
+      "exit": 0,
+      "stdout_sha256": "cb5cb7d4b7f4638853ff1bb8ebd26e4cc72d050910d2d18c44fb8bfe278c7972"
+    },
+    {
+      "index": 5,
+      "command": "python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl",
+      "exit": 0,
+      "stdout_sha256": "d9c615464b406b376fd52db5a0cae1b03b11c0371da0a0f523419b45c9729292"
+    },
+    {
+      "index": 6,
+      "command": "python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
+      "exit": 0,
+      "stdout_sha256": "78dfd8aea8b73dda4346d7f746db33af97b0ab7e945ec516a92481137af313f7"
+    },
+    {
+      "index": 7,
+      "command": "python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl",
+      "exit": 0,
+      "stdout_sha256": "93dc4c2f32794101a32479e8adc4c6892e7a8b3c615707969eeed6131c3a133f"
+    },
+    {
+      "index": 8,
+      "command": "python3 tools/test_runtime_session.py --check sbcl-admission --require-sbcl",
+      "exit": 0,
+      "stdout_sha256": "04acc224e2588d87ddb416ec7fad85d45acd5fd0bbe7aa14f4aa0ffd8f48ba53"
+    },
+    {
+      "index": 9,
+      "command": "python3 tools/test_runtime_session.py --check core-ready",
+      "exit": 0,
+      "stdout_sha256": "06bad942806dff39ffba040a49df01bb6e3d973c70a9980a904548ab98ba55f5"
+    },
+    {
+      "index": 10,
+      "command": "bash tools/validate.sh",
+      "exit": 0,
+      "stdout_sha256": "1643c81b81705bf6832a1cb625e1bfbc40ad453b1ca81573c3bf4bce3f46f45c",
+      "summary": "SUMMARY: 16 passed, 0 failed"
+    },
+    {
+      "index": 11,
+      "command": "bash tools/validate.sh --payload",
+      "exit": 0,
+      "stdout_sha256": "5769d46d15b5479122948e44658226979a23da6167a245c8bb79615cff34bc4a",
+      "summary": "SUMMARY (payload mode): 12 passed, 0 failed"
+    },
+    {
+      "index": 12,
+      "command": "python3 tools/test_public_entry.py",
+      "exit": 0,
+      "stdout_sha256": "ddddc5e91f352448d9395e1024e1cf24aa33c5a949a6bd60012fa921460b339c",
+      "note": "Public-entry check already on parent d19f090e. Re-run because this branch contains that commit. It is not one of the eleven contract commands."
+    }
+  ],
+  "failed_count": 0,
+  "feature_129_complete": false,
+  "full_live_qualification": "Remains features 131 and 132."
+}

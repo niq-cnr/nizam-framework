@@ -1,0 +1,51 @@
+import ast,hashlib,json,runpy,subprocess
+from pathlib import Path
+candidate=Path('.agent/evidence/133/delivery-supplement1/measure-v2.py')
+raw=candidate.read_bytes()
+compile(raw,str(candidate),'exec')
+assert hashlib.sha256(raw).hexdigest() == '10d37bc62cf9fc511278f7a6197841e17410d4627b02fc715425bde32310d9bf'
+assert hashlib.sha256(Path('.agent/evidence/133/delivery-supplement1/measure.py').read_bytes()).hexdigest() == '97aa21952679b2155530af1f114afbe2fb411df7f51664418a96aa2dee3b2656'
+ns=runpy.run_path(str(candidate),run_name='supplement_preparation_only')
+assert subprocess.check_output(['git','diff','--name-only','003d9a4d13a3f33337709dd9959886602f6ff127','HEAD']).decode().splitlines() == [str(candidate)]
+subprocess.check_call(['git','diff','--check','003d9a4d13a3f33337709dd9959886602f6ff127','HEAD'])
+head=ns['git']('rev-parse','HEAD').decode().strip()
+merge=ns['git']('rev-list','--merges','-n','1',ns['FROZEN']+'..'+head).decode().strip()
+parents=ns['git']('rev-list','--parents','-n','1',merge).decode().split()[1:]
+merge_proof=ns['automatic_merge'](merge,parents)
+indexes=[]
+for path in ['.agent/evidence/133/ci-portability1/review/index.json','.agent/evidence/133/ci-portability1/qa/index.json']:
+ data=ns['blob'](head,path)
+ proof=ns['json_hash_index'](data,head)
+ assert proof is not None
+ indexes.append(dict(path=path,index_sha256=ns['sha'](data),schema=proof['schema'],source_revision=head,verified_source_proof_sha256=ns['sha'](json.dumps(proof,sort_keys=True).encode())))
+assert ns['json_hash_index'](ns['blob'](head,'.agent/evidence/133/ci-portability1/recovery-plan.json'),head) is None
+root='/home/cnross/workspace02/nizam-framework'
+rootpin='09d227d0210db72c9b09d8b2d508eef91fa95b9a'
+def git(*args): return subprocess.check_output(['git','-C',root,*args])
+paths=git('diff','--name-only',ns['FROZEN'],rootpin).decode().splitlines()
+shared=[p for p in paths if p.startswith(('.agent/feature_list','.agent/product_spec','docs/planning/'))]
+old=runpy.run_path(ns['HELPER'])['authored']
+unknown=[]
+for path in paths:
+ if not path.startswith('.agent/evidence/'):
+  continue
+ observed=subprocess.run(['git','-C',root,'show',rootpin+':'+path],capture_output=True)
+ if observed.returncode:
+  continue
+ data=observed.stdout
+ kind=old(path,data)
+ known=any(t in path for t in ('/raw/','.stdout.','.stderr.','.execution.','.started.','.capture-summary.','.preservation-','capture-index','outside-sentinel','.stdin')) or path.endswith('numstat.raw')
+ if kind is None and not known and b'\0' not in data[:8000]:
+  unknown.append(dict(path=path,sha256=ns['sha'](data),needs='observed_git_object type/oid exact bytes or observed frame/hash/reason declaration'))
+body_metadata=[]
+md='.agent/evidence/133/ci/pr-description1.md'
+mdrefs={}
+for rev in git('log','--format=%H',ns['FROZEN']+'..'+rootpin,'--',md).decode().splitlines():
+ mdrefs[ns['sha'](git('show',rev+':'+md))]=[rev,md]
+for path in [p for p in paths if p.startswith('.agent/evidence/133/ci/raw/') and p.endswith('.json')]:
+ for rev in git('log','--format=%H',ns['FROZEN']+'..'+rootpin,'--',path).decode().splitlines():
+  data=git('show',rev+':'+path)
+  for pointer,text in ns['bodies'](json.loads(data)):
+   digest=ns['sha'](text.encode())
+   body_metadata.append(dict(origin=[rev,path,pointer],body_sha256=digest,exact_markdown=mdrefs.get(digest),needs='authored origin declaration; readbacks may reference this exact body through reviewed read-only prefixes'))
+print(json.dumps(dict(kind='Static and metadata provenance qualification only; no measurement main/cost/history tallies',candidate_revision=head,helper_sha256=ns['sha'](raw),prototype_preserved=True,automatic_merge=merge_proof,strict_indexes=indexes,mixed_recovery_plan_remains_authored=True,metadata_root_revision=rootpin,shared_paths_needing_hunk_attribution=shared,product_owner_rules={'tools/test_receipt_candidate_batching.py':'133','tools/test_runtime_session.py':'129/phase020'},unknown_observations=unknown,embedded_bodies=body_metadata,previous_pr_body_reference=['cc1a73c97f770573bd26239f6978c001341ac783',md],limit='Root END and final retained-head inventory remain unpinned; nonempty/unsupported merges and unclassified ownership/body/provenance fail closed'),indent=2))

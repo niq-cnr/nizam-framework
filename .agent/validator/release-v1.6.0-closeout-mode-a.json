@@ -1,0 +1,140 @@
+{
+  "gate": "mode-a",
+  "contract_id": "release-v1.6.0-closeout",
+  "round": 9,
+  "reviewed_revision": "e10d0af786bfdece35ee726535ecf83fc1d07b8f + uncommitted round-6/7/8/9 contract amendments",
+  "reviewer": "independent-validator",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "round9_checks_condensed_by_orchestrator": {
+    "0_authority_and_drift": "Delta = files_modify[7] SELF_GOVERNANCE.md, one AT4 allow entry, seven->eight (accurate, disclosed, consequence of scope item 2), new AT5, status proposed, one amendment. AT1-AT3, README purpose, non_goals, approvals, amendments[0..5] byte-unchanged. No drift.",
+    "1_scope_bound": "Purpose records exactly the authorized observed facts; extra keys mirror the v1.5.0 record's structure; README purpose unchanged; commissioning not authorized. Within scope.",
+    "2_schema_coherence": "Top-level status stays 'active' (enum draft/active/deprecated); 0.2.0 semver; additionalProperties:true admits the installation block. Coherent.",
+    "3_no_commissioning_or_history_change": "installation.status=='installed', commissioning_performed False, exact key set; commissioning block, 0.1.1/0.1.0 change_log span and v1.5.0 body byte-locked to the tag.",
+    "4_AT5_strict_non_vacuous": "Values derived at run time (git rev-parse, provenance, run_state decision, ls-tree count); fails closed; schema-validated; single marker line; fails correctly pre-code on real tree; static pass against candidate (Generator's PASS and 18 mutations not executed by validator).",
+    "5_heuristic_prose_limit": "ACCEPTABLE: structured fields strict; prose guard heuristic and honestly bounded in AT5 expected. Uncovered: marker line free text, YAML comments in unlocked frontmatter, commission-free implications. Mode B/QA semantic reading mandatory.",
+    "6_non_goal_consistency": "Planning ledger record, not payload/workflow/anchor/dossier/debt; observed facts only. Consistent."
+  },
+  "binding_note_for_mode_b_and_qa": "Read the new current-installation section, the historical-marker line and any frontmatter YAML comment text for any v1.6.0 commissioning implication (marker must describe only v1.5.0 history); check the heading text, the ordering disclosure (PR #114, 9a830aa4, 05c070b4), the five captures and the 'not authorized' sentence against purpose item (4), which AT5 does not assert. MB-1, MB-3, MB-4 fixes still required in implementation attempt 2.",
+  "rename_detection_note": "Unchanged since round 8: AT4 still uses --no-renames.",
+  "summary": "ROUND 9 APPROVED (targeted delta review). Delta exactly the operator-authorized round-9 scope; AT5 strict and non-vacuous with derived values, exact key set, pinned installed/not-commissioned stage, schema validation and byte-locked v1.5.0 history; heuristic prose limit acceptable given mandatory Mode B/QA semantic reading. Limitation: validator did not execute AT4/AT5 (restricted Bash).",
+  "canonical_for": "release-v1.6.0-closeout",
+  "prior_round8_record": {
+    "gate": "mode-a",
+    "contract_id": "release-v1.6.0-closeout",
+    "round": 8,
+    "reviewed_revision": "e10d0af786bfdece35ee726535ecf83fc1d07b8f + uncommitted round-6/7/8 contract amendments",
+    "reviewer": "independent-validator",
+    "final_verdict": {
+      "approved": true
+    },
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "round8_checks_condensed_by_orchestrator": {
+      "0_authority_and_drift": "Last history entry is the 2026-10-17T19:20:00Z round-8 authorization (scope: --no-renames; tag-evidence absent-from-tag + regular; review files exist as regular; expected/claim wording). Only verification[3].command, verification[3].expected and one appended amendment differ from round-7 text; all else byte-identical; HEAD e10d0af7. No drift.",
+      "1_MAJOR_R7_1_fixed": "Changed set uses git diff --name-only --no-renames v1.6.0; untracked leg intact. Orchestrator capture M5 (delete tools/start_path.py): AssertionError ['tools/start_path.py'] EXIT:1. at4_r8.sh matches the contract command. FIXED.",
+      "2_MAJOR_R7_2_fixed": "Bare prefix removed; tag-evidence path admitted only if regular(lstat S_ISREG) and not in_tag (git cat-file -e v1.6.0:<path>); review files admitted only if regular. M6 (modify at-tag 01) and M7 (delete mode-a verdict) fail with exactly that path, EXIT:1. FIXED.",
+      "3_unsupported_claim_resolved": "Round-8 amendment records the round-7 claim as unsupported at round 7 and supported only from round 8; round-7 entry left as logged; AT4 expected states each admission and its condition accurately. RESOLVED.",
+      "4_no_new_dishonest_pass_or_weakening": "pin_script_ok() and payload_problems() unchanged from round 7 (sound); every round-8 change strictly tightens; vs round-6 baseline only the four authorized conditional admissions are added. Real-worktree capture PASS EXIT:0. Non-blocking: setdefault evaluates payload_problems() eagerly per .nizam path (performance only, pre-existing). Validator Bash restricted; static analysis plus Orchestrator captures (scratchpad r8-at4-worktree.txt, r8-mutations.txt)."
+    },
+    "rename_detection_note": "Resolved in round 8: AT4 uses git diff --name-only --no-renames v1.6.0, so deleted tag-source paths are always listed and rejected (M5 confirms).",
+    "summary": "ROUND 8 APPROVED (targeted delta review). Only the three operator-authorized items changed (AT4 command, AT4 expected, one appended round-8 amendment); nothing else drifted from round-7 text. MAJOR-R7-1 fixed (--no-renames, untracked leg intact). MAJOR-R7-2 fixed (bare tag-evidence prefix replaced by absent-from-v1.6.0 (git cat-file -e) AND regular-file (lstat); the two review files admitted only when they exist as regular files). The unsupported 'never a blanket pass' claim is corrected in the append-only log. Every change is a strict tightening; no new dishonest-pass path; no earlier assertion weakened. Orchestrator captures corroborate: real worktree EXIT:0; M5/M6/M7 each fail with exactly the targeted path. Status 'proposed', approvals untouched. Fit to proceed to evaluator contract re-review. Limitation: validator did not execute AT4 itself (restricted Bash); relied on static analysis plus Orchestrator captures.",
+    "canonical_for": "release-v1.6.0-closeout",
+    "prior_round7_record": {
+      "gate": "mode-a",
+      "contract_id": "release-v1.6.0-closeout",
+      "round": 7,
+      "reviewed_revision": "e10d0af786bfdece35ee726535ecf83fc1d07b8f + uncommitted round-6/7 contract amendments",
+      "reviewer": "independent-validator",
+      "final_verdict": {
+        "approved": false
+      },
+      "issues": [
+        {
+          "id": "MAJOR-R7-1",
+          "severity": "major",
+          "issue": "Round 7's .nizam/** admission turns AT4's pre-existing rename-detection blind spot into a concrete dishonest-pass path: ~31 .nizam/ files newly added since the tag have byte-identical tag-source twins, so deleting a tag-source file (e.g. tools/start_path.py) yields an R100 pair that 'git diff --name-only v1.6.0' (diff.renames default true) reports only as the admitted .nizam/ path; the deleted product-source path is never listed and AT4 exits 0 despite non-goal 1. In round 6 every .nizam/ path was disallowed, so such renames failed closed.",
+          "location": ".agent/contracts/release-v1.6.0-closeout.json verification[3].command (changed=set(git('diff','--name-only','v1.6.0')...))",
+          "source_evidence": "non_goals[0]; git log --name-status v1.6.0..HEAD (9a830aa4 adds ~31 .nizam/ files); release-v1.6.0.json verification[3] uses --name-status with a strict 2-field split",
+          "why_this_fails": "AT4 claims only bounded paths changed vs the tag, yet can exit 0 while a tag-source payload file is deleted.",
+          "required_fix": "Compute the changed set with rename detection disabled: git('diff','--name-only','--no-renames','v1.6.0') (or --name-status --no-renames); no other change."
+        },
+        {
+          "id": "MAJOR-R7-2",
+          "severity": "major",
+          "issue": "Admission (a) uses the bare prefix .agent/evidence/release-v1.6.0-tag/, which also contains the at-tag release evidence 01-04 (added in tag commit 4e7db5a4); round 7 would pass AT4 if those immutable records were modified or deleted (round 6 failed). The two named verdict files are admitted by name only, so their deletion would also pass.",
+          "location": ".agent/contracts/release-v1.6.0-closeout.json verification[3].command (prefixes tuple; allow entries for the two release-v1.6.0 verdict files); verification[3].expected; amendments[5].change (1)(a)",
+          "source_evidence": "run_state history[-1].scope item (3) 'post-tag evidence and joint-review records'; git log --name-status v1.6.0 -- .agent/evidence/release-v1.6.0-tag/ (01-04 in 4e7db5a4); release-v1.6.0.json non_goals[1],[3]",
+          "why_this_fails": "Exceeds the operator's post-tag-only scope and weakens an existing assertion (at-tag evidence rewrite used to fail AT4).",
+          "required_fix": "Admit .agent/evidence/release-v1.6.0-tag/ paths only if absent from the v1.6.0 tree and regular non-symlink files (or exactly 05-08 by name); admit the two named verdict files only when they exist as regular files; update AT4 expected; no other change."
+        }
+      ],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [
+        {
+          "claim": "amendments[5].change 'Every change is conditional or strictly tightening, never a blanket pass'; verification[3].expected 'strictly conditional admissions: the release-v1.6.0 post-tag evidence prefix ...'",
+          "location": ".agent/contracts/release-v1.6.0-closeout.json amendments[5].change, verification[3].expected",
+          "why_unsupported": "The prefix admission passes at-tag files 01-04 unconditionally, and the .nizam/ admission plus rename-detected --name-only can hide a deleted tag-source path (MAJOR-R7-1, MAJOR-R7-2)."
+        }
+      ],
+      "round7_checks_summary": "(1) Finding premise CONFIRMED by static reconstruction: exactly 65 disallowed paths, round-6 AT4 unsatisfiable together with AT3's re-pin. (2) Pin-script admission (b) and payload admission (c) sound and fail closed (mutations M1-M4 fail); M5 (tag-source deletion masked as rename) and M6 (at-tag evidence rewrite) wrongly pass. (3) AT3 change is a single strict tightening; failing pre-code is correct. (4) README purpose matches authorization; 8/0 preserved; self_governance job exists. (5) No other drift; approvals untouched; status proposed. (6) .nizam/** and pin script admitted only as verified re-bootstrap artifacts, not editable scope; prefix form of (a) exceeds authorization item (3). Validator Bash was restricted to git diff/status/log, so AT3/AT4 were reasoned statically; the Orchestrator separately reproduced MAJOR-R7-1 (scratch worktree: tools/start_path.py deletion absent from --name-only, present with --no-renames) and confirmed 01-04 are in the v1.6.0 tree.",
+      "rename_detection_note": "Blocker for this gate: round 7's .nizam/** admission makes the pre-existing blind spot concrete and likely; fix is the one-token strict tightening --no-renames (parent contract AT4 already fails closed via --name-status). No deletions exist on the current tree; this is a soundness defect, not a present violation.",
+      "summary": "ROUND 7 REJECTED: two major soundness defects in the new AT4 admissions (MAJOR-R7-1 rename masking; MAJOR-R7-2 bare at-tag evidence prefix and deletable verdict files). Both fixes are minimal strict tightenings. Per the operator's round-7 authorization, a round-7 rejection halts for operator decision.",
+      "canonical_for": "release-v1.6.0-closeout",
+      "prior_round6_record": {
+        "gate": "mode-a",
+        "contract_id": "release-v1.6.0",
+        "round": 6,
+        "reviewed_revision": "c6d01ee9db696b17e58b570ebec771959d6a96f6",
+        "reviewer": "independent-validator",
+        "final_verdict": {
+          "approved": true
+        },
+        "issues": [],
+        "missing_acceptance_coverage": [],
+        "unsupported_claims": [],
+        "round1_disposition": {
+          "BLOCKER-1 (pre-tag/post-tag observed-fact contradiction)": "FIXED in amendment 1 (verified round 2); stable through revisions 3-5.",
+          "MAJOR-1 (changed-doc frontmatter sweep)": "FIXED across rounds: three planning .md frontmatter bumps guarded in AT4 (executed each round); manifest.json consistency carried to closeout whole-document equality vs the tag (verified); design-note misclaim corrected in revision 3 and stable.",
+          "MAJOR-2 (AT4 embedded placeholder)": "FIXED: scope_base declares both occurrences substituted with d86e1160a60e21c485235741e30372facee0e9d9 at commit.",
+          "MAJOR-3 (feature 119 omitted)": "FIXED: enumeration reads 115-119, matching origin/main (verified round 1).",
+          "MINOR-1 (AT8 template)": "REJECTED WITH REASON (round 2), not re-raised: AT7 records the temp clone path as the deterministic substitution source; precedent-consistent.",
+          "Coverage gap 1 (README/guide counts)": "FIXED and verified: AT3 companion guard asserts README 7/1 and guide 3/0 (re-verified intact rounds 5-6); counts recomputed from base d86e1160; closeout 8/0 target consistent.",
+          "Coverage gap 2 (post-tag ledger verification)": "FIXED: closeout AT3 asserts run_state release_executed, operator_gates EXECUTED row, HANDOVER mandated-heading note, gh release published, gh api Latest, provenance resolved_sha, README 8/0 + version-anchored installed-line, manifest 021 note-append + whole-document equality.",
+          "Coverage gap 3 (released-section immutability)": "FIXED: exact tail equality in closeout AT3; fail-open OR clause absent."
+        },
+        "round2_disposition": {
+          "BLOCKER-2 (AT4 allowlist rejected closeout contract)": "FIXED and verified by executing auxiliary().",
+          "MAJOR-R2-1 (README/guide count language unenforced)": "FIXED: AT3 companion occurrence-count guard; amendment 2 honestly retracted the 'existence+count' overstatement.",
+          "MAJOR-R2-2 (changelog immutability OR fail-open)": "FIXED: exact tail equality, no OR.",
+          "MAJOR-R2-3 (closeout missing manifest/README own-duty assertions)": "FIXED: README 8/0 + installed-line selector and manifest 021 note-append + m==bm whole-document equality sound; HANDOVER description-anchor duty resolved via round-5 description scoping.",
+          "MINOR-R2-1 (rule mislabel, ROADMAP brittleness, phantom file, manifest misclaim)": "FIXED: AT2 expected text accurate; phantom HANDOVER-2026-10-16.md explicitly excluded; frontmatter_sweep manifest misclaim corrected in revision 3; ROADMAP rescoping resolved by revision-3 section anchoring verified against the tool's own semantics in round 4."
+        },
+        "round3_disposition": {
+          "MAJOR-R3-1 (closeout AT3 ROADMAP section extraction)": "RESOLVED and finding WITHDRAWN in round 4: the revision-3 section anchoring is correct; demonstrated by simulation with the tool's own document_body/group_roadmap semantics on the mandated post-release-PR tree shape. The base-tree reading in round 3 was the wrong evaluation shape.",
+          "MAJOR-R3-2 (operator_gates/HANDOVER purposes crossed)": "FIXED: purposes uncrossed and stable.",
+          "MINOR-R3-1 (frontmatter_sweep manifest misclaim)": "FIXED in revision 3; stable.",
+          "MINOR-R3-2 (vacuous HANDOVER frontmatter-anchor check)": "FIXED in round 5: assertion scoped to the description: field only."
+        },
+        "round4_disposition": {
+          "BLOCKER-R4-1 (recovery-authorization evidence path inadmissible under AT4)": "FIXED in amendment 4 (release contract) and verified by executing the exact auxiliary(): all real .agent/evidence/release-v1.6.0-contract/ paths pass; product and foreign paths fail closed.",
+          "MAJOR-R4-1 (closeout 'v1.5.0'-absent assertion unsatisfiable without prohibited historical rewrite)": "FIXED in amendment 3 (closeout contract) and verified: description:-scoped assertion binds uniquely at base, fails closed on the unedited tree, passes a compliant edit with historical change_log mentions untouched."
+        },
+        "round6_notes": {
+          "scope_review": "Targeted delta review of closeout amendment 4 only, plus drift check on both contracts. Closeout revision: amendment 4 adds the environment-fit fix to AT3's release-latest check; amendments 1-3 unchanged. Release contract unchanged since round 5 (mtime corroborates; round-5 invariants re-executed intact: auxiliary contract-prefix leg, AT3 companion count guard 7/1 and 3/0, schema-valid, 4 amendments).",
+          "delta_verification": "(1) Premise verified live on this host: 'gh release view v1.5.0 --json isLatest' exits rc=1 with 'Unknown JSON field: \"isLatest\"' (an earlier pipeline-masked rc=0 in my probe was a shell artifact of piping through head; the direct probe confirms rc=1). (2) Replacement verified live: 'gh api repos/niq-cnr/nizam-framework/releases/latest --jq .tag_name' exits rc=0 and returns 'v1.6.0' -- GitHub does mark the published v1.6.0 release Latest, and the command is executable on the operator host. (3) Semantic equivalence confirmed by inspection: leg 1 (gh release view --json tagName,isDraft,isPrerelease,publishedAt with the same assertions as before) plus leg 2 (/releases/latest tag_name=='v1.6.0') is exactly the isLatest semantics -- the endpoint returns GitHub's designated non-draft Latest release, so the check fails if any other release holds Latest, if v1.6.0 is draft/prerelease/unpublished (leg 1 or the endpoint's tag_name), or if the release does not exist (gh exits non-zero, check_output raises). Equally strict, fail-closed, repo-root executable. (4) Drift check: 'isLatest' now appears nowhere in closeout AT3; every other round-5 AT3 leg (run_state release_executed, ROADMAP section triple assertion, operator_gates EXECUTED row, HANDOVER description + mandated-note assertions, provenance, exact changelog tail equality, README 8/0 + installed-line, manifest 021 note-append + m==bm) confirmed intact by fragment assertion. Both contracts schema-valid.",
+          "observed_lifecycle_state": "Since round 5: the annotated tag v1.6.0 exists locally, 'gh api .../releases/latest' names v1.6.0, and the closeout contract's own dual gates have advanced it (status approved, validator_mode_a/evaluator_contract_review true, revisions 3) -- the closeout's independent Mode A/B and evaluator records exist under .agent/validator/release-v1.6.0-closeout-*.json and .agent/qa/release-v1.6.0-closeout*.json. These are the closeout contract's own lifecycle fields, not drift in the reviewed delta.",
+          "non_blocking_followups": "(1) Release contract AT6 also asserts rel['isLatest'] via gh release view; the release loop already executed (tag and GitHub release exist), so its evidence was necessarily captured in an environment whose gh supports the field -- no forward-looking defect, but if any future close-out-style rerun happens on this host, expect the same limitation. (2) Round-5 bookkeeping notes stand (extension-pointer freshness; revisions-counter semantics)."
+        },
+        "summary": "ROUND 6 APPROVED (targeted re-review, closeout delta only). The single pre-execution change (closeout amendment 4) is verified correct and necessary: I reproduced the failure premise live on this host (gh release view --json isLatest exits rc=1 'Unknown JSON field', direct probe without pipeline masking) and live-verified the replacement (gh api repos/niq-cnr/nizam-framework/releases/latest returns tag_name v1.6.0, rc=0, against the actual published release). The two-leg replacement preserves the isLatest semantics exactly, is equally strict, fail-closed, and executable from the repo root; no other closeout content drifted (all round-5 AT3 legs intact, isLatest absent), and the release contract is byte-stable since round 5 with its round-5 invariants re-executed intact. Both contracts schema-valid. Observed lifecycle state (tag v1.6.0 existing, closeout's own approvals advanced by its independent gates) is recorded as context, not drift. All issue arrays are empty; the contract pair remains fit for the closeout's execution phase, with two non-blocking environmental/bookkeeping follow-ups noted for the Orchestrator.",
+        "canonical_for": "release-v1.6.0-closeout",
+        "source_verdict": ".agent/validator/release-v1.6.0-mode-a.json"
+      }
+    }
+  }
+}

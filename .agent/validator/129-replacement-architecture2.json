@@ -1,0 +1,239 @@
+{
+  "role": "Independent Validator review of unreviewed replacement-architecture2. approved means a replacement design is fit to implement. This is not Mode B product acceptance, not a source release, and not a fifth-attempt authorization.",
+  "review_base": "b07b1e3c228ab80506d06b4d721f53218463715d",
+  "branch": "chore/handover-2026-10-16-recovery2",
+  "final_verdict": {
+    "approved": false,
+    "mode": "replacement-architecture2",
+    "contract_id": "129",
+    "feature_id": "129",
+    "risk_level": "high",
+    "summary": "No replacement design is fit to implement. Same-byte decision and digest binding, plus a live attempt and identity recheck before apply, are already required by contract 126 attempt_guard, contract 127 source_checks and reattach, and the actual 129-B1 split. A global multi-file transaction and detection of every mutation until publication are not in those clauses. History retention and the 65536-byte frame bound are required, and a history-sized helper response must not make cancel or close unavailable. A constant-size certificate is an implementation shape, not a semantic change, and it must not bypass verification or leave cancel or close waiting on unbounded history I/O. The native mmap negative still disproves Source4 inotify/mtime/ctime currentness. None of the lean helper, read-lease, or sealed-memfd options is qualified. No contract revision is proposed. Consumed source attempts remain 4/4 and this review releases no product work."
+  },
+  "issues": [
+    {
+      "id": "129-R2-NONE",
+      "severity": "blocker",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options",
+      "title": "No provisional option is a fully qualified design",
+      "description": "The lean per-request helper, read leases plus namespace monitoring, and sealed memfd copies are all refused as implementable designs. Same-byte binding and a non-bypassing constant-size certificate are permitted shapes under the existing clauses, but the report does not specify an executable capture primitive, the exact pre-apply recheck, or a way for cancel and close to stay available without waiting on unbounded history I/O. The report itself leaves concurrent observation and worst-case safety-call timing unresolved. An executor would have to invent those mechanisms.",
+      "why_this_fails": "A design is fit to implement only when the executor need not guess material behavior. None of the three options meets that bar, and this review does not supply the missing design.",
+      "required_fix": "Do not implement any of the three options from this report. A later design, under a fresh recorded authority decision, must satisfy the decisions in this verdict without reviving Source4 currentness and without a semantic contract change."
+    },
+    {
+      "id": "129-R2-LEASE",
+      "severity": "blocker",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options[1]",
+      "title": "Read leases are not an exclusion or currentness design",
+      "description": "Preserved probe facts: directory lease errno 22 EINVAL; existing writer and existing mapping after writer close errno 11 EAGAIN; acquired_after_unmap succeeded; host lease-break time 45 seconds was read and not expired. Pathname replacement left lease_after_namespace_replace 0 while retained FD bytes were {\"attempt\":2}\\n and pathname bytes were {\"attempt\":3}\\n. On this interpreter fcntl.F_RDLCK is 0 and fcntl.F_UNLCK is 2, and the probe asserts the post-replace value equals F_RDLCK, so 0 means the read lease stayed on the retained description. It did not follow the new pathname. The probe never opened a conflicting writer against a held lease. The report's own F_SETLEASE citation says a conflicting writer can proceed after the break timer. Source4 directory/inode inotify and unchanged mtime/ctime currentness stay disproved and are not a substitute namespace observer.",
+      "why_this_fails": "The option asserts writer exclusion and a possible observation proof that the probe and the cited lease behavior do not establish. Selecting it would revive an unproved currentness mechanism.",
+      "required_fix": "Do not select read leases as writer exclusion, namespace coverage, or currentness-through-publication. Do not implement the quarantined Source4 monitor."
+    },
+    {
+      "id": "129-R2-SEAL",
+      "severity": "blocker",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options[2]",
+      "title": "Sealed memfd copies do not certify original paths",
+      "description": "Preserved probe facts: seals value 15, which is F_SEAL_WRITE|F_SEAL_GROW|F_SEAL_SHRINK|F_SEAL_SEAL (8|4|2|1); existing writable shared mapping errno 16 EBUSY; already-open writer, new shared mapping, and post-helper-death write errno 1 EPERM; content_after_helper_death remained {\"attempt\":1}\\n; helper pid 420631 exit 0. The probe limit states seals bind copied input bytes only and neither freeze nor certify current original paths. This interpreter's fcntl module has no F_SEAL_FUTURE_WRITE, and the probe did not apply that seal.",
+      "why_this_fails": "Immutable copies can transport bytes already captured. They do not prove the original authoritative paths, and treating a copy as new counter or durable-state authority would change contract semantics. No such change is proposed.",
+      "required_fix": "Do not treat sealed memfds as original-path authority or as a product design. Do not move counter ownership or public request semantics onto a copied transaction."
+    },
+    {
+      "id": "129-R2-RELEASE",
+      "severity": "blocker",
+      "location": "docs/planning/HANDOVER-2026-10-16.md resume step 1; .agent/run_state.json recovery_status",
+      "title": "This review releases no product work and no fifth source attempt",
+      "description": "qualification-stop1 remains the native negative: a shared mapping changed attempt bytes from {\"attempts\":1} to {\"attempts\":2}, directory and inode watches stayed silent, mtime_ns and ctime_ns stayed equal, events_after_shared_mapping_write was empty, actual exit 1, child pid 404819, revision 9458d9b558a7d2874f9ded2859bff6cdc5c6217c. That disproves the Source4 inotify/mtime/ctime currentness-through-publication mechanism. Quarantined draft 5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c stays unexecuted. Committed handover and run_state keep consumed source attempts at 4/4 with no further product release. An untracked working-tree file .agent/evidence/129/source5-authority1.json is not in HEAD b07b1e3 and was not relied on. The working tree .agent/run_state.json differs from HEAD: 129-source attempts stays 4 while limit moves from 4 to 5 and points at the untracked source5 authority file. This review did not write that diff and does not adopt it.",
+      "why_this_fails": "Feasibility probes, an unreviewed report, and an untracked authority file do not admit implementation. Attempt 5 is not granted by this verdict. An uncommitted limit increase is not a reviewed release and does not make any replacement design fit to implement.",
+      "required_fix": "Do not start Source5, do not merge the quarantined draft, and do not edit product, contract, runner, installed .nizam, or run_state from this review."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [
+    {
+      "id": "129-R2-U1",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options[1].assessment",
+      "sentence": "Not disproved by either isolated primitive test.",
+      "why_unsupported": "The lease probe disproved directory F_SETLEASE with EINVAL and showed pathname replacement diverging authoritative bytes from the retained description. Those are negative results against this option. The probes were not a passing qualification of the combined lease-plus-namespace family."
+    },
+    {
+      "id": "129-R2-U2",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options[1].assessment",
+      "sentence": "Read leases can reject existing writable mappings and prevent conflicting new writer access, while a separately complete namespace observer could detect replacement/rename.",
+      "why_unsupported": "EAGAIN on an already-open writer and an already-open mapping supports only rejection of lease acquisition while those holders exist. The probe did not show that a held read lease prevents a later conflicting writer. The report's own F_SETLEASE source note says a conflicting writable open can proceed after forced timer expiry, and the probe did not expire the 45-second timer. No namespace observer was exercised. The replacement result shows a lease value of F_RDLCK remaining on the old description while the pathname bytes changed, which is the opposite of the lease covering the new name."
+    },
+    {
+      "id": "129-R2-U3",
+      "location": ".agent/evidence/129/replacement-architecture2/report.json provisional_options[2].assessment",
+      "sentence": "Full memfd seals can enforce unchanged copied bytes across FD transfer and helper death, unlike F_SEAL_FUTURE_WRITE.",
+      "unsupported_part": "unlike F_SEAL_FUTURE_WRITE",
+      "why_unsupported": "The seals probe supports unchanged copied memfd bytes across SCM_RIGHTS transfer and helper death, with later writes EPERM. It does not apply or compare F_SEAL_FUTURE_WRITE. Contract 126, 127, and 129 do not mention seals. This review does not treat the man-page contrast as probe evidence."
+    }
+  ],
+  "not_discharged": [
+    {
+      "id": "129-V1",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind"
+    },
+    {
+      "id": "129-V2",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing"
+    },
+    {
+      "id": "129-V3",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmed"
+    },
+    {
+      "id": "129-V4",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check termination-ends-generation"
+    },
+    {
+      "id": "129-V5",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl"
+    },
+    {
+      "id": "129-V6",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl"
+    },
+    {
+      "id": "129-V7",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl"
+    },
+    {
+      "id": "129-V8",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check sbcl-admission --require-sbcl"
+    },
+    {
+      "id": "129-V9",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready"
+    },
+    {
+      "id": "129-V10",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "id": "129-V11",
+      "command": "bash tools/validate.sh --payload"
+    },
+    {
+      "id": "counted-cost",
+      "status": "Actual candidate cost remains unmeasured. Not discharged."
+    },
+    {
+      "id": "independent-mode-b-and-fresh-qa",
+      "status": "This review is not post-code Mode B, fresh QA, or the one extra adversarial check. Not discharged."
+    },
+    {
+      "id": "root-evidence-admission",
+      "status": "No Root completion, adoption, merge, tag, or release admission. Not discharged."
+    }
+  ],
+  "decisions": {
+    "same_byte_binding": {
+      "semantic_decision_and_digest_from_same_captured_bytes": "required",
+      "recheck_live_attempt_and_named_identities_before_apply": "required",
+      "already_decided_without_contract_revision": true,
+      "global_atomic_multifile_transaction": "not_required",
+      "detect_every_mutation_until_publication": "not_required",
+      "why": "Contract 126 attempt_guard requires the governed attempts integer to be read on open and every submit and to equal the request and the session binding, with missing, malformed, or changed counts failing closed before execution. Contract 127 source_checks requires each declared commit and workspace byte hash to equal the manifest before successful reentry, and disclaims undeclared files and heap equality. Contract 127 reattach requires the supervisor, under its lock, to compare actual live identities, metadata, session, and the correlated pending record before success. Contract 129 wait requires reattach to preserve the actual live generation, owner, lease, outstanding operation, and governed attempt. Interface S2 adds only rejection of a stale generation or lease before execution and an owner check; it is not a multi-file snapshot rule. The actual 129-B1 defect is that attempt_ok is decided from an earlier run_state read, source bytes are checked separately, and a later read supplies the stamp and digest that the parent trusts. The parent checks stamp equality and digest length only, then apply_request installs the cached boolean while check_live returns immediately. Repairing that defect so the quoted guards are true of the bytes that are applied requires one captured byte sequence for the decision and any digest the parent trusts, and a live recheck of the attempt and the identities those clauses name before apply. It does not require one atomic transaction across every mutable filesystem object, and it does not require detecting every mutation until publication. Contract 126 records require per-record temporary file, flush, fsync, and os.replace, and contract 127 handoff_records require the supervisor's own handoff and reattach publications to fail closed on disagreement. Those are not a global input transaction and not a monitor-until-publication promise. Source4 currentness-through-publication remains the stronger unsupported promise.",
+      "clauses": {
+        "126.interface.attempt_guard": "Read run_state.circuit_breaker[step_key].attempts on open and every submit; require its integer>=1 to equal request.attempt and session-bound contract_id/step_key/attempt. Missing/malformed/changed counts fail closed before execution. Store the initial binding in controller metadata, preserve it across child restart, and emit previous_* identity when generation changed per schema. Never write run_state, increment/reset counters or infer a fresh governed attempt from a new PID/generation. A newly authorized attempt needs a separately opened session with Root-provided state.",
+        "126.interface.serialization": "Owner/generation/lease/trial/attempt checks occur before any execute frame, including observe.",
+        "126.interface.records": "Use same-directory temporary files, flush/fsync and os.replace for each durable JSON record. Persist generation before spawn and running/outstanding state before dispatch; publish terminal operation before clearing outstanding. Crash disagreement fails closed on reopen; never dispatch from ambiguous state. Keep prior operation/result files.",
+        "127.interface.source_checks": "Verify Git HEAD equals source_revision, each declared file exists in that commit and workspace and both byte hashes equal its manifest hash, all command refs resolve and parse as replay templates, and resource objects conform to existing schema. Reject missing, dirty, mismatched, duplicate or escaping inputs before successful reentry. No claim about undeclared files or heap equality. Bind the first validated provenance in supervisor metadata; later reattach to that incarnation must match it, apart from workspace_path relocation with identical committed content. A changed provenance requires a separately opened session; never silently bless changed source for the warm image.",
+        "127.interface.reattach_request": "Under the existing supervisor lock, compare actual live identities, metadata, session and correlated pending record before success. Wrong owner/role, stale generation/lease, attempt mismatch, wrong pending reference or source mismatch refuses without transfer, execute frame or replacement generation.",
+        "127.interface.handoff_records": "On successful reattach atomically write ROOT/session_id/handoff.json as an existing runtime_session schema record with transition:handoff, current owner/lease/generation/outstanding ref, committed source fields, command refs and resource refs. Write runtime_session.json with transition:reattach and previous_owner/previous_generation/previous_lease_epoch/previous_outstanding_operation_ref equal to that same checked current snapshot. ... Multi-file publication disagreement must fail closed before further execution; no overwrite of unresolved operation/result evidence.",
+        "127.interface.responses": "Exit0 means an observed snapshot or admitted request, not terminal execution success",
+        "129.implementation_obligations.wait": "Timed polling/disconnect stops waiting only: stopped_waiting preserves running/cancel_requested/unknown and busy lane. Concurrent project work remains refused until outcome is resolved. Reattach preserves actual live generation, owner/lease, outstanding operation and governed attempt.",
+        "tools/interface.md S2": "Reject stale generation or lease before execution and verify the requester is the current owner."
+      }
+    },
+    "history_frame_and_certificate": {
+      "retain_operation_and_result_history": "required",
+      "frame_bound_65536": "required",
+      "history_sized_helper_response_must_not_make_cancel_or_close_unavailable": "required",
+      "constant_size_certificate": "implementation_shape_not_semantic_change",
+      "must_not_become_verification_bypass": true,
+      "must_not_leave_cancel_or_close_waiting_on_unbounded_history_io": true,
+      "why": "Contract 126 records require prior operation and result files to be kept, original bytes to be preserved, and crash disagreement to fail closed. Contract 126 wire fixes the default per-line bound at 65536 bytes, rejects oversize frames, and bounds control waits and close to 5 seconds. Contract 129 transport preserves those strict frame limits together with attempt guards, atomic records, and one busy lane. Contract 129 cancel requires cancel_requested to be published before the correlated request. Contract 129 termination keeps a finite confirmation deadline and separates supervisor lifetime from the runtime group. Contract 127 wait requires other control calls to remain bounded. The actual 129-B2 defect is that verification_files includes every operations/*.json record, the helper replaces any encoded response larger than 65536 bytes with infrastructure failure, and every non-poll action, including cancel and close, waits for that job. That outcome is forbidden by the conjunction of retained history, the frame bound, and cancel/close availability. The contracts do not require the helper response to carry every historical path, stamp, and hash, so a constant-size certificate is not a semantic change. It becomes forbidden if the certificate skips the attempt, source, duplicate, history, or crash-disagreement checks, or if cancel or close still waits on unbounded history I/O and therefore becomes unavailable or unbounded as legal history grows. The lean option does not specify a qualified solution to that timing constraint. That is an implementation gap, not a reason to weaken the clauses.",
+      "clauses": {
+        "126.interface.records": "Keep prior operation/result files.",
+        "126.interface.wire": "Default per-line bound 65536 bytes; reject oversize/malformed frames, bound startup/control waits to5s and close to5s; child stdout/stderr are bounded diagnostic files, never protocol or acceptance evidence.",
+        "126.interface.poll_close": "close-session invokes no project code, terminates/reaps child and supervisor with bounded waiting, records observed termination for an outstanding operation and preserves records/effects. Infrastructure uncertainty stays unknown/busy and exit70, never fabricated success.",
+        "127.interface.wait": "Waiting transport is bounded by the requested deadline plus existing control grace; other control calls remain bounded.",
+        "129.implementation_obligations.transport": "Adapt existing private bounded transport as needed for built-in-only SBCL, with separate diagnostic output. Preserve strict frame limits/types, owner/generation/lease/attempt guards, duplicate-ID precedence, atomic records and one busy lane.",
+        "129.implementation_obligations.cancel": "Publish cancel_requested/cancellation_confirmed=false before sending one correlated request. Confirm cancelled only after operation unwind/cleanup has actually finished and runtime reports matching session/operation/generation/lease.",
+        "129.implementation_obligations.termination": "Use a finite documented cancellation-confirmation deadline; on inability to confirm, terminate the proven owned runtime process group with bounded escalation, observe death before terminated, record image_consistent=false and end that generation. ... Keep supervisor/control lifetime distinct from runtime group lifetime."
+      }
+    },
+    "native_negative": {
+      "preserved": true,
+      "source": ".agent/evidence/129/implementation4/qualification-stop1.json",
+      "actual_exit": 1,
+      "child_pid": 404819,
+      "revision": "9458d9b558a7d2874f9ded2859bff6cdc5c6217c",
+      "snapshot_hex": "7b22617474656d707473223a317d0a",
+      "current_hex": "7b22617474656d707473223a327d0a",
+      "meaning": "Shared mmap changed authoritative attempt bytes from {\"attempts\":1} to {\"attempts\":2}. Directory watch 1 and inode watch 2 produced no events. mtime_ns and ctime_ns stayed 1792141449822375684. unobserved_authoritative_mutation is true.",
+      "effect": "This disproves the Source4 inotify and mtime/ctime currentness-through-publication mechanism reviewed in .agent/validator/129-source4-architecture1.json. That earlier approval is not permission to implement. Inode watches and timestamp checks do not repair the hole.",
+      "quarantined_draft": {
+        "revision": "5f7de0361cc7a9b255e80c9c8cca30fe05a4d11c",
+        "status": "unexecuted; do not merge and do not treat as a repair"
+      },
+      "source_attempts": "4/4 consumed. Original installed limit 3 retained. No fifth permission from this verdict.",
+      "uncommitted_run_state_not_adopted": {
+        "path": ".agent/run_state.json",
+        "relation_to_HEAD": "uncommitted working-tree diff observed after the evidence review; not written by this review",
+        "observed": "129-source attempts remains 4. The dirty diff changes limit 4 to 5, status to attempt5-authorized-design-pending-applicability-review, authorized_additional_attempts 1 to 2, and updated_at to 2026-10-16T09:52:37.274231+00:00, citing untracked .agent/evidence/129/source5-authority1.json. That timestamp matches the untracked file and is not in HEAD b07b1e3.",
+        "effect": "This verdict does not adopt the dirty limit change, does not authorize a fifth source attempt, and does not edit run_state back or forward."
+      }
+    },
+    "option_selection": {
+      "selected": null,
+      "lean_per_request_helper": "not_approved",
+      "read_leases_plus_namespace_monitoring": "not_approved",
+      "sealed_memfd_copies": "not_approved",
+      "source4_currentness": "not_revived"
+    },
+    "contract_revision": {
+      "proposed": false,
+      "reason": "The original clauses already decide same-byte binding, the live recheck before apply, history retention, the 65536-byte bound, and the prohibition on a history-sized helper response making cancel or close unavailable. A constant-size certificate is an implementation shape under those clauses. Adding a global atomic multi-file transaction or mutation detection until publication would be a real semantic strengthening and is not proposed. No frozen test, acceptance command, runner, schema, or public API change is proposed."
+    }
+  },
+  "source3_line_confirmation": {
+    "object": "a9114bcbe16fba76dbdba1147ea76db8a5a6b39d:tools/runtime_session.py",
+    "blob_sha256": "e8e5571d365d8bf84df34c0bac1a08b002297543100f1fd6e33c9e6c046712ce",
+    "line_count": 1672,
+    "mismatch": false,
+    "claims": {
+      "FRAME_LIMIT_65536_line_29": "confirmed: FRAME_LIMIT = 65536",
+      "check_live_returns_when_verification_set_494_496": "confirmed",
+      "verified_attempt_1144_1147": "confirmed. Non-stub line 1147 returns cached verification attempt_ok. Lines 1145-1146 still call attempt_matches when runtime is stub. That precision does not move the cited lines.",
+      "non_poll_actions_call_start_job_1213_1216": "confirmed. poll-operation calls apply_request with None; every other action calls start_job.",
+      "verification_files_globs_operations_1250_1260": "confirmed. The glob is line 1253 and also includes session, controller, run_state, optional handoff, and manifest paths.",
+      "attempt_ok_1310_1311_before_stamps_1318_1325": "confirmed. attempt_matches reads run_state JSON at lines 290-292. The sha256 is a later path.read_bytes at line 1321. The per-file before/after stamp does not cover the gap between the semantic read and that hash.",
+      "parent_stamp_and_digest_length_1443_1446_then_apply_1467": "confirmed. The parent compares file_stamp to the returned stamp and len(digest) to 64. It does not recompute the digest. apply_request is line 1467."
+    },
+    "working_tree_runtime_session_sha256": "fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345",
+    "working_tree_status": "pre-adoption baseline confirmed and not modified"
+  },
+  "evidence_pins": {
+    "contract_129_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+    "report_sha256": "57fe0fc935827ce5c13a06f020ab5bd2e5ad9cf32225be53dc50d7d4e04e0b62",
+    "lease_execution_sha256": "0899c5fd6cfcaae0d6b7d1ddc852a4fc24fff68d1f1c995dd1638187d2942a63",
+    "lease_execution_exit": 0,
+    "lease_execution_pid": 420629,
+    "lease_stdout_sha256": "1f0114d05f55738eee3c5d592fdc192d3faa265571c91a68d4891aac240d7106",
+    "seal_execution_sha256": "a9b7fc0e114500c0c0489a6a14136f2d8406923856aa6db3ccc1d5c516ffec1b",
+    "seal_execution_exit": 0,
+    "seal_execution_pid": 420627,
+    "seal_stdout_sha256": "7ba7186e32ffabdedf607dfad2beb5ffb0aab04dc9de0a5fde77787c7fb15a4e",
+    "seal_helper_pid_from_stdout": 420631,
+    "qualification_stop1_sha256": "30a57829fe1a1291f45673642aa9fd793105585d0f14e60d449310c95f6fe55d",
+    "contract_126_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+    "contract_127_sha256": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7",
+    "hashes_recomputed": true,
+    "preservation_inventories": "not recomputed; 16842/239 figures were not used as pins"
+  },
+  "non_actions": "No product, contract, runner, installed .nizam, run_state, feasibility-report, or historical-evidence edit. No controller, acceptance, probe, or product command. No fifth source attempt, budget change, merge, tag, or contract revision. Observed dirty run_state was left untouched."
+}

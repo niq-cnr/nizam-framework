@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:small_change_intent.schema.json",
+  "title": "Nizam small-change intent",
+  "description": "Validates .agent/evidence/<id>-intent.json, the intent that tools/start_path.py reads before a small unambiguous change may begin.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "path", "summary", "needs_new_contract"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Same identifier as the <id> in the evidence file name."
+    },
+    "path": {
+      "const": "small-change",
+      "description": "Selects the small-change start path."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The unambiguous change to make."
+    },
+    "needs_new_contract": {
+      "type": "boolean",
+      "description": "When true, this path is refused and the feature path is required."
+    }
+  }
+}

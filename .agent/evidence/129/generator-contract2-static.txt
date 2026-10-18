@@ -1,0 +1,30 @@
+Generator129 preparation attempt2/3; structural proposal only; no runtime/test/preflight execution.
+workspace=/home/cnross/.tmp/generator129-contract2-o_s9jial/repo
+exercised_revision=c511b4f2b7df49b8f918b5e032af9d5c26a6e6d8
+environment PYTHONDONTWRITEBYTECODE=1
+contract_sha256=fcebeec5520ea8616e14e8059503358f76c5c91ddfea779041bd4a0a04c8ce85
+captured_at=2026-10-16T01:21:41.459077+00:00
+argv=["/usr/bin/python3", "-c", "import hashlib,json,pathlib,subprocess,jsonschema\np=pathlib.Path('.agent/contracts/129.json'); c=json.loads(p.read_text())\nfor s in ('.nizam/schema/contract.schema.json','schema/contract.schema.json'):\n jsonschema.Draft202012Validator(json.load(open(s))).validate(c); print('schema valid:',s)\nold=json.loads(subprocess.check_output(['git','show','HEAD:.agent/contracts/129.json']))\nf=json.load(open('.agent/feature_list_020.json'))['features'][0]\nassert [v['command'] for v in c['verification'][:7]]==f['acceptance_tests']==[v['command'] for v in old['verification'][:7]]\nassert c['verification'][:7]==old['verification'][:7] and c['verification'][8:]==old['verification'][7:] and len(c['verification'])==11\nassert c['red_admission']['command']==c['verification'][7]['command']\nassert c['status']=='proposed' and c['approvals']==dict(validator_mode_a=False,evaluator_contract_review=False,revisions=1)\nassert c['implementation_obligations']==old['implementation_obligations'] and c['non_goals']==old['non_goals']\nassert c['estimated_lines']==f['estimated_lines']==2100 and c['budget']==old['budget']\nassert subprocess.check_output(['git','diff','--name-only','HEAD'],text=True).splitlines()==['.agent/contracts/129.json']\nassert subprocess.check_output(['git','remote','get-url','origin'],text=True).strip()=='https://github.com/niq-cnr/nizam-framework.git'\nfor name in ['tools/runtime_session.py','tools/test_runtime_session.py','.agent/product_spec_020.md','.agent/feature_list_020.json','.agent/evidence/129/generator-contract1-static.txt','.agent/validator/129-mode-a.json','.agent/qa/129-contract-review.json']:\n raw=pathlib.Path(name).read_bytes(); assert raw==subprocess.check_output(['git','show','HEAD:'+name]); print('preserved',name,hashlib.sha256(raw).hexdigest())\nprint('seven final acceptance leaves unchanged; one added procedural selector; eleven final verification commands; product scope/budgets/history preserved')\nprint('contract_sha256='+hashlib.sha256(p.read_bytes()).hexdigest())\n"]
+stdout:
+schema valid: .nizam/schema/contract.schema.json
+schema valid: schema/contract.schema.json
+preserved tools/runtime_session.py fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345
+preserved tools/test_runtime_session.py 005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534
+preserved .agent/product_spec_020.md ff9e2de8b72d3f877b346ceba52025bb44d28e6f72acda2287acd72c0320fda0
+preserved .agent/feature_list_020.json 4c6e7adc494b5c362fcea016d2c58d6d23cb7d79c623ae689e58ec691461ca65
+preserved .agent/evidence/129/generator-contract1-static.txt a2812b06806bdf6eb0d35ca49276ce2e659aa11e3c6aa3c8d7af580774114d52
+preserved .agent/validator/129-mode-a.json e31623e0d8a244c0243fa57c8973b3243204197913d0a2f2383c515af47f4c9f
+preserved .agent/qa/129-contract-review.json 01b32e958ebfb29b2cafc4816b7b414c7b93ed9c47a8c5628a40507ea29181b0
+seven final acceptance leaves unchanged; one added procedural selector; eleven final verification commands; product scope/budgets/history preserved
+contract_sha256=fcebeec5520ea8616e14e8059503358f76c5c91ddfea779041bd4a0a04c8ce85
+
+stderr:
+
+actual_exit=0
+captured_at=2026-10-16T01:21:41.463543+00:00
+argv=["git", "diff", "--cached", "--check"]
+stdout:
+
+stderr:
+
+actual_exit=0

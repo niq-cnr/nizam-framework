@@ -1,0 +1,26 @@
+import hashlib,json,subprocess
+from pathlib import Path
+import yaml,jsonschema
+base='5dd6e2c6cfbca1168c4b7e3ec4fa8433b92d27dd'
+def prior(path):return subprocess.check_output(['git','show',base+':'+path])
+spec_path='.agent/product_spec_020.md'
+spec=Path(spec_path).read_text()
+assert subprocess.check_output(['git','diff','--name-only',base,'HEAD'],text=True).splitlines()==[spec_path]
+for p in ['.agent/feature_list_020.json','docs/planning/phase_020.yaml','docs/planning/manifest.json','.agent/evidence/phase020-preflight/intake-current-context1.json']:
+ assert Path(p).read_bytes()==prior(p),p
+front=json.loads(json.dumps(yaml.safe_load(spec.split('---',2)[1]),default=str))
+jsonschema.Draft202012Validator(json.loads(Path('.nizam/schema/frontmatter.schema.json').read_text())).validate(front)
+assert front['version']=='0.2.0' and front['status']=='active'
+assert 'At that snapshot, local 133 gates/capture were complete; PR 105 at frozen head\n441d292559eacb95c778b4e20bcc62350e9f31a8 still awaited capable CI, normal merge\nand main delivery. That historical snapshot is not current delivery proof.' in spec
+assert 'Before applying activation, Root rechecks the actual current PR 105 head, all six\nrequired checks, clear feedback and normal merge.' in spec
+assert 'its frozen PR 105 still awaits' not in spec
+for anchor in ['129 remains pending until separate Root implementation release.','activation/allocation, dual-approved contract, independent bundle and PR 105 normal merge.','New integration waits PR 105 main all five. Optional 133 is not a new normative dependency.','Phase 018 requires feature 127 only','current Source 133 API 5f','historical 123 API 2579','this proposed delta alone grants no activation or Source release.']:
+ assert anchor in spec,anchor
+root='/home/cnross/workspace02/nizam-framework'
+review=subprocess.check_output(['git','-C',root,'show','5a08813eeaeafd4b81cbc642c369abcb99678ad7:.agent/validator/phase020-activation1.json'])
+assert hashlib.sha256(review).hexdigest()=='c3884c6353646b88ccfc902851e86c1f3260c29a482cd18a71086cfadbd7603a'
+r=json.loads(review);assert r['final_verdict']['approved'] is False and [i['id'] for i in r['issues']]==['P020-ACTIVATION1-CURRENT-CONTEXT']
+print('PASS minimal historical-context correction for P020-ACTIVATION1-CURRENT-CONTEXT; spec0.2.0 frontmatter schema; actual-current-head/all6/feedback/normalmerge recheck explicit')
+print('PASS other3 activationfiles, historicalintake, featureobjects/acceptance/DAG/lanes/matrix/prerefs/budgets and implementation/integration gates unchanged; no runtime/fullsuite or activation claim')
+for p in [spec_path,'.agent/feature_list_020.json','docs/planning/phase_020.yaml','docs/planning/manifest.json']:
+ print(hashlib.sha256(Path(p).read_bytes()).hexdigest(),p)

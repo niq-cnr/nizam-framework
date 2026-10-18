@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.20.0
+version: 0.20.1
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.20.1"
+    date: "2026-10-16"
+    summary: "Add bug-fix cause, bug-fix scope, and small-change intent schemas consumed by tools/start_path.py."
   - version: "0.20.0"
     date: "2026-10-11"
     summary: "Register two closed runtime provenance schemas and distinguish C12 record validity from future live conformance."
@@ -104,6 +107,9 @@ validation does not sweep a consumer's session records automatically.
 | `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. The **era-safe complete-feature lifecycle rule** (a `complete` feature with a contract on disk must also have a QA verdict, and any `evidence_files` it lists must resolve) is enforced in code by `tools/validate.sh` C16. | `.agent/feature_list.json` |
 | `contract.schema.json` | Validates a per-feature contract: scope, non-goals, and verification commands agreed before implementation. | `.agent/contracts/NNN.json` |
 | `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
+| `bugfix_cause.schema.json` | Validates the assessed cause for a bug-fix start path. `tools/start_path.py` reads it before implementation may begin. | `.agent/evidence/<id>-cause.json` |
+| `bugfix_scope.schema.json` | Validates the scoped fix for a bug-fix start path, including an optional already-approved `contract_id`. `tools/start_path.py` reads it before implementation may begin. | `.agent/evidence/<id>-scope.json` |
+| `small_change_intent.schema.json` | Validates the intent for a small unambiguous change and refuses the path when `needs_new_contract` is true. `tools/start_path.py` reads it before implementation may begin. | `.agent/evidence/<id>-intent.json` |
 | `contract_review.schema.json` | Validates the pre-code contract-testability review verdict. | `.agent/qa/NNN-contract-review.json` |
 | `run_state.schema.json` | Validates the durable run state an execution engine reads and writes across a session. | `.agent/run_state.json` |
 | `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the shipped template now validates end-to-end against this schema — F-054/NDEBT-011 — with the optional enum/integer dispatch fields `tier`/`blast_radius`/`merge_order` omitted from the template rather than shipped as literal defaults a copied packet could silently carry; consumers add them from this schema when a packet needs cross-repo dispatch). |

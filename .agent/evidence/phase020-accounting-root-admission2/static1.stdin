@@ -1,0 +1,10 @@
+from pathlib import Path
+import json,hashlib
+r=Path.cwd();d=r/'.agent/evidence/phase020-accounting-preparation2'
+i=json.loads((d/'index.json').read_text())['files']
+for p,h in i.items(): assert hashlib.sha256((r/p).read_bytes()).hexdigest()==h,p
+f=json.loads((d/'static1.execution.json').read_text())
+assert f['actual_exit']==0 and f['child_pid']==4162093 and f['exercised_revision']=='b5ad533fa819b9b0bdf060f53ae0d0317fc59678'
+for key in ['stdin','stdout','stderr']:
+ x=f[key];b=(d/Path(x['path']).name).read_bytes();assert len(b)==x['bytes'] and hashlib.sha256(b).hexdigest()==x['sha256']
+print('PASS held preparation2 bytes/frame/provenance verified; no method approval, measurement or budget result')

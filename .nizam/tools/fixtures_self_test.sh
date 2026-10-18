@@ -44,23 +44,37 @@ source tools/verify_lib.sh
 fail=0
 COVERED=()
 SKILL_BAK=""
+SKILL_BAK_OWNER=""
 declare -A SCRATCH_OWNED=()
 
-# Backstop: if a C13 substitution is interrupted, restore the real skill.json.
+# One backstop composes restoration and scratch cleanup for this Bash process.
+# Subshells inherit the maps but must never remove or restore parent resources.
 cleanup() {
-  if [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
-    cp -- "${SKILL_BAK}" tools/skill.json
-    rm -f -- "${SKILL_BAK}"
+  local d status=0
+  local -a owned=()
+  if [ "${SKILL_BAK_OWNER}" = "${BASHPID}" ] && [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
+    if cp -- "${SKILL_BAK}" tools/skill.json; then
+      rm -f -- "${SKILL_BAK}" || status=1
+    else
+      status=1
+    fi
   fi
+  for d in "${!SCRATCH_OWNED[@]}"; do
+    if [ "${SCRATCH_OWNED["${d}"]}" = "${BASHPID}" ]; then
+      owned+=("${d}")
+    fi
+  done
+  cleanup_scratch_dirs "${owned[@]}" || status=1
+  return "${status}"
 }
-trap cleanup EXIT
+trap 'cleanup || exit 1' EXIT
 
 note_covered() { COVERED+=("$1"); }
 
 # scratch_dirs <output-var> [<output-var> ...]
 #
 # Creates one isolated directory per named caller variable and installs a single
-# EXIT trap for those exact directories. Every target is resolved below the
+# composed EXIT backstop for process-owned directories. Every target is resolved below the
 # configured temporary root and rejected if it is /, the repository, or below
 # the repository. Probe bodies call this directly (never through command
 # substitution), so printf -v assigns their local variables in the caller.
@@ -72,7 +86,7 @@ cleanup_scratch_dirs() {
     [ -n "${d}" ] || return 1
     [ -d "${d}" ] || continue
     resolved=$(cd -- "${d}" && pwd -P) || return 1
-    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "1" ]] || return 1
+    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "${BASHPID}" ]] || return 1
     case "${resolved}" in
       "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
     esac
@@ -81,7 +95,7 @@ cleanup_scratch_dirs() {
 }
 
 scratch_dirs() {
-  local name made resolved quoted cleanup="cleanup_scratch_dirs" temp_root
+  local name made resolved temp_root
   local -a created=()
   temp_root=$(cd -- "${TMPDIR:-/tmp}" && pwd -P) || return 1
   case "${temp_root}" in
@@ -107,13 +121,11 @@ scratch_dirs() {
     case "${resolved}" in
       "/"|"${REPO}"|"${REPO}"/*) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
     esac
-    SCRATCH_OWNED["${resolved}"]=1
+    SCRATCH_OWNED["${resolved}"]="${BASHPID}"
     printf -v "${name}" '%s' "${resolved}"
     created+=("${resolved}")
-    printf -v quoted '%q' "${resolved}"
-    cleanup+=" ${quoted}"
   done
-  trap "${cleanup}" EXIT
+  trap 'cleanup || exit 1' EXIT
 }
 
 if TMPDIR="${REPO}" scratch_dirs should_not_exist; then
@@ -304,6 +316,26 @@ note_covered bare_ref_fail.md
 assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
 assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
 
+# Feature111: top-level runtime provenance fixtures; no nested claim-map row.
+assert_target runtime_operation_valid_rejected_foreign_stale.json C12 PASS
+assert_target runtime_operation_neg_foreign_executed.json C12 FAIL
+assert_target runtime_operation_neg_stale_generation_executed.json C12 FAIL
+assert_target runtime_operation_valid_partial_load_condition.json C12 PASS
+assert_target runtime_operation_neg_failed_load_consistent.json C12 FAIL
+assert_target runtime_operation_valid_running_stopped_waiting.json C12 PASS
+assert_target runtime_operation_valid_rejected_busy.json C12 PASS
+assert_target runtime_operation_neg_timeout_cancelled.json C12 FAIL
+assert_target runtime_session_valid_reattach_pending.json C12 PASS
+assert_target runtime_operation_neg_session_result_acceptance.json C12 FAIL
+assert_target runtime_operation_valid_trial_rejected.json C12 PASS
+assert_target runtime_operation_neg_trial_executed.json C12 FAIL
+assert_target runtime_operation_valid_new_generation_same_attempt.json C12 PASS
+assert_target runtime_session_valid_replayable_handoff.json C12 PASS
+assert_target runtime_session_valid_accept_hermetic.json C12 PASS
+assert_target runtime_session_neg_accept_inherited_cache.json C12 FAIL
+assert_target runtime_session_valid_transfer_lease.json C12 PASS
+assert_target runtime_operation_neg_stale_lease_executed.json C12 FAIL
+
 # vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
 # DIRECTORY, so its seeded omission is built through scratch_dirs (Section 11
 # probe isolation), the same guarded pattern the two primitives below use. A
@@ -341,7 +373,7 @@ _f055_real_tree() {
       || { echo "FAIL guard       enumeration real-tree: NIZAM.json omits an on-disk ${m}/ doc"; bad=1; }
   done
   [ "${bad}" -eq 0 ] \
-    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)" \
+    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk, including methodology10)" \
     || fail=1
   bad=0
   for f in methodology/*.md standard/*.md; do
@@ -615,6 +647,7 @@ test_c13() {
   note_covered skill_index_neg_dangling_module.json
   note_covered skill_index_neg_unindexed_capability.json
   SKILL_BAK=$(mktemp)
+  SKILL_BAK_OWNER="${BASHPID}"
   cp -- tools/skill.json "${SKILL_BAK}"
   _c13_substitute_one() {
     local fixture_basename="$1"
@@ -635,6 +668,7 @@ test_c13() {
   _c13_substitute_one skill_index_neg_unindexed_capability.json "is not the authoritative_source of any NIZAM.json capability"
   rm -f -- "${SKILL_BAK}"
   SKILL_BAK=""
+  SKILL_BAK_OWNER=""
 }
 test_c13
 
@@ -953,7 +987,43 @@ fi
 # ---------------------------------------------------------------------------
 FIXTURE_CLAIMS=(
   "convergent_review|tools/test_convergent_review.py"
+  "runtime_session|tools/test_runtime_session.py"
 )
+
+# Keep this function self-contained so scheduling can be tested without recursion.
+runtime_session_checks() {
+  local selector value rc failed=0
+  local -a arguments
+  for selector in check case policy extra_check extra_case; do
+    case "${selector}" in
+      check) set -- lifecycle-no-evaluation record-schema fixture-claim-registered ;;
+      case) set -- 1 2 3 9 13 ;;
+      policy) set -- 8 ;;
+      extra_check) set -- cancel-confirmation-required handoff-source-bound ;;
+      extra_case) set -- 5 6 10 ;;
+    esac
+    for value in "$@"; do
+      if [ "${selector}" = check ] || [ "${selector}" = extra_check ]; then
+        arguments=(--check "${value}")
+      else
+        arguments=(--case "${value}" --runtime stub)
+        if [ "${selector}" = policy ]; then arguments+=(--layer policy); fi
+      fi
+      printf 'COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py'
+      printf ' %s' "${arguments[@]}"
+      printf '\n'
+      if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py "${arguments[@]}"; then
+        rc=0
+      else
+        rc=$?
+        failed=1
+      fi
+      printf 'ACTUAL_EXIT: %s\n' "${rc}"
+    done
+  done
+  return "${failed}"
+}
+runtime_session_checks || fail=1
 
 # claim_map_check <fixtures-root> <repo-root> <claim-row>...
 #
@@ -1072,6 +1142,25 @@ fi
 if [ -n "${phantom}" ]; then
   echo "FAIL completeness: manifest row(s) name a fixture that is not on disk:"
   printf '%s\n' "${phantom}" | sed 's/^/       /'
+  fail=1
+fi
+
+# Feature123 parser selectors are synthetic controls; actual hosted readiness is
+# separately selected and observed after the two capable-job passes.
+for controls_case in ci-candidate-bound ci-blocker-rejected; do
+  if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case "${controls_case}"; then
+    echo "OK   workflow-assurance ${controls_case}"
+  else
+    echo "FAIL workflow-assurance ${controls_case}"
+    fail=1
+  fi
+done
+
+# Feature133 checks are separate from the on-disk fixture-file denominator.
+if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py; then
+  echo "OK   receipt-candidate-batching four focused checks"
+else
+  echo "FAIL receipt-candidate-batching focused checks"
   fail=1
 fi
 

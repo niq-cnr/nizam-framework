@@ -1,0 +1,33 @@
+{"actual_exit": 1, "argv": ["/usr/bin/sbcl", "--noinform", "--no-sysinit", "--no-userinit", "--disable-debugger", "--script", "/tmp/nizam-source129-1/tools/sbcl_session_loop.lisp"], "cwd": "/tmp/nizam-source129-startup-diagnosis1/private-runtime", "elapsed_seconds": 0.024287817999720573, "exercised_revision": "b9505bc8703dbeef7fbc2c42698d880462b985c1", "input_sha256": "23bbb95c1088b2f4291a8ca47ec7fcb6c589a178f07931ec1420f1abf53ca428", "pid": 3677828, "product_revision": "ee1ce1dfb6b0f235c23eae439e00328645098c42", "purpose": "Actual startup diagnosis only; no backend acceptance", "streams": {"protocol": {"bytes": 0, "path": "worker.protocol", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "stderr": {"bytes": 2668, "path": "worker.stderr", "sha256": "cc5488d431137daa6754df55efc8339cb8b2e64afaee091ac4dcd8e87f680988"}, "stdout": {"bytes": 0, "path": "worker.stdout", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}}, "timed_out": false}
+Unhandled SB-C::INPUT-ERROR-IN-LOAD in thread #<SB-THREAD:THREAD "main thread" RUNNING
+                                                 {1001348003}>:
+  READ error during LOAD:
+
+    The symbol "MAP-BACKTRACE" is not external in the SB-DEBUG package.
+
+      Line: 121, Column: 37, File-Position: 6340
+
+      Stream: #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>
+
+Backtrace for: #<SB-THREAD:THREAD "main thread" RUNNING {1001348003}>
+0: (SB-DEBUG::DEBUGGER-DISABLED-HOOK #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}> #<unused argument> :QUIT T)
+1: (SB-DEBUG::RUN-HOOK SB-EXT:*INVOKE-DEBUGGER-HOOK* #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+2: (INVOKE-DEBUGGER #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+3: (ERROR #<SB-C::INPUT-ERROR-IN-LOAD {1001C606F3}>)
+4: (SB-C:COMPILER-ERROR SB-C::INPUT-ERROR-IN-LOAD :CONDITION #<SB-INT:SIMPLE-READER-PACKAGE-ERROR "The symbol ~S is not external in the ~A package." {1001C606A3}> :STREAM #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+5: (SB-C::%DO-FORMS-FROM-INFO #<FUNCTION (LAMBDA (SB-KERNEL:FORM &KEY :CURRENT-INDEX &ALLOW-OTHER-KEYS) :IN SB-INT:LOAD-AS-SOURCE) {100136074B}> #<SB-C::SOURCE-INFO {1001360713}> SB-C::INPUT-ERROR-IN-LOAD)
+6: (SB-INT:LOAD-AS-SOURCE #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> :VERBOSE NIL :PRINT NIL :CONTEXT "loading")
+7: ((LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> NIL)
+8: (SB-FASL::CALL-WITH-LOAD-BINDINGS #<FUNCTION (LABELS SB-FASL::LOAD-STREAM-1 :IN LOAD) {767699D8782B}> #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> NIL #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+9: (LOAD #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}> :VERBOSE NIL :PRINT NIL :IF-DOES-NOT-EXIST :ERROR :EXTERNAL-FORMAT :DEFAULT)
+10: ((FLET SB-IMPL::LOAD-SCRIPT :IN SB-IMPL::PROCESS-SCRIPT) #<SB-SYS:FD-STREAM for "file /tmp/nizam-source129-1/tools/sbcl_session_loop.lisp" {10013375D3}>)
+11: ((FLET SB-UNIX::BODY :IN SB-IMPL::PROCESS-SCRIPT))
+12: ((FLET "WITHOUT-INTERRUPTS-BODY-11" :IN SB-IMPL::PROCESS-SCRIPT))
+13: (SB-IMPL::PROCESS-SCRIPT "/tmp/nizam-source129-1/tools/sbcl_session_loop.lisp")
+14: (SB-IMPL::TOPLEVEL-INIT)
+15: ((FLET SB-UNIX::BODY :IN SB-IMPL::START-LISP))
+16: ((FLET "WITHOUT-INTERRUPTS-BODY-3" :IN SB-IMPL::START-LISP))
+17: (SB-IMPL::%START-LISP)
+
+unhandled condition in --disable-debugger mode, quitting
+

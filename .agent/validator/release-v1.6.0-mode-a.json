@@ -1,0 +1,47 @@
+{
+  "gate": "mode-a",
+  "contract_id": "release-v1.6.0",
+  "round": 6,
+  "reviewed_revision": "c6d01ee9db696b17e58b570ebec771959d6a96f6",
+  "reviewer": "independent-validator",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "round1_disposition": {
+    "BLOCKER-1 (pre-tag/post-tag observed-fact contradiction)": "FIXED in amendment 1 (verified round 2); stable through revisions 3-5.",
+    "MAJOR-1 (changed-doc frontmatter sweep)": "FIXED across rounds: three planning .md frontmatter bumps guarded in AT4 (executed each round); manifest.json consistency carried to closeout whole-document equality vs the tag (verified); design-note misclaim corrected in revision 3 and stable.",
+    "MAJOR-2 (AT4 embedded placeholder)": "FIXED: scope_base declares both occurrences substituted with d86e1160a60e21c485235741e30372facee0e9d9 at commit.",
+    "MAJOR-3 (feature 119 omitted)": "FIXED: enumeration reads 115-119, matching origin/main (verified round 1).",
+    "MINOR-1 (AT8 template)": "REJECTED WITH REASON (round 2), not re-raised: AT7 records the temp clone path as the deterministic substitution source; precedent-consistent.",
+    "Coverage gap 1 (README/guide counts)": "FIXED and verified: AT3 companion guard asserts README 7/1 and guide 3/0 (re-verified intact rounds 5-6); counts recomputed from base d86e1160; closeout 8/0 target consistent.",
+    "Coverage gap 2 (post-tag ledger verification)": "FIXED: closeout AT3 asserts run_state release_executed, operator_gates EXECUTED row, HANDOVER mandated-heading note, gh release published, gh api Latest, provenance resolved_sha, README 8/0 + version-anchored installed-line, manifest 021 note-append + whole-document equality.",
+    "Coverage gap 3 (released-section immutability)": "FIXED: exact tail equality in closeout AT3; fail-open OR clause absent."
+  },
+  "round2_disposition": {
+    "BLOCKER-2 (AT4 allowlist rejected closeout contract)": "FIXED and verified by executing auxiliary().",
+    "MAJOR-R2-1 (README/guide count language unenforced)": "FIXED: AT3 companion occurrence-count guard; amendment 2 honestly retracted the 'existence+count' overstatement.",
+    "MAJOR-R2-2 (changelog immutability OR fail-open)": "FIXED: exact tail equality, no OR.",
+    "MAJOR-R2-3 (closeout missing manifest/README own-duty assertions)": "FIXED: README 8/0 + installed-line selector and manifest 021 note-append + m==bm whole-document equality sound; HANDOVER description-anchor duty resolved via round-5 description scoping.",
+    "MINOR-R2-1 (rule mislabel, ROADMAP brittleness, phantom file, manifest misclaim)": "FIXED: AT2 expected text accurate; phantom HANDOVER-2026-10-16.md explicitly excluded; frontmatter_sweep manifest misclaim corrected in revision 3; ROADMAP rescoping resolved by revision-3 section anchoring verified against the tool's own semantics in round 4."
+  },
+  "round3_disposition": {
+    "MAJOR-R3-1 (closeout AT3 ROADMAP section extraction)": "RESOLVED and finding WITHDRAWN in round 4: the revision-3 section anchoring is correct; demonstrated by simulation with the tool's own document_body/group_roadmap semantics on the mandated post-release-PR tree shape. The base-tree reading in round 3 was the wrong evaluation shape.",
+    "MAJOR-R3-2 (operator_gates/HANDOVER purposes crossed)": "FIXED: purposes uncrossed and stable.",
+    "MINOR-R3-1 (frontmatter_sweep manifest misclaim)": "FIXED in revision 3; stable.",
+    "MINOR-R3-2 (vacuous HANDOVER frontmatter-anchor check)": "FIXED in round 5: assertion scoped to the description: field only."
+  },
+  "round4_disposition": {
+    "BLOCKER-R4-1 (recovery-authorization evidence path inadmissible under AT4)": "FIXED in amendment 4 (release contract) and verified by executing the exact auxiliary(): all real .agent/evidence/release-v1.6.0-contract/ paths pass; product and foreign paths fail closed.",
+    "MAJOR-R4-1 (closeout 'v1.5.0'-absent assertion unsatisfiable without prohibited historical rewrite)": "FIXED in amendment 3 (closeout contract) and verified: description:-scoped assertion binds uniquely at base, fails closed on the unedited tree, passes a compliant edit with historical change_log mentions untouched."
+  },
+  "round6_notes": {
+    "scope_review": "Targeted delta review of closeout amendment 4 only, plus drift check on both contracts. Closeout revision: amendment 4 adds the environment-fit fix to AT3's release-latest check; amendments 1-3 unchanged. Release contract unchanged since round 5 (mtime corroborates; round-5 invariants re-executed intact: auxiliary contract-prefix leg, AT3 companion count guard 7/1 and 3/0, schema-valid, 4 amendments).",
+    "delta_verification": "(1) Premise verified live on this host: 'gh release view v1.5.0 --json isLatest' exits rc=1 with 'Unknown JSON field: \"isLatest\"' (an earlier pipeline-masked rc=0 in my probe was a shell artifact of piping through head; the direct probe confirms rc=1). (2) Replacement verified live: 'gh api repos/niq-cnr/nizam-framework/releases/latest --jq .tag_name' exits rc=0 and returns 'v1.6.0' -- GitHub does mark the published v1.6.0 release Latest, and the command is executable on the operator host. (3) Semantic equivalence confirmed by inspection: leg 1 (gh release view --json tagName,isDraft,isPrerelease,publishedAt with the same assertions as before) plus leg 2 (/releases/latest tag_name=='v1.6.0') is exactly the isLatest semantics -- the endpoint returns GitHub's designated non-draft Latest release, so the check fails if any other release holds Latest, if v1.6.0 is draft/prerelease/unpublished (leg 1 or the endpoint's tag_name), or if the release does not exist (gh exits non-zero, check_output raises). Equally strict, fail-closed, repo-root executable. (4) Drift check: 'isLatest' now appears nowhere in closeout AT3; every other round-5 AT3 leg (run_state release_executed, ROADMAP section triple assertion, operator_gates EXECUTED row, HANDOVER description + mandated-note assertions, provenance, exact changelog tail equality, README 8/0 + installed-line, manifest 021 note-append + m==bm) confirmed intact by fragment assertion. Both contracts schema-valid.",
+    "observed_lifecycle_state": "Since round 5: the annotated tag v1.6.0 exists locally, 'gh api .../releases/latest' names v1.6.0, and the closeout contract's own dual gates have advanced it (status approved, validator_mode_a/evaluator_contract_review true, revisions 3) -- the closeout's independent Mode A/B and evaluator records exist under .agent/validator/release-v1.6.0-closeout-*.json and .agent/qa/release-v1.6.0-closeout*.json. These are the closeout contract's own lifecycle fields, not drift in the reviewed delta.",
+    "non_blocking_followups": "(1) Release contract AT6 also asserts rel['isLatest'] via gh release view; the release loop already executed (tag and GitHub release exist), so its evidence was necessarily captured in an environment whose gh supports the field -- no forward-looking defect, but if any future close-out-style rerun happens on this host, expect the same limitation. (2) Round-5 bookkeeping notes stand (extension-pointer freshness; revisions-counter semantics)."
+  },
+  "summary": "ROUND 6 APPROVED (targeted re-review, closeout delta only). The single pre-execution change (closeout amendment 4) is verified correct and necessary: I reproduced the failure premise live on this host (gh release view --json isLatest exits rc=1 'Unknown JSON field', direct probe without pipeline masking) and live-verified the replacement (gh api repos/niq-cnr/nizam-framework/releases/latest returns tag_name v1.6.0, rc=0, against the actual published release). The two-leg replacement preserves the isLatest semantics exactly, is equally strict, fail-closed, and executable from the repo root; no other closeout content drifted (all round-5 AT3 legs intact, isLatest absent), and the release contract is byte-stable since round 5 with its round-5 invariants re-executed intact. Both contracts schema-valid. Observed lifecycle state (tag v1.6.0 existing, closeout's own approvals advanced by its independent gates) is recorded as context, not drift. All issue arrays are empty; the contract pair remains fit for the closeout's execution phase, with two non-blocking environmental/bookkeeping follow-ups noted for the Orchestrator."
+}

@@ -1,0 +1,98 @@
+{
+  "gate": "mode-b",
+  "contract_id": "release-v1.6.0-closeout",
+  "round": 2,
+  "reviewed_revision": "e10d0af7 + uncommitted implementation (attempt 2)",
+  "reviewer": "independent-validator",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "checks_condensed_by_orchestrator": {
+    "CHANGELOG.md": "PASS: Unreleased entry only; facts match evidence 06/run_state; wording accurately describes the SELF_GOVERNANCE 0.2.0 record, README no-commissioning statement, operator_gates supersession and the single HANDOVER marker line. Round-1 unsupported claim resolved.",
+    "ROADMAP.md": "PASS (unchanged from attempt 1).",
+    "operator_gates.md": "PASS; MB-4 resolved ('the v1.6.0 PREPARED clause (v0.40.0) is superseded by this record.').",
+    "HANDOVER.md": "PASS; MB-1 resolved (2026-10-17 note = HEAD + exactly one marker line; change_log 1.0.31 exact); MB-3 resolved (v1.6.0 released section directly under H1).",
+    "manifest.json": "PASS (unchanged from attempt 1).",
+    "SELF_GOVERNANCE.md": "PASS: installation block values all match repo sources; v1.5.0 commissioning block/change_log/body unchanged; no YAML comments; purpose item (4) fully present (heading, ordering disclosure PR #114/9a830aa4/05c070b4, five captures, 'not authorized' sentence); no v1.6.0 commissioning implication.",
+    "README.md": "PASS; MB-2 resolved: the unchanged self-governance sentence is now true.",
+    ".nizam/provenance.json": "PASS (committed 9a830aa4).",
+    "scope_and_non_goals": "PASS: only the 8 scoped paths plus closeout artifacts, Orchestrator state and the two AT4-admitted release-v1.6.0 review records.",
+    "captures": "PASS: fresh attempt-2 captures 01-05 match approved round-9 commands verbatim, each EXIT:0; evidence_disclosure 22:05:00Z accepted.",
+    "readme_prose": "PASS: (i)-(iii) supported; nothing implies v1.6.0 commissioning.",
+    "marker_line": "PASS: single marker describes only v1.5.0 history and disclaims the current installation."
+  },
+  "follow_up_non_blocking": "operator_gates.md H-CONSUMER-UPGRADE row records only the 2026-10-10 v1.5.0 self-adoption, not the 2026-10-17 v1.6.0 installation decision; outside this contract's scope; log for a later reviewed registry refresh.",
+  "summary": "MODE B ROUND 2 APPROVED (implementation attempt 2 vs approved round-9 contract). MB-1..MB-4 resolved; binding notes satisfied; every observed fact supported; v1.5.0 history unchanged; scope confined; captures 01-05 verbatim, EXIT:0. Limitation: validator restricted to git diff/status/log and file reads.",
+  "canonical_for": "release-v1.6.0-closeout",
+  "prior_round1_record": {
+    "gate": "mode-b",
+    "contract_id": "release-v1.6.0-closeout",
+    "round": 1,
+    "reviewed_revision": "e10d0af7 + uncommitted implementation",
+    "reviewer": "independent-validator",
+    "final_verdict": {
+      "approved": false
+    },
+    "issues": [
+      {
+        "id": "MB-1",
+        "severity": "major",
+        "issue": "HANDOVER.md '## Current status — 2026-10-17' preparation note (shipped in the v1.6.0 tag) was rewritten rather than retained with a supersession marker: 'v1.6.0 release in preparation (tag pending).' and 'The installed `v1.5.0` payload remains unchanged until a reviewed, operator-authorized re-bootstrap after the tag exists.' deleted, remainder re-tensed, while the note claims to be 'retained as the historical record'.",
+        "location": "docs/planning/HANDOVER.md lines 110-120",
+        "required_fix": "Restore the HEAD body byte-for-byte; the only permitted addition is one leading supersession marker line; re-run AT1/AT3 with fresh evidence."
+      },
+      {
+        "id": "MB-2",
+        "severity": "major",
+        "issue": "README '## Local governance' unchanged sentence 'The [self-governance record](docs/planning/SELF_GOVERNANCE.md) records the exact pin, operator authorization and current stage.' is false after the v1.6.0 re-pin: SELF_GOVERNANCE.md records v1.5.0 (f749f4d4, 2026-10-10, 238 files, commissioned). Contract-originated: README purpose forbids other README changes and SELF_GOVERNANCE.md is out of scope.",
+        "location": "README.md line 133 read with new lines 127-132",
+        "required_fix": "Operator-authorized contract amendment: (a) extend README purpose to correct that one sentence, or (b) bring a reviewed SELF_GOVERNANCE.md installation update into scope; then re-run AT1-AT4."
+      },
+      {
+        "id": "MB-3",
+        "severity": "minor",
+        "issue": "New '## Current status — v1.6.0 released' section sits below '## SUPERSEDED — 2026-10-16', which declares all content below it historical and unchanged.",
+        "location": "docs/planning/HANDOVER.md lines 122-147",
+        "required_fix": "Move the section directly under the H1 (still above '## Current handoff'); marker reads 'see ... above'."
+      },
+      {
+        "id": "MB-4",
+        "severity": "minor",
+        "issue": "operator_gates H-FRAMEWORK-RELEASE v1.6.0 EXECUTED clause says 'the preceding PREPARED clause is historical' but that clause was replaced and no longer precedes it.",
+        "location": "docs/planning/operator_gates.md H-FRAMEWORK-RELEASE row",
+        "required_fix": "Reword to 'the v1.6.0 PREPARED clause (v0.40.0) is superseded by this record.' or remove; no other row change."
+      }
+    ],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [
+      {
+        "claim": "HANDOVER preparation note 'retained as the historical record'; HANDOVER change_log 1.0.31 'Historical bodies unchanged.'; CHANGELOG [Unreleased] 'No ... historical record changes'",
+        "why_unsupported": "The preparation note body was edited (MB-1)."
+      },
+      {
+        "claim": "README: self-governance record 'records the exact pin, operator authorization and current stage'",
+        "why_unsupported": "SELF_GOVERNANCE.md records the v1.5.0 pin/stage, not v1.6.0 (MB-2)."
+      },
+      {
+        "claim": "operator_gates: 'the preceding PREPARED clause is historical'",
+        "why_unsupported": "No v1.6.0 PREPARED clause precedes it in the row (MB-4)."
+      }
+    ],
+    "checks_condensed_by_orchestrator": {
+      "CHANGELOG.md": "PASS scope (Unreleased entry only; facts match evidence 06/run_state); phrase contradicted by MB-1.",
+      "ROADMAP.md": "PASS.",
+      "operator_gates.md": "PASS scope; minor MB-4.",
+      "HANDOVER.md": "FAIL MB-1 (major), MB-3 (minor); mandated section and facts present and correct.",
+      "manifest.json": "PASS.",
+      "README.md": "Contract-literal PASS (8/0, only lines 127-129 changed); prose FAIL MB-2. Clauses (i)-(iii) each supported; no implication v1.6.0 was commissioned.",
+      ".nizam/provenance.json": "PASS (committed 9a830aa4).",
+      "non_goals": "PASS.",
+      "captures": "PASS: 01-04 invocations match AT1-AT4 verbatim, each EXIT:0 (validator could not re-run; restricted Bash)."
+    },
+    "summary": "MODE B ROUND 1 REJECTED. Scope, captures (01-04 EXIT:0, verbatim invocations) and every observed ledger fact verified. Blocking: MB-1 (HANDOVER historical preparation note rewritten) and MB-2 (README claims SELF_GOVERNANCE.md records the current pin/stage; contract-originated, needs operator-authorized amendment). Minor: MB-3, MB-4. Validator disclosed one out-of-allowlist read-only 'ls'.",
+    "canonical_for": "release-v1.6.0-closeout"
+  }
+}

@@ -1,0 +1,69 @@
+import ast, hashlib, json, subprocess
+from pathlib import Path
+import yaml
+C=Path.cwd(); R=Path('/home/cnross/.tmp/nizam-133-pr105-terminal2-evidence'); O=Path('/home/cnross/.tmp/nizam-133-pr105-terminal2')
+HEAD='19efbca54be6b2d58f637b22ee4b4185cf32b342'; BASE='c8ef3cd44dd795ae249769b79a99ef4ebf3f0ad7'; CHECKOUT='77f394489620fae51699628fcd38e6cb8fb9fcf6'
+def sha(raw): return hashlib.sha256(raw).hexdigest()
+def git(*argv): return subprocess.check_output(['git','-C',str(R),*argv])
+def read(name): return json.loads((O/(name+'.stdout.txt')).read_bytes())
+assert subprocess.check_output(['git','rev-parse','HEAD']).decode().strip()==HEAD
+assert subprocess.check_output(['git','status','--porcelain','--untracked-files=all'])==b''
+run=read('terminal-run'); container=read('terminal-jobs'); jobs=container['jobs']; expected={'validate','e2e_bootstrap','fixtures_self_test','convergent_review','self_governance'}
+assert run['id']==38842030473 and run['run_attempt']==1 and run['head_sha']==HEAD and run['event']=='pull_request' and run['status']=='completed' and run['conclusion']=='success'
+assert container['total_count']==len(jobs)==5 and {j['name'] for j in jobs}==expected
+assert all(j['status']=='completed' and j['conclusion']=='success' and j['run_id']==run['id'] and j['head_sha']==HEAD for j in jobs)
+checks=read('terminal-checks'); assert checks['headRefOid']==HEAD and checks['baseRefOid']==BASE and checks['state']=='OPEN' and not checks['isDraft']
+rollup=checks['statusCheckRollup']; assert len(rollup)==6 and {v['name'] for v in rollup}==expected|{'closeout'} and all(v['status']=='COMPLETED' and v['conclusion']=='SUCCESS' for v in rollup)
+assert {int(v['detailsUrl'].split('/runs/')[1].split('/')[0]) for v in rollup if v['name']!='closeout'}=={38842030473}
+assert int(next(v for v in rollup if v['name']=='closeout')['detailsUrl'].split('/runs/')[1].split('/')[0])==38842030197
+feedback=read('terminal-feedback'); assert not feedback.get('errors'); pr=feedback['data']['repository']['pullRequest']; assert pr['headRefOid']==HEAD and pr['baseRefOid']==BASE
+for key in ('reviews','comments','reviewThreads'): assert not pr[key]['pageInfo']['hasNextPage']
+assert pr['reviews']['nodes']==[] and pr['reviewThreads']['nodes']==[]
+comments=pr['comments']['nodes']; old_comment=read('feedback2')['data']['repository']['pullRequest']['comments']['nodes'][0]
+assert len(comments)==1 and comments[0]==old_comment and comments[0]['databaseId']==6206053425 and comments[0]['author']['login']=='niq-cnr'
+rows=[]
+for line in (O/'terminal-logs.stdout.txt').read_text().splitlines():
+ parts=line.split('\t',2); assert len(parts)==3; rows.append((parts[0],parts[1],parts[2].lstrip('\ufeff').partition(' ')[2]))
+footers=[(j,s) for j,s,t in rows if t=='Cleaning up orphan processes']; assert len(footers)==5 and {j for j,s in footers}==expected
+raw=(O/'checkout-commit.stdout.txt').read_bytes(); assert hashlib.sha1(b'commit '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==CHECKOUT
+assert git('rev-parse','refs/wa133/pr105-ci2-merge').decode().strip()==CHECKOUT
+assert git('show','-s','--format=%P',CHECKOUT).decode().strip().split()==[BASE,HEAD] and git('rev-parse',CHECKOUT+'^{tree}')==git('rev-parse',HEAD+'^{tree}')
+pins={'tools/workflow_assurance.py':'5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d','tools/test_receipt_candidate_batching.py':'d4d2e4df39ffabc24135d414e478c417bfab28a8914aaa6d91a90fe0ebb0bc44','tools/fixtures_self_test.sh':'098641d301c50cfa2815cffc3d49380e6a6c398b29e860e67713edc76dcb338e'}
+for path,digest in pins.items(): assert sha(git('show',CHECKOUT+':'+path))==digest
+receipts=[(j,json.loads(t.split('=',1)[1])) for j,s,t in rows if s=='Record maintenance checkout source identity' and t.startswith('MAINTENANCE_CHECKOUT_RECEIPT={')]
+assert len(receipts)==2 and {j for j,r in receipts}=={'fixtures_self_test','convergent_review'}
+workflow=yaml.safe_load(git('show',HEAD+':.github/workflows/compliance.yml'))
+for job,receipt in receipts:
+ step=next(s for s in workflow['jobs'][job]['steps'] if s.get('name')=='Record maintenance checkout source identity'); lines=step['run'].splitlines(); assert lines[0]=="python3 - <<'PY'" and lines[-1]=='PY'
+ paths=ast.literal_eval(next(n.value for n in ast.parse('\n'.join(lines[1:-1])).body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='paths' for t in n.targets)))
+ assert len(paths)==len(set(paths))==9 and receipt['checkout_sha']==CHECKOUT and set(receipt['source_sha256'])==set(paths)
+ for path,digest in receipt['source_sha256'].items(): assert sha(git('show',CHECKOUT+':'+path))==digest
+assert receipts[0][1]['source_sha256']==receipts[1][1]['source_sha256']
+helper=git('show',HEAD+':.agent/evidence/123/fresh-qa1/finalize2.py'); assert sha(helper)=='55128e72b14e620f7b35b8e0d68293af39c53236d61de4c88eb1cf469fda1872'
+function=next(n for n in ast.parse(helper).body if isinstance(n,ast.FunctionDef) and n.name=='inventory_ast'); scope={'ast':ast}; exec(compile(ast.Module(body=[function],type_ignores=[]),'immutable AST inventory','exec'),scope)
+source=git('show',HEAD+':tools/test_workflow_assurance.py'); assert sha(source)=='06eba273dbfd615df7f0ea3b6b52592ed208f9ec267b52a1e06996488b850f13'
+cases=scope['inventory_ast'](source); assert len(cases)==len(set(cases))==48
+passes=[t[5:] for j,s,t in rows if j=='fixtures_self_test' and s=='Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py' and t.startswith('PASS ')]
+assert [p for p in passes if p in cases]==cases
+observer=next(n for n in ast.parse(source).body if isinstance(n,ast.FunctionDef) and n.name=='controls_foreign_observer')
+aux=[n.args[0].value[5:] for n in ast.walk(observer) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='print' and n.args and isinstance(n.args[0],ast.Constant) and isinstance(n.args[0].value,str) and n.args[0].value.startswith('PASS ')]
+assert len(aux)==1 and [p for p in passes if p not in cases]==aux
+runner=ast.parse(git('show',HEAD+':tools/test_receipt_candidate_batching.py')); assignments={t.id:n.value for n in runner.body if isinstance(n,ast.Assign) for t in n.targets if isinstance(t,ast.Name)}; new_checks=list(ast.literal_eval(assignments['CHECKS'])); assert len(new_checks)==4
+for job,step in [('fixtures_self_test','Run bash tools/fixtures_self_test.sh'),('convergent_review','Run fixture self-test')]:
+ payloads=[t for j,s,t in rows if j==job and s==step]
+ assert payloads.count('SELF-TEST OK: 166/166 fixtures accounted for, 0 failed')==1
+ assert [t[5:] for t in payloads if t.startswith('PASS ') and t[5:] in new_checks]==new_checks
+ assert payloads.count('OK   receipt-candidate-batching four focused checks')==1
+ for case in ('ci-candidate-bound','ci-blocker-rejected'): assert payloads.count('OK   workflow-assurance '+case)==1
+frames=[]
+for path in sorted(O.glob('*.execution.json')):
+ f=json.loads(path.read_bytes()); expected_exit=1 if path.name=='watch.execution.json' else 0
+ assert f['actual_exit']==expected_exit and not f['timed_out'] and f['exercised_revision']==HEAD and f['child_pid']>0
+ for stream in ('stdout','stderr'):
+  ref=f[stream]; raw=Path(ref['path']).read_bytes(); assert sha(raw)==ref['sha256'] and len(raw)==ref['bytes']
+ frames.append(dict(path=path.name,actual_exit=expected_exit))
+assert 'connection timed out' in (O/'watch.stderr.txt').read_text()
+qualified=Path('/home/cnross/.tmp/nizam-gh-collector-repair2-build/bin/gh'); assert sha(qualified.read_bytes())=='5eb17f67b155d2595267b6aa8c030ca8def95c6f4fb4216570708b44eef06075'
+feedback_frame=json.loads((O/'terminal-feedback.execution.json').read_bytes())
+report=dict(role='Read-only CI delivery observer',observation_complete=True,all_required_checks_succeeded=True,pr_number=105,run_id=run['id'],run_attempt=1,event=run['event'],head=HEAD,base=BASE,workflow_conclusion=run['conclusion'],terminal_at=max(j['completed_at'] for j in jobs),jobs={j['name']:dict(id=j['id'],conclusion=j['conclusion']) for j in jobs},required_checks={c['name']:c['conclusion'] for c in rollup},actual_checkout=CHECKOUT,checkout_tree=git('rev-parse',CHECKOUT+'^{tree}').decode().strip(),checkout_parents=[BASE,HEAD],checkout_commit_bytes_retained='checkout-commit.stdout.txt',immutable_checkout_pins=pins,physical_source9_hashes=receipts[0][1]['source_sha256'],pin_scope='Two physical receipts cover their explicit nine paths; API and runner hashes bind immutable checkout Git blobs.',collector_revision=HEAD,coverage=dict(default_ordered_cases=cases,auxiliary_pass_literals=aux,fixture_file_inventory_per_shell_job='166/166',new_ordered_checks_per_shell_job=new_checks),feedback=dict(snapshot_at=feedback_frame['ended_at'],pagination_complete=True,reviews=0,review_threads=0,comments=1,retained_nonblocking_ci1_status_comment=dict(id=comments[0]['databaseId'],author=comments[0]['author']['login'],body_sha256=sha(comments[0]['body'].encode()))),qualified_log=dict(path='terminal-logs.stdout.txt',bytes=(O/'terminal-logs.stdout.txt').stat().st_size,sha256=sha((O/'terminal-logs.stdout.txt').read_bytes()),lines=len(rows),observed_cleanup_footer_labels=dict(footers),collector_cli_sha256=sha(qualified.read_bytes())),verified_frames=frames,original_watch_outcome='Actual1 at03:23:26Z from network TCP read timeout; original raw streams retained. Subsequent bounded metadata observed the same live workflow, which later completed success. No watcher/CI restart.',historical_ci1='Run38831271485 at441d remains failed; original negative evidence retained in pr105-terminal1. This report does not rebind historical QA or Source123 proof.',scope='Delivery metadata and AST-only static inventory inspection. No product import, test execution, fresh QA/gate authorship, CI restart, push, merge or lifecycle-state edit. Root owns independent admission and merge. This factual report precedes its own separate execution frame.')
+p=O/'report.json'; assert not p.exists(); p.write_text(json.dumps(report,indent=2)+'\n'); print(json.dumps(dict(observation_complete=True,required_checks_successful=6,jobs_successful=5,ordered_default_cases=48,fixture_files_per_shell_job=166,new_checks_per_shell_job=4,checkout=CHECKOUT,log_bytes=report['qualified_log']['bytes'])))

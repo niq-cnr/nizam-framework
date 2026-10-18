@@ -12,6 +12,7 @@ import importlib.util
 import json
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -62,6 +63,88 @@ def command_for(case: Path, output: Path) -> list[str]:
 
 def run_case(case: Path, output: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command_for(case, output), cwd=ROOT, text=True, capture_output=True, check=False)
+
+
+WRAPPER = ROOT / 'tools/linux_trial_sandbox.sh'
+ADAPTER = ROOT / 'tools/isolated_trial_adapter.py'
+NAMESPACES = ['unshare', '--user', '--map-root-user', '--net', '--ipc', '--uts', '--pid', '--fork', '--mount-proc']
+
+
+def execute(command, expected, label, cwd):
+    result = subprocess.run(command, cwd=cwd, text=True, capture_output=True, timeout=30)
+    print(f'{label}: EXIT: {result.returncode} (expected {expected})', flush=True)
+    if result.stdout: print(result.stdout, end='')
+    if result.stderr: print(result.stderr, end='', file=sys.stderr)
+    if result.returncode != expected:
+        raise RuntimeError(f'{label}: expected {expected}, got {result.returncode}')
+
+
+def script(path, contents):
+    path.write_text(contents)
+    path.chmod(0o755)
+    return path
+
+
+def sandbox_command(trial, runner):
+    return [str(WRAPPER), '--root', str(trial), '--runner', str(runner), '--', str(runner)]
+
+
+def adapter_command(adapter, trial, runner):
+    return [str(adapter), '--root', str(trial), '--runner', str(runner), '--', str(runner)]
+
+
+def exercise_cross_files_network(scratch):
+    trial = scratch / 'cross-trial'; trial.mkdir()
+    sentinel = scratch / 'sibling-secret'; sentinel.write_text('actual outside secret\n')
+    file_probe = script(scratch / 'file-probe.py',
+        '#!/usr/bin/env python3\nimport errno,pathlib\n'
+        f'p=pathlib.Path({str(sentinel)!r})\n'
+        'try:p.read_bytes()\n'
+        'except OSError as e:raise SystemExit(0 if e.errno==errno.EACCES else 51)\n'
+        'raise SystemExit(40)\n')
+    execute(sandbox_command(trial,file_probe),0,'intact sibling-file boundary',trial)
+    # Namespaces remain intact; only Landlock is absent in this control.
+    execute(NAMESPACES+[str(file_probe)],40,'Landlock omitted; namespaces intact',trial)
+    with socket.socket() as listener:
+        listener.bind(('127.0.0.1',0)); listener.listen(8)
+        port = listener.getsockname()[1]
+        with socket.create_connection(('127.0.0.1',port),timeout=3):
+            print(f'LIVE LISTENER: reachable outside sandbox on port {port}',flush=True)
+        peer,_ = listener.accept(); peer.close()
+        network_probe = script(scratch / 'network-probe.py',
+            '#!/usr/bin/env python3\nimport errno,socket\n'
+            's=socket.socket();s.settimeout(3)\n'
+            f'try:s.connect(("127.0.0.1",{port}))\n'
+            'except OSError as e:\n'
+            ' if e.errno in (errno.ECONNREFUSED,errno.ENETUNREACH,errno.EHOSTUNREACH,errno.ETIMEDOUT):raise SystemExit(0)\n'
+            ' raise SystemExit(52)\n'
+            'raise SystemExit(41)\n')
+        execute(sandbox_command(trial,network_probe),0,'intact network boundary',trial)
+        # The production Landlock adapter still runs; only namespaces are absent.
+        execute(adapter_command(ADAPTER,trial,network_probe),41,'namespaces omitted; Landlock intact',trial)
+        peer,_ = listener.accept(); peer.close()
+
+
+def exercise_generated_execution(scratch):
+    trial = scratch / 'exec-trial'; trial.mkdir()
+    probe = script(scratch / 'execution-probe.py',
+        '#!/usr/bin/env python3\nimport errno,os,pathlib\n'
+        'p=pathlib.Path("generated.sh")\n'
+        'p.write_text("#!/bin/sh\\nexit 42\\n")\n'
+        'p.chmod(0o755)\n'
+        'try:os.execv(str(p.resolve()),[str(p.resolve())])\n'
+        'except OSError as e:raise SystemExit(0 if e.errno==errno.EACCES else 53)\n'
+        'raise SystemExit(54)\n')
+    execute(sandbox_command(trial,probe),0,'intact generated-execution boundary (EACCES only)',trial)
+    adapter_source = ADAPTER.read_text()
+    needle = 'trial_access = handled & ~EXECUTE'
+    if adapter_source.count(needle) != 1:
+        raise RuntimeError('generated-execution mutant anchor is not unique')
+    mutant = script(scratch / 'execute-permitted-adapter.py',adapter_source.replace(needle,'trial_access = handled'))
+    execute(NAMESPACES+adapter_command(mutant,trial,probe),42,'generated execution permitted; namespaces and Landlock retained',trial)
+    # A nonexistent interpreter must be a setup failure, never a confinement pass.
+    bad_probe = script(scratch / 'bad-interpreter-probe.py',probe.read_text().replace('#!/bin/sh\\nexit 42\\n','#!/nonexistent-nizam-test-interpreter\\nexit 42\\n'))
+    execute(NAMESPACES+adapter_command(mutant,trial,bad_probe),53,'missing interpreter rejected as setup error',trial)
 
 
 UNSUPPORTED_REASON_PREFIX = "UNSUPPORTED: user-namespace isolation unavailable"
@@ -818,28 +901,7 @@ class SemanticMutationTests(unittest.TestCase):
 
     @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_cross_trial_files_and_network(self) -> None:
-        probe = self.temp / "isolation-probe.py"
-        sentinel = self.temp / "sibling-secret"
-        sentinel.write_text("secret", encoding="utf-8")
-        probe.write_text(
-            "#!/usr/bin/env python3\n"
-            "import pathlib,socket,sys\n"
-            "sentinel=pathlib.Path(sys.argv[-1])\n"
-            "try: sentinel.read_text(); raise SystemExit(40)\n"
-            "except (PermissionError,FileNotFoundError): pass\n"
-            "try: socket.socket().connect(('127.0.0.1',9)); raise SystemExit(41)\n"
-            "except OSError: pass\n"
-            "raise SystemExit(0)\n",
-            encoding="utf-8",
-        )
-        probe.chmod(0o755)
-        trial_root = self.temp / "trial-root"
-        trial_root.mkdir()
-        result = subprocess.run([
-            str(LINUX_SANDBOX), "--root", str(trial_root), "--runner", str(probe),
-            "--", str(probe), str(sentinel),
-        ], cwd=trial_root, text=True, capture_output=True, check=False)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        exercise_cross_files_network(self.temp)
 
 
     def _git_repo(self) -> tuple[Path, str, str]:
@@ -939,26 +1001,7 @@ class SemanticMutationTests(unittest.TestCase):
 
     @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_execution_of_runner_generated_trial_file(self) -> None:
-        probe = self.temp / "execution-probe.py"
-        probe.write_text(
-            "#!/usr/bin/env python3\n"
-            "import os,pathlib,sys\n"
-            "generated=pathlib.Path('generated.sh')\n"
-            "generated.write_text('#!/bin/sh\\nexit 0\\n')\n"
-            "generated.chmod(0o755)\n"
-            "try: os.execv(str(generated.resolve()), [str(generated.resolve())])\n"
-            "except PermissionError: raise SystemExit(0)\n"
-            "except OSError: raise SystemExit(0)\n"
-            "raise SystemExit(42)\n",
-            encoding="utf-8",
-        )
-        probe.chmod(0o755)
-        trial_root = self.temp / "execute-trial"
-        trial_root.mkdir()
-        result = subprocess.run([
-            str(LINUX_SANDBOX), "--root", str(trial_root), "--runner", str(probe), "--", str(probe),
-        ], cwd=trial_root, text=True, capture_output=True, check=False)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        exercise_generated_execution(self.temp)
 
     @requires_user_namespace_isolation
     def test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files(self) -> None:

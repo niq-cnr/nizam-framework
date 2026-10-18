@@ -2,10 +2,25 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.12
+version: 0.65.17
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.17"
+    date: "2026-10-17"
+    summary: "Post-release refresh (the 0.51.0 precedent): the Current position disposition line rolls from 'Release in preparation: v1.6.0' to 'Latest released tag: v1.6.0' carrying the observed facts -- annotated tag v1.6.0 at reviewed PR #113 merge 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, release.yml run 39008222975 succeeded, GitHub Release published 2026-10-17T05:59:26Z and marked Latest, tag bootstrap rehearsal passed. The v1.5.0 prior-release record and all historical snapshots, phase records and budgets are preserved untouched."
+  - version: "0.65.16"
+    date: "2026-10-17"
+    summary: "Record v1.6.0 release preparation: the Current position section gains the 'Release in preparation: v1.6.0' disposition line (preparation only; the annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.6.0' roll land only in the post-tag closeout). The v1.5.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
+  - version: "0.65.15"
+    date: "2026-10-16"
+    summary: "Refresh the current section after the 13-scope audit: the recovery2 handover is superseded by the operator's active directive ('audit the project and planning and ready for further development'); feature 129 is complete (PR #109 96cd3573, approved QA, Source5 adopted 5/5 under recorded authority) and feature 130 is active at pre-contract stage; 021/133 is delivered (PR105 bfd15d10, five-success main CI) under the retained budget exception. Historical snapshots preserved untouched."
+  - version: "0.65.14"
+    date: "2026-10-16"
+    summary: "Refresh stopped recovery handover with verified B2 and monitor failures, provisional alternatives and unexecuted accounting assembly."
+  - version: "0.65.13"
+    date: "2026-10-16"
+    summary: "Publish current020 handover, verbatim dogfooding authority and rejected Source3; preserve held recovery/accounting checkpoints and historical snapshots."
   - version: "0.65.12"
     date: "2026-10-16"
     summary: "Record immutable133 cost variance and bounded delivery exception; preserve budgets and history, and distinguish successful old main CI from pending new delivery."
@@ -243,7 +258,43 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — locally complete 021 / delivery pending, 2026-10-16
+## Current position — audit-refresh, 2026-10-16
+
+The 2026-10-16 recovery2 handover goal (branch `chore/handover-2026-10-16-recovery2`,
+checkpoint `b07b1e3c`) is **SUPERSEDED**: the operator's active directive is now
+"audit the project and planning and ready for further development". Work continues
+on branch `fix/start-path-gates` (HEAD `54c6a5f3`, clean tree). The historical
+handover packets and all snapshot sections below retain their dated facts.
+
+Phase **020** is active under H-PHASE-020. Feature **129** (SBCL loop and confirmed
+cancellation) is **COMPLETE**: approved contract `.agent/contracts/129.json`, canonical
+QA `.agent/qa/129.json` approved, merged via PR #109 (`96cd3573`); Source5 was adopted
+(`tools/sbcl_session_loop.lisp` at HEAD) and the 129-source circuit reads 5/5 under the
+recorded operator extension (`.agent/evidence/129/source5-authority1.json`). Feature
+**130** (hermetic committed-source acceptance) is the active feature at its
+pre-contract stage — no contract yet, implementation not started; the environment is
+verified green at HEAD (SBCL 2.2.9.debian; `python3 tools/test_runtime_session.py
+--check sbcl-admission --require-sbcl` exit 0). Remaining phase-020 product headroom is
+632 lines against 130's estimate of 750, a recorded non-halting variance. Features
+**131/132** remain PENDING behind 130 in the 020 order 129→130→131→132. Phase **019**
+(features 124–125) remains the declared next phase after 020.
+
+Phase **021** / feature **133** is complete and delivered: PR105 merged as `bfd15d10`
+and the five-success main CI proof is recorded in run_state (`133-main-hosted-delivery`);
+its budget gate retains the recorded delivery exception (3,024 against the 2,600
+ceiling, `budget_gate_passed` false under standing operator authority).
+
+Open debt is limited to NDEBT-034 and NDEBT-040 (both Low); NDEBT-034 awaits an
+operator close decision (its deferral trigger is extinct). Comparative superiority
+remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 adapter
+checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
+Current coordination is in [run_state](../../.agent/run_state.json); the live status
+section is this one.
+
+Latest released tag: v1.6.0 (MINOR) — RELEASED 2026-10-17 at `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e` (PR #113); `release.yml` run 39008222975 succeeded and the GitHub Release published at `2026-10-17T05:59:26Z` is marked Latest.
+
+
+## Historical snapshot — position — locally complete 021 / delivery pending, 2026-10-16
 
 Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
 Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).

@@ -1,0 +1,46 @@
+$ tmp=$(mktemp -d) && git clone --quiet --branch v1.6.0 https://github.com/niq-cnr/nizam-framework.git "$tmp/nizam" && cd "$tmp/nizam" && bash bootstrap.sh --tag v1.6.0 --expected-sha "$(git rev-parse v1.6.0^{commit})" && echo "BOOTSTRAP REHEARSAL OK: $tmp/nizam"
+Note: switching to '4e7db5a47d753555abd4d724c5d16f2b5eb86c3e'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: cloning https://github.com/niq-cnr/nizam-framework.git at pinned tag v1.6.0 (--depth 1)...
+Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.0zCfNS'...
+Note: switching to '4e7db5a47d753555abd4d724c5d16f2b5eb86c3e'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Updating files:  96% (16331/16948)Updating files:  97% (16440/16948)Updating files:  98% (16610/16948)Updating files:  99% (16779/16948)Updating files: 100% (16948/16948)Updating files: 100% (16948/16948), done.
+bootstrap.sh: staging governance payload in ./.nizam-stage.ox4Yuc...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 94 indexed path(s) resolve under ./.nizam-stage.ox4Yuc.
+bootstrap.sh: recording provenance (framework_version=1.6.0, tag=v1.6.0, resolved_sha=4e7db5a47d753555abd4d724c5d16f2b5eb86c3e)...
+bootstrap.sh: install complete. Governance payload version 1.6.0 (tag v1.6.0) is now at '.nizam'.
+BOOTSTRAP REHEARSAL OK: /home/cnross/.tmp/tmp.YI1KYuatfh/nizam
+EXIT:0
+CLONE_PATH:/home/cnross/.tmp/tmp.YI1KYuatfh/nizam

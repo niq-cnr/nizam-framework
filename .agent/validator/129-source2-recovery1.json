@@ -1,0 +1,86 @@
+{
+  "review_id": "129-source2-recovery1",
+  "role": "Independent Validator structural recovery assessment; not Mode B, QA, source author or bundle reviewer",
+  "scope": "niq-cnr/nizam-framework only; installed immutable governance; no source/test/contract/state/installed changes or runtime rerun",
+  "review_base_revision": "e86ce1b8b3d35a3d7cbec1f266b41d01445b5815",
+  "candidate_revision": "f9fe6d441a94a94798bd42071827b4f2d264be49",
+  "imported_evidence_revision": "cf4bb78a28792fa93944ea45e7fc1121d54f84ee",
+  "contract": ".agent/contracts/129.json:69-90 (approved)",
+  "frozen_bundle": ".agent/evidence/129/frozen-bundle2.json; runner a61a2ec17e729a6c6ea0b9090a639beb0903db49c4d9869b948d908d568bdf1e; identity 342a1e113346bdbc071dc28008bef0c843b72c5d9464ec5db7dad0b14670fcb2",
+  "diagnosis": "Executed acceptance false-fail, another latent fixture false-fail, and two independent static product defects; no acceptance decision",
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "F1",
+      "class": "executed_fixture_false_fail",
+      "refs": [
+        "tools/test_runtime_session.py:2281,2300@candidate",
+        "tools/test_runtime_session.py:1903-1908@candidate",
+        ".agent/evidence/129/implementation2/public-validation2/printing.execution.json",
+        ".agent/evidence/129/implementation2/public-validation2/printing.stderr.txt"
+      ],
+      "finding": "Printing selector exited2 because final same-session nonce live-11 was refused exit1/inconsistent_image after a real evaluate condition. That fixture defines condition/function and writes files. Contract capture requires quarantine when inconsistent; methodology/11_sbcl_runtime_binding.md:88-93 requires quarantine when consistency cannot be established. No approved requirement demands evaluate-condition image_consistent=true.",
+      "required_change": "Acceptance author must permit honest quarantine and obtain any subsequent execution positive in a fresh or explicitly reconstructed image. Preserve actual condition/capture/overflow assertions and failed load/compile false-consistency/quarantine. Do not set evaluate consistency true to satisfy this control."
+    },
+    {
+      "id": "F2",
+      "class": "latent_fixture_false_fail_static_only",
+      "refs": [
+        "tools/test_runtime_session.py:1997-2003@candidate",
+        "tools/runtime_session.py:837-840@candidate",
+        "tools/test_runtime_session.py:1775-1785@candidate"
+      ],
+      "finding": "Unresolved-capture branch compares outstanding_operation_ref to bare operation_id. Controller publishes the absolute operation-record path, as the other continuity checks expect. A legitimate stuck capture therefore fails the continuity assertion before its cancellation/death proof. Metadata-only Source2 did not execute this branch.",
+      "required_change": "Acceptance author must compare the canonical operation-record reference and retain the independent operation/session/generation/lease and actual live-process checks."
+    },
+    {
+      "id": "S1",
+      "class": "concrete_static_product_defect_not_executed",
+      "refs": [
+        "tools/runtime_session.py:984-1003@candidate",
+        "tools/runtime_session.py:702-722@candidate",
+        ".agent/contracts/129.json:77",
+        ".agent/evidence/129/interface-intent1.json:cancel_timing"
+      ],
+      "finding": "stop_child observes only the Popen leader. If TERM kills that leader while an owned same-group descendant ignores TERM, wait returns and KILL is skipped; early already-dead leader also returns true. end_generation can then publish terminated, clear busy and mark ended without establishing owned runtime-group death. This finding concerns the contracted group boundary, not rollback of arbitrary external resources.",
+      "required_change": "Architectural Source3 must retain a proven owned group identity, perform bounded group escalation/death observation independently of leader exit, and retain unknown/busy when that boundary cannot be established; never broaden killing to unrelated processes."
+    },
+    {
+      "id": "S2",
+      "class": "concrete_static_product_defect_not_executed",
+      "refs": [
+        "tools/runtime_session.py:724-733,759-760@candidate",
+        "tools/runtime_session.py:962-970@candidate",
+        "tools/runtime_session.py:248-258,875@candidate",
+        ".agent/evidence/129/interface-intent1.json:cancel_timing"
+      ],
+      "finding": "Cancellation deadline is checked only after selector callbacks. serve synchronously waits up to CONTROL_SECONDS=5 for an accepted client frame; reattach source_provenance also performs synchronous work up to5s. Such work can postpone an already due min(1s,requested) cancellation escalation. Selector timeout shortening alone does not bound these callbacks.",
+      "required_change": "Architectural Source3 must keep deadline servicing independent of blocking client/request/provenance work, or bound all such work by the nearest deadline. Preserve request identity, durable cancel_requested-before-send, and observed-stop semantics."
+    }
+  ],
+  "full_source_static_sweep": [
+    "Read all1150 Python and280 Lisp candidate lines, plus full frozen live-fixture dispatch, helpers and negative-control routing. Candidate bytes independently SHA256 matched supplied identities.",
+    "Admission/payload/transport: selected-runtime validation154-216/473-545; duplicate/identity/attempt/busy/quarantine guards812-848; correlated result parsing635-700; atomic records134-151. No additional concrete defect observed in these paths; static inspection is not live proof.",
+    "Capture/printing: worker-local bindings190-210; handler-bind213-220 captures before nonlocal unwind; active frame/restart metadata120-154; bounded streams16-35 and timers124-150/224-227; single-byte omission matches frozen interface. No unconditional evaluate-consistency change is justified.",
+    "Cancellation: durable request872-879; one correlated interrupt271-277; worker unwind231-233 and actual death/join235-249 precede result; controller accepts truthful cancelled/image_consistent=false666-693 and preserves terminal/idempotent cases866-867. Remaining cancellation/termination tests were not executed in this review.",
+    "Wait/reattach: pending lane and deadline wait responses724-764/939-960; handoff identity/source checks915-937; stale/busy guards784-858. S2 limits responsiveness. Static evidence does not establish process continuity or all race behavior."
+  ],
+  "remaining_fixture_applicability_sweep": [
+    "live_cancel1798-1826 accepts cancelled without requiring image_consistent=true; no subsequent same-session nonce. Completion-winning race uses a fresh peer1820-1823. Hostile cancellation2007-2017 accepts confirmed cancellation with false consistency and then requires refusal; F2 precedes that conditional branch.",
+    "All other final nonce sites follow observed completed gates1694-1695/1761/1794 or explicit new-generation reconstruction1846-1851; no additional concrete same-session post-cancellation false-fail observed. LiveSession.cleanup1572-1586 closes then independently stops scratch processes; it is cleanup, not product termination proof.",
+    "Capture late/missing-restart/missing-frame negative controls route2311-2312 and are present in recorded capture exit0. Printing unbounded/print-level/length/circle controls2313-2326 follow F1 and remain unexecuted in printing2; do not inherit their success. Cancellation premature/mismatch, generation reuse, and case5 runtime-refusal controls2306-2328 remain pending. Each must still prove actual working-path progress plus exact intended rejection.",
+    "Zero-deadline termination2246-2256 requires observed process death after uninterruptible work; it does not demand clean cancellation. Case4 partial load2086-2109 requires false consistency and quarantine. Conditional hostile-stop cleanup/death guards2007-2017 are appropriate apart from F2; no runtime coverage inferred for metadata-only paths."
+  ],
+  "executed_evidence_limit": "Existing development admission0/capture0/printing2 only; 22 indexed raw files plus raw-index.json and stream hashes verified. No reproduction, new runtime result, complete seven-leaf proof, final Mode B, QA or acceptance pass. All eleven fresh QA commands plus exactly one independent adversarial check remain required.",
+  "missing_acceptance_coverage": [
+    "Corrected bundle independently reviewed/refrozen and baseline readmitted before Source resumes; printing negatives and remaining development leaves still pending; final independent Mode B, fresh QA and Root evidence gate pending."
+  ],
+  "unsupported_claims": [],
+  "required_next_gate": "Root admits this diagnosis, preserves all historical failures/counters and Source2=2/3, releases separate acceptance author correction addressing F1/F2, obtains distinct independent review/refreeze and refreshed unchanged-product baseline admission. Fixture repair must not consume Source3 or become a silent fourth attempt. Only after those gates may Root separately release bounded architectural Source3 for S1/S2. No product repair or reproduction is authorized by this report.",
+  "static_capture": ".agent/evidence/129/source2-recovery1/index.json",
+  "capture_note": "First static helper exited1 after identity/hash verification; first PID was not recorded and is unknown. Original capture/output/error retained. Root-released structural correction2 uses .agent/evidence/123/fresh-qa-capture1.py execute() by reference; static2.execution.json records actual PID/exit0 and review checkout revision. Candidate source is read as Git blobs at f9fe6d4, not executed. Only genuine public-CLI stdout is parsed as JSON; other command observations retain argv/line/exit/output digest and every candidate CLI error is parsed.",
+  "review_attempt": 2,
+  "counter_release": "e8db1c385bd30ddcca531f0c55b6238bdeb20f15:.agent/run_state.json circuit_breaker.129-source2-recovery-review=2/3; original frozen workspace base retained"
+}

@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "tools/test_runtime_session.py",
+    "--check",
+    "capture-before-unwind"
+  ],
+  "command": "PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp python3 tools/test_runtime_session.py --check capture-before-unwind",
+  "cwd": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+  "environment": {
+    "HOME": "/home/cnross",
+    "LANG": "en_US.UTF-8",
+    "LOGNAME": "cnross",
+    "PATH": "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.cargo/bin:/home/cnross/.nvm/versions/node/v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "PWD": "/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "SHELL": "/bin/bash",
+    "TERM": "dumb",
+    "TMPDIR": "/tmp",
+    "USER": "cnross"
+  },
+  "exit": 0,
+  "finished_at": "2026-10-16T10:28:54Z",
+  "index": 1,
+  "revision": "e47a645f947ccb2cce0f40eafe93a740e421487f",
+  "started_at": "2026-10-16T10:28:39Z",
+  "stderr_bytes": 0,
+  "stderr_excerpt": "",
+  "stderr_path": ".agent/evidence/129/qa5/command01.stderr.log",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 359189,
+  "stdout_excerpt": "LIVE_COMMAND {\"argv\": [\"/usr/bin/sbcl\", \"--version\"], \"pid\": 580427, \"exit\": 0, \"stdout\": \"SBCL 2.2.9.debian\\n\", \"stderr\": \"\", \"timeout\": false}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/sbcl\", \"--no-sysinit\", \"--no-userinit\", \"--non-interactive\", \"--eval\", \"(format t \\\"~&26d4597b7f52646cf94747b168a56acc:~D~%\\\" (+ 19 23))\"], \"pid\": 580428, \"exit\": 0, \"stdout\": \"This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.\\nMore information about SBCL is available at <http://www.sbcl.org/>.\\n\\nSBCL is free software, provided as is, with absolutely no warranty.\\nIt is mostly in the public domain; some portions are provided under\\nBSD-style licenses.  See the CREDITS and COPYING files in the\\ndistribution for more information.\\n26d4597b7f52646cf94747b168a56acc:42\\n\", \"stderr\": \"\", \"timeout\": false}\nSBCL_PREFLIGHT {\"executable\": \"/usr/bin/sbcl\", \"sha256\": \"2409c8befe0ca3d6309fcce4f820d8257ceff316a437b38115e228d9259f5670\", \"nonce\": \"26d4597b7f52646cf94747b168a56acc\", \"arithmetic\": 42}\nLIVE_REQUEST {\"action\": \"open-session\", \"request\": {\"session_id\": \"live\", \"requester\": {\"principal_kind\": \"agent\", \"role\": \"Orchestrator\", \"agent_id\": \"root\"}, \"owner\": {\"principal_kind\": \"agent\", \"role\": \"Generator\", \"agent_id\": \"owner\"}, \"purpose\": \"develop\", \"contract_id\": \"129\", \"step_key\": \"129-implementation\", \"attempt\": 1, \"run_state_path\": \"/tmp/n129-cwtbu6yg/run_state.json\", \"runtime\": \"sbcl\"}}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/python3\", \"/home/cnross/.grok/worktrees/workspace02-nizam-framework/subagent-01a14426-b6f8-7852-96e7-8132cc003862/tools/runtime_session.py\", \"open-session\", \"--root\", \"/tmp/n129-cwtbu6yg/state\", \"--request\", \"/tmp/n129-cwtbu6yg/live-request-1.json\"], \"pid\": 580430, \"exit\": 0, \"stdout\": \"{\\\"ok\\\": true, \\\"result\\\": {\\\"generation\\\": {\\\"counter\\\": 1, \\\"nonce\\\": \\\"2480916bb721bf3f96af465fe6baafb1\\\"}, \\\"lease_epoch\\\": 0, \\\"outstanding_operation_ref\\\": null, \\\"owner\\\": {\\\"agent_id\\\": \\\"owner\\\", \\\"principal_kind\\\": \\\"agent\\\", \\\"role\\\": \\\"Generator\\\"}, \\\"purpose\\\": \\\"devel\n...[excerpt truncated]...\n0, \"diagnostic_bytes\": 405, \"budget\": 16384, \"condition_ref_required\": false}\nLIVE_DIAGNOSTIC {\"operation_id\": \"live-25\", \"condition_ref\": \"/tmp/n129-cwtbu6yg/mutant-y3lfj4oc/fixture/state/live/diagnostics/live-25.json\", \"sha256\": \"5912a1289ec7f60120922a5ddf41ab9357c8f6e0bca82093dea16ee1f836679f\", \"bytes\": 405, \"content\": \"{\\\"condition\\\": {\\\"type\\\": \\\"N129-CONDITION-B7616DA81DE5DB2EF1A3502C\\\", \\\"text\\\": \\\"Trusted condition identity; project report omitted\\\", \\\"fallback\\\": true}, \\\"backtrace\\\": [], \\\"restarts\\\": [{\\\"name\\\": \\\"N129-RESTART-B7616DA81DE5DB2EF1A3502C\\\", \\\"description\\\": \\\"Active restart; project report omitted\\\"}, {\\\"name\\\": \\\"ABORT\\\", \\\"description\\\": \\\"Active restart; project report omitted\\\"}], \\\"truncated\\\": true, \\\"capture_failed\\\": false}\"}\nLIVE_CAPTURE_CALLBACK {\"invoked\": false, \"proof\": \"safe capture/fallback checked separately\"}\nLIVE_REQUEST {\"action\": \"close-session\", \"request\": {\"session_id\": \"live\", \"requester\": {\"principal_kind\": \"agent\", \"role\": \"Orchestrator\", \"agent_id\": \"root\"}, \"expected_generation\": {\"counter\": 1, \"nonce\": \"e7e0f9b84dbbe0b13f2c181b74098820\"}, \"expected_lease_epoch\": 0}}\nLIVE_COMMAND {\"argv\": [\"/usr/bin/python3\", \"/tmp/n129-cwtbu6yg/mutant-y3lfj4oc/candidate/tools/runtime_session.py\", \"close-session\", \"--root\", \"/tmp/n129-cwtbu6yg/mutant-y3lfj4oc/fixture/state\", \"--request\", \"/tmp/n129-cwtbu6yg/mutant-y3lfj4oc/fixture/live-request-28.json\"], \"pid\": 580875, \"exit\": 0, \"stdout\": \"{\\\"ok\\\": true, \\\"result\\\": {\\\"closed\\\": true, \\\"session_id\\\": \\\"live\\\"}}\\n\", \"stderr\": \"{\\\"control_real_cli_pid\\\": 580876, \\\"actual_exit\\\": 0, \\\"original_stdout\\\": \\\"{\\\\\\\"ok\\\\\\\": true, \\\\\\\"result\\\\\\\": {\\\\\\\"closed\\\\\\\": true, \\\\\\\"session_id\\\\\\\": \\\\\\\"live\\\\\\\"}}\\\\n\\\", \\\"original_stderr\\\": \\\"\\\"}\\n\", \"timeout\": false}\nLIVE_NEGATIVE_CONTROL {\"fault\": \"missing-frame\", \"expected_assertion\": \"CAPTURE_ACTIVE_FRAME\", \"observed_assertion\": \"BEHAVIOR_ASSERTION: CAPTURE_ACTIVE_FRAME\", \"result\": \"rejected\", \"accepted_product\": false}\nPASS capture-before-unwind\n",
+  "stdout_path": ".agent/evidence/129/qa5/command01.stdout.log",
+  "stdout_sha256": "92d81a98421fe3eae55ea9fb4a82658336e14f9fb9cb5d49b3bc9af3a6712892"
+}

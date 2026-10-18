@@ -1,0 +1,7 @@
+import ast,hashlib,json,pathlib
+p=pathlib.Path('.agent/evidence/phase020-closed-candidate-inventory1');v=json.loads((p/'preparation.json').read_text());source=(p/'assemble.py').read_bytes();ast.parse(source);assert hashlib.sha256(source).hexdigest()==v['assembler_sha256']
+for name,digest in v['inputs'].items():assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()==digest,name
+assert v['inputs']['.agent/evidence/phase020-candidate-accounting-preparation1/adapter.py']=='6db240cae85e763c076f38aec577e53506ddaae1b7a93dbd3212e8fc07661549'
+assert v['no_numeric_or_runtime_execution'] and v['pending']
+assert not (p/'inventory.json.gz').exists()
+print('PASS static syntax and exact input/helper pins; no assembler/count/adapter main or runtime executed. Inventory, END/heads, snapshot/tail/merge and exact review remain pending.')

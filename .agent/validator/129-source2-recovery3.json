@@ -1,0 +1,68 @@
+{
+  "review_id": "129-source2-recovery3",
+  "role": "Independent read-only branch-coverage and cause assessment only",
+  "review_base_revision": "448976e142a82d6bc459fb8f2bea2e78cb0e0518",
+  "counter": "129-source2-recovery-review3/3; Source remains2/3; no repeat or counter reset authorized",
+  "examined_candidate_revision": "fde4115b4468b7b9da412b1078294345a4f4a442",
+  "actual_evidence_revision": "d8415499577f9f23ff93a9475ffa409b1028379e",
+  "final_verdict": {
+    "approved": true
+  },
+  "approval_scope": "This completed diagnostic assessment only. Not S1 intended-red admission, product approval, Mode B, QA, fixture review, Source3 release or permission to execute the proposed witness.",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observed_facts": [
+    {
+      "refs": ".agent/evidence/129/source2-regression-red1/admission.execution.json; group-death.execution.json; group-death-driver.execution.json",
+      "finding": "Admission actually exited0 PID3995648. termination-ends-generation actually exited0 PID4000632; its expected-red driver exited1 PID4000574 because expected1 differed from actual0. Empty selector stderr and PASS termination-ends-generation are positive selector evidence, not an S1 semantic red."
+    },
+    {
+      "refs": ".agent/evidence/129/source2-regression-red1/group-death.stdout.txt:78,233,273-274; report.json:observed_controls",
+      "finding": "Primary descendant4001369 had parent/group leader4000639, recorded nonce/token/operation identity and continued pulse after direct TERM; analogous mutant-control descendant4001695 had leader4001576. The selector later passed its named-descendant-death assertion, unrelated-runtime survival, generation replacement/stale refusal, zero-deadline checks and generation-reuse negative exactly at NEW_GENERATION. This proves the exercised observations for those named processes; it does not enumerate all possible group members."
+    },
+    {
+      "refs": ".agent/evidence/129/source2-regression-red1/report.json:preservation; admission.capture-summary.json; group-death.capture-summary.json; .agent/evidence/129/source2-regression-root-admission1/admission.execution.json",
+      "finding": "Original captures report16355 physical rows/239 installed files and equal before/after inventories; indexed raw hashes independently verified. Root admission actually exited0 PID4020187. None of these records is rebound to a future Source3 candidate."
+    }
+  ],
+  "cause_and_unknowns": [
+    {
+      "refs": "candidate tools/test_runtime_session.py:1920-1933; group-death.stdout.txt:78-274",
+      "finding": "The frozen scenario first proves a TERM-resistant descendant, then starts an uninterruptible live_gate operation before cancellation. It measures outcomes, not the controller TERM/leader-exit/KILL event sequence. The observed PASS establishes that this scenario did not expose S1. It does not establish that the leader exited early or that stop_child bypassed KILL."
+    },
+    {
+      "refs": "candidate tools/runtime_session.py:993-1003; tools/test_runtime_session.py:1922",
+      "finding": "A leader staying alive beyond0.25s would cause the existing SIGKILL group branch to stop the named descendant and could explain this positive. The uninterruptible operation makes that a plausible hypothesis only. There is no captured signal-delivery/leader-exit chronology proving it; no chronology is inferred from elapsed total CLI time or terminal status."
+    }
+  ],
+  "S1_static_disposition": {
+    "status": "Remains a concrete conditional static defect; no observed S1 semantic failure established by this run.",
+    "refs": [
+      "candidate tools/runtime_session.py:984-1003",
+      ".agent/contracts/129.json:77",
+      ".agent/evidence/129/interface-intent1.json:cancel_timing"
+    ],
+    "finding": "stop_child returns true immediately for an already exited leader986-987. For a live leader, it escalates only when leader wait exceeds0.25s995-998, then its success predicate1003 observes only that leader. Neither success path observes remaining live members of the proven runtime group. Therefore if the leader exits while an owned same-group descendant remains live, the routine can report group-stop success without group death. The actual positive does not negate that conditional control-flow defect or prove that its premise occurred.",
+    "all_callers": "end_generation705 uses success to publish terminated/clear outstanding/set ended711-722. Public close898-913 uses it to publish closed and possibly terminated. cleanup1013-1021 calls it without checking the return before closing listener/lock; normal close and ended-generation reconstruction both reach this cleanup via supervisor finally1082-1086. The second call cannot repair a surviving group after leader death because986-987 returns early. These are static caller consequences, not observed failures in the captured positive."
+  },
+  "minimal_public_API_witness_proposal": [
+    "Separately released independent Evaluator diagnostic only: keep frozen d186 runner/product bytes unchanged. Use existing open-session/submit-operation/poll-operation/close-session calls and exactly the already-native-qualified group_descendant_fixture/live_group_descendant form1829-1863. No new SBCL exit/signal primitive, product hook, monkeypatch or runner edit is needed.",
+    "Establish actual SBCL nonce42/string positives, owner/lease/generation/attempt and private supervisor/group identity. Submit the qualified descendant spawn and observe its completed result, outstanding_operation_ref=null and idle live leader. Retain the same direct-descendant TERM-resistance/pulse/nonce/PID/start-token/PGID checks; do not start live_gate or another uninterruptible operation.",
+    "Issue public lifecycle close-session with the valid Orchestrator identity. Independently observe the existing leader and descendant tokens and fresh pulse throughout close, and retain exact CLI response/actual exit. Inspect before any fixture finally cleanup or45-second descendant backstop. Preserve an unrelated process/sentinel and governed attempt bytes.",
+    "A successful closed response plus independently observed dead original leader and the same still-live descendant producing a newer pulse would establish an actual owned-group survivor after reported stop. That is a discriminating S1 witness; require all three observations rather than assuming TERM killed the leader promptly. No invented TERM-to-leader chronology is needed to prove the mismatch.",
+    "If close instead stops both, retain that positive and report no S1 red. If setup/ownership/response/observation is ambiguous, classify it as such. If the leader never exits early, this proposal has not exercised the missing branch. Do not weaken assertions, introduce an unqualified primitive, relabel success as failure or repeat merely to force the expected result.",
+    "After capturing the decisive observation or uncertainty, independently clean only the proven scratch processes with the existing bounded ownership/token rules. Cleanup must not supply the earlier product group-death observation. Root must separately admit any diagnostic result; this proposal authorizes no command now."
+  ],
+  "S2_boundary": "S2 was not run in the original stopped d841 capture. Root has separately released its first actual capture on unchanged fde; no S2 outcome is assumed or reported here.",
+  "protected_identities": {
+    "tools/runtime_session.py": "aae6a5cbe09435e39c29153469a9ca13f45065e6248ff70ca44f6ce9bc5d8fa5",
+    "tools/sbcl_session_loop.lisp": "2ad3d3b633637e305e428169654929aec80577f55d90477338071247cb5f0cf9",
+    "tools/test_runtime_session.py": "d186e915424040b32ee9c232d952a170ec0a806cf415126abf34a8a81eda0431",
+    "contract_sha256": "71c6374a6bd88a1110de3fceb612a1392f0b203736e13843caace9fec52c26e6",
+    "bundle3_identity": "bd6d2638a0a636993047b09e3aca985e1facee6472abf15d5d3fa225d4c2fe7b"
+  },
+  "required_next_gate": "Root preserves the actual S1 positive and missing-red classification, admits the separately captured S2 result only on its own evidence, then decides whether to release the bounded public idle-close witness. Source3 remains held; architecture-plan approval45fca88e and its Root admission do not establish S1 red or consume/reset Source2=2/3. No fourth recovery assessment or full bundle review is proposed.",
+  "evidence": ".agent/evidence/129/source2-recovery3/index.json; static1.execution.json actualexit0 child_pid4033695; frozen fresh-qa-capture1.py execute() by reference",
+  "limits": "Existing raw evidence and Git source/fixture reads only. No runtime/probe/test/product import, signal delivery, fixture/source/contract/state/installed changes, acceptance or Source3 release. Original positives and prior failures remain immutable."
+}

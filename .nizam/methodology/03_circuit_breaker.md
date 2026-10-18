@@ -2,10 +2,16 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
-version: 0.2.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-15"
+    summary: "Clarify evidenced cause routing with failed outcomes and unchanged max3 continuity."
+  - version: "0.3.0"
+    date: "2026-10-11"
+    summary: "Define governed attempts and predeclared probes with non-resetting cross-stage identity."
   - version: "0.2.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 safety repair: every attempt runs in an isolated worktree/snapshot from the last approved base; failure cleanup removes only that validated attempt root after evidence capture. The phase document is canonical and run_state is repaired idempotently as derived state, replacing the impossible cross-file atomic-write claim; the escalation cross-reference now points to Section 4 step 4."
@@ -71,6 +77,48 @@ attempt's evidence is captured from that root and then only that exact root is
 removed through the worktree/snapshot manager. A successful attempt's reviewed
 diff or commit is the only material promoted back to the feature branch. The
 shared tree is never recovered with repository-wide reset or clean commands.
+
+### 3.2 What counts as an attempt
+
+A governed attempt is one execution of a repeatable contracted step, identified
+by the stable tuple `contract_id`, `step_key` and `attempt`. Its classification,
+expected outcome and budget treatment MUST be declared before execution. A
+negative acceptance test within that execution can succeed by producing its
+predeclared expected rejection; an infrastructure failure remains a failure.
+
+An explicitly declared diagnostic probe is distinct from a governed attempt:
+its purpose, expected negative outcome and budget classification are recorded
+before it runs. A probe investigates a condition without delivering a repair.
+A failed repair MUST NOT be relabeled as a probe after its outcome is known,
+and a probe cannot deliver an uncounted repair or supply a new attempt budget.
+
+A new process, subagent, agent session, context reset, worktree, process
+generation, operation rename or stage handoff MUST NOT reset an existing
+counter. The same repair keeps its contract_id, step_key and attempt through
+those boundaries. Independently defined governed steps retain their own
+canonical counters; changing the stage name does not create a distinct step.
+
+The Orchestrator alone owns coordination and circuit counters; implementation
+agents read the current identity and preserve those fields. This definition
+changes neither Section 3's strategy ladder nor the three-attempt limit,
+isolation, cleanup or halt duties. Runtime continuity is specified in
+`10_live_runtime_sessions.md`; it creates no extra cause-specific retry budget.
+
+### 3.3 Evidence-based cause routing
+
+A selected infrastructure or semantic failure MUST retain its failed outcome and
+stable contract, step and allocated attempt identity. The Orchestrator selects
+immutable classification and actual wrapper-capture evidence; labels and hashes
+bind that evidence but do not authenticate its truth. Missing or inconsistent
+proof fails closed. A successful nested expected-negative control cannot make a
+failed outer wrapper successful or retroactively turn a repair into a probe.
+
+The optional `route_failed_attempt` library proposes infrastructure diagnosis or
+semantic repair for allocated attempts one and two, and halt for attempt three.
+It neither executes nor authorizes a retry. The strategy ladder, three-attempt
+limit, isolation and Section 4 escalation duties remain binding for either cause.
+A handoff preserves counters, budgets and prior history; process, agent, session,
+generation or stage changes create no additional cause-specific allowance.
 
 ## 4. Attempt 4 Is Forbidden — The Breach Procedure
 

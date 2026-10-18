@@ -1,0 +1,180 @@
+{
+  "contract_id": "release-v1.6.0",
+  "feature_id": "release-v1.6.0",
+  "name": "Prepare operator-authorized v1.6.0 MINOR release: changelog roll-up and version anchors (pre-tag; post-tag observed facts are the separate closeout contract's scope)",
+  "status": "approved",
+  "spec_ref": "methodology/06_release_train.md",
+  "base_revision": "d86e1160a60e21c485235741e30372facee0e9d9",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/release-v1.6.0-tag/<NN-name>.txt",
+        "purpose": "Externalized command output for every AT: exact invocation first, raw output, EXIT:<code> last; tag/workflow/bootstrap captures recorded only after actual external results, with the observed tag/commit/workflow facts they prove."
+      },
+      {
+        "path": ".agent/validator/release-v1.6.0-<name>.json",
+        "purpose": "Independent Mode A/B gate records with empty issue arrays required for approval."
+      },
+      {
+        "path": ".agent/qa/release-v1.6.0-<name>.json",
+        "purpose": "Independent evaluator contract-review and QA verdict records."
+      },
+      {
+        "path": ".agent/contracts/release-v1.6.0-closeout.json",
+        "purpose": "Post-tag close-out contract, mirroring the release-v1.5.0-closeout precedent: authored in this PR as status proposed (gated independently before execution); carries ALL observed-fact updates (ROADMAP Latest-released roll, operator_gates EXECUTED row, HANDOVER release note, manifest observed fact, README installed-payload line post-re-bootstrap) plus the post-release CHANGELOG Unreleased ledger refresh; executed only after the tag, release workflow and bootstrap rehearsal exist."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Roll the [Unreleased] section into a dated [1.6.0] section per release-train Section 4: keep all landed Unreleased bullets (features 115-119, 120-123, 126-128, 133, planning/maintenance/self-governance records), author the missing feature 129 entry with its explicit boundary (feature-scope complete; full-live qualification remains features 131/132), and add the release-tier note (MINOR per Section 3.2, no breaking governance changes). Do not rewrite released [1.5.0] or older sections."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "framework.version to 1.6.0 only; modules, capabilities and all other fields unchanged."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Version/change_log top entry 1.6.0 dated at release; accurate current payload/release status; historical entries preserved."
+      },
+      {
+        "path": "README.md",
+        "purpose": "Roll current release pins v1.5.0 -> v1.6.0: the implementation must end with exactly 7 'v1.6.0' occurrences (raw bootstrap URL, GOVERNANCE_TAG and --tag examples, release link) and exactly 1 remaining 'v1.5.0' occurrence \u2014 the installed-payload statement, which is closeout scope. Exact counts asserted by AT3's companion guard. Preserve operator GA declaration note and links."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Exactly three 1.6.0 anchors \u2014 the meta framework-version content value, the footer version span, and the tagged GitHub blob href for the operator-gates decision page \u2014 mirroring the v1.5.0 amendment; exact counts asserted by AT3's companion guard; zero remaining '1.5.0' occurrences. Pages publishes docs/guide only so sibling relative links would 404."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Bump document version/change_log; set the document's release disposition line, in the current-position section (the first '## Current'-prefixed section, '## Current position \u2014 ...'), to exactly 'Release in preparation: v1.6.0' (one line, PREPARED-clause per release_closeout.py, which accepts either disposition phrase naming the version); observed tag/commit/workflow facts and the 'Latest released tag: v1.6.0' roll land ONLY in the post-tag closeout contract, which replaces this same line in this same section; remove any v1.6.0 preparation bullet; preserve historical phase records and prior release lines."
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "Bump version/change_log with a dated PREPARED row for v1.6.0 under the recurring H-FRAMEWORK-RELEASE gate (preparation record, no execution claim); the observed EXECUTED facts (date, tag, commit, workflow run) are appended ONLY by the post-tag closeout contract; retain H-GA decision, exceptions and H-CONSOLIDATION outstanding status."
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Add a dated current-status note 'v1.6.0 release in preparation (tag pending)' above the historical snapshot; bump document version/change_log; historical bodies unchanged. Also refresh the PR-#112-era frontmatter description anchor that names the current release status (e.g. 'Current v1.5.0 release status' -> preparation wording). The release-EXECUTED note with observed facts is the closeout contract's scope."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Append a PREPARED v1.6.0 release-preparation note to the phase ledger (no observed facts, no execution claim); the observed post-release fact lands ONLY via the post-tag closeout contract; phase statuses and steps unchanged."
+      }
+    ]
+  },
+  "non_goals": [
+    "No changes to the installed .nizam/ payload in this repository beyond a reviewed, operator-authorized re-bootstrap performed AFTER the v1.6.0 tag exists; source edits never update the installed release automatically.",
+    "No rewriting, back-dating or re-tiering of released [1.5.0] or older CHANGELOG sections, the v1.5.0 GA decision, or historical dossier/phase evidence.",
+    "No source tool, schema, workflow, bootstrap, template, methodology, ecosystem or registry semantics changes; the version-anchor diff is documentation and pins only.",
+    "No contract or verdict resets: existing .agent/contracts/*.json records, validator/QA verdicts and run_state history remain immutable; this contract appends new records only.",
+    "Features 130, 131 and 132 are NOT part of this release: no feature-130 completion claims, and no full-live SBCL/runtime conformance claim for feature 129 (full-live qualification remains features 131/132 and is disclosed as pending in the release notes).",
+    "No superiority or comparative-performance claims: agentic-excellence material stays no-claim; the balanced comparative proposal in the Unreleased entries remains an unexecuted proposal with pinned sources only.",
+    "No tag creation, push, release publishing or merge by the Generator; those remain Orchestrator release mechanics executed only after dual-gate approval and AT completion (release-train Sections 2 and 6).",
+    "No whole-tree fixed-anchor byte guards: per NDEBT-040, any byte-guard assertions in this contract's scope checks target only the feature-list/contract JSON files or use parsed-JSON decomposition, so live documentation edits elsewhere cannot invalidate them."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: Full compliance passes on the release candidate, including schema-valid contracts and version/changelog consistency.",
+      "command": "bash tools/validate.sh",
+      "evidence": "01-validate-sh.txt",
+      "expected": "Exit 0; SUMMARY: 16 passed, 0 failed (verified 2026-10-16 at origin/main bfd15d10; C8 version-bump-vs-changelog runs on the PR diff, so the [1.6.0] section and anchor bumps must land together in one PR)"
+    },
+    {
+      "acceptance_test": "AT2: The installed v1.5.0 payload remains compliant against the candidate source tree before any post-tag re-bootstrap.",
+      "command": "bash .nizam/tools/validate.sh --payload",
+      "evidence": "02-installed-payload-validate.txt",
+      "expected": "Exit 0; installed-payload checks all PASS with exact payload inventory undisturbed (PYTHONDONTWRITEBYTECODE=1 for any installed Python tool invocation)"
+    },
+    {
+      "acceptance_test": "AT3: All release anchor groups agree with V=1.6.0 in the current working tree.",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr && python3 - <<'PY'\nfrom pathlib import Path\nreadme=Path('README.md').read_text()\nassert readme.count('v1.6.0')==7, readme.count('v1.6.0')\nassert readme.count('v1.5.0')==1, readme.count('v1.5.0')\nguide=Path('docs/guide/index.html').read_text()\nassert guide.count('1.6.0')==3, guide.count('1.6.0')\nassert guide.count('1.5.0')==0, guide.count('1.5.0')\nprint('README/guide version-occurrence counts exact: 7/1 and 3/0')\nPY",
+      "evidence": "03-release-closeout-pr.txt",
+      "expected": "Exit 0; five PASS groups and final V=1.6.0 summary from release_closeout.py, plus exact occurrence counts: README v1.6.0=7 / v1.5.0=1 (installed statement only), guide 1.6.0=3 / 1.5.0=0"
+    },
+    {
+      "acceptance_test": "AT4: Only the nine authorized product files plus framework-only release artifacts changed relative to this contract's committed base; untracked paths fail closed; byte-guards are NDEBT-040-safe (feature-list/contract JSON only, or parsed-JSON decomposition); changed planning docs carry bumped frontmatter versions.",
+      "command": "python3 - <<'PY'\nimport json,re,subprocess\nbase='d86e1160a60e21c485235741e30372facee0e9d9'\nproduct={'CHANGELOG.md','NIZAM.json','CONTEXT.md','README.md','docs/guide/index.html','docs/planning/ROADMAP.md','docs/planning/operator_gates.md','docs/planning/HANDOVER.md','docs/planning/manifest.json'}\ndef auxiliary(p):\n return p=='.agent/run_state.json' or p=='.agent/contracts/release-v1.6.0.json' or p=='.agent/contracts/release-v1.6.0-closeout.json' or bool(re.fullmatch(r'\\.agent/(validator|qa)/release-v1\\.6\\.0-[A-Za-z0-9_-]+\\.json',p)) or bool(re.fullmatch(r'\\.agent/evidence/release-v1\\.6\\.0-tag/[A-Za-z0-9_.-]+',p)) and '..' not in p or p.startswith('.agent/evidence/release-v1.6.0-contract/')\nr=subprocess.run(['git','diff','--name-status',base],check=True,text=True,capture_output=True)\nseen=set()\nfor l in r.stdout.splitlines():\n parts=l.split('\\t');assert len(parts)==2,l;status,p=parts\n if p in product: assert status=='M',(status,p);seen.add(p)\n else: assert auxiliary(p) and status in ('A','M'),(status,p)\nassert seen==product,(seen,product)\nfor p in subprocess.run(['git','ls-files','--others','--exclude-standard'],check=True,text=True,capture_output=True).stdout.splitlines(): assert auxiliary(p),p\n# NDEBT-040-safe parsed-JSON decomposition guards (no whole-tree byte anchors)\ncontract=json.load(open('.agent/contracts/release-v1.6.0.json'))\nassert contract['contract_id']=='release-v1.6.0' and contract['status'] in ('approved','implemented','complete')\nassert json.load(open('NIZAM.json'))['framework']['version']=='1.6.0'\nassert json.load(open('docs/planning/manifest.json'))['current_phase'] is not None\nimport re\ndef ver_at(rev,path):\n out=subprocess.run(['git','show',f'{rev}:{path}'],text=True,capture_output=True)\n if out.returncode!=0: return None\n m=re.search(r'^version:\\s*(\\S+)',out.stdout,flags=re.M)\n return m.group(1) if m else None\nfor path in ['docs/planning/ROADMAP.md','docs/planning/operator_gates.md','docs/planning/HANDOVER.md']:\n b=ver_at(base,path); c=ver_at('HEAD',path)\n assert b and c and b!=c,(path,b,c)\nprint('Scope guard passed: nine product files plus authorized release artifacts only; parsed-JSON guards intact; planning-doc frontmatter versions bumped')\nPY",
+      "evidence": "04-scope.txt",
+      "expected": "Exit 0; exact nine product paths plus only authorized contract/validator/QA/evidence additions; no fixed-anchor whole-tree byte guards; ROADMAP/operator_gates/HANDOVER frontmatter version strictly bumped vs base (parsed decomposition)"
+    },
+    {
+      "acceptance_test": "AT5: Era-safe at-tag verification (097/098 precedent): every version anchor is checked as it exists AT the published tag, after tagging, never from the local tree.",
+      "command": "python3 - <<'PY'\nimport json,subprocess\nT='v1.6.0'\nsha=subprocess.check_output(['git','rev-parse',T+'^{commit}'],text=True).strip()\nassert subprocess.run(['git','cat-file','-t',T],text=True,capture_output=True).stdout.strip()=='tag','annotated tag required'\nassert json.loads(subprocess.check_output(['git','show',T+':NIZAM.json'],text=True))['framework']['version']=='1.6.0'\nout=subprocess.check_output(['git','show',T+':CHANGELOG.md'],text=True)\nassert '## [1.6.0] - ' in out and '## [Unreleased]' in out.split('## [1.6.0]')[0]\nassert '**Minor release**' in out\nassert 'feature 129' in out and '131/132' in out,'feature 129 entry must disclose the full-live boundary'\nassert subprocess.run(['python3','.github/scripts/release_closeout.py','--mode','tag','--tag',T],text=True,capture_output=True).returncode==0\nprint('At-tag anchors consistent at',T,sha)\nPY",
+      "evidence": "05-at-tag-anchors.txt",
+      "expected": "Exit 0; annotated tag object, NIZAM.json 1.6.0 and changelog [1.6.0] section with feature-129 boundary verified via git show <tag>:<path> only"
+    },
+    {
+      "acceptance_test": "AT6: The release workflow succeeded on the merge commit and GitHub marks the release published and Latest.",
+      "command": "python3 - <<'PY'\nimport json,subprocess\nsha=subprocess.check_output(['git','rev-parse','v1.6.0^{commit}'],text=True).strip()\nruns=json.loads(subprocess.check_output(['gh','run','list','--workflow','release.yml','--json','databaseId,headSha,conclusion,status'],text=True))\nassert any(r['headSha']==sha and r['conclusion']=='success' for r in runs),runs\nrel=json.loads(subprocess.check_output(['gh','release','view','v1.6.0','--json','tagName,isDraft,isPrerelease,publishedAt,isLatest'],text=True))\nassert rel['tagName']=='v1.6.0' and not rel['isDraft'] and not rel['isPrerelease'] and rel['publishedAt'] and rel['isLatest']\nprint('Release workflow and publication verified for',sha)\nPY",
+      "evidence": "06-release-workflow.txt",
+      "expected": "Exit 0; release.yml success at the tagged merge commit and published non-draft Latest release"
+    },
+    {
+      "acceptance_test": "AT7: Tag bootstrap rehearsal: a fresh clone at --branch v1.6.0 bootstraps with --expected-sha and passes payload verification.",
+      "command": "tmp=$(mktemp -d) && git clone --quiet --branch v1.6.0 https://github.com/niq-cnr/nizam-framework.git \"$tmp/nizam\" && cd \"$tmp/nizam\" && bash bootstrap.sh --tag v1.6.0 --expected-sha \"$(git rev-parse v1.6.0^{commit})\" && echo \"BOOTSTRAP REHEARSAL OK: $tmp/nizam\"",
+      "evidence": "07-tag-bootstrap-rehearsal.txt",
+      "expected": "Exit 0; bootstrap.sh resolves the pinned tag to exactly the expected commit (resolved_sha matches the annotated tag target) and injects the payload; record the temp clone path and resolved_sha"
+    },
+    {
+      "acceptance_test": "AT8: The bootstrapped copy from AT7 validates clean in --payload mode.",
+      "command": "cd <AT7-clone-path> && PYTHONDONTWRITEBYTECODE=1 bash .nizam/tools/validate.sh --payload",
+      "evidence": "08-bootstrapped-payload-validate.txt",
+      "expected": "Exit 0; every installed-payload check passes on the fresh tag clone, proving consumers inherit a compliant v1.6.0 payload"
+    }
+  ],
+  "estimated_lines": 400,
+  "evidence_dir": ".agent/evidence/release-v1.6.0-tag/",
+  "evidence_convention": "NN-name.txt captures exact invocation first, raw output, EXIT:<code> last, plus applicable HEAD/resolved_sha; tag/workflow/bootstrap artifacts are recorded only after actual external results; evaluator reruns independently and references every capture in QA/readiness. Mirrors the release-v1.5.0-tag convention.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 4,
+    "human_authorized_extension": ".agent/evidence/release-v1.6.0-contract/recovery-authorization.json"
+  },
+  "dod_ref": "standard/definition_of_done.md",
+  "design_notes": {
+    "release_classification": "MINOR per methodology/06_release_train.md Section 3.2: new functionality landed since v1.5.0 (features 115-123, 126-129, 133 across phases 015-017/021 plus start-path gating and audit-readiness planning records) with no schema narrowing, no removed/renamed shipped files and no breaking governance change; the release tier note must record this classification.",
+    "changelog_rollup_gap": "The [Unreleased] section on origin/main (verified 2026-10-16 at bfd15d10) covers features 115-119, 120-123, 126-128 and 133 but has NO feature 129 entry even though ROADMAP records feature 129 complete (PR #109 merge 96cd3573, QA-approved); the roll-up must author it, stating feature-scope completion only and that full-live qualification deliberately remains features 131/132. Do not claim live conformance anywhere in release notes or anchors.",
+    "operator_decision": "On 2026-10-16 the operator authorized PR management and merge: 'manage, triage as necessary, your PR's and once clean merge as appropriate'. PR #112 (audit-readiness: planning current-view refresh + lifecycle re-anchoring) merges to main with green CI BEFORE this contract's implementation phase, so the release base already carries the audit-readiness current view.",
+    "implementation_gate": "Status stays proposed until independent Mode A and evaluator contract-review verdicts both approve with all issue arrays empty; the annotated tag v1.6.0 is cut and pushed by the Orchestrator only after both gates approve and AT1-AT4 pass on the committed candidate; AT5-AT8 then run against the real tag, workflow and bootstrap results.",
+    "verification_order": "AT1-AT4 run serially on the release PR branch; AT5-AT8 are close-out ATs that execute only after the tag and release exist and must capture the observed tag SHA, workflow run id and bootstrap resolved_sha. AT2 is captured ONCE, pre-re-bootstrap, on the still-installed v1.5.0 payload against the candidate tree; the post-re-bootstrap payload re-capture is the closeout contract's evidence, not a second AT2. The installed .nizam/ payload in THIS repository is refreshed only via a reviewed re-bootstrap after the tag exists (non-goal boundary).",
+    "scope_base": "base_revision is TO_BE_SET_BY_ORCHESTRATOR_AT_COMMIT in TWO places \u2014 the base_revision field and the AT4 embedded guard script \u2014 and the Orchestrator substitutes BOTH with the same actual value (the main merge commit d86e1160a60e21c485235741e30372facee0e9d9 of PR #112, the post-audit-readiness main tip) when committing this contract on the release branch. All AT4 diff-scope assertions resolve against that committed base.",
+    "ndebt_040_guard_design": "AT4 uses path-allowlists plus parsed-JSON decomposition on NIZAM.json and docs/planning/manifest.json. No git-show byte-equality anchor against any whole file outside the contract/feature-list set, so later live documentation edits cannot stale-fail this contract's guards.",
+    "two_contract_split": "Round-1 gate finding (both independent reviewers): a single contract cannot require observed tag/workflow facts in files_modify while its own AT1-AT4 gate the tag \u2014 a sequencing contradiction. Resolution per the v1.5.0 precedent: this contract is PRE-TAG ONLY (anchors + PREPARED disposition lines); release-v1.6.0-closeout.json (created in this PR, status proposed) owns every observed post-tag fact and is independently gated before execution. ROADMAP keeps 'Release in preparation: v1.6.0' through the tag (release_closeout.py accepts that phrase in both pr and tag modes), so AT5 stays green pre-closeout.",
+    "frontmatter_sweep": "The four touched planning docs (ROADMAP.md, operator_gates.md, HANDOVER.md, manifest.json) must each carry a bumped version + dated change_log entry per NDS Sec 7: AT1's C8 enforces version-bump-vs-changelog over the PR diff for every changed governed document, and AT4's parsed-decomposition guard asserts the frontmatter version field strictly bumped vs base for the three planning .md files (docs/planning/manifest.json has no version field; its consistency guard is the parsed-JSON phase-pointer check in AT4). HANDOVER-2026-10-16.md is NOT in this contract's scope.",
+    "manifest_target_phase": "The manifest ledger note target is phase 021-receipt-input-maintenance (the currently complete phase on the release base); phase 020 remains in_progress and untouched."
+  },
+  "amendments": [
+    {
+      "at": "2026-10-17",
+      "by": "Orchestrator at gate direction",
+      "type": "structural split + factual corrections",
+      "round1_findings": ".agent/validator/release-v1.6.0-mode-a.json (1 blocker, 3 major, 1 minor, 3 coverage gaps) and .agent/qa/release-v1.6.0-contract-review.json (4 issues, 1 coverage item)",
+      "change": "Split pre-tag vs post-tag per the v1.5.0 two-contract precedent: all observed-fact updates moved to the new release-v1.6.0-closeout.json (created in this PR as proposed); ROADMAP/operator_gates/HANDOVER/manifest purposes rewritten to PREPARED-clause wording ('Release in preparation: v1.6.0'); README installed-payload statement and HANDOVER PR-#112 description anchor given explicit dispositions; Unreleased enumeration corrected to include feature 119; AT2/verification_order contradiction resolved (single pre-rebootstrap AT2; re-capture is closeout evidence); AT4 embedded placeholder substitution instruction made explicit for BOTH occurrences; AT4 extended with parsed-decomposition frontmatter version-bump guards; coverage gaps on exact-count README/guide assertions assigned to AT3's existing release_closeout.py groups (existence+count enforced by the tool's five PASS groups). Nothing else changed."
+    },
+    {
+      "at": "2026-10-17",
+      "by": "Orchestrator at gate direction",
+      "type": "round-2 prescribed fixes",
+      "round2_findings": ".agent/validator/release-v1.6.0-mode-a.json round 2 (5 issues) and .agent/qa/release-v1.6.0-contract-review.json round 2 (4 issues, 1 coverage, 2 claims)",
+      "change": "AT4 auxiliary() allowlist now admits .agent/contracts/release-v1.6.0-closeout.json (real defect: files_create mandated it but AT4 failed closed on it). README/guide purposes' count language is now enforced by AT3's companion occurrence-count guard (7/1 README, 3/0 guide, computed from base d86e1160). frontmatter_sweep note corrected (HANDOVER-2026-10-16.md phantom removed; C8-over-diff carries the sweep). Manifest target phase named 021-receipt-input-maintenance. AT3 amendment-record overstatement corrected: the tool's groups are existence/pattern checks; exact counts are the companion guard's job. Nothing else changed."
+    },
+    {
+      "at": "2026-10-17",
+      "by": "Orchestrator under standing operator authority (recovery authorization recorded)",
+      "type": "round-3 prescribed surgical fixes",
+      "round3_findings": ".agent/validator/release-v1.6.0-mode-a.json round 3 and .agent/qa/release-v1.6.0-contract-review.json round 3",
+      "change": "ROADMAP disposition-line purpose anchored to the current-position section (same section the closeout CHECK binds to, closing the reviewers' divergent readings). frontmatter_sweep note corrected (AT4's parsed guard covers the three planning .md files; manifest.json has no version field). Closeout-contract fixes recorded in that contract's amendments[0]. Authorization: .agent/evidence/release-v1.6.0-contract/recovery-authorization.json (standing authority narrowly applied, interpretation disclosed). Nothing else changed."
+    },
+    {
+      "at": "2026-10-17",
+      "by": "Orchestrator under standing operator authority (attempt-5 recovery authorization recorded)",
+      "type": "round-4 prescribed surgical fixes",
+      "round4_findings": ".agent/validator/release-v1.6.0-mode-a.json round 4 (1 blocker) and .agent/qa/release-v1.6.0-contract-review.json round 4 (1 issue)",
+      "change": "AT4 auxiliary() allowlist now admits the .agent/evidence/release-v1.6.0-contract/ prefix pattern, so the recovery-authorization evidence path referenced by approvals.human_authorized_extension (.agent/evidence/release-v1.6.0-contract/recovery-authorization.json, plus the attempt-5 record recovery-authorization-attempt5.json) no longer fails AT4 closed in both legs. Remedy applied exactly as agreed by both independent reviewers. Nothing else changed."
+    }
+  ],
+  "runtime_role_disclosure": "The Orchestrator embodies Generator only for the bounded version-anchor edits, changelog roll-up and dated planning-ledger rows listed in scope; independent Validator Mode A, Mode B and evaluator contract review/QA remain mandatory and gate the full product diff. The Orchestrator resumes for PR management under the 2026-10-16 operator authorization, merge, tag/release mechanics and the reviewed post-tag .nizam/ re-bootstrap; no gate is bypassed.",
+  "precondition": "Implement only after PR #112 (audit-readiness) is merged to main with CI green, and after this contract has passed independent Mode A and evaluator contract review. The annotated tag v1.6.0 is cut only after dual-gate approval of this contract and completion of AT1-AT4 on the committed candidate; AT5-AT8 require the actual tag, release workflow and bootstrap results."
+}

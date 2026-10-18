@@ -1,13 +1,31 @@
 ---
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
-description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.25
+description: "Current v1.6.0 release status and the historical phase-014 handover, with live canonical planning references."
+version: 1.0.31
 status: active
 authoritative_source: docs/planning/HANDOVER.md
-last_audited: "2026-10-11"
+last_audited: "2026-10-16"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.31"
+    date: "2026-10-17"
+    summary: "Record the published v1.6.0 release: add the dated '## Current status — v1.6.0 released' heading directly under the H1, above the 2026-10-17 preparation note, with the observed facts (annotated tag v1.6.0 at reviewed PR #113 merge 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, release.yml run 39008222975 succeeded, GitHub Release published 2026-10-17T05:59:26Z and marked Latest, tag bootstrap rehearsal passed, .nizam/ re-pinned by the reviewed re-bootstrap); add ONE supersession marker line as the first line under the '## Current status — 2026-10-17' heading, pointing to the new section; refresh the frontmatter description anchor to name v1.6.0 as the current release. Historical bodies are unchanged except that single marker line; the 2026-10-17 preparation note body is otherwise byte-identical to version 1.0.30."
+  - version: "1.0.30"
+    date: "2026-10-17"
+    summary: "Add a dated current-status note above the historical snapshots: v1.6.0 release in preparation (tag pending) on branch release/v1.6.0; the annotated tag and release publication remain the separate post-merge Orchestrator mechanic under H-FRAMEWORK-RELEASE and the installed v1.5.0 payload is unchanged. Refresh the frontmatter description anchor from the PR-#112-era v1.5.0 release-status wording to preparation wording. Historical bodies unchanged."
+  - version: "1.0.29"
+    date: "2026-10-16"
+    summary: "Mark the 2026-10-16 recovery handover SUPERSEDED by the operator's directive ('audit the project and planning and ready for further development'); add a dated preamble recording post-handover events (Source5 adoption, 129 completion via PR #109, work continuing on fix/start-path-gates, 129-source 5/5 under recorded authority) and point to ROADMAP.md's current section as the live status. Historical bodies unchanged."
+  - version: "1.0.28"
+    date: "2026-10-16"
+    summary: "Refresh stopped recovery handover with verified B2 and monitor failures, provisional alternatives and unexecuted accounting assembly."
+  - version: "1.0.27"
+    date: "2026-10-16"
+    summary: "Carry the operator's verbatim world-class comparative delivery bar into the current handover."
+  - version: "1.0.26"
+    date: "2026-10-16"
+    summary: "Publish current020 handover, verbatim dogfooding authority and rejected Source3; preserve held recovery/accounting checkpoints and historical snapshots."
   - version: "1.0.25"
     date: "2026-10-16"
     summary: "Record immutable133 cost variance and bounded delivery exception; preserve budgets and history, and distinguish successful old main CI from pending new delivery."
@@ -89,7 +107,80 @@ change_log:
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current handoff — locally complete 021 / delivery pending, 2026-10-16
+## Current status — v1.6.0 released
+
+v1.6.0 is released and published. The annotated tag `v1.6.0` points at reviewed
+PR #113 merge `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e`; `release.yml` run
+39008222975 succeeded and published the GitHub Release at
+`2026-10-17T05:59:26Z`, marked Latest; the tag bootstrap rehearsal passed
+(evidence `.agent/evidence/release-v1.6.0-tag/`). This repository's `.nizam/`
+install is re-pinned to the `v1.6.0` payload by the reviewed post-tag
+re-bootstrap. This note supersedes the preparation-time note below; the operator
+`H-GA` decision and its explicit evidence exceptions remain unchanged, and
+feature 129 remains feature-scope complete with full-live qualification in
+features 131/132.
+
+## Current status — 2026-10-17
+**SUPERSEDED by the v1.6.0 release — see 'Current status — v1.6.0 released' above.**
+
+v1.6.0 release in preparation (tag pending). The dated release anchors and the
+CHANGELOG roll-up for the next MINOR are prepared on branch `release/v1.6.0`
+(contract `.agent/contracts/release-v1.6.0.json`); the annotated tag and release
+publication remain the separate post-merge Orchestrator mechanic under
+`H-FRAMEWORK-RELEASE`, which the pipeline never self-executes. The installed
+`v1.5.0` payload remains unchanged until a reviewed, operator-authorized
+re-bootstrap after the tag exists. Feature 129 is feature-scope complete; its
+full-live qualification remains features 131/132. The live current status is the
+[current section of ROADMAP.md](ROADMAP.md).
+
+## SUPERSEDED — 2026-10-16
+
+The 2026-10-16 recovery handover goal (branch `chore/handover-2026-10-16-recovery2`,
+checkpoint `b07b1e3c`) is **SUPERSEDED** by the operator's active directive of
+2026-10-16: "audit the project and planning and ready for further development".
+Post-handover events: Source5 was adopted (`tools/sbcl_session_loop.lisp` at HEAD,
+circuit 129-source 5/5 under the recorded operator authority in
+`.agent/evidence/129/source5-authority1.json`); feature **129 completed** via PR #109
+(`96cd3573`) with approved canonical QA `.agent/qa/129.json`; work continues on branch
+`fix/start-path-gates` (HEAD `54c6a5f3`), with feature 130 active at its pre-contract
+stage and 131/132 pending. The live current status is the
+[current section of ROADMAP.md](ROADMAP.md); all handover content below is retained
+unchanged as the historical record.
+
+## Current handover — phase020 / feature129 recovery, 2026-10-16
+
+Continuing delivery bar, verbatim:
+
+> Continue until we have a world class agentic development framework superpassing Superpowers, BMAD Method, and GitHub Spec Kit.
+
+Standing operator authorization, verbatim:
+
+> Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement self improvements and may ignore blocking issues with the current installed .nizam/ framework if you are able to determine a strategically superior approach.
+
+Read the [current handover packet](HANDOVER-2026-10-16.md) for the verbatim
+**dogfooding/self-improvement authorization**, exact resume instructions and refs.
+Phase020 is active; 129 is in progress and 130–132 remain pending. Source3's eleven
+Generator commands and sealed idle-close regression passed, but independent ModeB
+rejected its stale-validation race and history-size cancellation/close failure.
+B2 was reproduced after151 completed history operations: public submit and idle
+close returned70; native controls, cleanup and preservation passed. Source4 then
+failed native qualification: shared mmap writes escaped directory/inode watches
+and timestamps. Its unexecuted draft is quarantined, attempts4/4 are preserved,
+and no further product release exists. Replacement architecture and accounting
+assembly are stopped, unreviewed/unexecuted preparations as detailed in the packet.
+B1 remains static evidence. Root has not adopted Source3 or the Source4 draft.
+Installed v1.5.0/239-file governance remains immutable. The current task is handover;
+the comparative bar is preserved as future direction, with no superiority claim.
+
+PR105 normally merged as `bfd15d10eb718d2cf18272b35c1bb5857af71f3f`; its matching
+main run38851734070 passed all five jobs. Phase020 cost is unmeasured against
+unchanged7350/9555. Held accounting closure and recovery gates are listed in the
+packet. No freshQA, full-live readiness, new release or comparative superiority
+follows. Earlier sections are historical snapshots; current coordination is in
+[run_state](../../.agent/run_state.json).
+
+
+## Historical snapshot — handoff — locally complete 021 / delivery pending, 2026-10-16
 
 Feature 123 is [captured complete](../../.agent/evidence/123/evidence-capture.json); [canonical phase 018](phase_018.yaml) records 119–123 complete after independent acceptance and Root capture.
 Source `9886e5fa` and sealed tests `06eba273…` bind the actual [capture 38736608742](https://github.com/niq-cnr/nizam-framework/actions/runs/38736608742) and [verify 38754141468](https://github.com/niq-cnr/nizam-framework/actions/runs/38754141468) runs. Their five-job results and immutable checkout identities passed [independent HostedReview](../../.agent/evidence/123/hosted-review1.json).

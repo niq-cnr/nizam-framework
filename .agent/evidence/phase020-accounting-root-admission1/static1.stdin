@@ -1,0 +1,15 @@
+from pathlib import Path
+import json,hashlib
+r=Path.cwd(); d=r/'.agent/evidence/phase020-accounting-method-review1'
+i=json.loads((d/'index.json').read_text())
+assert len(i)==5
+for p,h in i.items(): assert hashlib.sha256((r/p).read_bytes()).hexdigest()==h,p
+f=json.loads((d/'static1.execution.json').read_text())
+assert f['actual_exit']==0 and f['child_pid']==4094946 and not f['timed_out']
+for key in ['stdin','stdout','stderr']:
+ x=f[key]; b=(d/Path(x['path']).name).read_bytes()
+ assert len(b)==x['bytes'] and hashlib.sha256(b).hexdigest()==x['sha256']
+v=json.loads((r/'.agent/validator/020-accounting-method1.json').read_text())
+assert v['final_verdict']['approved'] is False and len(v['issues'])==5
+assert v['missing_acceptance_coverage']==[] and v['unsupported_claims']==[]
+print('PASS retained independent rejection; five issues; static exit0/PID4094946; all indexed streams verified; no method freeze or measurement')

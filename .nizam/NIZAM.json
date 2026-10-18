@@ -1,7 +1,7 @@
 {
   "framework": {
     "name": "nizam-framework",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
   },
   "modules": [
@@ -22,7 +22,8 @@
         "standard/cross_repo_governance.md",
         "standard/README.md",
         "standard/definition_of_done.md",
-        "standard/convergent_code_review.md"
+        "standard/convergent_code_review.md",
+        "standard/acceptance_bars.md"
       ]
     },
     {
@@ -39,6 +40,8 @@
         "methodology/07_eval_gated_promotion.md",
         "methodology/08_cross_repo_dependency_gate.md",
         "methodology/09_review_gate_flake_management.md",
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/11_sbcl_runtime_binding.md",
         "methodology/README.md"
       ]
     },
@@ -78,6 +81,9 @@
         "schema/contract.schema.json",
         "schema/contract_review.schema.json",
         "schema/qa_verdict.schema.json",
+        "schema/bugfix_cause.schema.json",
+        "schema/bugfix_scope.schema.json",
+        "schema/small_change_intent.schema.json",
         "schema/run_state.schema.json",
         "schema/work-packet.schema.json",
         "schema/debt.schema.json",
@@ -90,6 +96,8 @@
         "schema/ecosystem_membership_result.schema.json",
         "schema/reconciliation_plan.schema.json",
         "schema/release_train_manifest.schema.json",
+        "schema/runtime_session.schema.json",
+        "schema/runtime_operation.schema.json",
         "schema/README.md",
         "schema/review_packet.schema.json",
         "schema/review_trial.schema.json",
@@ -107,12 +115,16 @@
         "tools/interface.md",
         "tools/README.md",
         "tools/validate.sh",
+        "tools/start_path.py",
+        "tools/test_start_path.py",
         "tools/convergent_review.py",
         "tools/evaluate_convergent_review_prompt.py",
         "tools/linux_trial_sandbox.sh",
         "tools/isolated_trial_adapter.py",
         "tools/test_convergent_review.py",
-        "tools/fixtures/convergent_review/manifest.json"
+        "tools/fixtures/convergent_review/manifest.json",
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
       ]
     },
     {
@@ -323,6 +335,21 @@
       "id": "nizam-convergent-code-review",
       "summary": "Prior-ledger-first automated review using exactly three observation-only trials, deterministic semantic fingerprints and lifecycle, fail-closed carrying, human-authorized suppression, and content-addressed replay.",
       "authoritative_source": "standard/convergent_code_review.md"
+    },
+    {
+      "id": "nizam-live-runtime-sessions",
+      "summary": "Neutral consumer-aspirational live runtime ownership, operation, provenance, handoff and fresh-environment acceptance rules.",
+      "authoritative_source": "methodology/10_live_runtime_sessions.md"
+    },
+    {
+      "id": "nizam-sbcl-runtime-binding",
+      "summary": "Consumer-aspirational SBCL reference binding with folded language profile, honest runtime hazards and fresh hermetic acceptance rules.",
+      "authoritative_source": "methodology/11_sbcl_runtime_binding.md"
+    },
+    {
+      "id": "nizam-live-runtime-adapter",
+      "summary": "Optional runtime-session adapter surface with seven calls and conditional S1-S9; existing adapters remain conformant and live enforcement remains pending.",
+      "authoritative_source": "tools/interface.md"
     }
   ],
   "schemas": [
@@ -349,7 +376,9 @@
     "schema/review_trial.schema.json",
     "schema/review_ledger.schema.json",
     "schema/review_suppression.schema.json",
-    "schema/review_replay.schema.json"
+    "schema/review_replay.schema.json",
+    "schema/runtime_session.schema.json",
+    "schema/runtime_operation.schema.json"
   ],
   "templates": [
     "templates/CONTEXT.md",
