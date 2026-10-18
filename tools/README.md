@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.36.0
+version: 0.37.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.37.0"
+    date: "2026-10-18"
+    summary: "Document payload_integrity.py, start_path.py publish --mode prepare|publish|finalize and build-receipt mutation mediation (V1), non-conflated validate.sh --payload summary (V4), C13 skill.json/SKILL.md version parity (V5), and provenance-based installed-payload discovery."
   - version: "0.36.0"
     date: "2026-10-18"
     summary: "Document Phase 019 generic repository/worktree assurance profile preregistration (124), shadow comparison and promotion recommendation (125), seven profile regression cases, and the start_path.py task-routing/capture/status CLI."
@@ -136,7 +139,9 @@ selectors (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`,
 and `--check profiles-ready` run through [`test_workflow_assurance.py`](test_workflow_assurance.py).
 [`start_path.py`](start_path.py) (tested by [`test_start_path.py`](test_start_path.py) and
 [`test_public_entry.py`](test_public_entry.py)) provides `classify`, `preflight`, `begin`,
-`capture`, `check-verdict`, `amend-contract`, `done`, `status`, and `resume`.
+`capture`, `publish` (`--mode prepare|publish|finalize`, plus `prepare-publish` and
+`finalize-publish` subcommands), `build-receipt`, `check-verdict`, `amend-contract`, `done`,
+`status`, and `resume`.
 
 ## Development runtime controller — features 126–127
 
@@ -296,7 +301,8 @@ advance preserves readiness when the assessed inputs remain unchanged.
 Readiness supports the bounded foundation. Phase completion follows the live
 [phase017 record](../docs/planning/phase_017.yaml) and requires separate Mode B,
 fresh three-command QA plus an independent spot check, and Root evidence capture.
-The installed v1.5.0 payload remains unchanged; full WA controls, runtime and
+The installed `.nizam/` payload recorded in `.nizam/provenance.json` remains
+unchanged until an authorized re-bootstrap; full WA controls, runtime and
 controller work require their separately authorized phases.
 
 
@@ -308,9 +314,10 @@ agent runtime through the same adapter contract — no per-runtime forks.
 
 | File | Purpose |
 |---|---|
-| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. The optional live_runtime_session requirement is false; adapter and SBCL binding capabilities route to their authoritative sources. |
+| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version (which C13 enforces must match `SKILL.md` frontmatter `version`), its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. The optional live_runtime_session requirement is false; adapter and SBCL binding capabilities route to their authoritative sources. |
 | [`SKILL.md`](SKILL.md) | The single instructions payload any agent runtime loads to act on the framework: when to load it, how to consume the framework by querying the root index rather than bulk-reading, a summary of the contract-first execution loop, the circuit-breaker and anti-hallucination obligations every role carries, the durable-state and evidence-by-path obligations, and the verdict JSON formats every gate produces. |
 | [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the ten-item Adapter Conformance Checklist an integrator ticks through. Section 6 adds seven optional session calls and conditional S1–S9 for claiming adapters. |
+| [`payload_integrity.py`](payload_integrity.py) | Shared installed-payload integrity comparator invoked by `bootstrap.sh --verify-only` (when a reference tree or `--source-root` is reachable) and `.github/scripts/verify_self_governance.py`: compares the complete file inventory (excluding only `provenance.json`), exact byte content, regular-file/no-symlink rules, and executable file modes (`100755` vs `100644`) of an installed payload against a Git commit tree or source directory. |
 | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
 | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
 | [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |
@@ -321,8 +328,9 @@ The optional session surface routes through [the adapter interface](interface.md
 [Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
 [SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md). Adapters without
 sessions remain conformant. Existing schemas/C12 validate declared records only;
-the partial stub controller proves only the bounded cases above. Full adapter/SBCL
-and remaining live proofs stay pending; installed v1.5.0 is unchanged.
+the partial stub controller proves only the bounded cases above. Query
+`.nizam/provenance.json` and `tools/start_path.py preflight` for the installed
+payload pin and active runtime capabilities.
 
 ## Sealed independent acceptance bundles
 
@@ -356,7 +364,7 @@ reviewed inputs and output evidence; local role records are not cryptographic
 authentication or runtime permission enforcement. Feature 117 entry checks and
 feature 118 foundation closure remain pending. Earlier feature 115 documentation
 below records its initial eleven-case suite; the current default count is sixteen.
-The authored tool does not upgrade installed v1.5.0.
+The authored tool does not silently mutate the installed `.nizam/` payload.
 
 ## Assessed-source identity and record continuity
 
@@ -394,7 +402,7 @@ outside the assessed repository unless they have a declared record mask.
 This local identity utility does not authenticate callers or authorize entry;
 sealed-bundle enforcement, entry/role checks and foundation closure belong to
 features 116–118. It implements no runtime controller or live acceptance and does
-not upgrade the installed v1.5.0 payload.
+not silently mutate the installed `.nizam/` payload.
 
 ## Design Decision — DD-4: Unified Skill Payload
 
@@ -453,7 +461,9 @@ CI runs this suite as the `convergent_review` job of `.github/workflows/complian
 `tools/validate.sh`, the repo-local NDS compliance validator, runs sixteen
 checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
 As of phase 013 (feature 092's C16 feature-list lifecycle check), the
-full default sweep reports `SUMMARY: 16 passed, 0 failed`:
+full default sweep reports `SUMMARY: 16 passed, 0 failed`, while `--payload` mode
+separates exercised checks from non-applicable, skipped, and out-of-scope checks
+(`SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed`):
 
 | Check | Name | What it enforces |
 |---|---|---|
@@ -462,17 +472,17 @@ full default sweep reports `SUMMARY: 16 passed, 0 failed`:
 | C3 | Untagged-fence sweep | No fenced code block in a shipped `.md` is missing a language tag. |
 | C4 | `NIZAM.json` index integrity | Every path `NIZAM.json` indexes resolves on disk. |
 | C5 | Branding/endpoint leakage | No vendor-specific branding or internal endpoint strings ship in the framework payload. |
-| C6 | `bootstrap.sh` sanity | The inject/verify script passes its own internal sanity checks. |
+| C6 | `bootstrap.sh` sanity | The inject/verify script passes its own internal sanity checks (`SKIP` in `--payload` mode because `bootstrap.sh` is not copied into `.nizam/`). |
 | C7 | Module README presence | Every module directory carries a governed `README.md`. |
 | C8 | Version-bump-vs-changelog | Any file whose frontmatter `version` increased vs `HEAD` is matched by a `change_log` entry for the new version, or a `CHANGELOG.md` line naming the file. |
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
-| C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest,runtime_session,runtime_operation}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all ten routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). Runtime records use shared `vlib_runtime_record_relations` for owner, generation, lease and continuity comparisons in both targeted validation and the sweep. Records prove no live runtime behavior; consumer sessions are not auto-swept. |
-| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |
-| C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only. |
-| C15 | Capability-profile ↔ AGF-role mapping | C15 calls both `vlib_profiles_cover_roles` (5↔5 coverage: every profile identifier in `standard/capability_profiles.md` is present and each one's corresponding role is defined in `standard/AGF.md`) and `vlib_profiles_map_roles` (phase-014 feature 109, NDEBT-026), a primitive that parses the table's explicit `Role` column and fails unless each of the five profile rows names its own role — so a swapped profile-to-role mapping now fails C15. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; 109 adds the Role column and the mapping primitive; default sweep only. |
-| C16 | Feature-list lifecycle invariant | Every `.agent/feature_list*.json` (when present) validates against `schema/feature_list.schema.json`; and for every feature with `status: "complete"`, IF `.agent/contracts/<id>.json` exists THEN `.agent/qa/<id>.json` MUST also exist, and if that QA verdict carries a top-level `evidence_files` array, every path it lists MUST exist on disk. Era-safe: a complete feature with no contract file at all (the framework's own pre-contract-first history) is not flagged. Feature 092 — mechanizes "complete implies approved contract and passing QA verdict and evidence on disk"; enforce-if-present (trivial PASS with no feature list on disk), and a counted trivial PASS in `--payload` mode (`.agent/` is never part of the bootstrap.sh payload). A `--target` invocation against a feature-list-shaped file routes to schema-only validation (the era-safe referential rule is a whole-repo-tree relational property, not evaluable on one isolated file). |
+| C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present in repo mode, and reported as `NOT_APPLICABLE` (not counted as an exercised pass) in `--payload` mode because `.agent/` is not part of a consumer payload. |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest,runtime_session,runtime_operation}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all ten routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). Runtime records use shared `vlib_runtime_record_relations` for owner, generation, lease and continuity comparisons in both targeted validation and the sweep. Records prove no live runtime behavior; consumer sessions are not auto-swept (`OUT_OF_SCOPE` in `--payload` mode). |
+| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, its `version` matches `tools/SKILL.md` frontmatter `version` (V5), and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |
+| C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only (`OUT_OF_SCOPE` in `--payload` mode). |
+| C15 | Capability-profile ↔ AGF-role mapping | C15 calls both `vlib_profiles_cover_roles` (5↔5 coverage: every profile identifier in `standard/capability_profiles.md` is present and each one's corresponding role is defined in `standard/AGF.md`) and `vlib_profiles_map_roles` (phase-014 feature 109, NDEBT-026), a primitive that parses the table's explicit `Role` column and fails unless each of the five profile rows names its own role — so a swapped profile-to-role mapping now fails C15. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; 109 adds the Role column and the mapping primitive; default sweep only (`OUT_OF_SCOPE` in `--payload` mode). |
+| C16 | Feature-list lifecycle invariant | Every `.agent/feature_list*.json` (when present) validates against `schema/feature_list.schema.json`; and for every feature with `status: "complete"`, IF `.agent/contracts/<id>.json` exists THEN `.agent/qa/<id>.json` MUST also exist, and if that QA verdict carries a top-level `evidence_files` array, every path it lists MUST exist on disk. Era-safe: a complete feature with no contract file at all (the framework's own pre-contract-first history) is not flagged. Feature 092 — mechanizes "complete implies approved contract and passing QA verdict and evidence on disk"; enforce-if-present in repo mode, and reported as `NOT_APPLICABLE` (not counted as an exercised pass) in `--payload` mode (`.agent/` is never part of the bootstrap.sh payload). A `--target` invocation against a feature-list-shaped file routes to schema-only validation (the era-safe referential rule is a whole-repo-tree relational property, not evaluable on one isolated file). |
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
 their shared, fixture-tested primitives); C12 was added by phase 005
@@ -535,7 +545,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
 
 The existing jobs emit checkout SHA and source digest receipts. Actual capable CI
 and independent QA remain prerequisites to debt closure; local unsupported results
-are recorded as limitations. The installed v1.5.0 payload remains unchanged.
+are recorded as limitations. The installed `.nizam/` payload recorded in
+`.nizam/provenance.json` remains unchanged until an authorized re-bootstrap.
 
 
 ## Authorized entry — feature 117

@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-10-18"
+    summary: "Document publish --mode prepare|publish|finalize and build-receipt runtime mutation-authority mediation (V1), align skill.json version parity (C13), and replace static installed-version/phase claims in Section 10 with provenance and capability discovery (V5)."
   - version: "0.7.0"
     date: "2026-10-18"
     summary: "Align Routine/Standard/High-assurance role allocation (independent Evaluator across all tiers), work-specific diagnostic stopping policy, publish/build-receipt producer-to-receipt workflow, and the single authoritative AGF verdict schema across all gates and comparator loops."
@@ -129,8 +132,11 @@ command update without changing goals, `non_goals`, or security invariants, use
 changes and flags `re_approval_required: true` on semantic changes). Use
 `tools/start_path.py preflight` before a governed attempt,
 `tools/start_path.py capture` for exclusive per-execution evidence capture,
-`tools/start_path.py publish` and `tools/start_path.py build-receipt` to publish
-post-execution outputs and bind receipt-qualified stage evidence,
+`tools/start_path.py publish` (`--mode prepare|publish|finalize`, separating
+read-only plan preparation from externally mediated Git commit publication and
+finalization) and `tools/start_path.py build-receipt` (requiring an
+already-published capture envelope unless `--commit` is explicitly passed under
+runtime mutation authority) to bind receipt-qualified stage evidence,
 `tools/start_path.py status` for a concise read-only status view, and
 `tools/start_path.py resume` for receipt-verified stage transitions. No feature
 implementation may begin against a contract that is not `approved`.
@@ -277,9 +283,13 @@ or forking their rules. Adapters without sessions remain conformant under the
 original ten mandatory adapter items; the seven calls and S1–S9 are conditional.
 
 Existing schemas and C12 validate declared records only. Session provenance and
-warm-image results never substitute for fresh independent acceptance. Executable
-controller/adapter/SBCL enforcement and all thirteen live proofs remain pending
-phase016; source routing does not upgrade the installed v1.5.0 payload.
+warm-image results never substitute for fresh independent acceptance. To
+determine the installed payload version, pinned release tag/commit, and active
+runtime capabilities in any repository, query `.nizam/provenance.json` and
+`.nizam/NIZAM.json` (or run `tools/start_path.py preflight`) rather than
+assuming a static release literal or development-phase status; source edits in a
+framework checkout never silently mutate an installed `.nizam/` payload without
+an authorized re-bootstrap.
 
 ## 11. References
 

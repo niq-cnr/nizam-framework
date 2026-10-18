@@ -96,6 +96,12 @@ EXPECTED_SHA="${EXPECTED_SHA:-}"
 # Controlled test-only fixture tag override (--allow-fixture-tag or ALLOW_FIXTURE_TAG=1)
 # permitting ephemeral ^e2e-[0-9A-Za-z._-]+$ tags in tools/e2e_bootstrap_test.sh.
 ALLOW_FIXTURE_TAG="${ALLOW_FIXTURE_TAG:-0}"
+# Optional unpacked release source root for --verify-only content-integrity checks.
+SOURCE_ROOT="${SOURCE_ROOT:-}"
+# Require a reachable reference tree for --verify-only content-integrity verification.
+REQUIRE_CONTENT_INTEGRITY=0
+# Explicitly request structural-only verification when no reference tree is reachable.
+STRUCTURAL_ONLY=0
 
 # Tracked temp/backup paths for the cleanup trap. Cleared once ownership of a
 # directory transfers away from the tracker (e.g. after a successful atomic
@@ -130,8 +136,9 @@ Modes:
                      pinned tag, its recorded commit SHA is present (and,
                      with --expected-sha, matches), and (when a trusted git
                      tag/commit or --source-root anchor is available) its full
-                     277-file inventory, SHA-256 content digests, and executable
-                     modes match the release payload.
+                     released file inventory, SHA-256 content digests, and
+                     executable modes match the release payload via
+                     tools/payload_integrity.py.
   --genesis          Greenfield genesis (the 0-case, ecosystem/00 Section 8):
                      stand up a NEW project from nothing. git-inits an empty
                      --project-root, scaffolds a minimal deterministic skeleton
@@ -158,7 +165,15 @@ Options:
   --expected-sha SHA The 40-hex commit SHA the pinned tag must resolve to.
                      Enforced at install time BEFORE staging or replacing the
                      target directory, and in --verify-only against recorded
-                     provenance (NDEBT-033).
+                     provenance and the reference commit tree (NDEBT-033, B2/B3).
+  --source-root DIR  (--verify-only) Unpacked release tree to compare installed
+                     file inventory, modes, and bytes against.
+  --require-content-integrity
+                     (--verify-only) Fail non-zero if no trusted reference tree
+                     (local git commit/tag or --source-root) is reachable.
+  --structural-only  (--verify-only) Perform structural/provenance checks only
+                     without claiming content-integrity verification; incompatible
+                     with --expected-sha and --require-content-integrity.
 
 Environment variables (overridden by the matching flag above when both are given):
   GOVERNANCE_REPO_URL   Source repository of the governance payload.
@@ -263,6 +278,23 @@ parse_args() {
         ;;
       --allow-fixture-tag)
         ALLOW_FIXTURE_TAG=1
+        shift
+        ;;
+      --require-content-integrity)
+        REQUIRE_CONTENT_INTEGRITY=1
+        shift
+        ;;
+      --structural-only)
+        STRUCTURAL_ONLY=1
+        shift
+        ;;
+      --source-root)
+        [ "$#" -ge 2 ] || die "--source-root requires an argument."
+        SOURCE_ROOT="$2"
+        shift 2
+        ;;
+      --source-root=*)
+        SOURCE_ROOT="${1#--source-root=}"
         shift
         ;;
       --project-root)
@@ -448,21 +480,65 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   fi
 }
 
-# --verify-only: a pure, network-free drift check against an already-injected
-# target directory. Clones nothing and writes nothing.
+# --verify-only: a pure, network-free drift and content-integrity check against an
+# already-injected target directory. Clones nothing and writes nothing.
 run_verify_only() {
   require_pinned_tag "${GOVERNANCE_TAG}"
   require_valid_expected_sha "${EXPECTED_SHA}"
   require_command python3
+  if [ "${STRUCTURAL_ONLY}" -eq 1 ] && { [ -n "${EXPECTED_SHA}" ] || [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ]; }; then
+    die "--structural-only cannot be combined with --expected-sha or --require-content-integrity."
+  fi
   [ -d "${TARGET_DIR}" ] || die "--verify-only: target directory '${TARGET_DIR}' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first."
   log "verify-only: checking '${TARGET_DIR}' against pinned tag '${GOVERNANCE_TAG}' (no clone, no network)..."
   check_required_files "${TARGET_DIR}"
   check_nizam_index "${TARGET_DIR}"
   check_provenance_pin "${TARGET_DIR}" "${GOVERNANCE_TAG}" "${EXPECTED_SHA}"
-  if [ -n "${EXPECTED_SHA}" ]; then
-    log "verify-only: PASS -- '${TARGET_DIR}' is present, well-formed, and matches pinned tag '${GOVERNANCE_TAG}' at commit '${EXPECTED_SHA}'."
+
+  if [ "${STRUCTURAL_ONLY}" -eq 1 ]; then
+    log "verify-only: PASS (structural_only; content_integrity=not_checked) -- '${TARGET_DIR}' required files, index paths, and recorded provenance tag '${GOVERNANCE_TAG}' verified; file bytes and complete inventory were not compared against a reference tree."
+    return 0
+  fi
+
+  local integrity_script=""
+  local script_root
+  script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+  if [ -f "${script_root}/tools/payload_integrity.py" ]; then
+    integrity_script="${script_root}/tools/payload_integrity.py"
+  elif [ -f "${TARGET_DIR}/tools/payload_integrity.py" ]; then
+    integrity_script="${TARGET_DIR}/tools/payload_integrity.py"
   else
-    log "verify-only: PASS -- '${TARGET_DIR}' is present, well-formed, and matches pinned tag '${GOVERNANCE_TAG}' (recorded commit pin present; pass --expected-sha to also assert the commit)."
+    die "--verify-only: tools/payload_integrity.py not found under '${script_root}' or '${TARGET_DIR}'."
+  fi
+
+  local -a integrity_args=(
+    "--payload-dir" "${TARGET_DIR}"
+    "--expected-tag" "${GOVERNANCE_TAG}"
+  )
+  if [ -n "${EXPECTED_SHA}" ]; then
+    integrity_args+=("--expected-sha" "${EXPECTED_SHA}" "--require-reference-tree")
+  elif [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ]; then
+    integrity_args+=("--require-reference-tree")
+  fi
+  if [ -n "${SOURCE_ROOT}" ]; then
+    integrity_args+=("--source-root" "${SOURCE_ROOT}")
+  fi
+
+  local pi_out pi_rc
+  if pi_out="$(PYTHONDONTWRITEBYTECODE=1 python3 "${integrity_script}" "${integrity_args[@]}" 2>&1)"; then
+    pi_rc=0
+  else
+    pi_rc=$?
+  fi
+
+  if [ "${pi_rc}" -eq 0 ]; then
+    log "verify-only: PASS (content_integrity=verified) -- '${TARGET_DIR}' matches pinned tag '${GOVERNANCE_TAG}' (${pi_out})."
+    return 0
+  elif [ "${pi_rc}" -eq 2 ]; then
+    log "verify-only: PASS (structural_only; content_integrity=not_checked) -- '${TARGET_DIR}' required files, index paths, and recorded provenance tag '${GOVERNANCE_TAG}' verified; no reference tree reachable (${pi_out})."
+    return 0
+  else
+    die "verify-only content-integrity check failed for '${TARGET_DIR}': ${pi_out}"
   fi
 }
 
