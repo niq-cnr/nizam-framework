@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.5.1
+version: 0.6.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-18"
+    summary: "Adopt the 2026-10-18 post-remediation audit and follow-up execution mandate (A0-A8) at 2026-10-18T10:10:00Z: reassert continuing operator authority over obstructive repository-local governance until A8 completes; correct run 39064043210 attribution to PR #114 head 7c049c88 and record PR #115 (39075498443, 99m27s), PR #116 (39111912990, 18m12s), and merged main (39115161856, 18m23s) hosted CI facts; reclassify R9/R10 profile and pilot records (.agent/evidence/125/ and .agent/evidence/remediation-2026-10-18/pilot-report.json) as historical smoke/parser/record-validation evidence pending A3/A6/A7/A8; and restore explicit transitional entry precedence in AGENTS.md."
   - version: "0.5.1"
     date: "2026-10-18"
     summary: "Align CI Python minor pin to 3.14 (avoiding /opt/hostedtoolcache 3.12 stdlib landmark collision inside native Landlock sandbox on Ubuntu 24.04) and normalize .git suffix matching in tools/start_path.py for GitHub Actions checkouts."
@@ -28,36 +31,37 @@ change_log:
 
 # Critical Quality and Velocity Remediation — 2026-10-18
 
-## 1. Mandate Adoption & Authority (R0)
+## 1. Mandate Adoption & Continuing Follow-Up Authority (R0 & A0)
 
-- **Adopted at**: `2026-10-18T04:45:00Z`
+- **Initial mandate adopted at**: `2026-10-18T04:45:00Z`
+- **Follow-up audit & execution mandate (`A0`–`A8`) adopted at**: `2026-10-18T10:10:00Z`
 - **Repository**: `niq-cnr/nizam-framework` (`https://github.com/niq-cnr/nizam-framework.git`)
-- **Authoritative instruction**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt"), recorded in `.agent/run_state.json` and this single brief.
-- **Process precedence**: Prospectively suspends obstructive repository-local self-governance ceremony (repeated per-edit contracts, dual pre-code approval rounds, automatic halt solely from old 3-attempt counter exhaustion, historical line-count ceilings, whole-module AST freezes outside target functions, and recursive closeout invalidation) while strictly preserving:
+- **Authoritative instructions**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt") and operator post-remediation audit & follow-up execution mandate dated 18 October 2026 ("Nizam framework: post-remediation audit and follow-up execution prompt", audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`), recorded in `.agent/run_state.json` and this single brief.
+- **Continuing process precedence**: The operator reaffirmed and continued authorization to pragmatically ignore, suspend, simplify, or replace obstructive repository-local Nizam governance (`AGENTS.md`, installed `.nizam/` instructions, authored skills and protocols, phase plans, templates, contracts, line-count gates, 3-strike attempt counters, and historical scope guards) while completing follow-up packets `A0`–`A8`. The previous `v0.5.0` claim that temporary remediation mode had ended is superseded until `A8` re-bootstraps `.nizam/` to the post-follow-up immutable release (`v1.8.0`). During `A0`–`A8`, `AGENTS.md`, this brief, and root `tools/start_path.py` take precedence over conflicting `.nizam/` requirements while strictly preserving:
   1. Independent acceptance of each integrated, publishable remediation slice by a non-authoring reviewer.
   2. Real, accurately captured verification results tied to the committed candidate and execution inputs.
   3. Security and correctness invariants (identity, authorization, isolation, source integrity, claimed vs. authenticated authority).
   4. Ownership of writes, preservation of unrelated work, and recoverability.
   5. Honest lifecycle status across implemented, tested, independently accepted, merged, released, installed, and commissioned states.
 
-## 2. Live-Work Reconciliation (R0)
+## 2. Live-Work Reconciliation (R0 & A0)
 
-- **`main` baseline**: `e3748676f4f12a5a1a10bf1a100869db773b70ee` (PR #114 merge).
-- **Installed payload**: `.nizam/` pinned at released tag `v1.6.0` (`4e7db5a47d753555abd4d724c5d16f2b5eb86c3e`, 276 released files + `provenance.json`, `commissioning_performed: false` per `docs/planning/SELF_GOVERNANCE.md`).
-- **Active open work reconciled**: PR #115 (`feat/portable-review-sandbox-2026-10-16` at `fe78e4fe538c28420f7ce9ff2bfb460b44e93a4a`, superseding closed PR #108) delivers Feature 134 (`tools/docker_trial_sandbox.sh` and adapter-specific conformance selection in `tools/test_convergent_review.py` and `.github/scripts/test_sandbox_boundaries.py`). This remediation branch (`feat/quality-velocity-remediation-2026-10-18`) builds directly on `fe78e4fe538c28420f7ce9ff2bfb460b44e93a4a` so all Feature 134 work is preserved intact.
+- **Initial `main` baseline (`R0`)**: `e3748676f4f12a5a1a10bf1a100869db773b70ee` (PR #114 merge); PR #115 merged Feature 134 (`144e20e09bd17257c34873e1608a24bb6f05248d`), and PR #116 merged `R0`–`R11` at audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`.
+- **Follow-up `main` & release baseline (`A0`)**: PR #117 (`47851d857e0ab879b848610128ee6e9e13368f0d`) released tag `v1.7.0` (annotated tag object `6a4cf599f3850ae31561ba38f9da29237d0a4a53`; `release.yml` run `39116785402` succeeded), and PR #118 (`f64333c203ee4cf3693b32c2bf28735b088ab3f8`) merged the `v1.7.0` closeout and `.nizam/` re-bootstrap (`277` released files + `provenance.json`, `commissioning_performed: false` per `docs/planning/SELF_GOVERNANCE.md`).
+- **Active follow-up scope (`A0`–`A8`)**: Closes audit findings `F1`–`F6` across Slice 1 (`A0 + A1 + A2`), Slice 2 (`A3 + A4 + A5`), and Slice 3 (`A6 + A7 + A8`) before releasing and adopting `v1.8.0`.
 
-## 3. Suite Ownership & Timing Baseline (R1)
+## 3. Suite Ownership & Timing Baseline (R1 & A0 Audited Hosted Runs)
 
-### 3.1 Pre-Remediation Timing Baseline
+### 3.1 Pre-Remediation and Post-PR #116 Hosted Timing Baseline
 
 | Source | Job / Suite | Observed Duration | Root Cause / Notes |
 |---|---|---|---|
-| Hosted Actions run `39064043210` (`main` `e3748676`) | `validate` | `19s` | `tools/validate.sh` (C1–C16) |
-| Hosted Actions run `39064043210` (`main` `e3748676`) | `e2e_bootstrap` | `54s` | `tools/e2e_bootstrap_test.sh` |
-| Hosted Actions run `39064043210` (`main` `e3748676`) | `self_governance` | `28s` | `verify_self_governance.py`, `test_self_governance.py`, `.nizam/tools/validate.sh --payload` |
-| Hosted Actions run `39064043210` (`main` `e3748676`) | `fixtures_self_test` | `84m47s` | `fixtures_self_test.sh` (`42m33s`, dominated by `ci-candidate-bound` + `ci-blocker-rejected`) + full `test_workflow_assurance.py` (`41m50s`, running `ci-candidate-bound` + `ci-blocker-rejected` a second time) |
-| Hosted Actions run `39064043210` (`main` `e3748676`) | `convergent_review` | `35m40s` | Isolation suite (`8s`) + duplicate `fixtures_self_test.sh` (`35m03s`, running `ci-candidate-bound` + `ci-blocker-rejected` a third time) |
-| Hosted Actions run `39095406918` (PR #115 `fe78e4fe`) | `convergent_review` | `51m07s` | Native + Docker isolation suites + duplicate `fixtures_self_test.sh` |
+| Hosted Actions run `39064043210` (PR #114 head `7c049c88`, `2026-10-18T00:08:23Z`–`01:47:50Z`, total `99m27s`) | `validate` / `e2e_bootstrap` / `self_governance` | `19s` / `54s` / `28s` | Fast jobs on PR #114 head `7c049c8805a5d48a9729f2d80e0a7e4a5086a2cb` (previously mislabeled in v0.1.0–v0.5.1 as `main` `e3748676`) |
+| Hosted Actions run `39064043210` (PR #114 head `7c049c88`, total `99m27s`) | `fixtures_self_test` | `84m47s` | `fixtures_self_test.sh` (`42m33s`, dominated by `ci-candidate-bound` + `ci-blocker-rejected`) + full `test_workflow_assurance.py` (`41m50s`, running `ci-candidate-bound` + `ci-blocker-rejected` a second time) |
+| Hosted Actions run `39064043210` (PR #114 head `7c049c88`, total `99m27s`) | `convergent_review` | `35m40s` | Isolation suite (`8s`) + duplicate `fixtures_self_test.sh` (`35m03s`, running `ci-candidate-bound` + `ci-blocker-rejected` a third time) |
+| Hosted Actions run `39075498443` (PR #115 `fe78e4fe`, `2026-10-18T02:23:03Z`–`04:02:30Z`, total `99m27s`) | Full `compliance.yml` | `99m27s` | Immediately preceding successful PR #115 run (`fixtures_self_test` + `convergent_review` with native + Docker isolation suites and duplicate `fixtures_self_test.sh`) |
+| Hosted Actions run `39111912990` (PR #116 final candidate `ec70cefb`, total `18m12s`) | Full `compliance.yml` | `18m12s` | **~81.7% reduction** vs. PR #115 (`39075498443`): full Workflow Assurance step `15m06s`, general fixture step `2m37s`, `convergent_review` job `1m11s` |
+| Hosted Actions run `39115161856` (merged `main` `8815d311`, `2026-10-18T09:23:47Z`–`09:42:10Z`, total `18m23s`) | Full `compliance.yml` | `18m23s` | **~81.5% reduction** vs. PR #115 (`39075498443`) on the merged candidate (cross-revision hosted observation, not a controlled benchmark or agent active-time measurement) |
 
 ### 3.2 Authoritative Five-Job Suite Ownership (`compliance.yml`)
 
@@ -102,7 +106,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
 - **R8 (Concise Generated Status / Readiness Views)**:
   - Added `tools/start_path.py status --format json|markdown` reporting implemented, verified, independently accepted, merged, released, installed, and commissioned states without mutating repository files, and updated `tools/test_public_entry.py` to derive the expected `--tag v<framework_version>` dynamically from `NIZAM.json`.
 
-### 3.6 Slice 4 Summary (`R9` — Phase 019 Generic Assurance Profiles `124` and `125` — Accepted at `b99041dc948522a52832c8871fc3ec8e3c073091`)
+### 3.6 Slice 4 Summary (`R9` — Phase 019 Generic Assurance Profiles `124` and `125` — Accepted at `b99041dc948522a52832c8871fc3ec8e3c073091`, Hardened in `A3` & `A7`)
 
 - **Feature 124 (`preregister_profile_comparison` / `preregister-profile`)**:
   - Reuses the exact five canonical AGF roles and capability profile identifiers (`Orchestrator` → `orchestrator-primary`, `Planner` → `planner-creative`, `Generator` → `generator-deterministic`, `Validator` → `validator-structural`, `Evaluator` → `evaluator-adversarial`).
@@ -110,43 +114,47 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - Enforces the `execution_scope` boundary: generic `repository-worktree` profiles forbid `persistent_runtime_claim: true`, while `persistent-runtime-sbcl` profile claims require `persistent_runtime_ready: true` (gated on Phase 020 features `130–132`).
 - **Feature 125 (`evaluate_profile_comparison` / `evaluate-profile` and `verify_profiles_ready` / `verify-profiles-ready`)**:
   - Evaluates same-candidate baseline vs. shadow runs with candidate-bound capture artifacts (`stdout`, `stderr`, `duration_ms`, `cost_units`, `command_count`), records both `success` and `failed` outcomes, rejects promotion recommendations whenever any baseline blocker is missed or cost/latency bounds are exceeded, and enforces `promoted: false`, `active_gates_reduced: false`, and `permissions_changed: false` (no self-promotion).
-  - Verified by the 7 permanent `PROFILE_CASES` (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`, `same-candidate`, `missed-baseline-blocker`, `cost-latency-accounting`, `no-self-promotion`) and `--check profiles-ready` against `.agent/evidence/125/profiles-policy.json`.
+  - **Audit & Follow-Up Classification (`A0` / `F3`)**: The initial `R9` `.agent/evidence/125/` records are classified as **parser/record-validation smoke evidence** until `A3` strengthens causal commit ordering, minimum comparison run counts, tier-specific run binding, captured `case_proofs`, and reviewer/producer provenance separation, and `A7` records the real paired task evaluation.
 
-### 3.7 Slice 5 Summary (`R10 + R11` — Representative 15-Task Pilot, Consumer Rehearsal, and Clean Exit)
+### 3.7 Slice 5 Summary (`R10 + R11` — Initial Smoke Rehearsal & Follow-Up Transition)
 
-- **R10 (Representative 15-Task Pilot & Disposable Consumer Rehearsal)**:
-  - Recorded in [pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json) (`source_commit: b99041dc948522a52832c8871fc3ec8e3c073091`, `total_duration_ms: 18075`):
-  - **15 tasks across all 5 routes** (`3 trivial`, `3 bugfix`, `3 small-change`, `3 standard-feature`, `3 high-risk`):
-    - `trivial` (`Routine`): `3` tasks, avg `6.0` commands, avg `484.3ms`, `1` review round/task.
-    - `bugfix` (`Standard`): `3` tasks, avg `5.7` commands, avg `453.3ms`, `1` review round/task (`pilot-06-bugfix-seeded-blocker` seeded blocker caught).
-    - `small-change` (`Routine`): `3` tasks, avg `6.0` commands, avg `483.7ms`, `1` review round/task (`pilot-07-small-status-flag` advisory-only verdict non-blocking).
-    - `standard-feature` (`Standard`): `3` tasks, avg `4.3` commands, avg `360.3ms`, `1` review round/task (`pilot-10-feature-124-prereg` mechanical contract amendment via `amend-contract --apply` without full pre-code re-entry; `pilot-12-feature-seeded-blocker` seeded blocker caught).
-    - `high-risk` (`High-assurance`): `3` tasks, avg `4.0` commands, avg `333.0ms`, `1` review round/task (`pilot-15-highrisk-seeded-blocker` seeded blocker caught).
-  - **Defect & Evidence Integrity**: `seeded_blockers: 3`, `blockers_caught: 3`, `missed_baseline_blockers: 0`, `silent_evidence_overwrites: 0` (exclusive capture overwrite prevention verified on every task).
-  - **Disposable Consumer Checkout Rehearsal**:
-    - `bootstrap.sh --repo-url <repo> --tag v1.6.0 --target <consumer>/.nizam`: **PASS** (`1685ms`)
-    - `bash .nizam/tools/validate.sh --payload`: **PASS** (`12 passed, 0 failed`, `9645ms`)
-    - `python3 tools/start_path.py classify` and `python3 tools/start_path.py status` on consumer checkout: **PASS**.
-- **R11 (Backlog Reconciliation & Clean Exit from Temporary Remediation Mode)**:
-  - All R0–R11 remediation items are implemented, verified, independently accepted across slices, and reconciled in `AGENTS.md`, `tools/SKILL.md`, `tools/README.md`, `standard/acceptance_bars.md`, `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`, `docs/planning/ROADMAP.md`, `docs/planning/manifest.json`, `docs/planning/phase_019.yaml`, `.agent/feature_list_019.json`, and `.agent/run_state.json`.
-  - Temporary remediation override mode exits cleanly with this integrated delivery: ordinary development uses the reconciled five-route workflow (`tools/start_path.py classify`, `begin|done`, `amend-contract`, `preflight`, `capture`, `check-verdict`, `resume`, `status`) and the Phase 019 (`124–125`) generic repository/worktree assurance profile tools (`preregister-profile`, `evaluate-profile`, `verify-profiles-ready`), while Phase 020 (`130–132`) resumes as the active persistent-runtime SBCL track.
+- **R10 (Initial 15-Task CLI Smoke & Consumer Rehearsal — Reclassified under `A0` / `F4`)**:
+  - Recorded in [pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json) (`source_commit: b99041dc948522a52832c8871fc3ec8e3c073091`, `total_duration_ms: 18075`, `evidence_classification: "historical-smoke-and-parser-validation"`).
+  - **Audit & Follow-Up Classification**: The initial `R10` record exercised CLI subcommands and `v1.6.0` bootstrap combined with author-checkout `start_path.py` calls, rather than a zero-reach-back consumer checkout and a real paired baseline-vs-proposed task study. It is retained strictly as **historical smoke/CLI validation evidence**; `A6` delivers the zero-reach-back consumer-only rehearsal and `A7` delivers the real paired task evaluation.
+- **R11 (Transitional Override Continuation under `A0`–`A8`)**:
+  - Rather than exiting temporary remediation override mode prematurely while `.nizam/` lacked the new tools and findings `F1`–`F6` remained open, temporary remediation precedence continues under `A0`–`A8` until `A8` releases `v1.8.0`, re-bootstraps `.nizam/` to `v1.8.0`, and verifies parity between root and `.nizam/`.
 
-## 4. Reconciled Backlog & Dependency Order (R0–R11)
+## 4. Initial Backlog & Dependency Order (`R0`–`R11`)
 
 1. **Slice 1 (`R0` → `R1` → `R2` → independent acceptance at `30243037a4e8b085aa2ef8f493a3e93c56977f80`)**:
    - `R0`: Mandate adoption, PR #115 (`134`) reconciliation, and backlog order adjustment.
    - `R1`: Suite ownership mapping and timing baseline.
-   - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python (`3.14`) + shared `.github/requirements-ci.txt`.
+   - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python + shared `.github/requirements-ci.txt`.
 2. **Slice 2 (`R3` + `R4` → independent acceptance at `3132337b1a46132a573a854a2db835b84081cc68`)**:
-   - `R3`: Bound `ControlsFixture` and `controls_snapshot` in `tools/test_workflow_assurance.py` so synthetic parser tests use a small, deterministic repository tree instead of cloning/walking the entire growing `.agent/evidence/` history and traversing `f.root` twice.
-   - `R4`: Retire the default whole-module `MASKED_AST` freeze in `tools/test_receipt_candidate_batching.py` (confining historical AST-freeze checks to an opt-in flag while keeping all four behavioral receipt-batching checks in default execution).
+   - `R3`: Bound `ControlsFixture` and `controls_snapshot` in `tools/test_workflow_assurance.py`.
+   - `R4`: Retire the default whole-module `MASKED_AST` freeze in `tools/test_receipt_candidate_batching.py` behind `--check-historical-ast-freeze`.
 3. **Slice 3 (`R5` + `R6` + `R7` + `R8` → independent acceptance at `14ae992fed5217f016e8ee7edb542c67725d9e48`)**:
-   - `R5`: Task routing (`tools/start_path.py`, schemas, entry docs, `AGENTS.md`, `tools/SKILL.md`, `methodology/01_execution.md`), evidence-based blocking vs. advisory review severity (reusing `convergent_agf_verdict`), lightweight amendments, and unified stopping rules (`standard/acceptance_bars.md` and `methodology/03_circuit_breaker.md`).
-   - `R6`: Automated safe evidence capture (exclusive per-execution paths, monotonic elapsed time, no silent overwrite, interrupted vs. completed distinction), capability preflight, and cause-based recovery routing.
-   - `R7`: Bounded repository-binding migration (Option A from `.agent/evidence/120/repository-binding-decision-proposal.json`) and operational receipt/resume integration into the start/resume flow.
-   - `R8`: Concise generated status/readiness views and thin task entry/status CLI without recursive closeout invalidation.
+   - `R5`: Task routing, blocking vs. advisory review severity, lightweight amendments, and stopping rules.
+   - `R6`: Automated safe evidence capture, capability preflight, and cause-based recovery routing.
+   - `R7`: Bounded repository-binding migration (Option A) and operational receipt/resume CLI.
+   - `R8`: Concise generated status/readiness views.
 4. **Slice 4 (`R9` — Phase 019 Features `124` and `125` → independent acceptance at `b99041dc948522a52832c8871fc3ec8e3c073091`)**:
-   - Reconciled dependency split in `.agent/feature_list_019.json`: generic repository/worktree assurance profile comparison (`124`) and shadow recommendation (`125`) depend on `123` (`123` → `124` → `125`) and are complete; persistent-runtime / SBCL profile qualification remains gated on Phase 020 features `130–132`.
-5. **Slice 5 (`R10` + `R11` → final independent acceptance & PR delivery)**:
-   - `R10`: Independent acceptance of integrated slices and representative 15-task pilot + clean consumer checkout validation ([pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json)).
-   - `R11`: Documentation, backlog reconciliation, and clean exit from temporary remediation mode.
+   - Reconciled dependency split in `.agent/feature_list_019.json` (`123` → `124` → `125`) separated from persistent-runtime SBCL (`130`–`132`).
+5. **Slice 5 (`R10` + `R11` → merged in PR #116 at `8815d311ea512d3bbd7dafddfc124a6197b38c72`)**:
+   - Initial smoke pilot and `v1.7.0` release (`47851d857e0ab879b848610128ee6e9e13368f0d`).
+
+## 5. Post-Remediation Audit Follow-Up Packets (`A0`–`A8`)
+
+1. **Follow-Up Slice 1 (`A0` + `A1` + `A2`)**:
+   - `A0`: Re-resolve baseline (`v1.7.0` / `47851d857e0ab879b848610128ee6e9e13368f0d`), record continuing follow-up authority (`2026-10-18T10:10:00Z`), correct run `39064043210` attribution and reclassify `R9`/`R10` records as smoke/parser validation, and restore visible transitional entry precedence in `AGENTS.md`.
+   - `A1` (Closes `F1` & `F5` amendment part): Shared canonical path normalization and route-eligibility decision across `classify`, `begin`, `done`, and `amend-contract`; working-tree/commit diff scope verification and task-bound substantive QA/evidence validation in `done`; strict field validation, path normalization, vacuous-command rejection, semantic scope-expansion detection, and approval hash binding in `amend-contract`.
+   - `A2` (Closes `F2`, `F5` preflight part, & native Python runtime layout): Explicit 3-stage evidence model (`capture` → `publish` → `build-receipt`/`verify-receipt`/`resume`) with unbound candidate representation (`binding_state: "unbound"`, `candidate_sha256: null`), multi-variable environment capture, post-execution `output_revision` publication, route-aware receipt stages (`trivial-complete`, `bugfix-complete`, `small-change-complete`), operational sandbox adapter probe in `preflight`, and `PATH` sanitization in `tools/isolated_trial_adapter.py` so Python 3.12+ never stats unmounted `/opt/hostedtoolcache` entries under Landlock.
+2. **Follow-Up Slice 2 (`A3` + `A4` + `A5`)**:
+   - `A3` (Closes `F3`): Harden `preregister_profile_comparison`, `evaluate_profile_comparison`, and `verify_profiles_ready` with causal commit ordering (`git merge-base --is-ancestor`), `min_comparison_runs` enforcement, distinct tier/profile-config run bindings, captured `case_proofs`, and distinct reviewer/producer provenance checks.
+   - `A4` (Closes `F4`): Align `AGENTS.md`, `tools/SKILL.md`, `NIZAM.json`, `methodology/00_planning.md`, `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`, and `standard/acceptance_bars.md` on the `Routine` / `Standard` / `High-assurance` responsibility table, work-specific diagnostic stopping policy (repeated identical deterministic failure triggers diagnosis; attempt counter and line counts are telemetry rather than hard blockers), and single authoritative AGF verdict shape.
+   - `A5` (Closes `F6`): Dynamic phase/feature discovery and contradiction reporting in `tools/start_path.py status`, reconciliation of `.agent/feature_list_022.json` and `docs/planning/phase_022.yaml`, and C16 (`vlib_feature_list_lifecycle`) historical-exemption tightening and truthful structural-check labeling.
+3. **Follow-Up Slice 3 (`A6` + `A7` + `A8`)**:
+   - `A6`: Clean disposable consumer repository validation using only the consumer's normal entry and installed `.nizam/` tools (zero reach-back to author checkout).
+   - `A7`: Real paired baseline-vs-proposed task comparison (10–15 representative tasks/replays including tiny policy-bearing edit, test-oracle change, and seeded blockers) and refreshed `.agent/evidence/125/` qualification package passing all strengthened `A3` checks.
+   - `A8`: Merge follow-up PR, release and tag immutable `v1.8.0`, re-bootstrap `.nizam/` to `v1.8.0`, remove transitional override banner from `AGENTS.md`, and complete final closeout.
+

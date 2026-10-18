@@ -5,7 +5,7 @@
   "description": "Validates .agent/evidence/<id>-intent.json, the intent that tools/start_path.py reads before a small unambiguous change may begin.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "path", "summary", "needs_new_contract"],
+  "required": ["id", "path", "summary", "needs_new_contract", "files"],
   "properties": {
     "id": {
       "type": "string",
@@ -29,7 +29,7 @@
       "type": "array",
       "minItems": 1,
       "items": { "type": "string", "minLength": 1 },
-      "description": "Optional repository-relative files scoped for the trivial or small change."
+      "description": "Required non-empty list of repository-relative files scoped for the trivial or small change."
     }
   }
 }

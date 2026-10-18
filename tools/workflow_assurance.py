@@ -794,6 +794,23 @@ def _receipt_producer(value):
     for key in value: _receipt_text(value[key], key)
 
 
+ROUTE_RECEIPT_STAGES = {
+    'trivial-complete': 'trivial',
+    'bugfix-complete': 'bugfix',
+    'small-change-complete': 'small-change',
+}
+
+
+def _load_start_path_module():
+    try:
+        import start_path as sp
+    except ModuleNotFoundError as exc:
+        if exc.name != 'start_path':
+            raise
+        from tools import start_path as sp
+    return sp
+
+
 def _receipt_policy(root, policy):
     json_value(policy)
     _bundle_object(policy, ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'candidate',
@@ -801,7 +818,9 @@ def _receipt_policy(root, policy):
     require(type(policy['schema_version']) is int and policy['schema_version'] == 1, 'receipt policy version')
     for key in ('repository', 'feature_id', 'operation_id', 'from_status', 'to_status', 'at'): _receipt_text(policy[key], key)
     minima = {'contract-approved': ('mode-a', 'contract-review'), 'source-ready': ('approved-contract', 'provisional-bundle'),
-        'qa-passed': ('mode-b',), 'evidence-captured': ('fresh-qa',), 'feature-complete': ('fresh-qa', 'evidence-capture')}
+        'qa-passed': ('mode-b',), 'evidence-captured': ('fresh-qa',), 'feature-complete': ('fresh-qa', 'evidence-capture'),
+        'trivial-complete': ('route-intent', 'route-qa'), 'bugfix-complete': ('route-intent', 'route-qa'),
+        'small-change-complete': ('route-intent', 'route-qa')}
     require(type(policy['stage']) is str and policy['stage'] in minima, 'receipt unknown stage')
     validate_identity(policy['candidate']); _receipt_producer(policy['producer'])
     for key in ('contract', 'operator'): _receipt_ref(root, policy[key])
@@ -890,6 +909,49 @@ def _receipt_contract(root, value, feature):
 
 def _receipt_prerequisites(root, policy, minimum):
     entries = policy['prerequisites']; seen = set(); current = set(); records = []
+    if policy['stage'] in ROUTE_RECEIPT_STAGES:
+        expected_route = ROUTE_RECEIPT_STAGES[policy['stage']]
+        sp = _load_start_path_module()
+        kinds = ('route-intent', 'route-qa', 'evidence-capture')
+        for entry in entries:
+            _bundle_object(entry, ('kind', 'artifact', 'feature_id', 'assessed_revision', 'contract_sha256'), 'receipt prerequisite')
+            require(type(entry['kind']) is str and entry['kind'] in kinds, 'receipt prerequisite kind')
+            _receipt_text(entry['feature_id'], 'prerequisite feature')
+            _bundle_hex(entry['assessed_revision'], 40, 'prerequisite revision'); _bundle_hex(entry['contract_sha256'], 64, 'prerequisite contract')
+            require(git(root, 'rev-parse', '--verify', entry['assessed_revision'] + '^{commit}').decode().strip() == entry['assessed_revision'],
+                    'receipt prerequisite actual revision')
+            identity = (entry['kind'], entry['feature_id'])
+            require(identity not in seen, 'receipt duplicate prerequisite'); seen.add(identity)
+            if entry['feature_id'] == policy['feature_id']: current.add(entry['kind'])
+            value = parse_json(_receipt_artifact(root, entry['artifact'])); kind = entry['kind']
+            feature, revision, digest = entry['feature_id'], entry['assessed_revision'], entry['contract_sha256']
+            if kind == 'route-intent':
+                require(canonical(entry['artifact']) == canonical(policy['contract']) and
+                    entry['artifact']['sha256'] == digest and entry['artifact']['revision'] == revision, 'receipt route intent entry')
+                try:
+                    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'])
+                except (ValueError, sp.StartPathError) as exc:
+                    raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
+            elif kind == 'route-qa':
+                _receipt_gate(value)
+                require((value.get('feature_id') or value.get('id')) == feature and
+                    value.get('reviewed_revision') == revision and
+                    (value.get('intent_sha256') or value.get('approved_contract_sha256')) == digest, 'receipt route qa binding')
+                require(value.get('qa_pass') is True and type(value.get('checks_run')) is int and value['checks_run'] > 0 and
+                    type(value.get('checks_passed')) is int and value['checks_passed'] == value['checks_run'], 'receipt route QA predicate')
+                _receipt_text(value.get('reviewer', value.get('actor')), 'route qa reviewer')
+            elif kind == 'evidence-capture':
+                require(value.get('role') == 'Root' and value.get('feature') == feature and value.get('revision') == revision and
+                    value.get('approved_contract_sha256') == digest and value.get('passed') is True and
+                    type(value.get('actual_exit')) is int and value['actual_exit'] == 0, 'receipt evidence capture predicate')
+            records.append((entry, value))
+        require(set(minimum) <= current, 'receipt missing current prerequisite')
+        intent = parse_json(_receipt_artifact(root, policy['contract']))
+        try:
+            sp.verify_route_scope_eligibility(root, expected_route, intent, feature_id=policy['feature_id'], candidate=policy['candidate'])
+        except (ValueError, sp.StartPathError) as exc:
+            raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
+        return
     kinds = ('mode-a', 'contract-review', 'approved-contract', 'provisional-bundle', 'mode-b', 'fresh-qa', 'evidence-capture')
     for entry in entries:
         _bundle_object(entry, ('kind', 'artifact', 'feature_id', 'assessed_revision', 'contract_sha256'), 'receipt prerequisite')
@@ -944,6 +1006,10 @@ def _receipt_prerequisites(root, policy, minimum):
 
 
 def _receipt_operator(root, policy):
+    if policy['stage'] in ROUTE_RECEIPT_STAGES and canonical(policy['operator']) == canonical(policy['contract']):
+        intent = parse_json(_receipt_artifact(root, policy['operator']))
+        require(type(intent) is dict and intent.get('id') == policy['feature_id'], 'receipt route operator intent binding')
+        return
     app = parse_json(_receipt_artifact(root, policy['operator']))
     _bundle_object(app, ('schema_version', 'role', 'repository', 'feature_id', 'stage', 'candidate_sha256',
         'approved', 'authority_ref', 'owner', 'gate', 'scope'), 'receipt operator application')
@@ -2732,23 +2798,29 @@ def main():
         command.add_argument('--before', required=True); command.add_argument('--after', required=True)
         if name == 'record': command.add_argument('--owned-fields', required=True)
     vrec = sub.add_parser('verify-receipt')
-    for name in ('repo', 'receipt', 'policy'):
+    vrec.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('receipt', 'policy'):
         vrec.add_argument('--' + name, required=True)
     ptrans = sub.add_parser('plan-transition')
-    for name in ('repo', 'state', 'policy'):
+    ptrans.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('state', 'policy'):
         ptrans.add_argument('--' + name, required=True)
     ptrans.add_argument('--receipt')
     rfail = sub.add_parser('route-failure')
-    for name in ('repo', 'request', 'policy'):
+    rfail.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('request', 'policy'):
         rfail.add_argument('--' + name, required=True)
     pprof = sub.add_parser('preregister-profile')
-    for name in ('repo', 'preregistration', 'policy'):
+    pprof.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('preregistration', 'policy'):
         pprof.add_argument('--' + name, required=True)
     eprof = sub.add_parser('evaluate-profile')
-    for name in ('repo', 'comparison', 'policy'):
+    eprof.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('comparison', 'policy'):
         eprof.add_argument('--' + name, required=True)
     vprof = sub.add_parser('verify-profiles-ready')
-    for name in ('repo', 'evidence', 'policy'):
+    vprof.add_argument('--repo', '--root', dest='repo', required=True)
+    for name in ('evidence', 'policy'):
         vprof.add_argument('--' + name, required=True)
     args = parser.parse_args()
     def read(path): return parse_json(Path(path).read_bytes())
