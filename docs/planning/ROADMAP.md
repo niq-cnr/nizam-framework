@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.19
+version: 0.65.20
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.20"
+    date: "2026-10-18"
+    summary: "Complete the 2026-10-18 critical quality and velocity remediation (R0-R11) on branch feat/quality-velocity-remediation-2026-10-18: record Slice 4 independent acceptance (b99041dc948522a52832c8871fc3ec8e3c073091), the 15-task representative pilot across all five routes and clean disposable consumer checkout rehearsal (.agent/evidence/remediation-2026-10-18/pilot-report.json), and clean exit from temporary remediation override mode. Preserve the v1.6.0 disposition line and all historical snapshots."
   - version: "0.65.19"
     date: "2026-10-18"
     summary: "Record completion of Phase 019 (features 124-125) generic repository/worktree assurance profile preregistration and shadow comparison/recommendation under the 2026-10-18 remediation mandate (R9); persistent-runtime SBCL profile qualification remains gated on Phase 020 features 130-132. Preserve the v1.6.0 disposition line and all historical snapshots."
@@ -292,8 +295,14 @@ verified green at HEAD (SBCL 2.2.9.debian; `python3 tools/test_runtime_session.p
 **131/132** remain PENDING behind 130 in the 020 persistent-runtime order 129→130→131→132.
 Phase **019** ([phase_019.yaml](phase_019.yaml), features **124–125**) generic repository/worktree
 assurance profile preregistration and shadow comparison/recommendation are **COMPLETE** under
-the 2026-10-18 remediation mandate (R9; verified via `python3 tools/test_workflow_assurance.py --check profiles-ready`),
+the 2026-10-18 remediation mandate (R9; verified via `python3 tools/test_workflow_assurance.py --check profiles-ready`
+and independently accepted at `b99041dc948522a52832c8871fc3ec8e3c073091`),
 while persistent-runtime SBCL profile qualification remains gated on Phase 020 (`130–132`).
+The 15-task representative pilot across all five routes (`trivial`, `bugfix`, `small-change`,
+`standard-feature`, `high-risk`) and the clean disposable consumer checkout rehearsal at `v1.6.0`
+are **COMPLETE** ([pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json):
+`3/3` seeded blockers caught, `0` missed baseline blockers, `0` silent evidence overwrites),
+and the temporary remediation override mode exits cleanly upon integrated PR delivery (R11).
 
 Phase **021** / feature **133** is complete and delivered: PR105 merged as `bfd15d10`
 and the five-success main CI proof is recorded in run_state (`133-main-hosted-delivery`);

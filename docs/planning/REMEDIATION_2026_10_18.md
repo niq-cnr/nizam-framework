@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-18"
+    summary: "Record Slice 4 independent acceptance (b99041dc948522a52832c8871fc3ec8e3c073091), Slice 5 (R10 + R11) 15-task representative pilot across all five routes and clean disposable consumer checkout rehearsal (.agent/evidence/remediation-2026-10-18/pilot-report.json), and clean exit from temporary remediation mode."
   - version: "0.4.0"
     date: "2026-10-18"
     summary: "Record Slice 3 independent acceptance (14ae992fed5217f016e8ee7edb542c67725d9e48) and Slice 4 (R9) Phase 019 generic repository/worktree assurance profile preregistration (124) and shadow comparison/recommendation (125)."
@@ -81,6 +84,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - `python3 tools/test_workflow_assurance.py --case ci-candidate-bound`: **PASS** (`106/106` negative variants + foreign-observer + deterministic observer + positive restorations) in **`11m22.64s`** (down from **`41m50s`** in baseline run `39064043210`)
   - Remaining 46 cases in `tools/test_workflow_assurance.py`: **PASS** (`46/46`) in **`~25s`**
   - `python3 tools/test_workflow_assurance.py --check controls-ready`: **PASS** in **`2.05s`** (with scratch clone detached at `evidence['candidate']['source_commit']`)
+  - `python3 tools/test_workflow_assurance.py`: **PASS** (`48/48` cases)
   - `python3 tools/test_receipt_candidate_batching.py`: **PASS** (`4/4` behavioral checks: `real-git-count-reduction`, `semantic-equivalence`, `fresh-mutations`, `literal-paths-and-modes`; historical whole-module `MASKED_AST` check gated behind `--check-historical-ast-freeze`) in **`1.91s`**
 
 ### 3.5 Slice 3 Summary (`R5 + R6 + R7 + R8` — Accepted at `14ae992fed5217f016e8ee7edb542c67725d9e48`)
@@ -95,7 +99,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
 - **R8 (Concise Generated Status / Readiness Views)**:
   - Added `tools/start_path.py status --format json|markdown` reporting implemented, verified, independently accepted, merged, released, installed, and commissioned states without mutating repository files, and updated `tools/test_public_entry.py` to derive the expected `--tag v<framework_version>` dynamically from `NIZAM.json`.
 
-### 3.6 Slice 4 Summary (`R9` — Phase 019 Generic Assurance Profiles `124` and `125`)
+### 3.6 Slice 4 Summary (`R9` — Phase 019 Generic Assurance Profiles `124` and `125` — Accepted at `b99041dc948522a52832c8871fc3ec8e3c073091`)
 
 - **Feature 124 (`preregister_profile_comparison` / `preregister-profile`)**:
   - Reuses the exact five canonical AGF roles and capability profile identifiers (`Orchestrator` → `orchestrator-primary`, `Planner` → `planner-creative`, `Generator` → `generator-deterministic`, `Validator` → `validator-structural`, `Evaluator` → `evaluator-adversarial`).
@@ -105,22 +109,41 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - Evaluates same-candidate baseline vs. shadow runs with candidate-bound capture artifacts (`stdout`, `stderr`, `duration_ms`, `cost_units`, `command_count`), records both `success` and `failed` outcomes, rejects promotion recommendations whenever any baseline blocker is missed or cost/latency bounds are exceeded, and enforces `promoted: false`, `active_gates_reduced: false`, and `permissions_changed: false` (no self-promotion).
   - Verified by the 7 permanent `PROFILE_CASES` (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`, `same-candidate`, `missed-baseline-blocker`, `cost-latency-accounting`, `no-self-promotion`) and `--check profiles-ready` against `.agent/evidence/125/profiles-policy.json`.
 
+### 3.7 Slice 5 Summary (`R10 + R11` — Representative 15-Task Pilot, Consumer Rehearsal, and Clean Exit)
+
+- **R10 (Representative 15-Task Pilot & Disposable Consumer Rehearsal)**:
+  - Recorded in [pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json) (`source_commit: b99041dc948522a52832c8871fc3ec8e3c073091`, `total_duration_ms: 18075`):
+  - **15 tasks across all 5 routes** (`3 trivial`, `3 bugfix`, `3 small-change`, `3 standard-feature`, `3 high-risk`):
+    - `trivial` (`Routine`): `3` tasks, avg `6.0` commands, avg `484.3ms`, `1` review round/task.
+    - `bugfix` (`Standard`): `3` tasks, avg `5.7` commands, avg `453.3ms`, `1` review round/task (`pilot-06-bugfix-seeded-blocker` seeded blocker caught).
+    - `small-change` (`Routine`): `3` tasks, avg `6.0` commands, avg `483.7ms`, `1` review round/task (`pilot-07-small-status-flag` advisory-only verdict non-blocking).
+    - `standard-feature` (`Standard`): `3` tasks, avg `4.3` commands, avg `360.3ms`, `1` review round/task (`pilot-10-feature-124-prereg` mechanical contract amendment via `amend-contract --apply` without full pre-code re-entry; `pilot-12-feature-seeded-blocker` seeded blocker caught).
+    - `high-risk` (`High-assurance`): `3` tasks, avg `4.0` commands, avg `333.0ms`, `1` review round/task (`pilot-15-highrisk-seeded-blocker` seeded blocker caught).
+  - **Defect & Evidence Integrity**: `seeded_blockers: 3`, `blockers_caught: 3`, `missed_baseline_blockers: 0`, `silent_evidence_overwrites: 0` (exclusive capture overwrite prevention verified on every task).
+  - **Disposable Consumer Checkout Rehearsal**:
+    - `bootstrap.sh --repo-url <repo> --tag v1.6.0 --target <consumer>/.nizam`: **PASS** (`1685ms`)
+    - `bash .nizam/tools/validate.sh --payload`: **PASS** (`12 passed, 0 failed`, `9645ms`)
+    - `python3 tools/start_path.py classify` and `python3 tools/start_path.py status` on consumer checkout: **PASS**.
+- **R11 (Backlog Reconciliation & Clean Exit from Temporary Remediation Mode)**:
+  - All R0–R11 remediation items are implemented, verified, independently accepted across slices, and reconciled in `AGENTS.md`, `tools/SKILL.md`, `tools/README.md`, `standard/acceptance_bars.md`, `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`, `docs/planning/ROADMAP.md`, `docs/planning/manifest.json`, `docs/planning/phase_019.yaml`, `.agent/feature_list_019.json`, and `.agent/run_state.json`.
+  - Temporary remediation override mode exits cleanly with this integrated delivery: ordinary development uses the reconciled five-route workflow (`tools/start_path.py classify`, `begin|done`, `amend-contract`, `preflight`, `capture`, `check-verdict`, `resume`, `status`) and the Phase 019 (`124–125`) generic repository/worktree assurance profile tools (`preregister-profile`, `evaluate-profile`, `verify-profiles-ready`), while Phase 020 (`130–132`) resumes as the active persistent-runtime SBCL track.
+
 ## 4. Reconciled Backlog & Dependency Order (R0–R11)
 
-1. **Slice 1 (`R0` → `R1` → `R2` → independent acceptance)**:
+1. **Slice 1 (`R0` → `R1` → `R2` → independent acceptance at `30243037a4e8b085aa2ef8f493a3e93c56977f80`)**:
    - `R0`: Mandate adoption, PR #115 (`134`) reconciliation, and backlog order adjustment.
    - `R1`: Suite ownership mapping and timing baseline.
    - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python (`3.12`) + shared `.github/requirements-ci.txt`.
-2. **Slice 2 (`R3` + `R4` → independent acceptance)**:
+2. **Slice 2 (`R3` + `R4` → independent acceptance at `3132337b1a46132a573a854a2db835b84081cc68`)**:
    - `R3`: Bound `ControlsFixture` and `controls_snapshot` in `tools/test_workflow_assurance.py` so synthetic parser tests use a small, deterministic repository tree instead of cloning/walking the entire growing `.agent/evidence/` history and traversing `f.root` twice.
    - `R4`: Retire the default whole-module `MASKED_AST` freeze in `tools/test_receipt_candidate_batching.py` (confining historical AST-freeze checks to an opt-in flag while keeping all four behavioral receipt-batching checks in default execution).
-3. **Slice 3 (`R5` + `R6` + `R7` + `R8` → independent acceptance)**:
+3. **Slice 3 (`R5` + `R6` + `R7` + `R8` → independent acceptance at `14ae992fed5217f016e8ee7edb542c67725d9e48`)**:
    - `R5`: Task routing (`tools/start_path.py`, schemas, entry docs, `AGENTS.md`, `tools/SKILL.md`, `methodology/01_execution.md`), evidence-based blocking vs. advisory review severity (reusing `convergent_agf_verdict`), lightweight amendments, and unified stopping rules (`standard/acceptance_bars.md` and `methodology/03_circuit_breaker.md`).
    - `R6`: Automated safe evidence capture (exclusive per-execution paths, monotonic elapsed time, no silent overwrite, interrupted vs. completed distinction), capability preflight, and cause-based recovery routing.
    - `R7`: Bounded repository-binding migration (Option A from `.agent/evidence/120/repository-binding-decision-proposal.json`) and operational receipt/resume integration into the start/resume flow.
    - `R8`: Concise generated status/readiness views and thin task entry/status CLI without recursive closeout invalidation.
-4. **Slice 4 (`R9` — Phase 019 Features `124` and `125`)**:
-   - Reconciled dependency split in `.agent/feature_list_019.json`: generic repository/worktree assurance profile comparison (`124`) and shadow recommendation (`125`) depend on `123` (`123` → `124` → `125`) and execute now; persistent-runtime / SBCL profile qualification remains gated on Phase 020 features `130–132`.
-5. **Slice 5 (`R10` + `R11`)**:
-   - `R10`: Independent acceptance of integrated slices and representative pilot (10–20 tasks/replays + clean consumer checkout validation).
+4. **Slice 4 (`R9` — Phase 019 Features `124` and `125` → independent acceptance at `b99041dc948522a52832c8871fc3ec8e3c073091`)**:
+   - Reconciled dependency split in `.agent/feature_list_019.json`: generic repository/worktree assurance profile comparison (`124`) and shadow recommendation (`125`) depend on `123` (`123` → `124` → `125`) and are complete; persistent-runtime / SBCL profile qualification remains gated on Phase 020 features `130–132`.
+5. **Slice 5 (`R10` + `R11` → final independent acceptance & PR delivery)**:
+   - `R10`: Independent acceptance of integrated slices and representative 15-task pilot + clean consumer checkout validation ([pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json)).
    - `R11`: Documentation, backlog reconciliation, and clean exit from temporary remediation mode.
