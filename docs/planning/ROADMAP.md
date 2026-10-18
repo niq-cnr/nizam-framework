@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.20
+version: 0.65.21
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.21"
+    date: "2026-10-18"
+    summary: "Record v1.7.0 release preparation (operator verbatim 'Once the PR merges prepare the current build as the next release then tag/pin/release this as the latest verison.'): the Current position section gains the 'Release in preparation: v1.7.0' disposition line (preparation only; the annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.7.0' roll land in the post-tag closeout). The v1.6.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.20"
     date: "2026-10-18"
     summary: "Complete the 2026-10-18 critical quality and velocity remediation (R0-R11) on branch feat/quality-velocity-remediation-2026-10-18: record Slice 4 independent acceptance (b99041dc948522a52832c8871fc3ec8e3c073091), the 15-task representative pilot across all five routes and clean disposable consumer checkout rehearsal (.agent/evidence/remediation-2026-10-18/pilot-report.json), and clean exit from temporary remediation override mode. Preserve the v1.6.0 disposition line and all historical snapshots."
@@ -315,6 +318,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v1.7.0
 
 Latest released tag: v1.6.0 (MINOR) — RELEASED 2026-10-17 at `4e7db5a47d753555abd4d724c5d16f2b5eb86c3e` (PR #113); `release.yml` run 39008222975 succeeded and the GitHub Release published at `2026-10-17T05:59:26Z` is marked Latest.
 
