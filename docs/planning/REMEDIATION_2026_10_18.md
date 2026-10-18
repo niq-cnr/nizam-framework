@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.5.0
+version: 0.5.1
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.5.1"
+    date: "2026-10-18"
+    summary: "Align CI Python minor pin to 3.14 (avoiding /opt/hostedtoolcache 3.12 stdlib landmark collision inside native Landlock sandbox on Ubuntu 24.04) and normalize .git suffix matching in tools/start_path.py for GitHub Actions checkouts."
   - version: "0.5.0"
     date: "2026-10-18"
     summary: "Record Slice 4 independent acceptance (b99041dc948522a52832c8871fc3ec8e3c073091), Slice 5 (R10 + R11) 15-task representative pilot across all five routes and clean disposable consumer checkout rehearsal (.agent/evidence/remediation-2026-10-18/pilot-report.json), and clean exit from temporary remediation mode."
@@ -133,7 +136,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
 1. **Slice 1 (`R0` → `R1` → `R2` → independent acceptance at `30243037a4e8b085aa2ef8f493a3e93c56977f80`)**:
    - `R0`: Mandate adoption, PR #115 (`134`) reconciliation, and backlog order adjustment.
    - `R1`: Suite ownership mapping and timing baseline.
-   - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python (`3.12`) + shared `.github/requirements-ci.txt`.
+   - `R2`: Deduplicate CI (`tools/fixtures_self_test.sh` and `.github/workflows/compliance.yml`) and pin Python (`3.14`) + shared `.github/requirements-ci.txt`.
 2. **Slice 2 (`R3` + `R4` → independent acceptance at `3132337b1a46132a573a854a2db835b84081cc68`)**:
    - `R3`: Bound `ControlsFixture` and `controls_snapshot` in `tools/test_workflow_assurance.py` so synthetic parser tests use a small, deterministic repository tree instead of cloning/walking the entire growing `.agent/evidence/` history and traversing `f.root` twice.
    - `R4`: Retire the default whole-module `MASKED_AST` freeze in `tools/test_receipt_candidate_batching.py` (confining historical AST-freeze checks to an opt-in flag while keeping all four behavioral receipt-batching checks in default execution).

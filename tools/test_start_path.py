@@ -252,6 +252,17 @@ def test_r5_classification_and_amendments(root: Path) -> None:
 
 def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
     """Verify capability preflight, exclusive command capture, read-only status view, and receipt CLI."""
+    import start_path as sp
+
+    assert sp._repository_urls_match(
+        "https://github.com/niq-cnr/nizam-framework.git",
+        "https://github.com/niq-cnr/nizam-framework",
+    ) is True
+    assert sp._repository_urls_match(
+        "https://github.com/niq-cnr/nizam-framework.git",
+        "https://github.com/niq-cnr/other-repo",
+    ) is False
+
     # 1. Preflight on real repository root (R6 + R7 repository binding aligned)
     res_preflight = run(ROOT, "preflight")
     expect(res_preflight, 0, '"repository_binding_aligned": true')

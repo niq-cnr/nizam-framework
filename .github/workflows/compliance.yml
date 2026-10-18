@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       - run: pip install -r .github/requirements-ci.txt
 
@@ -53,7 +53,7 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # jsonschema + pyyaml are required because, as of phase-006 feature 050,
       # the harness's assert_payload_validate_cwd_independent runs
@@ -77,7 +77,7 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # tools/fixtures_self_test.sh (NDEBT-009, feature 052) drives
       # tools/validate.sh --target, which fails closed without jsonschema/yaml.
@@ -105,7 +105,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
       - run: pip install -r .github/requirements-ci.txt
       - name: Enable unprivileged user namespaces where the kernel restricts them
         run: |
@@ -195,7 +195,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
       - run: pip install -r .github/requirements-ci.txt
       - run: python3 .github/scripts/verify_self_governance.py
       - run: python3 .github/scripts/test_self_governance.py

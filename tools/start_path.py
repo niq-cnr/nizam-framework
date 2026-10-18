@@ -572,6 +572,18 @@ def validate_review_verdict(
     }
 
 
+def _repository_urls_match(repo_a: Any, repo_b: Any) -> bool:
+    if not isinstance(repo_a, str) or not isinstance(repo_b, str) or not repo_a or not repo_b:
+        return False
+    norm_a = repo_a.rstrip("/")
+    norm_b = repo_b.rstrip("/")
+    if norm_a.endswith(".git"):
+        norm_a = norm_a[:-4]
+    if norm_b.endswith(".git"):
+        norm_b = norm_b[:-4]
+    return norm_a == norm_b
+
+
 def preflight_capabilities(root: Path, *, require_sandbox: bool = False) -> dict[str, Any]:
     """Check runtime, Git, schema, repository-binding, and sandbox readiness before a governed attempt."""
     failures: list[str] = []
@@ -629,7 +641,7 @@ def preflight_capabilities(root: Path, *, require_sandbox: bool = False) -> dict
         try:
             state = load_record(root, Path(".agent/run_state.json"), "run_state.schema.json")
             capabilities["run_state_valid"] = True
-            if capabilities["origin_url"] and state.get("repository") == capabilities["origin_url"]:
+            if capabilities["origin_url"] and _repository_urls_match(state.get("repository"), capabilities["origin_url"]):
                 capabilities["repository_binding_aligned"] = True
             elif capabilities["origin_url"]:
                 failures.append(
@@ -870,7 +882,7 @@ def generate_status_view(root: Path) -> dict[str, Any]:
     return {
         "repository": state.get("repository"),
         "origin_url": origin_url,
-        "repository_binding_aligned": bool(origin_url and state.get("repository") == origin_url),
+        "repository_binding_aligned": _repository_urls_match(state.get("repository"), origin_url),
         "head_revision": head_sha,
         "current_phase": state.get("current_phase"),
         "current_feature": state.get("current_feature"),
