@@ -71,7 +71,7 @@ def add_path_rule(ruleset_fd: int, path: Path, access: int) -> None:
         os.close(descriptor)
 
 
-def restrict_filesystem(root: Path, runner: Path) -> int:
+def restrict_filesystem(root: Path, runner: Path, interpreters: list[Path]) -> int:
     abi = syscall(SYS_LANDLOCK_CREATE_RULESET, 0, 0, LANDLOCK_CREATE_RULESET_VERSION)
     handled = BASE_ACCESS
     if abi >= 2:
@@ -88,6 +88,8 @@ def restrict_filesystem(root: Path, runner: Path) -> int:
         trial_access = handled & ~EXECUTE
         add_path_rule(ruleset_fd, root, trial_access)
         add_path_rule(ruleset_fd, runner, READ_FILE | EXECUTE)
+        for interpreter in interpreters:
+            add_path_rule(ruleset_fd, interpreter, READ_FILE | EXECUTE)
         for system_path in (Path("/usr"), Path("/lib"), Path("/lib64")):
             if system_path.exists():
                 add_path_rule(ruleset_fd, system_path, READ_FILE | READ_DIR | EXECUTE)
@@ -108,15 +110,23 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", required=True)
     parser.add_argument("--runner", required=True)
+    parser.add_argument(
+        "--interpreter",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help="grant READ|EXECUTE on a required interpreter file before restriction; repeatable",
+    )
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     root = Path(args.root).resolve(strict=True)
     runner = Path(args.runner).resolve(strict=True)
+    interpreters = [Path(item).resolve(strict=True) for item in (args.interpreter or [])]
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command or Path(command[0]).resolve(strict=True) != runner:
         raise SystemExit("adapter command must execute the exact trusted runner")
     os.chdir(root)
-    restrict_filesystem(root, runner)
+    restrict_filesystem(root, runner, interpreters)
     os.execv(str(runner), command)
     return 127
 

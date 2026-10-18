@@ -1,0 +1,42 @@
+=== lane exit captures - feature 134 BLOCKED at contract step ===
+date: 2026-10-16T13:57:27Z
+
+--- command: bash tools/validate.sh ---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+[C14] PASS workflow-sha-pins
+[C15] PASS capability-profile-roles
+[C16] PASS feature-list-lifecycle
+SUMMARY: 16 passed, 0 failed
+exit=0
+
+--- command: bash .nizam/tools/validate.sh --payload ---
+SUMMARY (payload mode): 12 passed, 0 failed
+exit=0
+
+--- command: git status --porcelain (pre-commit) ---
+ M .agent/run_state.json
+ M docs/planning/DEBT.md
+ M docs/planning/manifest.json
+?? .agent/contracts/134.json
+?? .agent/evidence/134-contract-circuit/
+?? .agent/feature_list_022.json
+?? .agent/product_spec_022.md
+?? docs/planning/phase_022.yaml
+exit=0
+
+--- command: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py ---
+ACTUAL SWAP BARRIER: exact dangling fixture bytes observed
+C13 RESTORATION PASS: exact bytes restored; all owned resources removed; unrelated sentinel and parent ownership preserved
+exit=0

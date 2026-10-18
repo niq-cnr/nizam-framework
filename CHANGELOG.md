@@ -7,6 +7,36 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Portable Docker trial-sandbox adapter (feature 134).** Added one canonical
+  trusted Docker-backed equivalent adapter (`tools/docker_trial_sandbox.sh`)
+  implementing the same `ADAPTER --root TRIAL_ROOT --runner RUNNER --
+  RUNNER_ARGUMENTS...` protocol as the Linux reference adapter: one fresh
+  `--network none --cap-drop ALL --no-new-privileges --read-only` container per
+  trial over a digest-pinned `python:3-alpine` image, same-path bind mounts, a
+  fixed minimal container environment, and the existing inner Landlock adapter
+  with an explicit interpreter allowlist (new repeatable `--interpreter` flag,
+  byte-identical native behavior when absent). The adapter fails closed (exit 2
+  arguments, 3 daemon/pinned image, 4 inner setup), never auto-pulls, and
+  exposes `--probe` and `--print-image`. Sandbox conformance capability
+  selection is now adapter-specific: `tools/test_convergent_review.py`
+  auto-selects native-first, falls back to the Docker adapter when the native
+  probe fails, honors an explicit `--isolation-adapter` override before unittest
+  passthrough, and records the selected adapter and its sha256 on stderr; the
+  five sandbox-dependent tests execute under the selected adapter with
+  adapter-flavored omission controls and, under Docker, live in-sandbox guards
+  (zero capabilities, no daemon socket, fresh PID namespace, no ambient
+  environment forwarding). `.github/scripts/test_sandbox_boundaries.py` gains
+  the same selection with `--adapter`. UNSUPPORTED reason text and the
+  required-conformance exit semantics are unchanged; on hosts with neither
+  capability the five tests still report UNSUPPORTED, print
+  `CONFORMANCE: NOT FULL`, and exit non-zero. The `convergent_review` CI job
+  pulls the pinned image and runs the Docker-adapter boundary and conformance
+  suites; no evaluator, schema, host-control, or trust-surface change. The
+  pinned-image digest re-pin policy is registered as NDEBT-056, and the
+  live-model observation gap remains unclaimed.
+
 ### Changed
 
 - **v1.6.0 post-release ledger refresh** (framework-envelope only). v1.6.0 is

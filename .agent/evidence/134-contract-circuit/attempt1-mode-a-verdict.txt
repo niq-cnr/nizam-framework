@@ -1,0 +1,14 @@
+Nizam contract 134 - Mode A (pre-code contract gate) verdict - attempt 1
+Reviewer: independent Validator (pi spawn, zai/glm-5.3), read-only
+Verdict: REJECTED (approved=false)
+Issues:
+1. BLOCKER: verification was an array of 10 bare command strings; schema/contract.schema.json
+   requires each item to be an object with required fields acceptance_test and command;
+   tools/validate.sh C11 validates .agent/contracts/*.json against that schema by path, and
+   verification command 9 was "bash tools/validate.sh", so the contract as written failed its
+   own verification bank (10 jsonschema errors, each "is not of type object").
+2. MINOR: docs/planning/phase_022.yaml listed under files_create although already present
+   untracked (planner-authored).
+missing_acceptance_coverage: []
+unsupported_claims: []
+Required fixes: canonical verification objects; reclassify phase record.

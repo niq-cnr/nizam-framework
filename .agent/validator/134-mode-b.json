@@ -1,0 +1,27 @@
+{
+  "review": "validator-mode-b",
+  "feature": "134",
+  "contract_id": "134",
+  "loop": 2,
+  "role": "canonical Mode B post-code verdict at the contract-mandated path (.agent/contracts/134.json revision 4, files_create); published from the already-executed independent Loop 2 Mode B round; no new review round is recorded here",
+  "reviewer": "mode-b",
+  "reviewed_commit": "add11a99b21f17fd55eab4721fb90ccd13a7331f",
+  "branch": "feat/portable-review-sandbox-2026-10-16",
+  "contract": ".agent/contracts/134.json revision 4",
+  "source_verdict": ".agent/validator/134-loop2-mode-b.json",
+  "approved": true,
+  "issues": [],
+  "majors": [],
+  "confirmed": [
+    "Scope: whole commit add11a99 touches only contract-authorized paths (tools/docker_trial_sandbox.sh new; tools/isolated_trial_adapter.py, tools/test_convergent_review.py, .github/scripts/test_sandbox_boundaries.py, .github/workflows/compliance.yml convergent_review job only, tools/README.md, NIZAM.json, CHANGELOG.md, docs/planning/DEBT.md, .agent/evidence/134/*). No evaluator, schema, ledger, template, linux_trial_sandbox.sh, sysctl, or other-CI-job change; working tree otherwise clean at HEAD.",
+    "Independent re-execution on the restrictive QA host: verification 4 (--isolation-adapter linux_trial_sandbox.sh) exits 1 with exactly five UNSUPPORTED skips and CONFORMANCE: NOT FULL; verification 6 inner call exits 2 on flag-shaped --privileged with no docker invocation; verification 7 stub-PATH probes exit 3 for both daemon-unreachable and image-absent with one-line reasons; verification 2 forced-Docker exits 0, zero UNSUPPORTED lines, CONFORMANCE FULL, selected-adapter sha256 equals the committed wrapper's sha256 (19876966103e...); verification 3 plus the 09 teardown leg exit 0 with omission controls 40/41/42/53, live guards PASS, and zero nizam-review-trial- container leftovers.",
+    "Fail-closed verified live beyond the evidence: at review time the pinned image had been garbage-collected from the host (NDEBT-056 risk materialized); --probe exited 3 with 'pinned image absent locally' and the adapter never auto-pulled. After one explicit operator-style docker pull of the exact pinned digest, all container-backed verifications passed. Evidence 05 was therefore truthful at capture; the current host state changed afterwards.",
+    "No dishonest-pass paths found: the five native obligations are unmodified and still run under native selection; the UNSUPPORTED count/exit logic in main() is byte-identical; forced-adapter probe failure degrades to UNSUPPORTED with no fallback (verification 4 proves it even with a healthy Docker daemon present); generated-execution probe still demands exactly EACCES; the sibling-read probe's widened (EACCES,ENOENT) acceptance cannot mask a boundary miss because successful reads still exit 40; omission-control mutants assert unique anchors and scratch copies only.",
+    "Disclosed interpretations adjudicated acceptable: (1) deferring docs/planning/manifest.json, phase_022.yaml, and run_state.json updates matches their contract purposes ('once gates and QA pass'); (2) the EACCES->(EACCES,ENOENT) widening on the shared sibling-read probe is a container-path errno difference, failure exits 40/51 preserved; (3) native NAMESPACES omission controls not running under the Docker adapter is the contract's stated 'adapter-flavored exercises' design, and omission-control coverage is replaced by Docker-specific mount/network mutants; (4) keeping the historical UNSUPPORTED reason prefix verbatim is what the contract's 'UNSUPPORTED reason text preserved' clause requires; (5) wrapper timeout exit 124 mapped to exit 4 is consistent with the bounded-teardown purpose; trap cleanup '|| true' is bounded-removal hygiene, independently guarded by the fail-closed teardown leg in verification 9."
+  ],
+  "notes": "Evidence files 01-14 inspected and consistent with the declared commands, exits, and counts; evidence-capture.json matches the files. Verifications 1, 10-14 taken from the committed evidence (host-environment-dependent or long-running suites) with spot checks of their tails; the fail-closed, UNSUPPORTED-semantics, digest-binding, count-sensitive, and teardown verifications (2, 3, 4, 5, 6, 7, 9 legs) were independently re-executed by this reviewer and reproduced. The pinned-image GC observed mid-review is an operational instance of the already-registered NDEBT-056 policy debt, not an implementation defect. Canonical publication at the contract-mandated path; the Loop 2 record is .agent/validator/134-loop2-mode-b.json. Downstream obligations at publication time: canonical fresh independent QA (.agent/qa/134.json, published from .agent/qa/134-loop2-qa.json), phase-completion files, and merge/release gates.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent Validator Mode B Loop 2 round 1 approved commit add11a99 against contract 134 revision 4 with empty issues and majors: scope clean, key verifications independently re-executed on the restrictive QA host and reproduced, fail-closed exits verified live (including the materialized NDEBT-056 pinned-image GC), and no dishonest-pass path found. Canonical publication at the contract-mandated .agent/validator/134-mode-b.json from the loop-2 record .agent/validator/134-loop2-mode-b.json; no new review round was performed for this publication."
+  }
+}

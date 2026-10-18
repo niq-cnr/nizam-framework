@@ -1,0 +1,19 @@
+Nizam contract 134 - Mode A (pre-code contract gate) verdict - attempt 3 (revision 3)
+Reviewer: independent Validator (pi spawn, zai/glm-5.3), read-only
+Verdict: REJECTED (approved=false) - circuit breaker tripped (attempt 3 of 3)
+Resolved from attempt 2 (confirmed by reviewer): fail-closed stub/assertion shape genuinely
+   fixed; manifest purpose reworded to update-not-append. Planning-ref pins byte-verified;
+   schema VALID; pre-code state confirmed (no tools/ changes, no evidence/134 yet).
+Issues:
+1. BLOCKER: verification[7] grepped "evidence/134/02-forced-docker.txt" - a path absent from
+   the repo and outside the authorized files_create scope (canonical evidence_dir is
+   .agent/evidence/134); with CWD=repo root (required by the command's own first leg) grep
+   exits 2, so the digest-binding verification could never pass as written.
+2. MAJOR: verification[8] teardown assertion "docker ps -aq ... | wc -l | grep -qx 0" returns
+   0 when the docker CLI itself fails (empirically confirmed with a daemon-down stub), making
+   the no-leaked-container criterion fail-open.
+3. MINOR: scope.files_modify purpose for .github/scripts/test_sandbox_boundaries.py named
+   "--isolation-adapter ... unittest passthrough", contradicting the spec and the contract's
+   own verification commands (both use --adapter) and the file's actual structure.
+missing_acceptance_coverage: []
+unsupported_claims: []

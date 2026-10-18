@@ -1,0 +1,21 @@
+{
+  "gate": "mode-a",
+  "contract_id": "134",
+  "revision": 4,
+  "attempt": "4 of 4 (human-authorized recovery)",
+  "reviewed_revision": "8a3f2c06d064bc4453f8da7aeba7147232ac6375",
+  "reviewer": "independent-validator-recovery1",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "prescription_verification": {
+    "1_grep_target": "verified",
+    "2_fail_closed_teardown": "verified",
+    "3_adapter_flag_purpose": "verified",
+    "scope_guard": "clean"
+  },
+  "summary": "Revision 4 is APPROVED. Scope guard: git diff e1b499dc..HEAD touches only .agent/contracts/134.json (17 lines) and the new .agent/evidence/134/recovery-authorization.json; the contract diff contains exactly the three authorized prescriptions plus the disclosed recovery metadata (attempt/limit 3->4, human_authorized_extension pointer, rewritten note); zero verification additions/removals (14 before and after), scope lists, signatures, non_goals untouched; no counter resets (run_state.json 134-contract remains attempts:3/limit:3). Prescription 1: verification[7] command and its same-entry expected_exit now grep .agent/evidence/134/02-forced-docker.txt, matching the declared evidence_dir '.agent/evidence/134' and the feature_list evidence path; the previous grep exited 2 against the nonexistent evidence/134 path (attempt-3 blocker 1) and is now executable as written from repo root once verification[2] captures its bytes. Prescription 2: verification[8] teardown leg is 'leftovers=$(docker ps -aq --filter name=nizam-review-trial-) && test -z \"$leftovers\"'; simulated all three cases - docker CLI error -> exit 1 (fail-closed, fixes attempt-3 blocker 2's wc-pipe fail-open), no leftovers -> 0, leftover present -> 1; expected_exit now discloses the fail-closed semantics. Prescription 3: the test_sandbox_boundaries.py files_modify purpose now names '--adapter PATH override', matching verification[3]/[8] real CLI; tools/test_convergent_review.py purpose and signatures correctly retain --isolation-adapter (consistent with evaluator evaluate_convergent_review_prompt.py:208 and spec user story 5; not flagged per gate instructions). Full quality: contract validates against schema/contract.schema.json (jsonschema VALID); evidence fields follow the established evidence/134 shorthand convention under the declared evidence_dir; feasibility probes explicitly labeled pre-contract; no fixed-anchor whole-tree byte guards (NDEBT-040-safe); planning-ref pins pre-existing and previously accepted. Non-blocking follow-up for the Orchestrator (outside this contract gate): enact the authorized limit 3->4 in .agent/run_state.json circuit_breaker['134-contract'] when recording the recovery epoch; attempts counter must stay 3."
+}

@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-17T22:30:00Z",
+  "updated_at": "2026-10-18T03:56:29Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3946,6 +3946,45 @@
       "limit": 3,
       "status": "passed",
       "note": "Attempt 1 rejected by Mode B round 1 (MB-1..MB-4); attempt 2 started 2026-10-17T21:40:00Z after operator-authorized round-9 contract approval."
+    },
+    "134-contract": {
+      "attempts": 3,
+      "limit": 4,
+      "status": "contract-approved-at-authorized-recovery-attempt-4",
+      "human_authorized_extension": ".agent/evidence/134/recovery-authorization.json",
+      "gate_evidence": {
+        "mode_a": ".agent/validator/134-recovery1-mode-a.json",
+        "contract_review": ".agent/qa/134-recovery1-contract-review.json"
+      },
+      "note": "Operator authorized recovery 2026-10-16 (verbatim recorded in the authorization file); revision 4 applied exactly the three attempt-3 prescriptions; both independent Loop 1 gates approved with empty arrays; contract status approved. The 3 concluded rejection attempts are preserved (no reset) in .agent/evidence/134-contract-circuit/. The Section 4.1 attempt-workspace isolation deviation stands recorded, not relabeled."
+    },
+    "134-implementation": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved",
+      "note": "Loop 2 implementation add11a99b21f17fd55eab4721fb90ccd13a7331f approved at independent Mode B round 1 with empty issues/majors; scope verified clean against contract 134 revision 4; fail-closed exits, UNSUPPORTED semantics and digest binding independently re-executed on the restrictive QA host; live pinned-image GC (NDEBT-056) confirmed fail-closed, not a defect. The deferred manifest/phase_022/run_state updates were adjudicated acceptable deferrals per the contract purposes and are closed by this lifecycle record.",
+      "gate_evidence": {
+        "mode_b": ".agent/validator/134-mode-b.json",
+        "mode_b_loop2_source": ".agent/validator/134-loop2-mode-b.json",
+        "qa": ".agent/qa/134.json",
+        "qa_loop2_source": ".agent/qa/134-loop2-qa.json"
+      }
+    },
+    "134-mode-b": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved",
+      "verdict_path": ".agent/validator/134-mode-b.json",
+      "source_verdict": ".agent/validator/134-loop2-mode-b.json",
+      "reviewed_commit": "add11a99b21f17fd55eab4721fb90ccd13a7331f"
+    },
+    "134-qa": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "approved",
+      "verdict_path": ".agent/qa/134.json",
+      "source_verdict": ".agent/qa/134-loop2-qa.json",
+      "exercised_revision": "add11a99b21f17fd55eab4721fb90ccd13a7331f"
     }
   },
   "history": [
@@ -10279,6 +10318,21 @@
         ".agent/evidence/release-v1.6.0-closeout/05-self-governance-record.txt",
         ".agent/qa/release-v1.6.0-closeout.json"
       ]
+    },
+    {
+      "at": "2026-10-16T19:15:00Z",
+      "event": "134-contract-recovery-approved",
+      "detail": "Operator authorized recovery of BLOCKED step 134-contract (verbatim: 'reocover PR #108 — feature 134. approved, proceed with the logical next steps.'), recorded in .agent/evidence/134/recovery-authorization.json with disclosed narrow interpretation: exactly one contract revision (attempt 4) applying the three attempt-3 reviewer prescriptions, limit 3->4, no reset of the 3 concluded rejections, no fifth attempt implied. Revision 4 landed at 8a3f2c06 and passed both independent Loop 1 gates with empty verdict arrays: Mode A .agent/validator/134-recovery1-mode-a.json (scope guard clean; all three prescriptions verified; teardown leg simulated fail-closed on CLI error) and evaluator contract review .agent/qa/134-recovery1-contract-review.json (14/14 verification executability; coverage 1:1; teardown branches verified). Contract 134 status proposed->approved with approvals.revisions=4. NDEBT-055 moved to Resolved (DEBT.md 0.75.3); phase_022.yaml step 134 BLOCKED->CONTRACT_APPROVED, phase in_progress; manifest phase 022 unblocked. Trip record, Section 4.1 workspace-isolation deviation, and all prior verdicts preserved unchanged. Implementation NOT started (134-implementation 0/3); Loop 2 is next per the approved contract."
+    },
+    {
+      "at": "2026-10-17T05:16:00Z",
+      "event": "134-loop2-gates-approved-local-lifecycle-closed",
+      "detail": "Loop 2 implementation add11a99 passed both independent gates with empty arrays: Mode B .agent/validator/134-loop2-mode-b.json (scope clean; fail-closed/UNSUPPORTED/digest-binding verifications independently re-executed; live pinned-image GC confirmed the contracted exit-3 no-auto-pull behavior) and fresh QA .agent/qa/134-loop2-qa.json (verifications 1/3/8/9/13 independently re-run, exit 0; adversarial forced-unknown-adapter check failed closed exactly as contracted; evidence-authenticity and scope/docs reviews clean). Canonical verdicts published at the contract-mandated paths .agent/validator/134-mode-b.json and .agent/qa/134.json as publications citing the loop-2 records (no new review rounds, no re-execution). Circuit counters: 134-implementation 1/3 approved; 134-mode-b 1/3; 134-qa 1/3. Phase closed canonical-first: docs/planning/phase_022.yaml complete, manifest phase 022 entry updated in place (status/note/timestamps per the contract files_modify purposes), this run_state record derived third. Trip record, recovery authorization and all prior verdicts preserved; NDEBT-056 (digest GC/re-pin policy) remains Open. Local lifecycle complete; PR #108 merge and release gates pending. No release, tag or installed-payload change."
+    },
+    {
+      "at": "2026-10-18T03:56:29Z",
+      "event": "merge_main_into_feature_134_branch",
+      "detail": "Orchestrator merged origin/main (e3748676, including PR #114 v1.6.0 self-installation and closeout, and the phase-020 progress from PRs #106/#109/#112) into feat/portable-review-sandbox-2026-10-16 (PR #115) to clear the merge conflicts that prevented GitHub from dispatching pull_request CI since c6d01ee9 (the feature-134 implementation add11a99 had never run in CI). Merge chosen over rebase so the Mode B/QA bindings to add11a99 stay valid. Conflict resolution, both sides otherwise disjoint: run_state rebuilt from main's bytes; the branch's four 134-* circuit_breaker entries and its two history entries (2026-10-16T19:15:00Z 134-contract-recovery-approved, 2026-10-17T05:16:00Z 134-loop2-gates-approved-local-lifecycle-closed) inserted with their original bytes. The two branch entries are therefore placed after main's later-dated entries, out of chronological order, with original timestamps preserved; no existing entry is altered. completed_contract_ids = union (main's list + '134'). current_phase/current_feature/status keep main's active position (020-sbcl-fresh-acceptance / 130 / in_progress): phase 022 is complete and recorded in the manifest. manifest.json: current_phase 020 kept, updated_at = later of the two sides; phases merged without conflict (020/021 from main, 022 from the branch). Operator instruction (verbatim): 'do the conflict resolution and push'."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10734,7 +10788,7 @@
       }
     ]
   },
-  "last_action": "release-v1.6.0-closeout complete (Mode B round 2 + QA PASS) on PR #114, which now carries the full v1.6.0 self-installation: re-bootstrap + pin, H-CONSUMER-UPGRADE record, ledger closeout and SELF_GOVERNANCE.md installation record. v1.6.0 installed, not commissioned. Awaiting operator merge. current_phase/current_feature unchanged (020/130).",
+  "last_action": "Merged origin/main into the feature-134 branch (PR #115) to clear merge conflicts blocking CI; run_state/manifest resolved as disjoint unions keeping main's active position 020/130 in_progress (phase 022 complete). PR #115 awaits its first CI run on the feature-134 implementation, then operator merge.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -10763,7 +10817,8 @@
     "122",
     "123",
     "133",
-    "129"
+    "129",
+    "134"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

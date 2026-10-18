@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Envelope entry point for shipped, self-contained sandbox boundary tests."""
+import argparse
 import importlib.util
 from pathlib import Path
 import subprocess
@@ -12,24 +13,30 @@ boundaries = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = boundaries
 assert SPEC.loader is not None
 SPEC.loader.exec_module(boundaries)
-NAMESPACES = boundaries.NAMESPACES
 exercise_cross_files_network = boundaries.exercise_cross_files_network
 exercise_generated_execution = boundaries.exercise_generated_execution
+exercise_docker_guards = boundaries.exercise_docker_guards
+configure_isolation_adapter = boundaries.configure_isolation_adapter
 
 def main():
-    try:
-        capability = subprocess.run(NAMESPACES+['true'],text=True,capture_output=True,timeout=20)
-    except (OSError,subprocess.TimeoutExpired) as error:
-        print('UNSUPPORTED: namespace capability unavailable: '+str(error),file=sys.stderr)
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
+    parser.add_argument("--adapter", default=None,
+                        help="force a specific sandbox adapter (tools/linux_trial_sandbox.sh or "
+                             "tools/docker_trial_sandbox.sh); auto-selects native-first when absent")
+    arguments = parser.parse_args()
+    adapter = configure_isolation_adapter(arguments.adapter)
+    if adapter is None:
+        print('UNSUPPORTED: namespace capability unavailable: ' + boundaries.adapter_unavailable_detail(), file=sys.stderr)
         return 64
-    if capability.returncode:
-        print('UNSUPPORTED: namespace capability unavailable: '+capability.stderr.strip(),file=sys.stderr)
-        return 64
+    digest = __import__('hashlib').sha256(adapter.wrapper.read_bytes()).hexdigest()
+    print(f"SELECTED ISOLATION ADAPTER: {adapter.wrapper.relative_to(ROOT)} sha256={digest}", file=sys.stderr)
     try:
         with tempfile.TemporaryDirectory(prefix='nizam-sandbox-boundaries-') as name:
             scratch=Path(name)
-            exercise_cross_files_network(scratch)
-            exercise_generated_execution(scratch)
+            exercise_cross_files_network(scratch, adapter)
+            exercise_generated_execution(scratch, adapter)
+            if adapter.kind == 'docker':
+                exercise_docker_guards(scratch, adapter)
         print('SANDBOX BOUNDARIES PASS: intact 0; isolated omission controls 40/41/42; unexpected execution errors rejected')
         return 0
     except (OSError,RuntimeError,subprocess.SubprocessError) as error:
