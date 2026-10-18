@@ -2,10 +2,19 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.17
+version: 0.65.20
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.20"
+    date: "2026-10-18"
+    summary: "Complete the 2026-10-18 critical quality and velocity remediation (R0-R11) on branch feat/quality-velocity-remediation-2026-10-18: record Slice 4 independent acceptance (b99041dc948522a52832c8871fc3ec8e3c073091), the 15-task representative pilot across all five routes and clean disposable consumer checkout rehearsal (.agent/evidence/remediation-2026-10-18/pilot-report.json), and clean exit from temporary remediation override mode. Preserve the v1.6.0 disposition line and all historical snapshots."
+  - version: "0.65.19"
+    date: "2026-10-18"
+    summary: "Record completion of Phase 019 (features 124-125) generic repository/worktree assurance profile preregistration and shadow comparison/recommendation under the 2026-10-18 remediation mandate (R9); persistent-runtime SBCL profile qualification remains gated on Phase 020 features 130-132. Preserve the v1.6.0 disposition line and all historical snapshots."
+  - version: "0.65.18"
+    date: "2026-10-18"
+    summary: "Adopt the 2026-10-18 critical quality and velocity remediation mandate (docs/planning/REMEDIATION_2026_10_18.md): reconcile PR #115 (feature 134), prioritize R0-R11 remediation slices, and split Phase 019 generic repository/worktree assurance profiles (124-125, proceeding after completed 018/123) from persistent-runtime SBCL profile claims (still gated on Phase 020 features 130-132). Preserve the v1.6.0 disposition line and all historical snapshots."
   - version: "0.65.17"
     date: "2026-10-17"
     summary: "Post-release refresh (the 0.51.0 precedent): the Current position disposition line rolls from 'Release in preparation: v1.6.0' to 'Latest released tag: v1.6.0' carrying the observed facts -- annotated tag v1.6.0 at reviewed PR #113 merge 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, release.yml run 39008222975 succeeded, GitHub Release published 2026-10-17T05:59:26Z and marked Latest, tag bootstrap rehearsal passed. The v1.5.0 prior-release record and all historical snapshots, phase records and budgets are preserved untouched."
@@ -258,12 +267,19 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — audit-refresh, 2026-10-16
+## Current position — quality and velocity remediation, 2026-10-18
+
+On 2026-10-18 the operator issued the critical quality and velocity remediation mandate
+([REMEDIATION_2026_10_18.md](REMEDIATION_2026_10_18.md)), making R0–R11 the highest-priority
+engineering work ahead of unrelated backlog items, reconciling open PR #115 (feature **134**
+portable Docker trial-sandbox adapter and adapter-specific conformance selection), and
+moving Phase **019** (features **124–125**) generic repository/worktree assurance-profile
+comparison and shadow recommendation ahead of Phase **020** features **130–132** (which
+remain prerequisites only for persistent-runtime / SBCL profile claims).
 
 The 2026-10-16 recovery2 handover goal (branch `chore/handover-2026-10-16-recovery2`,
 checkpoint `b07b1e3c`) is **SUPERSEDED**: the operator's active directive is now
-"audit the project and planning and ready for further development". Work continues
-on branch `fix/start-path-gates` (HEAD `54c6a5f3`, clean tree). The historical
+the 2026-10-18 remediation mandate. The historical
 handover packets and all snapshot sections below retain their dated facts.
 
 Phase **020** is active under H-PHASE-020. Feature **129** (SBCL loop and confirmed
@@ -271,13 +287,22 @@ cancellation) is **COMPLETE**: approved contract `.agent/contracts/129.json`, ca
 QA `.agent/qa/129.json` approved, merged via PR #109 (`96cd3573`); Source5 was adopted
 (`tools/sbcl_session_loop.lisp` at HEAD) and the 129-source circuit reads 5/5 under the
 recorded operator extension (`.agent/evidence/129/source5-authority1.json`). Feature
-**130** (hermetic committed-source acceptance) is the active feature at its
+**130** (hermetic committed-source acceptance) is at its
 pre-contract stage — no contract yet, implementation not started; the environment is
 verified green at HEAD (SBCL 2.2.9.debian; `python3 tools/test_runtime_session.py
 --check sbcl-admission --require-sbcl` exit 0). Remaining phase-020 product headroom is
 632 lines against 130's estimate of 750, a recorded non-halting variance. Features
-**131/132** remain PENDING behind 130 in the 020 order 129→130→131→132. Phase **019**
-(features 124–125) remains the declared next phase after 020.
+**131/132** remain PENDING behind 130 in the 020 persistent-runtime order 129→130→131→132.
+Phase **019** ([phase_019.yaml](phase_019.yaml), features **124–125**) generic repository/worktree
+assurance profile preregistration and shadow comparison/recommendation are **COMPLETE** under
+the 2026-10-18 remediation mandate (R9; verified via `python3 tools/test_workflow_assurance.py --check profiles-ready`
+and independently accepted at `b99041dc948522a52832c8871fc3ec8e3c073091`),
+while persistent-runtime SBCL profile qualification remains gated on Phase 020 (`130–132`).
+The 15-task representative pilot across all five routes (`trivial`, `bugfix`, `small-change`,
+`standard-feature`, `high-risk`) and the clean disposable consumer checkout rehearsal at `v1.6.0`
+are **COMPLETE** ([pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json):
+`3/3` seeded blockers caught, `0` missed baseline blockers, `0` silent evidence overwrites),
+and the temporary remediation override mode exits cleanly upon integrated PR delivery (R11).
 
 Phase **021** / feature **133** is complete and delivered: PR105 merged as `bfd15d10`
 and the five-success main CI proof is recorded in run_state (`133-main-hosted-delivery`);

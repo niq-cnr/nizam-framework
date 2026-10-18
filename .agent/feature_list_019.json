@@ -1,7 +1,7 @@
 {
   "phase": "019-workflow-assurance-profiles",
   "spec_version": "0.1.0",
-  "phase_status": "pending",
+  "phase_status": "complete",
   "original_estimate_lines": 3500,
   "ceiling_130pct": 4550,
   "budget_categories": {"product": 800, "tests": 950, "process": 1750},
@@ -9,9 +9,9 @@
     {
       "id": "124",
       "name": "Preregister assurance profile comparison",
-      "description": "Reuse existing role IDs; preregister Routine/Standard/High-assurance applicability, same-candidate full baseline, candidate/test identities, blocker mismatch and cost/latency limits before shadow runs. ",
-      "status": "pending",
-      "passes": false,
+      "description": "Reuse existing role IDs; preregister Routine/Standard/High-assurance applicability, same-candidate full baseline, candidate/test identities, blocker mismatch and cost/latency limits before shadow runs (generic repository/worktree profiles depend on completed 018/123; persistent-runtime SBCL profile claims remain gated on 020/130-132).",
+      "status": "complete",
+      "passes": true,
       "dependencies": [],
       "estimated_lines": 1600,
       "budget_categories": {"product": 400, "tests": 400, "process": 800},
@@ -25,9 +25,9 @@
     {
       "id": "125",
       "name": "Shadow comparison and promotion recommendation",
-      "description": "Capture every outcome including failures; missed baseline blocker rejects recommendation; report measured cost/latency and accountable operator decision; recommendation cannot reduce gates or self-promote.",
-      "status": "pending",
-      "passes": false,
+      "description": "Capture every outcome including failures; missed baseline blocker rejects recommendation; report measured cost/latency and accountable operator decision; recommendation cannot reduce gates or self-promote (generic repository/worktree profiles depend on 124; persistent-runtime SBCL profile claims remain gated on 020/130-132).",
+      "status": "complete",
+      "passes": true,
       "dependencies": ["124"],
       "estimated_lines": 1900,
       "budget_categories": {"product": 400, "tests": 550, "process": 950},
@@ -44,10 +44,10 @@
     }
   ],
   "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
-  "cross_phase_prerequisites": [{"phase": "018-workflow-assurance-controls", "requires": ["119", "120", "123"], "evidence": [".agent/evidence/123/evidence-gate.txt"], "authority": "Future H-PHASE-018 completion and trusted A10/A11; no gate reduction."}, {"phase": "020-sbcl-fresh-acceptance", "requires": ["132"], "evidence": [".agent/evidence/132/evidence-gate.txt"], "authority": "Future H-PHASE-020 captured controller close; stable measured same-candidate baseline before profiles."}],
+  "cross_phase_prerequisites": [{"phase": "018-workflow-assurance-controls", "requires": ["119", "120", "123"], "evidence": [".agent/evidence/123/evidence-capture.json"], "authority": "Completed H-PHASE-018 and trusted A10/A11; satisfies generic repository/worktree profile prerequisites without gate reduction."}, {"phase": "020-sbcl-fresh-acceptance", "requires": ["130", "131", "132"], "scope": "persistent-runtime-profiles-only", "evidence": [".agent/evidence/132/evidence-gate.txt"], "authority": "Required only for profiles that claim persistent-runtime / SBCL session semantics; generic repository/worktree profiles proceed after 123 under the 2026-10-18 operator remediation mandate."}],
   "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
-  "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Future H-PHASE-019 approves this scope/budget and applicable external prerequisite receipts."],
+  "existing_inputs": ["Completed 018 controls 119-123; completed 021/133; completed 015 normative source 110-114; existing 014 CI/claim-map 103-105; Open 040/034; immutable installed v1.6.0."],
+  "activation_prerequisites": ["Authorized by the 2026-10-18 operator quality and velocity remediation mandate (docs/planning/REMEDIATION_2026_10_18.md) for generic repository/worktree profiles; persistent-runtime SBCL profile claims remain gated on 130-132."],
   "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }

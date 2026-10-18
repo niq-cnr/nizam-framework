@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.6.1
+version: 0.6.2
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.6.2"
+    date: "2026-10-18"
+    summary: "Route semantic 5-class task classification, trivial/bugfix/small-change paths, lightweight contract amendments, capability preflight, exclusive evidence capture, concise status views, and receipt transitions through tools/start_path.py; clarify blocking vs. advisory_minor verdict rules."
   - version: "0.6.1"
     date: "2026-10-16"
     summary: "Route bug-fix and small-change starts through tools/start_path.py. Feature loops stay mandatory."
@@ -104,11 +107,20 @@ loading this skill must recognize its shape:
 Read `methodology/01_execution.md` before proposing, implementing, or
 reviewing any contract.
 
-A bug fix or a small unambiguous change is not a feature. Do not start one by
-skipping Loop 1 on a feature. `tools/start_path.py` decides whether that
-non-feature path may begin and whether its recorded verification result exists,
-as `methodology/01_execution.md` Section 2.1 specifies. No feature
-implementation may begin against a contract that is not `approved`.
+Before starting a change, classify the task with `tools/start_path.py classify`
+into `trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`
+based on semantic change properties (never line count alone). A trivial change,
+bug fix, or small unambiguous change is not a feature; `tools/start_path.py
+begin|done trivial|bugfix|small-change` gates whether that non-feature path may
+begin and whether its recorded verification result exists, as
+`methodology/01_execution.md` Section 2.1 specifies. For an already `approved`
+feature contract that needs only a bounded mechanical file-list or verification
+command update without changing goals, `non_goals`, or security invariants, use
+`tools/start_path.py amend-contract`. Use `tools/start_path.py preflight` before
+a governed attempt, `tools/start_path.py capture` for exclusive per-execution
+evidence capture, `tools/start_path.py status` for a concise read-only status
+view, and `tools/start_path.py resume` for receipt-verified stage transitions.
+No feature implementation may begin against a contract that is not `approved`.
 
 **Eval-Gated Promotion**: Model and prompt changes are treated as code changes and MUST pass through this exact execution loop, blocking promotion until role-specific evals pass per `methodology/07_eval_gated_promotion.md`.
 
