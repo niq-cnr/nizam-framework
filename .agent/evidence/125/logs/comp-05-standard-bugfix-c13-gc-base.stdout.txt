@@ -1,0 +1,38 @@
+[comp-05-standard-bugfix-c13-gc:base:Baseline]
+{
+  "assurance_tier": "Standard",
+  "files": [
+    ".github/scripts/test_c13_cleanup.py"
+  ],
+  "reasons": [
+    "repairs reproducible defect within bounded scope"
+  ],
+  "required_gates": [
+    "start_path:begin:bugfix",
+    "targeted_reproducer_and_regression_test",
+    "validate.sh",
+    "independent_acceptance_verdict",
+    "start_path:done:bugfix"
+  ],
+  "review_remit": {
+    "advisory_fields": [
+      "advisory_minor"
+    ],
+    "blocking_fields": [
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "required_fixes"
+    ],
+    "evidence_required_for_blockers": true
+  },
+  "route": "bugfix",
+  "stopping_conditions": {
+    "attempt_counter_role": "telemetry",
+    "breaker_ref": "methodology/03_circuit_breaker.md",
+    "comparator_subordinate": true,
+    "halt_condition": "Stop and diagnose on repeated identical deterministic failure, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget; comparator claims remain subordinate to stopping rules.",
+    "max_attempts": 3,
+    "pass_condition": "All required_gates for route 'bugfix' exit 0 and blocking verdict arrays are empty."
+  }
+}
