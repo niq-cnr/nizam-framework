@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -888,6 +889,266 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
             check=False,
         )
         expect(res_bad_route, 1, "trivial path cannot modify")
+
+        # --- B1 Discrimination Suite (Closing V1) ---
+        def _git_head_and_index_sha(repo_root: Path) -> tuple[str, str]:
+            h = subprocess.run(
+                ["git", "-C", str(repo_root), "rev-parse", "HEAD"],
+                capture_output=True, text=True, check=True,
+            ).stdout.strip()
+            idx_rel = subprocess.run(
+                ["git", "-C", str(repo_root), "rev-parse", "--git-path", "index"],
+                capture_output=True, text=True, check=True,
+            ).stdout.strip()
+            idx_p = Path(idx_rel) if Path(idx_rel).is_absolute() else (repo_root / idx_rel)
+            idx_sha = twa.sha(idx_p.read_bytes()) if idx_p.is_file() else "none"
+            return h, idx_sha
+
+        # (B1.a) Repeated identical publication is a no-op with zero HEAD or .git/index mutations
+        head_before_noop, idx_before_noop = _git_head_and_index_sha(froot)
+        res_pub_noop = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--capture", raw_cap["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_pub_noop, 0, '"noop": true')
+        assert _git_head_and_index_sha(froot) == (head_before_noop, idx_before_noop)
+
+        # (B1.b) Changed evidence attempting to overwrite prior accepted evidence is rejected
+        cap_stdout_file = froot / raw_cap["stdout"]["path"]
+        orig_stdout_bytes = cap_stdout_file.read_bytes()
+        raw_cap_file = froot / raw_cap["capture_path"]
+        orig_raw_cap_bytes = raw_cap_file.read_bytes()
+        tampered_stdout = orig_stdout_bytes + b"tampered-line\n"
+        cap_stdout_file.write_bytes(tampered_stdout)
+        tampered_raw = json.loads(orig_raw_cap_bytes.decode("utf-8"))
+        tampered_raw["stdout"]["sha256"] = twa.sha(tampered_stdout)
+        raw_cap_file.write_bytes(twa.canonical(tampered_raw) + b"\n")
+        res_pub_overwrite = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--capture", raw_cap["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_pub_overwrite, 1, "cannot overwrite")
+        cap_stdout_file.write_bytes(orig_stdout_bytes)
+        raw_cap_file.write_bytes(orig_raw_cap_bytes)
+
+        # (B1.c) Raw closed-capture input to build-receipt without commit authority:
+        #   - Uncommitted raw closed capture fails closed WITHOUT calling _git_ensure_committed or mutating HEAD/.git/index
+        #   - Committed raw closed capture succeeds read-only WITHOUT mutating HEAD/.git/index
+        uncommitted_closed_path = froot / "proof" / "captures" / "uncommitted.receipt-capture.json"
+        uncommitted_closed_path.write_bytes((froot / pub_doc["receipt_capture_ref"]["path"]).read_bytes())
+        head_before_raw, idx_before_raw = _git_head_and_index_sha(froot)
+        res_raw_uncommitted = subprocess.run(
+            [
+                sys.executable, str(TOOL), "build-receipt",
+                "--policy", str(policy_path),
+                "--published", "proof/captures/uncommitted.receipt-capture.json",
+                "--output", str(froot / "proof" / "raw-uncommitted-receipt.json"),
+                "--root", str(froot),
+            ],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_raw_uncommitted, 1, "raw closed capture is not committed in Git")
+        assert _git_head_and_index_sha(froot) == (head_before_raw, idx_before_raw)
+        uncommitted_closed_path.unlink()
+
+        res_raw_committed = subprocess.run(
+            [
+                sys.executable, str(TOOL), "build-receipt",
+                "--policy", str(policy_path),
+                "--published", pub_doc["receipt_capture_ref"]["path"],
+                "--output", str(froot / "proof" / "raw-committed-receipt.json"),
+                "--root", str(froot),
+            ],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_raw_committed, 0, '"verified": true')
+        assert _git_head_and_index_sha(froot) == (head_before_raw, idx_before_raw)
+
+        # (B1.d) Noncommitting prepare -> external commit -> prepare -> external commit -> finalize workflow
+        #        plus commit denial (adapter & pre-commit hook) and same-path staged conflict & unrelated staged preservation
+        res_cap_b1 = subprocess.run(
+            [
+                sys.executable, str(TOOL), "capture",
+                "--id", "120", "--step", "b1-noncommitting", "--attempt", "1",
+                "--output-dir", "proof/captures", "--candidate", cand_sha,
+                "--env-var", "NIZAM_WA120_FIXTURE=observed",
+                "--agent-id", fixture.producer["agent_id"],
+                "--session-id", fixture.producer["session_id"],
+                "--root", str(froot),
+                "--", sys.executable, "-c", cmd_code,
+            ],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_cap_b1, 0, '"binding_state": "candidate-bound"')
+        cap_b1 = json.loads(res_cap_b1.stdout)
+        assert _git_head_and_index_sha(froot) == (head_before_raw, idx_before_raw)
+
+        # Stage an unrelated file and create an unrelated unstaged file to prove they are preserved
+        unrelated_staged = froot / "proof" / "unrelated-staged.txt"
+        unrelated_staged.write_text("unrelated staged content\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(froot), "add", "--", "proof/unrelated-staged.txt"], check=True)
+        unrelated_unstaged = froot / "proof" / "unrelated-unstaged.txt"
+        unrelated_unstaged.write_text("unrelated unstaged content\n", encoding="utf-8")
+        head_with_staged, idx_with_staged = _git_head_and_index_sha(froot)
+
+        # Noncommitting prepare-publish (Stage 1)
+        res_prep1 = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_prep1, 0, '"stage": "outputs_pending"')
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
+        prep1_doc = json.loads(res_prep1.stdout)
+        assert (froot / prep1_doc["publish_request_path"]).is_file()
+
+        # Simulated commit denial via NIZAM_MUTATION_ADAPTER=deny leaves HEAD, .git/index, and unrelated staged unchanged
+        deny_env = {**os.environ, "NIZAM_MUTATION_ADAPTER": "deny"}
+        res_deny = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=deny_env, text=True, capture_output=True, check=False,
+        )
+        expect(res_deny, 1, "denied by runtime mutation authority")
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
+
+        # Real commit denial via failing .git/hooks/pre-commit leaves HEAD and .git/index byte-for-byte unchanged!
+        hooks_dir = froot / ".git" / "hooks"
+        hooks_dir.mkdir(parents=True, exist_ok=True)
+        pre_commit_hook = hooks_dir / "pre-commit"
+        pre_commit_hook.write_text("#!/usr/bin/env bash\necho 'hook denied commit' >&2\nexit 1\n", encoding="utf-8")
+        pre_commit_hook.chmod(0o755)
+        res_hook_deny = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_hook_deny, 1, "git commit failed during evidence publication")
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
+        pre_commit_hook.unlink()
+
+        # Same-path staged conflict in .git/index is rejected without clobbering existing staged content
+        subprocess.run(["git", "-C", str(froot), "add", "--", cap_b1["stdout"]["path"]], check=True)
+        _, idx_with_conflict = _git_head_and_index_sha(froot)
+        res_conflict = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_conflict, 1, "same-path staged conflict in .git/index")
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_conflict)
+        subprocess.run(["git", "-C", str(froot), "reset", "-q", "HEAD", "--", cap_b1["stdout"]["path"]], check=True)
+        _, idx_with_staged = _git_head_and_index_sha(froot)
+
+        # Failed git diff --cached / git status exits non-zero and never returns HEAD as if committed
+        with tempfile.TemporaryDirectory(prefix="nizam-fake-git-") as fake_git_dir:
+            real_git = shutil.which("git")
+            fake_git = Path(fake_git_dir) / "git"
+            fake_git.write_text(
+                f'#!/usr/bin/env bash\n'
+                f'for arg in "$@"; do\n'
+                f'  if [ "$arg" = "diff" ]; then echo "simulated git diff failure" >&2; exit 128; fi\n'
+                f'done\n'
+                f'exec "{real_git}" "$@"\n',
+                encoding="utf-8",
+            )
+            fake_git.chmod(0o755)
+            bad_git_env = {**os.environ, "PATH": f"{fake_git_dir}:{os.environ.get('PATH', '')}"}
+            res_bad_diff = subprocess.run(
+                [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+                cwd=ROOT, env=bad_git_env, text=True, capture_output=True, check=False,
+            )
+            expect(res_bad_diff, 1, "git diff --cached failed")
+            assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
+
+        # External commit of Stage 1 -> noncommitting prepare-publish (Stage 2) -> external commit of Stage 2 -> noncommitting finalize-publish
+        s1_specs = [f["literal_pathspec"] for f in prep1_doc["commit_request"]["files"]]
+        subprocess.run(["git", "-C", str(froot), "add", "--", *s1_specs], check=True)
+        subprocess.run(["git", "-C", str(froot), "commit", "-qm", "ext s1", "--", *s1_specs], check=True)
+        head_s1, idx_s1 = _git_head_and_index_sha(froot)
+
+        res_prep2 = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_prep2, 0, '"stage": "receipt_capture_pending"')
+        assert _git_head_and_index_sha(froot) == (head_s1, idx_s1)
+        prep2_doc = json.loads(res_prep2.stdout)
+
+        # Finalize before Stage 2 is committed fails closed without mutating Git
+        res_fin_early = subprocess.run(
+            [sys.executable, str(TOOL), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_fin_early, 1, "is not committed in Git")
+        assert _git_head_and_index_sha(froot) == (head_s1, idx_s1)
+
+        s2_specs = [f["literal_pathspec"] for f in prep2_doc["commit_request"]["files"]]
+        subprocess.run(["git", "-C", str(froot), "add", "--", *s2_specs], check=True)
+        subprocess.run(["git", "-C", str(froot), "commit", "-qm", "ext s2", "--", *s2_specs], check=True)
+        head_s2, idx_s2 = _git_head_and_index_sha(froot)
+
+        res_fin = subprocess.run(
+            [sys.executable, str(TOOL), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_fin, 0, '"receipt_capture_ref"')
+        assert _git_head_and_index_sha(froot) == (head_s2, idx_s2)
+
+        # (B1.e) Multi-capture batch publication & two-stage interruption recovery without re-execution
+        exec_before_batch = len(counter_file.read_text(encoding="utf-8").splitlines())
+        batch_caps = []
+        for step_name in ("batch-check-1", "batch-check-2"):
+            rc_b = subprocess.run(
+                [
+                    sys.executable, str(TOOL), "capture",
+                    "--id", "120", "--step", step_name, "--attempt", "1",
+                    "--output-dir", "proof/captures", "--candidate", cand_sha,
+                    "--env-var", "NIZAM_WA120_FIXTURE=observed",
+                    "--agent-id", fixture.producer["agent_id"],
+                    "--session-id", fixture.producer["session_id"],
+                    "--root", str(froot),
+                    "--", sys.executable, "-c", cmd_code,
+                ],
+                cwd=ROOT, text=True, capture_output=True, check=False,
+            )
+            expect(rc_b, 0, '"binding_state": "candidate-bound"')
+            batch_caps.append(json.loads(rc_b.stdout)["capture_path"])
+        assert len(counter_file.read_text(encoding="utf-8").splitlines()) == exec_before_batch + 2
+
+        # Stop after Stage 1 outputs (simulating interruption between Stage 1 and Stage 2)
+        res_stop_s1 = subprocess.run(
+            [
+                sys.executable, str(TOOL), "publish",
+                "--capture", batch_caps[0], "--capture", batch_caps[1],
+                "--stop-after-stage", "outputs",
+                "--root", str(froot),
+            ],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_stop_s1, 0, '"status": "stopped_after_outputs"')
+        head_after_batch_s1, _ = _git_head_and_index_sha(froot)
+
+        # Resume publication across both captures: recovers from Stage 1 and commits Stage 2 in 1 commit without re-executing commands!
+        res_batch_resume = subprocess.run(
+            [
+                sys.executable, str(TOOL), "publish",
+                "--capture", batch_caps[0], "--capture", batch_caps[1],
+                "--root", str(froot),
+            ],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_batch_resume, 0, '"published"')
+        batch_pub_doc = json.loads(res_batch_resume.stdout)
+        assert len(batch_pub_doc["published"]) == 2
+        assert batch_pub_doc["published"][0]["output_revision"] == head_after_batch_s1
+        assert batch_pub_doc["published"][1]["output_revision"] == head_after_batch_s1
+        assert batch_pub_doc["published"][0]["receipt_capture_ref"]["revision"] == batch_pub_doc["published"][1]["receipt_capture_ref"]["revision"]
+        assert len(counter_file.read_text(encoding="utf-8").splitlines()) == exec_before_batch + 2
+
+        # Verify unrelated staged and unstaged files were preserved untouched throughout!
+        staged_now = subprocess.run(
+            ["git", "-C", str(froot), "diff", "--cached", "--name-only"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip().splitlines()
+        assert staged_now == ["proof/unrelated-staged.txt"], f"expected unrelated staged file preserved, got {staged_now}"
+        assert unrelated_unstaged.read_text(encoding="utf-8") == "unrelated unstaged content\n"
 
     # 4. Concise status view on real repository root and synthetic contradiction probe (R8 + A5)
     res_status = run(ROOT, "status", "--format", "json")

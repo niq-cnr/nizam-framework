@@ -2,10 +2,13 @@
 id: nizam-self-governance-agents
 title: "Nizam Framework — Local Agent Instructions"
 description: "Route work on this repository through its installed immutable Nizam governance."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: AGENTS.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-10-18"
+    summary: "Record explicit transitional entry precedence during the v1.8.0 rollout corrective execution mandate (B0-B6, closing V1-V7) until .nizam/ is re-bootstrapped to the corrective release in B6."
   - version: "0.2.0"
     date: "2026-10-18"
     summary: "Exit temporary remediation override mode upon re-bootstrapping .nizam/ to the post-follow-up immutable release v1.8.0 (606d11ee84deff0d3b7934cbfd715223d64ac79d) and route local agent sessions through the installed v1.8.0 governance."
@@ -22,6 +25,15 @@ change_log:
 
 # Local agent instructions
 
+> **Transitional Entry Precedence (`B0`–`B6`, 2026-10-18):** While the `v1.8.0`
+> rollout corrective mandate (`B0`–`B6`, recorded in
+> [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md)) is in
+> flight, authored root tools (`tools/start_path.py`, `tools/workflow_assurance.py`,
+> `tools/payload_integrity.py`, `bootstrap.sh`, `tools/validate.sh`) and
+> [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md) take
+> precedence over conflicting `.nizam/` instructions until `B6` releases and
+> re-bootstraps `.nizam/` to the corrective release.
+
 Before planning, editing or reviewing work in this repository, query
 `.nizam/NIZAM.json`, then load `.nizam/tools/SKILL.md`. Resolve the installed
 index's paths relative to `.nizam/` and read only the protocols the task needs.
@@ -35,9 +47,9 @@ The operator authorized self-adoption for **niq-cnr/nizam-framework only** under
 [SELF_GOVERNANCE.md](docs/planning/SELF_GOVERNANCE.md) records that local scope and
 the installation's current commissioning stage, and
 [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md) records the
-completed 2026-10-18 quality and velocity remediation and follow-up (`A0`–`A8`).
-No external organization scope or ecosystem membership is asserted by this
-adoption.
+2026-10-18 quality and velocity remediation, follow-up (`A0`–`A8`), and `v1.8.0`
+rollout corrective execution (`B0`–`B6`). No external organization scope or
+ecosystem membership is asserted by this adoption.
 
 Before starting a change, classify the task with `tools/start_path.py classify`
 into `trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`
@@ -49,15 +61,16 @@ supported via `tools/start_path.py amend-contract` when goals, invariants, and
 risk boundaries are unchanged). Use `tools/start_path.py preflight` before
 governed attempts, `tools/start_path.py capture` to write exclusive
 per-execution evidence files without silent overwrites, `tools/start_path.py
-publish` and `tools/start_path.py build-receipt` to publish post-execution
-outputs and bind receipt-qualified stage evidence, `tools/start_path.py status`
-for a concise read-only status view, and `tools/start_path.py resume` for
-receipt-verified transitions. The Orchestrator owns lifecycle state and circuit
-counters in `.agent/run_state.json`; implementation agents preserve those fields.
+publish` (`--mode prepare|publish|finalize`) and `tools/start_path.py
+build-receipt` to prepare, externally mediate, finalize, and bind
+receipt-qualified stage evidence without hidden Git mutations,
+`tools/start_path.py status` for a concise read-only status view, and
+`tools/start_path.py resume` for receipt-verified transitions. The Orchestrator
+owns lifecycle state and circuit counters in `.agent/run_state.json`;
+implementation agents preserve those fields.
 
 Do not edit installed `.nizam/` files. A future upgrade requires operator
 authorization, a reviewed immutable pin update and re-bootstrap. Use
 `PYTHONDONTWRITEBYTECODE=1` when invoking installed Python tools so transient
 bytecode does not contaminate the exact payload inventory. Source changes in the
 root framework do not update the installed release automatically.
-

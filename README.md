@@ -94,12 +94,12 @@ Implementation may begin once the intent is recorded. `tools/start_path.py begin
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.8.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.9.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.8.0 ./bootstrap.sh --tag v1.8.0
+GOVERNANCE_TAG=v1.9.0 ./bootstrap.sh --tag v1.9.0
 ```
 
-`--tag v1.8.0` (equivalently `GOVERNANCE_TAG=v1.8.0`) pins the inheritance to a real
+`--tag v1.9.0` (equivalently `GOVERNANCE_TAG=v1.9.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, stages the governance payload, verifies it landed correctly, and
 atomically installs it under `.nizam/` (the default target). What you get:
@@ -116,7 +116,7 @@ atomically installs it under `.nizam/` (the default target). What you get:
 └── provenance.json
 ```
 
-See the [v1.8.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.8.0)
+See the [v1.9.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.9.0)
 and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
@@ -126,10 +126,17 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 
 This repository has installed its public `v1.8.0` governance under `.nizam/`.
 The installed payload is verified byte-for-byte against the pinned tag by the
-standing `self_governance` CI job. Commissioning of this release (clean
-installed preflight, baseline and independent QA) has not been performed.
-The earlier commissioning at assessed source candidate `bfd475f` remains
-recorded in `docs/planning/SELF_GOVERNANCE.md`.
+standing `self_governance` CI job (`verify_self_governance.py` and
+`bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).
+When a release tag `vX.Y.Z` is cut on this repository, the consumer payload
+defined by that tag is the six authored root modules (`standard/`,
+`methodology/`, `templates/`, `schema/`, `tools/`, `ecosystem/`) plus root
+`NIZAM.json` packaged by `bootstrap.sh` — never the repository's own `.nizam/`
+directory (which at tag creation time still records the prior self-installed
+release until a post-release self-adoption commit updates `.nizam/`).
+Commissioning of this release (clean installed preflight, baseline and
+independent QA) has not been performed. The earlier commissioning at assessed
+source candidate `bfd475f` remains recorded in `docs/planning/SELF_GOVERNANCE.md`.
 The [self-governance record](docs/planning/SELF_GOVERNANCE.md) records the exact pin,
 operator authorization and current stage. Root framework modules remain the
 authored product; local agent work follows the installed governance.
@@ -138,8 +145,11 @@ authored product; local agent work follows the installed governance.
 
 - **DD-1 — Tool-Driven State Management.** Agents query the root `NIZAM.json` index to
   find the minimal governance files a task needs, instead of bulk-reading directories.
-- **DD-2 — Universal Circuit Breaker.** Every execution loop embeds a mandatory 3-strike
-  breaker: three failed attempts halts the loop, marks it blocked, and escalates.
+- **DD-2 — Universal Circuit Breaker.** Every execution loop embeds a work-specific
+  diagnostic stopping and circuit-breaker policy: attempt counters drive escalating
+  investigative posture or bounded decomposition when invariants hold, while invariant
+  breaches, specification contradictions, or repeated unresolved defect signatures halt
+  the loop, mark it blocked, and escalate.
 - **DD-3 — Evidence Externalisation.** Proof of work lives in files referenced by path,
   never pasted inline into YAML or JSON state.
 - **DD-4 — Unified Skill Payload.** Exactly one skill payload under `tools/`, loaded by

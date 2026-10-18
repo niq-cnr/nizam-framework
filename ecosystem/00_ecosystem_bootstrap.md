@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-10-18"
+    summary: "Phase-019 v1.8.0 rollout corrective B2 (V2): enforce install-time --expected-sha comparison and explicit refs/tags/<tag> SemVer release-tag resolution in bootstrap.sh before staging or replacing the target payload. Updated Section 4 and Section 7 in lockstep with standard/GIP.md v0.7.0."
   - version: "0.7.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): describe bootstrap.sh --genesis as the scaffold-and-inject capability it actually is, not a complete lifecycle-ready genesis. Consumer Section-6 decisions, incubating registry enrollment, and a clean Preflight/Baseline remain required before promotion. The 0-to-n status is also synchronized with the multi-repository iteration/aggregation tools and the 04/05 coordination protocols shipped in phases 010-011."
@@ -116,13 +119,15 @@ cycle.
 
 ## 4. Pinned-Immutable-Tag Precondition
 
-A Bootstrap MUST inherit from a specific, immutable, released framework tag (for
-example `v0.8.0`), never a floating branch reference. `main`, `master`, `HEAD`, and
-any `refs/heads/*` branch are refused: pinning is what prevents a consumer from
+A Bootstrap MUST inherit from a specific, immutable, released SemVer framework tag
+(`refs/tags/<tag>`, for example `v1.9.0`), never a floating branch reference. `main`,
+`master`, `HEAD`, any `refs/heads/*` branch, non-SemVer tag names, branch-only refs,
+and same-name branch/tag ambiguity are refused: pinning is what prevents a consumer from
 silently inheriting mid-development governance changes it never reviewed
-(`standard/GIP.md` Section 2, point 1; `bootstrap.sh` enforces this by refusing an
-unpinned ref). A consumer that "adopts the framework" from a floating ref has not
-performed a valid Bootstrap and MUST NOT be treated as having entered the cycle.
+(`standard/GIP.md` Section 2, point 1; `bootstrap.sh` enforces this by resolving
+`refs/tags/<tag>` explicitly and rejecting unpinned or ambiguous refs). A consumer that
+"adopts the framework" from a floating ref has not performed a valid Bootstrap and MUST
+NOT be treated as having entered the cycle.
 
 The pinned tag is the anchor every later stage's evidence is measured against: the
 Baseline's `framework_references` (`ecosystem/02_evidence_baseline.md` Section 3)
@@ -199,9 +204,10 @@ the source the payload was cloned from, and when it was installed, so that later
 detection (`standard/GIP.md` Section 4) and every stage's `framework_references` have a
 baseline to compare against. The `resolved_sha` makes the pin an **immutable commit**,
 not merely a tag *name*: a tag can be moved on the remote to replay a different payload,
-so `bootstrap.sh --verify-only` requires the recorded commit to be present and, given a
-caller-supplied expected SHA (`--expected-sha`, resolved out-of-band from the authentic
-tag), rejects a recorded commit that differs (`NDEBT-033`). `bootstrap.sh` writes this
+so given a caller-supplied expected SHA (`--expected-sha`, resolved out-of-band from the
+authentic tag), `bootstrap.sh` enforces `--expected-sha` both at install time (comparing
+`refs/tags/<tag>^{commit}` before staging or replacing the target) and during
+`bootstrap.sh --verify-only` (`NDEBT-033`, `B2`/`V2`). `bootstrap.sh` writes this
 artifact as part of its verified install; a consumer MUST NOT synthesize it by hand,
 since a hand-authored pin that does not match the injected payload is precisely the
 drift the artifact exists to detect. The framework pin recorded here -- not the

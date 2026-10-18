@@ -2,10 +2,13 @@
 id: nizam-methodology-readme
 title: "Methodology Module — Index"
 description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, cross-repo dependency gates, and review-gate flake management."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: methodology/README.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-10-18"
+    summary: "Align 03_circuit_breaker.md, 07_eval_gated_promotion.md, 11_sbcl_runtime_binding.md, and DD-2 descriptions with work-specific diagnostic stopping and consumer-aspirational runtime profile semantics (V5)."
   - version: "0.6.0"
     date: "2026-10-12"
     summary: "Index the SBCL reference binding with its folded language profile and pending live-enforcement boundary."
@@ -37,16 +40,16 @@ reference binding build on the agent roles and gates defined in
 | [`00_planning.md`](00_planning.md) | Planning Enforcer — the mandatory pre-code specification and feature-list artifact pair, validated DAG and dependency rule, atomic acceptance tests, and Scope Budget Protocol (the current feature is excluded from its prior-three rolling baseline; cumulative 130% halt). |
 | [`01_execution.md`](01_execution.md) | Contract-First Harness Loop — Orchestrator-coordinated pre-code alignment and post-code repair, the JSON Verdict Parse Rule, and the externalised-evidence gate required before completion. |
 | [`02_adversarial_tdd.md`](02_adversarial_tdd.md) | Adversarial Test Design — Evaluator independence (never trust generator-supplied evidence), false-pass and false-fail hunting patterns, the negative-testing requirement, and the mandatory per-QA-round adversarial spot-check. |
-| [`03_circuit_breaker.md`](03_circuit_breaker.md) | Universal Circuit Breaker (DD-2) — three isolated attempts from an approved base, exact attempt-root cleanup after evidence capture, canonical phase state with idempotently repaired run state, and no fourth attempt. |
+| [`03_circuit_breaker.md`](03_circuit_breaker.md) | Universal Circuit Breaker (DD-2) — isolated attempts from an approved base, escalating diagnostic posture or bounded decomposition when invariants hold, exact attempt-root cleanup after evidence capture, canonical phase state with idempotently repaired run state, and hard-stop escalation on invariant breaches, specification contradictions, or repeated unresolved defect signatures. |
 | [`04_tool_driven_state.md`](04_tool_driven_state.md) | Tool-Driven State Management (DD-1 + DD-3) — index-first discovery, externalised evidence, durable artifact families, and every handoff in the five-role chain. |
 | [`05_eval_and_trace.md`](05_eval_and_trace.md) | Eval and Trace Infrastructure — verification hierarchy, trace capture, and eval suites for Orchestrator plus all four execution roles. |
 | [`06_release_train.md`](06_release_train.md) | Release Train Protocol — SemVer classification, validator-gated changelog/version preparation, human sign-off, the final tag act, and consumer re-bootstrap. |
-| [`07_eval_gated_promotion.md`](07_eval_gated_promotion.md) | Eval-Gated Model Promotion Protocol — model/prompt changes use contract-first evals; degraded evals consume the shared three-attempt breaker and durable fallback repins remain gated. |
+| [`07_eval_gated_promotion.md`](07_eval_gated_promotion.md) | Eval-Gated Model Promotion Protocol — model/prompt changes use contract-first evals; degraded evals follow the shared circuit-breaker policy and durable fallback repins remain gated. |
 | [`08_cross_repo_dependency_gate.md`](08_cross_repo_dependency_gate.md) | Cross-Repo Dependency Gate — the Planner declares dependencies; the Orchestrator routes but does not author upstream deltas, and blocks until owner approval. |
 | [`09_review_gate_flake_management.md`](09_review_gate_flake_management.md) | Review-Gate Flake Management — operational doctrine for infrastructure failures of a convergent review gate: fail-closed principles, the open F1–F6 flake-class taxonomy, the bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties (post-merge evidence races, canonical-vs-vendored resync waves), and flake-rate KPI targets. |
 
 | [`10_live_runtime_sessions.md`](10_live_runtime_sessions.md) | Live Runtime Sessions — neutral ownership, lease and generation checks, serialized operations, honest outcomes, reconstructible handoffs and fresh hermetic acceptance; consumer-aspirational runtime enforcement. |
-| [`11_sbcl_runtime_binding.md`](11_sbcl_runtime_binding.md) | SBCL reference binding — folded language profile, non-atomic effects, condition capture, image drift, thread/cancellation hazards and fresh hermetic acceptance; executable enforcement and live proof remain pending. |
+| [`11_sbcl_runtime_binding.md`](11_sbcl_runtime_binding.md) | SBCL reference binding — folded language profile, non-atomic effects, condition capture, image drift, thread/cancellation hazards, and fresh hermetic acceptance; consumer-aspirational reference profile. |
 
 ## Design Decision Cross-Reference
 
@@ -55,8 +58,9 @@ framework's named Design Decisions (this repository's root `README.md`, "Design
 Decisions" section):
 
 - **`03_circuit_breaker.md`** remediates **DD-2 (Universal Circuit Breaker)** —
-  the mandatory 3-strike limit that prevents any execution loop from retrying a
-  failing step indefinitely.
+  the circuit-breaker and work-specific diagnostic stopping policy that
+  prevents any execution loop from retrying an unchanged failing approach
+  indefinitely.
 - **`04_tool_driven_state.md`** remediates both **DD-1 (Tool-Driven State
   Management)** — routing through `NIZAM.json` instead of bulk-reading — and
   **DD-3 (Evidence Externalisation)** — proof lives in `.agent/evidence/`

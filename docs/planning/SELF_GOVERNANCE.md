@@ -2,10 +2,13 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-18"
+    summary: "Clarify the release-tag vs. self-adoption ordering (V6): a tag's consumer payload is the six authored root modules plus root NIZAM.json copied by bootstrap.sh, whereas the repository's .nizam/ directory at tag creation time holds the prior self-installed release until a subsequent self-adoption commit re-bootstraps .nizam/; note shared tools/payload_integrity.py verification across verify_self_governance.py and bootstrap.sh --verify-only (V3)."
   - version: "0.4.0"
     date: "2026-10-18"
     summary: "Record the v1.8.0 installation from observed facts: stage installed, commissioning not performed (277 released files + provenance.json at 606d11ee84deff0d3b7934cbfd715223d64ac79d, installed_at 2026-10-18T13:12:27Z). The v1.7.0, v1.6.0, and v1.5.0 installation records below are retained unchanged as history."
@@ -76,6 +79,15 @@ resolved commit `606d11ee84deff0d3b7934cbfd715223d64ac79d`, installed at
 `2026-10-18T13:12:27Z` as recorded in `.nizam/provenance.json`. The installation
 contains 277 released files and that provenance record.
 
+Because an immutable Git tag cannot contain a commit created after the tag is
+cut, the repository's `.nizam/` directory at any release tag `vX.Y.Z` holds the
+prior self-installed release (`v1.7.0` inside the `v1.8.0` tag tree). A release
+tag's consumer payload is always the six authored root modules (`standard/`,
+`methodology/`, `templates/`, `schema/`, `tools/`, `ecosystem/`) plus root
+`NIZAM.json` copied by `bootstrap.sh`, never the tagged tree's `.nizam/`
+directory. After the tag is published, a separate self-adoption commit runs
+`bootstrap.sh` against that published tag to update this repository's `.nizam/`.
+
 The operator authorization is gate `H-CONSUMER-UPGRADE`, recorded in
 `.agent/run_state.json` at `2026-10-18T12:40:00Z` before the re-bootstrap ran. The
 operator's verbatim instructions were: "Use merge, release, self-upgrade, and other
@@ -85,7 +97,8 @@ authorization covers local installation for this single repository.
 
 The installation was verified against the tag: the payload trees are identical to
 the tag, and `verify_self_governance.py`, its drift tests, `validate.sh --payload`
-and `bootstrap.sh --verify-only` all exited 0. Captures:
+and `bootstrap.sh --verify-only` (which shares `tools/payload_integrity.py` with
+`verify_self_governance.py` whenever the reference tree is reachable) all exited 0. Captures:
 `.agent/evidence/release-v1.8.0-closeout/00a-reinstall-tree-identity.txt`,
 `00b-reinstall-verify-self-governance.txt`, `00c-reinstall-test-self-governance.txt`,
 `00d-reinstall-payload-validate.txt` and `00e-reinstall-bootstrap-verify-only.txt`

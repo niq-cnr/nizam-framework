@@ -1,6 +1,6 @@
 {
   "name": "nizam-governance",
-  "version": "0.6.1",
+  "version": "0.8.0",
   "description": "Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a single skill payload any agent runtime can load to plan, execute, gate, and durably record contract-first work.",
   "entry_point": "tools/SKILL.md",
   "capabilities": [
@@ -21,7 +21,7 @@
     },
     {
       "name": "circuit_breaker",
-      "description": "The universal 3-strike attempt limit embedded by every repeatable execution loop, its per-attempt strategy table, and the forbidden-fourth-attempt halt/escalation procedure.",
+      "description": "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, per-attempt escalating strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions.",
       "module": "methodology/03_circuit_breaker.md"
     },
     {
@@ -116,7 +116,7 @@
     },
     {
       "name": "sbcl_runtime_binding",
-      "description": "Consumer-aspirational SBCL reference profile and fresh hermetic acceptance; executable enforcement and live proofs remain pending.",
+      "description": "Consumer-aspirational SBCL reference profile and fresh hermetic acceptance rules; query NIZAM.json and tools/start_path.py preflight for active runtime-session adapter capabilities.",
       "module": "methodology/11_sbcl_runtime_binding.md"
     }
   ],

@@ -7,20 +7,81 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-18
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the
+2026-10-18 `v1.8.0` rollout corrective execution (`B0–B6`, closing findings
+`V1–V7`) lands as additive and hardening capability across `tools/`,
+`standard/`, `methodology/`, `ecosystem/`, and `bootstrap.sh` (`278` released
+files, adding `tools/payload_integrity.py`) with no removed or renamed shipped
+file and no breaking governance change; nothing that validated under `v1.8.0`
+is invalidated.
+
+### Added
+
+- **Shared complete payload-integrity comparator (`B3`, closes `V3`)**:
+  `tools/payload_integrity.py` compares the complete released file inventory,
+  exact SHA-256 byte contents, regular-file types (rejecting symlinks), and
+  executable modes (`100755`/`100644`) of an installed `.nizam/` directory
+  against a trusted release tree (`git:<repo>@<ref>`) or `dir:<path>`, shared by
+  `.github/scripts/verify_self_governance.py` and `bootstrap.sh --verify-only`.
+
 ### Changed
 
-- **v1.8.0 post-release ledger refresh, `.nizam/` self-adoption, and clean exit from temporary remediation override mode** (framework-envelope only).
-  `v1.8.0` is published: the annotated tag `v1.8.0` (`faeb50dfdb055cc4d5018ab8d474979be71f876f`)
-  points at reviewed PR #119 merge `606d11ee84deff0d3b7934cbfd715223d64ac79d`
-  (`compliance.yml` run `39128908966` succeeded in `18m23s`); `release.yml` run
-  `39130412824` succeeded and published the GitHub Release at `2026-10-18T13:11:05Z`.
-  This repository's `.nizam/` installation is re-pinned to the `v1.8.0` payload
-  (`277` released files + `provenance.json`, `installed_at: 2026-10-18T13:12:27Z`)
-  via the reviewed post-tag re-bootstrap under `H-CONSUMER-UPGRADE` (`AGENTS.md`
-  `v0.2.0` removes the transitional remediation precedence banner now that `.nizam/`
-  is at `v1.8.0` parity), and the planning ledgers (`ROADMAP.md`, `operator_gates.md`,
-  `SELF_GOVERNANCE.md`, `manifest.json`, `REMEDIATION_2026_10_18.md`) and
-  `.agent/run_state.json` record the observed facts.
+- **2026-10-18 `v1.8.0` rollout corrective execution (`B0–B6`, closing `V1–V7`).**
+  - **Runtime mutation-authority boundary for evidence publication (`B1`, closes `V1`)**:
+    Separated `tools/start_path.py publish` into noncommitting `--mode prepare`
+    (`prepare-publish`, emitting deterministic `.publish-request.json` records
+    without touching Git), externally mediated `--mode publish` (honoring
+    `NIZAM_MUTATION_ADAPTER` and `NIZAM_MUTATION_POLICY`, using literal
+    `:(literal)` pathspecs, staging in an isolated temporary `GIT_INDEX_FILE`
+    without mutating the caller's real index, rejecting same-path staged
+    conflicts and failed Git observations, supporting multi-capture batching,
+    and recovering cleanly from Stage 1 interruption), and noncommitting
+    `--mode finalize` (`finalize-publish`, verifying committed blob SHA-256 and
+    `100644` mode before emitting `.published.json`). Removed the hidden
+    `_git_ensure_committed` fallback from `build-receipt` when `--commit` is
+    omitted so default `build-receipt` is strictly noncommitting. Updated
+    `tools/interface.md` (`v0.5.0`), `standard/permission_classes.md` (`v0.4.0`),
+    and `tools/test_start_path.py`.
+  - **Install-time release-tag and SHA pin enforcement (`B2`, closes `V2` and `V7` regression)**:
+    `bootstrap.sh` enforces strict `vMAJOR.MINOR.PATCH` release-tag syntax on
+    the public path (with `--allow-fixture-tag` / `ALLOW_FIXTURE_TAG=1` reserved
+    for controlled `e2e-*` test tags), fetches explicit `refs/tags/<tag>` via
+    `git fetch --depth 1 --no-tags`, rejects branch-only refs and same-name
+    branch/tag ambiguity on the source remote, and verifies `--expected-sha`
+    against the peeled tag commit before staging or replacing the target
+    directory. Added a 3-form normal-clone and linked-worktree reproducibility
+    regression to `tools/e2e_bootstrap_test.sh` and updated `standard/GIP.md`
+    (`v0.7.0`) and `ecosystem/00_ecosystem_bootstrap.md` (`v0.8.0`).
+  - **Content-verified `--verify-only` and non-conflated `--payload` validation summary (`B3`, closes `V3` and `V4`)**:
+    `bootstrap.sh --verify-only` runs `tools/payload_integrity.py` against a
+    reachable reference repository or `--reference-repo` (reporting
+    `content_integrity=verified`), fails closed when `--expected-sha` or
+    `--require-content-integrity` lacks a reachable reference tree, and
+    explicitly discloses `structural_only; content_integrity=not_checked` when
+    operating offline without a reference tree. `tools/validate.sh --payload`
+    reports `[C11] NOT_APPLICABLE`, `[C16] NOT_APPLICABLE`, `[C6] SKIP`,
+    `[C12]/[C14]/[C15] OUT_OF_SCOPE`, and a non-conflated summary:
+    `SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed`.
+  - **Coherent stopping policy, skill metadata parity, and provenance discovery (`B4`, closes `V5` and `V6`)**:
+    Aligned active stopping-policy text across `methodology/03_circuit_breaker.md`
+    (`v0.6.0`), `standard/acceptance_bars.md` (`v0.3.0`), `tools/SKILL.md`
+    (`v0.8.0`), `tools/skill.json` (`v0.8.0`), `NIZAM.json`,
+    `methodology/README.md` (`v0.7.0`), and `README.md`; enforced version parity
+    between `tools/skill.json` and `tools/SKILL.md` in `tools/validate.sh` C13;
+    replaced hardcoded `v1.5.0` and `phase016` statements in `tools/SKILL.md`
+    Section 10 and active `tools/README.md` (`v0.37.0`) sections with provenance
+    and `start_path.py preflight` discovery; and documented the distinction
+    between a release tag's authored payload and the repository's own `.nizam/`
+    directory in `README.md` and `docs/planning/SELF_GOVERNANCE.md` (`v0.4.1`).
+  - **v1.8.0 post-release ledger refresh (`PR #120`)**:
+    `v1.8.0` is published at `606d11ee84deff0d3b7934cbfd715223d64ac79d`
+    (annotated tag `faeb50dfdb055cc4d5018ab8d474979be71f876f`, `release.yml`
+    run `39130412824` at `2026-10-18T13:11:05Z`), and `.nizam/` was
+    re-bootstrapped to `v1.8.0` in PR #120 (`016a1b79e0be6bc5b7459baae3c67ee99f2803f6`,
+    `compliance.yml` run `39133101798` in `13m35s`) prior to this `v1.9.0`
+    corrective rollout.
 
 ## [1.8.0] - 2026-10-18
 
