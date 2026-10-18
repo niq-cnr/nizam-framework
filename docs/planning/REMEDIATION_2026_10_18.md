@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-18"
+    summary: "Record Slice 2 (R3 + R4) bounded ControlsFixture/controls_snapshot timings and retirement of the default whole-module MASKED_AST freeze."
   - version: "0.1.0"
     date: "2026-10-18"
     summary: "Adopt the 2026-10-18 critical quality and velocity remediation mandate (R0), record the CI suite ownership and timing baseline (R1), and reconcile the R0-R11 backlog order."
@@ -64,6 +67,15 @@ Each check family has exactly one authoritative CI job owner inside the existing
 - `python3 .github/scripts/verify_self_governance.py` + `test_self_governance.py`: **PASS** (`276` released files + `10` drift negatives)
 - `python3 .github/scripts/test_c13_cleanup.py`: **PASS** in `4.16s` (after disabling Git 2.55 background `maintenance.auto` and skipping `.agent/evidence/` in the private C13 scratch copy)
 - `bash tools/fixtures_self_test.sh`: **PASS** (`166/166` fixtures accounted for, `14` runtime-session leaves, `4` receipt-candidate-batching checks) in **`1m28.46s`** (down from `42m33s` in `fixtures_self_test` and `35m03s` in `convergent_review` when `ci-candidate-bound` and `ci-blocker-rejected` were duplicated inside `fixtures_self_test.sh`).
+
+### 3.4 Post-R3/R4 Measured Local Verification Timings (Slice 2)
+
+- `ControlsFixture` index and working tree bounded (`git rm -rf --quiet --ignore-unmatch .` on orphan `synthetic-ambient` before checking out the 40 required tool/schema/contract/authority files), reducing `controls_snapshot` from **34,205 files** to **219 files** and single `controls_variant` execution from `13.34s` to `4.28s` while preserving every positive and negative assertion:
+  - `python3 tools/test_workflow_assurance.py --case ci-blocker-rejected`: **PASS** (`12/12` negative variants + positive restorations) in **`57.36s`**
+  - `python3 tools/test_workflow_assurance.py --case ci-candidate-bound`: **PASS** (`106/106` negative variants + foreign-observer + deterministic observer + positive restorations) in **`11m22.64s`** (down from **`41m50s`** in baseline run `39064043210`)
+  - Remaining 46 cases in `tools/test_workflow_assurance.py`: **PASS** (`46/46`) in **`~25s`**
+  - `python3 tools/test_workflow_assurance.py --check controls-ready`: **PASS** in **`2.05s`** (with scratch clone detached at `evidence['candidate']['source_commit']`)
+  - `python3 tools/test_receipt_candidate_batching.py`: **PASS** (`4/4` behavioral checks: `real-git-count-reduction`, `semantic-equivalence`, `fresh-mutations`, `literal-paths-and-modes`; historical whole-module `MASKED_AST` check gated behind `--check-historical-ast-freeze`) in **`1.91s`**
 
 ## 4. Reconciled Backlog & Dependency Order (R0–R11)
 

@@ -1590,11 +1590,20 @@ class ControlsFixture(FailureFixture):
 
     def __init__(self, api, parent, defect=None, seed=None):
         self.api = api; self.parent = Path(parent); self.root = self.parent / 'root'
-        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name; self.checkouts={}
+        self.serial = 0; self.nodes = {}; self.originals = {}; self.payloads = {}; self.defect=defect; self.applied=[]; self.manifests={}; self.synthetic_projection=False; self.namespace=self.parent.name; self.checkouts={}; self._raw_cache={}
+        tool_paths = ['tools/workflow_assurance_ci.py', 'tools/convergent_review.py',
+            'tools/evaluate_convergent_review_prompt.py', 'tools/linux_trial_sandbox.sh',
+            'tools/isolated_trial_adapter.py', 'tools/verify_lib.sh',
+            '.github/workflows/compliance.yml', 'tools/fixtures_self_test.sh',
+            '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
+            'templates/convergent-review-prompt.md']
+        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
         source_profile=bool(defect and defect['site']=='source-contract')
         if seed and not source_profile:
             self.root=seed.root;self.source=seed.source
             self.ambient_source=seed.ambient_source;self.packet_base=seed.packet_base;self.fixture_source_path=seed.fixture_source_path
+            self._fixture_housekeeping_disabled = True
+            self._raw_cache = seed._raw_cache
             require(git(self.root,'remote','get-url','origin')==CONTROL_ORIGIN,'seed actual origin stable')
             git(self.root,'merge-base','--is-ancestor',self.source,'HEAD')
             for path in seed.source_paths:require((self.root/path).is_file() and not (self.root/path).is_symlink(),'seed complete Source remains materialized')
@@ -1602,10 +1611,23 @@ class ControlsFixture(FailureFixture):
             subprocess.check_call(['git', 'clone', '--quiet', '--shared', '--no-checkout', str(ROOT), str(self.root)])
             git(self.root, 'config', 'user.name', 'SYNTHETIC123 Independent Parser Fixture')
             git(self.root, 'config', 'user.email', 'synthetic123@example.invalid')
+            git(self.root, 'config', 'gc.auto', '0')
+            git(self.root, 'config', 'maintenance.auto', 'false')
+            self._fixture_housekeeping_disabled = True
             git(self.root, 'remote', 'set-url', 'origin', CONTROL_ORIGIN)
-            git(self.root, 'checkout', '--quiet', '--detach', git(ROOT, 'rev-parse', 'HEAD'))
-            self.source = git(self.root, 'rev-parse', 'HEAD')
-            self.ambient_source=self.source;self.fixture_source_path='tools/zz_wa123_synthetic_candidate.txt'
+            c123_ae = json.loads((ROOT / '.agent/contracts/123.json').read_bytes())['approval_evidence']
+            bounded_paths = sorted(set(tool_paths + [
+                'tools/workflow_assurance.py', 'tools/test_workflow_assurance.py',
+                '.agent/contracts/123.json', c123_ae['mode_a'], c123_ae['contract_review'],
+                '.agent/evidence/phase018-preflight/activation-authority.json',
+            ]))
+            git(self.root, 'checkout', '--quiet', '--orphan', 'synthetic-ambient')
+            git(self.root, 'rm', '-rf', '--quiet', '--ignore-unmatch', '.')
+            git(self.root, 'checkout', '--quiet', git(ROOT, 'rev-parse', 'HEAD'), '--', *bounded_paths)
+            self.ambient_source = self.commit('SYNTHETIC bounded ambient source baseline')
+            git(self.root, 'checkout', '--quiet', '--detach', self.ambient_source)
+            self.source = self.ambient_source
+            self.fixture_source_path='tools/zz_wa123_synthetic_candidate.txt'
             require(not git(self.root,'status','--porcelain=v1'),'full ambient clone is clean before private source anchors')
             require(not git(self.root,'ls-tree',self.ambient_source,'--',self.fixture_source_path),'private synthetic source input is absent from ambient tree')
             target=self.root/self.fixture_source_path
@@ -1625,15 +1647,8 @@ class ControlsFixture(FailureFixture):
         require(git(self.root,'diff','--name-only',self.packet_base,self.source).splitlines()==changed,'F1 changes only meaningful private input and designated contract mutation')
         require(self.ref(self.fixture_source_path,self.packet_base)['sha256']==sha(b'SYNTHETIC_INPUT_VERSION = 0\n'),'F0 contains actual synthetic UTF8 baseline')
         require(self.ref(self.fixture_source_path,self.source)['sha256']==sha(b'SYNTHETIC_INPUT_VERSION = 1\n'),'F1 contains actual changed synthetic UTF8 input')
-        self.source_paths=git(self.root,'ls-tree','-r','--name-only',self.source).splitlines()
+        self.source_paths = list(seed.source_paths) if seed and not source_profile else git(self.root,'ls-tree','-r','--name-only',self.source).splitlines()
         self.outside = self.parent / 'outside-sentinel'; self.outside.write_bytes(b'SYNTHETIC outside unchanged\n'); self.outside.chmod(0o600)
-        tool_paths = ['tools/workflow_assurance_ci.py', 'tools/convergent_review.py',
-            'tools/evaluate_convergent_review_prompt.py', 'tools/linux_trial_sandbox.sh',
-            'tools/isolated_trial_adapter.py', 'tools/verify_lib.sh',
-            '.github/workflows/compliance.yml', 'tools/fixtures_self_test.sh',
-            '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
-            'templates/convergent-review-prompt.md']
-        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
         self.inputs = copy.deepcopy(seed.inputs) if seed and not source_profile else dict(source=['tools/workflow_assurance.py',self.fixture_source_path], contracts=['.agent/contracts/123.json'],
             tests=['tools/test_workflow_assurance.py'], tools=tool_paths, unknown_dependencies=[])
         self.candidate = copy.deepcopy(seed.candidate) if seed and not source_profile else api.assess_repository(self.root, self.source, self.inputs, ['PYTHONDONTWRITEBYTECODE'], {})
@@ -1642,28 +1657,35 @@ class ControlsFixture(FailureFixture):
         for category in ('source','tests','tools','contracts'):
             for entry in self.candidate['assessed_inputs'][category]:
                 target=self.root/entry['path'];require(sha(target.read_bytes())==entry['sha256'] and bool(target.stat().st_mode&0o111)==entry['executable'],'immutable seed protected bytes/mode stable')
-        self.good_contract=self.ref('.agent/contracts/123.json',CONTROL_APPROVAL)
+        self.good_contract = copy.deepcopy(seed.good_contract) if seed and not source_profile else self.ref('.agent/contracts/123.json',CONTROL_APPROVAL)
         self.contract = self.ref('.agent/contracts/123.json', self.source if source_profile else CONTROL_APPROVAL)
-        approved = self.read(self.good_contract); ae = approved['approval_evidence']
-        self.prerequisites = []
-        for kind, key, field in (('mode-a', 'mode_a', 'reviewed_commit'), ('contract-review', 'contract_review', 'reviewed_revision')):
-            artifact=self.ref(ae[key],self.source); actual=self.read(artifact)
-            self.prerequisites.append(dict(kind=kind, artifact=artifact, feature_id='123',
-                assessed_revision=actual[field], contract_sha256=ae['proposal_sha256']))
-        self.prerequisites.append(dict(kind='approved-contract', artifact=self.contract, feature_id='123',
-            assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
         gate = dict(final_verdict=dict(approved=True), issues=[], missing_acceptance_coverage=[], unsupported_claims=[])
-        provisional = dict(gate, feature_id='123', reviewed_revision=self.contract['revision'],
-            approved_contract_sha256=self.contract['sha256'], reviewer='SYNTHETIC-provisional-parser-only')
-        provisional_ref = self.put('provisional', provisional)
-        self.prerequisites.append(dict(kind='provisional-bundle', artifact=provisional_ref, feature_id='123',
-            assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
-        origin_ref = self.ref('.agent/evidence/phase018-preflight/activation-authority.json', self.source)
-        original = self.read(origin_ref); scope = {k: original['scope'][k] for k in ('phase','features','original_estimate_lines','ceiling_130pct')}
-        authority = dict(schema_version=1, role='Root', purpose='experiment-only', repository=CONTROL_ORIGIN,
-            **{k: original[k] for k in ('owner','gate','operator_instruction_verbatim')}, scope=scope,
-            source_authority_ref=origin_ref, mapping=dict(repository_origin=CONTROL_ORIGIN, review_repository=CONTROL_REPOSITORY))
-        authority_ref = self.put('authority', authority)
+        if seed and not source_profile and (not defect or defect['site'] not in ('provisional', 'authority')):
+            self.prerequisites = copy.deepcopy(seed.prerequisites)
+            authority_ref = copy.deepcopy(seed.authority_ref)
+            authority = copy.deepcopy(seed.authority)
+            scope = copy.deepcopy(seed.scope)
+        else:
+            approved = self.read(self.good_contract); ae = approved['approval_evidence']
+            self.prerequisites = []
+            for kind, key, field in (('mode-a', 'mode_a', 'reviewed_commit'), ('contract-review', 'contract_review', 'reviewed_revision')):
+                artifact=self.ref(ae[key],self.source); actual=self.read(artifact)
+                self.prerequisites.append(dict(kind=kind, artifact=artifact, feature_id='123',
+                    assessed_revision=actual[field], contract_sha256=ae['proposal_sha256']))
+            self.prerequisites.append(dict(kind='approved-contract', artifact=self.contract, feature_id='123',
+                assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
+            provisional = dict(gate, feature_id='123', reviewed_revision=self.contract['revision'],
+                approved_contract_sha256=self.contract['sha256'], reviewer='SYNTHETIC-provisional-parser-only')
+            provisional_ref = self.put('provisional', provisional)
+            self.prerequisites.append(dict(kind='provisional-bundle', artifact=provisional_ref, feature_id='123',
+                assessed_revision=self.contract['revision'], contract_sha256=self.contract['sha256']))
+            origin_ref = self.ref('.agent/evidence/phase018-preflight/activation-authority.json', self.source)
+            original = self.read(origin_ref); scope = {k: original['scope'][k] for k in ('phase','features','original_estimate_lines','ceiling_130pct')}
+            authority = dict(schema_version=1, role='Root', purpose='experiment-only', repository=CONTROL_ORIGIN,
+                **{k: original[k] for k in ('owner','gate','operator_instruction_verbatim')}, scope=scope,
+                source_authority_ref=origin_ref, mapping=dict(repository_origin=CONTROL_ORIGIN, review_repository=CONTROL_REPOSITORY))
+            authority_ref = self.put('authority', authority)
+            self.authority_ref = authority_ref; self.authority = authority; self.scope = scope
         self.shadow = dict(repository=CONTROL_ORIGIN, current_phase='018-workflow-assurance-controls', current_feature='123',
             status='experiment-pending', updated_at='2026-10-15T00:00:00Z',
             scope_budget=dict(original_estimate_lines=7200,total_lines_changed=4303,per_feature=[]),
@@ -1672,22 +1694,35 @@ class ControlsFixture(FailureFixture):
         self.capture_producer = self.value('capture-producer',dict(agent_id='wa123-capable-ci', session_id='123-ci-capture-attempt1'))
         self.verify_producer = self.value('verify-producer',dict(agent_id='wa123-capable-ci', session_id='123-ci-verify-attempt1'))
         prior=self.value('carried-ledger',None)
+        if seed and not source_profile and defect and defect['site'] not in ('shadow', 'report', 'carried-ledger'):
+            shadow_ref = copy.deepcopy(seed.selection['shadow_state_ref'])
+            report_ref = copy.deepcopy(seed.selection['report_ref'])
+        else:
+            shadow_ref = self.put('shadow', self.shadow)
+            report_ref = self.put('report', report)
         self.selection = dict(schema_version=1, mode='capture', repository_origin=CONTROL_ORIGIN,
             review_repository=CONTROL_REPOSITORY, source_commit=self.source, source_tree=self.candidate['source_tree'],
             inputs=self.inputs, contract_ref=self.contract, authority_ref=authority_ref, prerequisites=self.prerequisites,
-            producer=self.capture_producer, packet_base=git(self.root, 'rev-parse', self.source+'^'), prior_ledger=self.put('prior-ledger',prior) if prior else None,
-            report_ref=self.put('report', report), prompt_ref=self.ref('templates/convergent-review-prompt.md', self.source),
+            producer=self.capture_producer, packet_base=self.packet_base, prior_ledger=self.put('prior-ledger',prior) if prior else None,
+            report_ref=report_ref, prompt_ref=self.ref('templates/convergent-review-prompt.md', self.source),
             runner_ref=self.ref('tools/workflow_assurance_ci.py',self.source), adapter_ref=self.ref('tools/linux_trial_sandbox.sh',self.source),
-            evaluator_ref=self.ref('tools/evaluate_convergent_review_prompt.py',self.source), shadow_state_ref=self.put('shadow',self.shadow),
+            evaluator_ref=self.ref('tools/evaluate_convergent_review_prompt.py',self.source), shadow_state_ref=shadow_ref,
             candidate=None,a10_policy_ref=None,capture_pack_ref=None)
         self.shadow=self.read(self.selection['shadow_state_ref'])
         self.capture_selection = self.put('selection-capture',self.selection)
         self.checkout=self.stage_checkout('capture',self.capture_selection)
-        self.exp = self.parent / 'experiment'
-        git(self.root,'worktree','add','--quiet','--detach',str(self.exp),self.source)
-        # Only the later execution worktree is sparse; unchanged115 never sees it.
-        git(self.exp,'sparse-checkout','set','--no-cone','/tools/','/schema/','/.github/',
-            '/templates/convergent-review-prompt.md','/.agent/contracts/','/.agent/run_state.json','/'+CONTROL_PREFIX)
+        if seed and not source_profile and getattr(seed, '_shared_exp', None) is not None:
+            import shutil
+            self.exp = seed._shared_exp
+            self._reused_exp = True
+            shutil.rmtree(self.exp / CONTROL_PREFIX, ignore_errors=True)
+            git(self.exp, 'reset', '--quiet', '--hard', self.source)
+        else:
+            self.exp = self.parent / 'experiment'
+            self._reused_exp = False
+            git(self.root,'worktree','add','--quiet','--detach',str(self.exp),self.source)
+            if not seed and not defect:
+                self._shared_exp = self.exp
         self.exp_write('inputs/selection-capture.json',self.raw(self.capture_selection))
         self.exp_commit('SYNTHETIC capture selected input')
         self.make_evaluation(self.read(self.selection['report_ref']))
@@ -1765,7 +1800,7 @@ class ControlsFixture(FailureFixture):
         a10_capture_ref=self.exp_ref('verify/capture.json',tip)
         verify_host, pack = self.host('verify',tip,self.verify_selection,[self.receipt_ref,result_ref,a10_capture_ref])
         git(self.root,'checkout',tip,'--',CONTROL_PREFIX);self.materialized_tip=tip
-        self.commit('SYNTHETIC materialized immutable experiment outputs')
+        self.commit_paths('SYNTHETIC materialized immutable experiment outputs', CONTROL_PREFIX)
         self.evidence = dict(schema_version=1,candidate=self.candidate,checkout=self.checkout,
             capture_selection_ref=self.capture_selection,verify_selection_ref=self.verify_selection,evaluation_ref=self.evaluation_ref,
             replay_ref=self.replay_ref,trial_provenance=self.trials,a11_capture_ref=self.map_capture_ref,a11_result_ref=self.map_ref,
@@ -1783,6 +1818,23 @@ class ControlsFixture(FailureFixture):
         require(len(self.applied)==(1 if defect else 0),'exactly one deliberate defect site applied')
         self.assert_bindings()
 
+    def commit_paths(self, message, *paths):
+        if not getattr(self, '_fixture_housekeeping_disabled', False):
+            for key, value in (('gc.auto', '0'), ('maintenance.auto', 'false')):
+                git(self.root, 'config', '--local', key, value)
+            self._fixture_housekeeping_disabled = True
+        git(self.root, 'add', '--', *(paths or ('.',)))
+        if git(self.root, 'diff', '--cached', '--name-only'):
+            git(self.root, 'commit', '-qm', message)
+        return git(self.root, 'rev-parse', 'HEAD')
+
+    def ref(self, path, revision=None):
+        revision = revision or git(self.root, 'rev-parse', 'HEAD')
+        key = (revision, path)
+        if key not in self._raw_cache:
+            self._raw_cache[key] = subprocess.check_output(['git', '-C', str(self.root), 'show', revision + ':' + path])
+        return dict(path=path, sha256=sha(self._raw_cache[key]), revision=revision)
+
     def stage_checkout(self,mode,selection):
         # This outer CLI input belongs to a Root record-only checkout, never the
         # Source-relative output branch. Both historical versions remain in Git.
@@ -1790,14 +1842,17 @@ class ControlsFixture(FailureFixture):
         present=self.value(mode+'-selection-present',True)
         if present:self.write(path,self.value(mode+'-fixed-selection-bytes',self.raw(selection)))
         elif target.exists():target.unlink()
-        revision=self.commit('SYNTHETIC '+mode+' fixed CLI selection checkout')
+        revision=self.commit_paths('SYNTHETIC '+mode+' fixed CLI selection checkout', path)
         checkout=dict(sha=revision,tree=git(self.root,'rev-parse',revision+'^{tree}'),event='push',
             event_head=revision,event_base=None,parents=git(self.root,'show','-s','--format=%P',revision).split())
         self.checkouts[mode]=self.value(mode+'-checkout',checkout)
         return self.checkouts[mode]
 
     def raw(self, reference):
-        return subprocess.check_output(['git','-C',str(self.root),'show',reference['revision']+':'+reference['path']])
+        key = (reference['revision'], reference['path'])
+        if key not in self._raw_cache:
+            self._raw_cache[key] = subprocess.check_output(['git','-C',str(self.root),'show',reference['revision']+':'+reference['path']])
+        return self._raw_cache[key]
 
     def read(self, reference): return json.loads(self.raw(reference))
 
@@ -1812,7 +1867,9 @@ class ControlsFixture(FailureFixture):
     def put(self,label,value):
         self.serial += 1; path='.agent/evidence/123/synthetic-root/%s/%04d-%s' % (self.namespace,self.serial,label)
         value=self.value(label,value); data=value if type(value) is bytes else canonical(value)+b'\n'
-        self.write(path,data); reference=self.ref(path,self.commit('SYNTHETIC parser record '+label))
+        self.write(path,data); rev=self.commit_paths('SYNTHETIC parser record '+label, path)
+        self._raw_cache[(rev, path)] = data
+        reference=dict(path=path, sha256=sha(data), revision=rev)
         self.nodes[label]=reference; self.originals[label]=copy.deepcopy(value); return reference
 
     def exp_write(self,path,value):
@@ -1824,7 +1881,11 @@ class ControlsFixture(FailureFixture):
         git(self.exp,'add','--',CONTROL_PREFIX); git(self.exp,'commit','--quiet','-m',message)
         return git(self.exp,'rev-parse','HEAD')
 
-    def exp_ref(self,path,revision): return self.ref(CONTROL_PREFIX+path,revision)
+    def exp_ref(self,path,revision):
+        rel = CONTROL_PREFIX + path
+        if path in self.payloads:
+            self._raw_cache[(revision, rel)] = self.payloads[path]
+        return self.ref(rel,revision)
 
     def capture(self,argv,revision,producer,stdout,stderr,cwd=None):
         return dict(schema_version=1,argv=argv,cwd=str(self.exp if cwd is None else cwd),revision=revision,candidate_sha256=sha(canonical(self.candidate)),
@@ -1892,8 +1953,10 @@ class ControlsFixture(FailureFixture):
     def inventory(self,tip):
         rows=[]
         for revision in git(self.exp,'rev-list','--reverse',self.source+'..'+tip).splitlines():
-            for path in git(self.exp,'diff-tree','--no-commit-id','--name-only','-r',revision).splitlines():
-                mode,kind,blob=git(self.exp,'ls-tree',revision,'--',path).split()[:3]
+            for line in git(self.exp,'diff-tree','--no-commit-id','--raw','-r',revision).splitlines():
+                meta, path = line.split('\t', 1)
+                parts = meta.lstrip(':').split()
+                mode, blob = parts[1], parts[3]
                 rows.append(dict(path=path,revision=revision,git_blob=blob,git_mode=mode,sha256=self.ref(path,revision)['sha256']))
         return sorted(rows,key=lambda r:(r['revision'],r['path']))
 
@@ -1971,16 +2034,21 @@ class ControlsFixture(FailureFixture):
                 require(git(self.root,'rev-parse',checkout['sha']+'^{tree}')==checkout['tree'],'fixture actual stage checkout tree')
                 require(git(self.root,'show','-s','--format=%P',checkout['sha']).split()==checkout['parents'],'fixture actual stage checkout parents')
                 git(self.root,'merge-base','--is-ancestor',self.source,checkout['sha'])
+                tree_entries={}
+                for row in git(self.root,'ls-tree','-r',checkout['sha']).splitlines():
+                    m_part, p_part = row.split('\t', 1)
+                    m_bits, _, m_oid = m_part.split()
+                    tree_entries[p_part] = (m_bits, m_oid)
                 for category in ('source','tests','tools','contracts'):
                     for entry in self.candidate['assessed_inputs'][category]:
-                        raw=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+entry['path']])
-                        mode_bits=git(self.root,'ls-tree',checkout['sha'],'--',entry['path']).split()[0]
+                        raw=self.raw(dict(path=entry['path'], revision=checkout['sha'], sha256=entry['sha256']))
+                        mode_bits=tree_entries[entry['path']][0]
                         require(sha(raw)==entry['sha256'] and (mode_bits=='100755') is entry['executable'],'fixture stage checkout preserves protected Source bytes/modes')
                 require(checkout['event']=='push' and checkout['event_head']==checkout['sha'] and checkout['event_base'] is None,'fixture actual synthetic push checkout/event')
             fixed=frame and not(self.defect and self.defect.get('frame_waiver')==mode+'-fixed-input')
             if fixed:
                 path='.agent/evidence/123/selection.json'
-                actual=subprocess.check_output(['git','-C',str(self.root),'show',checkout['sha']+':'+path])
+                actual=self.raw(dict(path=path, revision=checkout['sha'], sha256=''))
                 require(actual==self.raw(selected),'fixture fixed CLI input equals independently selected immutable JSON')
             archive=self.raw(metadata['archive_ref'])
             require(metadata['archive_ref']==fetches['archive']['stdout'],'fixture raw archive selection coherent')
@@ -2024,7 +2092,7 @@ class ControlsFixture(FailureFixture):
         if name!='a10-capture-preselection-revision':
             require(capture['revision']==outer['checkout']['sha']==self.checkouts['verify']['sha'],'fixture nested A10 Capture actual stage V revision')
         if name not in ('a10-capture-preselection-revision','verify-preselection-checkout','verify-fixed-selection-absent','verify-fixed-selection-substituted'):
-            selected=subprocess.check_output(['git','-C',str(self.root),'show',capture['revision']+':.agent/evidence/123/selection.json'])
+            selected=self.raw(dict(path='.agent/evidence/123/selection.json', revision=capture['revision'], sha256=''))
             require(selected==self.raw(self.verify_selection),'fixture nested A10 fixed input equals independently selected verify JSON')
         result=json.loads(self.payloads['verify/result.json']);expected_receipt=self.read(self.receipt_ref)
         require(result['receipt']==expected_receipt,'fixture actual/projected result receipt equals selected immutable receipt')
@@ -2042,18 +2110,26 @@ class ControlsFixture(FailureFixture):
         require(after['history'][:-1]==before['history'] and after['status']==self.a10_policy['to_status'] and after['updated_at']==self.a10_policy['at'],'fixture projected owned transition fields coherent')
         for key in ('history','status','updated_at'):after.pop(key);before.pop(key)
         require(after==before,'fixture unowned shadow fields coherent')
+        rev_trees={}
         for row in self.evidence['inventory']:
             ref={k:row[k] for k in ('path','revision','sha256')}
             require(sha(self.raw(ref))==row['sha256'],'fixture inventory bytes coherent')
-            require(git(self.root,'ls-tree',row['revision'],'--',row['path']).split()[:3]==[row['git_mode'],'blob',row['git_blob']],'fixture inventory Git mode/blob coherent')
+            if row['revision'] not in rev_trees:
+                rev_trees[row['revision']] = {line.split('\t',1)[1]: line.split('\t',1)[0].split()[:3] for line in git(self.root,'ls-tree','-r',row['revision']).splitlines()}
+            require(rev_trees[row['revision']].get(row['path'])==[row['git_mode'],'blob',row['git_blob']],'fixture inventory Git mode/blob coherent')
 
 
 def controls_snapshot(f):
     paths=[]
-    for anchor in dict.fromkeys((f.root,f.parent)):
+    anchors=(f.parent,) if f.root.is_relative_to(f.parent) else (f.root,f.parent)
+    for anchor in anchors:
         for directory,dirs,files in os.walk(anchor):
-            dirs[:]=[d for d in dirs if d!='.git']
+            dirs[:]=[d for d in dirs if d not in ('.git', 'synthetic-root')]
             paths.extend(Path(directory)/name for name in files if name!='.git')
+    for ref in f.nodes.values():
+        p = f.root / ref['path']
+        if p.exists() or p.is_symlink():
+            paths.append(p)
     return ({str(p):(p.lstat().st_mode,p.lstat().st_nlink,sha(p.read_bytes())) for p in set(paths)},
         f.outside.lstat().st_mode,f.outside.read_bytes(),git(f.root,'status','--porcelain','--untracked-files=all'),
         git(f.root,'rev-parse','HEAD'),git(f.root,'show-ref'))
@@ -2128,10 +2204,12 @@ def controls_variant(api,positive,defect):
     with tempfile.TemporaryDirectory(prefix='nizam123-SYNTHETIC-variant-') as parent:
         bad=controls_construct(api,parent,defect,seed=positive)
         try:controls_call(api,bad,True)
-        finally:git(bad.root,'worktree','remove','--force',str(bad.exp))
+        finally:
+            if not getattr(bad, '_reused_exp', False):
+                git(bad.root,'worktree','remove','--force',str(bad.exp))
     git(positive.root,'restore','--source='+positive.materialized_tip,'--staged','--worktree','--',CONTROL_PREFIX)
     positive.write('.agent/evidence/123/selection.json',positive.raw(positive.verify_selection))
-    positive.commit('SYNTHETIC restored original positive materialization')
+    positive.commit_paths('SYNTHETIC restored original positive materialization', CONTROL_PREFIX, '.agent/evidence/123/selection.json')
     controls_call(api,positive)
     print('RESTORED '+defect['name'])
 
@@ -2405,8 +2483,9 @@ def run_controls_ready(api):
     before=copy.deepcopy((policy,evidence)); status=git(ROOT,'status','--porcelain','--untracked-files=all')
     with tempfile.TemporaryDirectory(prefix='nizam123-actual-observation-') as parent:
         scratch=Path(parent)/'repo'; bundle=Path(parent)/'selected.bundle'
-        subprocess.check_call(['git','clone','--quiet','--shared',str(ROOT),str(scratch)])
+        subprocess.check_call(['git','clone','--quiet','--shared','--no-checkout',str(ROOT),str(scratch)])
         git(scratch,'remote','set-url','origin',git(ROOT,'remote','get-url','origin'))
+        git(scratch,'checkout','--quiet','--detach',evidence['candidate']['source_commit'])
         payload=api._receipt_artifact(ROOT,evidence['pack_ref']);bundle.write_bytes(payload)
         require(payload.startswith(b'# v2 git bundle\n') and b'\n\n' in payload,'selected bundle v2 preparation')
         pack=payload.split(b'\n\n',1)[1]
