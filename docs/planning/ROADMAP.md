@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.22
+version: 0.65.23
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.23"
+    date: "2026-10-18"
+    summary: "Record v1.8.0 release preparation and completion of the 2026-10-18 post-remediation audit follow-up (A0-A7, closing F1-F6): Follow-Up Slice 1 (8c7d50a9a712f4fd9a29e160c422f9465e40b226), Slice 2 (149d7d6647cbcccab853f02ce37fc00f1e4e8605), and Slice 3 packets A6-A7 (345b0c1a81bb6138ca2d2d917af4639cbd93d5c4) are independently accepted; the Current position section gains the 'Release in preparation: v1.8.0' disposition line under continuing operator authority. The v1.7.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.22"
     date: "2026-10-18"
     summary: "Post-release refresh (the 0.65.17 precedent): the Current position disposition line rolls from 'Release in preparation: v1.7.0' to 'Latest released tag: v1.7.0' carrying the observed facts -- annotated tag v1.7.0 (tag object 6a4cf599f3850ae31561ba38f9da29237d0a4a53) at reviewed PR #117 merge 47851d857e0ab879b848610128ee6e9e13368f0d, release.yml run 39116785402 succeeded, GitHub Release published 2026-10-18T09:48:38Z and marked Latest, local .nizam/ re-bootstrapped to v1.7.0 (277 released files + provenance.json). The v1.6.0 prior-release record and all historical snapshots, phase records and budgets are preserved untouched."
@@ -321,6 +324,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v1.8.0
 
 Latest released tag: v1.7.0 (MINOR) — RELEASED 2026-10-18 at `47851d857e0ab879b848610128ee6e9e13368f0d` (PR #117, annotated tag object `6a4cf599f3850ae31561ba38f9da29237d0a4a53`); `release.yml` run 39116785402 succeeded and the GitHub Release published at `2026-10-18T09:48:38Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.7.0` (`277` released files + `provenance.json`).
 

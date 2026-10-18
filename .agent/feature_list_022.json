@@ -1,7 +1,7 @@
 {
   "phase": "022-portable-review-sandbox-adapter",
   "spec_version": "0.1.0",
-  "phase_status": "in_progress",
+  "phase_status": "complete",
   "activation_state": "active",
   "original_estimate_lines": 1100,
   "ceiling_130pct": 1430,
@@ -15,8 +15,8 @@
       "id": "134",
       "name": "Portable Docker trial-sandbox adapter with adapter-specific conformance selection",
       "description": "Add one canonical trusted Docker-backed equivalent adapter implementing ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS... (digest-pinned image, network none, cap-drop all, no-new-privileges, read-only rootfs, same-path bind mounts, inner Landlock via the existing isolated_trial_adapter.py extended with an optional interpreter allowlist), and make sandbox conformance capability selection adapter-specific in the test suite so the five sandbox-dependent obligations exercise for real through the selected adapter while unsupported-stays-nonzero is preserved.",
-      "status": "in_progress",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": [],
       "estimated_lines": 1100,
       "budget_categories": {
@@ -59,7 +59,7 @@
       ],
       "product_boundary": "One new trusted wrapper adapter, an additive optional interpreter-rule flag on the existing inner adapter, adapter-specific capability selection and boundary exercises in the shipped test suite, envelope/CI/docs/index registration. No evaluator/schema/packet/replay/publication changes; no orchestration layer; no host-control changes.",
       "evidence": ".agent/evidence/134/evidence-capture.json",
-      "delivery_status": "In progress."
+      "delivery_status": "Complete (merged in PR #115; Loop 2 Mode B and fresh QA approved)."
     }
   ],
   "external_prerequisites": [

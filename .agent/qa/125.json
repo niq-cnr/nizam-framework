@@ -1,0 +1,34 @@
+{
+  "feature_id": "125",
+  "reviewer": "Independent Evaluator (Slice 2 acceptance reviewer)",
+  "qa_pass": true,
+  "checks_run": 7,
+  "checks_passed": 7,
+  "adversarial": {
+    "performed": true,
+    "description": "Negative discrimination probes: evaluate_profile_comparison and verify_profiles_ready reject reused baseline/shadow captures, identical baseline/shadow argv for reduced tiers, post-shadow preregistration commits, uncaptured case_proofs rows, and authoring reviewer self-approval.",
+    "result": "pass"
+  },
+  "evidence_files": [
+    ".agent/evidence/125/profiles-evidence.json",
+    ".agent/evidence/125/profiles-policy.json",
+    ".agent/evidence/125/independent-review.json",
+    ".agent/evidence/125/comparison-routine.json",
+    ".agent/evidence/125/comparison-standard.json",
+    ".agent/evidence/125/comparison-high.json",
+    ".agent/evidence/125/comparison-missed-blocker.json",
+    ".agent/evidence/125/result-routine.json",
+    ".agent/evidence/125/result-standard.json",
+    ".agent/evidence/125/result-high.json",
+    ".agent/evidence/125/result-missed-blocker.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All Feature 125 acceptance cases (same-candidate, missed-baseline-blocker, cost-latency-accounting, no-self-promotion, --check profiles-ready, validate.sh, and validate.sh --payload) pass with causal commit ordering and distinct baseline/shadow run bindings."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

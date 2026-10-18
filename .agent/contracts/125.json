@@ -1,0 +1,85 @@
+{
+  "contract_id": "125",
+  "feature_id": "125",
+  "name": "Shadow comparison and promotion recommendation",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_019.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/125.json",
+        "purpose": "Approved feature contract for Phase 019 Feature 125 shadow comparison and readiness verification."
+      },
+      {
+        "path": ".agent/qa/125.json",
+        "purpose": "Independent QA verdict for Feature 125 shadow comparison and profiles-ready check."
+      },
+      {
+        "path": ".agent/evidence/125/profiles-evidence.json",
+        "purpose": "Committed Phase 019 profile readiness evidence bundle."
+      },
+      {
+        "path": ".agent/evidence/125/profiles-policy.json",
+        "purpose": "Committed Phase 019 profile readiness policy anchor."
+      },
+      {
+        "path": ".agent/evidence/125/independent-review.json",
+        "purpose": "Independent non-authoring Evaluator review of the Phase 019 profile readiness bundle."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Implement evaluate_profile_comparison and verify_profiles_ready enforcing causal commit ordering, distinct baseline/shadow run bindings, min_comparison_runs, captured case_proofs, and independent reviewer provenance."
+      },
+      {
+        "path": "tools/test_workflow_assurance.py",
+        "purpose": "Exercise same-candidate, missed-baseline-blocker, cost-latency-accounting, no-self-promotion, and --check profiles-ready."
+      }
+    ]
+  },
+  "non_goals": [
+    "No persistent-runtime SBCL session profile claims while Phase 020 Features 130-132 remain pending.",
+    "No automatic gate reduction or self-promotion."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case same-candidate",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case same-candidate"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case missed-baseline-blocker",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case missed-baseline-blocker"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case cost-latency-accounting",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case cost-latency-accounting"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case no-self-promotion",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case no-self-promotion"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check profiles-ready",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check profiles-ready"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh --payload",
+      "command": "bash tools/validate.sh --payload"
+    }
+  ],
+  "estimated_lines": 1900,
+  "evidence_dir": ".agent/evidence/125/",
+  "evidence_convention": ".agent/evidence/125/profiles-evidence.json, .agent/evidence/125/profiles-policy.json, .agent/evidence/125/independent-review.json, and .agent/evidence/125/captures/*",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-10-18T11:15:00Z",
+    "revisions": 1
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

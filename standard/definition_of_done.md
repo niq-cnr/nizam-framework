@@ -2,11 +2,14 @@
 id: nizam-definition-of-done
 title: "Definition of Done"
 description: "Aggregates the framework's eight done-layers -- Step, Handoff, Gate, Feature, Plan, Merge, Release, and Ecosystem -- by citing each layer's existing authority rather than restating its mechanics."
-version: 0.4.0
+version: 0.4.1
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/definition_of_done.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-18"
+    summary: "Clarify that check C16 (`vlib_feature_list_lifecycle`) is a deterministic structural check over `.agent/feature_list*.json`, `.agent/contracts/`, `.agent/qa/`, and referenced evidence files on disk (requiring contracts, passing QA verdicts, and non-empty evidence files for contemporary `passes: true` features while preserving legacy pre-contract-era exemptions)."
   - version: "0.4.0"
     date: "2026-10-13"
     summary: "Gate-Done (Section 5) and Feature-Done (Section 6) add comparator acceptance per `standard/acceptance_bars.md` (cost tier declared at dispatch; deterministic work exempt per its Section 1); the standard joins the References list (Section 13)."
@@ -24,8 +27,15 @@ change_log:
 # Definition of Done
 
 > **Partially enforced.** This document's Feature-Done layer (Section 6) --
-> the complete-implies-contract-plus-QA-plus-evidence invariant -- is
-> verified by `tools/validate.sh` check C16 when a checkout runs it. This
+> the structural referential rule over `.agent/feature_list*.json`,
+> `.agent/contracts/<id>.json`, `.agent/qa/<id>.json`, and referenced
+> `evidence_files` on disk -- is verified deterministically by
+> `tools/validate.sh` check C16 (`vlib_feature_list_lifecycle`) when a checkout
+> runs it (requiring approved contracts, passing QA verdicts, and non-empty
+> evidence files for contemporary `passes: true` completed features while
+> preserving the legacy pre-contract-era exemption for historical entries without
+> `passes`). Check C16 is a structural file-and-status check; it does not
+> re-execute verification commands. This
 > document's Merge-Done and Release-Done layers (Sections 8-9) are verified
 > by the release close-out gate defined by phase 013, feature 097. Every
 > other named layer -- Step, Handoff, Gate, Plan, and Ecosystem -- is
@@ -33,7 +43,7 @@ change_log:
 > runtime, mirroring the same aspirational/enforced split already recorded
 > by `standard/capability_profiles.md` and `standard/ci_gates.md`'s own
 > banners. This document does not claim C16 verifies anything beyond the
-> Feature-Done layer.
+> structural Feature-Done file and status invariants.
 
 ## 1. Role and Authority
 
@@ -231,11 +241,13 @@ filename, consistent with this document's own no-forward-path discipline
 ## 11. Enforcement
 
 Exactly two layers are mechanically enforced by this framework's own
-tooling today. Feature-Done (Section 6) is verified by `tools/validate.sh`
-check C16, mechanizing the era-safe referential rule that every `complete`
-feature has a corresponding approved contract, a passing QA verdict, and
-evidence resolving on disk. Merge-Done (Section 8) is verified by the
-four jobs `.github/workflows/compliance.yml` declares, which already run
+tooling today. Feature-Done (Section 6) is verified structurally by `tools/validate.sh`
+check C16 (`vlib_feature_list_lifecycle`), which checks that every contemporary
+`complete` feature (`passes: true`) has an approved contract in `.agent/contracts/<id>.json`,
+a passing QA verdict in `.agent/qa/<id>.json`, and non-empty `evidence_files`
+resolving on disk (while preserving the era-safe exemption only for legacy
+pre-contract-first entries that lack `passes`). Merge-Done (Section 8) is verified by the
+jobs `.github/workflows/compliance.yml` declares, which already run
 on this repository today. Release-Done (Section 9) additionally requires
 the release close-out gate defined by phase 013, feature 097, once that
 feature lands.
