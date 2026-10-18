@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.25
+version: 0.65.26
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.26"
+    date: "2026-10-18"
+    summary: "Post-release refresh (the 0.65.17/0.65.22/0.65.24 precedent): the Current position disposition line rolls from 'Release in preparation: v1.9.0' to 'Latest released tag: v1.9.0' carrying the observed facts -- annotated tag v1.9.0 (tag object 7e721b6e0fb2a0a3014efda388e1097378e3da87) at reviewed PR #121 merge 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (compliance.yml run 39171134860 succeeded), release.yml run 39172587918 succeeded, GitHub Release published 2026-10-18T22:31:27Z and marked Latest, local .nizam/ re-bootstrapped to v1.9.0 (278 released files + provenance.json, installed_at 2026-10-18T22:32:25Z), and temporary override mode exited cleanly. The v1.8.0, v1.7.0, and v1.6.0 prior-release records and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.25"
     date: "2026-10-18"
     summary: "Record v1.9.0 release preparation and completion of the 2026-10-18 v1.8.0 rollout corrective execution (B0-B5, closing V1-V7): Corrective Slice 1 (9cc9547ffc09694cea324bb009916811d786d2c5), Slice 2 (f825908e80100a2e13b9157b6a4f72908dd26a24), and Slice 3 packet B5 are complete; the Current position section gains the 'Release in preparation: v1.9.0' disposition line under continuing operator authority. The v1.8.0 latest-released record and all historical snapshots, phase records and budgets are preserved untouched."
@@ -331,9 +334,9 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v1.9.0 (MINOR) — PREPARED 2026-10-18: the 2026-10-18 `v1.8.0` rollout corrective execution (`B0–B5`, closing findings `V1–V7`: Corrective Slice 1 `9cc9547ffc09694cea324bb009916811d786d2c5`, Slice 2 `f825908e80100a2e13b9157b6a4f72908dd26a24`, and Slice 3 `B5`) is complete and ready for PR merge, annotated tag `v1.9.0`, GitHub Release publication, and reviewed post-tag `.nizam/` re-bootstrap (`B6`).
+Latest released tag: v1.9.0 (MINOR) — RELEASED 2026-10-18 at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d` (PR #121, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87`); `release.yml` run 39172587918 succeeded and the GitHub Release published at `2026-10-18T22:31:27Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.9.0` (`278` released files + `provenance.json`, `installed_at` `2026-10-18T22:32:25Z`).
 
-Latest released tag: v1.8.0 (MINOR) — RELEASED 2026-10-18 at `606d11ee84deff0d3b7934cbfd715223d64ac79d` (PR #119, annotated tag object `faeb50dfdb055cc4d5018ab8d474979be71f876f`); `release.yml` run 39130412824 succeeded and the GitHub Release published at `2026-10-18T13:11:05Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.8.0` (`277` released files + `provenance.json`).
+Prior released tag: v1.8.0 (MINOR) — RELEASED 2026-10-18 at `606d11ee84deff0d3b7934cbfd715223d64ac79d` (PR #119, annotated tag object `faeb50dfdb055cc4d5018ab8d474979be71f876f`); `release.yml` run 39130412824 succeeded and the GitHub Release published at `2026-10-18T13:11:05Z` was marked Latest; local `.nizam/` was re-bootstrapped to `v1.8.0` (`277` released files + `provenance.json`).
 
 Prior released tag: v1.7.0 (MINOR) — RELEASED 2026-10-18 at `47851d857e0ab879b848610128ee6e9e13368f0d` (PR #117, annotated tag object `6a4cf599f3850ae31561ba38f9da29237d0a4a53`); `release.yml` run 39116785402 succeeded and the GitHub Release published at `2026-10-18T09:48:38Z` was marked Latest; local `.nizam/` was re-bootstrapped to `v1.7.0` (`277` released files + `provenance.json`).
 

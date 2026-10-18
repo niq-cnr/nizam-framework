@@ -124,7 +124,7 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 
 ## Local governance
 
-This repository has installed its public `v1.8.0` governance under `.nizam/`.
+This repository has installed its public `v1.9.0` governance under `.nizam/`.
 The installed payload is verified byte-for-byte against the pinned tag by the
 standing `self_governance` CI job (`verify_self_governance.py` and
 `bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).

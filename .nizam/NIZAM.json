@@ -1,7 +1,7 @@
 {
   "framework": {
     "name": "nizam-framework",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
   },
   "modules": [
@@ -115,6 +115,7 @@
         "tools/interface.md",
         "tools/README.md",
         "tools/validate.sh",
+        "tools/payload_integrity.py",
         "tools/start_path.py",
         "tools/test_start_path.py",
         "tools/convergent_review.py",
@@ -229,7 +230,7 @@
     },
     {
       "id": "nizam-circuit-breaker",
-      "summary": "The single authoritative 3-strike attempt limit (DD-2) embedded by every repeatable execution loop.",
+      "summary": "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop.",
       "authoritative_source": "methodology/03_circuit_breaker.md"
     },
     {
@@ -349,7 +350,7 @@
     },
     {
       "id": "nizam-live-runtime-adapter",
-      "summary": "Optional runtime-session adapter surface with seven calls and conditional S1-S9; existing adapters remain conformant and live enforcement remains pending.",
+      "summary": "Optional runtime-session adapter surface with seven calls and conditional S1-S9; adapters without the capability remain conformant.",
       "authoritative_source": "tools/interface.md"
     }
   ],

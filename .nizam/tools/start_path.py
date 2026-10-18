@@ -15,6 +15,12 @@ Supports:
     tools/start_path.py preflight [--require-sandbox] [--root <root>]
 - Safe exclusive per-execution command evidence capture:
     tools/start_path.py capture --id <id> --step <step> --attempt <n> --output-dir <dir> -- <cmd> ...
+- Noncommitting preparation, externally mediated publication, and finalization of captured evidence:
+    tools/start_path.py publish [--mode prepare|publish|finalize] --capture <file> [--capture <file> ...] [--root <root>]
+    tools/start_path.py prepare-publish --capture <file> [--capture <file> ...] [--root <root>]
+    tools/start_path.py finalize-publish --capture <file> [--capture <file> ...] [--root <root>]
+- Noncommitting stage-receipt construction and verification (with optional externally mediated commit):
+    tools/start_path.py build-receipt --policy <file> --published <file> [--published <file> ...] --output <file> [--root <root>]
 - Concise read-only status/readiness view:
     tools/start_path.py status [--format json|markdown] [--root <root>]
 - Operational receipt transition / failure routing:
@@ -283,6 +289,8 @@ def main(argv: list[str] | None = None) -> int:
         "preflight",
         "capture",
         "publish",
+        "prepare-publish",
+        "finalize-publish",
         "build-receipt",
         "status",
         "resume",
@@ -311,6 +319,18 @@ def _main_begin_done(argv: list[str]) -> int:
         return error.exit_code
     print(message)
     return 0
+
+
+def _add_publish_arguments(p: argparse.ArgumentParser, *, default_mode: str | None = None) -> None:
+    p.add_argument("--capture", action="append", required=True, type=Path, dest="captures", help="Path to raw <stem>.capture.json file (repeatable for multi-capture batching).")
+    if default_mode is None:
+        p.add_argument("--mode", choices=("prepare", "publish", "finalize"), default="publish", help="Publication mode: noncommitting prepare, externally mediated publish, or noncommitting finalize.")
+    else:
+        p.set_defaults(mode=default_mode)
+    p.add_argument("--output-revision", default=None, help="Optional expected 40-hex commit revision for Stage 1 capture outputs.")
+    p.add_argument("--capture-revision", default=None, help="Optional expected 40-hex commit revision for Stage 2 receipt-capture.")
+    p.add_argument("--stop-after-stage", choices=("outputs",), default=None, help="Stop after committing Stage 1 outputs and writing receipt-capture.json on disk.")
+    p.add_argument("--root", type=Path, default=Path.cwd())
 
 
 def _main_extended(argv: list[str]) -> int:
@@ -360,16 +380,21 @@ def _main_extended(argv: list[str]) -> int:
     capture_p.add_argument("--root", type=Path, default=Path.cwd())
     capture_p.add_argument("cmd", nargs=argparse.REMAINDER)
 
-    publish_p = sub.add_parser("publish", help="Publish completed capture outputs into Git and project a closed 12-field receipt capture.")
-    publish_p.add_argument("--capture", required=True, type=Path, help="Path to raw <stem>.capture.json file.")
-    publish_p.add_argument("--root", type=Path, default=Path.cwd())
+    publish_p = sub.add_parser("publish", help="Prepare, publish, or finalize completed capture outputs and project a closed 12-field receipt capture.")
+    _add_publish_arguments(publish_p, default_mode=None)
+
+    prep_pub_p = sub.add_parser("prepare-publish", help="Validate capture outputs and emit a noncommitting publish-request without mutating Git.")
+    _add_publish_arguments(prep_pub_p, default_mode="prepare")
+
+    fin_pub_p = sub.add_parser("finalize-publish", help="Verify committed capture blobs/modes and finalize .published.json without mutating Git.")
+    _add_publish_arguments(fin_pub_p, default_mode="finalize")
 
     build_receipt_p = sub.add_parser("build-receipt", help="Bind published capture(s) into a stage receipt and verify with verify_stage_receipt.")
     build_receipt_p.add_argument("--policy", required=True, type=Path)
-    build_receipt_p.add_argument("--published", action="append", required=True, type=Path, help="Path to <stem>.published.json (repeatable).")
+    build_receipt_p.add_argument("--published", action="append", required=True, type=Path, help="Path to <stem>.published.json or committed <stem>.receipt-capture.json (repeatable).")
     build_receipt_p.add_argument("--output", required=True, type=Path, help="Output path for the verified receipt JSON.")
     build_receipt_p.add_argument("--update-policy", action="store_true", help="Write pinned capture refs back into the policy file.")
-    build_receipt_p.add_argument("--commit", action="store_true", help="Commit the generated receipt (and updated policy) into Git.")
+    build_receipt_p.add_argument("--commit", action="store_true", help="Commit the generated receipt (and updated policy) via the externally mediated commit path.")
     build_receipt_p.add_argument("--root", type=Path, default=Path.cwd())
 
     status_p = sub.add_parser("status", help="Generate a concise read-only status/readiness view.")
@@ -449,10 +474,15 @@ def _main_extended(argv: list[str]) -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
             return 0 if result["outcome"] == "success" else 1
-        if args.subcommand == "publish":
+        if args.subcommand in ("publish", "prepare-publish", "finalize-publish"):
             result = publish_captured_evidence(
                 args.root.resolve(),
-                capture_path=args.capture,
+                capture_path=args.captures[0] if len(args.captures) == 1 else None,
+                capture_paths=args.captures,
+                mode=args.mode,
+                output_revision=args.output_revision,
+                capture_revision=args.capture_revision,
+                stop_after_stage=args.stop_after_stage,
             )
             print(json.dumps(result, indent=2, sort_keys=True))
             return 0
@@ -1309,91 +1339,445 @@ def capture_command_evidence(
     return capture_doc
 
 
-def _git_ensure_committed(root: Path, rel_paths: list[str], message: str) -> str:
-    """Stage and commit the specified repository-relative paths if needed, returning HEAD sha."""
-    add_res = subprocess.run(
-        ["git", "-C", str(root), "add", "--", *rel_paths],
+def _verify_git_worktree_root(root: Path) -> tuple[str, str, Path]:
+    """Verify that root is the exact Git worktree toplevel and return (head_sha, origin_url, real_index_path)."""
+    wt_res = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--is-inside-work-tree"],
         capture_output=True,
         text=True,
         check=False,
     )
-    if add_res.returncode != 0:
-        raise StartPathError(f"git add failed during evidence publication: {add_res.stderr.strip()}", 1)
+    if wt_res.returncode != 0 or wt_res.stdout.strip() != "true":
+        raise StartPathError(f"target root is not inside a Git working tree: {root}", 1)
+    top_res = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if top_res.returncode != 0 or not top_res.stdout.strip():
+        raise StartPathError(f"git rev-parse --show-toplevel failed for {root}", 1)
+    if Path(top_res.stdout.strip()).resolve() != root.resolve():
+        raise StartPathError(
+            f"target root ({root.resolve()}) does not match Git worktree toplevel ({Path(top_res.stdout.strip()).resolve()})",
+            1,
+        )
+    head_res = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--verify", "HEAD^{commit}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
+        raise StartPathError("git rev-parse HEAD^{commit} failed during evidence publication", 1)
+    head_sha = head_res.stdout.strip()
+
+    idx_res = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--git-path", "index"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if idx_res.returncode != 0 or not idx_res.stdout.strip():
+        raise StartPathError("git rev-parse --git-path index failed", 1)
+    raw_idx = Path(idx_res.stdout.strip())
+    real_index_path = raw_idx if raw_idx.is_absolute() else (root / raw_idx)
+
+    origin_res = subprocess.run(
+        ["git", "-C", str(root), "remote", "get-url", "origin"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    origin_url = origin_res.stdout.strip() if origin_res.returncode == 0 and origin_res.stdout.strip() else str(root)
+    return head_sha, origin_url, real_index_path
+
+
+def _verify_regular_file_mode_100644(root: Path, rel_path: str) -> tuple[Path, bytes, str]:
+    """Verify rel_path is an existing regular non-symlink non-executable file (mode 100644) and return (path, bytes, sha256)."""
+    norm = normalize_relative_path(rel_path, root=root, reject_symlinks=True, forbid_nizam_payload=True)
+    fpath = resolve_project_file(root, norm)
+    if fpath.is_symlink() or not fpath.is_file():
+        raise StartPathError(f"evidence path does not exist as a regular file: {norm}", 1)
+    st_mode = fpath.stat().st_mode
+    if (st_mode & 0o111) != 0:
+        raise StartPathError(f"evidence file must have regular mode 100644 (executable bit forbidden): {norm}", 1)
+    raw_bytes = fpath.read_bytes()
+    return fpath, raw_bytes, sha256_hex(raw_bytes)
+
+
+def _verify_git_status_and_no_staged_conflicts(
+    root: Path,
+    norm_paths: list[str],
+    *,
+    check_staged_conflicts: bool = True,
+) -> None:
+    """Verify git status and git diff --cached exit 0, and reject same-path staged entries in .git/index."""
+    if not norm_paths:
+        return
+    lit_specs = [f":(literal){p}" for p in norm_paths]
+    status_res = subprocess.run(
+        ["git", "-C", str(root), "status", "--porcelain", "-z", "--", *lit_specs],
+        capture_output=True,
+        check=False,
+    )
+    if status_res.returncode != 0:
+        err_msg = status_res.stderr.decode("utf-8", errors="replace").strip()
+        raise StartPathError(f"git status failed during evidence publication: {err_msg}", 1)
+
     diff_res = subprocess.run(
-        ["git", "-C", str(root), "diff", "--cached", "--name-only", "--", *rel_paths],
+        ["git", "-C", str(root), "diff", "--cached", "--name-only", "-z", "--", *lit_specs],
+        capture_output=True,
+        check=False,
+    )
+    if diff_res.returncode != 0:
+        err_msg = diff_res.stderr.decode("utf-8", errors="replace").strip()
+        raise StartPathError(f"git diff --cached failed during evidence publication: {err_msg}", 1)
+
+    if check_staged_conflicts:
+        staged = [
+            entry.decode("utf-8", errors="replace")
+            for entry in diff_res.stdout.split(b"\x00")
+            if entry
+        ]
+        if staged:
+            raise StartPathError(
+                "same-path staged conflict in .git/index for: " + ", ".join(staged),
+                1,
+            )
+
+
+def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[str, str] | None:
+    """Return (mode, sha256_hex) of rel_path at revision, or None if not present in the revision's tree."""
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise StartPathError(f"invalid 40-hex Git revision: {revision!r}", 1)
+    commit_check = subprocess.run(
+        ["git", "-C", str(root), "cat-file", "-e", f"{revision}^{{commit}}"],
         capture_output=True,
         text=True,
         check=False,
     )
-    if diff_res.returncode == 0 and diff_res.stdout.strip():
+    if commit_check.returncode != 0:
+        raise StartPathError(f"Git commit does not exist: {revision}", 1)
+
+    ls_res = subprocess.run(
+        ["git", "-C", str(root), "ls-tree", revision, "--", f":(literal){rel_path}"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if ls_res.returncode != 0:
+        raise StartPathError(f"git ls-tree failed for {revision}:{rel_path}: {ls_res.stderr.strip()}", 1)
+    line = ls_res.stdout.strip()
+    if not line:
+        return None
+    header, _, _ = line.partition("\t")
+    parts = header.split()
+    if len(parts) != 3:
+        raise StartPathError(f"unexpected git ls-tree output for {revision}:{rel_path}", 1)
+    mode, obj_type, obj_hash = parts
+    if obj_type != "blob":
+        raise StartPathError(f"committed object at {revision}:{rel_path} is not a blob ({obj_type})", 1)
+    cat_res = subprocess.run(
+        ["git", "-C", str(root), "cat-file", "blob", obj_hash],
+        capture_output=True,
+        check=False,
+    )
+    if cat_res.returncode != 0:
+        raise StartPathError(f"git cat-file blob failed for {revision}:{rel_path}", 1)
+    return mode, sha256_hex(cat_res.stdout)
+
+
+def _find_last_commit_for_paths(root: Path, revision: str, norm_paths: list[str]) -> str:
+    """Return the most recent 40-hex commit in revision's history that touched norm_paths."""
+    lit_specs = [f":(literal){p}" for p in norm_paths]
+    log_res = subprocess.run(
+        ["git", "-C", str(root), "log", "-n", "1", "--format=%H", revision, "--", *lit_specs],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    sha = log_res.stdout.strip()
+    if log_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", sha):
+        raise StartPathError(f"failed to resolve commit history for {', '.join(norm_paths)} at {revision}", 1)
+    return sha
+
+
+def _check_files_committed_at_revision(
+    root: Path,
+    revision: str,
+    expected_files: list[dict[str, str]],
+    *,
+    check_worktree_clean: bool = True,
+) -> str | None:
+    """Check whether expected_files are committed at revision with matching sha256 and mode 100644.
+
+    Raises StartPathError if any path is already committed at revision with different content or mode,
+    or if only a partial subset of expected_files is committed.
+    Returns the commit SHA that introduced the files when all are present and match, or None when none are committed.
+    """
+    present_count = 0
+    norm_paths = [f["path"] for f in expected_files]
+    for item in expected_files:
+        info = _get_committed_blob_info(root, revision, item["path"])
+        if info is None:
+            continue
+        present_count += 1
+        committed_mode, committed_sha = info
+        expected_mode = item.get("mode", "100644")
+        if committed_mode != expected_mode:
+            raise StartPathError(
+                f"committed file mode mismatch for {item['path']} at {revision}: expected {expected_mode}, got {committed_mode}",
+                1,
+            )
+        if committed_sha != item["sha256"]:
+            raise StartPathError(
+                f"cannot overwrite committed evidence for {item['path']} at {revision}: committed sha256 ({committed_sha}) != current sha256 ({item['sha256']})",
+                1,
+            )
+    if present_count == 0:
+        return None
+    if present_count != len(expected_files):
+        raise StartPathError(
+            f"partial committed evidence state at {revision} for: {', '.join(norm_paths)}",
+            1,
+        )
+    if check_worktree_clean:
+        _verify_git_status_and_no_staged_conflicts(root, norm_paths, check_staged_conflicts=True)
+        for item in expected_files:
+            _, _, disk_sha = _verify_regular_file_mode_100644(root, item["path"])
+            if disk_sha != item["sha256"]:
+                raise StartPathError(
+                    f"working-tree file {item['path']} differs from committed evidence",
+                    1,
+                )
+    return _find_last_commit_for_paths(root, revision, norm_paths)
+
+
+def _build_commit_request(
+    root: Path,
+    origin_url: str,
+    head_sha: str,
+    stage: str,
+    message: str,
+    expected_files: list[dict[str, str]],
+    *,
+    pre_execution_revision: str | None = None,
+    status: str = "pending_external_commit",
+) -> dict[str, Any]:
+    req: dict[str, Any] = {
+        "schema_version": 1,
+        "stage": stage,
+        "status": status,
+        "repository_root": str(root),
+        "repository": origin_url,
+        "worktree": str(root),
+        "intended_base": head_sha,
+        "commit_message": message,
+        "files": [
+            {
+                "path": f["path"],
+                "sha256": f["sha256"],
+                "mode": f.get("mode", "100644"),
+                "literal_pathspec": f":(literal){f['path']}",
+            }
+            for f in expected_files
+        ],
+    }
+    if pre_execution_revision is not None:
+        req["pre_execution_revision"] = pre_execution_revision
+    return req
+
+
+def _write_publish_requests(request_paths: list[Path], req_doc: dict[str, Any]) -> None:
+    payload = canonical_bytes(req_doc) + b"\n"
+    for rpath in request_paths:
+        rpath.parent.mkdir(parents=True, exist_ok=True)
+        rpath.write_bytes(payload)
+
+
+def _git_commit_literal_paths(
+    root: Path,
+    expected_files: list[dict[str, str]],
+    message: str,
+    *,
+    stage: str,
+    request_out_paths: list[Path] | None = None,
+    pre_execution_revision: str | None = None,
+) -> str:
+    """Commit literal paths via external mutation authority or isolated temporary GIT_INDEX_FILE."""
+    head_sha, origin_url, real_index_path = _verify_git_worktree_root(root)
+    norm_paths: list[str] = []
+    for item in expected_files:
+        _, _, disk_sha = _verify_regular_file_mode_100644(root, item["path"])
+        if disk_sha != item["sha256"]:
+            raise StartPathError(f"on-disk digest mismatch before commit for {item['path']}", 1)
+        norm_paths.append(item["path"])
+
+    _verify_git_status_and_no_staged_conflicts(root, norm_paths, check_staged_conflicts=True)
+
+    already_rev = _check_files_committed_at_revision(root, head_sha, expected_files, check_worktree_clean=True)
+    if already_rev is not None:
+        return already_rev
+
+    req_paths = request_out_paths or []
+    commit_req = _build_commit_request(
+        root,
+        origin_url,
+        head_sha,
+        stage,
+        message,
+        expected_files,
+        pre_execution_revision=pre_execution_revision,
+    )
+
+    adapter = os.environ.get("NIZAM_MUTATION_ADAPTER", "").strip()
+    policy_mode = os.environ.get("NIZAM_MUTATION_POLICY", "").strip().lower()
+    if policy_mode in ("deny", "none", "read-only", "readonly", "prepare-only") or adapter.lower() in (
+        "deny",
+        "none",
+        "false",
+        "0",
+    ):
+        commit_req["status"] = "denied_by_mutation_authority"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            "git commit denied by runtime mutation authority; prepared publish-request written without mutating Git state",
+            1,
+        )
+
+    if adapter:
+        import shlex
+
+        adapter_argv = shlex.split(adapter)
+        adapter_res = subprocess.run(
+            adapter_argv,
+            input=canonical_bytes(commit_req) + b"\n",
+            cwd=str(root),
+            capture_output=True,
+            check=False,
+        )
+        if adapter_res.returncode != 0:
+            commit_req["status"] = "denied_by_mutation_adapter"
+            _write_publish_requests(req_paths, commit_req)
+            err_detail = (
+                adapter_res.stderr.decode("utf-8", errors="replace").strip()
+                or adapter_res.stdout.decode("utf-8", errors="replace").strip()
+            )
+            raise StartPathError(
+                f"git commit denied by runtime mutation adapter (exit {adapter_res.returncode}): {err_detail}",
+                1,
+            )
+        raw_out = adapter_res.stdout.decode("utf-8", errors="replace").strip()
+        if raw_out:
+            try:
+                resp = json.loads(raw_out)
+            except json.JSONDecodeError as exc:
+                commit_req["status"] = "invalid_mutation_adapter_response"
+                _write_publish_requests(req_paths, commit_req)
+                raise StartPathError(f"runtime mutation adapter returned invalid JSON: {exc.msg}", 1) from exc
+            if not isinstance(resp, dict):
+                raise StartPathError("runtime mutation adapter response must be a JSON object", 1)
+            if resp.get("approved") is False or resp.get("status") in ("denied", "pending"):
+                commit_req["status"] = str(resp.get("status", "denied"))
+                _write_publish_requests(req_paths, commit_req)
+                raise StartPathError(
+                    f"git commit {resp.get('status', 'denied')} by runtime mutation adapter",
+                    1,
+                )
+            if resp.get("committed") is True or isinstance(resp.get("revision"), str):
+                new_head, _, _ = _verify_git_worktree_root(root)
+                target_rev = resp.get("revision") if isinstance(resp.get("revision"), str) else new_head
+                verified_rev = _check_files_committed_at_revision(
+                    root,
+                    target_rev,
+                    expected_files,
+                    check_worktree_clean=True,
+                )
+                if verified_rev is None:
+                    raise StartPathError(
+                        "runtime mutation adapter claimed commit completion, but committed blobs were not found in Git",
+                        1,
+                    )
+                return verified_rev
+
+    lit_specs = [f":(literal){p}" for p in norm_paths]
+    with tempfile.TemporaryDirectory(prefix="nizam-git-index-") as tmp_idx_dir:
+        tmp_index = Path(tmp_idx_dir) / "index"
+        if real_index_path.is_file():
+            shutil.copy2(real_index_path, tmp_index)
+        git_env = {**os.environ, "GIT_INDEX_FILE": str(tmp_index)}
+
+        add_res = subprocess.run(
+            ["git", "-C", str(root), "add", "--", *lit_specs],
+            env=git_env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if add_res.returncode != 0:
+            commit_req["status"] = "git_add_failed"
+            _write_publish_requests(req_paths, commit_req)
+            raise StartPathError(f"git add failed during evidence publication: {add_res.stderr.strip()}", 1)
+
+        diff_res = subprocess.run(
+            ["git", "-C", str(root), "diff", "--cached", "--name-only", "-z", "--", *lit_specs],
+            env=git_env,
+            capture_output=True,
+            check=False,
+        )
+        if diff_res.returncode != 0:
+            commit_req["status"] = "git_diff_failed"
+            _write_publish_requests(req_paths, commit_req)
+            err_msg = diff_res.stderr.decode("utf-8", errors="replace").strip()
+            raise StartPathError(f"git diff --cached failed during evidence publication: {err_msg}", 1)
+        if not diff_res.stdout.strip(b"\x00"):
+            commit_req["status"] = "git_diff_empty"
+            _write_publish_requests(req_paths, commit_req)
+            raise StartPathError("git diff --cached reported no staged changes for uncommitted evidence paths", 1)
+
         commit_res = subprocess.run(
-            ["git", "-C", str(root), "commit", "-qm", message, "--", *rel_paths],
+            ["git", "-C", str(root), "commit", "-qm", message, "--", *lit_specs],
+            env=git_env,
             capture_output=True,
             text=True,
             check=False,
         )
         if commit_res.returncode != 0:
-            raise StartPathError(f"git commit failed during evidence publication: {commit_res.stderr.strip()}", 1)
-    head_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if head_res.returncode != 0 or not head_res.stdout.strip():
-        raise StartPathError("git rev-parse HEAD failed during evidence publication", 1)
-    return head_res.stdout.strip()
+            commit_req["status"] = "git_commit_failed"
+            _write_publish_requests(req_paths, commit_req)
+            err_detail = commit_res.stderr.strip() or commit_res.stdout.strip()
+            raise StartPathError(f"git commit failed during evidence publication: {err_detail}", 1)
+
+        new_head, _, _ = _verify_git_worktree_root(root)
+        verified_rev = _check_files_committed_at_revision(
+            root,
+            new_head,
+            expected_files,
+            check_worktree_clean=False,
+        )
+        if verified_rev is None:
+            raise StartPathError("post-commit verification failed: committed blobs missing at HEAD", 1)
+
+        if tmp_index.is_file():
+            shutil.copy2(tmp_index, real_index_path)
+
+    return new_head
 
 
-def publish_captured_evidence(
-    root: Path,
+def _project_closed_capture(
+    raw_capture: dict[str, Any],
     *,
-    capture_path: Path,
+    pre_rev: str,
+    cand_sha: str,
+    stdout_rel: str,
+    stdout_sha: str,
+    stderr_rel: str,
+    stderr_sha: str,
+    output_revision: str,
     cause: str | None = None,
     proof_kind: str | None = None,
 ) -> dict[str, Any]:
-    """Commit completed capture outputs into Git and project a closed 12-field receipt capture."""
-    resolved_cap_path = capture_path if capture_path.is_absolute() else (root / capture_path).resolve()
-    if not resolved_cap_path.is_file():
-        raise StartPathError(f"capture record does not exist: {capture_path}", 1)
-    raw_capture = _read_json_file(resolved_cap_path)
-
-    if raw_capture.get("completion_state") != "completed" or raw_capture.get("executed") is not True:
-        raise StartPathError(
-            "cannot publish incomplete or unexecuted capture for receipt consumption",
-            1,
-        )
-    cand_sha = raw_capture.get("candidate_sha256")
-    if raw_capture.get("binding_state") != "candidate-bound" or not isinstance(cand_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", cand_sha):
-        raise StartPathError(
-            "cannot publish unbound capture for receipt consumption (candidate_sha256 is required)",
-            1,
-        )
-    pre_rev = raw_capture.get("revision")
-    if not isinstance(pre_rev, str) or not re.fullmatch(r"[0-9a-f]{40}", pre_rev):
-        raise StartPathError("capture record is missing a valid 40-hex pre-execution revision", 1)
-
-    stdout_info = raw_capture.get("stdout", {})
-    stderr_info = raw_capture.get("stderr", {})
-    stdout_rel = normalize_relative_path(stdout_info.get("path", ""), root=root)
-    stderr_rel = normalize_relative_path(stderr_info.get("path", ""), root=root)
-    cap_rel = normalize_relative_path(resolved_cap_path.relative_to(root).as_posix(), root=root)
-
-    stdout_file = resolve_project_file(root, stdout_rel)
-    stderr_file = resolve_project_file(root, stderr_rel)
-    if not stdout_file.is_file() or not stderr_file.is_file():
-        raise StartPathError("captured stdout/stderr files are missing on disk", 1)
-    if sha256_hex(stdout_file.read_bytes()) != stdout_info.get("sha256"):
-        raise StartPathError("captured stdout file digest on disk does not match capture record", 1)
-    if sha256_hex(stderr_file.read_bytes()) != stderr_info.get("sha256"):
-        raise StartPathError("captured stderr file digest on disk does not match capture record", 1)
-
-    output_revision = _git_ensure_committed(
-        root,
-        [stdout_rel, stderr_rel, cap_rel],
-        f"publish capture outputs for {raw_capture.get('id', 'task')}:{raw_capture.get('step', 'step')}",
-    )
-
     exit_code = raw_capture.get("exit_code")
     if exit_code == 0:
         eff_kind = proof_kind or raw_capture.get("proof_kind") or (
@@ -1411,7 +1795,7 @@ def publish_captured_evidence(
         else:
             projected_outcome = "failed"
 
-    closed_capture: dict[str, Any] = {
+    return {
         "schema_version": 1,
         "argv": raw_capture["argv"],
         "cwd": raw_capture["cwd"],
@@ -1424,52 +1808,522 @@ def publish_captured_evidence(
         "exit_code": exit_code,
         "stdout": {
             "path": stdout_rel,
-            "sha256": stdout_info["sha256"],
+            "sha256": stdout_sha,
             "revision": output_revision,
         },
         "stderr": {
             "path": stderr_rel,
-            "sha256": stderr_info["sha256"],
+            "sha256": stderr_sha,
             "revision": output_revision,
         },
     }
 
-    stem_name = resolved_cap_path.name
-    if stem_name.endswith(".capture.json"):
-        base_stem = stem_name[: -len(".capture.json")]
-    else:
-        base_stem = resolved_cap_path.stem
 
-    receipt_cap_path = resolved_cap_path.parent / f"{base_stem}.receipt-capture.json"
-    receipt_cap_rel = normalize_relative_path(receipt_cap_path.relative_to(root).as_posix(), root=root)
-    closed_bytes = canonical_bytes(closed_capture) + b"\n"
-    receipt_cap_path.write_bytes(closed_bytes)
+def publish_captured_evidence(
+    root: Path,
+    *,
+    capture_path: Path | None = None,
+    capture_paths: list[Path] | None = None,
+    cause: str | None = None,
+    proof_kind: str | None = None,
+    mode: str = "publish",
+    output_revision: str | None = None,
+    capture_revision: str | None = None,
+    stop_after_stage: str | None = None,
+) -> dict[str, Any]:
+    """Prepare, publish, or finalize completed capture outputs and project 12-field receipt capture(s)."""
+    if mode not in ("prepare", "publish", "finalize"):
+        raise StartPathError(f"unsupported publication mode: {mode!r}", 2)
+    raw_paths: list[Path] = []
+    if capture_paths:
+        raw_paths.extend(capture_paths)
+    elif capture_path is not None:
+        raw_paths.append(capture_path)
+    if not raw_paths:
+        raise StartPathError("at least one --capture path is required", 2)
 
-    capture_revision = _git_ensure_committed(
-        root,
-        [receipt_cap_rel],
-        f"publish receipt capture {base_stem}",
-    )
-    receipt_capture_ref = {
-        "path": receipt_cap_rel,
-        "sha256": sha256_hex(closed_bytes),
-        "revision": capture_revision,
-    }
+    items: list[dict[str, Any]] = []
+    seen_cap_rels: set[str] = set()
+    head_sha: str | None = None
+    origin_url: str | None = None
+    for cpath in raw_paths:
+        resolved_cap_path = cpath if cpath.is_absolute() else (root / cpath).resolve()
+        if not resolved_cap_path.is_file():
+            raise StartPathError(f"capture record does not exist: {cpath}", 1)
+        cap_rel = normalize_relative_path(resolved_cap_path.relative_to(root).as_posix(), root=root)
+        if cap_rel in seen_cap_rels:
+            raise StartPathError(f"duplicate --capture path in batch: {cap_rel}", 1)
+        seen_cap_rels.add(cap_rel)
 
-    published_doc = {
-        "schema_version": 1,
-        "raw_capture_path": cap_rel,
-        "output_revision": output_revision,
-        "receipt_capture_ref": receipt_capture_ref,
-        "stdout_ref": closed_capture["stdout"],
-        "stderr_ref": closed_capture["stderr"],
-        "receipt_capture": closed_capture,
-    }
-    published_path = resolved_cap_path.parent / f"{base_stem}.published.json"
-    published_rel = normalize_relative_path(published_path.relative_to(root).as_posix(), root=root)
-    published_path.write_bytes(canonical_bytes(published_doc) + b"\n")
-    published_doc["published_path"] = published_rel
-    return published_doc
+        _, _, cap_sha = _verify_regular_file_mode_100644(root, cap_rel)
+        raw_capture = _read_json_file(resolved_cap_path)
+
+        if raw_capture.get("completion_state") != "completed" or raw_capture.get("executed") is not True:
+            raise StartPathError(
+                "cannot publish incomplete or unexecuted capture for receipt consumption",
+                1,
+            )
+        cand_sha = raw_capture.get("candidate_sha256")
+        if (
+            raw_capture.get("binding_state") != "candidate-bound"
+            or not isinstance(cand_sha, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", cand_sha)
+        ):
+            raise StartPathError(
+                "cannot publish unbound capture for receipt consumption (candidate_sha256 is required)",
+                1,
+            )
+        pre_rev = raw_capture.get("revision")
+        if not isinstance(pre_rev, str) or not re.fullmatch(r"[0-9a-f]{40}", pre_rev):
+            raise StartPathError("capture record is missing a valid 40-hex pre-execution revision", 1)
+
+        stdout_info = raw_capture.get("stdout", {})
+        stderr_info = raw_capture.get("stderr", {})
+        stdout_rel = normalize_relative_path(stdout_info.get("path", ""), root=root)
+        stderr_rel = normalize_relative_path(stderr_info.get("path", ""), root=root)
+
+        _, _, stdout_sha = _verify_regular_file_mode_100644(root, stdout_rel)
+        _, _, stderr_sha = _verify_regular_file_mode_100644(root, stderr_rel)
+        if stdout_sha != stdout_info.get("sha256"):
+            raise StartPathError("captured stdout file digest on disk does not match capture record", 1)
+        if stderr_sha != stderr_info.get("sha256"):
+            raise StartPathError("captured stderr file digest on disk does not match capture record", 1)
+
+        if head_sha is None or origin_url is None:
+            head_sha, origin_url, _ = _verify_git_worktree_root(root)
+        pre_check = subprocess.run(
+            ["git", "-C", str(root), "cat-file", "-e", f"{pre_rev}^{{commit}}"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if pre_check.returncode != 0:
+            raise StartPathError(f"capture pre-execution revision does not exist in Git: {pre_rev}", 1)
+
+        stem_name = resolved_cap_path.name
+        if stem_name.endswith(".capture.json"):
+            base_stem = stem_name[: -len(".capture.json")]
+        else:
+            base_stem = resolved_cap_path.stem
+
+        receipt_cap_path = resolved_cap_path.parent / f"{base_stem}.receipt-capture.json"
+        receipt_cap_rel = normalize_relative_path(
+            receipt_cap_path.relative_to(root).as_posix(),
+            root=root,
+            reject_symlinks=True,
+        )
+        published_path = resolved_cap_path.parent / f"{base_stem}.published.json"
+        published_rel = normalize_relative_path(
+            published_path.relative_to(root).as_posix(),
+            root=root,
+            reject_symlinks=True,
+        )
+        request_path = resolved_cap_path.parent / f"{base_stem}.publish-request.json"
+        request_rel = normalize_relative_path(
+            request_path.relative_to(root).as_posix(),
+            root=root,
+            reject_symlinks=True,
+        )
+
+        stage1_files = [
+            {"path": stdout_rel, "sha256": stdout_sha, "mode": "100644"},
+            {"path": stderr_rel, "sha256": stderr_sha, "mode": "100644"},
+            {"path": cap_rel, "sha256": cap_sha, "mode": "100644"},
+        ]
+
+        _verify_git_status_and_no_staged_conflicts(
+            root,
+            [stdout_rel, stderr_rel, cap_rel, receipt_cap_rel],
+            check_staged_conflicts=True,
+        )
+
+        already_published_doc: dict[str, Any] | None = None
+        if published_path.is_file():
+            existing_pub = _read_json_file(published_path)
+            ex_out_rev = existing_pub.get("output_revision")
+            ex_cap_ref = existing_pub.get("receipt_capture_ref")
+            if (
+                existing_pub.get("raw_capture_path") != cap_rel
+                or not isinstance(ex_out_rev, str)
+                or not isinstance(ex_cap_ref, dict)
+                or not isinstance(ex_cap_ref.get("revision"), str)
+            ):
+                raise StartPathError(f"existing published record for {base_stem} is invalid or mismatched", 1)
+            verified_s1 = _check_files_committed_at_revision(root, ex_out_rev, stage1_files, check_worktree_clean=True)
+            if verified_s1 is None:
+                raise StartPathError(f"existing published record for {base_stem} references uncommitted Stage 1 outputs", 1)
+            expected_closed = _project_closed_capture(
+                raw_capture,
+                pre_rev=pre_rev,
+                cand_sha=cand_sha,
+                stdout_rel=stdout_rel,
+                stdout_sha=stdout_sha,
+                stderr_rel=stderr_rel,
+                stderr_sha=stderr_sha,
+                output_revision=ex_out_rev,
+                cause=cause,
+                proof_kind=proof_kind,
+            )
+            expected_closed_sha = sha256_hex(canonical_bytes(expected_closed) + b"\n")
+            if ex_cap_ref.get("sha256") != expected_closed_sha or existing_pub.get("receipt_capture") != expected_closed:
+                raise StartPathError(
+                    f"cannot overwrite prior published evidence for {base_stem} with changed capture content",
+                    1,
+                )
+            verified_s2 = _check_files_committed_at_revision(
+                root,
+                ex_cap_ref["revision"],
+                [{"path": receipt_cap_rel, "sha256": expected_closed_sha, "mode": "100644"}],
+                check_worktree_clean=True,
+            )
+            if verified_s2 is None:
+                raise StartPathError(f"existing published record for {base_stem} references uncommitted receipt capture", 1)
+            already_published_doc = dict(existing_pub)
+            already_published_doc["published_path"] = published_rel
+            already_published_doc["noop"] = True
+
+        items.append({
+            "base_stem": base_stem,
+            "raw_capture": raw_capture,
+            "pre_rev": pre_rev,
+            "cand_sha": cand_sha,
+            "cap_rel": cap_rel,
+            "cap_sha": cap_sha,
+            "stdout_rel": stdout_rel,
+            "stdout_sha": stdout_sha,
+            "stderr_rel": stderr_rel,
+            "stderr_sha": stderr_sha,
+            "receipt_cap_path": receipt_cap_path,
+            "receipt_cap_rel": receipt_cap_rel,
+            "published_path": published_path,
+            "published_rel": published_rel,
+            "request_path": request_path,
+            "request_rel": request_rel,
+            "stage1_files": stage1_files,
+            "already_published_doc": already_published_doc,
+        })
+
+    if all(it["already_published_doc"] is not None for it in items):
+        pub_list = [it["already_published_doc"] for it in items]
+        if len(pub_list) == 1:
+            res = dict(pub_list[0])
+            res["published"] = pub_list
+            return res
+        return {"noop": True, "published": pub_list}
+
+    target_out_rev_check = output_revision or head_sha
+    for it in items:
+        if it["already_published_doc"] is not None:
+            it["resolved_output_rev"] = it["already_published_doc"]["output_revision"]
+            continue
+        it["resolved_output_rev"] = _check_files_committed_at_revision(
+            root,
+            target_out_rev_check,
+            it["stage1_files"],
+            check_worktree_clean=True,
+        )
+
+    if mode == "prepare":
+        uncommitted_s1: list[dict[str, str]] = []
+        req_paths_s1: list[Path] = []
+        req_rels_s1: list[str] = []
+        for it in items:
+            if it["resolved_output_rev"] is None:
+                uncommitted_s1.extend(it["stage1_files"])
+                req_paths_s1.append(it["request_path"])
+                req_rels_s1.append(it["request_rel"])
+        if uncommitted_s1:
+            first_it = items[0]
+            msg = f"publish capture outputs for {first_it['raw_capture'].get('id', 'task')}:{first_it['raw_capture'].get('step', 'step')}"
+            req_doc = _build_commit_request(
+                root,
+                origin_url,
+                head_sha,
+                "outputs_pending",
+                msg,
+                uncommitted_s1,
+                pre_execution_revision=first_it["pre_rev"],
+            )
+            _write_publish_requests(req_paths_s1, req_doc)
+            return {
+                "status": "pending_external_commit",
+                "stage": "outputs_pending",
+                "publish_request_path": req_rels_s1[0] if len(req_rels_s1) == 1 else req_rels_s1,
+                "publish_request_paths": req_rels_s1,
+                "commit_request": req_doc,
+            }
+
+        stage2_files: list[dict[str, str]] = []
+        req_paths_s2: list[Path] = []
+        req_rels_s2: list[str] = []
+        receipt_cap_rels: list[str] = []
+        for it in items:
+            if it["already_published_doc"] is not None:
+                continue
+            closed_cap = _project_closed_capture(
+                it["raw_capture"],
+                pre_rev=it["pre_rev"],
+                cand_sha=it["cand_sha"],
+                stdout_rel=it["stdout_rel"],
+                stdout_sha=it["stdout_sha"],
+                stderr_rel=it["stderr_rel"],
+                stderr_sha=it["stderr_sha"],
+                output_revision=it["resolved_output_rev"],
+                cause=cause,
+                proof_kind=proof_kind,
+            )
+            closed_bytes = canonical_bytes(closed_cap) + b"\n"
+            closed_sha = sha256_hex(closed_bytes)
+            existing_s2 = _get_committed_blob_info(root, head_sha, it["receipt_cap_rel"])
+            if existing_s2 is not None and (existing_s2[0] != "100644" or existing_s2[1] != closed_sha):
+                raise StartPathError(
+                    f"cannot overwrite committed receipt capture {it['receipt_cap_rel']} with changed evidence",
+                    1,
+                )
+            it["receipt_cap_path"].write_bytes(closed_bytes)
+            stage2_files.append({"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"})
+            req_paths_s2.append(it["request_path"])
+            req_rels_s2.append(it["request_rel"])
+            receipt_cap_rels.append(it["receipt_cap_rel"])
+
+        first_it = items[0]
+        msg2 = f"publish receipt capture {first_it['base_stem']}"
+        req_doc2 = _build_commit_request(
+            root,
+            origin_url,
+            head_sha,
+            "receipt_capture_pending",
+            msg2,
+            stage2_files,
+            pre_execution_revision=first_it["pre_rev"],
+        )
+        _write_publish_requests(req_paths_s2, req_doc2)
+        return {
+            "status": "pending_external_commit",
+            "stage": "receipt_capture_pending",
+            "output_revision": items[0]["resolved_output_rev"],
+            "receipt_capture_path": receipt_cap_rels[0] if len(receipt_cap_rels) == 1 else receipt_cap_rels,
+            "publish_request_path": req_rels_s2[0] if len(req_rels_s2) == 1 else req_rels_s2,
+            "publish_request_paths": req_rels_s2,
+            "commit_request": req_doc2,
+        }
+
+    if mode == "finalize":
+        published_results: list[dict[str, Any]] = []
+        target_cap_rev_check = capture_revision or head_sha
+        for it in items:
+            if it["already_published_doc"] is not None:
+                published_results.append(it["already_published_doc"])
+                continue
+            if it["resolved_output_rev"] is None:
+                raise StartPathError(
+                    f"finalize failed: Stage 1 capture outputs for {it['base_stem']} are not committed in Git",
+                    1,
+                )
+            closed_cap = _project_closed_capture(
+                it["raw_capture"],
+                pre_rev=it["pre_rev"],
+                cand_sha=it["cand_sha"],
+                stdout_rel=it["stdout_rel"],
+                stdout_sha=it["stdout_sha"],
+                stderr_rel=it["stderr_rel"],
+                stderr_sha=it["stderr_sha"],
+                output_revision=it["resolved_output_rev"],
+                cause=cause,
+                proof_kind=proof_kind,
+            )
+            closed_bytes = canonical_bytes(closed_cap) + b"\n"
+            closed_sha = sha256_hex(closed_bytes)
+            if not it["receipt_cap_path"].is_file():
+                raise StartPathError(
+                    f"finalize failed: {it['receipt_cap_rel']} does not exist on disk",
+                    1,
+                )
+            _, disk_rc_bytes, disk_rc_sha = _verify_regular_file_mode_100644(root, it["receipt_cap_rel"])
+            if disk_rc_sha != closed_sha or disk_rc_bytes != closed_bytes:
+                raise StartPathError(
+                    f"finalize failed: on-disk {it['receipt_cap_rel']} does not match projected closed capture",
+                    1,
+                )
+            cap_rev = _check_files_committed_at_revision(
+                root,
+                target_cap_rev_check,
+                [{"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"}],
+                check_worktree_clean=True,
+            )
+            if cap_rev is None:
+                raise StartPathError(
+                    f"finalize failed: {it['receipt_cap_rel']} is not committed in Git at {target_cap_rev_check}",
+                    1,
+                )
+            receipt_capture_ref = {
+                "path": it["receipt_cap_rel"],
+                "sha256": closed_sha,
+                "revision": cap_rev,
+            }
+            published_doc = {
+                "schema_version": 1,
+                "raw_capture_path": it["cap_rel"],
+                "output_revision": it["resolved_output_rev"],
+                "receipt_capture_ref": receipt_capture_ref,
+                "stdout_ref": closed_cap["stdout"],
+                "stderr_ref": closed_cap["stderr"],
+                "receipt_capture": closed_cap,
+            }
+            it["published_path"].write_bytes(canonical_bytes(published_doc) + b"\n")
+            if it["request_path"].is_file():
+                it["request_path"].unlink()
+            pub_out = dict(published_doc)
+            pub_out["published_path"] = it["published_rel"]
+            published_results.append(pub_out)
+
+        if len(published_results) == 1:
+            res = dict(published_results[0])
+            res["published"] = published_results
+            return res
+        return {"published": published_results}
+
+    # mode == "publish"
+    uncommitted_s1_files: list[dict[str, str]] = []
+    s1_req_paths: list[Path] = []
+    for it in items:
+        if it["already_published_doc"] is None and it["resolved_output_rev"] is None:
+            uncommitted_s1_files.extend(it["stage1_files"])
+            s1_req_paths.append(it["request_path"])
+
+    if uncommitted_s1_files:
+        first_it = items[0]
+        if len(items) == 1:
+            s1_msg = f"publish capture outputs for {first_it['raw_capture'].get('id', 'task')}:{first_it['raw_capture'].get('step', 'step')}"
+        else:
+            s1_msg = f"publish capture outputs for {len(items)} checks ({first_it['raw_capture'].get('id', 'task')})"
+        s1_commit_sha = _git_commit_literal_paths(
+            root,
+            uncommitted_s1_files,
+            s1_msg,
+            stage="outputs_pending",
+            request_out_paths=s1_req_paths,
+            pre_execution_revision=first_it["pre_rev"],
+        )
+        for it in items:
+            if it["already_published_doc"] is None and it["resolved_output_rev"] is None:
+                it["resolved_output_rev"] = s1_commit_sha
+
+    head_after_s1, origin_url, _ = _verify_git_worktree_root(root)
+    s2_files_to_commit: list[dict[str, str]] = []
+    s2_req_paths: list[Path] = []
+    s2_req_rels: list[str] = []
+    for it in items:
+        if it["already_published_doc"] is not None:
+            continue
+        closed_cap = _project_closed_capture(
+            it["raw_capture"],
+            pre_rev=it["pre_rev"],
+            cand_sha=it["cand_sha"],
+            stdout_rel=it["stdout_rel"],
+            stdout_sha=it["stdout_sha"],
+            stderr_rel=it["stderr_rel"],
+            stderr_sha=it["stderr_sha"],
+            output_revision=it["resolved_output_rev"],
+            cause=cause,
+            proof_kind=proof_kind,
+        )
+        closed_bytes = canonical_bytes(closed_cap) + b"\n"
+        closed_sha = sha256_hex(closed_bytes)
+        existing_s2_blob = _get_committed_blob_info(root, head_after_s1, it["receipt_cap_rel"])
+        if existing_s2_blob is not None and (existing_s2_blob[0] != "100644" or existing_s2_blob[1] != closed_sha):
+            raise StartPathError(
+                f"cannot overwrite committed receipt capture {it['receipt_cap_rel']} with changed evidence",
+                1,
+            )
+        it["receipt_cap_path"].write_bytes(closed_bytes)
+        it["closed_capture"] = closed_cap
+        it["closed_sha"] = closed_sha
+        s2_entry = {"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"}
+        it["s2_entry"] = s2_entry
+        already_s2_rev = _check_files_committed_at_revision(
+            root,
+            head_after_s1,
+            [s2_entry],
+            check_worktree_clean=True,
+        )
+        it["resolved_capture_rev"] = already_s2_rev
+        if already_s2_rev is None:
+            s2_files_to_commit.append(s2_entry)
+            s2_req_paths.append(it["request_path"])
+            s2_req_rels.append(it["request_rel"])
+
+    if stop_after_stage == "outputs":
+        first_it = items[0]
+        s2_msg = f"publish receipt capture {first_it['base_stem']}"
+        req_doc = _build_commit_request(
+            root,
+            origin_url,
+            head_after_s1,
+            "receipt_capture_pending",
+            s2_msg,
+            s2_files_to_commit,
+            pre_execution_revision=first_it["pre_rev"],
+        )
+        _write_publish_requests(s2_req_paths, req_doc)
+        return {
+            "status": "stopped_after_outputs",
+            "stage": "receipt_capture_pending",
+            "output_revision": items[0]["resolved_output_rev"],
+            "receipt_capture_path": items[0]["receipt_cap_rel"] if len(items) == 1 else [i["receipt_cap_rel"] for i in items],
+            "publish_request_path": s2_req_rels[0] if len(s2_req_rels) == 1 else s2_req_rels,
+            "commit_request": req_doc,
+        }
+
+    if s2_files_to_commit:
+        first_it = items[0]
+        if len(items) == 1:
+            s2_msg = f"publish receipt capture {first_it['base_stem']}"
+        else:
+            s2_msg = f"publish receipt captures for {len(items)} checks ({first_it['raw_capture'].get('id', 'task')})"
+        s2_commit_sha = _git_commit_literal_paths(
+            root,
+            s2_files_to_commit,
+            s2_msg,
+            stage="receipt_capture_pending",
+            request_out_paths=s2_req_paths,
+            pre_execution_revision=first_it["pre_rev"],
+        )
+        for it in items:
+            if it["already_published_doc"] is None and it["resolved_capture_rev"] is None:
+                it["resolved_capture_rev"] = s2_commit_sha
+
+    published_results = []
+    for it in items:
+        if it["already_published_doc"] is not None:
+            published_results.append(it["already_published_doc"])
+            continue
+        receipt_capture_ref = {
+            "path": it["receipt_cap_rel"],
+            "sha256": it["closed_sha"],
+            "revision": it["resolved_capture_rev"],
+        }
+        published_doc = {
+            "schema_version": 1,
+            "raw_capture_path": it["cap_rel"],
+            "output_revision": it["resolved_output_rev"],
+            "receipt_capture_ref": receipt_capture_ref,
+            "stdout_ref": it["closed_capture"]["stdout"],
+            "stderr_ref": it["closed_capture"]["stderr"],
+            "receipt_capture": it["closed_capture"],
+        }
+        it["published_path"].write_bytes(canonical_bytes(published_doc) + b"\n")
+        if it["request_path"].is_file():
+            it["request_path"].unlink()
+        pub_out = dict(published_doc)
+        pub_out["published_path"] = it["published_rel"]
+        published_results.append(pub_out)
+
+    if len(published_results) == 1:
+        res = dict(published_results[0])
+        res["published"] = published_results
+        return res
+    return {"published": published_results}
 
 
 def build_stage_receipt(
@@ -1481,12 +2335,17 @@ def build_stage_receipt(
     update_policy: bool = False,
     commit_changes: bool = False,
 ) -> dict[str, Any]:
-    """Bind one or more published captures into a stage receipt and validate with verify_stage_receipt."""
+    """Bind one or more published captures into a stage receipt and validate with verify_stage_receipt.
+
+    Strictly noncommitting unless commit_changes is True; raw closed-capture inputs must already be
+    committed in Git and are verified read-only without staging or committing.
+    """
     try:
         import workflow_assurance as wa
     except ModuleNotFoundError:
         from tools import workflow_assurance as wa
 
+    head_sha, origin_url, _ = _verify_git_worktree_root(root)
     resolved_policy_path = policy_path if policy_path.is_absolute() else (root / policy_path).resolve()
     policy = _read_json_file(resolved_policy_path)
     commands = policy.get("commands")
@@ -1499,19 +2358,50 @@ def build_stage_receipt(
         )
 
     checks: list[dict[str, Any]] = []
-    for idx, (cmd, pub_path) in enumerate(zip(commands, published_paths)):
+    for cmd, pub_path in zip(commands, published_paths):
         resolved_pub = pub_path if pub_path.is_absolute() else (root / pub_path).resolve()
         pub_doc = _read_json_file(resolved_pub)
         if "receipt_capture_ref" in pub_doc and "receipt_capture" in pub_doc:
             cap_ref = pub_doc["receipt_capture_ref"]
             closed_cap = pub_doc["receipt_capture"]
+            if (
+                not isinstance(cap_ref, dict)
+                or not isinstance(cap_ref.get("path"), str)
+                or not isinstance(cap_ref.get("sha256"), str)
+                or not isinstance(cap_ref.get("revision"), str)
+            ):
+                raise StartPathError(f"invalid receipt_capture_ref in {pub_path}", 1)
+            verified_cap_rev = _check_files_committed_at_revision(
+                root,
+                cap_ref["revision"],
+                [{"path": normalize_relative_path(cap_ref["path"], root=root), "sha256": cap_ref["sha256"], "mode": "100644"}],
+                check_worktree_clean=False,
+            )
+            if verified_cap_rev is None:
+                raise StartPathError(
+                    f"published receipt_capture_ref is not committed in Git at {cap_ref['revision']}: {cap_ref['path']}",
+                    1,
+                )
         else:
+            if not resolved_pub.is_relative_to(root):
+                raise StartPathError(f"raw closed capture path must be inside repository root: {pub_path}", 1)
             rel_cap = normalize_relative_path(resolved_pub.relative_to(root).as_posix(), root=root)
-            head_sha = _git_ensure_committed(root, [rel_cap], f"pin capture {rel_cap}")
+            _, _, cap_sha = _verify_regular_file_mode_100644(root, rel_cap)
+            committed_rev = _check_files_committed_at_revision(
+                root,
+                head_sha,
+                [{"path": rel_cap, "sha256": cap_sha, "mode": "100644"}],
+                check_worktree_clean=True,
+            )
+            if committed_rev is None:
+                raise StartPathError(
+                    f"raw closed capture is not committed in Git: {rel_cap} (publish or commit the capture before running build-receipt)",
+                    1,
+                )
             cap_ref = {
                 "path": rel_cap,
-                "sha256": sha256_hex(resolved_pub.read_bytes()),
-                "revision": head_sha,
+                "sha256": cap_sha,
+                "revision": committed_rev,
             }
             closed_cap = pub_doc
         cmd["capture"] = cap_ref
@@ -1559,23 +2449,49 @@ def build_stage_receipt(
     out_bytes = canonical_bytes(verified) + b"\n"
     resolved_out.write_bytes(out_bytes)
     out_rel = normalize_relative_path(resolved_out.relative_to(root).as_posix(), root=root)
+    out_sha = sha256_hex(out_bytes)
+
+    to_commit_files: list[dict[str, str]] = [
+        {"path": out_rel, "sha256": out_sha, "mode": "100644"},
+    ]
+    if update_policy and resolved_policy_path.is_relative_to(root):
+        pol_rel = normalize_relative_path(resolved_policy_path.relative_to(root).as_posix(), root=root)
+        _, _, pol_sha = _verify_regular_file_mode_100644(root, pol_rel)
+        to_commit_files.append({"path": pol_rel, "sha256": pol_sha, "mode": "100644"})
+
+    commit_msg = f"publish stage receipt {policy['operation_id']}"
+    commit_req = _build_commit_request(
+        root,
+        origin_url,
+        head_sha,
+        "stage_receipt_pending",
+        commit_msg,
+        to_commit_files,
+    )
 
     receipt_ref: dict[str, Any] = {
         "path": out_rel,
-        "sha256": sha256_hex(out_bytes),
+        "sha256": out_sha,
         "revision": None,
     }
     if commit_changes:
-        to_commit = [out_rel]
-        if update_policy and resolved_policy_path.is_relative_to(root):
-            to_commit.append(normalize_relative_path(resolved_policy_path.relative_to(root).as_posix(), root=root))
-        commit_sha = _git_ensure_committed(root, to_commit, f"publish stage receipt {policy['operation_id']}")
+        req_out_path = resolved_out.parent / f"{resolved_out.stem}.publish-request.json"
+        commit_sha = _git_commit_literal_paths(
+            root,
+            to_commit_files,
+            commit_msg,
+            stage="stage_receipt_pending",
+            request_out_paths=[req_out_path],
+        )
         receipt_ref["revision"] = commit_sha
+        commit_req["status"] = "committed"
+        commit_req["revision"] = commit_sha
 
     return {
         "verified": True,
         "receipt_path": out_rel,
         "receipt_ref": receipt_ref,
+        "commit_request": commit_req,
         "receipt": verified,
     }
 

@@ -133,15 +133,18 @@ Modes:
                       Framework-envelope files (CONTEXT.md, README.md,
                       CHANGELOG.md, bootstrap.sh, registry/, docs/) are absent
                       from the injected payload; C4/C9 carve out references
-                      into non-injected paths. Runs 12 counted checks:
-                      C1-C5, C7-C11, C13 and C16; C6 is skipped. C9 and C10
-                      sweep the payload-doc set, including methodology/ and
-                      ecosystem/, excluding tools/fixtures/ and the guide.
-                      C11 and C16 pass trivially because .agent/ governance
-                      state is not injected. C13 requires each skill module
-                      to match a NIZAM.json authoritative_source in both modes,
-                      including modules whose path resolution is carved out.
-                      Exits 0 only if every applicable check passed.
+                      into non-injected paths. Runs 10 exercised structural
+                      checks (C1-C5, C7-C10, C13), reports 2 not-applicable
+                      checks (C11, C16, because .agent/ governance state is not
+                      injected), 1 skipped check (C6), and 3 out-of-scope
+                      checks (C12, C14, C15), plus explicit scope qualifiers
+                      (content_integrity=not_checked, operational_acceptance=not_assessed).
+                      C9 and C10 sweep the payload-doc set, including
+                      methodology/ and ecosystem/, excluding tools/fixtures/
+                      and the guide. C13 requires tools/skill.json version to
+                      match tools/SKILL.md frontmatter version and each skill
+                      module to match a NIZAM.json authoritative_source in both
+                      modes. Exits 0 only if every applicable check passed.
 
   --help, -h          Prints this usage and exits 0.
 
@@ -1503,21 +1506,13 @@ PY
 
 # check_c11_dogfood_payload_skip
 #
-# --payload mode is a DESIGNED, disk-free trivial pass: .agent/ is
+# --payload mode reports NOT_APPLICABLE (uncounted in exercised passes): .agent/ is
 # orchestrator/governance state that bootstrap.sh NEVER injects into a
-# consumer payload (the injected set is exactly standard/, templates/,
-# schema/, tools/, NIZAM.json), so C11 has nothing to enforce in payload
-# mode regardless of where CWD is. As of feature 050 (NDEBT-012 / issue
-# #18) --payload anchors to its own payload root, so on a real consumer
-# install CWD becomes the injected .nizam/ payload itself -- which still
-# carries no .agent/, so C11 has nothing to enforce either way (and on the
-# framework's own checkout the payload root simply equals the repo root).
-# This is a COUNTED pass (unlike C6's
-# uncounted SKIP), since C11 genuinely is applicable in concept to payload
-# validation (spec Sec 4.1) -- it just resolves to a trivial pass by
-# design, not a suppressed check.
+# consumer payload (the injected set is standard/, templates/, schema/, tools/,
+# methodology/, ecosystem/, NIZAM.json), so C11 has nothing to enforce in payload
+# mode regardless of where CWD is.
 check_c11_dogfood_payload_skip() {
-  echo "[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)"
+  echo "[C11] NOT_APPLICABLE dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload)"
   return 0
 }
 
@@ -2185,6 +2180,41 @@ for index, capability in enumerate(capabilities):
     if module not in indexed_sources:
         label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
         problems.append(f"{label} -> {module} is not the authoritative_source of any NIZAM.json capability")
+
+# Enforce version parity between tools/skill.json and entry_point (tools/SKILL.md)
+# frontmatter version (B4 / V5). Dedicated negative C13 fixtures testing only
+# dangling/unindexed module pointers carry name "nizam-skill-index-negative-fixture*"
+# so their targeted error stays isolated.
+skill_name = skill.get("name")
+skill_version = skill.get("version")
+if not (isinstance(skill_name, str) and skill_name.startswith("nizam-skill-index-negative-fixture")):
+    if not isinstance(skill_version, str) or not skill_version:
+        problems.append("tools/skill.json version missing, empty, or not a string")
+    elif isinstance(entry_point, str) and entry_point and os.path.isfile(os.path.normpath(entry_point)):
+        try:
+            import yaml
+            with open(os.path.normpath(entry_point), encoding="utf-8") as ep_fh:
+                ep_lines = ep_fh.read().splitlines()
+            fm_ver = None
+            if ep_lines and ep_lines[0].strip() == "---":
+                end_idx = None
+                for i in range(1, len(ep_lines)):
+                    if ep_lines[i].strip() == "---":
+                        end_idx = i
+                        break
+                if end_idx is not None:
+                    fm_doc = yaml.safe_load("\n".join(ep_lines[1:end_idx]))
+                    if isinstance(fm_doc, dict) and isinstance(fm_doc.get("version"), str):
+                        fm_ver = fm_doc["version"]
+            if fm_ver is None:
+                problems.append(f"entry_point {entry_point} has no readable frontmatter version")
+            elif skill_version != fm_ver:
+                problems.append(
+                    f"tools/skill.json version ({skill_version!r}) does not match entry_point {entry_point} frontmatter version ({fm_ver!r})"
+                )
+        except Exception as exc:
+            problems.append(f"failed to parse frontmatter of entry_point {entry_point}: {exc}")
+
 for problem in problems:
     print(problem)
 sys.exit(1 if problems else 0)
@@ -2408,16 +2438,12 @@ check_c16_feature_list_lifecycle() {
 
 # check_c16_feature_lifecycle_payload_skip
 #
-# --payload mode is a DESIGNED, disk-free trivial pass, mirroring
-# check_c11_dogfood_payload_skip's exact precedent: `.agent/` (including
-# `.agent/feature_list*.json`) is orchestrator/governance state that
+# --payload mode reports NOT_APPLICABLE (uncounted in exercised passes): `.agent/`
+# (including `.agent/feature_list*.json`) is orchestrator/governance state that
 # bootstrap.sh NEVER injects into a consumer payload, so C16 has nothing to
-# enforce in payload mode regardless of CWD. This is a COUNTED pass (unlike
-# C6's uncounted SKIP), since C16 genuinely is applicable in concept to
-# payload validation -- it just resolves to a trivial pass by design, not a
-# suppressed check.
+# enforce in payload mode regardless of CWD.
 check_c16_feature_lifecycle_payload_skip() {
-  echo "[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)"
+  echo "[C16] NOT_APPLICABLE feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload)"
   return 0
 }
 
@@ -2586,11 +2612,14 @@ main() {
     check_c8_version_changelog "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c9_path_resolution "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c10_consistency "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
-    check_c11_dogfood_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c11_dogfood_payload_skip
+    echo "[C12] OUT_OF_SCOPE ecosystem-fixtures (payload mode)"
     check_c13_skill_index payload && passed=$((passed + 1)) || failed=$((failed + 1))
-    check_c16_feature_lifecycle_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
+    echo "[C14] OUT_OF_SCOPE workflow-sha-pins (payload mode)"
+    echo "[C15] OUT_OF_SCOPE capability-profile-roles (payload mode)"
+    check_c16_feature_lifecycle_payload_skip
 
-    echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
+    echo "SUMMARY (payload mode): ${passed} exercised passed, ${failed} failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed"
   else
     local shipped_md=()
     local f

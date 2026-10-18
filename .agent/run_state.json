@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-18T16:40:00Z",
+  "updated_at": "2026-10-18T22:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -10383,6 +10383,11 @@
       "at": "2026-10-18T16:40:00Z",
       "event": "operator_gate_decision",
       "detail": "Completed and independently accepted Corrective Slice 1 (B0-B2 at 9cc9547ffc09694cea324bb009916811d786d2c5, closing V1, V2, and V7 worktree regression), Corrective Slice 2 (B3-B4 at f825908e80100a2e13b9157b6a4f72908dd26a24, closing V3, V4, V5, and V6), and Corrective Slice 3 packet B5 (tools/e2e_bootstrap_test.sh end-to-end negative and positive discrimination for V1-V7). Prepared v1.9.0 MINOR release anchors on branch feat/v1.8.0-rollout-corrective-2026-10-18 under continuing H-FRAMEWORK-RELEASE and H-CONSUMER-UPGRADE operator authority ('Where the session already authorizes a concrete commit, merge, release, or self-upgrade, use that authority without requesting it again.')."
+    },
+    {
+      "at": "2026-10-18T22:40:00Z",
+      "event": "release_executed",
+      "detail": "v1.9.0 MINOR release published and locally adopted under .nizam/: Corrective Slice 3 (40372780b328359fb4757651640920f11f14a23f) independently accepted and merged via PR #121 at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (compliance.yml run 39171134860 green); annotated tag v1.9.0 (7e721b6e0fb2a0a3014efda388e1097378e3da87) pushed; release.yml run 39172587918 succeeded and published the GitHub Release at 2026-10-18T22:31:27Z; .nizam/ re-bootstrapped to v1.9.0 (278 released files + provenance.json, installed_at 2026-10-18T22:32:25Z, evidence .agent/evidence/release-v1.9.0-closeout/). Exited temporary corrective override mode cleanly with .nizam/ and authored root at v1.9.0 parity."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -10838,7 +10843,7 @@
       }
     ]
   },
-  "last_action": "Completed Corrective Slices 1 and 2 (B0-B4) and packet B5 (tools/e2e_bootstrap_test.sh end-to-end discrimination for V1-V7), and prepared v1.9.0 MINOR release anchors (B6 pre-tag) on branch feat/v1.8.0-rollout-corrective-2026-10-18. Next: independent acceptance of Slice 3 (B5 + B6), PR merge to main, annotated tag v1.9.0, and .nizam/ re-bootstrap to v1.9.0. Phase 020 feature 130 remains active at pre-contract stage.",
+  "last_action": "Completed the 2026-10-18 v1.8.0 rollout corrective execution mandate (B0-B6, docs/planning/REMEDIATION_2026_10_18.md v0.12.0): PR #121 merged at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (compliance.yml run 39171134860), v1.9.0 released (annotated tag 7e721b6e0fb2a0a3014efda388e1097378e3da87, release.yml run 39172587918), .nizam/ re-bootstrapped to v1.9.0 parity (278 released files + provenance.json), and temporary override mode exited cleanly. Phase 020 feature 130 remains active at pre-contract stage.",
   "completed_contract_ids": [
     "099",
     "103",

@@ -7,6 +7,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **`v1.9.0` post-release closeout and `.nizam/` self-adoption (`B6`)**:
+  Re-bootstrapped `.nizam/` to the released immutable tag `v1.9.0` (`0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87`, `278` released files + `provenance.json`, `installed_at` `2026-10-18T22:32:25Z`, evidence `.agent/evidence/release-v1.9.0-closeout/`), updated `.github/scripts/verify_self_governance.py`, `README.md`, `docs/planning/SELF_GOVERNANCE.md` (`v0.5.0`), `docs/planning/ROADMAP.md` (`v0.65.26`), `docs/planning/operator_gates.md` (`v0.47.0`), `docs/planning/manifest.json`, and `docs/planning/REMEDIATION_2026_10_18.md` (`v0.12.0`), and removed the transitional corrective banner in `AGENTS.md` (`v0.3.0`) upon reaching parity between `.nizam/` and the authored framework.
+
 ## [1.9.0] - 2026-10-18
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): the
