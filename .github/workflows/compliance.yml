@@ -30,9 +30,9 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
-      - run: pip install jsonschema pyyaml
+      - run: pip install -r .github/requirements-ci.txt
 
       - run: bash tools/validate.sh
 
@@ -53,7 +53,7 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
       # jsonschema + pyyaml are required because, as of phase-006 feature 050,
       # the harness's assert_payload_validate_cwd_independent runs
@@ -61,7 +61,7 @@ jobs:
       # NDEBT-012 / issue #18 is fixed), and validate.sh fails closed on a
       # missing jsonschema/yaml module. Before F-050 the e2e exercised only
       # bootstrap.sh (which needs neither), so this step is new to this job.
-      - run: pip install jsonschema pyyaml
+      - run: pip install -r .github/requirements-ci.txt
 
       - run: bash tools/e2e_bootstrap_test.sh
 
@@ -77,11 +77,11 @@ jobs:
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.x"
+          python-version: "3.12"
 
       # tools/fixtures_self_test.sh (NDEBT-009, feature 052) drives
       # tools/validate.sh --target, which fails closed without jsonschema/yaml.
-      - run: pip install jsonschema pyyaml
+      - run: pip install -r .github/requirements-ci.txt
 
 
       - name: Record maintenance checkout source identity
@@ -105,8 +105,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.x"
-      - run: pip install jsonschema pyyaml
+          python-version: "3.12"
+      - run: pip install -r .github/requirements-ci.txt
       - name: Enable unprivileged user namespaces where the kernel restricts them
         run: |
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
@@ -138,8 +138,6 @@ jobs:
         run: sbcl --no-sysinit --no-userinit --non-interactive --eval '(assert (= (+ 1 1) 2))'
       - name: Run required isolation suite
         run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
-      - name: Run fixture self-test
-        run: bash tools/fixtures_self_test.sh
       - name: Pull pinned Docker trial-sandbox image
         run: docker pull "$(bash tools/docker_trial_sandbox.sh --print-image)"
       - name: Run Docker-adapter sandbox boundary suite
@@ -197,8 +195,8 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: "3.x"
-      - run: pip install jsonschema pyyaml
+          python-version: "3.12"
+      - run: pip install -r .github/requirements-ci.txt
       - run: python3 .github/scripts/verify_self_governance.py
       - run: python3 .github/scripts/test_self_governance.py
       - run: bash .nizam/tools/validate.sh --payload

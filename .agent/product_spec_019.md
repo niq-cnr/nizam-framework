@@ -2,21 +2,25 @@
 id: nizam-phase019-product-spec
 title: "Phase 019 — Workflow Assurance — Deferred Profiles"
 description: "Proposed bounded WA scope, future atomic acceptance and independent evidence gates."
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: active
 authoritative_source: .agent/product_spec_019.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-18"
+    summary: "Reconcile 124/125 under the 2026-10-18 operator quality and velocity remediation mandate: generic repository/worktree profile comparison and shadow recommendation proceed after completed 018/123, while persistent-runtime SBCL profile claims remain gated on 020/130-132."
   - version: "0.1.0"
     date: "2026-10-12"
     summary: "Plan pending features only; activation, implementation and budget approval remain future."
 ---
 
-# Proposed phase 019
+# Phase 019 — Workflow Assurance Profiles
 
-NIP-0004 accepted scope and six operator selections are inputs. This planning task
-allocates 124–125 only; H-PHASE-019 and approved implementation
-contracts remain outstanding. Records for phases 015 and 014, installed payload,
-release versions and Open debts NDEBT-040/NDEBT-034 remain unchanged. Planning is not activation.
+NIP-0004 accepted scope, six operator selections, and the 2026-10-18 operator
+quality and velocity remediation mandate (`docs/planning/REMEDIATION_2026_10_18.md`)
+are inputs. This phase allocates 124–125. Generic repository and worktree assurance
+profiles proceed directly after completed Phase 018 (`123`); persistent-runtime /
+SBCL profile qualification remains gated on Phase 020 features `130–132`.
 
 ## Architecture and external prerequisites
 
@@ -26,17 +30,10 @@ mismatch/blocker thresholds, cost/latency bounds and accountable operator decisi
 before any shadow run. Feature 125 records every comparison including failed outcomes;
 a missed baseline blocker rejects promotion recommendation. No recommendation or
 shadow result activates a profile, reduces a gate or grants additional permission.
-Existing role/profile identifiers remain unchanged. Stable measured baseline,
-trusted A10/A11 and controller feature 132 captured close are future external prerequisites.
-
-Recommended order: phase 017 foundation → phase 016 core → phase 018 controls →
-phase 020 fresh acceptance → phase 019 profiles. This is a proposed order requiring future activation, not an operator
-selection. Preserve historical A09-after-NIP3-120 edge; propose its supersession
-explicitly for early identity/sealed ownership. Phase 018 depends specifically on core feature 127,
-not completion of split NIP3-116's later CI feature 131. A15 remains after controller feature 132.
-Same-list dependencies alone appear in features; cross-phase prerequisites and
-shared-file serialization are separate metadata. Existing completed phases 015/014 are
-inputs, not new-list dependencies. Local adoption asserts no external ecosystem.
+Existing role/profile identifiers remain unchanged. Under the 2026-10-18 remediation
+mandate, generic repository/worktree profile comparison and recommendation depend on
+completed Phase 018 (`119`, `120`, `123`) and remediated CI/fixture baselines (`R1–R8`),
+whereas persistent-runtime / SBCL profile claims continue to require Phase 020 (`130–132`).
 
 ## Future acceptance and independent ownership
 

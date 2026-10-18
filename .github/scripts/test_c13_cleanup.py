@@ -30,7 +30,7 @@ def private_source(destination, source_ref):
     else:
         paths = run(['git', 'ls-files', '-z'], REPO).stdout.decode().split('\0')
         for name in paths:
-            if not name:
+            if not name or name.startswith('.agent/evidence/'):
                 continue
             src, dst = REPO / name, destination / name
             if src.is_file():
@@ -39,6 +39,8 @@ def private_source(destination, source_ref):
     run(['git', 'init', '-q'], destination)
     run(['git', 'config', 'user.email', 'cleanup-test@example.test'], destination)
     run(['git', 'config', 'user.name', 'C13 cleanup regression'], destination)
+    run(['git', 'config', 'gc.auto', '0'], destination)
+    run(['git', 'config', 'maintenance.auto', 'false'], destination)
     run(['git', 'add', '-A'], destination)
     run(['git', 'commit', '-qm', 'private actual source'], destination)
 

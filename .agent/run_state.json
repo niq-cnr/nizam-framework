@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-18T03:56:29Z",
+  "updated_at": "2026-10-18T04:45:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -10333,6 +10333,11 @@
       "at": "2026-10-18T03:56:29Z",
       "event": "merge_main_into_feature_134_branch",
       "detail": "Orchestrator merged origin/main (e3748676, including PR #114 v1.6.0 self-installation and closeout, and the phase-020 progress from PRs #106/#109/#112) into feat/portable-review-sandbox-2026-10-16 (PR #115) to clear the merge conflicts that prevented GitHub from dispatching pull_request CI since c6d01ee9 (the feature-134 implementation add11a99 had never run in CI). Merge chosen over rebase so the Mode B/QA bindings to add11a99 stay valid. Conflict resolution, both sides otherwise disjoint: run_state rebuilt from main's bytes; the branch's four 134-* circuit_breaker entries and its two history entries (2026-10-16T19:15:00Z 134-contract-recovery-approved, 2026-10-17T05:16:00Z 134-loop2-gates-approved-local-lifecycle-closed) inserted with their original bytes. The two branch entries are therefore placed after main's later-dated entries, out of chronological order, with original timestamps preserved; no existing entry is altered. completed_contract_ids = union (main's list + '134'). current_phase/current_feature/status keep main's active position (020-sbcl-fresh-acceptance / 130 / in_progress): phase 022 is complete and recorded in the manifest. manifest.json: current_phase 020 kept, updated_at = later of the two sides; phases merged without conflict (020/021 from main, 022 from the branch). Operator instruction (verbatim): 'do the conflict resolution and push'."
+    },
+    {
+      "at": "2026-10-18T04:45:00Z",
+      "event": "remediation_mandate_adopted_2026_10_18",
+      "detail": "Operator authorized the critical quality and velocity remediation mandate (18 October 2026, recorded in docs/planning/REMEDIATION_2026_10_18.md) as the highest-priority engineering work in niq-cnr/nizam-framework. Prospectively suspends obstructive repository-local self-governance ceremony (repeated per-edit contracts/dual pre-code approvals, automatic halt solely from old 3-attempt counter exhaustion, historical line-count ceilings, whole-module AST freezes outside target functions, and recursive closeout invalidation) while preserving: (1) independent acceptance per slice by a non-authoring reviewer, (2) real captured verification results, (3) security/correctness invariants, (4) write ownership and preservation of unrelated work (including PR #115 feature 134), and (5) honest lifecycle status. Reconciled Phase 019 features 124-125 so generic repository/worktree assurance profiles proceed after completed 018/123 while persistent-runtime SBCL profile claims remain gated on Phase 020 features 130-132."
     }
   ],
   "phase_001_scope_budget_final": {

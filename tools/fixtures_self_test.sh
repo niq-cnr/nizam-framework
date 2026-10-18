@@ -1145,16 +1145,9 @@ if [ -n "${phantom}" ]; then
   fail=1
 fi
 
-# Feature123 parser selectors are synthetic controls; actual hosted readiness is
-# separately selected and observed after the two capable-job passes.
-for controls_case in ci-candidate-bound ci-blocker-rejected; do
-  if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case "${controls_case}"; then
-    echo "OK   workflow-assurance ${controls_case}"
-  else
-    echo "FAIL workflow-assurance ${controls_case}"
-    fail=1
-  fi
-done
+# Feature 123 parser selectors (ci-candidate-bound and ci-blocker-rejected) are
+# owned by the full `python3 tools/test_workflow_assurance.py` dispatcher step
+# in the `fixtures_self_test` CI job so they execute once per compliance run.
 
 # Feature133 checks are separate from the on-disk fixture-file denominator.
 if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py; then

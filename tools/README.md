@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.34.0
+version: 0.35.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.35.0"
+    date: "2026-10-18"
+    summary: "Document authoritative five-job CI suite ownership, remove duplicate ci-candidate-bound/ci-blocker-rejected execution from fixtures_self_test.sh and duplicate fixtures_self_test.sh execution from convergent_review, and pin CI Python 3.12 with shared requirements."
   - version: "0.34.0"
     date: "2026-10-17"
     summary: "Register the Docker trial-sandbox adapter, its pinned-image requirement and fail-closed behavior, adapter-specific conformance selection, and the Docker boundary/guard suite additions."
@@ -220,10 +223,12 @@ afresh. Ownership rules, origin and ancestry checks retain their existing meanin
 `python3 tools/test_receipt_candidate_batching.py` runs four independent synthetic
 checks in order; `--check` selects `real-git-count-reduction`, `semantic-equivalence`,
 `fresh-mutations` or `literal-paths-and-modes`. The fixture shell suite invokes all
-four and retains its existing 166 fixture-file denominator and 48 Workflow Assurance
-cases. These checks establish real Git launch reduction, not a wall-time speedup
-or hosted qualification. Changed protected Source makes feature 123's existing
-current-readiness proof historical; this maintenance does not rebind that proof.
+four and retains its existing 166 fixture-file denominator, while the separate
+`python3 tools/test_workflow_assurance.py` step in `fixtures_self_test` owns all
+48 Workflow Assurance cases once per run. These checks establish real Git launch
+reduction, not a wall-time speedup or hosted qualification. Changed protected
+Source makes feature 123's existing current-readiness proof historical; this
+maintenance does not rebind that proof.
 
 ## Convergent findings to AGF verdict — feature 119
 
@@ -488,12 +493,21 @@ ambient file unreadable inside) and the container omission controls are
 short-lived ephemeral containers over scratch data with no daemon socket, no
 host mounts, and no sysctl/seccomp/AppArmor change.
 
-The standing CI jobs run these helpers and the required suite with these commands:
+The standing CI jobs in `.github/workflows/compliance.yml` assign each suite to
+one authoritative job owner (pinned to Python `3.12` and shared dependencies):
+`validate` runs `bash tools/validate.sh`; `e2e_bootstrap` runs
+`bash tools/e2e_bootstrap_test.sh`; `fixtures_self_test` runs the C13 cleanup
+helper, `bash tools/fixtures_self_test.sh`, and `python3 tools/test_workflow_assurance.py`
+once; `convergent_review` runs the native and Docker sandbox boundary and
+required-conformance suites plus conditional `WA123` steps; and `self_governance`
+runs the installed-payload drift verifiers and `bash .nizam/tools/validate.sh --payload`:
 
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+bash tools/fixtures_self_test.sh
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
 PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
-PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
 ```
 
 The existing jobs emit checkout SHA and source digest receipts. Actual capable CI
