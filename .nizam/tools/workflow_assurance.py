@@ -1986,6 +1986,735 @@ def verify_controls_ready(repo, evidence, *, policy):
     except (OSError,ValueError,TypeError,KeyError,AttributeError,IndexError,StopIteration,RecursionError,RuntimeError) as exc:
         raise AssuranceError('controls proof invalid: '+str(exc)[:600]) from exc
 
+
+_WA_ROLE_PROFILES = {
+    'Orchestrator': 'orchestrator-primary',
+    'Planner': 'planner-creative',
+    'Generator': 'generator-deterministic',
+    'Validator': 'validator-structural',
+    'Evaluator': 'evaluator-adversarial',
+}
+_WA_ASSURANCE_TIERS = ('Routine', 'Standard', 'High-assurance')
+_WA_TIER_ROUTES = {
+    'Routine': ['trivial', 'small-change'],
+    'Standard': ['bugfix', 'standard-feature'],
+    'High-assurance': ['high-risk'],
+}
+_WA_PROFILE_CASES = (
+    'preregister-before-run',
+    'roles-reused',
+    'reject-unstable-baseline',
+    'same-candidate',
+    'missed-baseline-blocker',
+    'cost-latency-accounting',
+    'no-self-promotion',
+)
+
+
+def _receipt_root(repo):
+    root = Path(repo)
+    require(not root.is_symlink(), 'receipt symlink repository')
+    root = root.resolve(strict=True)
+    require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'receipt repository toplevel')
+    return root
+
+
+def _profile_int(value, label, minimum=0):
+    require(type(value) is int and value >= minimum, f'profile integer >={minimum}: {label}')
+    return value
+
+
+def _profile_candidate(root, candidate, *, live_env=True):
+    if live_env:
+        _receipt_candidate(root, candidate)
+        return
+    validate_identity(candidate)
+    anchor = candidate['source_commit']
+    require(git(root, 'rev-parse', '--verify', anchor + '^{commit}').decode().strip() == anchor, 'profile candidate exact commit')
+    require(git(root, 'rev-parse', anchor + '^{tree}').decode().strip() == candidate['source_tree'], 'profile candidate actual tree')
+    require(git(root, 'remote', 'get-url', 'origin').decode().strip() == candidate['repository'], 'profile actual repository')
+    env = candidate['environment']
+    _bundle_object(env, ('runtime', 'variables'), 'profile candidate environment')
+    _bundle_object(env['runtime'], ('implementation', 'version', 'system', 'machine'), 'profile candidate runtime')
+    for key, val in env['runtime'].items():
+        _receipt_text(val, 'profile runtime ' + key)
+    require(type(env['variables']) is dict and env['variables'], 'profile environment variables')
+    for category in ('source', 'tests', 'tools', 'contracts'):
+        for entry in candidate['assessed_inputs'][category]:
+            data, executable = _entry_blob(root, anchor, entry['path'])
+            require(sha(data) == entry['sha256'] and executable is entry['executable'], 'profile protected Git input changed')
+
+
+def _profile_authority(root, reference, repository):
+    raw = _receipt_artifact(root, reference)
+    authority = parse_json(raw)
+    require(raw.rstrip(b'\n') == canonical(authority), 'profile authority canonical JSON')
+    _bundle_object(
+        authority,
+        ('schema_version', 'role', 'repository', 'owner', 'gate', 'approved', 'allow_self_promotion', 'allow_gate_reduction'),
+        'profile authority',
+    )
+    _profile_int(authority['schema_version'], 'authority schema_version', 1)
+    require(authority['schema_version'] == 1, 'authority schema_version')
+    require(authority['role'] == 'Root' and authority['approved'] is True, 'profile authority Root approval')
+    require(authority['repository'] == repository, 'profile authority repository binding')
+    _receipt_text(authority['owner'], 'authority owner')
+    _receipt_text(authority['gate'], 'authority gate')
+    require(
+        authority['allow_self_promotion'] is False and authority['allow_gate_reduction'] is False,
+        'profile authority forbids self-promotion and gate reduction',
+    )
+    return authority
+
+
+def preregister_profile_comparison(repo, preregistration, *, policy, live_env=True):
+    """Validate and record a Phase 019 Feature 124 profile comparison preregistration before shadow runs."""
+    try:
+        json_value(preregistration)
+        json_value(policy)
+        root = _receipt_root(repo)
+        origin = git(root, 'remote', 'get-url', 'origin').decode().strip()
+        _bundle_object(
+            policy,
+            ('schema_version', 'repository', 'feature_id', 'stage', 'baseline_controls_ref', 'authority_ref', 'persistent_runtime_ready'),
+            'profile preregistration policy',
+        )
+        require(type(policy['schema_version']) is int and policy['schema_version'] == 1, 'preregistration policy version')
+        require(policy['repository'] == origin, 'preregistration policy repository binding')
+        require(
+            policy['feature_id'] == '124' and policy['stage'] == 'profile-preregistration',
+            'preregistration policy feature/stage',
+        )
+        require(type(policy['persistent_runtime_ready']) is bool, 'preregistration persistent_runtime_ready boolean')
+        authority = _profile_authority(root, policy['authority_ref'], origin)
+
+        baseline_raw = _receipt_artifact(root, policy['baseline_controls_ref'])
+        baseline = parse_json(baseline_raw)
+        require(baseline_raw.rstrip(b'\n') == canonical(baseline), 'baseline controls canonical JSON')
+        _bundle_object(
+            baseline,
+            ('schema_version', 'feature_id', 'source_commit', 'candidate_sha256', 'a11_verdict', 'status', 'flaky_runs', 'unresolved_blockers'),
+            'baseline controls readiness',
+        )
+        require(
+            type(baseline['schema_version']) is int and baseline['schema_version'] == 1 and baseline['feature_id'] == '123',
+            'baseline controls feature/version',
+        )
+        _profile_int(baseline['flaky_runs'], 'baseline flaky_runs', 0)
+        _profile_int(baseline['unresolved_blockers'], 'baseline unresolved_blockers', 0)
+        require(
+            baseline['status'] == 'stable'
+            and baseline['a11_verdict'] == 'approve'
+            and baseline['flaky_runs'] == 0
+            and baseline['unresolved_blockers'] == 0,
+            'unstable or unapproved baseline controls rejected',
+        )
+
+        _bundle_object(
+            preregistration,
+            (
+                'schema_version',
+                'preregistration_id',
+                'repository',
+                'feature_id',
+                'execution_scope',
+                'state',
+                'shadow_runs_started',
+                'shadow_run_refs',
+                'candidate',
+                'test_bundle_ref',
+                'role_bindings',
+                'tiers',
+                'thresholds',
+                'operator_decision_policy',
+            ),
+            'profile preregistration',
+        )
+        require(type(preregistration['schema_version']) is int and preregistration['schema_version'] == 1, 'preregistration schema_version')
+        _receipt_text(preregistration['preregistration_id'], 'preregistration_id')
+        require(
+            preregistration['repository'] == origin and preregistration['feature_id'] == '124',
+            'preregistration repository/feature_id',
+        )
+        require(
+            preregistration['execution_scope'] in ('repository-worktree', 'persistent-runtime-sbcl'),
+            'preregistration execution_scope',
+        )
+        if preregistration['execution_scope'] == 'persistent-runtime-sbcl':
+            require(
+                policy['persistent_runtime_ready'] is True,
+                'persistent-runtime SBCL profile claims require completed 130-132 qualification',
+            )
+        require(
+            preregistration['state'] == 'preregistered-before-shadow'
+            and preregistration['shadow_runs_started'] is False
+            and preregistration['shadow_run_refs'] == [],
+            'preregistration must occur before any shadow run starts',
+        )
+
+        candidate = preregistration['candidate']
+        _profile_candidate(root, candidate, live_env=live_env)
+        candidate_digest = sha(canonical(candidate))
+        require(
+            baseline['source_commit'] == candidate['source_commit']
+            and baseline['candidate_sha256'] == candidate_digest,
+            'baseline controls must bind to the same candidate as preregistration',
+        )
+
+        test_bundle_raw = _receipt_artifact(root, preregistration['test_bundle_ref'])
+        test_bundle = parse_json(test_bundle_raw)
+        require(test_bundle_raw.rstrip(b'\n') == canonical(test_bundle), 'test bundle canonical JSON')
+        _bundle_object(test_bundle, ('schema_version', 'bundle_id', 'source_commit', 'cases'), 'profile test bundle')
+        require(
+            type(test_bundle['schema_version']) is int
+            and test_bundle['schema_version'] == 1
+            and test_bundle['source_commit'] == candidate['source_commit']
+            and type(test_bundle['cases']) is list
+            and len(test_bundle['cases']) >= 1
+            and all(type(c) is str and bool(c.strip()) for c in test_bundle['cases']),
+            'profile test bundle source_commit/cases binding',
+        )
+
+        roles = preregistration['role_bindings']
+        _bundle_object(roles, tuple(_WA_ROLE_PROFILES.keys()), 'profile role_bindings')
+        require(
+            roles == _WA_ROLE_PROFILES,
+            'profile role_bindings must reuse exact existing AGF role and capability profile IDs',
+        )
+
+        tiers = preregistration['tiers']
+        _bundle_object(tiers, _WA_ASSURANCE_TIERS, 'profile tiers')
+        tier_max_duration = 0
+        tier_max_cost = 0
+        for tier_name in _WA_ASSURANCE_TIERS:
+            spec = tiers[tier_name]
+            _bundle_object(
+                spec,
+                (
+                    'applicability',
+                    'route_classes',
+                    'required_roles',
+                    'same_candidate_baseline',
+                    'persistent_runtime_claim',
+                    'max_duration_ms',
+                    'max_cost_units',
+                    'max_blocker_mismatch',
+                ),
+                f'tier {tier_name}',
+            )
+            _receipt_text(spec['applicability'], f'{tier_name} applicability')
+            require(
+                spec['route_classes'] == _WA_TIER_ROUTES[tier_name],
+                f'{tier_name} route_classes must match canonical tier applicability',
+            )
+            require(
+                type(spec['required_roles']) is list
+                and len(spec['required_roles']) >= 2
+                and len(spec['required_roles']) == len(set(spec['required_roles']))
+                and all(r in _WA_ROLE_PROFILES for r in spec['required_roles'])
+                and 'Evaluator' in spec['required_roles']
+                and 'Generator' in spec['required_roles'],
+                f'{tier_name} required_roles must reuse canonical roles and include Generator and Evaluator',
+            )
+            require(spec['same_candidate_baseline'] is True, f'{tier_name} requires same_candidate_baseline=True')
+            require(type(spec['persistent_runtime_claim']) is bool, f'{tier_name} persistent_runtime_claim boolean')
+            if preregistration['execution_scope'] == 'repository-worktree':
+                require(
+                    spec['persistent_runtime_claim'] is False,
+                    f'{tier_name} repository-worktree scope cannot claim persistent-runtime semantics',
+                )
+            dur = _profile_int(spec['max_duration_ms'], f'{tier_name} max_duration_ms', 1)
+            cost = _profile_int(spec['max_cost_units'], f'{tier_name} max_cost_units', 1)
+            mismatch = _profile_int(spec['max_blocker_mismatch'], f'{tier_name} max_blocker_mismatch', 0)
+            require(mismatch == 0, f'{tier_name} max_blocker_mismatch must be 0')
+            tier_max_duration = max(tier_max_duration, dur)
+            tier_max_cost = max(tier_max_cost, cost)
+
+        thresholds = preregistration['thresholds']
+        _bundle_object(
+            thresholds,
+            ('max_missed_baseline_blockers', 'max_unexplained_divergences', 'max_duration_ms', 'max_cost_units', 'min_comparison_runs'),
+            'profile thresholds',
+        )
+        require(
+            _profile_int(thresholds['max_missed_baseline_blockers'], 'max_missed_baseline_blockers', 0) == 0
+            and _profile_int(thresholds['max_unexplained_divergences'], 'max_unexplained_divergences', 0) == 0,
+            'profile thresholds must prohibit missed baseline blockers and unexplained divergences',
+        )
+        require(
+            _profile_int(thresholds['max_duration_ms'], 'thresholds max_duration_ms', 1) >= tier_max_duration
+            and _profile_int(thresholds['max_cost_units'], 'thresholds max_cost_units', 1) >= tier_max_cost
+            and _profile_int(thresholds['min_comparison_runs'], 'thresholds min_comparison_runs', 1) >= 1,
+            'profile thresholds must bound tier duration, cost, and comparison runs',
+        )
+
+        op_policy = preregistration['operator_decision_policy']
+        _bundle_object(
+            op_policy,
+            ('accountable_role', 'gate', 'self_promotion_allowed', 'automatic_gate_reduction_allowed', 'authority_ref'),
+            'operator_decision_policy',
+        )
+        require(
+            op_policy['accountable_role'] == 'Root'
+            and op_policy['gate'] == authority['gate']
+            and op_policy['self_promotion_allowed'] is False
+            and op_policy['automatic_gate_reduction_allowed'] is False
+            and op_policy['authority_ref'] == policy['authority_ref'],
+            'operator_decision_policy must bind Root authority and forbid self-promotion/gate reduction',
+        )
+
+        return copy.deepcopy(
+            dict(
+                schema_version=1,
+                feature_id='124',
+                preregistration_id=preregistration['preregistration_id'],
+                repository=origin,
+                execution_scope=preregistration['execution_scope'],
+                candidate_sha256=candidate_digest,
+                source_commit=candidate['source_commit'],
+                baseline_controls_sha256=policy['baseline_controls_ref']['sha256'],
+                test_bundle_sha256=preregistration['test_bundle_ref']['sha256'],
+                tiers=list(_WA_ASSURANCE_TIERS),
+                roles_reused=True,
+                before_shadow_run=True,
+                baseline_stable=True,
+                self_promotion_allowed=False,
+                automatic_gate_reduction_allowed=False,
+            )
+        )
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, IndexError, RecursionError) as exc:
+        raise AssuranceError('profile preregistration invalid: ' + str(exc)[:600]) from exc
+
+
+def _profile_run_record(root, run, label, expected_candidate_sha, expected_commit, expected_tree, expected_bundle_sha):
+    _bundle_object(
+        run,
+        (
+            'run_id',
+            'candidate_sha256',
+            'source_commit',
+            'source_tree',
+            'test_bundle_sha256',
+            'executed',
+            'outcome',
+            'exit_code',
+            'verdict',
+            'blocker_ids',
+            'advisory_ids',
+            'duration_ms',
+            'cost_units',
+            'command_count',
+            'capture_ref',
+        ),
+        label,
+    )
+    _receipt_text(run['run_id'], label + ' run_id')
+    require(
+        run['candidate_sha256'] == expected_candidate_sha
+        and run['source_commit'] == expected_commit
+        and run['source_tree'] == expected_tree
+        and run['test_bundle_sha256'] == expected_bundle_sha,
+        f'same-candidate binding mismatch on {label}',
+    )
+    require(run['executed'] is True and run['outcome'] in ('success', 'failed'), f'{label} must be an executed run')
+    require(type(run['exit_code']) is int, f'{label} exit_code must be integer')
+    if run['outcome'] == 'success':
+        require(run['exit_code'] == 0, f'{label} success outcome requires exit_code 0')
+    else:
+        require(run['exit_code'] != 0, f'{label} failed outcome requires nonzero exit_code')
+
+    for field in ('blocker_ids', 'advisory_ids'):
+        items = run[field]
+        require(
+            type(items) is list
+            and all(type(x) is str and bool(x.strip()) for x in items)
+            and len(items) == len(set(items)),
+            f'{label} {field} must be unique non-empty strings',
+        )
+
+    verdict = run['verdict']
+    _bundle_object(
+        verdict,
+        ('final_verdict', 'issues', 'missing_acceptance_coverage', 'unsupported_claims'),
+        f'{label} verdict',
+    )
+    _bundle_object(verdict['final_verdict'], ('approved',), f'{label} final_verdict')
+    require(type(verdict['final_verdict']['approved']) is bool, f'{label} approved boolean')
+    for k in ('issues', 'missing_acceptance_coverage', 'unsupported_claims'):
+        require(type(verdict[k]) is list, f'{label} verdict {k} list')
+    if run['blocker_ids'] or run['outcome'] == 'failed':
+        require(
+            verdict['final_verdict']['approved'] is False
+            and bool(verdict['issues'] or verdict['missing_acceptance_coverage'] or verdict['unsupported_claims']),
+            f'{label} with blockers or failed outcome must have unapproved verdict and non-empty blocking array',
+        )
+    else:
+        _receipt_gate(verdict)
+
+    dur = _profile_int(run['duration_ms'], f'{label} duration_ms', 1)
+    cost = _profile_int(run['cost_units'], f'{label} cost_units', 1)
+    cmds = _profile_int(run['command_count'], f'{label} command_count', 1)
+
+    cap_raw = _receipt_artifact(root, run['capture_ref'])
+    cap = parse_json(cap_raw)
+    require(cap_raw.rstrip(b'\n') == canonical(cap), f'{label} capture canonical JSON')
+    _bundle_object(
+        cap,
+        (
+            'schema_version',
+            'run_id',
+            'candidate_sha256',
+            'revision',
+            'executed',
+            'outcome',
+            'exit_code',
+            'duration_ms',
+            'cost_units',
+            'command_count',
+            'stdout',
+            'stderr',
+        ),
+        f'{label} capture',
+    )
+    require(
+        type(cap['schema_version']) is int
+        and cap['schema_version'] == 1
+        and cap['run_id'] == run['run_id']
+        and cap['candidate_sha256'] == expected_candidate_sha
+        and cap['executed'] is True
+        and cap['outcome'] == run['outcome']
+        and cap['exit_code'] == run['exit_code']
+        and cap['duration_ms'] == dur
+        and cap['cost_units'] == cost
+        and cap['command_count'] == cmds,
+        f'{label} capture accounting/outcome mismatch',
+    )
+    git(root, 'merge-base', '--is-ancestor', expected_commit, cap['revision'])
+    _receipt_artifact(root, cap['stdout']).decode('utf-8')
+    _receipt_artifact(root, cap['stderr']).decode('utf-8')
+
+
+def evaluate_profile_comparison(repo, comparison, *, policy, live_env=True):
+    """Evaluate a Phase 019 Feature 125 shadow comparison against its preregistered baseline."""
+    try:
+        json_value(comparison)
+        json_value(policy)
+        root = _receipt_root(repo)
+        origin = git(root, 'remote', 'get-url', 'origin').decode().strip()
+        _bundle_object(
+            policy,
+            ('schema_version', 'repository', 'feature_id', 'stage', 'preregistration_ref', 'preregistration_policy_ref', 'authority_ref'),
+            'profile comparison policy',
+        )
+        require(type(policy['schema_version']) is int and policy['schema_version'] == 1, 'comparison policy version')
+        require(
+            policy['repository'] == origin and policy['feature_id'] == '125' and policy['stage'] == 'shadow-comparison',
+            'comparison policy repository/feature/stage',
+        )
+        prereg_raw = _receipt_artifact(root, policy['preregistration_ref'])
+        prereg = parse_json(prereg_raw)
+        require(prereg_raw.rstrip(b'\n') == canonical(prereg), 'preregistration artifact canonical JSON')
+        prereg_policy_raw = _receipt_artifact(root, policy['preregistration_policy_ref'])
+        prereg_policy = parse_json(prereg_policy_raw)
+        require(prereg_policy_raw.rstrip(b'\n') == canonical(prereg_policy), 'preregistration policy canonical JSON')
+        require(policy['authority_ref'] == prereg_policy.get('authority_ref'), 'comparison authority_ref must match preregistration policy')
+        prereg_summary = preregister_profile_comparison(root, prereg, policy=prereg_policy, live_env=live_env)
+        authority = _profile_authority(root, policy['authority_ref'], origin)
+
+        _bundle_object(
+            comparison,
+            (
+                'schema_version',
+                'comparison_id',
+                'repository',
+                'feature_id',
+                'preregistration_ref',
+                'profile_tier',
+                'route_class',
+                'candidate',
+                'baseline_run',
+                'shadow_run',
+                'operator_decision',
+                'requested_action',
+            ),
+            'profile comparison',
+        )
+        require(type(comparison['schema_version']) is int and comparison['schema_version'] == 1, 'comparison schema_version')
+        _receipt_text(comparison['comparison_id'], 'comparison_id')
+        require(
+            comparison['repository'] == origin
+            and comparison['feature_id'] == '125'
+            and comparison['preregistration_ref'] == policy['preregistration_ref'],
+            'comparison repository/feature/preregistration binding',
+        )
+        tier = comparison['profile_tier']
+        require(tier in _WA_ASSURANCE_TIERS, 'comparison profile_tier')
+        tier_spec = prereg['tiers'][tier]
+        require(comparison['route_class'] in tier_spec['route_classes'], 'comparison route_class not applicable to tier')
+
+        require(
+            canonical(comparison['candidate']) == canonical(prereg['candidate']),
+            'same-candidate comparison candidate differs from preregistered candidate',
+        )
+        _profile_candidate(root, comparison['candidate'], live_env=live_env)
+        candidate_digest = prereg_summary['candidate_sha256']
+        source_commit = prereg['candidate']['source_commit']
+        source_tree = prereg['candidate']['source_tree']
+        bundle_digest = prereg_summary['test_bundle_sha256']
+
+        baseline_run = comparison['baseline_run']
+        shadow_run = comparison['shadow_run']
+        _profile_run_record(root, baseline_run, 'baseline_run', candidate_digest, source_commit, source_tree, bundle_digest)
+        _profile_run_record(root, shadow_run, 'shadow_run', candidate_digest, source_commit, source_tree, bundle_digest)
+        require(baseline_run['run_id'] != shadow_run['run_id'], 'baseline and shadow run_id must be distinct')
+
+        require(
+            comparison['requested_action'] == 'recommend-only',
+            'no-self-promotion: profile comparison requested_action must be recommend-only',
+        )
+        op_decision = comparison['operator_decision']
+        _bundle_object(
+            op_decision,
+            ('role', 'owner', 'gate', 'decision', 'self_promote', 'reduce_active_gates', 'authority_ref'),
+            'comparison operator_decision',
+        )
+        require(
+            op_decision['role'] == 'Root'
+            and op_decision['owner'] == authority['owner']
+            and op_decision['gate'] == authority['gate']
+            and op_decision['authority_ref'] == policy['authority_ref'],
+            'comparison operator_decision authority binding',
+        )
+        require(
+            op_decision['self_promote'] is False and op_decision['reduce_active_gates'] is False,
+            'no-self-promotion: self_promote and reduce_active_gates must be False',
+        )
+        require(
+            op_decision['decision'] in ('pending-operator-review', 'hold', 'reject-recommendation', 'approve-recommendation-only'),
+            'comparison operator_decision value',
+        )
+
+        missed_blockers = sorted(set(baseline_run['blocker_ids']) - set(shadow_run['blocker_ids']))
+        extra_blockers = sorted(set(shadow_run['blocker_ids']) - set(baseline_run['blocker_ids']))
+        baseline_approved = baseline_run['verdict']['final_verdict']['approved']
+        shadow_approved = shadow_run['verdict']['final_verdict']['approved']
+        if not baseline_approved and shadow_approved and not missed_blockers:
+            missed_blockers = ['UNIDENTIFIED_BASELINE_REJECTION']
+
+        within_bounds = (
+            shadow_run['duration_ms'] <= tier_spec['max_duration_ms']
+            and shadow_run['cost_units'] <= tier_spec['max_cost_units']
+            and shadow_run['duration_ms'] <= prereg['thresholds']['max_duration_ms']
+            and shadow_run['cost_units'] <= prereg['thresholds']['max_cost_units']
+        )
+        eligible = (
+            not missed_blockers
+            and not extra_blockers
+            and within_bounds
+            and baseline_approved == shadow_approved
+            and baseline_run['outcome'] == shadow_run['outcome']
+        )
+        if op_decision['decision'] == 'approve-recommendation-only':
+            require(
+                eligible,
+                'missed baseline blocker, divergence, or cost/latency bound violation rejects recommendation approval',
+            )
+
+        return copy.deepcopy(
+            dict(
+                schema_version=1,
+                feature_id='125',
+                comparison_id=comparison['comparison_id'],
+                preregistration_id=prereg['preregistration_id'],
+                repository=origin,
+                profile_tier=tier,
+                route_class=comparison['route_class'],
+                candidate_sha256=candidate_digest,
+                source_commit=source_commit,
+                same_candidate=True,
+                baseline_outcome=baseline_run['outcome'],
+                shadow_outcome=shadow_run['outcome'],
+                missed_baseline_blockers=missed_blockers,
+                unexplained_divergences=extra_blockers,
+                within_cost_latency_bounds=within_bounds,
+                accounting=dict(
+                    baseline_duration_ms=baseline_run['duration_ms'],
+                    shadow_duration_ms=shadow_run['duration_ms'],
+                    duration_delta_ms=shadow_run['duration_ms'] - baseline_run['duration_ms'],
+                    baseline_cost_units=baseline_run['cost_units'],
+                    shadow_cost_units=shadow_run['cost_units'],
+                    cost_delta_units=shadow_run['cost_units'] - baseline_run['cost_units'],
+                    baseline_command_count=baseline_run['command_count'],
+                    shadow_command_count=shadow_run['command_count'],
+                    command_delta=shadow_run['command_count'] - baseline_run['command_count'],
+                ),
+                recommendation='recommend-for-operator-review' if eligible else 'reject-promotion',
+                operator_decision=op_decision['decision'],
+                promoted=False,
+                active_gates_reduced=False,
+                permissions_changed=False,
+            )
+        )
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, IndexError, RecursionError) as exc:
+        raise AssuranceError('profile comparison invalid: ' + str(exc)[:600]) from exc
+
+
+def verify_profiles_ready(repo, evidence, *, policy):
+    """Observe candidate-bound Phase 019 (124/125) profile preregistration and shadow comparison proof."""
+    try:
+        json_value(evidence)
+        json_value(policy)
+        root = _receipt_root(repo)
+        origin = git(root, 'remote', 'get-url', 'origin').decode().strip()
+        _bundle_object(
+            policy,
+            ('schema_version', 'role', 'repository', 'feature_id', 'evidence_ref', 'independent_review_ref', 'approved'),
+            'profiles-ready policy',
+        )
+        require(type(policy['schema_version']) is int and policy['schema_version'] == 1, 'profiles-ready policy version')
+        require(
+            policy['role'] == 'Root'
+            and policy['approved'] is True
+            and policy['repository'] == origin
+            and policy['feature_id'] == '125',
+            'profiles-ready Root policy binding',
+        )
+        evidence_raw = _receipt_artifact(root, policy['evidence_ref'])
+        require(evidence_raw.rstrip(b'\n') == canonical(evidence), 'profiles-ready selected evidence bytes mismatch')
+        _bundle_object(
+            evidence,
+            (
+                'schema_version',
+                'feature_id',
+                'phase',
+                'execution_scope',
+                'candidate',
+                'preregistration_ref',
+                'preregistration_policy_ref',
+                'preregistration_result_ref',
+                'comparison_policy_ref',
+                'comparisons',
+                'case_proofs',
+            ),
+            'profiles-ready evidence',
+        )
+        require(
+            type(evidence['schema_version']) is int
+            and evidence['schema_version'] == 1
+            and evidence['feature_id'] == '125'
+            and evidence['phase'] == '019-workflow-assurance-profiles'
+            and evidence['execution_scope'] == 'repository-worktree',
+            'profiles-ready evidence metadata',
+        )
+        candidate = evidence['candidate']
+        _profile_candidate(root, candidate, live_env=False)
+
+        prereg = parse_json(_receipt_artifact(root, evidence['preregistration_ref']))
+        prereg_policy = parse_json(_receipt_artifact(root, evidence['preregistration_policy_ref']))
+        expected_prereg_result = parse_json(_receipt_artifact(root, evidence['preregistration_result_ref']))
+        actual_prereg_result = preregister_profile_comparison(root, prereg, policy=prereg_policy, live_env=False)
+        require(actual_prereg_result == expected_prereg_result, 'profiles-ready preregistration result mismatch')
+        require(canonical(prereg['candidate']) == canonical(candidate), 'profiles-ready candidate binding')
+
+        comp_policy = parse_json(_receipt_artifact(root, evidence['comparison_policy_ref']))
+        require(type(evidence['comparisons']) is list and len(evidence['comparisons']) >= 4, 'profiles-ready comparisons list')
+        tiers_recommended = set()
+        rejected_blocker_seen = False
+        for row in evidence['comparisons']:
+            _bundle_object(row, ('comparison_ref', 'result_ref'), 'profiles-ready comparison row')
+            comp = parse_json(_receipt_artifact(root, row['comparison_ref']))
+            expected_res = parse_json(_receipt_artifact(root, row['result_ref']))
+            actual_res = evaluate_profile_comparison(root, comp, policy=comp_policy, live_env=False)
+            require(actual_res == expected_res, 'profiles-ready comparison result mismatch')
+            require(
+                actual_res['promoted'] is False
+                and actual_res['active_gates_reduced'] is False
+                and actual_res['permissions_changed'] is False,
+                'profiles-ready comparison cannot promote or reduce gates',
+            )
+            if actual_res['recommendation'] == 'recommend-for-operator-review':
+                tiers_recommended.add(actual_res['profile_tier'])
+            elif actual_res['recommendation'] == 'reject-promotion' and actual_res['missed_baseline_blockers']:
+                rejected_blocker_seen = True
+        require(
+            tiers_recommended == set(_WA_ASSURANCE_TIERS) and rejected_blocker_seen,
+            'profiles-ready requires verified Routine/Standard/High-assurance comparisons plus rejected missed-blocker proof',
+        )
+
+        case_proofs = evidence['case_proofs']
+        require(type(case_proofs) is list and len(case_proofs) == len(_WA_PROFILE_CASES), 'profiles-ready case_proofs count')
+        seen_cases = []
+        for row in case_proofs:
+            _bundle_object(row, ('case', 'feature_id', 'command', 'exit_code'), 'profiles-ready case proof')
+            require(
+                row['case'] in _WA_PROFILE_CASES
+                and row['case'] not in seen_cases
+                and row['feature_id'] in ('124', '125')
+                and row['command'] == f'PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case {row["case"]}'
+                and type(row['exit_code']) is int
+                and row['exit_code'] == 0,
+                'profiles-ready case proof row invalid',
+            )
+            seen_cases.append(row['case'])
+        require(tuple(seen_cases) == _WA_PROFILE_CASES, 'profiles-ready case order/coverage')
+
+        review_raw = _receipt_artifact(root, policy['independent_review_ref'])
+        review = parse_json(review_raw)
+        require(review_raw.rstrip(b'\n') == canonical(review), 'profiles-ready review canonical JSON')
+        _bundle_object(
+            review,
+            (
+                'schema_version',
+                'role',
+                'reviewer',
+                'feature_id',
+                'source_commit',
+                'evidence_ref',
+                'final_verdict',
+                'issues',
+                'missing_acceptance_coverage',
+                'unsupported_claims',
+            ),
+            'profiles-ready independent review',
+        )
+        require(
+            type(review['schema_version']) is int
+            and review['schema_version'] == 1
+            and review['role'] == 'Evaluator'
+            and review['feature_id'] == '125'
+            and review['source_commit'] == candidate['source_commit']
+            and review['evidence_ref'] == policy['evidence_ref'],
+            'profiles-ready independent review binding',
+        )
+        _receipt_text(review['reviewer'], 'profiles-ready reviewer')
+        _receipt_gate(review)
+
+        return copy.deepcopy(
+            dict(
+                schema_version=1,
+                feature_id='125',
+                phase='019-workflow-assurance-profiles',
+                execution_scope='repository-worktree',
+                source_commit=candidate['source_commit'],
+                candidate_sha256=sha(canonical(candidate)),
+                preregistration_sha256=evidence['preregistration_ref']['sha256'],
+                tiers_verified=list(_WA_ASSURANCE_TIERS),
+                cases_verified=list(_WA_PROFILE_CASES),
+                promoted=False,
+                active_gates_reduced=False,
+                independent_review_sha256=policy['independent_review_ref']['sha256'],
+            )
+        )
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, IndexError, RecursionError) as exc:
+        raise AssuranceError('profiles proof invalid: ' + str(exc)[:600]) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -2002,6 +2731,25 @@ def main():
         command = sub.add_parser(name)
         command.add_argument('--before', required=True); command.add_argument('--after', required=True)
         if name == 'record': command.add_argument('--owned-fields', required=True)
+    vrec = sub.add_parser('verify-receipt')
+    for name in ('repo', 'receipt', 'policy'):
+        vrec.add_argument('--' + name, required=True)
+    ptrans = sub.add_parser('plan-transition')
+    for name in ('repo', 'state', 'policy'):
+        ptrans.add_argument('--' + name, required=True)
+    ptrans.add_argument('--receipt')
+    rfail = sub.add_parser('route-failure')
+    for name in ('repo', 'request', 'policy'):
+        rfail.add_argument('--' + name, required=True)
+    pprof = sub.add_parser('preregister-profile')
+    for name in ('repo', 'preregistration', 'policy'):
+        pprof.add_argument('--' + name, required=True)
+    eprof = sub.add_parser('evaluate-profile')
+    for name in ('repo', 'comparison', 'policy'):
+        eprof.add_argument('--' + name, required=True)
+    vprof = sub.add_parser('verify-profiles-ready')
+    for name in ('repo', 'evidence', 'policy'):
+        vprof.add_argument('--' + name, required=True)
     args = parser.parse_args()
     def read(path): return parse_json(Path(path).read_bytes())
     try:
@@ -2014,6 +2762,24 @@ def main():
         if args.command == 'assess':
             result = assess_repository(args.repo, args.source_commit, read(args.inputs), read(args.environment_names),
                                        read(args.record_ownership) if args.record_ownership else None)
+            print(canonical(result).decode()); return 0
+        if args.command == 'verify-receipt':
+            result = verify_stage_receipt(args.repo, read(args.receipt), policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'plan-transition':
+            result = plan_receipt_transition(args.repo, read(args.state), read(args.receipt) if args.receipt else None, policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'route-failure':
+            result = route_failed_attempt(args.repo, read(args.request), policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'preregister-profile':
+            result = preregister_profile_comparison(args.repo, read(args.preregistration), policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'evaluate-profile':
+            result = evaluate_profile_comparison(args.repo, read(args.comparison), policy=read(args.policy))
+            print(canonical(result).decode()); return 0
+        if args.command == 'verify-profiles-ready':
+            result = verify_profiles_ready(args.repo, read(args.evidence), policy=read(args.policy))
             print(canonical(result).decode()); return 0
         before, after = read(args.before), read(args.after)
         if args.command == 'compare':

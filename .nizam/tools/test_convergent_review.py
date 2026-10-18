@@ -66,6 +66,7 @@ def run_case(case: Path, output: Path) -> subprocess.CompletedProcess[str]:
 
 
 WRAPPER = ROOT / 'tools/linux_trial_sandbox.sh'
+DOCKER_WRAPPER = ROOT / 'tools/docker_trial_sandbox.sh'
 ADAPTER = ROOT / 'tools/isolated_trial_adapter.py'
 NAMESPACES = ['unshare', '--user', '--map-root-user', '--net', '--ipc', '--uts', '--pid', '--fork', '--mount-proc']
 
@@ -85,26 +86,71 @@ def script(path, contents):
     return path
 
 
-def sandbox_command(trial, runner):
-    return [str(WRAPPER), '--root', str(trial), '--runner', str(runner), '--', str(runner)]
+def sandbox_command(wrapper, trial, runner):
+    return [str(wrapper), '--root', str(trial), '--runner', str(runner), '--', str(runner)]
 
 
 def adapter_command(adapter, trial, runner):
     return [str(adapter), '--root', str(trial), '--runner', str(runner), '--', str(runner)]
 
 
-def exercise_cross_files_network(scratch):
+def docker_mutant_wrapper(scratch, label, replacements):
+    """Copy the Docker wrapper into scratch with trusted constants reverted.
+
+    These scratch copies are the omission controls: they prove a boundary layer is
+    load-bearing by running an otherwise-identical wrapper with one or more layers
+    mounted. ``replacements`` is a sequence of (anchor, replacement) pairs; every
+    anchor must occur exactly once in the wrapper.
+    """
+    source = DOCKER_WRAPPER.read_text()
+    for anchor, _ in replacements:
+        if source.count(anchor) != 1:
+            raise RuntimeError(f'{label}: mutant anchor is not unique: {anchor}')
+    # The wrapper resolves its inner adapter next to itself; keep the scratch copy self-contained.
+    scratch.joinpath('isolated_trial_adapter.py').write_text(ADAPTER.read_text())
+    for anchor, replacement in replacements:
+        source = source.replace(anchor, replacement)
+    mutant = scratch / f'docker-wrapper-{label}.sh'
+    mutant.write_text(source)
+    mutant.chmod(0o755)
+    return mutant
+
+
+def landlock_passthrough(scratch):
+    """Inner-adapter stand-in that skips Landlock restriction (omission control only)."""
+    passthrough = script(scratch / 'landlock-passthrough.py',
+        '#!/usr/bin/env python3\nimport os,sys\n'
+        'argv=sys.argv[1:]\n'
+        'argv=argv[argv.index("--")+1:]\n'
+        'os.execv(argv[0],argv)\n')
+    return passthrough
+
+
+def exercise_cross_files_network(scratch, adapter):
     trial = scratch / 'cross-trial'; trial.mkdir()
     sentinel = scratch / 'sibling-secret'; sentinel.write_text('actual outside secret\n')
     file_probe = script(scratch / 'file-probe.py',
         '#!/usr/bin/env python3\nimport errno,pathlib\n'
         f'p=pathlib.Path({str(sentinel)!r})\n'
         'try:p.read_bytes()\n'
-        'except OSError as e:raise SystemExit(0 if e.errno==errno.EACCES else 51)\n'
+        # EACCES is the native Landlock denial; ENOENT is the unmapped-path denial
+        # inside the container. Reading the bytes at all is the failure (40).
+        'except OSError as e:raise SystemExit(0 if e.errno in (errno.EACCES,errno.ENOENT) else 51)\n'
         'raise SystemExit(40)\n')
-    execute(sandbox_command(trial,file_probe),0,'intact sibling-file boundary',trial)
-    # Namespaces remain intact; only Landlock is absent in this control.
-    execute(NAMESPACES+[str(file_probe)],40,'Landlock omitted; namespaces intact',trial)
+    execute(sandbox_command(adapter.wrapper, trial, file_probe),0,'intact sibling-file boundary',trial)
+    if adapter.kind == 'native':
+        # Namespaces remain intact; only Landlock is absent in this control.
+        execute(NAMESPACES+[str(file_probe)],40,'Landlock omitted; namespaces intact',trial)
+    else:
+        # Only the production wrapper's mount omission keeps the sibling unmapped:
+        # a scratch wrapper copy with the sibling bind-mounted and the inner
+        # Landlock restriction omitted must read it (40), proving the probe bytes
+        # are genuinely reachable once the boundary layers are removed.
+        mounted = docker_mutant_wrapper(scratch, 'mounted-sibling', (
+            ('EXTRA_MOUNTS=()', f'EXTRA_MOUNTS=(--volume "{sentinel}:{sentinel}:ro")'),
+            ('INNER_ADAPTER="$SELF_DIR/isolated_trial_adapter.py"', f'INNER_ADAPTER={str(landlock_passthrough(scratch))!r}'),
+        ))
+        execute(sandbox_command(mounted, trial, file_probe),40,'sibling bind-mounted; mount omission load-bearing',trial)
     with socket.socket() as listener:
         listener.bind(('127.0.0.1',0)); listener.listen(8)
         port = listener.getsockname()[1]
@@ -119,13 +165,21 @@ def exercise_cross_files_network(scratch):
             ' if e.errno in (errno.ECONNREFUSED,errno.ENETUNREACH,errno.EHOSTUNREACH,errno.ETIMEDOUT):raise SystemExit(0)\n'
             ' raise SystemExit(52)\n'
             'raise SystemExit(41)\n')
-        execute(sandbox_command(trial,network_probe),0,'intact network boundary',trial)
-        # The production Landlock adapter still runs; only namespaces are absent.
-        execute(adapter_command(ADAPTER,trial,network_probe),41,'namespaces omitted; Landlock intact',trial)
+        execute(sandbox_command(adapter.wrapper, trial, network_probe),0,'intact network boundary',trial)
+        if adapter.kind == 'native':
+            # The production Landlock adapter still runs; only namespaces are absent.
+            execute(adapter_command(ADAPTER,trial,network_probe),41,'namespaces omitted; Landlock intact',trial)
+        else:
+            # Only --network none keeps the proven-live listener unreachable: a
+            # scratch wrapper copy attached to the host network must connect (41).
+            host_network = docker_mutant_wrapper(scratch, 'host-network', (
+                ('NETWORK_MODE="none"', 'NETWORK_MODE="host"'),
+            ))
+            execute(sandbox_command(host_network, trial, network_probe),41,'host network attached; network omission load-bearing',trial)
         peer,_ = listener.accept(); peer.close()
 
 
-def exercise_generated_execution(scratch):
+def exercise_generated_execution(scratch, adapter):
     trial = scratch / 'exec-trial'; trial.mkdir()
     probe = script(scratch / 'execution-probe.py',
         '#!/usr/bin/env python3\nimport errno,os,pathlib\n'
@@ -135,31 +189,88 @@ def exercise_generated_execution(scratch):
         'try:os.execv(str(p.resolve()),[str(p.resolve())])\n'
         'except OSError as e:raise SystemExit(0 if e.errno==errno.EACCES else 53)\n'
         'raise SystemExit(54)\n')
-    execute(sandbox_command(trial,probe),0,'intact generated-execution boundary (EACCES only)',trial)
+    execute(sandbox_command(adapter.wrapper, trial, probe),0,'intact generated-execution boundary (EACCES only)',trial)
     adapter_source = ADAPTER.read_text()
     needle = 'trial_access = handled & ~EXECUTE'
     if adapter_source.count(needle) != 1:
         raise RuntimeError('generated-execution mutant anchor is not unique')
     mutant = script(scratch / 'execute-permitted-adapter.py',adapter_source.replace(needle,'trial_access = handled'))
-    execute(NAMESPACES+adapter_command(mutant,trial,probe),42,'generated execution permitted; namespaces and Landlock retained',trial)
     # A nonexistent interpreter must be a setup failure, never a confinement pass.
     bad_probe = script(scratch / 'bad-interpreter-probe.py',probe.read_text().replace('#!/bin/sh\\nexit 42\\n','#!/nonexistent-nizam-test-interpreter\\nexit 42\\n'))
-    execute(NAMESPACES+adapter_command(mutant,trial,bad_probe),53,'missing interpreter rejected as setup error',trial)
+    if adapter.kind == 'native':
+        execute(NAMESPACES+adapter_command(mutant,trial,probe),42,'generated execution permitted; namespaces and Landlock retained',trial)
+        execute(NAMESPACES+adapter_command(mutant,trial,bad_probe),53,'missing interpreter rejected as setup error',trial)
+    else:
+        exec_permitted = docker_mutant_wrapper(scratch, 'exec-permitted', (
+            ('INNER_ADAPTER="$SELF_DIR/isolated_trial_adapter.py"', f'INNER_ADAPTER={str(mutant)!r}'),
+        ))
+        execute(sandbox_command(exec_permitted, trial, probe),42,'generated execution permitted; container confinement retained',trial)
+        execute(sandbox_command(exec_permitted, trial, bad_probe),53,'missing interpreter rejected as setup error',trial)
+
+
+def exercise_docker_guards(scratch, adapter):
+    """Live in-sandbox regression guards, exercised only under the Docker adapter."""
+    trial = scratch / 'guard-trial'; trial.mkdir()
+    ambient = scratch / 'ambient-secret'; ambient.write_text('ambient host-only secret\n')
+    guard = script(scratch / 'guard-probe.py',
+        '#!/usr/bin/env python3\nimport ctypes,os,pathlib\n'
+        f'ambient=pathlib.Path({str(ambient)!r})\n'
+        # /proc is outside every Landlock rule, so capabilities are read via capget(2).
+        # Version 2 is used deliberately: v3 returns EINVAL on this kernel/user pair.
+        '_hdr=(ctypes.c_uint32*4)(0x20071026,0,0,0)\n'
+        '_data=(ctypes.c_uint32*3)()\n'
+        '_rc=ctypes.CDLL(None,use_errno=True).syscall(125,ctypes.byref(_hdr),ctypes.byref(_data))\n'
+        'fail=None\n'
+        'if _rc!=0 or any(_data[:2]): fail=61\n'
+        "elif any(os.path.exists(sock) for sock in ('/var/run/docker.sock','/run/docker.sock')): fail=62\n"
+        'elif os.getpid()!=1: fail=63\n'
+        "elif os.environ.get('NIZAM_AMBIENT_MARK') is not None: fail=64\n"
+        "elif set(os.environ)!={'HOME','PATH','PYTHONDONTWRITEBYTECODE'}: fail=65\n"
+        'else:\n'
+        ' try:\n'
+        '  ambient.read_bytes(); fail=66\n'
+        ' except OSError: pass\n'
+        'raise SystemExit(fail or 0)\n')
+    environment = os.environ.copy()
+    environment['NIZAM_AMBIENT_MARK'] = 'must-not-forward-into-trial'
+    result = subprocess.run(sandbox_command(adapter.wrapper, trial, guard), cwd=trial, env=environment,
+                            text=True, capture_output=True, timeout=60, check=False)
+    print(f'docker live guards: EXIT: {result.returncode} (expected 0)', flush=True)
+    if result.stdout: print(result.stdout, end='')
+    if result.stderr: print(result.stderr, end='', file=sys.stderr)
+    if result.returncode != 0:
+        raise RuntimeError(f'docker live guards: expected 0, got {result.returncode}')
+    if not ambient.is_file():
+        raise RuntimeError('ambient secret missing on the host; host-existence proof void')
+    print('DOCKER LIVE GUARDS PASS: CapEff zero; no daemon socket; fresh PID namespace; '
+          'fixed minimal environment; ambient marker not forwarded; host-existing ambient file unreadable inside', flush=True)
 
 
 UNSUPPORTED_REASON_PREFIX = "UNSUPPORTED: user-namespace isolation unavailable"
 ISOLATION_PROBE_COMMAND = ("unshare", "--user", "--map-root-user", "true")
 ISOLATION_PROBE_TIMEOUT_SECONDS = 20
+DOCKER_PROBE_TIMEOUT_SECONDS = 60
 ISOLATION_DEPENDENT_TESTS: list[str] = []
-_PROBE_CACHE: list["IsolationProbeResult"] = []
 
 
 @dataclasses.dataclass(frozen=True)
 class IsolationProbeResult:
-    """Outcome of the host user-namespace capability probe."""
+    """Outcome of a host sandbox-capability probe."""
 
     available: bool
     detail: str
+
+
+@dataclasses.dataclass(frozen=True)
+class IsolationAdapter:
+    """A selectable trial-sandbox adapter implementing the shared adapter protocol."""
+
+    kind: str  # 'native' or 'docker'
+    wrapper: Path
+
+
+NATIVE_ADAPTER = IsolationAdapter('native', WRAPPER)
+DOCKER_ADAPTER = IsolationAdapter('docker', DOCKER_WRAPPER)
 
 
 def probe_user_namespace_isolation() -> IsolationProbeResult:
@@ -181,16 +292,94 @@ def probe_user_namespace_isolation() -> IsolationProbeResult:
     return IsolationProbeResult(False, lines[0] if lines else f"probe exited {completed.returncode}")
 
 
+def probe_docker_isolation() -> IsolationProbeResult:
+    """Probe the Docker adapter: daemon, pinned image, and a smoke trial; never raises."""
+    try:
+        completed = subprocess.run(
+            ["bash", str(DOCKER_WRAPPER), "--probe"], stdin=subprocess.DEVNULL, capture_output=True,
+            text=True, timeout=DOCKER_PROBE_TIMEOUT_SECONDS, check=False,
+        )
+    except FileNotFoundError:
+        return IsolationProbeResult(False, "bash or the Docker wrapper not found")
+    except subprocess.TimeoutExpired:
+        return IsolationProbeResult(False, f"docker probe timed out after {DOCKER_PROBE_TIMEOUT_SECONDS}s")
+    except OSError as exc:
+        return IsolationProbeResult(False, f"docker probe could not run: {exc}")
+    if completed.returncode != 0:
+        lines = (completed.stderr or completed.stdout).strip().splitlines()
+        return IsolationProbeResult(False, lines[0] if lines else f"docker probe exited {completed.returncode}")
+    try:
+        with tempfile.TemporaryDirectory(prefix='nizam-docker-smoke-') as temporary:
+            scratch = Path(temporary)
+            trial = scratch / 'trial'
+            trial.mkdir()
+            runner = script(scratch / 'smoke-runner.py', '#!/usr/bin/env python3\n')
+            smoked = subprocess.run(
+                sandbox_command(DOCKER_WRAPPER, trial, runner), cwd=trial, text=True,
+                capture_output=True, timeout=DOCKER_PROBE_TIMEOUT_SECONDS, check=False,
+            )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return IsolationProbeResult(False, f"docker smoke trial failed: {exc}")
+    if smoked.returncode != 0:
+        return IsolationProbeResult(False, f"docker smoke trial exited {smoked.returncode}")
+    return IsolationProbeResult(True, "")
+
+
+def probe_adapter(adapter: IsolationAdapter) -> IsolationProbeResult:
+    if adapter.kind == 'docker':
+        return probe_docker_isolation()
+    return probe_user_namespace_isolation()
+
+
+def select_isolation_adapter(explicit: str | None) -> tuple[IsolationAdapter | None, str]:
+    """Select the sandbox adapter: explicit force (fail-closed) or native-first auto-selection."""
+    if explicit is not None:
+        requested = Path(explicit)
+        for candidate in (NATIVE_ADAPTER, DOCKER_ADAPTER):
+            if requested.resolve() == candidate.wrapper.resolve():
+                probed = probe_adapter(candidate)
+                if probed.available:
+                    return candidate, ""
+                return None, f"forced adapter {candidate.wrapper.name} unavailable: {probed.detail}"
+        return None, f"unknown isolation adapter: {explicit}"
+    native = probe_user_namespace_isolation()
+    if native.available:
+        return NATIVE_ADAPTER, ""
+    docker = probe_docker_isolation()
+    if docker.available:
+        return DOCKER_ADAPTER, ""
+    return None, f"native probe: {native.detail}; docker probe: {docker.detail}"
+
+
+_SELECTED_ADAPTER: IsolationAdapter | None = None
+_ADAPTER_UNAVAILABLE_DETAIL = ""
+
+
+def configure_isolation_adapter(explicit: str | None) -> IsolationAdapter | None:
+    """Run selection once per process and record it; returns the selected adapter or None."""
+    global _SELECTED_ADAPTER, _ADAPTER_UNAVAILABLE_DETAIL
+    _SELECTED_ADAPTER, _ADAPTER_UNAVAILABLE_DETAIL = select_isolation_adapter(explicit)
+    return _SELECTED_ADAPTER
+
+
+def selected_adapter() -> IsolationAdapter:
+    if _SELECTED_ADAPTER is None:
+        raise RuntimeError('no isolation adapter selected')
+    return _SELECTED_ADAPTER
+
+
+def adapter_unavailable_detail() -> str:
+    return _ADAPTER_UNAVAILABLE_DETAIL
+
+
 def requires_user_namespace_isolation(test_function):
-    """Report the test UNSUPPORTED (a skip) when the host cannot prove isolation."""
+    """Report the test UNSUPPORTED (a skip) when no sandbox adapter is selectable."""
     ISOLATION_DEPENDENT_TESTS.append(test_function.__name__)
 
     @functools.wraps(test_function)
     def wrapper(self, *args, **kwargs):
-        if not _PROBE_CACHE:
-            _PROBE_CACHE.append(probe_user_namespace_isolation())
-        if not _PROBE_CACHE[0].available:
-            self.skipTest(f"{UNSUPPORTED_REASON_PREFIX} ({_PROBE_CACHE[0].detail})")
+        if _SELECTED_ADAPTER is None:
+            self.skipTest(f"{UNSUPPORTED_REASON_PREFIX} ({_ADAPTER_UNAVAILABLE_DETAIL})")
         return test_function(self, *args, **kwargs)
 
     return wrapper
@@ -477,6 +666,7 @@ class SemanticMutationTests(unittest.TestCase):
                 "--packet", str(FIXTURES / "01-no-findings/packet.json"),
                 "--prompt-template", str(PROMPT_TEMPLATE),
                 "--runner", str(FAKE_RUNNER),
+                "--isolation-adapter", str(selected_adapter().wrapper),
                 "--output-dir", str(output),
             ],
             cwd=ROOT, text=True, capture_output=True, check=False,
@@ -676,6 +866,7 @@ class SemanticMutationTests(unittest.TestCase):
         result = subprocess.run(
             ["python3", str(PROMPT_EVAL), "--packet", str(FIXTURES / "01-no-findings/packet.json"),
              "--prompt-template", str(PROMPT_TEMPLATE), "--runner", str(FAKE_RUNNER),
+             "--isolation-adapter", str(selected_adapter().wrapper),
              "--output-dir", str(output)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
@@ -901,7 +1092,10 @@ class SemanticMutationTests(unittest.TestCase):
 
     @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_cross_trial_files_and_network(self) -> None:
-        exercise_cross_files_network(self.temp)
+        adapter = selected_adapter()
+        exercise_cross_files_network(self.temp, adapter)
+        if adapter.kind == 'docker':
+            exercise_docker_guards(self.temp, adapter)
 
 
     def _git_repo(self) -> tuple[Path, str, str]:
@@ -1001,7 +1195,7 @@ class SemanticMutationTests(unittest.TestCase):
 
     @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_execution_of_runner_generated_trial_file(self) -> None:
-        exercise_generated_execution(self.temp)
+        exercise_generated_execution(self.temp, selected_adapter())
 
     @requires_user_namespace_isolation
     def test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files(self) -> None:
@@ -1023,6 +1217,7 @@ class SemanticMutationTests(unittest.TestCase):
         result = subprocess.run([
             "python3", str(PROMPT_EVAL), "--packet", str(FIXTURES / "01-no-findings/packet.json"),
             "--prompt-template", str(PROMPT_TEMPLATE), "--runner", str(runner),
+            "--isolation-adapter", str(selected_adapter().wrapper),
             "--output-dir", str(self.temp / "symlink-evaluation"),
         ], cwd=ROOT, text=True, capture_output=True, check=False)
         self.assertNotEqual(result.returncode, 0)
@@ -1278,7 +1473,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__, epilog="All other arguments are passed to unittest.")
     parser.add_argument("--allow-unsupported-isolation", action="store_true",
                         help="local development only, CI never passes it: do not fail the run for UNSUPPORTED isolation-dependent tests")
+    parser.add_argument("--isolation-adapter", default=None,
+                        help="force a specific sandbox adapter (tools/linux_trial_sandbox.sh or tools/docker_trial_sandbox.sh); "
+                             "auto-selects native-first when absent; a forced adapter whose capability probe fails is reported UNSUPPORTED")
     arguments, remaining = parser.parse_known_args(sys.argv[1:] if argv is None else argv)
+    adapter = configure_isolation_adapter(arguments.isolation_adapter)
+    if adapter is not None:
+        digest = hashlib.sha256(adapter.wrapper.read_bytes()).hexdigest()
+        print(f"SELECTED ISOLATION ADAPTER: {adapter.wrapper.relative_to(ROOT)} sha256={digest}", file=sys.stderr)
+    else:
+        print(f"SELECTED ISOLATION ADAPTER: none ({_ADAPTER_UNAVAILABLE_DETAIL})", file=sys.stderr)
     program = unittest.main(argv=[sys.argv[0], *remaining], verbosity=2, exit=False)
     result = program.result
     unsupported = sum(1 for _, reason in result.skipped if reason.startswith(UNSUPPORTED_REASON_PREFIX))

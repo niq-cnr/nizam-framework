@@ -2,10 +2,13 @@
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
-version: 0.2.1
+version: 0.3.0
 status: active
 authoritative_source: methodology/01_execution.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-18"
+    summary: "Extend Section 2.1 with semantic 5-route task classification (trivial, bugfix, small-change, standard-feature, high-risk), lightweight contract amendments via tools/start_path.py amend-contract when goals and invariants are unchanged, exclusive per-execution evidence capture via tools/start_path.py capture, capability preflight, and blocking vs. advisory_minor verdict separation."
   - version: "0.2.1"
     date: "2026-10-16"
     summary: "Name the bug-fix and small-change routes. tools/start_path.py consumes their cause, scope, and intent records. The two feature loops stay mandatory and are not skipped."
@@ -60,13 +63,27 @@ against a contract whose `status` is anything other than `"approved"`. This is
 the single most important rule in this protocol — every other gate exists to
 protect it.
 
-### 2.1 Non-feature routes
+### 2.1 Semantic task routing and non-feature routes
 
-A bug fix and a small unambiguous change are not features. They do not open a
-product specification or a new contract, and they do not pass through Loop 1.
-`tools/start_path.py` is the consumer of their records. The feature-path gate
-count is unchanged.
+Before starting a change, classify the task using `tools/start_path.py classify`
+based on semantic change properties (files touched, defect repair vs. new
+contract obligations, schema/interface impact, and security/isolation/runtime
+boundaries), never line count alone. Classification returns the selected route
+(`trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`),
+required gates, review remit, and explicit stopping conditions bounded by
+`03_circuit_breaker.md` (maximum 3 attempts).
 
+ A bug fix, a small unambiguous change, and a trivial editorial adjustment are
+not features. They do not open a product specification or a new contract, and
+they do not pass through Loop 1. `tools/start_path.py` is the consumer of their
+records. The feature-path gate count is unchanged.
+
+- **Trivial change.** Editorial, comment, or documentation-only adjustments that
+  do not touch schemas, tools, contracts, or security boundaries may begin when
+  `tools/start_path.py begin trivial --id <id>` exits 0 (reading
+  `.agent/evidence/<id>-intent.json` against `schema/small_change_intent.schema.json`
+  with `needs_new_contract: false`) and complete when
+  `tools/start_path.py done trivial --id <id>` exits 0.
 - **Bug fix.** Implementation may begin only when
   `tools/start_path.py begin bugfix --id <id>` exits 0. That command reads
   `.agent/evidence/<id>-cause.json` against `schema/bugfix_cause.schema.json`
@@ -87,6 +104,11 @@ count is unchanged.
   `tools/start_path.py done small-change --id <id>` exits 0, which requires
   the same passing QA record. Use the feature path when the change needs a
   new contract.
+- **Standard feature and high-risk routes.** Changes that introduce new contract
+  obligations or modify schemas (`standard-feature`), or touch security/isolation,
+  authority verification, or persistent-runtime boundaries (`high-risk`), MUST
+  use the full Loop 1 and Loop 2 state machine (`high-risk` additionally requires
+  capability preflight and convergent review or the isolation boundary suite).
 
 ## 3. Loop 2 — Post-Code Repair
 
@@ -128,19 +150,27 @@ per the Dependency Enforcement Rule (00_planning.md Sec 5).
 ```
 
 A Generator implementing Loop 2 MUST implement only the contracted scope. If,
-during implementation, the Generator discovers the contract itself needs to
-change (a missed file, an incorrect deliverable), it MUST stop and propose a
-contract revision — re-entering Loop 1 — rather than silently expanding scope
-under cover of "finishing the job."
+during implementation, the Generator discovers the contract needs a substantive
+change to its goals, `non_goals`, acceptance intent, or security/isolation
+boundaries, it MUST stop and propose a contract revision — re-entering Loop 1 —
+rather than silently expanding scope under cover of "finishing the job." For a
+bounded mechanical update (adding a supporting file or correcting a verification
+command while `feature_id`, `non_goals`, and security invariants remain
+unchanged), the Orchestrator may validate and record a structured amendment on
+the approved contract via `tools/start_path.py amend-contract`.
 
 **Evidence is a completion gate, not post-processing.** A passing QA JSON block
 proves the Evaluator's decision, but the feature remains `in_progress` until the
 Orchestrator verifies that every contracted verification has a corresponding
 externalised file under `.agent/evidence/`, that the QA verdict references those
 paths, and that each referenced path exists and records the command/result plus
-the actual exit status. Missing or unreferenced evidence is a Loop 2 failure and
-uses the same bounded repair loop; it is never filled in after the feature is
-marked complete.
+the actual exit status. Use `tools/start_path.py preflight` before a governed
+attempt and `tools/start_path.py capture` to write exclusive per-execution
+evidence files (recording command `argv`, `cwd`, `revision`, `duration_ms`,
+`completion_state`, and `exit_code` without silently overwriting prior
+attempts). Missing or unreferenced evidence is a Loop 2 failure and uses the
+same bounded repair loop; it is never filled in after the feature is marked
+complete.
 
 ## 4. The JSON Verdict Parse Rule
 
@@ -160,8 +190,13 @@ This is restated here, not redefined — `standard/AGF.md` Section 4 is
 authoritative for the rule itself. The load-bearing consequence for this
 protocol is: **prose framing never substitutes for the JSON block.** A report
 that reads "mostly approved, one minor note" is a rejection if its JSON verdict
-carries a non-empty `issues` array. An orchestrator or Generator reading a gate
-result MUST parse only the JSON block to decide whether to advance.
+carries a non-empty `issues` array. Conversely, blocking findings (`issues`,
+`missing_acceptance_coverage`, `unsupported_claims`, `required_fixes`) MUST
+cite concrete evidence or specification defects; optional suggestions and minor
+observations belong in `advisory_minor` (`convergent_agf_verdict` /
+`tools/start_path.py check-verdict`) and do not block advancement when the
+blocking arrays are empty. An orchestrator or Generator reading a gate result
+MUST parse only the JSON block to decide whether to advance.
 
 ## 5. Circuit Breaker Cross-Reference
 

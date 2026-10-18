@@ -6,11 +6,13 @@ reimplement the prose.
 """
 
 from pathlib import Path
+import json
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 GUIDE = ROOT / "docs/guide" / "index.html"
+NIZAM_INDEX = ROOT / "NIZAM.json"
 
 
 def section(text, start, end):
@@ -28,6 +30,7 @@ def require(text, needle):
 def main():
     readme = README.read_text(encoding="utf-8")
     guide = GUIDE.read_text(encoding="utf-8")
+    fw_version = json.loads(NIZAM_INDEX.read_text(encoding="utf-8"))["framework"]["version"]
     paths = section(readme, "## Start paths", "## Quickstart")
     guide_paths = section(guide, 'id="start-paths"', 'id="execution-loop"')
     install = section(readme, "## Quickstart", "## Local governance")
@@ -52,7 +55,7 @@ def main():
             if banned in text:
                 raise SystemExit("comparison claim in public entry: " + banned)
 
-    require(install, "--tag v1.5.0")
+    require(install, f"--tag v{fw_version}")
     require(install, "never a floating branch (`main`, `master`, `HEAD` are all refused)")
     require(install, "`tools/validate.sh`")
     require(paths, "Spec Kit")

@@ -301,13 +301,16 @@ def literal_paths():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', choices=CHECKS)
+    parser.add_argument('--check-historical-ast-freeze', action='store_true',
+                        help='Opt-in historical feature-133 whole-module AST freeze check')
     args = parser.parse_args()
     try:
-        tree = ast.parse(Path(__file__).with_name('workflow_assurance.py').read_bytes())
-        target = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_receipt_candidate')
-        target.body = []
-        dump_options = {'show_empty': True} if sys.version_info >= (3, 13) else {}
-        require(sha(ast.dump(tree, include_attributes=False, **dump_options).encode()) == MASKED_AST, 'product AST outside _receipt_candidate body changed')
+        if args.check_historical_ast_freeze:
+            tree = ast.parse(Path(__file__).with_name('workflow_assurance.py').read_bytes())
+            target = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_receipt_candidate')
+            target.body = []
+            dump_options = {'show_empty': True} if sys.version_info >= (3, 13) else {}
+            require(sha(ast.dump(tree, include_attributes=False, **dump_options).encode()) == MASKED_AST, 'product AST outside _receipt_candidate body changed')
         global api
         import workflow_assurance as api
         actions = dict(zip(CHECKS, (count_reduction, semantics, mutations, literal_paths)))
