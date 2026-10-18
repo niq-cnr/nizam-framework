@@ -124,8 +124,8 @@ change_log:
 `evaluate_profile_comparison`, and `verify_profiles_ready` (plus CLI subcommands
 `preregister-profile`, `evaluate-profile`, `verify-profiles-ready`, `verify-receipt`,
 `plan-transition`, and `route-failure`). Feature 124 preregisters `Routine`, `Standard`,
-and `High-assurance` tier applicability, exact [`standard/AGF.md`](../standard/AGF.md) and
-[`standard/capability_profiles.md`](../standard/capability_profiles.md) role/profile bindings,
+and `High-assurance` tier applicability, exact `standard/AGF.md` and
+`standard/capability_profiles.md` role/profile bindings,
 stable A11 baseline controls, candidate/test-bundle digests, zero missed-blocker tolerance,
 and cost/latency bounds before any shadow run starts. Feature 125 evaluates same-candidate
 baseline vs. shadow runs, records every outcome including failures, rejects promotion
