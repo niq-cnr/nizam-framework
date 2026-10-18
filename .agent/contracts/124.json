@@ -1,0 +1,69 @@
+{
+  "contract_id": "124",
+  "feature_id": "124",
+  "name": "Preregister assurance profile comparison",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_019.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/124.json",
+        "purpose": "Approved feature contract for Phase 019 Feature 124 profile preregistration."
+      },
+      {
+        "path": ".agent/qa/124.json",
+        "purpose": "Independent QA verdict for Feature 124 profile preregistration cases."
+      },
+      {
+        "path": ".agent/evidence/125/preregistration.json",
+        "purpose": "Committed profile comparison preregistration record prior to shadow runs."
+      },
+      {
+        "path": ".agent/evidence/125/prereg-policy.json",
+        "purpose": "Policy binding for Feature 124 profile preregistration."
+      },
+      {
+        "path": ".agent/evidence/125/prereg-result.json",
+        "purpose": "Verified output of preregister_profile_comparison."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Implement preregister_profile_comparison enforcing canonical role reuse, causal commit ordering before shadow runs, stable baseline controls, and tier applicability."
+      },
+      {
+        "path": "tools/test_workflow_assurance.py",
+        "purpose": "Exercise preregister-before-run, roles-reused, and reject-unstable-baseline cases."
+      }
+    ]
+  },
+  "non_goals": [
+    "No persistent-runtime SBCL session profile claims while Phase 020 Features 130-132 remain pending.",
+    "No automatic gate reduction or self-promotion."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case preregister-before-run",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case preregister-before-run"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case roles-reused",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case roles-reused"
+    },
+    {
+      "acceptance_test": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unstable-baseline",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unstable-baseline"
+    }
+  ],
+  "estimated_lines": 1600,
+  "evidence_dir": ".agent/evidence/125/",
+  "evidence_convention": ".agent/evidence/125/preregistration.json, .agent/evidence/125/prereg-result.json, and .agent/evidence/125/captures/case-*.json",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-10-18T11:15:00Z",
+    "revisions": 1
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

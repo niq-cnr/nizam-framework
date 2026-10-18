@@ -2227,6 +2227,28 @@ def preregister_profile_comparison(repo, preregistration, *, policy, live_env=Tr
             'baseline controls must bind to the same candidate as preregistration',
         )
 
+        # Enforce causal commit ordering in Git history: no shadow run capture may precede preregistration
+        rev_list = git(root, 'rev-list', '--reverse', candidate['source_commit'] + '..HEAD').decode().splitlines()
+        last_prereg_idx = None
+        first_shadow_idx = None
+        for idx, rev in enumerate(rev_list):
+            changed = [
+                p
+                for p in git(root, 'diff-tree', '--no-commit-id', '--name-only', '-r', '-z', rev).decode().split('\0')
+                if p
+            ]
+            for p in changed:
+                bname = Path(p).name.lower()
+                if 'preregistration' in bname and 'policy' not in bname:
+                    last_prereg_idx = idx
+                if ('shadow' in bname or 'shad-' in bname or 'shad_' in bname) and first_shadow_idx is None:
+                    first_shadow_idx = idx
+        if first_shadow_idx is not None:
+            require(
+                last_prereg_idx is not None and last_prereg_idx < first_shadow_idx,
+                'causal ordering violation: shadow run capture commit exists before preregistration commit',
+            )
+
         test_bundle_raw = _receipt_artifact(root, preregistration['test_bundle_ref'])
         test_bundle = parse_json(test_bundle_raw)
         require(test_bundle_raw.rstrip(b'\n') == canonical(test_bundle), 'test bundle canonical JSON')
@@ -2354,8 +2376,16 @@ def preregister_profile_comparison(repo, preregistration, *, policy, live_env=Tr
         raise AssuranceError('profile preregistration invalid: ' + str(exc)[:600]) from exc
 
 
+def _bundle_object_optional(value, required_keys, optional_keys, label):
+    require(type(value) is dict, f'invalid {label} object')
+    req_set = set(required_keys)
+    allowed_set = req_set | set(optional_keys)
+    actual_set = set(value.keys())
+    require(req_set <= actual_set and actual_set <= allowed_set, f'invalid closed {label}')
+
+
 def _profile_run_record(root, run, label, expected_candidate_sha, expected_commit, expected_tree, expected_bundle_sha):
-    _bundle_object(
+    _bundle_object_optional(
         run,
         (
             'run_id',
@@ -2374,6 +2404,7 @@ def _profile_run_record(root, run, label, expected_candidate_sha, expected_commi
             'command_count',
             'capture_ref',
         ),
+        ('profile_tier', 'executed_roles', 'argv', 'task_id'),
         label,
     )
     _receipt_text(run['run_id'], label + ' run_id')
@@ -2426,7 +2457,7 @@ def _profile_run_record(root, run, label, expected_candidate_sha, expected_commi
     cap_raw = _receipt_artifact(root, run['capture_ref'])
     cap = parse_json(cap_raw)
     require(cap_raw.rstrip(b'\n') == canonical(cap), f'{label} capture canonical JSON')
-    _bundle_object(
+    _bundle_object_optional(
         cap,
         (
             'schema_version',
@@ -2442,6 +2473,7 @@ def _profile_run_record(root, run, label, expected_candidate_sha, expected_commi
             'stdout',
             'stderr',
         ),
+        ('profile_tier', 'executed_roles', 'argv', 'task_id'),
         f'{label} capture',
     )
     require(
@@ -2458,8 +2490,9 @@ def _profile_run_record(root, run, label, expected_candidate_sha, expected_commi
         f'{label} capture accounting/outcome mismatch',
     )
     git(root, 'merge-base', '--is-ancestor', expected_commit, cap['revision'])
-    _receipt_artifact(root, cap['stdout']).decode('utf-8')
-    _receipt_artifact(root, cap['stderr']).decode('utf-8')
+    stdout_text = _receipt_artifact(root, cap['stdout']).decode('utf-8')
+    stderr_text = _receipt_artifact(root, cap['stderr']).decode('utf-8')
+    return cap, stdout_text, stderr_text
 
 
 def evaluate_profile_comparison(repo, comparison, *, policy, live_env=True):
@@ -2532,9 +2565,57 @@ def evaluate_profile_comparison(repo, comparison, *, policy, live_env=True):
 
         baseline_run = comparison['baseline_run']
         shadow_run = comparison['shadow_run']
-        _profile_run_record(root, baseline_run, 'baseline_run', candidate_digest, source_commit, source_tree, bundle_digest)
-        _profile_run_record(root, shadow_run, 'shadow_run', candidate_digest, source_commit, source_tree, bundle_digest)
+        base_cap, _, _ = _profile_run_record(root, baseline_run, 'baseline_run', candidate_digest, source_commit, source_tree, bundle_digest)
+        shad_cap, _, _ = _profile_run_record(root, shadow_run, 'shadow_run', candidate_digest, source_commit, source_tree, bundle_digest)
         require(baseline_run['run_id'] != shadow_run['run_id'], 'baseline and shadow run_id must be distinct')
+        require(
+            baseline_run['capture_ref']['path'] != shadow_run['capture_ref']['path']
+            and baseline_run['capture_ref']['sha256'] != shadow_run['capture_ref']['sha256'],
+            'baseline and shadow capture_ref must be distinct',
+        )
+        require(
+            base_cap['stdout']['path'] != shad_cap['stdout']['path']
+            and base_cap['stdout']['sha256'] != shad_cap['stdout']['sha256'],
+            'baseline and shadow runs cannot share identical command output',
+        )
+
+        # Enforce causal commit ordering: preregistration must be committed in an ancestor commit before shadow run capture
+        prereg_rev = policy['preregistration_ref']['revision']
+        shad_rev = shadow_run['capture_ref']['revision']
+        shad_path = shadow_run['capture_ref']['path']
+        git(root, 'merge-base', '--is-ancestor', prereg_rev, shad_rev)
+        require(
+            prereg_rev != shad_rev
+            and not git(root, '--literal-pathspecs', 'ls-tree', '-z', prereg_rev, '--', shad_path)
+            and not git(root, '--literal-pathspecs', 'ls-tree', '-z', prereg_rev, '--', shad_cap['stdout']['path']),
+            'causal ordering violation: shadow_run capture must be committed in a descendant commit after preregistration',
+        )
+
+        # Enforce profile/tier configuration bindings when present
+        if 'profile_tier' in baseline_run or 'profile_tier' in shadow_run or 'profile_tier' in base_cap or 'profile_tier' in shad_cap:
+            b_tier = baseline_run.get('profile_tier', base_cap.get('profile_tier'))
+            s_tier = shadow_run.get('profile_tier', shad_cap.get('profile_tier'))
+            require(
+                b_tier in ('Baseline', 'High-assurance') and s_tier == tier,
+                'baseline and shadow profile_tier binding mismatch',
+            )
+        if 'executed_roles' in baseline_run or 'executed_roles' in shadow_run or 'executed_roles' in base_cap or 'executed_roles' in shad_cap:
+            b_roles = baseline_run.get('executed_roles', base_cap.get('executed_roles'))
+            s_roles = shadow_run.get('executed_roles', shad_cap.get('executed_roles'))
+            require(
+                b_roles == list(_WA_ROLE_PROFILES.keys()) and s_roles == tier_spec['required_roles'],
+                'baseline and shadow executed_roles binding mismatch',
+            )
+        if 'argv' in baseline_run or 'argv' in shadow_run or 'argv' in base_cap or 'argv' in shad_cap:
+            b_argv = baseline_run.get('argv', base_cap.get('argv'))
+            s_argv = shadow_run.get('argv', shad_cap.get('argv'))
+            require(
+                type(b_argv) is list and b_argv and all(type(x) is str and bool(x.strip()) for x in b_argv)
+                and type(s_argv) is list and s_argv and all(type(x) is str and bool(x.strip()) for x in s_argv),
+                'baseline and shadow argv must be non-empty string lists',
+            )
+            if tier != 'High-assurance':
+                require(b_argv != s_argv, 'baseline and reduced-tier shadow runs cannot execute identical commands')
 
         require(
             comparison['requested_action'] == 'recommend-only',
@@ -2677,6 +2758,7 @@ def verify_profiles_ready(repo, evidence, *, policy):
             'profiles-ready evidence metadata',
         )
         candidate = evidence['candidate']
+        candidate_digest = sha(canonical(candidate))
         _profile_candidate(root, candidate, live_env=False)
 
         prereg = parse_json(_receipt_artifact(root, evidence['preregistration_ref']))
@@ -2685,17 +2767,37 @@ def verify_profiles_ready(repo, evidence, *, policy):
         actual_prereg_result = preregister_profile_comparison(root, prereg, policy=prereg_policy, live_env=False)
         require(actual_prereg_result == expected_prereg_result, 'profiles-ready preregistration result mismatch')
         require(canonical(prereg['candidate']) == canonical(candidate), 'profiles-ready candidate binding')
+        authority = _profile_authority(root, prereg_policy['authority_ref'], origin)
 
         comp_policy = parse_json(_receipt_artifact(root, evidence['comparison_policy_ref']))
-        require(type(evidence['comparisons']) is list and len(evidence['comparisons']) >= 4, 'profiles-ready comparisons list')
+        min_runs = _profile_int(prereg['thresholds']['min_comparison_runs'], 'thresholds min_comparison_runs', 1)
+        require(
+            type(evidence['comparisons']) is list and len(evidence['comparisons']) >= max(4, min_runs),
+            'profiles-ready comparisons list below min_comparison_runs threshold',
+        )
         tiers_recommended = set()
         rejected_blocker_seen = False
+        seen_comparison_ids = set()
+        forbidden_reviewers = {
+            authority['owner'].strip(),
+            'Root',
+            'Orchestrator',
+            'Planner',
+            'Generator',
+            'Validator',
+        }
         for row in evidence['comparisons']:
             _bundle_object(row, ('comparison_ref', 'result_ref'), 'profiles-ready comparison row')
             comp = parse_json(_receipt_artifact(root, row['comparison_ref']))
             expected_res = parse_json(_receipt_artifact(root, row['result_ref']))
             actual_res = evaluate_profile_comparison(root, comp, policy=comp_policy, live_env=False)
             require(actual_res == expected_res, 'profiles-ready comparison result mismatch')
+            require(
+                actual_res['comparison_id'] not in seen_comparison_ids,
+                'profiles-ready duplicate comparison_id',
+            )
+            seen_comparison_ids.add(actual_res['comparison_id'])
+            forbidden_reviewers.add(comp['operator_decision']['owner'].strip())
             require(
                 actual_res['promoted'] is False
                 and actual_res['active_gates_reduced'] is False
@@ -2715,7 +2817,7 @@ def verify_profiles_ready(repo, evidence, *, policy):
         require(type(case_proofs) is list and len(case_proofs) == len(_WA_PROFILE_CASES), 'profiles-ready case_proofs count')
         seen_cases = []
         for row in case_proofs:
-            _bundle_object(row, ('case', 'feature_id', 'command', 'exit_code'), 'profiles-ready case proof')
+            _bundle_object(row, ('case', 'feature_id', 'command', 'exit_code', 'capture_ref'), 'profiles-ready case proof')
             require(
                 row['case'] in _WA_PROFILE_CASES
                 and row['case'] not in seen_cases
@@ -2724,6 +2826,44 @@ def verify_profiles_ready(repo, evidence, *, policy):
                 and type(row['exit_code']) is int
                 and row['exit_code'] == 0,
                 'profiles-ready case proof row invalid',
+            )
+            case_cap_raw = _receipt_artifact(root, row['capture_ref'])
+            case_cap = parse_json(case_cap_raw)
+            require(case_cap_raw.rstrip(b'\n') == canonical(case_cap), f'case proof {row["case"]} capture canonical JSON')
+            _bundle_object_optional(
+                case_cap,
+                (
+                    'schema_version',
+                    'run_id',
+                    'candidate_sha256',
+                    'revision',
+                    'executed',
+                    'outcome',
+                    'exit_code',
+                    'duration_ms',
+                    'cost_units',
+                    'command_count',
+                    'stdout',
+                    'stderr',
+                ),
+                ('profile_tier', 'executed_roles', 'argv', 'task_id', 'case'),
+                f'case proof {row["case"]} capture',
+            )
+            require(
+                type(case_cap['schema_version']) is int
+                and case_cap['schema_version'] == 1
+                and case_cap['candidate_sha256'] == candidate_digest
+                and case_cap['executed'] is True
+                and case_cap['outcome'] == 'success'
+                and case_cap['exit_code'] == 0,
+                f'case proof {row["case"]} capture binding/outcome mismatch',
+            )
+            git(root, 'merge-base', '--is-ancestor', candidate['source_commit'], case_cap['revision'])
+            case_stdout = _receipt_artifact(root, case_cap['stdout']).decode('utf-8')
+            _receipt_artifact(root, case_cap['stderr']).decode('utf-8')
+            require(
+                f'PASS {row["case"]}' in case_stdout.splitlines(),
+                f'case proof {row["case"]} captured stdout missing PASS line',
             )
             seen_cases.append(row['case'])
         require(tuple(seen_cases) == _WA_PROFILE_CASES, 'profiles-ready case order/coverage')
@@ -2757,6 +2897,10 @@ def verify_profiles_ready(repo, evidence, *, policy):
             'profiles-ready independent review binding',
         )
         _receipt_text(review['reviewer'], 'profiles-ready reviewer')
+        require(
+            review['reviewer'].strip() not in forbidden_reviewers,
+            'profiles-ready independent reviewer must be distinct from authority owner and authoring producer',
+        )
         _receipt_gate(review)
 
         return copy.deepcopy(

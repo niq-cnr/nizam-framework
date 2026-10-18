@@ -1580,6 +1580,173 @@ def build_stage_receipt(
     }
 
 
+def _discover_cross_surface_status(root: Path) -> tuple[list[str], list[str], bool, list[dict[str, Any]], list[str]]:
+    """Discover all feature lists, phase YAMLs, and manifest.json and detect cross-surface status contradictions."""
+    import yaml
+
+    fl_paths = sorted(
+        p.relative_to(root).as_posix()
+        for p in (root / ".agent").glob("feature_list*.json")
+        if p.is_file()
+    ) if (root / ".agent").is_dir() else []
+
+    yaml_paths = sorted(
+        p.relative_to(root).as_posix()
+        for p in (root / "docs" / "planning").glob("phase_*.yaml")
+        if p.is_file()
+    ) if (root / "docs" / "planning").is_dir() else []
+
+    manifest_path = root / "docs" / "planning" / "manifest.json"
+    manifest_present = manifest_path.is_file()
+    manifest_phases: dict[str, dict[str, Any]] = {}
+    if manifest_present:
+        try:
+            m_doc = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for entry in m_doc.get("phases", []):
+                if isinstance(entry, dict) and isinstance(entry.get("id"), str):
+                    manifest_phases[entry["id"]] = entry
+        except (OSError, json.JSONDecodeError):
+            pass
+
+    yaml_by_phase: dict[str, tuple[str, dict[str, Any]]] = {}
+    yaml_steps: dict[str, tuple[str, str]] = {}
+    for yrel in yaml_paths:
+        try:
+            ydoc = yaml.safe_load((root / yrel).read_text(encoding="utf-8"))
+        except (OSError, yaml.YAMLError):
+            continue
+        if not isinstance(ydoc, dict):
+            continue
+        pid = ydoc.get("id") or ydoc.get("phase_id") or ydoc.get("phase")
+        if isinstance(pid, str):
+            yaml_by_phase[pid] = (yrel, ydoc)
+        for step in ydoc.get("steps", []):
+            if isinstance(step, dict) and step.get("id") is not None:
+                sid = str(step["id"])
+                sstatus = str(step.get("status", "")).upper()
+                yaml_steps[sid] = (yrel, sstatus)
+
+    contradictions: list[str] = []
+    phase_summary: list[dict[str, Any]] = []
+    seen_phases: set[str] = set()
+
+    def _norm_phase_status(val: Any) -> str | None:
+        if not isinstance(val, str) or not val.strip():
+            return None
+        low = val.strip().lower()
+        return "complete" if low == "completed" else low
+
+    for fl_rel in fl_paths:
+        try:
+            fl_doc = json.loads((root / fl_rel).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            contradictions.append(f"{fl_rel}: invalid JSON: {exc}")
+            continue
+        if not isinstance(fl_doc, dict):
+            continue
+        pid = str(fl_doc.get("phase", ""))
+        seen_phases.add(pid)
+        fl_pstatus = _norm_phase_status(fl_doc.get("phase_status"))
+        m_entry = manifest_phases.get(pid)
+        m_status = _norm_phase_status(m_entry.get("status")) if m_entry else None
+        y_entry = yaml_by_phase.get(pid)
+        y_status = _norm_phase_status(y_entry[1].get("status")) if y_entry else None
+
+        if m_entry is not None:
+            m_fl = m_entry.get("feature_list")
+            if isinstance(m_fl, str) and m_fl != fl_rel:
+                contradictions.append(
+                    f"phase {pid}: manifest feature_list ({m_fl}) != discovered ({fl_rel})"
+                )
+        if fl_pstatus and m_status and fl_pstatus != m_status:
+            contradictions.append(
+                f"phase {pid}: {fl_rel} phase_status={fl_pstatus!r} contradicts manifest status={m_status!r}"
+            )
+        if fl_pstatus and y_status and fl_pstatus != y_status:
+            contradictions.append(
+                f"phase {pid}: {fl_rel} phase_status={fl_pstatus!r} contradicts {y_entry[0]} status={y_status!r}"
+            )
+        if m_status and y_status and m_status != y_status:
+            contradictions.append(
+                f"phase {pid}: manifest status={m_status!r} contradicts {y_entry[0]} status={y_status!r}"
+            )
+
+        features = [f for f in fl_doc.get("features", []) if isinstance(f, dict)]
+        completed_count = 0
+        pending_count = 0
+        for feat in features:
+            fid = str(feat.get("id", ""))
+            fstatus = str(feat.get("status", ""))
+            if fstatus == "complete":
+                completed_count += 1
+            elif fstatus in ("pending", "in_progress", "blocked"):
+                pending_count += 1
+
+            if "passes" in feat:
+                if fstatus == "complete" and feat.get("passes") is not True:
+                    contradictions.append(
+                        f"{fl_rel}: feature {fid} has status='complete' but passes={feat.get('passes')!r}"
+                    )
+                if fstatus != "complete" and feat.get("passes") is True:
+                    contradictions.append(
+                        f"{fl_rel}: feature {fid} has status={fstatus!r} but passes=True"
+                    )
+                if fstatus == "complete":
+                    cpath = root / ".agent" / "contracts" / f"{fid}.json"
+                    qpath = root / ".agent" / "qa" / f"{fid}.json"
+                    if not cpath.is_file():
+                        contradictions.append(
+                            f"{fl_rel}: contemporary complete feature {fid} is missing contract .agent/contracts/{fid}.json"
+                        )
+                    if not qpath.is_file():
+                        contradictions.append(
+                            f"{fl_rel}: contemporary complete feature {fid} is missing QA verdict .agent/qa/{fid}.json"
+                        )
+
+            if fid in yaml_steps:
+                yrel, sstatus = yaml_steps[fid]
+                if sstatus in ("COMPLETED", "COMPLETE") and fstatus != "complete":
+                    contradictions.append(
+                        f"feature {fid}: {yrel} step status={sstatus!r} contradicts {fl_rel} status={fstatus!r}"
+                    )
+                elif fstatus == "complete" and sstatus not in ("COMPLETED", "COMPLETE"):
+                    contradictions.append(
+                        f"feature {fid}: {fl_rel} status='complete' contradicts {yrel} step status={sstatus!r}"
+                    )
+
+        effective_phase_status = m_status or fl_pstatus or y_status
+        if effective_phase_status == "complete":
+            non_terminal = [
+                str(f.get("id"))
+                for f in features
+                if f.get("status") not in ("complete", "cancelled")
+            ]
+            if non_terminal:
+                contradictions.append(
+                    f"phase {pid}: marked complete but {fl_rel} has non-terminal features: {', '.join(non_terminal)}"
+                )
+
+        phase_summary.append({
+            "phase": pid,
+            "feature_list": fl_rel,
+            "manifest_status": m_status,
+            "feature_list_status": fl_pstatus,
+            "yaml_status": y_status,
+            "total_features": len(features),
+            "completed_features": completed_count,
+            "pending_features": pending_count,
+        })
+
+    for pid, m_entry in manifest_phases.items():
+        if pid not in seen_phases:
+            fl_ref = m_entry.get("feature_list")
+            contradictions.append(
+                f"phase {pid}: listed in manifest.json ({fl_ref}) but feature list file is missing"
+            )
+
+    return fl_paths, yaml_paths, manifest_present, phase_summary, contradictions
+
+
 def generate_status_view(root: Path) -> dict[str, Any]:
     """Derive a concise read-only status/readiness view from authoritative live records."""
     head_res = subprocess.run(
@@ -1620,6 +1787,8 @@ def generate_status_view(root: Path) -> dict[str, Any]:
                 "dependencies": row.get("dependencies", []),
             })
 
+    fl_paths, yaml_paths, manifest_present, phase_summary, contradictions = _discover_cross_surface_status(root)
+
     cb = state.get("circuit_breaker", {})
     current_feat = str(state.get("current_feature", ""))
     active_breakers = {
@@ -1644,6 +1813,12 @@ def generate_status_view(root: Path) -> dict[str, Any]:
         "updated_at": state.get("updated_at"),
         "installed_governance": installed,
         "phase_019_profiles": phase_019_profiles,
+        "discovered_feature_lists": fl_paths,
+        "discovered_phase_yamls": yaml_paths,
+        "manifest_present": manifest_present,
+        "phase_summary": phase_summary,
+        "contradictions": contradictions,
+        "reconciled": len(contradictions) == 0,
         "active_circuit_breakers": active_breakers,
         "total_circuit_breaker_entries": len(cb),
         "recent_history": recent_history,
@@ -1659,12 +1834,18 @@ def render_status_markdown(view: dict[str, Any]) -> str:
         f"- **HEAD**: `{view.get('head_revision')}`",
         f"- **Active Position**: phase `{view.get('current_phase')}`, feature `{view.get('current_feature')}`, status `{view.get('status')}`",
         f"- **Updated At**: `{view.get('updated_at')}`",
+        f"- **Cross-Surface Reconciled**: `{view.get('reconciled')}` (`{len(view.get('discovered_feature_lists', []))}` feature lists, `{len(view.get('discovered_phase_yamls', []))}` phase YAMLs, `{len(view.get('contradictions', []))}` contradictions)",
     ]
     inst = view.get("installed_governance")
     if isinstance(inst, dict):
         lines.append(
             f"- **Installed Governance**: `{inst.get('tag')}` (`{inst.get('resolved_sha')}`)"
         )
+    if view.get("contradictions"):
+        lines.append("")
+        lines.append("## Cross-Surface Contradictions")
+        for item in view["contradictions"]:
+            lines.append(f"- {item}")
     if view.get("phase_019_profiles"):
         lines.append("")
         lines.append("## Phase 019 Assurance Profiles")

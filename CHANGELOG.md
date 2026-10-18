@@ -9,6 +9,35 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **2026-10-18 post-remediation follow-up (`A0–A5`, closing `F1–F6`).**
+  - **Route eligibility and completion integrity (`A1`, closes `F1` and `F5`)**:
+    `tools/start_path.py` unifies task classification, `begin`, `done`, `amend-contract`,
+    and route-bound receipt stages on a single canonical scope-eligibility check
+    (`verify_route_scope_eligibility`), rejects symlinks and `.nizam/` paths, checks
+    actual Git working-tree changes against declared scope (`verify_actual_changed_scope`),
+    and enforces non-vacuous QA completion (`>=1` passing check and non-empty evidence).
+  - **Producer-to-receipt integration and operational preflight (`A2`, closes `F2` and `F5`)**:
+    Added `tools/start_path.py publish` and `tools/start_path.py build-receipt` to commit
+    post-execution capture outputs, project closed 12-field receipt captures with valid
+    output revisions and full candidate environment bindings, and verify stage receipts
+    for `resume` without command re-execution. `preflight` now executes a live sandbox
+    isolation probe and separates `installed`, `available`, `operational`, and `qualified`.
+  - **Profile readiness causal ordering and empirical binding (`A3`, closes `F3`)**:
+    Hardened `preregister_profile_comparison`, `evaluate_profile_comparison`, and
+    `verify_profiles_ready` in `tools/workflow_assurance.py` to enforce causal commit
+    ordering (preregistration committed strictly before shadow run captures), distinct
+    baseline/shadow run bindings and tier-differentiated `argv`/`executed_roles`,
+    `min_comparison_runs`, captured `case_proofs`, and independent reviewer provenance.
+  - **Canonical protocol alignment and status reconciliation (`A4–A5`, closes `F4` and `F6`)**:
+    Aligned `standard/AGF.md` (`v0.4.0`), `tools/SKILL.md` (`v0.7.0`),
+    `methodology/00_planning.md` (`v0.4.0`), `methodology/01_execution.md` (`v0.4.0`),
+    `methodology/03_circuit_breaker.md` (`v0.5.0`), `standard/acceptance_bars.md`
+    (`v0.2.0`), and `standard/definition_of_done.md` (`v0.4.1`) on the three-tier
+    responsibility table, diagnostic stopping rules, single AGF verdict shape, and
+    structural C16 (`vlib_feature_list_lifecycle`) check; reconciled `.agent/contracts/124.json`,
+    `.agent/contracts/125.json`, `.agent/qa/124.json`, `.agent/qa/125.json`, and
+    `.agent/feature_list_022.json`, and expanded `generate_status_view` to dynamically
+    discover all feature lists, phase YAMLs, and `manifest.json` and report contradictions.
 - **v1.7.0 post-release ledger refresh and self-adoption** (framework-envelope only).
   `v1.7.0` is published: the annotated tag `v1.7.0` (`6a4cf599f3850ae31561ba38f9da29237d0a4a53`)
   points at reviewed PR #117 merge `47851d857e0ab879b848610128ee6e9e13368f0d`;

@@ -2,11 +2,14 @@
 id: nizam-acceptance-bars
 title: "Comparator Acceptance Bars"
 description: "Defines comparator-based acceptance for quality-bearing deliverables: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface."
-version: "0.1.2"
+version: "0.2.0"
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/acceptance_bars.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-18"
+    summary: "Align Section 3 comparator verdict format with the single authoritative AGF verdict schema (final_verdict, issues, missing_acceptance_coverage, unsupported_claims, optional advisory_minor and comparator metadata)."
   - version: "0.1.2"
     date: "2026-10-18"
     summary: "Subordinate the comparator critic loop to methodology/03_circuit_breaker.md's 3-attempt hard operational cap: a round count never grants a pass, and a loop that has not achieved a blind win by attempt 3 halts and escalates rather than making a forbidden fourth autonomous attempt."
@@ -90,12 +93,25 @@ Additional requirements:
   every autonomous loop. If the deliverable has not achieved a blind win by attempt 3,
   the agent MUST halt and escalate per `methodology/03_circuit_breaker.md` Section 4
   rather than making a forbidden fourth autonomous attempt.
-- **Verdict format.** Recorded as machine-parseable JSON verdict blocks per
-  `standard/AGF.md` §4; prose may accompany, the block is the verdict. Suggested shape:
+- **Verdict format.** Recorded as machine-parseable JSON verdict blocks using the single
+  authoritative AGF verdict schema (`standard/AGF.md` §4); prose may accompany, the block
+  is the verdict. When the blind comparison fails, the gap is recorded in `issues` and
+  `final_verdict.approved` is `false`; comparator metadata is carried under `comparator`:
 
   ```json
-  {"kind":"acceptance","bar":"<bar id>","verdict":"pass|fail","blind_win":true,
-   "halves":{"<name>":...,"...":...},"biggest_gap":"<one line>"}
+  {
+    "final_verdict": {"approved": true},
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "advisory_minor": [],
+    "comparator": {
+      "bar": "<bar id>",
+      "blind_win": true,
+      "halves": {"<name>": "..."},
+      "biggest_gap": "<one line>"
+    }
+  }
   ```
 
 ## 4. Cost Tiering

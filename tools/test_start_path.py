@@ -889,12 +889,56 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         )
         expect(res_bad_route, 1, "trivial path cannot modify")
 
-    # 4. Concise status view on real repository root (R8)
+    # 4. Concise status view on real repository root and synthetic contradiction probe (R8 + A5)
     res_status = run(ROOT, "status", "--format", "json")
     expect(res_status, 0, '"repository": "https://github.com/niq-cnr/nizam-framework.git"')
     status_doc = json.loads(res_status.stdout)
     assert status_doc["repository_binding_aligned"] is True
     assert [p["id"] for p in status_doc["phase_019_profiles"]] == ["124", "125"]
+    assert status_doc["reconciled"] is True, f"unexpected contradictions: {status_doc['contradictions']}"
+    assert status_doc["contradictions"] == []
+    assert len(status_doc["discovered_feature_lists"]) >= 22
+    assert len(status_doc["discovered_phase_yamls"]) >= 11
+
+    # Synthetic cross-surface contradiction in isolated root
+    write(
+        root,
+        "docs/planning/manifest.json",
+        {
+            "schema_version": 1,
+            "current_phase": "022-portable-review-sandbox-adapter",
+            "phases": [
+                {
+                    "id": "022-portable-review-sandbox-adapter",
+                    "title": "Portable Sandbox",
+                    "feature_list": ".agent/feature_list_022.json",
+                    "status": "complete",
+                }
+            ],
+        },
+    )
+    write(
+        root,
+        ".agent/feature_list_022.json",
+        {
+            "phase": "022-portable-review-sandbox-adapter",
+            "phase_status": "in_progress",
+            "features": [
+                {
+                    "id": "134",
+                    "name": "Sandbox adapter",
+                    "status": "in_progress",
+                    "passes": False,
+                }
+            ],
+        },
+    )
+    res_bad_status = run(root, "status", "--format", "json")
+    expect(res_bad_status, 0, '"reconciled": false')
+    bad_status_doc = json.loads(res_bad_status.stdout)
+    assert bad_status_doc["reconciled"] is False
+    assert any("contradicts manifest status" in c for c in bad_status_doc["contradictions"])
+    assert any("non-terminal features: 134" in c for c in bad_status_doc["contradictions"])
 
 
 def main() -> int:
