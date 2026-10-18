@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-10-18"
+    summary: "Record independent acceptance of Follow-Up Slice 3 packets A6-A7 (345b0c1a81bb6138ca2d2d917af4639cbd93d5c4) and prepare the v1.8.0 MINOR release anchors (NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/manifest.json, docs/planning/operator_gates.md) for integrated PR delivery, tag creation, and post-tag .nizam/ re-bootstrap (A8)."
   - version: "0.7.0"
     date: "2026-10-18"
     summary: "Record independent acceptance of Follow-Up Slice 1 (8c7d50a9a712f4fd9a29e160c422f9465e40b226, closing F1, F2, F5) and Follow-Up Slice 2 (149d7d6647cbcccab853f02ce37fc00f1e4e8605, closing F3, F4, F6), and complete Follow-Up Slice 3 packets A6 (disposable consumer zero-reach-back lifecycle rehearsal in tools/e2e_bootstrap_test.sh and .nizam/schema fallback in _receipt_schema) and A7 (12-task preregistered paired baseline-vs-shadow comparison in .agent/evidence/125/ and .agent/evidence/remediation-2026-10-18/pilot-report.json)."
@@ -156,8 +159,8 @@ Each check family has exactly one authoritative CI job owner inside the existing
    - `A3` (Closes `F3`): Hardened `preregister_profile_comparison`, `evaluate_profile_comparison`, and `verify_profiles_ready` with causal commit ordering (`git merge-base --is-ancestor`), `min_comparison_runs` enforcement, distinct tier/profile-config run bindings, captured `case_proofs`, and distinct reviewer/producer provenance checks.
    - `A4` (Closes `F4`): Aligned `AGENTS.md`, `tools/SKILL.md`, `NIZAM.json`, `standard/AGF.md`, `methodology/00_planning.md`, `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`, and `standard/acceptance_bars.md` on the `Routine` / `Standard` / `High-assurance` responsibility table, work-specific diagnostic stopping policy (repeated identical deterministic failure triggers diagnosis; attempt counter and line counts are telemetry rather than hard blockers), and single authoritative AGF verdict shape.
    - `A5` (Closes `F6`): Dynamic phase/feature discovery and contradiction reporting in `tools/start_path.py status`, reconciliation of `.agent/feature_list_022.json` and `docs/planning/phase_022.yaml`, and C16 (`vlib_feature_list_lifecycle`) historical-exemption tightening and truthful structural-check labeling.
-3. **Follow-Up Slice 3 (`A6` + `A7` + `A8`)**:
+3. **Follow-Up Slice 3 (`A6` + `A7` → independent acceptance at `345b0c1a81bb6138ca2d2d917af4639cbd93d5c4`; `A8` `v1.8.0` release prepared)**:
    - `A6`: Added `assert_consumer_zero_reachback` in `tools/e2e_bootstrap_test.sh` (and `.nizam/schema/` fallback in `_receipt_schema` in `tools/workflow_assurance.py`) to exercise `classify`, `preflight`, `begin|done trivial`, `amend-contract`, `capture` → `publish` → `build-receipt` → `verify-receipt` → `resume`, `status`, and `validate.sh --payload` in a clean disposable `--genesis` consumer repository using only `.nizam/tools/` with zero reach-back to the author checkout.
    - `A7`: Executed a 12-task preregistered paired baseline-vs-shadow comparison across `Routine` (`trivial`, `small-change`, plus tiny policy-bearing edit and test-oracle weakening under-classification blockers), `Standard` (`bugfix`, `standard-feature`, plus detected seeded blocker and rejected missed-blocker negative control), and `High-assurance` (`high-risk` positive runs and causal/self-review blocker detection), recorded in [pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json) and `.agent/evidence/125/` (`min_comparison_runs: 12`, `0` missed blockers on recommended tiers, `promoted: false`, `active_gates_reduced: false`).
-   - `A8`: Merge follow-up PR, release and tag immutable `v1.8.0`, re-bootstrap `.nizam/` to `v1.8.0`, remove transitional override banner from `AGENTS.md`, and complete final closeout.
+   - `A8`: Prepared `v1.8.0` MINOR release anchors on `feat/remediation-followup-2026-10-18`; upon PR merge, tag and release immutable `v1.8.0`, re-bootstrap `.nizam/` to `v1.8.0`, remove transitional override banner from `AGENTS.md`, and complete final closeout.
 
