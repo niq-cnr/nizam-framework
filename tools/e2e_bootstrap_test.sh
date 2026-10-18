@@ -237,7 +237,7 @@ run_bootstrap_verify_only() {
   local tag="$1"
   local target="$2"
 
-  if ! bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}"; then
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}"; then
     echo "run_bootstrap_verify_only: bootstrap.sh --verify-only FAILED against ${target} (tag ${tag})"
     return 1
   fi
@@ -281,17 +281,182 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
     return 1
   fi
   # (b) correct expected SHA -> PASS (exit 0)
-  if ! bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha})"
     return 1
   fi
   # (c) wrong expected SHA -> drift FAIL (non-zero)
-  if bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
       --expected-sha "0000000000000000000000000000000000000000" >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
     return 1
   fi
   echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
+  return 0
+}
+
+# assert_install_tag_and_sha_pin_and_worktree_reproducibility <tag>
+# --------------------------------------------------------------------------
+# Corrective B2 (V2 + V7 regression guard):
+#   1. Public path (ALLOW_FIXTURE_TAG=0) rejects fixture tag names (`e2e-*`),
+#      floating branch names (`audit-floating-branch`), release-shaped branch
+#      names without a matching tag (`refs/heads/v99.9.9`), and same-name
+#      branch/tag ambiguity (`refs/heads/v99.8.8` + `refs/tags/v99.8.8`).
+#   2. Install-time `--expected-sha` succeeds when `refs/tags/<tag>^{commit}`
+#      matches `--expected-sha`, and fails non-zero BEFORE replacing an existing
+#      target when `--expected-sha` mismatches or is malformed.
+#   3. Both annotated (`v99.1.0`) and lightweight (`v99.2.0`) SemVer release
+#      tags resolve via `refs/tags/<tag>^{commit}` on the public path.
+#   4. Linked `git worktree` reproducibility (V7): normal clone invocation,
+#      invocation from inside a linked git worktree, and `file://` source
+#      pointing at a linked git worktree produce identical file inventories,
+#      executable modes, and SHA-256 digests.
+assert_install_tag_and_sha_pin_and_worktree_reproducibility() {
+  local fixture_tag="$1"
+  local b2_dir="${SCRATCH_DIR}/b2-pin-and-wt"
+  local src_repo="${b2_dir}/src-repo"
+  local head_sha
+
+  mkdir -p "${b2_dir}"
+
+  # (1a) Public path must reject e2e-* fixture tag when ALLOW_FIXTURE_TAG=0
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${fixture_tag}" --target "${b2_dir}/reject-fixture" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- public path accepted non-SemVer fixture tag '${fixture_tag}'"
+    return 1
+  fi
+
+  # Prepare a disposable source repository cloned from this checkout
+  git clone --quiet "file://$(pwd)" "${src_repo}"
+  git -C "${src_repo}" config user.email "b2-test@nizam.local"
+  git -C "${src_repo}" config user.name "B2 Pin Test"
+  head_sha="$(git -C "${src_repo}" rev-parse HEAD)"
+
+  # Create branch-only ref, release-shaped branch ref, ambiguous branch+tag,
+  # annotated SemVer tag, and lightweight SemVer tag.
+  git -C "${src_repo}" branch audit-floating-branch HEAD
+  git -C "${src_repo}" branch v99.9.9 HEAD
+  git -C "${src_repo}" branch v99.8.8 HEAD
+  git -C "${src_repo}" tag -a v99.8.8 -m "ambiguous tag" HEAD
+  git -C "${src_repo}" tag -a v99.1.0 -m "annotated release tag" HEAD
+  git -C "${src_repo}" tag v99.2.0 HEAD
+
+  # (1b) Reject arbitrary branch name
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag audit-floating-branch --target "${b2_dir}/reject-branch" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted floating branch 'audit-floating-branch'"
+    return 1
+  fi
+  # (1c) Reject release-shaped branch without refs/tags/<tag>
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.9.9 --target "${b2_dir}/reject-rel-branch" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted release-shaped branch 'v99.9.9' without refs/tags/v99.9.9"
+    return 1
+  fi
+  # (1d) Reject same-name branch and tag ambiguity
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.8.8 --target "${b2_dir}/reject-ambig" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted ambiguous same-name branch/tag 'v99.8.8'"
+    return 1
+  fi
+
+  # (2a & 3a) Annotated release tag v99.1.0 with matching --expected-sha succeeds on public path
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "${head_sha}" --target "${b2_dir}/ok-annotated/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install of annotated tag v99.1.0 with matching --expected-sha failed"
+    return 1
+  fi
+
+  # Plant a sentinel in the existing target, then verify mismatched --expected-sha fails BEFORE replacing target
+  printf 'keep-existing-target\n' > "${b2_dir}/ok-annotated/.nizam/sentinel.keep"
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "0000000000000000000000000000000000000000" --target "${b2_dir}/ok-annotated/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install accepted mismatched --expected-sha"
+    return 1
+  fi
+  if [ ! -f "${b2_dir}/ok-annotated/.nizam/sentinel.keep" ]; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- failed install with mismatched --expected-sha replaced or deleted existing target"
+    return 1
+  fi
+  rm -f -- "${b2_dir}/ok-annotated/.nizam/sentinel.keep"
+
+  # Reject malformed --expected-sha
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "not-a-40-hex-sha" --target "${b2_dir}/reject-malformed-sha/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install accepted malformed --expected-sha"
+    return 1
+  fi
+
+  # (3b) Lightweight release tag v99.2.0 with matching --expected-sha succeeds on public path
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.2.0 \
+      --expected-sha "${head_sha}" --target "${b2_dir}/ok-lightweight/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install of lightweight tag v99.2.0 with matching --expected-sha failed"
+    return 1
+  fi
+
+  # (4) Worktree reproducibility (V7 regression guard):
+  # Compare normal clone install (ok-annotated/.nizam), invocation from inside a linked git worktree,
+  # and file:// source pointing at a linked git worktree.
+  local linked_wt="${b2_dir}/linked-worktree"
+  git -C "${src_repo}" worktree add --quiet --detach "${linked_wt}" v99.1.0
+
+  if ! (cd -- "${linked_wt}" && ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" \
+      --tag v99.1.0 --expected-sha "${head_sha}" --target "${b2_dir}/wt-cwd/.nizam" >/dev/null 2>&1); then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- bootstrap invocation from linked git worktree CWD failed"
+    return 1
+  fi
+
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${linked_wt}" \
+      --tag v99.1.0 --expected-sha "${head_sha}" --target "${b2_dir}/wt-source/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- bootstrap invocation from linked git worktree file:// source failed"
+    return 1
+  fi
+
+  if ! PYTHONDONTWRITEBYTECODE=1 python3 - "${b2_dir}/ok-annotated/.nizam" "${b2_dir}/wt-cwd/.nizam" "${b2_dir}/wt-source/.nizam" <<'PY'
+import hashlib
+import json
+import pathlib
+import sys
+
+roots = [pathlib.Path(p).resolve() for p in sys.argv[1:4]]
+
+def snapshot(root: pathlib.Path) -> dict:
+    snap = {}
+    for p in sorted(root.rglob("*")):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(root).as_posix()
+        mode = bool(p.stat().st_mode & 0o111)
+        if rel == "provenance.json":
+            doc = json.loads(p.read_text(encoding="utf-8"))
+            snap[rel] = {
+                "mode": mode,
+                "framework_version": doc.get("framework_version"),
+                "tag": doc.get("tag"),
+                "resolved_sha": doc.get("resolved_sha"),
+            }
+        else:
+            snap[rel] = {
+                "mode": mode,
+                "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+            }
+    return snap
+
+base = snapshot(roots[0])
+if len(base) < 270:
+    print(f"unexpected file count in installed payload: {len(base)}", file=sys.stderr)
+    sys.exit(1)
+for other_root in roots[1:]:
+    other = snapshot(other_root)
+    if other != base:
+        print(f"worktree reproducibility mismatch between {roots[0]} and {other_root}", file=sys.stderr)
+        sys.exit(1)
+PY
+  then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- worktree installs produced differing inventories, modes, or digests"
+    return 1
+  fi
+
+  git -C "${src_repo}" worktree remove --force "${linked_wt}" >/dev/null 2>&1 || true
+  rm -rf -- "${b2_dir}"
+
+  echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: OK -- public SemVer tag gate, install-time --expected-sha match/mismatch, annotated+lightweight tags, and 3-form linked-worktree reproducibility verified."
   return 0
 }
 
@@ -427,6 +592,11 @@ main() {
   SCRATCH_DIR="$(mktemp -d)"
   local target="${SCRATCH_DIR}/.nizam"
 
+  # Explicitly opt in to controlled e2e-* fixture tags for the hermetic harness;
+  # assert_install_tag_and_sha_pin_and_worktree_reproducibility tests the public
+  # path with ALLOW_FIXTURE_TAG=0.
+  export ALLOW_FIXTURE_TAG=1
+
   echo "e2e_bootstrap_test.sh: installing pinned tag '${EPHEMERAL_TAG}' from 'file://$(pwd)' into '${target}' (hermetic -- local file:// clone, no network)..."
   bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${EPHEMERAL_TAG}" --target "${target}"
 
@@ -453,6 +623,7 @@ main() {
   assert_discovery_path "${target}"
   run_bootstrap_verify_only "${EPHEMERAL_TAG}" "${target}"
   assert_provenance_sha_pin "${EPHEMERAL_TAG}" "${target}"
+  assert_install_tag_and_sha_pin_and_worktree_reproducibility "${EPHEMERAL_TAG}"
   assert_payload_validate_cwd_independent "${target}"
   assert_preflight_governance_root "${SCRATCH_DIR}"
   assert_genesis "${EPHEMERAL_TAG}"

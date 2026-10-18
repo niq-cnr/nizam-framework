@@ -90,9 +90,12 @@ GENESIS=0
 PROJECT_ROOT=""
 PROJECT_NAME=""
 # Optional caller-supplied expected commit SHA (feature 067, NDEBT-033). When set,
-# --verify-only asserts the recorded provenance resolved_sha equals it, so a moved
-# remote tag replaying a different commit under the same tag name is rejected.
+# both install mode and --verify-only require the resolved/recorded commit SHA to
+# equal this 40-hex digest before installing or accepting the payload.
 EXPECTED_SHA="${EXPECTED_SHA:-}"
+# Controlled test-only fixture tag override (--allow-fixture-tag or ALLOW_FIXTURE_TAG=1)
+# permitting ephemeral ^e2e-[0-9A-Za-z._-]+$ tags in tools/e2e_bootstrap_test.sh.
+ALLOW_FIXTURE_TAG="${ALLOW_FIXTURE_TAG:-0}"
 
 # Tracked temp/backup paths for the cleanup trap. Cleared once ownership of a
 # directory transfers away from the tracker (e.g. after a successful atomic
@@ -115,17 +118,20 @@ templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json) into this
 repository, per standard/GIP.md (Governance Inheritance Protocol).
 
 Modes:
-  (default)         Clone the pinned GOVERNANCE_TAG, stage the governance
-                     payload in a temp directory, verify it, record
+  (default)         Fetch the pinned refs/tags/<GOVERNANCE_TAG>, verify any
+                     supplied --expected-sha before staging, stage the
+                     governance payload in a temp directory, verify it, record
                      provenance, and atomically install it under the target
                      directory.
-  --verify-only      Network-free drift check against an already-injected
+  --verify-only      Drift and content-integrity check against an already-injected
                      target directory: confirms the target exists, its
                      NIZAM.json parses, every path it indexes resolves on
                      disk, its recorded provenance tag matches the expected
-                     pinned tag, and its recorded commit SHA is present (and,
-                     with --expected-sha, matches). Performs no clone and no
-                     write, and never re-resolves the tag itself.
+                     pinned tag, its recorded commit SHA is present (and,
+                     with --expected-sha, matches), and (when a trusted git
+                     tag/commit or --source-root anchor is available) its full
+                     277-file inventory, SHA-256 content digests, and executable
+                     modes match the release payload.
   --genesis          Greenfield genesis (the 0-case, ecosystem/00 Section 8):
                      stand up a NEW project from nothing. git-inits an empty
                      --project-root, scaffolds a minimal deterministic skeleton
@@ -139,26 +145,26 @@ Modes:
 Options:
   --repo-url URL     Override GOVERNANCE_REPO_URL for this invocation.
   --tag TAG          Override GOVERNANCE_TAG for this invocation. Must be a
-                     pinned tag -- "", "main", "master", "HEAD", and any
-                     "refs/heads/*" reference are all refused.
+                     pinned semantic-version release tag (vMAJOR.MINOR.PATCH)
+                     resolved strictly via refs/tags/<TAG>. Floating branches
+                     ("", "main", "master", "HEAD", "refs/heads/*", or any
+                     branch-only ref) are refused.
   --target DIR       Override the injection target directory (default: .nizam,
                      or <project-root>/.nizam in --genesis mode).
   --project-root DIR (--genesis only) The new project's root to create and
                      scaffold. Must not already exist as a non-empty directory.
   --project-name NAME (--genesis only) Name used in the scaffold (default: the
                      basename of --project-root).
-  --expected-sha SHA The commit SHA the pinned tag must resolve to. Install
-                     records the tag's resolved commit in provenance.json
-                     (resolved_sha); --verify-only with --expected-sha asserts
-                     the recorded SHA equals it, rejecting a moved remote tag
-                     that replays a different commit under the same tag name
-                     (NDEBT-033). Resolve it out-of-band from the authentic tag.
+  --expected-sha SHA The 40-hex commit SHA the pinned tag must resolve to.
+                     Enforced at install time BEFORE staging or replacing the
+                     target directory, and in --verify-only against recorded
+                     provenance (NDEBT-033).
 
 Environment variables (overridden by the matching flag above when both are given):
   GOVERNANCE_REPO_URL   Source repository of the governance payload.
   GOVERNANCE_TAG        Pinned tag to install or to verify against.
   NIZAM_TARGET_DIR      Injection target directory.
-  EXPECTED_SHA          Expected commit SHA for --verify-only (see --expected-sha).
+  EXPECTED_SHA          Expected 40-hex commit SHA for install and --verify-only.
 
 Exit status:
   0   Success (including --help and a passing --verify-only run).
@@ -210,16 +216,29 @@ cleanup() {
 
 trap cleanup EXIT ERR
 
-# Refuses any tag value that is empty or is a known floating branch reference.
-# Called before any network operation and before any drift comparison, in
-# both the default install mode and --verify-only mode.
+# Refuses any tag value that is empty, a floating branch reference, or not a
+# pinned semantic-version release tag (unless --allow-fixture-tag / ALLOW_FIXTURE_TAG=1
+# is explicitly set for a controlled ^e2e-* test tag).
 require_pinned_tag() {
   local tag="$1"
   case "${tag}" in
-    ''|main|master|HEAD|refs/heads/*)
-      die "GOVERNANCE_TAG must be a pinned semantic-version tag, not '${tag}'. A floating branch reference (main, master, HEAD) is never accepted (standard/GIP.md Section 2, point 1). Pass --tag <tag> or set GOVERNANCE_TAG."
+    ''|main|master|HEAD|refs/heads/*|refs/tags/*)
+      die "GOVERNANCE_TAG must be a pinned semantic-version tag name (e.g. v1.8.0), not '${tag}'. A floating branch reference (main, master, HEAD, refs/heads/*) is never accepted (standard/GIP.md Section 2, point 1). Pass --tag <tag> or set GOVERNANCE_TAG."
       ;;
   esac
+  if [ "${ALLOW_FIXTURE_TAG}" = "1" ] && [[ "${tag}" =~ ^e2e-[0-9A-Za-z._-]+$ ]]; then
+    return 0
+  fi
+  if [[ ! "${tag}" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+    die "GOVERNANCE_TAG '${tag}' is not a valid pinned semantic-version release tag (expected vMAJOR.MINOR.PATCH, standard/GIP.md Section 2, point 1)."
+  fi
+}
+
+require_valid_expected_sha() {
+  local sha="$1"
+  if [ -n "${sha}" ] && [[ ! "${sha}" =~ ^[0-9a-f]{40}$ ]]; then
+    die "--expected-sha must be a 40-character lowercase hexadecimal commit SHA, got '${sha}'."
+  fi
 }
 
 require_command() {
@@ -240,6 +259,10 @@ parse_args() {
         ;;
       --genesis)
         GENESIS=1
+        shift
+        ;;
+      --allow-fixture-tag)
+        ALLOW_FIXTURE_TAG=1
         shift
         ;;
       --project-root)
@@ -429,6 +452,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
 # target directory. Clones nothing and writes nothing.
 run_verify_only() {
   require_pinned_tag "${GOVERNANCE_TAG}"
+  require_valid_expected_sha "${EXPECTED_SHA}"
   require_command python3
   [ -d "${TARGET_DIR}" ] || die "--verify-only: target directory '${TARGET_DIR}' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first."
   log "verify-only: checking '${TARGET_DIR}' against pinned tag '${GOVERNANCE_TAG}' (no clone, no network)..."
@@ -442,28 +466,43 @@ run_verify_only() {
   fi
 }
 
-# Default mode: clone the pinned tag, stage, inject, verify, record
-# provenance, then atomically install -- as one operation, per
-# standard/GIP.md Section 2.1.
+# Default mode: fetch the explicit refs/tags/<GOVERNANCE_TAG> ref, verify
+# --expected-sha before staging, stage, inject, verify, record provenance,
+# then atomically install -- as one operation, per standard/GIP.md Section 2.1.
 run_install() {
   require_pinned_tag "${GOVERNANCE_TAG}"
+  require_valid_expected_sha "${EXPECTED_SHA}"
   require_command git
   require_command python3
 
-  CLONE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/nizam-bootstrap-clone.XXXXXX")"
-  log "cloning ${GOVERNANCE_REPO_URL} at pinned tag ${GOVERNANCE_TAG} (--depth 1)..."
-  git clone --depth 1 --branch "${GOVERNANCE_TAG}" "${GOVERNANCE_REPO_URL}" "${CLONE_DIR}" \
-    || die "git clone of '${GOVERNANCE_REPO_URL}' at tag '${GOVERNANCE_TAG}' failed. Confirm the tag exists and the URL is reachable."
+  local remote_refs
+  remote_refs="$(git ls-remote "${GOVERNANCE_REPO_URL}" "refs/tags/${GOVERNANCE_TAG}" "refs/tags/${GOVERNANCE_TAG}^{}" "refs/heads/${GOVERNANCE_TAG}" 2>/dev/null)" \
+    || die "unable to query refs from '${GOVERNANCE_REPO_URL}'. Confirm the repository URL is reachable."
+  if ! printf '%s\n' "${remote_refs}" | grep -q "	refs/tags/${GOVERNANCE_TAG}$"; then
+    die "pinned tag 'refs/tags/${GOVERNANCE_TAG}' does not exist in '${GOVERNANCE_REPO_URL}'. Branch-only or untagged refs are never accepted (standard/GIP.md Section 2, point 1)."
+  fi
+  if printf '%s\n' "${remote_refs}" | grep -q "	refs/heads/${GOVERNANCE_TAG}$"; then
+    die "ambiguous ref '${GOVERNANCE_TAG}' in '${GOVERNANCE_REPO_URL}': branch 'refs/heads/${GOVERNANCE_TAG}' collides with tag 'refs/tags/${GOVERNANCE_TAG}'. Refusing ambiguous tag/branch resolution."
+  fi
 
-  # Resolve the pinned tag to the exact commit SHA it points at, recorded in
-  # provenance alongside the tag (feature 067, NDEBT-033). The tag NAME alone is
-  # not an immutable pin -- a tag can be moved on the remote to replay a different
-  # payload -- so the resolved commit is the durable anchor a later --verify-only
-  # (with --expected-sha) or an out-of-band audit can compare against.
+  CLONE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/nizam-bootstrap-clone.XXXXXX")"
+  log "fetching ${GOVERNANCE_REPO_URL} at explicit tag ref refs/tags/${GOVERNANCE_TAG} (--depth 1)..."
+  git -C "${CLONE_DIR}" init -q \
+    || die "git init failed in temporary clone directory '${CLONE_DIR}'."
+  git -C "${CLONE_DIR}" fetch --depth 1 --no-tags "${GOVERNANCE_REPO_URL}" "refs/tags/${GOVERNANCE_TAG}:refs/tags/${GOVERNANCE_TAG}" >/dev/null 2>&1 \
+    || die "git fetch of 'refs/tags/${GOVERNANCE_TAG}' from '${GOVERNANCE_REPO_URL}' failed."
+  git -C "${CLONE_DIR}" checkout -q --detach "refs/tags/${GOVERNANCE_TAG}" \
+    || die "git checkout of 'refs/tags/${GOVERNANCE_TAG}' failed."
+
+  # Resolve the pinned tag to the exact commit SHA it points at via refs/tags/<tag>^{commit}.
   local resolved_sha
-  resolved_sha="$(git -C "${CLONE_DIR}" rev-parse "HEAD^{commit}")" \
-    || die "unable to resolve the commit SHA of tag '${GOVERNANCE_TAG}' in the clone."
+  resolved_sha="$(git -C "${CLONE_DIR}" rev-parse --verify "refs/tags/${GOVERNANCE_TAG}^{commit}")" \
+    || die "unable to resolve commit SHA for 'refs/tags/${GOVERNANCE_TAG}'."
   [ -n "${resolved_sha}" ] || die "resolved an empty commit SHA for tag '${GOVERNANCE_TAG}' -- refusing to record incomplete provenance."
+
+  if [ -n "${EXPECTED_SHA}" ] && [ "${resolved_sha}" != "${EXPECTED_SHA}" ]; then
+    die "expected-sha mismatch at install time: tag 'refs/tags/${GOVERNANCE_TAG}' resolved to '${resolved_sha}' but --expected-sha required '${EXPECTED_SHA}' -- refusing to stage or replace '${TARGET_DIR}'."
+  fi
 
   local parent_dir
   parent_dir="$(dirname -- "${TARGET_DIR}")"

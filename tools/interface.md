@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-18"
+    summary: "Document externally mediated evidence publication (prepare/publish/finalize separation, literal pathspecs, temporary GIT_INDEX_FILE isolation, and the architectural boundary that an unrestricted interpreter with .git write access cannot be made commit-restricted solely by denying one top-level command spelling) and replace hardcoded v1.5.0/phase016 status text with provenance discovery."
   - version: "0.4.0"
     date: "2026-10-12"
     summary: "Add the optional runtime-session adapter surface and conditional checks; preserve the ten mandatory conformance items."
@@ -139,6 +142,36 @@ entire job.
 - **Native satisfaction:** Any generic shell or command-execution capability
   of the host environment satisfies this operation.
 
+### 4.4 Repository Mutation-Authority Boundary for Evidence Publication
+
+An unrestricted interpreter (such as `python3` or `bash`) with write access to
+`.git/` cannot be made robustly commit-restricted merely by denying a single
+top-level `git commit` command spelling in a tool dispatcher. To respect the
+host runtime's actual mutation-authority boundary without concealing Git
+mutations inside read/verify helpers:
+
+- **Noncommitting helpers perform zero Git mutations.** `tools/start_path.py
+  capture`, `prepare-publish` (`publish --mode prepare`), `finalize-publish`
+  (`publish --mode finalize`), and `build-receipt` (without `--commit`,
+  including when given a raw closed-capture input) never stage, reset, or
+  commit in Git; `HEAD`, refs, and `.git/index` remain byte-for-byte unchanged.
+- **Explicit prepare / external commit / finalize workflow.** In runtimes where
+  Git commits require separate host mediation, the agent runs `prepare-publish`
+  to validate captured outputs (`100644` regular files and SHA-256 digests) and
+  emit `<stem>.publish-request.json` naming the exact repository root, worktree,
+  intended base revision, and literal pathspecs (`:(literal)<path>`), delegates
+  the two commits (capture outputs, then projected `<stem>.receipt-capture.json`)
+  to the runtime's authorized commit primitive, and runs `finalize-publish` to
+  verify the committed blobs/modes and emit `<stem>.published.json`.
+- **Externally mediated `publish` mode.** When `publish` (or `build-receipt
+  --commit`) is invoked directly, it honors `NIZAM_MUTATION_ADAPTER` /
+  `NIZAM_MUTATION_POLICY` from the host runtime environment, never accepts a
+  caller-controlled `--authorized` boolean flag, rejects same-path staged
+  conflicts, stages via an isolated temporary `GIT_INDEX_FILE` with literal
+  pathspecs so a denied or failed commit leaves `.git/index` and `HEAD`
+  untouched, and supports batching multiple `--capture` inputs into one output
+  commit and one receipt-capture commit.
+
 ## 5. Adapter Conformance Checklist
 
 An integrator adapting a new agent runtime to this framework can verify
@@ -236,8 +269,9 @@ The [neutral protocol](..&#47;methodology/10_live_runtime_sessions.md) and
 [SBCL reference binding](..&#47;methodology/11_sbcl_runtime_binding.md) define these
 consumer duties. Existing schema/C12 checks establish declared record validity
 only; they cannot prove live ownership, runtime conformance or source/heap identity.
-Executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
-pending phase016 features115–120. The installed v1.5.0 payload is unchanged.
+Consult `.nizam/provenance.json` (in a bootstrapped consumer) or `NIZAM.json`
+and `tools/runtime_session.py` for the installed release version and delivered
+runtime-session controller/verifier capabilities.
 
 ## 7. References
 
