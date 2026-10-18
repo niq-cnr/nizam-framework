@@ -2522,17 +2522,633 @@ def run_controls_ready(api):
     print('PASS controls-ready observed independently selected actual hosted proof')
 
 
+PROFILE_CASES = (
+    'preregister-before-run',
+    'roles-reused',
+    'reject-unstable-baseline',
+    'same-candidate',
+    'missed-baseline-blocker',
+    'cost-latency-accounting',
+    'no-self-promotion',
+)
+
+
+class ProfileFixture(FailureFixture):
+    """Synthetic Phase 019 (124/125) profile preregistration and shadow comparison fixture."""
+
+    def __init__(self, api, parent):
+        super().__init__(api, parent)
+        self.candidate_digest = sha(canonical(self.candidate))
+        self.source_commit = self.candidate['source_commit']
+        self.source_tree = self.candidate['source_tree']
+        self.profile_authority = dict(
+            schema_version=1,
+            role='Root',
+            repository=self.repository,
+            owner='cnr',
+            gate='H-PHASE-019',
+            approved=True,
+            allow_self_promotion=False,
+            allow_gate_reduction=False,
+        )
+        self.profile_authority_ref = self.pin_new('profile-authority', self.profile_authority)
+        self.baseline_controls = dict(
+            schema_version=1,
+            feature_id='123',
+            source_commit=self.source_commit,
+            candidate_sha256=self.candidate_digest,
+            a11_verdict='approve',
+            status='stable',
+            flaky_runs=0,
+            unresolved_blockers=0,
+        )
+        self.baseline_controls_ref = self.pin_new('baseline-controls', self.baseline_controls)
+        self.test_bundle = dict(
+            schema_version=1,
+            bundle_id='wa019-bundle',
+            source_commit=self.source_commit,
+            cases=list(PROFILE_CASES),
+        )
+        self.test_bundle_ref = self.pin_new('test-bundle', self.test_bundle)
+        self.preregistration = dict(
+            schema_version=1,
+            preregistration_id='wa124-generic-profiles',
+            repository=self.repository,
+            feature_id='124',
+            execution_scope='repository-worktree',
+            state='preregistered-before-shadow',
+            shadow_runs_started=False,
+            shadow_run_refs=[],
+            candidate=copy.deepcopy(self.candidate),
+            test_bundle_ref=copy.deepcopy(self.test_bundle_ref),
+            role_bindings=dict(
+                Orchestrator='orchestrator-primary',
+                Planner='planner-creative',
+                Generator='generator-deterministic',
+                Validator='validator-structural',
+                Evaluator='evaluator-adversarial',
+            ),
+            tiers={
+                'Routine': dict(
+                    applicability='Unambiguous trivial and small-change worktree edits with recorded verification.',
+                    route_classes=['trivial', 'small-change'],
+                    required_roles=['Generator', 'Evaluator'],
+                    same_candidate_baseline=True,
+                    persistent_runtime_claim=False,
+                    max_duration_ms=60000,
+                    max_cost_units=100,
+                    max_blocker_mismatch=0,
+                ),
+                'Standard': dict(
+                    applicability='Scoped bug fixes and standard single-module features with independent acceptance.',
+                    route_classes=['bugfix', 'standard-feature'],
+                    required_roles=['Planner', 'Generator', 'Validator', 'Evaluator'],
+                    same_candidate_baseline=True,
+                    persistent_runtime_claim=False,
+                    max_duration_ms=180000,
+                    max_cost_units=300,
+                    max_blocker_mismatch=0,
+                ),
+                'High-assurance': dict(
+                    applicability='Security, isolation, authority, schema, and cross-module high-risk changes.',
+                    route_classes=['high-risk'],
+                    required_roles=['Orchestrator', 'Planner', 'Generator', 'Validator', 'Evaluator'],
+                    same_candidate_baseline=True,
+                    persistent_runtime_claim=False,
+                    max_duration_ms=600000,
+                    max_cost_units=1000,
+                    max_blocker_mismatch=0,
+                ),
+            },
+            thresholds=dict(
+                max_missed_baseline_blockers=0,
+                max_unexplained_divergences=0,
+                max_duration_ms=600000,
+                max_cost_units=1000,
+                min_comparison_runs=3,
+            ),
+            operator_decision_policy=dict(
+                accountable_role='Root',
+                gate='H-PHASE-019',
+                self_promotion_allowed=False,
+                automatic_gate_reduction_allowed=False,
+                authority_ref=copy.deepcopy(self.profile_authority_ref),
+            ),
+        )
+        self.prereg_policy = dict(
+            schema_version=1,
+            repository=self.repository,
+            feature_id='124',
+            stage='profile-preregistration',
+            baseline_controls_ref=copy.deepcopy(self.baseline_controls_ref),
+            authority_ref=copy.deepcopy(self.profile_authority_ref),
+            persistent_runtime_ready=False,
+        )
+        self.sync_preregistration()
+
+    def sync_preregistration(self):
+        self.preregistration_ref = self.pin_new('preregistration', self.preregistration)
+        self.prereg_policy_ref = self.pin_new('prereg-policy', self.prereg_policy)
+        self.comparison_policy = dict(
+            schema_version=1,
+            repository=self.repository,
+            feature_id='125',
+            stage='shadow-comparison',
+            preregistration_ref=copy.deepcopy(self.preregistration_ref),
+            preregistration_policy_ref=copy.deepcopy(self.prereg_policy_ref),
+            authority_ref=copy.deepcopy(self.profile_authority_ref),
+        )
+        self.baseline_run = self.make_run('baseline-125', 'success', 0, [], [], 12000, 80, 6)
+        self.shadow_run = self.make_run('shadow-125', 'success', 0, [], ['ADV-001'], 4500, 35, 3)
+        self.comparison = dict(
+            schema_version=1,
+            comparison_id='wa125-routine-comparison',
+            repository=self.repository,
+            feature_id='125',
+            preregistration_ref=copy.deepcopy(self.preregistration_ref),
+            profile_tier='Routine',
+            route_class='small-change',
+            candidate=copy.deepcopy(self.candidate),
+            baseline_run=copy.deepcopy(self.baseline_run),
+            shadow_run=copy.deepcopy(self.shadow_run),
+            operator_decision=dict(
+                role='Root',
+                owner='cnr',
+                gate='H-PHASE-019',
+                decision='approve-recommendation-only',
+                self_promote=False,
+                reduce_active_gates=False,
+                authority_ref=copy.deepcopy(self.profile_authority_ref),
+            ),
+            requested_action='recommend-only',
+        )
+
+    def make_run(self, run_id, outcome, exit_code, blocker_ids, advisory_ids, duration_ms, cost_units, command_count):
+        self.serial += 1
+        out_path = f'proof/profile-{self.serial}-{run_id}.stdout'
+        err_path = f'proof/profile-{self.serial}-{run_id}.stderr'
+        self.write(out_path, f'PROFILE_RUN {run_id} {outcome}\n'.encode('utf-8'))
+        self.write(err_path, b'')
+        rev = self.commit(f'profile run output {run_id}')
+        stdout_ref = self.ref(out_path, rev)
+        stderr_ref = self.ref(err_path, rev)
+        cap = dict(
+            schema_version=1,
+            run_id=run_id,
+            candidate_sha256=self.candidate_digest,
+            revision=rev,
+            executed=True,
+            outcome=outcome,
+            exit_code=exit_code,
+            duration_ms=duration_ms,
+            cost_units=cost_units,
+            command_count=command_count,
+            stdout=stdout_ref,
+            stderr=stderr_ref,
+        )
+        cap_ref = self.pin_new(f'cap-{run_id}', cap)
+        approved = (outcome == 'success' and not blocker_ids)
+        verdict = dict(
+            final_verdict=dict(approved=approved),
+            issues=[dict(id=b, description='blocking finding ' + b) for b in blocker_ids],
+            missing_acceptance_coverage=[],
+            unsupported_claims=[],
+        )
+        return dict(
+            run_id=run_id,
+            candidate_sha256=self.candidate_digest,
+            source_commit=self.source_commit,
+            source_tree=self.source_tree,
+            test_bundle_sha256=self.test_bundle_ref['sha256'],
+            executed=True,
+            outcome=outcome,
+            exit_code=exit_code,
+            verdict=verdict,
+            blocker_ids=list(blocker_ids),
+            advisory_ids=list(advisory_ids),
+            duration_ms=duration_ms,
+            cost_units=cost_units,
+            command_count=command_count,
+            capture_ref=cap_ref,
+        )
+
+
+def profile_preregister_call(api, f, deny=False):
+    before = repr((f.preregistration, f.prereg_policy))
+    files = f.files()
+    try:
+        out = api.preregister_profile_comparison(f.root, f.preregistration, policy=f.prereg_policy)
+    except api.AssuranceError as exc:
+        require(deny and 0 < len(str(exc)) <= 1000, 'preregistration rejection is bounded AssuranceError')
+        out = None
+    else:
+        require(not deny, 'invalid preregistration input accepted')
+        require(
+            out
+            == dict(
+                schema_version=1,
+                feature_id='124',
+                preregistration_id=f.preregistration['preregistration_id'],
+                repository=f.repository,
+                execution_scope=f.preregistration['execution_scope'],
+                candidate_sha256=f.candidate_digest,
+                source_commit=f.source_commit,
+                baseline_controls_sha256=f.prereg_policy['baseline_controls_ref']['sha256'],
+                test_bundle_sha256=f.preregistration['test_bundle_ref']['sha256'],
+                tiers=['Routine', 'Standard', 'High-assurance'],
+                roles_reused=True,
+                before_shadow_run=True,
+                baseline_stable=True,
+                self_promotion_allowed=False,
+                automatic_gate_reduction_allowed=False,
+            ),
+            'exact preregistration output',
+        )
+        require(not receipt_ids(out) & receipt_ids([f.preregistration, f.prereg_policy]), 'preregistration deep copy')
+    require(repr((f.preregistration, f.prereg_policy)) == before and f.files() == files, 'preregistration preserves inputs and files')
+    return out
+
+
+def profile_evaluate_call(api, f, deny=False):
+    before = repr((f.comparison, f.comparison_policy))
+    files = f.files()
+    try:
+        out = api.evaluate_profile_comparison(f.root, f.comparison, policy=f.comparison_policy)
+    except api.AssuranceError as exc:
+        require(deny and 0 < len(str(exc)) <= 1000, 'comparison rejection is bounded AssuranceError')
+        out = None
+    else:
+        require(not deny, 'invalid comparison input accepted')
+        require(
+            out['promoted'] is False
+            and out['active_gates_reduced'] is False
+            and out['permissions_changed'] is False
+            and out['same_candidate'] is True,
+            'comparison invariants hold',
+        )
+        require(not receipt_ids(out) & receipt_ids([f.comparison, f.comparison_policy]), 'comparison deep copy')
+    require(repr((f.comparison, f.comparison_policy)) == before and f.files() == files, 'comparison preserves inputs and files')
+    return out
+
+
+def profile_preregister_before_run(api, f):
+    profile_preregister_call(api, f)
+    saved = copy.deepcopy((f.preregistration, f.prereg_policy))
+    for field, values in {
+        'state': ['running', 'completed', 'after-shadow-run', '', None],
+        'shadow_runs_started': [True, 1, 'false', None],
+        'shadow_run_refs': [['shadow-1'], [{}], None, 'none'],
+        'execution_scope': ['persistent-runtime-sbcl', 'unknown-scope', ''],
+        'feature_id': ['125', '123', ''],
+        'repository': ['foreign/repo'],
+        'schema_version': [True, 2, '1'],
+    }.items():
+        for val in values:
+            f.preregistration, f.prereg_policy = copy.deepcopy(saved)
+            f.preregistration[field] = val
+            profile_preregister_call(api, f, True)
+    # Persistent-runtime SBCL scope succeeds only when persistent_runtime_ready=True (130-132 qualified)
+    f.preregistration, f.prereg_policy = copy.deepcopy(saved)
+    f.preregistration['execution_scope'] = 'persistent-runtime-sbcl'
+    f.preregistration['tiers']['High-assurance']['persistent_runtime_claim'] = True
+    f.prereg_policy['persistent_runtime_ready'] = True
+    profile_preregister_call(api, f)
+    # Claiming persistent_runtime_claim=True under repository-worktree scope must fail
+    f.preregistration, f.prereg_policy = copy.deepcopy(saved)
+    f.preregistration['tiers']['Routine']['persistent_runtime_claim'] = True
+    profile_preregister_call(api, f, True)
+    f.preregistration, f.prereg_policy = saved
+    profile_preregister_call(api, f)
+
+
+def profile_roles_reused(api, f):
+    profile_preregister_call(api, f)
+    saved = copy.deepcopy((f.preregistration, f.prereg_policy))
+    for bad_roles in (
+        dict(f.preregistration['role_bindings'], SuperAgent='super-profile'),
+        {k: v for k, v in f.preregistration['role_bindings'].items() if k != 'Evaluator'},
+        dict(f.preregistration['role_bindings'], Generator='orchestrator-primary'),
+        dict(f.preregistration['role_bindings'], Evaluator='evaluator-v2-custom'),
+    ):
+        f.preregistration = copy.deepcopy(saved[0])
+        f.preregistration['role_bindings'] = bad_roles
+        profile_preregister_call(api, f, True)
+    for tier in ('Routine', 'Standard', 'High-assurance'):
+        for bad_req in (
+            ['Generator'],
+            ['Evaluator'],
+            ['Generator', 'Evaluator', 'Evaluator'],
+            ['Generator', 'Evaluator', 'InventedRole'],
+        ):
+            f.preregistration = copy.deepcopy(saved[0])
+            f.preregistration['tiers'][tier]['required_roles'] = bad_req
+            profile_preregister_call(api, f, True)
+        f.preregistration = copy.deepcopy(saved[0])
+        f.preregistration['tiers'][tier]['route_classes'] = ['high-risk', 'trivial']
+        profile_preregister_call(api, f, True)
+    f.preregistration, f.prereg_policy = saved
+    profile_preregister_call(api, f)
+
+
+def profile_reject_unstable_baseline(api, f):
+    profile_preregister_call(api, f)
+    saved = copy.deepcopy((f.preregistration, f.prereg_policy, f.baseline_controls))
+    for field, values in {
+        'status': ['unstable', 'flaky', 'pending', 'failed', ''],
+        'a11_verdict': ['reject', 'pending', ''],
+        'flaky_runs': [1, 2, -1, True],
+        'unresolved_blockers': [1, 3, -1, True],
+        'source_commit': ['0' * 40],
+        'candidate_sha256': ['f' * 64],
+        'feature_id': ['122'],
+    }.items():
+        for val in values:
+            f.preregistration, f.prereg_policy, f.baseline_controls = copy.deepcopy(saved)
+            f.baseline_controls[field] = val
+            f.prereg_policy['baseline_controls_ref'] = f.pin_new('bad-baseline', f.baseline_controls)
+            profile_preregister_call(api, f, True)
+    for tier in ('Routine', 'Standard', 'High-assurance'):
+        f.preregistration, f.prereg_policy, f.baseline_controls = copy.deepcopy(saved)
+        f.preregistration['tiers'][tier]['max_blocker_mismatch'] = 1
+        profile_preregister_call(api, f, True)
+    for field in ('max_missed_baseline_blockers', 'max_unexplained_divergences'):
+        f.preregistration, f.prereg_policy, f.baseline_controls = copy.deepcopy(saved)
+        f.preregistration['thresholds'][field] = 1
+        profile_preregister_call(api, f, True)
+    f.preregistration, f.prereg_policy, f.baseline_controls = saved
+    profile_preregister_call(api, f)
+
+
+def profile_same_candidate(api, f):
+    out = profile_evaluate_call(api, f)
+    require(out['recommendation'] == 'recommend-for-operator-review', 'clean Routine comparison recommends review')
+    saved = copy.deepcopy((f.comparison, f.comparison_policy))
+    for tier, route in (('Standard', 'bugfix'), ('High-assurance', 'high-risk')):
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['profile_tier'] = tier
+        f.comparison['route_class'] = route
+        res = profile_evaluate_call(api, f)
+        require(res['profile_tier'] == tier and res['route_class'] == route and res['same_candidate'] is True, 'tier evaluation')
+    # Failed outcome on BOTH baseline and shadow for the same blocker on the same candidate is recorded and eligible
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['baseline_run'] = f.make_run('base-fail-same', 'failed', 1, ['BLK-SAME'], [], 10000, 70, 5)
+    f.comparison['shadow_run'] = f.make_run('shad-fail-same', 'failed', 1, ['BLK-SAME'], [], 4000, 30, 3)
+    res = profile_evaluate_call(api, f)
+    require(
+        res['baseline_outcome'] == 'failed'
+        and res['shadow_outcome'] == 'failed'
+        and res['missed_baseline_blockers'] == []
+        and res['recommendation'] == 'recommend-for-operator-review',
+        'failed outcome captured on both baseline and shadow with matching blocker',
+    )
+    # Candidate and run mismatches must be rejected
+    for run_key in ('baseline_run', 'shadow_run'):
+        for field, val in (
+            ('candidate_sha256', '0' * 64),
+            ('source_commit', '0' * 40),
+            ('source_tree', '0' * 40),
+            ('test_bundle_sha256', '0' * 64),
+            ('executed', False),
+            ('outcome', 'pending'),
+        ):
+            f.comparison = copy.deepcopy(saved[0])
+            f.comparison[run_key][field] = val
+            profile_evaluate_call(api, f, True)
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['shadow_run']['run_id'] = f.comparison['baseline_run']['run_id']
+    profile_evaluate_call(api, f, True)
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['candidate']['source_tree'] = 'f' * 40
+    profile_evaluate_call(api, f, True)
+    f.comparison, f.comparison_policy = saved
+    profile_evaluate_call(api, f)
+
+
+def profile_missed_baseline_blocker(api, f):
+    saved = copy.deepcopy((f.comparison, f.comparison_policy))
+    # Baseline finds BLK-CRIT-1; shadow misses it
+    f.comparison['baseline_run'] = f.make_run('base-blk', 'failed', 1, ['BLK-CRIT-1'], [], 12000, 80, 6)
+    f.comparison['shadow_run'] = f.make_run('shad-miss', 'success', 0, [], [], 4000, 30, 3)
+    # Attempting to approve recommendation when a baseline blocker was missed MUST fail
+    f.comparison['operator_decision']['decision'] = 'approve-recommendation-only'
+    profile_evaluate_call(api, f, True)
+    # Recording the comparison with reject-recommendation succeeds and reports missed_baseline_blockers + reject-promotion
+    f.comparison['operator_decision']['decision'] = 'reject-recommendation'
+    res = profile_evaluate_call(api, f)
+    require(
+        res['missed_baseline_blockers'] == ['BLK-CRIT-1']
+        and res['recommendation'] == 'reject-promotion'
+        and res['promoted'] is False,
+        'missed baseline blocker rejects promotion recommendation',
+    )
+    # Unexplained extra blocker in shadow also rejects approve-recommendation-only
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['shadow_run'] = f.make_run('shad-extra', 'failed', 1, ['BLK-EXTRA'], [], 4000, 30, 3)
+    f.comparison['operator_decision']['decision'] = 'approve-recommendation-only'
+    profile_evaluate_call(api, f, True)
+    f.comparison['operator_decision']['decision'] = 'reject-recommendation'
+    res_extra = profile_evaluate_call(api, f)
+    require(
+        res_extra['unexplained_divergences'] == ['BLK-EXTRA']
+        and res_extra['recommendation'] == 'reject-promotion',
+        'unexplained divergence rejects promotion recommendation',
+    )
+    f.comparison, f.comparison_policy = saved
+    profile_evaluate_call(api, f)
+
+
+def profile_cost_latency_accounting(api, f):
+    res = profile_evaluate_call(api, f)
+    require(
+        res['accounting']
+        == dict(
+            baseline_duration_ms=12000,
+            shadow_duration_ms=4500,
+            duration_delta_ms=-7500,
+            baseline_cost_units=80,
+            shadow_cost_units=35,
+            cost_delta_units=-45,
+            baseline_command_count=6,
+            shadow_command_count=3,
+            command_delta=-3,
+        )
+        and res['within_cost_latency_bounds'] is True,
+        'exact cost and latency accounting',
+    )
+    saved = copy.deepcopy((f.comparison, f.comparison_policy))
+    # Exceeding Routine max_duration_ms (60000) or max_cost_units (100)
+    f.comparison['shadow_run'] = f.make_run('shad-slow', 'success', 0, [], [], 75000, 120, 4)
+    f.comparison['operator_decision']['decision'] = 'approve-recommendation-only'
+    profile_evaluate_call(api, f, True)
+    f.comparison['operator_decision']['decision'] = 'reject-recommendation'
+    over = profile_evaluate_call(api, f)
+    require(
+        over['within_cost_latency_bounds'] is False and over['recommendation'] == 'reject-promotion',
+        'exceeding cost/latency bounds rejects recommendation',
+    )
+    # Tampering with duration_ms / cost_units / command_count relative to pinned capture_ref must fail
+    for field in ('duration_ms', 'cost_units', 'command_count'):
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['shadow_run'][field] += 1
+        profile_evaluate_call(api, f, True)
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['shadow_run'][field] = 0
+        profile_evaluate_call(api, f, True)
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['shadow_run'][field] = True
+        profile_evaluate_call(api, f, True)
+    f.comparison, f.comparison_policy = saved
+    profile_evaluate_call(api, f)
+
+
+def profile_no_self_promotion(api, f):
+    res = profile_evaluate_call(api, f)
+    require(
+        res['promoted'] is False
+        and res['active_gates_reduced'] is False
+        and res['permissions_changed'] is False,
+        'recommendation never self-promotes or reduces gates',
+    )
+    saved = copy.deepcopy((f.comparison, f.comparison_policy, f.preregistration, f.prereg_policy, f.profile_authority))
+    for action in ('self-promote', 'activate-profile', 'reduce-gates', 'grant-permissions', ''):
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['requested_action'] = action
+        profile_evaluate_call(api, f, True)
+    for field, val in (
+        ('self_promote', True),
+        ('reduce_active_gates', True),
+        ('role', 'Generator'),
+        ('role', 'Evaluator'),
+        ('owner', 'wrong-owner'),
+        ('gate', 'WRONG-GATE'),
+        ('decision', 'auto-promote'),
+    ):
+        f.comparison = copy.deepcopy(saved[0])
+        f.comparison['operator_decision'][field] = val
+        profile_evaluate_call(api, f, True)
+    for field in ('self_promotion_allowed', 'automatic_gate_reduction_allowed'):
+        f.preregistration = copy.deepcopy(saved[2])
+        f.preregistration['operator_decision_policy'][field] = True
+        profile_preregister_call(api, f, True)
+    for field in ('allow_self_promotion', 'allow_gate_reduction'):
+        f.profile_authority = copy.deepcopy(saved[4])
+        f.profile_authority[field] = True
+        bad_auth_ref = f.pin_new('bad-profile-auth', f.profile_authority)
+        f.preregistration = copy.deepcopy(saved[2])
+        f.prereg_policy = copy.deepcopy(saved[3])
+        f.prereg_policy['authority_ref'] = bad_auth_ref
+        f.preregistration['operator_decision_policy']['authority_ref'] = bad_auth_ref
+        profile_preregister_call(api, f, True)
+    f.comparison, f.comparison_policy, f.preregistration, f.prereg_policy, f.profile_authority = saved
+    profile_evaluate_call(api, f)
+
+
+def run_profile_case(name, api):
+    if not all(callable(getattr(api, fn, None)) for fn in ('preregister_profile_comparison', 'evaluate_profile_comparison', 'verify_profiles_ready')):
+        print('SETUP_ERROR: missing Phase 019 profile APIs; not intended semantic red', file=sys.stderr)
+        raise SystemExit(2)
+    previous = os.environ.get('NIZAM_WA120_FIXTURE')
+    os.environ['NIZAM_WA120_FIXTURE'] = 'observed'
+    try:
+        with tempfile.TemporaryDirectory(prefix='nizam019-profiles-') as parent:
+            f = ProfileFixture(api, parent)
+            dispatch = {
+                'preregister-before-run': profile_preregister_before_run,
+                'roles-reused': profile_roles_reused,
+                'reject-unstable-baseline': profile_reject_unstable_baseline,
+                'same-candidate': profile_same_candidate,
+                'missed-baseline-blocker': profile_missed_baseline_blocker,
+                'cost-latency-accounting': profile_cost_latency_accounting,
+                'no-self-promotion': profile_no_self_promotion,
+            }
+            dispatch[name](api, f)
+    finally:
+        if previous is None:
+            os.environ.pop('NIZAM_WA120_FIXTURE', None)
+        else:
+            os.environ['NIZAM_WA120_FIXTURE'] = previous
+
+
+def run_profiles_ready(api):
+    """Observe committed Phase 019 (124/125) profile readiness bundle and verify negative discrimination."""
+    if not callable(getattr(api, 'verify_profiles_ready', None)):
+        print('SETUP_ERROR: missing verify_profiles_ready; never intended semantic red', file=sys.stderr)
+        raise SystemExit(2)
+    policy_path = ROOT / '.agent/evidence/125/profiles-policy.json'
+    policy = api.parse_json(api.regular_file(ROOT, str(policy_path.relative_to(ROOT))).read_bytes())
+    evidence = api.parse_json(api._receipt_artifact(ROOT, policy['evidence_ref']))
+    before = copy.deepcopy((policy, evidence))
+    status = git(ROOT, 'status', '--porcelain', '--untracked-files=all')
+    with tempfile.TemporaryDirectory(prefix='nizam125-profiles-observation-') as parent:
+        scratch = Path(parent) / 'repo'
+        subprocess.check_call(['git', 'clone', '--quiet', '--shared', '--no-checkout', str(ROOT), str(scratch)])
+        git(scratch, 'remote', 'set-url', 'origin', git(ROOT, 'remote', 'get-url', 'origin'))
+        git(scratch, 'checkout', '--quiet', '--detach', evidence['candidate']['source_commit'])
+        result = api.verify_profiles_ready(scratch, evidence, policy=policy)
+        # Negative discrimination: remove one comparison row and verify rejection
+        negative = copy.deepcopy(evidence)
+        negative['comparisons'] = negative['comparisons'][:2]
+        synthetic_policy = copy.deepcopy(policy)
+        synthetic_review = api.parse_json(api._receipt_artifact(scratch, policy['independent_review_ref']))
+        git(scratch, 'config', 'user.name', 'SYNTHETIC125 private observation control')
+        git(scratch, 'config', 'user.email', 'synthetic125@example.invalid')
+        git(scratch, 'config', 'gc.auto', '0')
+        git(scratch, 'config', 'maintenance.auto', 'false')
+
+        def commit_control(label, value):
+            path = f'.agent/evidence/125/synthetic-observation-{label}.json'
+            raw = canonical(value) + b'\n'
+            target = scratch / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+            git(scratch, 'add', '--', path)
+            git(scratch, 'commit', '--quiet', '-m', 'SYNTHETIC125 observation control ' + label)
+            return dict(path=path, revision=git(scratch, 'rev-parse', 'HEAD'), sha256=sha(raw))
+
+        synthetic_policy['evidence_ref'] = commit_control('missing-comparisons', negative)
+        synthetic_review['evidence_ref'] = synthetic_policy['evidence_ref']
+        synthetic_policy['independent_review_ref'] = commit_control('review-ref-binding', synthetic_review)
+        try:
+            api.verify_profiles_ready(scratch, negative, policy=synthetic_policy)
+        except api.AssuranceError as exc:
+            require(re.search(r'comparisons|tiers|Routine|Standard|High-assurance', str(exc), re.I) is not None, 'profiles-ready negative cause: ' + str(exc))
+            print('EXPECTED_REJECTION SYNTHETIC125 missing-comparisons observation: ' + str(exc))
+        else:
+            require(False, 'synthetic invalid profiles-ready proof accepted')
+        require(api.verify_profiles_ready(scratch, evidence, policy=policy) == result, 'profiles-ready restores after synthetic negative')
+    require((policy, evidence) == before and git(ROOT, 'status', '--porcelain', '--untracked-files=all') == status, 'profiles-ready preserves inputs and repo state')
+    require(
+        result
+        == dict(
+            schema_version=1,
+            feature_id='125',
+            phase='019-workflow-assurance-profiles',
+            execution_scope='repository-worktree',
+            source_commit=evidence['candidate']['source_commit'],
+            candidate_sha256=sha(canonical(evidence['candidate'])),
+            preregistration_sha256=evidence['preregistration_ref']['sha256'],
+            tiers_verified=['Routine', 'Standard', 'High-assurance'],
+            cases_verified=list(PROFILE_CASES),
+            promoted=False,
+            active_gates_reduced=False,
+            independent_review_sha256=policy['independent_review_ref']['sha256'],
+        ),
+        'exact profiles-ready observation result',
+    )
+    print('PASS profiles-ready observed independently selected Phase 019 proof')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES + PROFILE_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
     group.add_argument('--scope-116', action='store_true')
     group.add_argument('--scope-controls-116', action='store_true')
     group.add_argument('--pre-entry-cases', action='store_true')
-    group.add_argument('--check', choices=('foundation-ready', 'controls-ready'))
+    group.add_argument('--check', choices=('foundation-ready', 'controls-ready', 'profiles-ready'))
     group.add_argument('--scope-118', action='store_true')
     group.add_argument('--scope-controls-118', action='store_true')
     group.add_argument('--scope-117', action='store_true')
@@ -2546,6 +3162,9 @@ def main():
     if args.check == 'controls-ready':
         if args.base: parser.error('--base requires a scope command')
         run_controls_ready(load_api()); return
+    if args.check == 'profiles-ready':
+        if args.base: parser.error('--base requires a scope command')
+        run_profiles_ready(load_api()); return
     if args.check:
         if args.base: parser.error('--base requires a scope command')
         load_api(ROOT / '.agent/evidence/118/foundation-fixtures.py').run_foundation(load_api()); return
@@ -2563,8 +3182,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES):
-        (run_controls_case if name in CONTROL_CASES else run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES + LANE_CASES + FAILURE_CASES + CONTROL_CASES + PROFILE_CASES):
+        (run_profile_case if name in PROFILE_CASES else run_controls_case if name in CONTROL_CASES else run_failure_case if name in FAILURE_CASES else run_lane_case if name in LANE_CASES else run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':

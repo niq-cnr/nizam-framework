@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-18"
+    summary: "Record Slice 3 independent acceptance (14ae992fed5217f016e8ee7edb542c67725d9e48) and Slice 4 (R9) Phase 019 generic repository/worktree assurance profile preregistration (124) and shadow comparison/recommendation (125)."
   - version: "0.3.0"
     date: "2026-10-18"
     summary: "Record Slice 2 independent acceptance (3132337b1a46132a573a854a2db835b84081cc68) and Slice 3 (R5 + R6 + R7 + R8) implementation: 5-route task classification, trivial path, lightweight contract amendments, unified stopping rules, exclusive evidence capture, Option A repository-binding migration, receipt/resume CLI, and concise status view."
@@ -80,7 +83,7 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - `python3 tools/test_workflow_assurance.py --check controls-ready`: **PASS** in **`2.05s`** (with scratch clone detached at `evidence['candidate']['source_commit']`)
   - `python3 tools/test_receipt_candidate_batching.py`: **PASS** (`4/4` behavioral checks: `real-git-count-reduction`, `semantic-equivalence`, `fresh-mutations`, `literal-paths-and-modes`; historical whole-module `MASKED_AST` check gated behind `--check-historical-ast-freeze`) in **`1.91s`**
 
-### 3.5 Slice 3 Summary (`R5 + R6 + R7 + R8`)
+### 3.5 Slice 3 Summary (`R5 + R6 + R7 + R8` — Accepted at `14ae992fed5217f016e8ee7edb542c67725d9e48`)
 
 - **R5 (Task Routing, Blocking vs. Advisory Review Severity, Lightweight Amendments, and Unified Stopping Rules)**:
   - Extended `tools/start_path.py` with semantic 5-route classification (`classify` across `trivial`, `bugfix`, `small-change`, `standard-feature`, `high-risk`), `trivial` start path (`begin|done trivial`), lightweight contract amendments (`amend-contract` with `--apply` for mechanical scope extensions and `"re_approval_required": true` for semantic scope changes), and `check-verdict` (reusing `convergent_agf_verdict` for convergent ledgers/reports and enforcing evidence-based blocking vs. `advisory_minor` separation).
@@ -91,6 +94,16 @@ Each check family has exactly one authoritative CI job owner inside the existing
   - Executed Option A from `.agent/evidence/120/repository-binding-decision-proposal.json`: created `.agent/evidence/120/authority-interpretation.json`, migrated `.agent/run_state.json` `repository` to `"https://github.com/niq-cnr/nizam-framework.git"` with append-only history event `wa120_repository_binding_migration_option_a`, and added `verify-receipt`, `plan-transition`, and `route-failure` CLI subcommands to `tools/workflow_assurance.py` plus `resume` to `tools/start_path.py`.
 - **R8 (Concise Generated Status / Readiness Views)**:
   - Added `tools/start_path.py status --format json|markdown` reporting implemented, verified, independently accepted, merged, released, installed, and commissioned states without mutating repository files, and updated `tools/test_public_entry.py` to derive the expected `--tag v<framework_version>` dynamically from `NIZAM.json`.
+
+### 3.6 Slice 4 Summary (`R9` — Phase 019 Generic Assurance Profiles `124` and `125`)
+
+- **Feature 124 (`preregister_profile_comparison` / `preregister-profile`)**:
+  - Reuses the exact five canonical AGF roles and capability profile identifiers (`Orchestrator` → `orchestrator-primary`, `Planner` → `planner-creative`, `Generator` → `generator-deterministic`, `Validator` → `validator-structural`, `Evaluator` → `evaluator-adversarial`).
+  - Preregisters `Routine` (`trivial`, `small-change`), `Standard` (`bugfix`, `standard-feature`), and `High-assurance` (`high-risk`) applicability, same-candidate full baseline controls (`status == "stable"`, `a11_verdict == "approve"`, `flaky_runs == 0`, `unresolved_blockers == 0`), candidate/test-bundle digests, zero missed-blocker tolerance, cost/latency limits, and accountable `Root` operator gate before any shadow run starts (`state == "preregistered-before-shadow"`, `shadow_runs_started is False`).
+  - Enforces the `execution_scope` boundary: generic `repository-worktree` profiles forbid `persistent_runtime_claim: true`, while `persistent-runtime-sbcl` profile claims require `persistent_runtime_ready: true` (gated on Phase 020 features `130–132`).
+- **Feature 125 (`evaluate_profile_comparison` / `evaluate-profile` and `verify_profiles_ready` / `verify-profiles-ready`)**:
+  - Evaluates same-candidate baseline vs. shadow runs with candidate-bound capture artifacts (`stdout`, `stderr`, `duration_ms`, `cost_units`, `command_count`), records both `success` and `failed` outcomes, rejects promotion recommendations whenever any baseline blocker is missed or cost/latency bounds are exceeded, and enforces `promoted: false`, `active_gates_reduced: false`, and `permissions_changed: false` (no self-promotion).
+  - Verified by the 7 permanent `PROFILE_CASES` (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`, `same-candidate`, `missed-baseline-blocker`, `cost-latency-accounting`, `no-self-promotion`) and `--check profiles-ready` against `.agent/evidence/125/profiles-policy.json`.
 
 ## 4. Reconciled Backlog & Dependency Order (R0–R11)
 

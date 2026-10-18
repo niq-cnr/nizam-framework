@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.35.0
+version: 0.36.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.36.0"
+    date: "2026-10-18"
+    summary: "Document Phase 019 generic repository/worktree assurance profile preregistration (124), shadow comparison and promotion recommendation (125), seven profile regression cases, and the start_path.py task-routing/capture/status CLI."
   - version: "0.35.0"
     date: "2026-10-18"
     summary: "Document authoritative five-job CI suite ownership, remove duplicate ci-candidate-bound/ci-blocker-rejected execution from fixtures_self_test.sh and duplicate fixtures_self_test.sh execution from convergent_review, and pin CI Python 3.12 with shared requirements."
@@ -115,6 +118,26 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
+## Assurance profiles and task entry CLI — features 124–125
+
+[`workflow_assurance.py`](workflow_assurance.py) provides `preregister_profile_comparison`,
+`evaluate_profile_comparison`, and `verify_profiles_ready` (plus CLI subcommands
+`preregister-profile`, `evaluate-profile`, `verify-profiles-ready`, `verify-receipt`,
+`plan-transition`, and `route-failure`). Feature 124 preregisters `Routine`, `Standard`,
+and `High-assurance` tier applicability, exact [`standard/AGF.md`](../standard/AGF.md) and
+[`standard/capability_profiles.md`](../standard/capability_profiles.md) role/profile bindings,
+stable A11 baseline controls, candidate/test-bundle digests, zero missed-blocker tolerance,
+and cost/latency bounds before any shadow run starts. Feature 125 evaluates same-candidate
+baseline vs. shadow runs, records every outcome including failures, rejects promotion
+recommendations on any missed baseline blocker or bound violation, and enforces
+`promoted: false` and `active_gates_reduced: false` (no self-promotion). Seven permanent
+selectors (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`,
+`same-candidate`, `missed-baseline-blocker`, `cost-latency-accounting`, `no-self-promotion`)
+and `--check profiles-ready` run through [`test_workflow_assurance.py`](test_workflow_assurance.py).
+[`start_path.py`](start_path.py) (tested by [`test_start_path.py`](test_start_path.py) and
+[`test_public_entry.py`](test_public_entry.py)) provides `classify`, `preflight`, `begin`,
+`capture`, `check-verdict`, `amend-contract`, `done`, `status`, and `resume`.
+
 ## Development runtime controller — features 126–127
 
 `runtime_session.py` provides a detached supervisor and one stub child per

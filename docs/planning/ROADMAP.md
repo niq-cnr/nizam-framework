@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.18
+version: 0.65.19
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.19"
+    date: "2026-10-18"
+    summary: "Record completion of Phase 019 (features 124-125) generic repository/worktree assurance profile preregistration and shadow comparison/recommendation under the 2026-10-18 remediation mandate (R9); persistent-runtime SBCL profile qualification remains gated on Phase 020 features 130-132. Preserve the v1.6.0 disposition line and all historical snapshots."
   - version: "0.65.18"
     date: "2026-10-18"
     summary: "Adopt the 2026-10-18 critical quality and velocity remediation mandate (docs/planning/REMEDIATION_2026_10_18.md): reconcile PR #115 (feature 134), prioritize R0-R11 remediation slices, and split Phase 019 generic repository/worktree assurance profiles (124-125, proceeding after completed 018/123) from persistent-runtime SBCL profile claims (still gated on Phase 020 features 130-132). Preserve the v1.6.0 disposition line and all historical snapshots."
@@ -287,8 +290,10 @@ verified green at HEAD (SBCL 2.2.9.debian; `python3 tools/test_runtime_session.p
 --check sbcl-admission --require-sbcl` exit 0). Remaining phase-020 product headroom is
 632 lines against 130's estimate of 750, a recorded non-halting variance. Features
 **131/132** remain PENDING behind 130 in the 020 persistent-runtime order 129→130→131→132.
-Phase **019** (features **124–125**) generic repository/worktree assurance profiles are
-prioritized under the 2026-10-18 remediation mandate (R9) without waiting on 130–132.
+Phase **019** ([phase_019.yaml](phase_019.yaml), features **124–125**) generic repository/worktree
+assurance profile preregistration and shadow comparison/recommendation are **COMPLETE** under
+the 2026-10-18 remediation mandate (R9; verified via `python3 tools/test_workflow_assurance.py --check profiles-ready`),
+while persistent-runtime SBCL profile qualification remains gated on Phase 020 (`130–132`).
 
 Phase **021** / feature **133** is complete and delivered: PR105 merged as `bfd15d10`
 and the five-success main CI proof is recorded in run_state (`133-main-hosted-delivery`);
