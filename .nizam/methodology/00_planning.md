@@ -2,10 +2,13 @@
 id: nizam-planning-enforcer
 title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/00_planning.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-18"
+    summary: "Align Section 6 Scope Budget Protocol with work-specific diagnostic stopping policy: per-feature and cumulative line-count thresholds serve as diagnostic telemetry signals rather than standalone mechanical hard stops when contract invariants hold."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 correction: the per-feature rolling scope baseline is computed from up to three completed features that precede the current feature; the current measurement is appended only after the comparison, preserving the first-feature exception."
@@ -149,20 +152,24 @@ writer):
    rolling average, compare the current feature's measurement with 3× that
    prior-only average, and only then append the current measurement to
    `scope_budget.per_feature`. The current feature MUST NOT participate in its
-   own baseline. If it exceeds that threshold, the feature is flagged. A flag does not halt the
-   pipeline by itself — it requires an explicit human acknowledgment recorded
-   before the next feature begins, so that scope creep is visible rather than
-   silently absorbed. When fewer than three prior features exist, the rolling
-   average uses however many precede the current one. The phase's first feature
-   therefore has no prior baseline and cannot be flagged by this rolling check;
-   it is still compared with its own `estimated_lines` and the cumulative check.
+   own baseline. If it exceeds that threshold, the feature is flagged as a
+   diagnostic telemetry signal in `scope_budget` to surface scope growth and
+   prompt bounded contract amendment (`tools/start_path.py amend-contract`) or
+   decomposition; it does not halt the pipeline by itself when contract
+   invariants and verification hold. When fewer than three prior features exist,
+   the rolling average uses however many precede the current one. The phase's
+   first feature therefore has no prior baseline and cannot be flagged by this
+   rolling check; it is still compared with its own `estimated_lines` and the
+   cumulative check.
 2. **Cumulative check.** If the running total of lines changed across the whole
-   phase exceeds **130% of the phase's `original_estimate_lines`**, the pipeline
-   MUST HALT, log the overrun to the technical-debt register, and require
-   explicit human authorization before any further feature is started. This is
-   a hard gate, not a flag — a phase that has grown 30% beyond its planned size
-   has outgrown its original plan and needs a human decision, not an assumption
-   that the plan still holds.
+   phase exceeds **130% of the phase's `original_estimate_lines`**, the
+   Orchestrator records the overrun as a diagnostic telemetry alert in
+   `scope_budget` and evaluates whether the growth reflects mechanical test/code
+   completeness within the approved contract invariants or an unapproved semantic
+   scope expansion. Mechanical line-count growth alone is not a standalone hard
+   stop when goals, `non_goals`, and security/isolation invariants hold; an
+   actual semantic scope expansion beyond the phase plan requires a structural
+   `rebaseline` or plan amendment (Section 9).
 
 Both checks operate on the same `scope_budget.per_feature` array and
 `scope_budget.total_lines_changed` field that `schema/run_state.schema.json`

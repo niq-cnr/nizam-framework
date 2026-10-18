@@ -889,11 +889,36 @@ for path in lists:
         if not isinstance(fid, str) or not fid:
             continue
 
+        is_contemporary = "passes" in feature
+        if is_contemporary and feature.get("passes") is not True:
+            errors.append(
+                f"{path}: feature '{fid}' is complete with passes={feature.get('passes')!r} (expected true)"
+            )
+            continue
+
         contract_path = f".agent/contracts/{fid}.json"
         if not os.path.isfile(contract_path):
-            # Era-safe: a complete feature with no contract at all predates
-            # the contract-first loop and is not flagged.
+            if is_contemporary:
+                errors.append(
+                    f"{path}: contemporary complete feature '{fid}' has no contract ({contract_path})"
+                )
+            # Era-safe: a legacy complete feature with no passes field and no
+            # contract at all predates the contract-first loop and is not flagged.
             continue
+
+        try:
+            contract_doc = load_json(contract_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(
+                f"{path}: feature '{fid}': contract {contract_path} not valid JSON: {exc}"
+            )
+            continue
+        if isinstance(contract_doc, dict) and "status" in contract_doc:
+            if contract_doc.get("status") not in ("approved", "implemented", "complete"):
+                errors.append(
+                    f"{path}: feature '{fid}': contract {contract_path} has unapproved status {contract_doc.get('status')!r}"
+                )
+                continue
 
         qa_path = f".agent/qa/{fid}.json"
         if not os.path.isfile(qa_path):
@@ -911,14 +936,40 @@ for path in lists:
             )
             continue
 
+        if isinstance(qa_doc, dict):
+            fv = qa_doc.get("final_verdict")
+            qa_approved = (
+                qa_doc.get("qa_pass") is True
+                or (isinstance(fv, dict) and fv.get("approved") is True)
+                or str(qa_doc.get("verdict", "")).upper() == "PASS"
+            )
+            if not qa_approved:
+                errors.append(
+                    f"{path}: feature '{fid}': QA verdict {qa_path} is not approved/passing"
+                )
+                continue
+
         evidence_files = qa_doc.get("evidence_files") if isinstance(qa_doc, dict) else None
+        if is_contemporary and (not isinstance(evidence_files, list) or not evidence_files):
+            errors.append(
+                f"{path}: contemporary complete feature '{fid}': {qa_path} must declare non-empty evidence_files"
+            )
+            continue
         if isinstance(evidence_files, list):
+            non_empty_count = 0
             for evidence_path in evidence_files:
-                if isinstance(evidence_path, str) and not os.path.isfile(evidence_path):
-                    errors.append(
-                        f"{path}: feature '{fid}': evidence file listed in {qa_path} "
-                        f"does not exist: {evidence_path}"
-                    )
+                if isinstance(evidence_path, str):
+                    if not os.path.isfile(evidence_path):
+                        errors.append(
+                            f"{path}: feature '{fid}': evidence file listed in {qa_path} "
+                            f"does not exist: {evidence_path}"
+                        )
+                    elif os.path.getsize(evidence_path) > 0:
+                        non_empty_count += 1
+            if is_contemporary and evidence_files and non_empty_count == 0:
+                errors.append(
+                    f"{path}: contemporary complete feature '{fid}': all evidence_files listed in {qa_path} are empty"
+                )
 
 if errors:
     for error in errors:

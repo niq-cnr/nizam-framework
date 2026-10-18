@@ -7,6 +7,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **v1.8.0 post-release ledger refresh, `.nizam/` self-adoption, and clean exit from temporary remediation override mode** (framework-envelope only).
+  `v1.8.0` is published: the annotated tag `v1.8.0` (`faeb50dfdb055cc4d5018ab8d474979be71f876f`)
+  points at reviewed PR #119 merge `606d11ee84deff0d3b7934cbfd715223d64ac79d`
+  (`compliance.yml` run `39128908966` succeeded in `18m23s`); `release.yml` run
+  `39130412824` succeeded and published the GitHub Release at `2026-10-18T13:11:05Z`.
+  This repository's `.nizam/` installation is re-pinned to the `v1.8.0` payload
+  (`277` released files + `provenance.json`, `installed_at: 2026-10-18T13:12:27Z`)
+  via the reviewed post-tag re-bootstrap under `H-CONSUMER-UPGRADE` (`AGENTS.md`
+  `v0.2.0` removes the transitional remediation precedence banner now that `.nizam/`
+  is at `v1.8.0` parity), and the planning ledgers (`ROADMAP.md`, `operator_gates.md`,
+  `SELF_GOVERNANCE.md`, `manifest.json`, `REMEDIATION_2026_10_18.md`) and
+  `.agent/run_state.json` record the observed facts.
+
 ## [1.8.0] - 2026-10-18
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): the

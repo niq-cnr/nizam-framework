@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.6.2
+version: 0.7.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-10-18"
+    summary: "Align Routine/Standard/High-assurance role allocation (independent Evaluator across all tiers), work-specific diagnostic stopping policy, publish/build-receipt producer-to-receipt workflow, and the single authoritative AGF verdict schema across all gates and comparator loops."
   - version: "0.6.2"
     date: "2026-10-18"
     summary: "Route semantic 5-class task classification, trivial/bugfix/small-change paths, lightweight contract amendments, capability preflight, exclusive evidence capture, concise status views, and receipt transitions through tools/start_path.py; clarify blocking vs. advisory_minor verdict rules."
@@ -109,18 +112,28 @@ reviewing any contract.
 
 Before starting a change, classify the task with `tools/start_path.py classify`
 into `trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`
-based on semantic change properties (never line count alone). A trivial change,
-bug fix, or small unambiguous change is not a feature; `tools/start_path.py
-begin|done trivial|bugfix|small-change` gates whether that non-feature path may
-begin and whether its recorded verification result exists, as
+based on canonical relative paths and semantic change properties (never line
+count alone). The five canonical roles map onto three assurance tiers
+(`standard/AGF.md` Section 2.1): **Routine** (`trivial`, `small-change`:
+`Generator` + independent `Evaluator`), **Standard** (`bugfix`,
+`standard-feature`: `Planner`, `Generator`, `Validator` + independent
+`Evaluator`), and **High-assurance** (`high-risk`: full five-role separation
+with independent `Evaluator`). A trivial change, bug fix, or small unambiguous
+change is not a feature; `tools/start_path.py begin|done
+trivial|bugfix|small-change` enforces scope eligibility and verifies that the
+actual changed tree and recorded QA result satisfy the route, as
 `methodology/01_execution.md` Section 2.1 specifies. For an already `approved`
 feature contract that needs only a bounded mechanical file-list or verification
 command update without changing goals, `non_goals`, or security invariants, use
-`tools/start_path.py amend-contract`. Use `tools/start_path.py preflight` before
-a governed attempt, `tools/start_path.py capture` for exclusive per-execution
-evidence capture, `tools/start_path.py status` for a concise read-only status
-view, and `tools/start_path.py resume` for receipt-verified stage transitions.
-No feature implementation may begin against a contract that is not `approved`.
+`tools/start_path.py amend-contract` (which classifies mechanical vs. semantic
+changes and flags `re_approval_required: true` on semantic changes). Use
+`tools/start_path.py preflight` before a governed attempt,
+`tools/start_path.py capture` for exclusive per-execution evidence capture,
+`tools/start_path.py publish` and `tools/start_path.py build-receipt` to publish
+post-execution outputs and bind receipt-qualified stage evidence,
+`tools/start_path.py status` for a concise read-only status view, and
+`tools/start_path.py resume` for receipt-verified stage transitions. No feature
+implementation may begin against a contract that is not `approved`.
 
 **Eval-Gated Promotion**: Model and prompt changes are treated as code changes and MUST pass through this exact execution loop, blocking promotion until role-specific evals pass per `methodology/07_eval_gated_promotion.md`.
 
@@ -129,19 +142,22 @@ No feature implementation may begin against a contract that is not `approved`.
 ## 4. Circuit Breaker Obligations
 
 Every repeatable step in either loop above — a contract revision, an
-implementation rework — is bound by the framework's mandatory 3-strike attempt
-limit. This skill imposes the following obligations on any agent runtime
-attempting such a step, regardless of runtime:
+implementation rework — is governed by `methodology/03_circuit_breaker.md`:
 
 1. Read the step's current attempt count from the project's durable
    circuit-breaker state before attempting the step.
-2. Follow the escalating per-attempt strategy (a direct fix on attempt one, a
-   structural/interface analysis on attempt two, an architectural
-   reconsideration on attempt three) rather than repeating the same approach.
-3. Treat a fourth attempt at the same step as forbidden. If the third attempt
-   also fails: discard the failed attempt's working changes, mark the step
-   `BLOCKED` in durable state, log the failure to the project's technical-debt
-   register, and halt for human review.
+2. Follow the escalating per-attempt diagnostic posture (a direct fix on
+   attempt one, a structural/interface analysis on attempt two, an
+   architectural reconsideration or bounded decomposition on attempt three)
+   rather than repeating the same approach.
+3. Treat attempt counters and line-count thresholds as work-specific diagnostic
+   telemetry signals when safety, security, and isolation invariants hold and
+   each attempt applies a materially new fix or decomposition. An immediate
+   hard stop (`BLOCKED`, logged to the technical-debt register, and escalated
+   for human review) is mandatory when safety, isolation, or authority
+   invariants are violated, when a specification contradiction requires human
+   authority, or when a third attempt fails on the same unresolved defect
+   signature without a viable bounded decomposition.
 
 The full mechanics — the strategy table, the halt procedure, and where the
 attempt counters live — are authoritative in `methodology/03_circuit_breaker.md`.
@@ -196,9 +212,9 @@ authoritative in `methodology/04_tool_driven_state.md`.
 
 ## 7. Verdict JSON Formats
 
-Every gate this skill's execution loop passes through (Section 3) culminates
-in a JSON verdict block. An agent runtime forming or consuming a verdict uses
-this shape:
+Every gate this skill's execution loop passes through (Section 3), including
+QA checks and comparator critic loops (`standard/acceptance_bars.md`),
+culminates in the single authoritative AGF JSON verdict shape:
 
 ```json
 {
@@ -211,8 +227,8 @@ this shape:
 }
 ```
 
-- `approved` — `true` only when every sibling field below is satisfied and the
-  reviewing role has no remaining objection.
+- `approved` — `true` only when every sibling blocking array below is empty and
+  the reviewing role has no remaining objection.
 - `issues` — non-empty means rejection, regardless of `approved`'s value.
 - `missing_acceptance_coverage` — any acceptance test not traceable to a
   verification step is listed here; non-empty means rejection.
@@ -220,9 +236,12 @@ this shape:
   by evidence the reviewing role independently confirmed; non-empty means
   rejection.
 
-A QA verdict extends this shape with a per-check result list and, on failure,
-a required-fixes list — see `schema/qa_verdict.schema.json` for the full
-structural definition. An agent runtime parses only the JSON block to decide
+Optional non-blocking observations belong in `advisory_minor` (which never
+blocks advancement when `issues`, `missing_acceptance_coverage`, and
+`unsupported_claims` are empty), required remediation items on failure belong
+in `required_fixes`, a QA verdict includes its per-check `verdict` list
+(`schema/qa_verdict.schema.json`), and comparator loops attach their metadata
+under `comparator`. An agent runtime parses only the JSON block to decide
 whether to advance; prose framing around it is informational only.
 
 ## 8. Ecosystem Engineering Cycle Routing

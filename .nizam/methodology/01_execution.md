@@ -2,10 +2,13 @@
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/01_execution.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-18"
+    summary: "Align Section 2.1 with Routine/Standard/High-assurance role allocation (independent Evaluator across all tiers), unify scope eligibility and actual-diff verification across classify/begin/done, document publish and build-receipt producer-to-receipt integration, distinguish mechanical vs. semantic contract amendments, and align Section 5 with work-specific diagnostic stopping."
   - version: "0.3.0"
     date: "2026-10-18"
     summary: "Extend Section 2.1 with semantic 5-route task classification (trivial, bugfix, small-change, standard-feature, high-risk), lightweight contract amendments via tools/start_path.py amend-contract when goals and invariants are unchanged, exclusive per-execution evidence capture via tools/start_path.py capture, capability preflight, and blocking vs. advisory_minor verdict separation."
@@ -66,49 +69,58 @@ protect it.
 ### 2.1 Semantic task routing and non-feature routes
 
 Before starting a change, classify the task using `tools/start_path.py classify`
-based on semantic change properties (files touched, defect repair vs. new
-contract obligations, schema/interface impact, and security/isolation/runtime
-boundaries), never line count alone. Classification returns the selected route
-(`trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`),
-required gates, review remit, and explicit stopping conditions bounded by
-`03_circuit_breaker.md` (maximum 3 attempts).
+based on canonical relative paths and semantic change properties (files touched,
+defect repair vs. new contract obligations, schema/interface impact, and
+security/isolation/runtime boundaries), never line count alone. Classification
+returns the selected route (`trivial`, `bugfix`, `small-change`,
+`standard-feature`, or `high-risk`), its assurance tier (`Routine`, `Standard`,
+or `High-assurance` per `standard/AGF.md` Section 2.1), required gates, review
+remit, and work-specific stopping conditions (`03_circuit_breaker.md`). Across
+every tier, the **Evaluator** remains independent of the authoring Generator.
 
- A bug fix, a small unambiguous change, and a trivial editorial adjustment are
+A bug fix, a small unambiguous change, and a trivial editorial adjustment are
 not features. They do not open a product specification or a new contract, and
-they do not pass through Loop 1. `tools/start_path.py` is the consumer of their
-records. The feature-path gate count is unchanged.
+they do not pass through Loop 1. `tools/start_path.py` enforces a single unified
+scope eligibility and actual-diff verification predicate across `classify`,
+`begin`, and `done`. The feature-path gate count is unchanged.
 
-- **Trivial change.** Editorial, comment, or documentation-only adjustments that
-  do not touch schemas, tools, contracts, or security boundaries may begin when
-  `tools/start_path.py begin trivial --id <id>` exits 0 (reading
-  `.agent/evidence/<id>-intent.json` against `schema/small_change_intent.schema.json`
-  with `needs_new_contract: false`) and complete when
-  `tools/start_path.py done trivial --id <id>` exits 0.
-- **Bug fix.** Implementation may begin only when
+- **Trivial change (`Routine` tier).** Editorial, comment, or documentation-only
+  adjustments (`*.md`, `*.txt`, `*.rst`, `*.html`) that do not touch governance
+  core (`AGENTS.md`, `NIZAM.json`, `standard/`, `methodology/`, `ecosystem/`,
+  `registry/`, `templates/`), schemas, tools, contracts, or security boundaries
+  may begin when `tools/start_path.py begin trivial --id <id>` exits 0 (reading
+  `.agent/evidence/<id>-intent.json` with a non-empty `files` list against
+  `schema/small_change_intent.schema.json` and `needs_new_contract: false`) and
+  complete when `tools/start_path.py done trivial --id <id>` exits 0 (verifying
+  that the actual changed tree is within the declared intent files and that a
+  passing `.agent/qa/<id>.json` with non-empty executed checks and evidence
+  exists).
+- **Bug fix (`Standard` tier).** Implementation may begin only when
   `tools/start_path.py begin bugfix --id <id>` exits 0. That command reads
   `.agent/evidence/<id>-cause.json` against `schema/bugfix_cause.schema.json`
   and `.agent/evidence/<id>-scope.json` against
-  `schema/bugfix_scope.schema.json`. When the scope names `contract_id`,
-  `.agent/contracts/<contract_id>.json` must validate against
-  `schema/contract.schema.json` with a status of `approved`, `implemented`,
-  or `complete`, and every scoped file must be inside that contract. The
-  repair then does not repeat Loop 1. The bug fix is not done until
-  `tools/start_path.py done bugfix --id <id>` exits 0. That command also
-  requires a passing `.agent/qa/<id>.json` validated against
-  `schema/qa_verdict.schema.json`, with a real evidence file.
-- **Small unambiguous change.** Implementation may begin only when
-  `tools/start_path.py begin small-change --id <id>` exits 0. That command
+  `schema/bugfix_scope.schema.json`, rejecting high-risk or schema paths. When
+  the scope names `contract_id`, `.agent/contracts/<contract_id>.json` must
+  validate against `schema/contract.schema.json` with a status of `approved`,
+  `implemented`, or `complete`, and every scoped file must be inside that
+  contract. The repair then does not repeat Loop 1. The bug fix is not done
+  until `tools/start_path.py done bugfix --id <id>` exits 0, which verifies the
+  actual changed files against the declared scope and requires a passing
+  `.agent/qa/<id>.json` with at least one executed check and non-empty evidence.
+- **Small unambiguous change (`Routine` tier).** Implementation may begin only
+  when `tools/start_path.py begin small-change --id <id>` exits 0. That command
   reads `.agent/evidence/<id>-intent.json` against
-  `schema/small_change_intent.schema.json` and refuses the path when
-  `needs_new_contract` is true. The change is not done until
-  `tools/start_path.py done small-change --id <id>` exits 0, which requires
-  the same passing QA record. Use the feature path when the change needs a
-  new contract.
-- **Standard feature and high-risk routes.** Changes that introduce new contract
-  obligations or modify schemas (`standard-feature`), or touch security/isolation,
-  authority verification, or persistent-runtime boundaries (`high-risk`), MUST
-  use the full Loop 1 and Loop 2 state machine (`high-risk` additionally requires
-  capability preflight and convergent review or the isolation boundary suite).
+  `schema/small_change_intent.schema.json`, requires a non-empty `files` list
+  eligible for `small-change`, and refuses the path when `needs_new_contract` is
+  true. The change is not done until `tools/start_path.py done small-change --id
+  <id>` exits 0, which verifies the actual changed scope and requires the same
+  passing QA record. Use the feature path when the change needs a new contract.
+- **Standard feature (`Standard` tier) and high-risk (`High-assurance` tier)
+  routes.** Changes that introduce new contract obligations or modify schemas
+  (`standard-feature`), or touch security/isolation, authority verification, or
+  persistent-runtime boundaries (`high-risk`), MUST use the full Loop 1 and
+  Loop 2 state machine (`high-risk` additionally requires capability preflight
+  and convergent review or the isolation boundary suite).
 
 ## 3. Loop 2 — Post-Code Repair
 
@@ -154,10 +166,13 @@ during implementation, the Generator discovers the contract needs a substantive
 change to its goals, `non_goals`, acceptance intent, or security/isolation
 boundaries, it MUST stop and propose a contract revision — re-entering Loop 1 —
 rather than silently expanding scope under cover of "finishing the job." For a
-bounded mechanical update (adding a supporting file or correcting a verification
-command while `feature_id`, `non_goals`, and security invariants remain
-unchanged), the Orchestrator may validate and record a structured amendment on
-the approved contract via `tools/start_path.py amend-contract`.
+bounded mechanical update (adding a low-risk supporting file or correcting a
+non-vacuous verification command while `feature_id`, `non_goals`, and security
+invariants remain unchanged), the Orchestrator may validate and record a
+structured amendment via `tools/start_path.py amend-contract`. If an amendment
+adds high-risk/schema/governance paths or alters acceptance criteria,
+`amend-contract` classifies it as `semantic`, sets `status: "proposed"` with
+`re_approval_required: true`, and requires Loop 1 re-approval.
 
 **Evidence is a completion gate, not post-processing.** A passing QA JSON block
 proves the Evaluator's decision, but the feature remains `in_progress` until the
@@ -165,12 +180,14 @@ Orchestrator verifies that every contracted verification has a corresponding
 externalised file under `.agent/evidence/`, that the QA verdict references those
 paths, and that each referenced path exists and records the command/result plus
 the actual exit status. Use `tools/start_path.py preflight` before a governed
-attempt and `tools/start_path.py capture` to write exclusive per-execution
-evidence files (recording command `argv`, `cwd`, `revision`, `duration_ms`,
+attempt, `tools/start_path.py capture` to write exclusive per-execution evidence
+files (recording command `argv`, `cwd`, `revision`, `duration_ms`,
 `completion_state`, and `exit_code` without silently overwriting prior
-attempts). Missing or unreferenced evidence is a Loop 2 failure and uses the
-same bounded repair loop; it is never filled in after the feature is marked
-complete.
+attempts), and `tools/start_path.py publish` + `tools/start_path.py
+build-receipt` to publish post-execution outputs and construct closed 12-field
+capture records compatible with `verify_stage_receipt` / `tools/start_path.py
+resume`. Missing or unreferenced evidence is a Loop 2 failure and uses the same
+bounded repair loop; it is never filled in after the feature is marked complete.
 
 ## 4. The JSON Verdict Parse Rule
 
@@ -200,18 +217,17 @@ MUST parse only the JSON block to decide whether to advance.
 
 ## 5. Circuit Breaker Cross-Reference
 
-Both loops above contain a step that can fail and be retried: Loop 1's "Generator
-revises contract" step, and Loop 2's "Generator reworks" step (twice — once for a
-Mode B rejection, once for a QA failure). Every one of these repeatable steps is
-bound by the **same** mandatory 3-strike circuit breaker.
-
-This protocol does not restate the breaker's internal mechanics (the per-attempt
-strategy, the halt procedure, or where its counters live) — those are
-authoritatively defined in `03_circuit_breaker.md`. What this protocol commits
-to is narrower and non-negotiable: **no revision loop or rework loop in either
-Loop 1 or Loop 2 above may exceed the attempt limit `03_circuit_breaker.md`
-defines, under any circumstance.** A fourth attempt at any single named step in
-this document is forbidden by that document and by extension forbidden here.
+Both loops above contain steps that can fail and be retried: Loop 1's contract
+revision step and Loop 2's implementation or evidence rework steps. Every
+repeatable step is governed by `03_circuit_breaker.md`: attempt counters and
+line-count thresholds serve as work-specific diagnostic telemetry signals to
+drive escalating diagnostic posture (direct fix -> interface/type analysis ->
+architectural review or bounded decomposition) when safety, security, and
+isolation invariants hold. An immediate hard stop and human escalation
+(`BLOCKED`) is mandatory when safety, isolation, or authority invariants are
+violated, when a specification contradiction requires human authority, or when a
+third attempt fails on the same unresolved defect signature without a viable
+bounded decomposition.
 
 ## 6. Handoff Out
 
