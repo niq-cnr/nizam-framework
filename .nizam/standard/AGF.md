@@ -2,10 +2,13 @@
 id: agent-governance-framework
 title: "Agent Governance Framework (AGF)"
 description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: standard/AGF.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-18"
+    summary: "Align role responsibilities across Routine, Standard, and High-assurance tiers (preserving Evaluator independence across all tiers), unify the single authoritative JSON verdict schema across all gates and comparator loops, and align circuit-breaker cross-references with work-specific diagnostic stopping."
   - version: "0.3.0"
     date: "2026-10-11"
     summary: "Name both Evaluator stages: independent Loop 1 contract testability review and Loop 2 implementation verification; role permissions unchanged (A04a)."
@@ -41,6 +44,16 @@ another's gate.
 | **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
 | **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
 | **Evaluator** | Independently reviews the verification plan and contract testability in Loop 1, then executes the verification plan against the implementation in Loop 2 and confirms pass/fail with evidence. | Independent contract-review and implementation-QA verdicts, with required fixes on failure. |
+
+### 2.1 Assurance Tiers and Role Allocation
+
+The five canonical roles above map onto three operational assurance tiers without introducing new roles (`standard/capability_profiles.md`):
+
+| Assurance Tier | Route Classes (`tools/start_path.py classify`) | Required Roles | Role Combination Rule |
+|---|---|---|---|
+| **Routine** | `trivial`, `small-change` | `Generator`, `Evaluator` | Planning, generation, and structural validation may be executed by one implementation agent (`Generator`), provided scope eligibility and completion verification are enforced by `tools/start_path.py` and the **Evaluator** remains independent. |
+| **Standard** | `bugfix`, `standard-feature` | `Planner`, `Generator`, `Validator`, `Evaluator` | `Planner`, `Generator`, and `Validator` responsibilities may be combined in an implementation session when disclosed in durable state, but the **Evaluator** MUST remain independent of the authoring Generator. |
+| **High-assurance** | `high-risk` | `Orchestrator`, `Planner`, `Generator`, `Validator`, `Evaluator` | Full role separation is required; `Evaluator` is strictly independent, capability preflight and isolation/convergent review gates apply, and operator authority gates (`H-*`) govern protected boundaries. |
 
 ## 3. The Dual Validator Gate
 
@@ -109,6 +122,14 @@ Rules for applying this gate:
    `approved: true` verdict on a validator's behalf from an incomplete or malformed
    response. A missing or malformed verdict block is treated as a rejection and triggers
    the failure-handling procedure the pipeline defines for malformed subagent output.
+4. **Single authoritative verdict shape across all gates.** Every gate, QA check, and
+   comparator critic loop (`standard/acceptance_bars.md`) uses this four-key top-level
+   structure (`final_verdict`, `issues`, `missing_acceptance_coverage`,
+   `unsupported_claims`). Optional non-blocking observations belong in `advisory_minor`
+   (which never blocks advancement when the three blocking arrays are empty), required
+   remediation actions on failure belong in `required_fixes`, and comparator metadata
+   belongs under an optional `comparator` object. No alternative top-level verdict schema
+   may replace these four required keys.
 
 ## 5. The Durable State Rule (No Oral Tradition)
 
@@ -140,13 +161,15 @@ other channel that is not independently readable by the next agent in the pipeli
 
 ## 6. Circuit Breaker Cross-Reference
 
-Every execution loop governed by this framework embeds a mandatory circuit breaker
-limiting self-correction attempts on any single step, so that repeated failures halt for
-human review rather than looping indefinitely. The full 3-strike protocol — attempt
-strategy per strike, the halt procedure, and required state updates on trigger — is
-defined in the framework's execution methodology (`methodology/03_circuit_breaker.md`).
-This document establishes only the cross-cutting requirement: no
-role defined in Section 2 may bypass or override the circuit breaker's halt decision.
+Every execution loop governed by this framework embeds a circuit breaker
+governing self-correction attempts on any single step (`methodology/03_circuit_breaker.md`).
+Attempt counters and line-count thresholds serve as work-specific diagnostic telemetry
+signals to drive escalating diagnostic posture or bounded decomposition when safety,
+security, and isolation invariants hold; hard stops and human escalations apply when
+invariants or authority boundaries are violated, when a specification contradiction
+requires human resolution, or when repeated attempts fail on the same unresolved defect
+signature. No role defined in Section 2 may bypass or override an active circuit-breaker
+halt decision.
 
 ## 7. References
 

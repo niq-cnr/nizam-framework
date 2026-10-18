@@ -106,6 +106,43 @@ def restrict_filesystem(root: Path, runner: Path, interpreters: list[Path]) -> i
     return abi
 
 
+def sanitize_runtime_environment(interpreters: list[Path]) -> None:
+    """Filter PATH to Landlock-allowed system/interpreter directories and clear host overrides."""
+    allowed_roots = [
+        p.resolve()
+        for p in (Path("/usr"), Path("/bin"), Path("/sbin"), Path("/lib"), Path("/lib64"))
+        if p.exists()
+    ]
+    allowed_exact = {interp.resolve() if interp.is_dir() else interp.resolve().parent for interp in interpreters}
+    raw_path = os.environ.get("PATH", "")
+    kept: list[str] = []
+    for entry in raw_path.split(os.pathsep):
+        if not entry:
+            continue
+        try:
+            resolved = Path(entry).resolve(strict=True)
+            in_allowed = resolved in allowed_exact or any(
+                resolved == root or root in resolved.parents for root in allowed_roots
+            )
+            if not in_allowed:
+                continue
+            os.listdir(resolved)
+            if entry not in kept:
+                kept.append(entry)
+        except OSError:
+            continue
+    for default_dir in ("/usr/local/bin", "/usr/bin", "/bin"):
+        if default_dir not in kept:
+            try:
+                os.listdir(default_dir)
+                kept.append(default_dir)
+            except OSError:
+                continue
+    os.environ["PATH"] = os.pathsep.join(kept) if kept else "/usr/bin:/bin"
+    os.environ.pop("PYTHONHOME", None)
+    os.environ.pop("VIRTUAL_ENV", None)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", required=True)
@@ -127,9 +164,11 @@ def main() -> int:
         raise SystemExit("adapter command must execute the exact trusted runner")
     os.chdir(root)
     restrict_filesystem(root, runner, interpreters)
+    sanitize_runtime_environment(interpreters)
     os.execv(str(runner), command)
     return 127
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

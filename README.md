@@ -124,7 +124,7 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 
 ## Local governance
 
-This repository has installed its public `v1.7.0` governance under `.nizam/`.
+This repository has installed its public `v1.8.0` governance under `.nizam/`.
 The installed payload is verified byte-for-byte against the pinned tag by the
 standing `self_governance` CI job. Commissioning of this release (clean
 installed preflight, baseline and independent QA) has not been performed.

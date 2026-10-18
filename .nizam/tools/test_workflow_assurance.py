@@ -2817,6 +2817,22 @@ def profile_preregister_before_run(api, f):
     f.preregistration, f.prereg_policy = copy.deepcopy(saved)
     f.preregistration['tiers']['Routine']['persistent_runtime_claim'] = True
     profile_preregister_call(api, f, True)
+    # Causal commit ordering: committing a shadow run before pinning preregistration must fail
+    head_before = git(f.root, 'rev-parse', 'HEAD')
+    serial_before = f.serial
+    saved_comp = copy.deepcopy((f.comparison, f.comparison_policy))
+    try:
+        early_shadow = f.make_run('shadow-early-before-prereg', 'success', 0, [], [], 3000, 20, 2)
+        late_prereg_ref = f.pin_new('preregistration-after-shadow', f.preregistration)
+        profile_preregister_call(api, f, True)
+        f.comparison['preregistration_ref'] = copy.deepcopy(late_prereg_ref)
+        f.comparison_policy['preregistration_ref'] = copy.deepcopy(late_prereg_ref)
+        f.comparison['shadow_run'] = copy.deepcopy(early_shadow)
+        profile_evaluate_call(api, f, True)
+    finally:
+        git(f.root, 'reset', '--hard', '--quiet', head_before)
+        f.serial = serial_before
+        f.comparison, f.comparison_policy = saved_comp
     f.preregistration, f.prereg_policy = saved
     profile_preregister_call(api, f)
 
@@ -2916,6 +2932,30 @@ def profile_same_candidate(api, f):
             profile_evaluate_call(api, f, True)
     f.comparison = copy.deepcopy(saved[0])
     f.comparison['shadow_run']['run_id'] = f.comparison['baseline_run']['run_id']
+    profile_evaluate_call(api, f, True)
+    # Reusing the identical capture_ref on baseline and shadow must be rejected
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['shadow_run']['capture_ref'] = copy.deepcopy(f.comparison['baseline_run']['capture_ref'])
+    profile_evaluate_call(api, f, True)
+    # Profile tier, executed_roles, and argv bindings must discriminate reduced tiers from baseline
+    f.comparison = copy.deepcopy(saved[0])
+    f.comparison['baseline_run']['profile_tier'] = 'Baseline'
+    f.comparison['baseline_run']['executed_roles'] = ['Orchestrator', 'Planner', 'Generator', 'Validator', 'Evaluator']
+    f.comparison['baseline_run']['argv'] = ['python3', 'tools/start_path.py', '--tier', 'Baseline']
+    f.comparison['shadow_run']['profile_tier'] = 'Routine'
+    f.comparison['shadow_run']['executed_roles'] = ['Generator', 'Evaluator']
+    f.comparison['shadow_run']['argv'] = ['python3', 'tools/start_path.py', '--tier', 'Routine']
+    profile_evaluate_call(api, f)
+    # Identical argv on Routine tier must be rejected
+    f.comparison['shadow_run']['argv'] = ['python3', 'tools/start_path.py', '--tier', 'Baseline']
+    profile_evaluate_call(api, f, True)
+    # Wrong executed_roles on Routine tier must be rejected
+    f.comparison['shadow_run']['argv'] = ['python3', 'tools/start_path.py', '--tier', 'Routine']
+    f.comparison['shadow_run']['executed_roles'] = ['Orchestrator', 'Planner', 'Generator', 'Validator', 'Evaluator']
+    profile_evaluate_call(api, f, True)
+    # Wrong profile_tier on shadow_run must be rejected
+    f.comparison['shadow_run']['executed_roles'] = ['Generator', 'Evaluator']
+    f.comparison['shadow_run']['profile_tier'] = 'Standard'
     profile_evaluate_call(api, f, True)
     f.comparison = copy.deepcopy(saved[0])
     f.comparison['candidate']['source_tree'] = 'f' * 40
@@ -3115,6 +3155,31 @@ def run_profiles_ready(api):
             print('EXPECTED_REJECTION SYNTHETIC125 missing-comparisons observation: ' + str(exc))
         else:
             require(False, 'synthetic invalid profiles-ready proof accepted')
+        # Negative discrimination: remove capture_ref from case_proofs
+        no_cap_ev = copy.deepcopy(evidence)
+        no_cap_ev['case_proofs'][0].pop('capture_ref', None)
+        no_cap_policy = copy.deepcopy(policy)
+        no_cap_review = api.parse_json(api._receipt_artifact(scratch, policy['independent_review_ref']))
+        no_cap_policy['evidence_ref'] = commit_control('missing-case-capture', no_cap_ev)
+        no_cap_review['evidence_ref'] = no_cap_policy['evidence_ref']
+        no_cap_policy['independent_review_ref'] = commit_control('missing-case-capture-review', no_cap_review)
+        try:
+            api.verify_profiles_ready(scratch, no_cap_ev, policy=no_cap_policy)
+        except api.AssuranceError as exc:
+            require(re.search(r'case proof|closed|capture', str(exc), re.I) is not None, 'profiles-ready missing case capture cause: ' + str(exc))
+        else:
+            require(False, 'synthetic missing case_proof capture_ref accepted')
+        # Negative discrimination: independent reviewer identical to authority owner
+        self_review_policy = copy.deepcopy(policy)
+        self_review = api.parse_json(api._receipt_artifact(scratch, policy['independent_review_ref']))
+        self_review['reviewer'] = 'cnr'
+        self_review_policy['independent_review_ref'] = commit_control('self-reviewer', self_review)
+        try:
+            api.verify_profiles_ready(scratch, evidence, policy=self_review_policy)
+        except api.AssuranceError as exc:
+            require(re.search(r'independent reviewer|distinct|authority|producer', str(exc), re.I) is not None, 'profiles-ready self-reviewer cause: ' + str(exc))
+        else:
+            require(False, 'synthetic self-reviewer accepted')
         require(api.verify_profiles_ready(scratch, evidence, policy=policy) == result, 'profiles-ready restores after synthetic negative')
     require((policy, evidence) == before and git(ROOT, 'status', '--porcelain', '--untracked-files=all') == status, 'profiles-ready preserves inputs and repo state')
     require(

@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
-version: 0.4.1
+version: 0.5.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-18"
+    summary: "Align circuit-breaker policy with work-specific diagnostic stopping: attempt counters and line-count thresholds serve as diagnostic telemetry signals driving escalating investigative posture or bounded decomposition when invariants hold, while hard stops (BLOCKED) apply to invariant breaches, specification contradictions, or repeated unresolved defect signatures."
   - version: "0.4.1"
     date: "2026-10-18"
     summary: "Clarify that comparator critic loops (standard/acceptance_bars.md) are subordinate to this 3-attempt hard cap and reference the CLI entry points tools/workflow_assurance.py route-failure and tools/start_path.py capture."
@@ -24,14 +27,18 @@ change_log:
 
 ## 1. Overview
 
-This document is the single source of truth for the framework's mandatory
-3-strike / three-attempt limit — Design Decision DD-2, remediating the
+This document is the single source of truth for the framework's circuit-breaker
+and diagnostic stopping policy — Design Decision DD-2, remediating the
 "infinite loop" failure mode where an agent retries a failing step indefinitely
-without ever escalating. Every execution loop that can repeat a step on failure
-— contract revision, implementation rework, or any other repair cycle defined
-elsewhere in this framework — embeds this exact limit. No document elsewhere in
-the framework restates or redefines these mechanics; they cross-reference this
-one by path.
+with the same ineffective approach. Every execution loop that can repeat a step
+on failure — contract revision, implementation rework, or comparator critic
+loop — embeds this policy. Attempt counters and line-count thresholds serve as
+work-specific diagnostic telemetry signals that require escalating diagnostic
+posture or bounded task decomposition when safety, security, and isolation
+invariants hold; hard stops (`BLOCKED`) apply when invariants or authority
+boundaries are violated, when a specification contradiction requires human
+resolution, or when a third attempt fails on the same unresolved defect
+signature without a viable bounded decomposition.
 
 ## 2. Scope: Every Repeatable Loop, No Exceptions
 
@@ -44,7 +51,7 @@ retried after a failure, including but not limited to:
   reworking code after a Validator Mode B rejection, or after a failing QA
   verdict.
 - Comparator critic loops (`standard/acceptance_bars.md` Section 3) — any
-  comparator or taste loop is subordinate to this 3-attempt hard cap; if a blind
+  comparator or taste loop is subordinate to this 3-attempt cap; if a blind
   win is not achieved by attempt 3, the run halts and escalates.
 - Any subagent retry a pipeline performs after a malformed or empty subagent
   response.
@@ -54,21 +61,25 @@ repeatable step" is the governing scope, not an enumerated allowlist.
 
 ## 3. The Per-Attempt Strategy Table
 
-Each attempt at a failing step MUST follow an escalating strategy. An agent
-MUST NOT repeat the same diagnostic approach across attempts — each attempt
-number below prescribes a materially different investigative posture:
+Each attempt at a failing step MUST follow an escalating diagnostic posture. An
+agent MUST NOT repeat the same diagnostic approach across attempts — each
+attempt number below prescribes a materially different investigative posture:
 
 | Attempt | Strategy |
 |---|---|
 | **1** | **Direct fix.** Read the exact error output. Fix the specific line or command it identifies. Assume the defect is local and mechanical. |
 | **2** | **Type/interface analysis.** If the direct fix did not resolve the failure, step back and check for a structural mismatch — a type signature, an interface contract, a schema shape, or an assumption about another component's output that does not actually hold. |
-| **3** | **Architectural review.** If the failure persists after a structural fix attempt, question the approach itself. Consider whether the chosen implementation strategy, not merely its details, is what needs to change. |
-| **4+** | **FORBIDDEN.** No fourth attempt at the same step is permitted, regardless of how promising a new idea seems. See Section 4. |
+| **3** | **Architectural review or bounded decomposition.** If the failure persists after a structural fix attempt, question the approach itself or decompose the work into smaller independently verifiable units within the approved invariants. |
+| **4+ (same defect signature)** | **HALT AND ESCALATE.** Repeating a fourth attempt against the same unresolved defect signature without a bounded decomposition or human direction is forbidden. See Section 4. |
 
 Skipping a strategy tier (for example, attempting an architectural rewrite on
 attempt 1 without first trying the direct fix) is itself a protocol violation —
 the escalating order exists so that cheap, likely fixes are exhausted before
-expensive, uncertain ones are attempted.
+expensive, uncertain ones are attempted. Conversely, raw attempt counters or
+line-count growth alone are diagnostic telemetry signals — they do not force an
+artificial operator-approval pause when safety, security, and isolation
+invariants hold and the step is advancing through a bounded mechanical
+amendment (`tools/start_path.py amend-contract`) or verified decomposition.
 
 ### 3.1 Attempt isolation
 
@@ -122,20 +133,30 @@ failed outer wrapper successful or retroactively turn a repair into a probe.
 The optional `route_failed_attempt` library (`tools/workflow_assurance.py
 route-failure`) proposes infrastructure diagnosis or semantic repair for
 allocated attempts one and two, and halt for attempt three. Exclusive per-attempt
-command captures (`tools/start_path.py capture`) distinguish `completed`
-(`success`, `failed`, `setup-error`) from `interrupted` runs and refuse to
-overwrite prior attempt evidence. `route_failed_attempt` neither executes nor
-authorizes a retry. The strategy ladder, three-attempt limit, isolation and
-Section 4 escalation duties remain binding for either cause. A handoff preserves
-counters, budgets and prior history; process, agent, session, generation or
-stage changes create no additional cause-specific allowance.
+command captures (`tools/start_path.py capture`, published via
+`tools/start_path.py publish` and `tools/start_path.py build-receipt`)
+distinguish `completed` (`success`, `failed`, `setup-error`) from `interrupted`
+runs and refuse to overwrite prior attempt evidence. `route_failed_attempt`
+neither executes nor authorizes a retry. The strategy ladder, three-attempt
+limit, isolation and Section 4 escalation duties remain binding for either
+cause. A handoff preserves counters, budgets and prior history; process, agent,
+session, generation or stage changes create no additional cause-specific
+allowance.
 
-## 4. Attempt 4 Is Forbidden — The Breach Procedure
+## 4. Hard-Stop Conditions and Breach Procedure
 
-If a step's third attempt (per Section 3's table) also fails, the circuit
-breaker has tripped. The acting agent MUST, in order:
+The circuit breaker trips — requiring an immediate hard stop and human
+escalation — when any of the following holds:
 
-1. **Capture and quarantine the third attempt.** Write its diagnostics, diff,
+- A step's third attempt (per Section 3's table) fails on the same unresolved
+  defect signature without a viable bounded decomposition;
+- A safety, security, isolation, or authority invariant is violated; or
+- A specification contradiction or external authority requirement cannot be
+  resolved within the approved contract boundaries.
+
+When the breaker trips, the acting agent MUST, in order:
+
+1. **Capture and quarantine the failed attempt.** Write its diagnostics, diff,
    and exact attempt-root/base identifiers under `.agent/evidence/`. Then ask
    the worktree or snapshot manager to remove **only that validated attempt
    root**. No shared-worktree reset, repository clean, glob, or broad path is
@@ -154,12 +175,8 @@ breaker has tripped. The acting agent MUST, in order:
    failure type, and a reference to the last attempt's response or evidence
    file.
 4. **Escalate to a human and terminate.** The agent stops. Autonomous
-   continuation past a third failed attempt on any single step is never
-   permitted, under any framing ("just one more try," "I think I see it now")
-   — that framing is precisely what this document exists to override.
-
-Attempt 4 is not a slower, more cautious version of attempts 1-3. It is not
-permitted to occur at all.
+   continuation past a tripped circuit breaker on any single step is never
+   permitted.
 
 ## 5. Where Breaker State Lives
 

@@ -542,6 +542,34 @@ if scratch_dirs fll_scratch; then
   else
     echo "OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)"
   fi
+
+  # contemporary feature (passes: true) with status=complete and NO contract -> rc 1.
+  rm -f "${fll_scratch}/.agent/contracts/900.json" "${fll_scratch}/.agent/qa/900.json"
+  cat > "${fll_scratch}/.agent/feature_list_900.json" <<'JSON'
+{
+  "phase": "900-scratch",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 10,
+  "features": [
+    {
+      "id": "900",
+      "name": "Scratch feature",
+      "description": "Scratch probe feature for vlib_feature_list_lifecycle.",
+      "status": "complete",
+      "passes": true,
+      "dependencies": [],
+      "acceptance_tests": ["Scratch acceptance test."],
+      "estimated_lines": 10
+    }
+  ]
+}
+JSON
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "FAIL primitive   vlib_feature_list_lifecycle contemporary-complete-without-contract: expected rc 1"
+    fail=1
+  else
+    echo "OK   primitive   vlib_feature_list_lifecycle contemporary-complete-without-contract (rc 1)"
+  fi
 else
   echo "FAIL primitive   vlib_feature_list_lifecycle: scratch_dirs setup failed"
   fail=1

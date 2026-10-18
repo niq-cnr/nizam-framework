@@ -13,8 +13,8 @@ import stat
 import subprocess
 import sys
 
-TAG = "v1.7.0"
-SHA = "47851d857e0ab879b848610128ee6e9e13368f0d"
+TAG = "v1.8.0"
+SHA = "606d11ee84deff0d3b7934cbfd715223d64ac79d"
 SOURCE = "https://github.com/niq-cnr/nizam-framework.git"
 MODULES = ("standard", "templates", "schema", "tools", "methodology", "ecosystem")
 REPO = Path(__file__).resolve().parents[2]
@@ -68,7 +68,7 @@ def verify(payload: Path) -> int:
     keys = {"framework_version", "tag", "resolved_sha", "source_url", "installed_at"}
     if not isinstance(provenance, dict) or set(provenance) != keys:
         raise GovernanceDrift("provenance must contain exactly the bootstrap-generated fields")
-    for key, value in {"framework_version": "1.7.0", "tag": TAG, "resolved_sha": SHA, "source_url": SOURCE}.items():
+    for key, value in {"framework_version": "1.8.0", "tag": TAG, "resolved_sha": SHA, "source_url": SOURCE}.items():
         if provenance[key] != value:
             raise GovernanceDrift(f"provenance {key} disagrees with trusted pin")
     timestamp = provenance["installed_at"]
