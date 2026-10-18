@@ -1,252 +1,485 @@
 {
-  "blockers_caught": 3,
-  "disposable_consumer_rehearsal": {
-    "bootstrap_duration_ms": 1685,
-    "bootstrap_passed": true,
-    "bootstrap_tag": "v1.6.0",
-    "consumer_start_path_classify_passed": true,
-    "consumer_start_path_status_passed": true,
-    "payload_validate_duration_ms": 9645,
-    "payload_validate_passed": true,
-    "payload_validate_summary": "12 passed, 0 failed"
+  "disposable_consumer_zero_reachback_rehearsal": {
+    "consumer_defect_caught_and_repaired": "Added .nizam/schema/<name>.schema.json fallback in workflow_assurance.py::_receipt_schema when running inside a bootstrapped consumer repository where root schema/ does not exist.",
+    "exercised_commands": [
+      ".nizam/tools/start_path.py classify",
+      ".nizam/tools/start_path.py preflight",
+      ".nizam/tools/start_path.py begin trivial",
+      ".nizam/tools/start_path.py done trivial",
+      ".nizam/tools/start_path.py amend-contract --apply",
+      ".nizam/tools/start_path.py capture",
+      ".nizam/tools/start_path.py publish",
+      ".nizam/tools/start_path.py build-receipt --commit",
+      ".nizam/tools/workflow_assurance.py verify-receipt",
+      ".nizam/tools/start_path.py resume --apply (advance + idempotent noop)",
+      ".nizam/tools/start_path.py status --format json",
+      "bash .nizam/tools/validate.sh --payload"
+    ],
+    "harness": "tools/e2e_bootstrap_test.sh::assert_consumer_zero_reachback",
+    "passed": true,
+    "reachback_to_author_checkout": false
   },
-  "evidence_classification": "historical-smoke-and-parser-validation",
-  "missed_baseline_blockers": 0,
-  "pilot_id": "remediation-2026-10-18-r10-pilot",
-  "qualification_note": "Initial R10 CLI smoke and v1.6.0 bootstrap rehearsal (which invoked author-checkout start_path.py). Full zero-reach-back consumer validation and real paired baseline-vs-proposed task comparison are tracked under follow-up packets A6 and A7.",
-  "route_summary": {
-    "bugfix": {
-      "avg_command_count": 5.7,
-      "avg_duration_ms": 453.3,
-      "review_rounds_per_task": 1,
-      "task_count": 3
-    },
-    "high-risk": {
-      "avg_command_count": 4.0,
-      "avg_duration_ms": 333.0,
-      "review_rounds_per_task": 1,
-      "task_count": 3
-    },
-    "small-change": {
-      "avg_command_count": 6.0,
-      "avg_duration_ms": 483.7,
-      "review_rounds_per_task": 1,
-      "task_count": 3
-    },
-    "standard-feature": {
-      "avg_command_count": 4.3,
-      "avg_duration_ms": 360.3,
-      "review_rounds_per_task": 1,
-      "task_count": 3
-    },
-    "trivial": {
-      "avg_command_count": 6.0,
-      "avg_duration_ms": 484.3,
-      "review_rounds_per_task": 1,
-      "task_count": 3
-    }
+  "evaluation_commit": "d925be4e783a56a3851aeecf62301dd43a7907fd",
+  "evidence_classification": "preregistered-paired-comparison-and-zero-reachback-consumer",
+  "historical_r10_smoke_summary": {
+    "evidence_classification": "historical-smoke-and-parser-validation",
+    "note": "Retained as historical CLI smoke record; superseded for qualification by the 12-task preregistered paired comparison and zero-reach-back consumer rehearsal above.",
+    "pilot_id": "remediation-2026-10-18-r10-pilot",
+    "source_commit": "b99041dc948522a52832c8871fc3ec8e3c073091"
   },
-  "schema_version": 1,
-  "seeded_blockers": 3,
-  "silent_evidence_overwrites": 0,
-  "source_commit": "b99041dc948522a52832c8871fc3ec8e3c073091",
+  "independent_review_commit": "55192d6793e9baa3acb22f085e92fcecad0365cc",
+  "independent_reviewer": "evaluator-adversarial-independent",
+  "paired_comparison_summary": {
+    "missed_baseline_blockers_on_recommended_runs": 0,
+    "negative_control_missed_blocker_rejected": "BLK-125-SEEDED-REGRESSION",
+    "no_self_promotion": {
+      "active_gates_reduced": false,
+      "permissions_changed": false,
+      "promoted": false
+    },
+    "recommended_comparisons": 11,
+    "rejected_negative_control_comparisons": 1,
+    "seeded_blockers_detected_by_both": [
+      "BLK-F1-POLICY-UNDERCLASSIFICATION",
+      "BLK-F1-VACUOUS-VERIFICATION-COMMAND",
+      "BLK-F1-EMPTY-QA-EVIDENCE",
+      "BLK-F3-CAUSAL-ORDERING-AND-SELF-REVIEW"
+    ],
+    "tier_metrics": {
+      "High-assurance": {
+        "baseline_avg_command_count": 6.0,
+        "baseline_avg_cost_units": 142.5,
+        "comparisons": 4,
+        "cost_reduction_pct": 0.0,
+        "missed_blockers": 0,
+        "shadow_avg_command_count": 6.0,
+        "shadow_avg_cost_units": 142.5
+      },
+      "Routine": {
+        "baseline_avg_command_count": 5.5,
+        "baseline_avg_cost_units": 43.75,
+        "comparisons": 4,
+        "cost_reduction_pct": 61.1,
+        "missed_blockers": 0,
+        "shadow_avg_command_count": 2.5,
+        "shadow_avg_cost_units": 17.0
+      },
+      "Standard": {
+        "baseline_avg_command_count": 7.0,
+        "baseline_avg_cost_units": 91.0,
+        "comparisons": 4,
+        "cost_reduction_pct": 45.1,
+        "missed_blockers_on_recommended": 0,
+        "recommended_comparisons": 3,
+        "rejected_negative_controls": 1,
+        "shadow_avg_command_count": 4.33,
+        "shadow_avg_cost_units": 50.0
+      }
+    },
+    "total_paired_comparisons": 12,
+    "unexplained_divergences_on_recommended_runs": 0
+  },
+  "pilot_id": "remediation-2026-10-18-a6-a7-paired-study",
+  "preregistration_commit": "56015c80e29b34d4076f1a1e67be316ea135cd62",
+  "schema_version": 2,
+  "shadow_captures_commit": "33d260648012c8812590787c8faeeb2abe77afb9",
+  "source_commit": "4a1a4cbd982b5fe391a2a39dd4ab0b4c58b12b88",
   "tasks": [
     {
-      "advisory_only": false,
       "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 491,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 45,
+      "baseline_duration_ms": 87,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Editorial README typo fix under Routine (trivial) vs. full 5-role Baseline",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "trivial",
-      "seeded_blocker": false,
-      "task_id": "pilot-01-typo-readme"
+      "shadow_blockers": [],
+      "shadow_command_count": 3,
+      "shadow_cost_units": 18,
+      "shadow_duration_ms": 80,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-01-routine-trivial-readme"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 480,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 48,
+      "baseline_duration_ms": 121,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Bounded helper adjustment under Routine (small-change) vs. full 5-role Baseline",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
+      "route": "small-change",
+      "shadow_blockers": [],
+      "shadow_command_count": 3,
+      "shadow_cost_units": 19,
+      "shadow_duration_ms": 122,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-02-routine-small-change-status"
+    },
+    {
+      "assurance_tier": "Routine",
+      "baseline_blockers": [
+        "BLK-F1-POLICY-UNDERCLASSIFICATION"
+      ],
+      "baseline_command_count": 5,
+      "baseline_cost_units": 42,
+      "baseline_duration_ms": 84,
+      "baseline_outcome": "failed",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Tiny policy-bearing edit (AGENTS.md + standard/AGF.md with --editorial) rejected from cheap routes in both Baseline and Routine",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
+      "route": "small-change",
+      "shadow_blockers": [
+        "BLK-F1-POLICY-UNDERCLASSIFICATION"
+      ],
+      "shadow_command_count": 2,
+      "shadow_cost_units": 16,
+      "shadow_duration_ms": 77,
+      "shadow_outcome": "failed",
+      "shadow_roles": [
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-03-routine-underclass-policy-edit"
+    },
+    {
+      "assurance_tier": "Routine",
+      "baseline_blockers": [
+        "BLK-F1-VACUOUS-VERIFICATION-COMMAND"
+      ],
+      "baseline_command_count": 5,
+      "baseline_cost_units": 40,
+      "baseline_duration_ms": 79,
+      "baseline_outcome": "failed",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Test-oracle weakening (replacing validate.sh with vacuous 'true') rejected in both Baseline and Routine",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "trivial",
-      "seeded_blocker": false,
-      "task_id": "pilot-02-doc-link-fix"
+      "shadow_blockers": [
+        "BLK-F1-VACUOUS-VERIFICATION-COMMAND"
+      ],
+      "shadow_command_count": 2,
+      "shadow_cost_units": 15,
+      "shadow_duration_ms": 83,
+      "shadow_outcome": "failed",
+      "shadow_roles": [
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-04-routine-underclass-test-oracle"
     },
     {
-      "advisory_only": false,
-      "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 482,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "trivial",
-      "seeded_blocker": false,
-      "task_id": "pilot-03-changelog-note"
-    },
-    {
-      "advisory_only": false,
       "assurance_tier": "Standard",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 480,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 7,
+      "baseline_cost_units": 85,
+      "baseline_duration_ms": 85,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Reproducible C13 background Git GC bugfix under Standard (Planner, Generator, Evaluator) vs. full 5-role Baseline",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "bugfix",
-      "seeded_blocker": false,
-      "task_id": "pilot-04-bugfix-parser-edge"
+      "shadow_blockers": [],
+      "shadow_command_count": 4,
+      "shadow_cost_units": 46,
+      "shadow_duration_ms": 88,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Planner",
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-05-standard-bugfix-c13-gc"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "Standard",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 480,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [
+        "BLK-F1-EMPTY-QA-EVIDENCE"
+      ],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 78,
+      "baseline_duration_ms": 83,
+      "baseline_outcome": "failed",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Seeded QA verdict blocker (checks_run=0) detected and blocked by both Baseline and Standard",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "bugfix",
-      "seeded_blocker": false,
-      "task_id": "pilot-05-bugfix-c13-git-gc"
+      "shadow_blockers": [
+        "BLK-F1-EMPTY-QA-EVIDENCE"
+      ],
+      "shadow_command_count": 4,
+      "shadow_cost_units": 42,
+      "shadow_duration_ms": 80,
+      "shadow_outcome": "failed",
+      "shadow_roles": [
+        "Planner",
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-06-standard-bugfix-detected-blocker"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "Standard",
-      "blocker_caught": true,
-      "command_count": 5,
-      "duration_ms": 400,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "bugfix",
-      "seeded_blocker": true,
-      "task_id": "pilot-06-bugfix-seeded-blocker"
-    },
-    {
-      "advisory_only": true,
-      "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 483,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "small-change",
-      "seeded_blocker": false,
-      "task_id": "pilot-07-small-status-flag"
-    },
-    {
-      "advisory_only": false,
-      "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 484,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "small-change",
-      "seeded_blocker": false,
-      "task_id": "pilot-08-small-tag-derivation"
-    },
-    {
-      "advisory_only": false,
-      "assurance_tier": "Routine",
-      "blocker_caught": false,
-      "command_count": 6,
-      "duration_ms": 484,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "small-change",
-      "seeded_blocker": false,
-      "task_id": "pilot-09-small-fixture-bound"
-    },
-    {
-      "advisory_only": false,
-      "assurance_tier": "Standard",
-      "blocker_caught": false,
-      "command_count": 5,
-      "duration_ms": 413,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": true,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 8,
+      "baseline_cost_units": 110,
+      "baseline_duration_ms": 86,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Standard feature implementation with mechanical contract amendment under Standard vs. full 5-role Baseline",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "standard-feature",
-      "seeded_blocker": false,
-      "task_id": "pilot-10-feature-124-prereg"
+      "shadow_blockers": [],
+      "shadow_command_count": 5,
+      "shadow_cost_units": 62,
+      "shadow_duration_ms": 89,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Planner",
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-07-standard-feature-amend-scope"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "Standard",
-      "blocker_caught": false,
-      "command_count": 4,
-      "duration_ms": 332,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [
+        "BLK-125-SEEDED-REGRESSION"
+      ],
+      "baseline_command_count": 7,
+      "baseline_cost_units": 95,
+      "baseline_duration_ms": 12,
+      "baseline_outcome": "failed",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "Negative control: faulty shadow run missing seeded baseline blocker BLK-125-SEEDED-REGRESSION is rejected (recommend-for-operator-review refused)",
+      "missed_baseline_blockers": [
+        "BLK-125-SEEDED-REGRESSION"
+      ],
+      "operator_decision": "reject-recommendation",
+      "recommendation": "reject-promotion",
       "route": "standard-feature",
-      "seeded_blocker": false,
-      "task_id": "pilot-11-feature-125-shadow"
+      "shadow_blockers": [],
+      "shadow_command_count": 4,
+      "shadow_cost_units": 50,
+      "shadow_duration_ms": 12,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Planner",
+        "Generator",
+        "Evaluator"
+      ],
+      "task_id": "comp-08-standard-feature-missed-blocker-negative"
     },
     {
-      "advisory_only": false,
-      "assurance_tier": "Standard",
-      "blocker_caught": true,
-      "command_count": 4,
-      "duration_ms": 336,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
-      "route": "standard-feature",
-      "seeded_blocker": true,
-      "task_id": "pilot-12-feature-seeded-blocker"
-    },
-    {
-      "advisory_only": false,
       "assurance_tier": "High-assurance",
-      "blocker_caught": false,
-      "command_count": 4,
-      "duration_ms": 327,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 140,
+      "baseline_duration_ms": 149,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "High-risk sandbox Landlock PATH sanitization and operational preflight under High-assurance (all 5 roles)",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "high-risk",
-      "seeded_blocker": false,
-      "task_id": "pilot-13-highrisk-sandbox"
+      "shadow_blockers": [],
+      "shadow_command_count": 6,
+      "shadow_cost_units": 140,
+      "shadow_duration_ms": 153,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "task_id": "comp-09-high-assurance-sandbox-landlock"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "High-assurance",
-      "blocker_caught": false,
-      "command_count": 4,
-      "duration_ms": 333,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 145,
+      "baseline_duration_ms": 668,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "High-risk 3-stage capture -> publish -> receipt verification under High-assurance (all 5 roles)",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "high-risk",
-      "seeded_blocker": false,
-      "task_id": "pilot-14-highrisk-assurance"
+      "shadow_blockers": [],
+      "shadow_command_count": 6,
+      "shadow_cost_units": 145,
+      "shadow_duration_ms": 673,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "task_id": "comp-10-high-assurance-receipt-publish-bridge"
     },
     {
-      "advisory_only": false,
       "assurance_tier": "High-assurance",
-      "blocker_caught": true,
-      "command_count": 4,
-      "duration_ms": 339,
-      "exclusive_overwrite_prevented": true,
-      "mechanical_amendment": false,
-      "review_rounds": 1,
+      "baseline_blockers": [
+        "BLK-F3-CAUSAL-ORDERING-AND-SELF-REVIEW"
+      ],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 135,
+      "baseline_duration_ms": 12,
+      "baseline_outcome": "failed",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "High-risk causal commit ordering and self-review blocker caught by both Baseline and High-assurance",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
       "route": "high-risk",
-      "seeded_blocker": true,
-      "task_id": "pilot-15-highrisk-seeded-blocker"
+      "shadow_blockers": [
+        "BLK-F3-CAUSAL-ORDERING-AND-SELF-REVIEW"
+      ],
+      "shadow_command_count": 6,
+      "shadow_cost_units": 135,
+      "shadow_duration_ms": 12,
+      "shadow_outcome": "failed",
+      "shadow_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "task_id": "comp-11-high-assurance-causal-selfreview-blocker"
+    },
+    {
+      "assurance_tier": "High-assurance",
+      "baseline_blockers": [],
+      "baseline_command_count": 6,
+      "baseline_cost_units": 150,
+      "baseline_duration_ms": 20,
+      "baseline_outcome": "success",
+      "baseline_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "description": "High-risk public entry and consumer zero-reach-back governance verification under High-assurance (all 5 roles)",
+      "missed_baseline_blockers": [],
+      "operator_decision": "approve-recommendation-only",
+      "recommendation": "recommend-for-operator-review",
+      "route": "high-risk",
+      "shadow_blockers": [],
+      "shadow_command_count": 6,
+      "shadow_cost_units": 150,
+      "shadow_duration_ms": 19,
+      "shadow_outcome": "success",
+      "shadow_roles": [
+        "Orchestrator",
+        "Planner",
+        "Generator",
+        "Validator",
+        "Evaluator"
+      ],
+      "task_id": "comp-12-high-assurance-consumer-zero-reachback"
     }
-  ],
-  "total_duration_ms": 18075,
-  "total_tasks": 15
+  ]
 }
