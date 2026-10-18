@@ -458,6 +458,7 @@ main() {
   assert_genesis "${EPHEMERAL_TAG}"
   assert_multirepo "${EPHEMERAL_TAG}"
   assert_stage4
+  assert_consumer_zero_reachback "${EPHEMERAL_TAG}"
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
 }
@@ -792,6 +793,471 @@ PY
   fi
 
   echo "assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL)."
+  return 0
+}
+
+# assert_consumer_zero_reachback <tag>
+#
+# Proves that a bootstrapped consumer repository can execute the full Nizam
+# operational workflow (classify, preflight, trivial/small-change/bugfix
+# begin+done, amend-contract, capture -> publish -> build-receipt ->
+# verify-receipt -> resume, status, and validate.sh --payload) using ONLY its
+# installed `.nizam/` payload, with zero reach-back to the framework source
+# repository (A6).
+assert_consumer_zero_reachback() {
+  local tag="$1"
+  local consumer="${SCRATCH_DIR}/zero-reachback-consumer"
+
+  if ! bash bootstrap.sh --genesis --project-root "${consumer}" --project-name zero-reachback \
+      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+    echo "assert_consumer_zero_reachback: FAIL -- bootstrap.sh --genesis failed for '${consumer}'."
+    return 1
+  fi
+
+  if ! PYTHONDONTWRITEBYTECODE=1 python3 - "${consumer}" <<'PY'
+import hashlib
+import json
+import os
+import pathlib
+import platform
+import subprocess
+import sys
+
+consumer = pathlib.Path(sys.argv[1]).resolve()
+sp = consumer / ".nizam" / "tools" / "start_path.py"
+wa = consumer / ".nizam" / "tools" / "workflow_assurance.py"
+val = consumer / ".nizam" / "tools" / "validate.sh"
+
+assert sp.is_file() and wa.is_file() and val.is_file(), "missing .nizam/tools entrypoints"
+
+env = dict(os.environ)
+env["PYTHONDONTWRITEBYTECODE"] = "1"
+env["NIZAM_CONSUMER_TEST"] = "1"
+
+
+def git(*args: str) -> str:
+    res = subprocess.run(["git", "-C", str(consumer), *args], capture_output=True, text=True, check=True)
+    return res.stdout.strip()
+
+
+def run_sp(*args: str, expected_rc: int = 0) -> subprocess.CompletedProcess[str]:
+    res = subprocess.run(
+        [sys.executable, str(sp), *args],
+        cwd=str(consumer),
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if res.returncode != expected_rc:
+        raise AssertionError(f"start_path {args} exited {res.returncode} (expected {expected_rc}): {res.stdout}\n{res.stderr}")
+    return res
+
+
+git("config", "user.email", "consumer@example.invalid")
+git("config", "user.name", "Consumer Bot")
+git("config", "gc.auto", "0")
+git("config", "maintenance.auto", "false")
+git("remote", "add", "origin", "https://example.invalid/org/zero-reachback.git")
+
+(consumer / ".agent" / "contracts").mkdir(parents=True, exist_ok=True)
+(consumer / ".agent" / "qa").mkdir(parents=True, exist_ok=True)
+(consumer / ".agent" / "evidence").mkdir(parents=True, exist_ok=True)
+(consumer / "docs" / "planning").mkdir(parents=True, exist_ok=True)
+
+run_state = {
+    "repository": "https://example.invalid/org/zero-reachback.git",
+    "current_phase": "001-init",
+    "current_feature": "triv1",
+    "status": "in_progress",
+    "updated_at": "2026-10-18T11:45:00Z",
+    "scope_budget": {
+        "original_estimate_lines": 50,
+        "total_lines_changed": 0,
+        "per_feature": [{"id": "001", "estimated": 50, "actual": 0}],
+    },
+    "circuit_breaker": {},
+    "history": [{"at": "2026-10-18T11:45:00Z", "event": "genesis", "detail": "Initialized consumer repository"}],
+}
+(consumer / ".agent" / "run_state.json").write_text(json.dumps(run_state, indent=2) + "\n", encoding="utf-8")
+
+(consumer / "src" / "main.py").write_text("print('main')\n", encoding="utf-8")
+
+contract_001 = {
+    "contract_id": "001",
+    "feature_id": "001",
+    "name": "Initial consumer feature",
+    "status": "approved",
+    "spec_ref": "CONTEXT.md",
+    "scope": {
+        "files_create": [],
+        "files_modify": [
+            {"path": "README.md", "purpose": "Update consumer README"},
+            {"path": "src/main.py", "purpose": "Main consumer module"},
+        ],
+    },
+    "non_goals": ["No external dependencies"],
+    "verification": [
+        {"acceptance_test": "test -f README.md", "command": "test -f README.md"}
+    ],
+    "estimated_lines": 50,
+    "evidence_dir": ".agent/evidence/001/",
+    "evidence_convention": ".agent/evidence/001/check.txt",
+    "approvals": {
+        "validator_mode_a": True,
+        "evaluator_contract_review": True,
+        "approved_at": "2026-10-18T11:45:00Z",
+        "revisions": 1,
+    },
+    "dod_ref": ".nizam/standard/definition_of_done.md",
+}
+(consumer / ".agent" / "contracts" / "001.json").write_text(json.dumps(contract_001, indent=2) + "\n", encoding="utf-8")
+
+feature_list = {
+    "phase": "001-init",
+    "spec_version": "0.1.0",
+    "phase_status": "in_progress",
+    "original_estimate_lines": 50,
+    "features": [
+        {
+            "id": "001",
+            "name": "Initial consumer feature",
+            "description": "Initial governed consumer feature.",
+            "status": "in_progress",
+            "passes": False,
+            "dependencies": [],
+            "acceptance_tests": ["test -f README.md"],
+            "estimated_lines": 50,
+        }
+    ],
+}
+(consumer / ".agent" / "feature_list.json").write_text(json.dumps(feature_list, indent=2) + "\n", encoding="utf-8")
+
+manifest = {
+    "schema_version": 1,
+    "updated_at": "2026-10-18T11:45:00Z",
+    "current_phase": "001-init",
+    "phases": [
+        {
+            "id": "001-init",
+            "title": "Initial Consumer Phase",
+            "feature_list": ".agent/feature_list.json",
+            "status": "in_progress",
+        }
+    ],
+}
+(consumer / "docs" / "planning" / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+git("add", ".")
+git("commit", "-qm", "initial governed consumer state")
+
+# 1. Classify
+c_triv = json.loads(run_sp("classify", "--editorial", "--files", "README.md").stdout)
+assert c_triv["route"] == "trivial"
+c_feat = json.loads(run_sp("classify", "--needs-new-contract", "--files", "src/PLACEHOLDER.md").stdout)
+assert c_feat["route"] == "standard-feature"
+
+# 2. Preflight
+pf = json.loads(run_sp("preflight").stdout)
+assert pf["ok"] is True and pf["status"] == "ready"
+assert pf["capabilities"]["installed"] is True and pf["capabilities"]["operational"] is True
+
+# 3. Trivial begin + done (plus negative rejection of .nizam/ modification)
+bad_intent = {
+    "id": "trivbad",
+    "path": "trivial",
+    "summary": "Illegal attempt to touch .nizam/",
+    "needs_new_contract": False,
+    "files": [".nizam/tools/start_path.py"],
+}
+(consumer / ".agent" / "evidence" / "trivbad-intent.json").write_text(json.dumps(bad_intent), encoding="utf-8")
+run_sp("begin", "trivial", "--id", "trivbad", expected_rc=1)
+
+good_intent = {
+    "id": "triv1",
+    "path": "trivial",
+    "summary": "Fix typo in README",
+    "needs_new_contract": False,
+    "files": ["README.md"],
+}
+(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(json.dumps(good_intent), encoding="utf-8")
+run_sp("begin", "trivial", "--id", "triv1")
+(consumer / ".agent" / "evidence" / "triv1-ev.txt").write_text("typo fixed\n", encoding="utf-8")
+qa_triv = {
+    "feature_id": "triv1",
+    "qa_pass": True,
+    "checks_run": 1,
+    "checks_passed": 1,
+    "adversarial": {"performed": True},
+    "evidence_files": [".agent/evidence/triv1-ev.txt"],
+    "issues": [],
+    "unsupported_claims": [],
+    "missing_acceptance_coverage": [],
+    "required_fixes": [],
+    "final_verdict": {"approved": True, "summary": "Approved trivial fix."},
+}
+(consumer / ".agent" / "qa" / "triv1.json").write_text(json.dumps(qa_triv), encoding="utf-8")
+run_sp("done", "trivial", "--id", "triv1")
+
+# 4. Amend contract
+(consumer / "src" / "helper.py").write_text("print('helper')\n", encoding="utf-8")
+amend_req = {
+    "contract_id": "001",
+    "summary": "Add helper.py to mechanical scope",
+    "invariants_preserved": True,
+    "files_modify_add": [{"path": "src/helper.py", "purpose": "Helper script"}],
+}
+(consumer / ".agent" / "evidence" / "001-amendment.json").write_text(json.dumps(amend_req), encoding="utf-8")
+git("add", "src/helper.py", ".agent")
+git("commit", "-qm", "add helper and trivial records")
+amend_doc = json.loads(
+    run_sp(
+        "amend-contract",
+        "--contract",
+        "001",
+        "--amendment",
+        ".agent/evidence/001-amendment.json",
+        "--apply",
+    ).stdout
+)
+assert amend_doc["applied"] is True and amend_doc["re_approval_required"] is False
+git("add", ".agent/contracts/001.json")
+git("commit", "-qm", "commit amended contract 001")
+
+# 5. Full producer-to-consumer receipt chain using only .nizam/tools/
+head_commit = git("rev-parse", "HEAD")
+head_tree = git("rev-parse", "HEAD^{tree}")
+
+
+def blob_entry(rel: str) -> dict:
+    p = consumer / rel
+    raw = p.read_bytes()
+    return {
+        "path": rel,
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "executable": bool(p.stat().st_mode & 0o111),
+    }
+
+
+cand_body = {
+    "schema_version": 1,
+    "repository": "https://example.invalid/org/zero-reachback.git",
+    "source_commit": head_commit,
+    "source_tree": head_tree,
+    "assessed_inputs": {
+        "source": [blob_entry("src/helper.py")],
+        "tests": [blob_entry("src/PLACEHOLDER.md")],
+        "contracts": [blob_entry(".agent/contracts/001.json")],
+        "tools": [blob_entry("README.md")],
+    },
+    "environment": {
+        "runtime": {
+            "implementation": platform.python_implementation(),
+            "version": platform.python_version(),
+            "system": platform.system(),
+            "machine": platform.machine(),
+        },
+        "variables": {"NIZAM_CONSUMER_TEST": "1"},
+    },
+    "record_ownership": {},
+}
+cand_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+cand_body["identity_sha256"] = hashlib.sha256(cand_canon).hexdigest()
+cand_full_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+cand_sha = hashlib.sha256(cand_full_canon).hexdigest()
+
+cap_out = json.loads(
+    run_sp(
+        "capture",
+        "--id",
+        "001",
+        "--step",
+        "verify",
+        "--attempt",
+        "1",
+        "--output-dir",
+        ".agent/evidence/001",
+        "--candidate",
+        cand_sha,
+        "--env-var",
+        "NIZAM_CONSUMER_TEST=1",
+        "--agent-id",
+        "consumer-generator",
+        "--session-id",
+        "consumer-sess-1",
+        "--",
+        sys.executable,
+        "-c",
+        "print('CONSUMER_RECEIPT_OK')",
+    ).stdout
+)
+pub_out = json.loads(
+    run_sp(
+        "publish",
+        "--capture",
+        cap_out["capture_path"],
+    ).stdout
+)
+assert set(pub_out["receipt_capture"].keys()) == {
+    "schema_version",
+    "argv",
+    "cwd",
+    "revision",
+    "candidate_sha256",
+    "environment",
+    "producer",
+    "executed",
+    "outcome",
+    "exit_code",
+    "stdout",
+    "stderr",
+}
+
+(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(
+    json.dumps(good_intent, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+)
+git("add", ".agent/evidence/triv1-intent.json")
+git("commit", "-qm", "pin trivial intent for route receipt")
+pin_rev = git("rev-parse", "HEAD")
+intent_ref = {
+    "path": ".agent/evidence/triv1-intent.json",
+    "sha256": hashlib.sha256((consumer / ".agent" / "evidence" / "triv1-intent.json").read_bytes()).hexdigest(),
+    "revision": pin_rev,
+}
+qa_triv_doc = json.loads((consumer / ".agent" / "qa" / "triv1.json").read_text(encoding="utf-8"))
+qa_triv_doc["reviewed_revision"] = pin_rev
+qa_triv_doc["intent_sha256"] = intent_ref["sha256"]
+qa_triv_doc["reviewer"] = "consumer-evaluator"
+(consumer / ".agent" / "qa" / "triv1.json").write_text(
+    json.dumps(qa_triv_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+)
+git("add", ".agent/qa/triv1.json")
+git("commit", "-qm", "pin trivial qa with exact intent revision")
+qa_rev = git("rev-parse", "HEAD")
+qa_ref = {
+    "path": ".agent/qa/triv1.json",
+    "sha256": hashlib.sha256((consumer / ".agent" / "qa" / "triv1.json").read_bytes()).hexdigest(),
+    "revision": qa_rev,
+}
+
+policy_doc = {
+    "schema_version": 1,
+    "repository": "https://example.invalid/org/zero-reachback.git",
+    "feature_id": "triv1",
+    "stage": "trivial-complete",
+    "operation_id": "consumer-op-triv1",
+    "candidate": cand_body,
+    "producer": {"agent_id": "consumer-generator", "session_id": "consumer-sess-1"},
+    "contract": intent_ref,
+    "operator": intent_ref,
+    "prerequisites": [
+        {
+            "kind": "route-intent",
+            "artifact": intent_ref,
+            "feature_id": "triv1",
+            "assessed_revision": pin_rev,
+            "contract_sha256": intent_ref["sha256"],
+        },
+        {
+            "kind": "route-qa",
+            "artifact": qa_ref,
+            "feature_id": "triv1",
+            "assessed_revision": pin_rev,
+            "contract_sha256": intent_ref["sha256"],
+        },
+    ],
+    "commands": [
+        {
+            "argv": [sys.executable, "-c", "print('CONSUMER_RECEIPT_OK')"],
+            "expected_exit": 0,
+            "proof_kind": "success",
+            "diagnostic": "CONSUMER_RECEIPT_OK",
+            "capture": pub_out["receipt_capture_ref"],
+        }
+    ],
+    "from_status": "in_progress",
+    "to_status": "complete",
+    "at": "2026-10-18T11:50:00Z",
+    "recovery": None,
+}
+policy_path = consumer / ".agent" / "evidence" / "001" / "policy.json"
+policy_path.write_text(json.dumps(policy_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+git("add", ".agent/evidence/001/policy.json")
+git("commit", "-qm", "commit consumer receipt policy")
+
+receipt_path = consumer / ".agent" / "evidence" / "001" / "receipt.json"
+build_res = json.loads(
+    run_sp(
+        "build-receipt",
+        "--policy",
+        str(policy_path),
+        "--published",
+        pub_out["published_path"],
+        "--output",
+        str(receipt_path),
+        "--commit",
+    ).stdout
+)
+assert build_res["verified"] is True
+
+wa_verify = subprocess.run(
+    [
+        sys.executable,
+        str(wa),
+        "verify-receipt",
+        "--root",
+        str(consumer),
+        "--policy",
+        str(policy_path),
+        "--receipt",
+        str(receipt_path),
+    ],
+    cwd=str(consumer),
+    env=env,
+    capture_output=True,
+    text=True,
+    check=False,
+)
+assert wa_verify.returncode == 0, f"verify-receipt failed: {wa_verify.stdout}\n{wa_verify.stderr}"
+
+res1 = json.loads(
+    run_sp(
+        "resume",
+        "--policy",
+        str(policy_path),
+        "--receipt",
+        str(receipt_path),
+        "--apply",
+    ).stdout
+)
+assert res1["action"] == "advance" and res1["applied"] is True
+
+res2 = json.loads(
+    run_sp(
+        "resume",
+        "--policy",
+        str(policy_path),
+        "--receipt",
+        str(receipt_path),
+        "--apply",
+    ).stdout
+)
+assert res2["action"] == "noop"
+
+# 6. Status view
+st = json.loads(run_sp("status", "--format", "json").stdout)
+assert st["reconciled"] is True and st["contradictions"] == []
+
+# 7. Payload validation from consumer root
+val_res = subprocess.run(["bash", ".nizam/tools/validate.sh", "--payload"], cwd=str(consumer), env=env, capture_output=True, text=True, check=False)
+assert val_res.returncode == 0, f"validate.sh --payload failed: {val_res.stdout}\n{val_res.stderr}"
+PY
+  then
+    echo "assert_consumer_zero_reachback: FAIL -- consumer zero-reach-back lifecycle exercise failed."
+    return 1
+  fi
+
+  echo "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back."
   return 0
 }
 

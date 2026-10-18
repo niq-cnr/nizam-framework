@@ -776,8 +776,11 @@ def _receipt_artifact(root, reference, live=False):
 
 def _receipt_schema(root, value, name):
     import jsonschema
+    rel = 'schema/' + name + '.schema.json'
+    if not os.path.lexists(Path(root) / rel) and os.path.lexists(Path(root) / ('.nizam/' + rel)):
+        rel = '.nizam/' + rel
     try:
-        jsonschema.Draft202012Validator(parse_json(regular_file(root, 'schema/' + name + '.schema.json').read_bytes())).validate(value)
+        jsonschema.Draft202012Validator(parse_json(regular_file(root, rel).read_bytes())).validate(value)
     except jsonschema.exceptions.ValidationError as exc:
         raise AssuranceError('receipt ' + name + ' schema: ' + exc.message[:240]) from exc
 
