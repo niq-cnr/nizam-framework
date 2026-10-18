@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-10-18"
+    summary: "Phase-019 v1.8.0 rollout corrective B2 (V2): enforce install-time --expected-sha comparison and explicit refs/tags/<tag> SemVer release-tag resolution in bootstrap.sh before staging or replacing the target payload. Updated Section 2, Section 2.1, and Section 4 point 5."
   - version: "0.6.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): make the consumer/bootstrap boundary explicit for brownfield adoption. The consumer reconciliation process preserves, diffs, and merges root CONTEXT.md/AGENTS.md content and adds CI checks; bootstrap.sh writes only the .nizam governance payload."
@@ -46,10 +49,13 @@ follow.
 Inheritance is triggered when a repository first adopts the framework, and re-triggered
 whenever it upgrades to a newer framework release.
 
-1. **Clone a pinned tag, never a floating branch.** The consumer MUST clone a specific
-   semantic-version git tag of the framework repository (e.g. `v0.3.0`), never `main` or
-   any other floating branch reference. Pinning prevents a consumer from silently
-   inheriting mid-development governance changes.
+1. **Clone a pinned tag, never a floating branch.** The consumer MUST fetch an explicit
+   semantic-version git tag of the framework repository (`refs/tags/<tag>`, e.g. `v1.9.0`),
+   never `main` or any other floating branch reference (`refs/heads/*`). Pinning prevents a
+   consumer from silently inheriting mid-development governance changes; `bootstrap.sh`
+   rejects non-SemVer tag names, branch-only refs, and same-name branch/tag ambiguity,
+   and when `--expected-sha` is supplied at install time, verifies that
+   `refs/tags/<tag>^{commit}` equals `--expected-sha` before staging or replacing the target.
 2. **Inject the governance directories.** The consumer copies the framework's `standard/`,
    `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/` directories, together
    with the framework's root `NIZAM.json` capability index, into its own workspace
@@ -72,7 +78,9 @@ Any consumer MAY invoke it directly rather than reimplementing the steps in Sect
 
 `bootstrap.sh` performs, as one atomic operation:
 
-1. Clone the pinned tag (never a floating branch) of the framework repository.
+1. Fetch the explicit pinned release tag (`refs/tags/<tag>`, never a floating branch),
+   resolve `refs/tags/<tag>^{commit}`, and if `--expected-sha` is supplied, require the
+   resolved commit to match before modifying the target.
 2. Inject `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/`,
    together with `NIZAM.json`, into the consumer's target location.
 3. Verify the injection succeeded before declaring success.
@@ -128,12 +136,13 @@ process of catching this divergence.
    framework's current governance content, even if its own injected copy is internally
    unmodified.
 5. **Detecting a moved tag.** A tag *name* is not immutable — it can be moved on the remote
-   to point at a different commit, replaying a different payload under the same name. The
-   recorded `resolved_sha` catches this: `bootstrap.sh --verify-only` requires the recorded
-   commit to be present, and given a caller-supplied expected commit (`--expected-sha`,
-   resolved out-of-band from the authentic tag) rejects a recorded commit that differs
-   (NDEBT-033). A payload predating this recorded commit has no `resolved_sha` and is itself
-   treated as drift.
+   to point at a different commit, replaying a different payload under the same name. Both
+   install and `--verify-only` enforce the commit pin: given a caller-supplied expected
+   commit (`--expected-sha`, resolved out-of-band from the authentic tag), `bootstrap.sh`
+   at install time verifies `refs/tags/<tag>^{commit}` equals `--expected-sha` before staging
+   or replacing the target, and `bootstrap.sh --verify-only` requires the recorded
+   `resolved_sha` to be present and equal to `--expected-sha` (NDEBT-033, B2/V2). A payload
+   predating this recorded commit has no `resolved_sha` and is itself treated as drift.
 6. **Remediation: re-bootstrap, don't hand-patch.** The correct remediation for both local
    mutation and staleness is to re-run `bootstrap.sh` against the appropriate pinned tag
    (the same tag, to undo local mutation, or a newer tag, to resolve staleness) and let

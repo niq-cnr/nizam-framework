@@ -2,11 +2,14 @@
 id: nizam-acceptance-bars
 title: "Comparator Acceptance Bars"
 description: "Defines comparator-based acceptance for quality-bearing deliverables: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface."
-version: "0.2.0"
+version: "0.3.0"
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/acceptance_bars.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-18"
+    summary: "Align comparator circuit-breaker interface and failure-mode table with methodology/03_circuit_breaker.md work-specific diagnostic stopping and hard-stop rules (V5)."
   - version: "0.2.0"
     date: "2026-10-18"
     summary: "Align Section 3 comparator verdict format with the single authoritative AGF verdict schema (final_verdict, issues, missing_acceptance_coverage, unsupported_claims, optional advisory_minor and comparator metadata)."
@@ -84,15 +87,16 @@ Additional requirements:
   stripped where meaningful. Never the builder's reasoning, effort, or history.
 - **Binary job.** "Which is better, A or B" — then name the single biggest remaining
   gap. No numeric scores (they drift upward); praise is not useful.
-- **Passing exit = blind win within the circuit-breaker budget, never a round count.**
+- **Passing exit = blind win within the circuit-breaker policy, never a round count.**
   Completing N rounds never converts a losing comparison into a pass. The loop exits with
-  a pass when the critic picks ours blind at or before attempt 3, or halts when the
-  circuit breaker trips or a human stops the run.
+  a pass when the critic picks ours blind within the circuit-breaker policy, or halts when
+  the circuit breaker trips or a human stops the run.
 - **Circuit-breaker interface (subordinate to `methodology/03_circuit_breaker.md`).**
-  `methodology/03_circuit_breaker.md`'s 3-attempt limit is the hard operational cap for
-  every autonomous loop. If the deliverable has not achieved a blind win by attempt 3,
-  the agent MUST halt and escalate per `methodology/03_circuit_breaker.md` Section 4
-  rather than making a forbidden fourth autonomous attempt.
+  Every autonomous comparator loop is subordinate to `methodology/03_circuit_breaker.md`:
+  attempt counters drive escalating diagnostic posture or bounded decomposition when
+  invariants hold, and if a blind win is not achieved by attempt 3 on the same unresolved
+  gap without a viable bounded decomposition, the agent MUST halt and escalate per
+  `methodology/03_circuit_breaker.md` Section 4.
 - **Verdict format.** Recorded as machine-parseable JSON verdict blocks using the single
   authoritative AGF verdict schema (`standard/AGF.md` §4); prose may accompany, the block
   is the verdict. When the blind comparison fails, the gap is recorded in `issues` and
@@ -154,7 +158,7 @@ Extends the `standard/failure_modes.md` taxonomy with deliverable-quality blindn
 | Soft/vague bar | The naming test fails | Reject the bar; offer 2–3 candidates, let the accountable human pick |
 | Builder self-judging | Critic shares builder context | Enforce freshness; re-run the verdict |
 | Score drift | Numeric scoring appears | Binary A/B only |
-| Round-count pass | Exhausting rounds is treated as a passing exit | Require a blind win within the 3-attempt breaker cap, or halt and escalate at attempt 3 |
+| Round-count pass | Exhausting rounds is treated as a passing exit | Require a blind win under `methodology/03_circuit_breaker.md`, or halt and escalate when attempt 3 on the same unresolved gap fails without a viable bounded decomposition |
 | Over-specification | The brief exceeds bar + loop in length | Minimal wins — cut to bar, loop, halves |
 | Broken/stale comparator | Pin re-verification fails at use | Record as defect; substitute with evidence |
 

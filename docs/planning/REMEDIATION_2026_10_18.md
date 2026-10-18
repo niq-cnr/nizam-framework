@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.11.0
+version: 0.12.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.12.0"
+    date: "2026-10-18"
+    summary: "Complete packet B6 and exit temporary corrective override mode: Corrective Slice 3 (B5 + B6 pre-tag at 40372780b328359fb4757651640920f11f14a23f) independently accepted and merged via PR #121 at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (compliance.yml run 39171134860 succeeded); annotated tag v1.9.0 (7e721b6e0fb2a0a3014efda388e1097378e3da87) published via release.yml run 39172587918 at 2026-10-18T22:31:27Z; .nizam/ re-bootstrapped to v1.9.0 (278 released files + provenance.json, installed_at 2026-10-18T22:32:25Z); and AGENTS.md (v0.3.0) transitional corrective banner removed."
   - version: "0.11.0"
     date: "2026-10-18"
     summary: "Record independent acceptance of Corrective Slice 1 (B0-B2 at 9cc9547ffc09694cea324bb009916811d786d2c5, closing V1, V2, and V7 regression) and Corrective Slice 2 (B3-B4 at f825908e80100a2e13b9157b6a4f72908dd26a24, closing V3, V4, V5, and V6), complete packet B5 end-to-end consumer discrimination in tools/e2e_bootstrap_test.sh, and prepare the v1.9.0 MINOR release anchors (NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/manifest.json, docs/planning/operator_gates.md) for integrated PR delivery, tag creation, and post-tag .nizam/ re-bootstrap (B6)."
@@ -52,9 +55,10 @@ change_log:
 - **Follow-up audit & execution mandate (`A0`–`A8`) adopted at**: `2026-10-18T10:10:00Z`
 - **Completed `A8` & `v1.8.0` self-adoption at**: `2026-10-18T13:15:00Z` (PR #120 merged at `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`, `compliance.yml` run `39133101798` succeeded in `13m35s`)
 - **`v1.8.0` rollout corrective mandate (`B0`–`B6`) adopted at**: `2026-10-18T14:55:00Z`
+- **Completed `B6` & `v1.9.0` self-adoption at**: `2026-10-18T22:40:00Z` (PR #121 merged at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `compliance.yml` run `39171134860` succeeded; annotated tag `v1.9.0` `7e721b6e0fb2a0a3014efda388e1097378e3da87` published via `release.yml` run `39172587918` at `2026-10-18T22:31:27Z`; `.nizam/` re-bootstrapped to `v1.9.0` with `278` released files + `provenance.json`, `installed_at: 2026-10-18T22:32:25Z`)
 - **Repository**: `niq-cnr/nizam-framework` (`https://github.com/niq-cnr/nizam-framework.git`)
 - **Authoritative instructions**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt"), operator post-remediation audit & follow-up execution mandate dated 18 October 2026 ("Nizam framework: post-remediation audit and follow-up execution prompt", audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`), and operator `v1.8.0` rollout corrective execution mandate dated 18 October 2026 ("Nizam framework v1.8.0 rollout corrective execution prompt", audited release `v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`, compared `main` `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`), recorded in `.agent/run_state.json` and this single brief.
-- **Process precedence (`B0`–`B6`)**: Continuing operator authorization remains active to pragmatically ignore, suspend, simplify, or replace obstructive repository-local Nizam governance (`AGENTS.md`, installed `.nizam/` instructions, authored skills and protocols, phase sequencing, contract ceremonies, line-count gates, attempt counters, and historical scope guards) until `B6` releases and re-bootstraps `.nizam/` to the corrective release. This waiver never grants authority to defeat runtime permissions, an actual commit denial, sandbox enforcement, credentials, hooks, or external required controls, and preserves:
+- **Process precedence (`B0`–`B6` — Completed)**: Continuing operator authorization governed `B0`–`B6` until `B6` released `v1.9.0` and re-bootstrapped `.nizam/` to `v1.9.0` parity (`AGENTS.md` `v0.3.0`). All slices preserved:
   1. Independent acceptance of each integrated, publishable corrective slice by a non-authoring reviewer.
   2. Real, accurately captured verification results tied to the committed candidate and execution inputs.
   3. Security and correctness invariants (identity, authorization, isolation, source integrity, claimed vs. authenticated authority, and externally mediated Git commit boundaries).
@@ -200,6 +204,6 @@ Each check family has exactly one authoritative CI job owner inside the existing
 2. **Corrective Slice 2 (`B3 + B4` → independent acceptance at `f825908e80100a2e13b9157b6a4f72908dd26a24`)**:
    - `B3` (Closes `V3` & `V4`): Shared trusted payload-integrity verifier (`tools/payload_integrity.py`) wired into `bootstrap.sh --verify-only` and `.github/scripts/verify_self_governance.py`, truthful `validate.sh --payload` scope/summary reporting (`10 exercised passed, 0 failed, 2 not-applicable, 1 skipped, 3 out-of-scope`), and updated tests.
    - `B4` (Closes `V5` & `V6`): Coherent work-specific stopping policy across active docs/metadata/tools, `SKILL.md`/`skill.json` version parity enforced in C13, portable provenance/capability discovery in `tools/SKILL.md` and `tools/README.md`, and clear explanation of authored release payload vs. repository self-installed `.nizam/` in `README.md` and `docs/planning/SELF_GOVERNANCE.md`.
-3. **Corrective Slice 3 (`B5 + B6` → independent acceptance, `v1.9.0` release, and `.nizam/` self-adoption)**:
-   - `B5`: Clean disposable consumer end-to-end acceptance (`tools/e2e_bootstrap_test.sh` + independent reviewer acceptance) covering all 10 discrimination areas in Section 10 (`V1`–`V7`).
-   - `B6`: Prepare and release `v1.9.0` (`278` released files, MINOR increment reflecting the updated `start_path.py`, `bootstrap.sh`, `payload_integrity.py`, and `validate.sh --payload` contracts), re-bootstrap `.nizam/` to `v1.9.0`, verify installed payload integrity against the trusted `v1.9.0` tag tree, and exit temporary override mode cleanly.
+3. **Corrective Slice 3 (`B5 + B6` → independent acceptance at `40372780b328359fb4757651640920f11f14a23f`, merged in PR #121 at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, released as `v1.9.0`, and re-bootstrapped under `.nizam/`)**:
+   - `B5`: Clean disposable consumer end-to-end acceptance (`tools/e2e_bootstrap_test.sh` + independent reviewer acceptance at `40372780b328359fb4757651640920f11f14a23f`) covering all 10 discrimination areas in Section 10 (`V1`–`V7`).
+   - `B6`: Released `v1.9.0` (`278` released files, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87` at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `release.yml` run `39172587918` published at `2026-10-18T22:31:27Z`), re-bootstrapped `.nizam/` to `v1.9.0` (`installed_at: 2026-10-18T22:32:25Z`, evidence `.agent/evidence/release-v1.9.0-closeout/`), verified installed payload integrity against the trusted `v1.9.0` tag tree, and exited temporary override mode cleanly (`AGENTS.md` `v0.3.0`).

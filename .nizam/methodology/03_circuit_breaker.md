@@ -1,11 +1,14 @@
 ---
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
-description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
-version: 0.5.0
+description: "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, escalating investigative strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions."
+version: 0.6.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-18"
+    summary: "Remove remaining universal 3-attempt hard-cap contradictions in frontmatter, comparator scope, attempt counting, cause routing, and state reconciliation so all active sections consistently reflect work-specific diagnostic stopping and hard-stop conditions (V5)."
   - version: "0.5.0"
     date: "2026-10-18"
     summary: "Align circuit-breaker policy with work-specific diagnostic stopping: attempt counters and line-count thresholds serve as diagnostic telemetry signals driving escalating investigative posture or bounded decomposition when invariants hold, while hard stops (BLOCKED) apply to invariant breaches, specification contradictions, or repeated unresolved defect signatures."
@@ -51,8 +54,10 @@ retried after a failure, including but not limited to:
   reworking code after a Validator Mode B rejection, or after a failing QA
   verdict.
 - Comparator critic loops (`standard/acceptance_bars.md` Section 3) — any
-  comparator or taste loop is subordinate to this 3-attempt cap; if a blind
-  win is not achieved by attempt 3, the run halts and escalates.
+  comparator or taste loop is subordinate to this circuit-breaker policy; if a
+  blind win is not achieved within the three-attempt strategy ladder on the same
+  unresolved defect signature and no bounded decomposition applies, the run
+  halts and escalates.
 - Any subagent retry a pipeline performs after a malformed or empty subagent
   response.
 
@@ -117,9 +122,10 @@ canonical counters; changing the stage name does not create a distinct step.
 
 The Orchestrator alone owns coordination and circuit counters; implementation
 agents read the current identity and preserve those fields. This definition
-changes neither Section 3's strategy ladder nor the three-attempt limit,
-isolation, cleanup or halt duties. Runtime continuity is specified in
-`10_live_runtime_sessions.md`; it creates no extra cause-specific retry budget.
+changes neither Section 3's strategy ladder nor Section 4's hard-stop
+conditions, isolation, cleanup, or halt duties. Runtime continuity is specified
+in `10_live_runtime_sessions.md`; it creates no extra cause-specific retry
+budget.
 
 ### 3.3 Evidence-based cause routing
 
@@ -132,16 +138,16 @@ failed outer wrapper successful or retroactively turn a repair into a probe.
 
 The optional `route_failed_attempt` library (`tools/workflow_assurance.py
 route-failure`) proposes infrastructure diagnosis or semantic repair for
-allocated attempts one and two, and halt for attempt three. Exclusive per-attempt
-command captures (`tools/start_path.py capture`, published via
-`tools/start_path.py publish` and `tools/start_path.py build-receipt`)
-distinguish `completed` (`success`, `failed`, `setup-error`) from `interrupted`
-runs and refuse to overwrite prior attempt evidence. `route_failed_attempt`
-neither executes nor authorizes a retry. The strategy ladder, three-attempt
-limit, isolation and Section 4 escalation duties remain binding for either
-cause. A handoff preserves counters, budgets and prior history; process, agent,
-session, generation or stage changes create no additional cause-specific
-allowance.
+allocated attempts one and two, and halt for attempt three on the same step
+identity. Exclusive per-attempt command captures (`tools/start_path.py capture`,
+published via `tools/start_path.py publish` and `tools/start_path.py
+build-receipt`) distinguish `completed` (`success`, `failed`, `setup-error`)
+from `interrupted` runs and refuse to overwrite prior attempt evidence.
+`route_failed_attempt` neither executes nor authorizes a retry. The strategy
+ladder, Section 4 hard-stop conditions, isolation, and escalation duties remain
+binding for either cause. A handoff preserves counters, budgets and prior
+history; process, agent, session, generation or stage changes create no
+additional cause-specific allowance.
 
 ## 4. Hard-Stop Conditions and Breach Procedure
 
@@ -201,8 +207,9 @@ with the canonical phase step, then read the counter to determine which attempt
 it is about to make. It MUST increment the relevant counter idempotently after
 each attempt concludes (success or failure). If reconciliation cannot prove the
 derived entry corresponds to the canonical step, the pipeline halts and rebuilds
-it before another attempt. An agent that begins a fourth attempt without having
-respected this counter has violated Section 4 regardless of its outcome.
+it before another attempt. An agent that begins a fourth attempt on the same
+unresolved defect signature without a bounded decomposition or human direction
+has violated Section 4 regardless of its outcome.
 
 ## 6. Escalation Protocol
 

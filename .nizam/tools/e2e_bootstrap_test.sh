@@ -237,7 +237,7 @@ run_bootstrap_verify_only() {
   local tag="$1"
   local target="$2"
 
-  if ! bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}"; then
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}"; then
     echo "run_bootstrap_verify_only: bootstrap.sh --verify-only FAILED against ${target} (tag ${tag})"
     return 1
   fi
@@ -280,18 +280,221 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
     echo "assert_provenance_sha_pin: FAIL -- recorded resolved_sha (${recorded_sha}) != the tag's authoritative commit (${true_sha})"
     return 1
   fi
-  # (b) correct expected SHA -> PASS (exit 0)
-  if ! bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
-    echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha})"
+  # (b) correct expected SHA -> PASS (exit 0) and content_integrity=verified
+  local vo_out
+  if ! vo_out="$(ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" 2>&1)"; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha}): ${vo_out}"
     return 1
   fi
+  case "${vo_out}" in
+    *"content_integrity=verified"*) ;;
+    *)
+      echo "assert_provenance_sha_pin: FAIL -- --verify-only did not report content_integrity=verified: ${vo_out}"
+      return 1
+      ;;
+  esac
   # (c) wrong expected SHA -> drift FAIL (non-zero)
-  if bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
       --expected-sha "0000000000000000000000000000000000000000" >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
     return 1
   fi
-  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
+  # (d) V3 Case 2: harmless comment appended to installed tools/start_path.py -> FAIL
+  cp -p "${target}/tools/start_path.py" "${SCRATCH_DIR}/start_path.py.orig"
+  printf '\n# harmless audit comment\n' >> "${target}/tools/start_path.py"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted appended comment in tools/start_path.py (V3 content drift missed)"
+    return 1
+  fi
+  mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
+  # (e) V3 Case 3: unexpected extra file added under payload -> FAIL
+  printf 'unexpected\n' > "${target}/tools/unexpected_audit_file.txt"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    rm -f -- "${target}/tools/unexpected_audit_file.txt"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted unexpected extra file under payload (V3 inventory drift missed)"
+    return 1
+  fi
+  rm -f -- "${target}/tools/unexpected_audit_file.txt"
+  # (f) V3 mode drift: flipping executable bit on tools/start_path.py -> FAIL
+  chmod +x "${target}/tools/start_path.py"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    chmod -x "${target}/tools/start_path.py"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted executable mode drift on tools/start_path.py"
+    return 1
+  fi
+  chmod -x "${target}/tools/start_path.py"
+  # Restore check passes again
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only failed after restoring original payload"
+    return 1
+  fi
+  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --verify-only enforces SHA match, content bytes, file inventory, and executable modes."
+  return 0
+}
+
+# assert_install_tag_and_sha_pin_and_worktree_reproducibility <tag>
+# --------------------------------------------------------------------------
+# Corrective B2 (V2 + V7 regression guard):
+#   1. Public path (ALLOW_FIXTURE_TAG=0) rejects fixture tag names (`e2e-*`),
+#      floating branch names (`audit-floating-branch`), release-shaped branch
+#      names without a matching tag (`refs/heads/v99.9.9`), and same-name
+#      branch/tag ambiguity (`refs/heads/v99.8.8` + `refs/tags/v99.8.8`).
+#   2. Install-time `--expected-sha` succeeds when `refs/tags/<tag>^{commit}`
+#      matches `--expected-sha`, and fails non-zero BEFORE replacing an existing
+#      target when `--expected-sha` mismatches or is malformed.
+#   3. Both annotated (`v99.1.0`) and lightweight (`v99.2.0`) SemVer release
+#      tags resolve via `refs/tags/<tag>^{commit}` on the public path.
+#   4. Linked `git worktree` reproducibility (V7): normal clone invocation,
+#      invocation from inside a linked git worktree, and `file://` source
+#      pointing at a linked git worktree produce identical file inventories,
+#      executable modes, and SHA-256 digests.
+assert_install_tag_and_sha_pin_and_worktree_reproducibility() {
+  local fixture_tag="$1"
+  local b2_dir="${SCRATCH_DIR}/b2-pin-and-wt"
+  local src_repo="${b2_dir}/src-repo"
+  local head_sha
+
+  mkdir -p "${b2_dir}"
+
+  # (1a) Public path must reject e2e-* fixture tag when ALLOW_FIXTURE_TAG=0
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${fixture_tag}" --target "${b2_dir}/reject-fixture" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- public path accepted non-SemVer fixture tag '${fixture_tag}'"
+    return 1
+  fi
+
+  # Prepare a disposable source repository cloned from this checkout
+  git clone --quiet "file://$(pwd)" "${src_repo}"
+  git -C "${src_repo}" config user.email "b2-test@nizam.local"
+  git -C "${src_repo}" config user.name "B2 Pin Test"
+  head_sha="$(git -C "${src_repo}" rev-parse HEAD)"
+
+  # Create branch-only ref, release-shaped branch ref, ambiguous branch+tag,
+  # annotated SemVer tag, and lightweight SemVer tag.
+  git -C "${src_repo}" branch audit-floating-branch HEAD
+  git -C "${src_repo}" branch v99.9.9 HEAD
+  git -C "${src_repo}" branch v99.8.8 HEAD
+  git -C "${src_repo}" tag -a v99.8.8 -m "ambiguous tag" HEAD
+  git -C "${src_repo}" tag -a v99.1.0 -m "annotated release tag" HEAD
+  git -C "${src_repo}" tag v99.2.0 HEAD
+
+  # (1b) Reject arbitrary branch name
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag audit-floating-branch --target "${b2_dir}/reject-branch" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted floating branch 'audit-floating-branch'"
+    return 1
+  fi
+  # (1c) Reject release-shaped branch without refs/tags/<tag>
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.9.9 --target "${b2_dir}/reject-rel-branch" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted release-shaped branch 'v99.9.9' without refs/tags/v99.9.9"
+    return 1
+  fi
+  # (1d) Reject same-name branch and tag ambiguity
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.8.8 --target "${b2_dir}/reject-ambig" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- accepted ambiguous same-name branch/tag 'v99.8.8'"
+    return 1
+  fi
+
+  # (2a & 3a) Annotated release tag v99.1.0 with matching --expected-sha succeeds on public path
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "${head_sha}" --target "${b2_dir}/ok-annotated/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install of annotated tag v99.1.0 with matching --expected-sha failed"
+    return 1
+  fi
+
+  # Plant a sentinel in the existing target, then verify mismatched --expected-sha fails BEFORE replacing target
+  printf 'keep-existing-target\n' > "${b2_dir}/ok-annotated/.nizam/sentinel.keep"
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "0000000000000000000000000000000000000000" --target "${b2_dir}/ok-annotated/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install accepted mismatched --expected-sha"
+    return 1
+  fi
+  if [ ! -f "${b2_dir}/ok-annotated/.nizam/sentinel.keep" ]; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- failed install with mismatched --expected-sha replaced or deleted existing target"
+    return 1
+  fi
+  rm -f -- "${b2_dir}/ok-annotated/.nizam/sentinel.keep"
+
+  # Reject malformed --expected-sha
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "not-a-40-hex-sha" --target "${b2_dir}/reject-malformed-sha/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install accepted malformed --expected-sha"
+    return 1
+  fi
+
+  # (3b) Lightweight release tag v99.2.0 with matching --expected-sha succeeds on public path
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.2.0 \
+      --expected-sha "${head_sha}" --target "${b2_dir}/ok-lightweight/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- install of lightweight tag v99.2.0 with matching --expected-sha failed"
+    return 1
+  fi
+
+  # (4) Worktree reproducibility (V7 regression guard):
+  # Compare normal clone install (ok-annotated/.nizam), invocation from inside a linked git worktree,
+  # and file:// source pointing at a linked git worktree.
+  local linked_wt="${b2_dir}/linked-worktree"
+  git -C "${src_repo}" worktree add --quiet --detach "${linked_wt}" v99.1.0
+
+  if ! (cd -- "${linked_wt}" && ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" \
+      --tag v99.1.0 --expected-sha "${head_sha}" --target "${b2_dir}/wt-cwd/.nizam" >/dev/null 2>&1); then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- bootstrap invocation from linked git worktree CWD failed"
+    return 1
+  fi
+
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${linked_wt}" \
+      --tag v99.1.0 --expected-sha "${head_sha}" --target "${b2_dir}/wt-source/.nizam" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- bootstrap invocation from linked git worktree file:// source failed"
+    return 1
+  fi
+
+  if ! PYTHONDONTWRITEBYTECODE=1 python3 - "${b2_dir}/ok-annotated/.nizam" "${b2_dir}/wt-cwd/.nizam" "${b2_dir}/wt-source/.nizam" <<'PY'
+import hashlib
+import json
+import pathlib
+import sys
+
+roots = [pathlib.Path(p).resolve() for p in sys.argv[1:4]]
+
+def snapshot(root: pathlib.Path) -> dict:
+    snap = {}
+    for p in sorted(root.rglob("*")):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(root).as_posix()
+        mode = bool(p.stat().st_mode & 0o111)
+        if rel == "provenance.json":
+            doc = json.loads(p.read_text(encoding="utf-8"))
+            snap[rel] = {
+                "mode": mode,
+                "framework_version": doc.get("framework_version"),
+                "tag": doc.get("tag"),
+                "resolved_sha": doc.get("resolved_sha"),
+            }
+        else:
+            snap[rel] = {
+                "mode": mode,
+                "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+            }
+    return snap
+
+base = snapshot(roots[0])
+if len(base) < 270:
+    print(f"unexpected file count in installed payload: {len(base)}", file=sys.stderr)
+    sys.exit(1)
+for other_root in roots[1:]:
+    other = snapshot(other_root)
+    if other != base:
+        print(f"worktree reproducibility mismatch between {roots[0]} and {other_root}", file=sys.stderr)
+        sys.exit(1)
+PY
+  then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- worktree installs produced differing inventories, modes, or digests"
+    return 1
+  fi
+
+  git -C "${src_repo}" worktree remove --force "${linked_wt}" >/dev/null 2>&1 || true
+  rm -rf -- "${b2_dir}"
+
+  echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: OK -- public SemVer tag gate, install-time --expected-sha match/mismatch, annotated+lightweight tags, and 3-form linked-worktree reproducibility verified."
   return 0
 }
 
@@ -354,8 +557,23 @@ assert_payload_validate_cwd_independent() {
     diff <(printf '%s\n' "${a_out}" | grep '^\[C') <(printf '%s\n' "${b_out}" | grep '^\[C') || true
     return 1
   fi
+  local expected_summary="SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed"
+  case "${a_out}" in
+    *"${expected_summary}"*) ;;
+    *)
+      echo "assert_payload_validate_cwd_independent: FORM A missing non-conflated payload summary line (V4 regression)"
+      return 1
+      ;;
+  esac
+  case "${b_out}" in
+    *"${expected_summary}"*) ;;
+    *)
+      echo "assert_payload_validate_cwd_independent: FORM B missing non-conflated payload summary line (V4 regression)"
+      return 1
+      ;;
+  esac
 
-  echo "assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under ${target})"
+  echo "assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent and reports non-conflated summary (both invocation forms green with identical [C*] verdicts under ${target})"
   return 0
 }
 
@@ -427,6 +645,11 @@ main() {
   SCRATCH_DIR="$(mktemp -d)"
   local target="${SCRATCH_DIR}/.nizam"
 
+  # Explicitly opt in to controlled e2e-* fixture tags for the hermetic harness;
+  # assert_install_tag_and_sha_pin_and_worktree_reproducibility tests the public
+  # path with ALLOW_FIXTURE_TAG=0.
+  export ALLOW_FIXTURE_TAG=1
+
   echo "e2e_bootstrap_test.sh: installing pinned tag '${EPHEMERAL_TAG}' from 'file://$(pwd)' into '${target}' (hermetic -- local file:// clone, no network)..."
   bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${EPHEMERAL_TAG}" --target "${target}"
 
@@ -453,6 +676,7 @@ main() {
   assert_discovery_path "${target}"
   run_bootstrap_verify_only "${EPHEMERAL_TAG}" "${target}"
   assert_provenance_sha_pin "${EPHEMERAL_TAG}" "${target}"
+  assert_install_tag_and_sha_pin_and_worktree_reproducibility "${EPHEMERAL_TAG}"
   assert_payload_validate_cwd_independent "${target}"
   assert_preflight_governance_root "${SCRATCH_DIR}"
   assert_genesis "${EPHEMERAL_TAG}"
@@ -803,7 +1027,7 @@ PY
 # begin+done, amend-contract, capture -> publish -> build-receipt ->
 # verify-receipt -> resume, status, and validate.sh --payload) using ONLY its
 # installed `.nizam/` payload, with zero reach-back to the framework source
-# repository (A6).
+# repository (A6 + B5).
 assert_consumer_zero_reachback() {
   local tag="$1"
   local consumer="${SCRATCH_DIR}/zero-reachback-consumer"
@@ -840,11 +1064,14 @@ def git(*args: str) -> str:
     return res.stdout.strip()
 
 
-def run_sp(*args: str, expected_rc: int = 0) -> subprocess.CompletedProcess[str]:
+def run_sp(*args: str, expected_rc: int = 0, extra_env: dict | None = None) -> subprocess.CompletedProcess[str]:
+    call_env = dict(env)
+    if extra_env:
+        call_env.update(extra_env)
     res = subprocess.run(
         [sys.executable, str(sp), *args],
         cwd=str(consumer),
-        env=env,
+        env=call_env,
         capture_output=True,
         text=True,
         check=False,
@@ -1024,7 +1251,7 @@ assert amend_doc["applied"] is True and amend_doc["re_approval_required"] is Fal
 git("add", ".agent/contracts/001.json")
 git("commit", "-qm", "commit amended contract 001")
 
-# 5. Full producer-to-consumer receipt chain using only .nizam/tools/
+# 5. Full producer-to-consumer receipt chain using only .nizam/tools/ (including V1 checks)
 head_commit = git("rev-parse", "HEAD")
 head_tree = git("rev-parse", "HEAD^{tree}")
 
@@ -1091,6 +1318,33 @@ cap_out = json.loads(
         "print('CONSUMER_RECEIPT_OK')",
     ).stdout
 )
+
+# V1 check (a): publish --mode prepare performs zero git commits and leaves HEAD unchanged
+pre_pub_head = git("rev-parse", "HEAD")
+prep_out = json.loads(
+    run_sp(
+        "publish",
+        "--mode",
+        "prepare",
+        "--capture",
+        cap_out["capture_path"],
+    ).stdout
+)
+assert prep_out["status"] == "pending_external_commit" and prep_out["stage"] == "outputs_pending"
+assert git("rev-parse", "HEAD") == pre_pub_head
+
+# V1 check (b): publish --mode publish respects NIZAM_MUTATION_POLICY=deny without creating a commit
+run_sp(
+    "publish",
+    "--mode",
+    "publish",
+    "--capture",
+    cap_out["capture_path"],
+    expected_rc=1,
+    extra_env={"NIZAM_MUTATION_POLICY": "deny"},
+)
+assert git("rev-parse", "HEAD") == pre_pub_head
+
 pub_out = json.loads(
     run_sp(
         "publish",
@@ -1185,7 +1439,27 @@ policy_path.write_text(json.dumps(policy_doc, sort_keys=True, separators=(",", "
 git("add", ".agent/evidence/001/policy.json")
 git("commit", "-qm", "commit consumer receipt policy")
 
+# V1 check (c): build-receipt without --commit rejects uncommitted 12-field closed capture without committing
+pre_br_head = git("rev-parse", "HEAD")
 receipt_path = consumer / ".agent" / "evidence" / "001" / "receipt.json"
+uncommitted_closed = consumer / ".agent" / "evidence" / "001" / "uncommitted.receipt-capture.json"
+uncommitted_closed.write_text(
+    json.dumps(pub_out["receipt_capture"], sort_keys=True, separators=(",", ":")) + "\n",
+    encoding="utf-8",
+)
+run_sp(
+    "build-receipt",
+    "--policy",
+    str(policy_path),
+    "--published",
+    str(uncommitted_closed),
+    "--output",
+    str(receipt_path),
+    expected_rc=1,
+)
+assert git("rev-parse", "HEAD") == pre_br_head
+uncommitted_closed.unlink()
+
 build_res = json.loads(
     run_sp(
         "build-receipt",
@@ -1248,16 +1522,17 @@ assert res2["action"] == "noop"
 st = json.loads(run_sp("status", "--format", "json").stdout)
 assert st["reconciled"] is True and st["contradictions"] == []
 
-# 7. Payload validation from consumer root
+# 7. Payload validation from consumer root (including V4 non-conflated summary check)
 val_res = subprocess.run(["bash", ".nizam/tools/validate.sh", "--payload"], cwd=str(consumer), env=env, capture_output=True, text=True, check=False)
 assert val_res.returncode == 0, f"validate.sh --payload failed: {val_res.stdout}\n{val_res.stderr}"
+assert "SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed" in val_res.stdout
 PY
   then
     echo "assert_consumer_zero_reachback: FAIL -- consumer zero-reach-back lifecycle exercise failed."
     return 1
   fi
 
-  echo "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back."
+  echo "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish(prepare+deny+publish)/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back."
   return 0
 }
 

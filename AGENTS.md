@@ -2,10 +2,13 @@
 id: nizam-self-governance-agents
 title: "Nizam Framework — Local Agent Instructions"
 description: "Route work on this repository through its installed immutable Nizam governance."
-version: 0.2.1
+version: 0.3.0
 status: active
 authoritative_source: AGENTS.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-18"
+    summary: "Exit temporary corrective override mode upon re-bootstrapping .nizam/ to the corrective immutable release v1.9.0 (0c9b1c5979a922c75499e0bfe4d9dbf9524f717d) and route local agent sessions through the installed v1.9.0 governance."
   - version: "0.2.1"
     date: "2026-10-18"
     summary: "Record explicit transitional entry precedence during the v1.8.0 rollout corrective execution mandate (B0-B6, closing V1-V7) until .nizam/ is re-bootstrapped to the corrective release in B6."
@@ -24,15 +27,6 @@ change_log:
 ---
 
 # Local agent instructions
-
-> **Transitional Entry Precedence (`B0`–`B6`, 2026-10-18):** While the `v1.8.0`
-> rollout corrective mandate (`B0`–`B6`, recorded in
-> [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md)) is in
-> flight, authored root tools (`tools/start_path.py`, `tools/workflow_assurance.py`,
-> `tools/payload_integrity.py`, `bootstrap.sh`, `tools/validate.sh`) and
-> [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md) take
-> precedence over conflicting `.nizam/` instructions until `B6` releases and
-> re-bootstraps `.nizam/` to the corrective release.
 
 Before planning, editing or reviewing work in this repository, query
 `.nizam/NIZAM.json`, then load `.nizam/tools/SKILL.md`. Resolve the installed
