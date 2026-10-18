@@ -2,10 +2,13 @@
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: methodology/01_execution.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-10-16"
+    summary: "Name the bug-fix and small-change routes. tools/start_path.py consumes their cause, scope, and intent records. The two feature loops stay mandatory and are not skipped."
   - version: "0.2.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 correction: a passing QA verdict no longer advances directly to complete. A distinct evidence-capture gate verifies referenced .agent/evidence files exist and record each required command/result before the Orchestrator may update lifecycle state."
@@ -19,7 +22,8 @@ Once `00_planning.md` has produced an eligible, dependency-cleared feature, that
 feature is driven through a two-loop state machine before it is considered
 complete. Loop 1 aligns on *what* will be built, before any code exists. Loop 2
 verifies *what was built* matches what was aligned on. Neither loop may be
-skipped, collapsed, or reordered.
+skipped, collapsed, or reordered for a feature. Section 2.1 is the only
+non-feature route, and it does not authorize skipping either loop for a feature.
 
 This protocol is coordinated by the **Orchestrator** and governs the interaction
 between the **Generator**, **Validator**, and **Evaluator** roles defined in
@@ -55,6 +59,34 @@ proposal missing any of these is incomplete and cannot reach `approved` status.
 against a contract whose `status` is anything other than `"approved"`. This is
 the single most important rule in this protocol — every other gate exists to
 protect it.
+
+### 2.1 Non-feature routes
+
+A bug fix and a small unambiguous change are not features. They do not open a
+product specification or a new contract, and they do not pass through Loop 1.
+`tools/start_path.py` is the consumer of their records. The feature-path gate
+count is unchanged.
+
+- **Bug fix.** Implementation may begin only when
+  `tools/start_path.py begin bugfix --id <id>` exits 0. That command reads
+  `.agent/evidence/<id>-cause.json` against `schema/bugfix_cause.schema.json`
+  and `.agent/evidence/<id>-scope.json` against
+  `schema/bugfix_scope.schema.json`. When the scope names `contract_id`,
+  `.agent/contracts/<contract_id>.json` must validate against
+  `schema/contract.schema.json` with a status of `approved`, `implemented`,
+  or `complete`, and every scoped file must be inside that contract. The
+  repair then does not repeat Loop 1. The bug fix is not done until
+  `tools/start_path.py done bugfix --id <id>` exits 0. That command also
+  requires a passing `.agent/qa/<id>.json` validated against
+  `schema/qa_verdict.schema.json`, with a real evidence file.
+- **Small unambiguous change.** Implementation may begin only when
+  `tools/start_path.py begin small-change --id <id>` exits 0. That command
+  reads `.agent/evidence/<id>-intent.json` against
+  `schema/small_change_intent.schema.json` and refuses the path when
+  `needs_new_contract` is true. The change is not done until
+  `tools/start_path.py done small-change --id <id>` exits 0, which requires
+  the same passing QA record. Use the feature path when the change needs a
+  new contract.
 
 ## 3. Loop 2 — Post-Code Repair
 

@@ -1,0 +1,69 @@
+$ python3 - <<'CHECK'
+import os,stat,subprocess
+from pathlib import Path
+def git(*args):
+    return subprocess.check_output(['git',*args])
+allow={'CHANGELOG.md','docs/planning/ROADMAP.md','docs/planning/operator_gates.md','docs/planning/HANDOVER.md','docs/planning/manifest.json','README.md','.nizam/provenance.json','.agent/run_state.json','.agent/contracts/release-v1.6.0-closeout.json','.agent/validator/release-v1.6.0-closeout-mode-a.json','.agent/validator/release-v1.6.0-closeout-mode-b.json','.agent/qa/release-v1.6.0-closeout-contract-review.json','.agent/qa/release-v1.6.0-closeout.json','docs/planning/SELF_GOVERNANCE.md'}
+prefix='.agent/evidence/release-v1.6.0-closeout/'
+TAGEV='.agent/evidence/release-v1.6.0-tag/'
+REVIEW={'.agent/qa/release-v1.6.0-contract-review.json','.agent/validator/release-v1.6.0-mode-a.json'}
+PIN='.github/scripts/verify_self_governance.py'
+sha=git('rev-parse','v1.6.0^{commit}').decode().strip()
+def regular(path):
+    try: info=os.lstat(path)
+    except OSError: return False
+    return stat.S_ISREG(info.st_mode)
+def in_tag(path):
+    return subprocess.run(['git','cat-file','-e','v1.6.0:'+path],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
+def pin_script_ok():
+    src=git('show','v1.6.0:'+PIN)
+    for old,new in ((b'TAG = "v1.5.0"',b'TAG = "v1.6.0"'),(b'SHA = "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852"',b'SHA = "'+sha.encode()+b'"'),(b'len(expected) != 238',b'len(expected) != 276'),(b'"framework_version": "1.5.0"',b'"framework_version": "1.6.0"')):
+        assert src.count(old)==1,(old,src.count(old))
+        src=src.replace(old,new)
+    p=Path(PIN)
+    return p.is_file() and not p.is_symlink() and p.read_bytes()==src
+def payload_problems():
+    problems=[]
+    tree=[e for e in git('ls-tree','-r','-z',sha,'--','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json').split(b'\0') if e]
+    assert tree,'empty tag payload listing'
+    expected={'.nizam/provenance.json'}
+    for entry in tree:
+        meta,raw=entry.split(b'\t',1); mode,kind,oid=meta.split(b' ')
+        assert kind==b'blob' and mode in (b'100644',b'100755'),entry
+        rel='.nizam/'+os.fsdecode(raw); expected.add(rel)
+        try: info=os.lstat(rel)
+        except OSError: problems.append('missing '+rel); continue
+        if not stat.S_ISREG(info.st_mode): problems.append('not a regular file '+rel); continue
+        if bool(info.st_mode & stat.S_IXUSR)!=(mode==b'100755'): problems.append('mode differs '+rel)
+        if Path(rel).read_bytes()!=git('cat-file','blob',oid.decode()): problems.append('bytes differ '+rel)
+    found=set()
+    if os.path.islink('.nizam') or not os.path.isdir('.nizam'): problems.append('.nizam is not a real directory')
+    else:
+        for root,dirs,files in os.walk('.nizam',followlinks=False):
+            for name in dirs+files:
+                full=os.path.join(root,name); info=os.lstat(full)
+                if stat.S_ISDIR(info.st_mode): continue
+                if stat.S_ISREG(info.st_mode): found.add(full)
+                else: problems.append('symlink or non-regular entry '+full)
+    if found!=expected: problems.append('file set differs: extra=%s missing=%s'%(sorted(found-expected)[:5],sorted(expected-found)[:5]))
+    return problems
+changed=set(git('diff','--name-only','--no-renames','v1.6.0').decode().splitlines()); changed.update(git('ls-files','--others','--exclude-standard').decode().splitlines())
+verdict={}
+bad=[]
+for p in sorted(changed):
+    if p in allow or p.startswith(prefix): continue
+    if p in REVIEW or p.startswith(TAGEV):
+        if regular(p) and (p in REVIEW or not in_tag(p)): continue
+    elif p==PIN:
+        verdict.setdefault('pin',pin_script_ok())
+        if verdict['pin']: continue
+    elif p.startswith('.nizam/'):
+        verdict.setdefault('payload',payload_problems())
+        if not verdict['payload']: continue
+    bad.append(p)
+if verdict.get('payload'): print('payload problems:',verdict['payload'][:10])
+assert not bad,bad
+print('PASS bounded editorial scope + allowed closeout artifacts + verified re-bootstrap admissions (release-v1.6.0 post-tag records absent from the tag, existing review verdict files, pin script equal to the tag version with exactly four pin substitutions, .nizam payload byte- and mode-identical to the tag)')
+CHECK
+PASS bounded editorial scope + allowed closeout artifacts + verified re-bootstrap admissions (release-v1.6.0 post-tag records absent from the tag, existing review verdict files, pin script equal to the tag version with exactly four pin substitutions, .nizam payload byte- and mode-identical to the tag)
+EXIT:0

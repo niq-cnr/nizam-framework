@@ -1,0 +1,24 @@
+$ gh run view 39008222975 && gh release view v1.6.0 --json tagName,isDraft,isPrerelease,publishedAt,url
+
+✓ v1.6.0 release · 39008222975
+Triggered via push less than a minute ago
+
+JOBS
+✓ publish in 12s (ID 117324976713)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+publish: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+publish: .github#1
+
+
+For more information about the job, try: gh run view --job=117324976713
+View this run on GitHub: https://github.com/niq-cnr/nizam-framework/actions/runs/39008222975
+---
+{"isDraft":false,"isPrerelease":false,"publishedAt":"2026-10-17T05:59:26Z","tagName":"v1.6.0","url":"https://github.com/niq-cnr/nizam-framework/releases/tag/v1.6.0"}
+---
+$ gh api repos/niq-cnr/nizam-framework/releases --jq latest check
+{"created_at":"2026-10-17T05:59:11Z","published_at":"2026-10-17T05:59:26Z","tag_name":"v1.6.0"}
+EXIT:0

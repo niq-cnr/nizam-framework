@@ -927,3 +927,95 @@ if errors:
 sys.exit(0)
 PY
 }
+
+# Runtime provenance relation helper (separate from the eleven generic
+# verification primitives). JSON Schema checks record shape first; this helper
+# compares fields within that record. It never proves live runtime behavior.
+# vlib_runtime_record_relations <runtime_operation|runtime_session> <path>
+# Returns 0 for valid relations, 1 with a named diagnostic for a violation.
+vlib_runtime_record_relations() {
+  python3 - "$1" "$2" <<'PY_RUNTIME_RELATIONS'
+import json
+import math
+import sys
+
+family, path = sys.argv[1:]
+
+def fail(invariant):
+    print(f"{path}: {family}:{invariant}")
+    sys.exit(1)
+
+try:
+    with open(path, encoding="utf-8") as handle:
+        record = json.load(handle)
+except (OSError, json.JSONDecodeError):
+    fail("invalid_input")
+if not isinstance(record, dict):
+    fail("invalid_input")
+
+def principal(value):
+    if not isinstance(value, dict) or value.get("principal_kind") not in ("human", "agent"):
+        fail("invalid_principal")
+    if value["principal_kind"] == "human":
+        return ("human", value.get("role"), value.get("agent_id"))
+    if not value.get("role") or not value.get("agent_id"):
+        fail("invalid_principal")
+    return ("agent", value["role"], value["agent_id"])
+
+def nonnegative_integer(value):
+    # JSON Schema integer includes integral floats; booleans are not numbers.
+    # Handle ints first so unbounded JSON integers do not overflow float casts.
+    if type(value) is int:
+        return value >= 0
+    return type(value) is float and math.isfinite(value) and value >= 0 and value.is_integer()
+
+def generation(value):
+    if not isinstance(value, dict) or not nonnegative_integer(value.get("counter")) or not value.get("nonce"):
+        fail("invalid_generation")
+    return (value["counter"], value["nonce"])
+
+if family == "runtime_operation":
+    if type(record.get("executed")) is not bool:
+        fail("invalid_executed")
+    if record["executed"]:
+        if principal(record.get("requester")) != principal(record.get("owner")):
+            fail("foreign_requester")
+        if generation(record.get("expected_generation")) != generation(record.get("generation")):
+            fail("stale_generation")
+        if not nonnegative_integer(record.get("expected_lease_epoch")) or not nonnegative_integer(record.get("lease_epoch")):
+            fail("invalid_lease")
+        if record["expected_lease_epoch"] != record["lease_epoch"]:
+            fail("stale_lease")
+    continuity = ("previous_generation", "previous_contract_id", "previous_step_key", "previous_attempt")
+    if any(key in record for key in continuity):
+        if not all(key in record for key in continuity):
+            fail("attempt_continuity_missing")
+        generation(record["previous_generation"])
+        for current in ("contract_id", "step_key", "attempt"):
+            if record.get(current) != record["previous_" + current]:
+                fail("attempt_continuity")
+elif family == "runtime_session":
+    transition = record.get("transition")
+    if transition == "transfer":
+        if not nonnegative_integer(record.get("previous_lease_epoch")) or not nonnegative_integer(record.get("lease_epoch")):
+            fail("invalid_lease")
+        if record["lease_epoch"] <= record["previous_lease_epoch"]:
+            fail("transfer_lease")
+        if principal(record.get("previous_owner")) == principal(record.get("owner")):
+            fail("transfer_owner")
+    elif transition == "reattach":
+        if not nonnegative_integer(record.get("previous_lease_epoch")) or not nonnegative_integer(record.get("lease_epoch")):
+            fail("invalid_lease")
+        if principal(record.get("previous_owner")) != principal(record.get("owner")):
+            fail("reattach_owner")
+        if generation(record.get("previous_generation")) != generation(record.get("generation")):
+            fail("reattach_generation")
+        if record.get("previous_lease_epoch") != record.get("lease_epoch"):
+            fail("reattach_lease")
+        if record.get("previous_outstanding_operation_ref") != record.get("outstanding_operation_ref"):
+            fail("reattach_outstanding_operation")
+else:
+    fail("unknown_family")
+sys.exit(0)
+PY_RUNTIME_RELATIONS
+}

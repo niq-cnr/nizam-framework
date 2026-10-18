@@ -1,0 +1,14 @@
+$ sha=$(git rev-parse "v1.6.0^{commit}"); echo "tag v1.6.0 -> $sha"; rc=0; for m in standard templates schema tools methodology ecosystem NIZAM.json; do a=$(git rev-parse "$sha:$m"); b=$(git rev-parse "HEAD:.nizam/$m"); if [ "$a" = "$b" ]; then echo "MATCH $m $a"; else echo "DIFF $m tag=$a head=$b"; rc=1; fi; done; echo "tag payload files: $(git ls-tree -r --name-only $sha -- standard templates schema tools methodology ecosystem NIZAM.json | wc -l)"; echo "HEAD .nizam files (excl provenance.json): $(git ls-tree -r --name-only HEAD -- .nizam | grep -vx .nizam/provenance.json | wc -l)"; git diff --quiet HEAD -- .nizam && echo "working tree .nizam clean vs HEAD" || { echo "working tree .nizam DIRTY"; rc=1; }; echo "HEAD $(git rev-parse HEAD)"; exit $rc
+tag v1.6.0 -> 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e
+MATCH standard 2b6e5301872f9f4b42fc2fc3c308f4ecb7f0d125
+MATCH templates 9bc0206c330e3be4c2eb758087b4da43f5dcf7db
+MATCH schema ec911c455cbaa30f9466fdad6b4df4098a895ef5
+MATCH tools 64ec21524f6316776156ae3fe88d9b5441a479fd
+MATCH methodology d9fb7800b111eba0aac307757798d1f4d4689056
+MATCH ecosystem f6907e70e8846326b3afaeb937d7e74a318bd026
+MATCH NIZAM.json 18169155c523b9fd0935a24455916a8ab7b1a95d
+tag payload files: 276
+HEAD .nizam files (excl provenance.json): 276
+working tree .nizam clean vs HEAD
+HEAD 05c070b494c9ef40a6aac78fbc6e8d075d757a29
+EXIT:0

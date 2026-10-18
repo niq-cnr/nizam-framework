@@ -1,0 +1,79 @@
+{
+  "gate": "qa",
+  "contract_id": "release-v1.6.0-closeout",
+  "attempt": 2,
+  "reviewed_revision": "e10d0af7 + uncommitted implementation (attempt 2) against the approved round-9 contract",
+  "reviewer": "independent-evaluator",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "at_results": {
+    "method": "Each command was extracted verbatim from verification[0..4] of .agent/contracts/release-v1.6.0-closeout.json (status approved, approvals {true,true,3}, 7 amendments, 5 verification entries), confirmed byte-equal to the text I reviewed in round 9, and executed by me on the real worktree AFTER the run_state evidence_disclosure entry (updated_at 2026-10-17T22:05:00Z). Each Orchestrator capture 01..05 contains the verbatim command, the output body I reproduced, and EXIT:0.",
+    "AT1": {
+      "command_ref": "verification[0] bash tools/validate.sh",
+      "evidence": "01-validate-sh.txt",
+      "exit_code": 0,
+      "summary": "SUMMARY: 16 passed, 0 failed",
+      "agrees_with_capture": true
+    },
+    "AT2": {
+      "command_ref": "verification[1] release_closeout.py --mode pr && --mode tag --tag v1.6.0",
+      "evidence": "02-closeout-pr-and-tag.txt",
+      "exit_code": 0,
+      "summary": "Release close-out: all internal version anchors agree with V=1.6.0 (--mode pr); tag v1.6.0's anchors are internally consistent (--mode tag)",
+      "agrees_with_capture": true
+    },
+    "AT3": {
+      "command_ref": "verification[2] published facts / ledger rows / provenance / README / manifest CHECK (uses live gh)",
+      "evidence": "03-published-facts.txt",
+      "exit_code": 0,
+      "summary": "PASS published v1.6.0 facts, ledger rows, provenance re-pin, README re-pin and immutable released notes",
+      "agrees_with_capture": true
+    },
+    "AT4": {
+      "command_ref": "verification[3] bounded scope CHECK (--no-renames, eight bounded paths)",
+      "evidence": "04-scope.txt",
+      "exit_code": 0,
+      "summary": "PASS bounded editorial scope + allowed closeout artifacts + verified re-bootstrap admissions (...) .nizam payload byte- and mode-identical to the tag",
+      "agrees_with_capture": true
+    },
+    "AT5": {
+      "command_ref": "verification[4] SELF_GOVERNANCE.md installation-record CHECK",
+      "evidence": "05-self-governance-record.txt",
+      "exit_code": 0,
+      "summary": "PASS SELF_GOVERNANCE.md: v1.6.0 installation facts equal observed values, stage installed with commissioning not performed, v1.5.0 commissioning block/body preserved byte-for-byte, frontmatter schema-valid",
+      "agrees_with_capture": true
+    },
+    "evidence_disclosure_effect": "None. run_state.json's last history entry (evidence_disclosure, 22:05:00Z) is not read by any AT outcome: AT3 reads the release_executed event for v1.6.0, AT5 reads the operator_gate_decision for H-CONSUMER-UPGRADE tag v1.6.0, AT4 only admits run_state.json by name. My re-executions ran after the entry was added and all exit 0, identical to the captures. The disclosure itself is consistent: it states captures 01-04 of attempt 1 were overwritten and are not reconstructed, and points to Mode B round 1 for their described content; I took no reliance on attempt-1 captures.",
+    "supplementary": "python3 .github/scripts/verify_self_governance.py on the real worktree: SELF-GOVERNANCE PASS: 276 released files + genuine provenance; v1.6.0 at 4e7db5a4... (EXIT 0). Reinstall captures 00a-00e each end EXIT:0."
+  },
+  "prose_review": {
+    "method": "Read git diff HEAD of CHANGELOG.md, README.md, ROADMAP.md, operator_gates.md, HANDOVER.md, manifest.json and SELF_GOVERNANCE.md in full for the added lines, grepped every added line for 'commission', read the removed lines, and read the run_state entries added since HEAD.",
+    "result": "No file claims or implies that v1.6.0 was commissioned.",
+    "findings": [
+      "README '## Local governance': 'installed its public `v1.6.0` governance ... Commissioning of this release (clean installed preflight, baseline and independent QA) has not been performed. The earlier commissioning at assessed source candidate `bfd475f` remains recorded in `docs/planning/SELF_GOVERNANCE.md`.' Satisfies purpose clauses (i)-(iii); the untouched sentence 'The self-governance record records the exact pin, operator authorization and current stage' is now true (SELF_GOVERNANCE.md records pin 4e7db5a4, the H-CONSUMER-UPGRADE authorization and stage installed). 8x v1.6.0 / 0x v1.5.0.",
+      "SELF_GOVERNANCE.md: heading '# Current installation — `v1.6.0` (installed — commissioning not performed)'; stage 'installed — commissioning not performed'; machine values status installed and commissioning_performed false; states the v1.5.0 commissioning steps 'have not been performed for v1.6.0' and 'Commissioning of v1.6.0 is not authorized by any decision recorded here'; installation-only authorization with the operator's verbatim text, the disclosed ordering (PR #114, 9a830aa4, 05c070b4, ratified, not back-dated) and the five 00a-00e captures. Exactly one marker line, which describes only the v1.5.0 installation and says it 'does not describe the current installation'. No YAML comments in the frontmatter. The removed lines are only the version number; the v1.5.0 commissioning block, 0.1.1/0.1.0 change_log text and v1.5.0 body are byte-preserved (AT5). Residual: the file's pre-existing title still contains the word 'Commissioning' and the preserved v1.5.0 body says 'installed and commissioned the public immutable `v1.5.0`'; both are unchanged by purpose and the latter sits below the historical marker, so they are history, not a v1.6.0 claim.",
+      "HANDOVER.md: new '## Current status — v1.6.0 released' directly under the H1, facts only (tag, merge SHA, run id, publication time, rehearsal, .nizam re-pin, H-GA unchanged, features 131/132); the 2026-10-17 preparation note is retained with one SUPERSEDED marker line; the only removed lines are the frontmatter description and version. No commissioning wording.",
+      "operator_gates.md H-FRAMEWORK-RELEASE row: 'v1.6.0 EXECUTED 2026-10-17' clause is release-execution facts only; 'the v1.6.0 PREPARED clause (v0.40.0) is superseded by this record' (MB-4 fixed). No commissioning wording.",
+      "CHANGELOG.md Unreleased '### Changed' entry: states the re-pin, that SELF_GOVERNANCE 0.2.0 records the install 'as installed with commissioning not performed' and README states commissioning of this release has not been performed; [1.6.0] section untouched (AT3 tail equality). ROADMAP and manifest: release-fact roll only.",
+      "run_state entries added since HEAD (7): commissioning appears only in negations and in process narration (binding notes about the AT5 heuristic); every recovery authorization has commissioning_authorized false.",
+      "Non-blocking, carried from Mode B: the operator_gates H-CONSUMER-UPGRADE row still records only the 2026-10-10 v1.5.0 self-adoption, not the 2026-10-17 v1.6.0 installation decision; outside this contract's scope, for a later reviewed registry refresh."
+    ]
+  },
+  "adversarial_check": {
+    "design": "Truth test of the README's operational claim, which no gate has executed: 'The installed payload is verified byte-for-byte against the pinned tag by the standing self_governance CI job.' I ran the actual CI step (compliance.yml: python3 .github/scripts/verify_self_governance.py) on the real worktree and on mutated copies in a scratch worktree (HEAD plus the 19 uncommitted/untracked files), to confirm the verifier really detects byte, mode, inventory and provenance drift, independent of AT4. If the verifier were weaker than the sentence says, the README would be an unsupported claim.",
+    "command": "Real: python3 .github/scripts/verify_self_governance.py. Scratch (git worktree add --detach, 19 files copied, each mutation restored): (A) append one byte to .nizam/tools/start_path.py; (B) chmod -x .nizam/tools/convergent_review.py; (C) add .nizam/extra.txt; (D) change one hex digit of resolved_sha in .nizam/provenance.json; (E) restored.",
+    "result": "Real worktree and scratch baseline: SELF-GOVERNANCE PASS (276 released files + genuine provenance; v1.6.0 at 4e7db5a4...) EXIT 0. A: 'content drift: tools/start_path.py' EXIT 1. B: 'Git executable-mode drift: tools/convergent_review.py' EXIT 1. C: 'file inventory drift: missing=[], extra=['extra.txt']' EXIT 1. D: 'provenance resolved_sha disagrees with trusted pin' EXIT 1. E: PASS EXIT 0. The CI job is confirmed to verify bytes, modes, inventory and provenance against the pinned tag, so the README sentence is true as written. Does not block."
+  },
+  "lifecycle_check": {
+    "run_state_sequence": "Verified in .agent/run_state.json: release_executed (v1.6.0, 2026-10-17T06:05:00Z) -> operator_gate_decision H-CONSUMER-UPGRADE (18:25:00Z, installation only) -> recovery authorization round 7 (18:25:00Z) -> circuit_breaker_halt after Mode A round-7 rejection (19:05:00Z) -> recovery authorization round 8 (19:20:00Z) -> contract_approved round 8 (20:10:00Z) -> mode_b_rejected attempt 1 (20:45:00Z, MB-1..MB-4) -> recovery authorization round 9 (20:55:00Z, MB-2) -> contract_approved round 9 (21:40:00Z) -> evidence_disclosure (22:05:00Z). History prefix at HEAD is unchanged (append-only); only updated_at and last_action changed at top level; every authorization carries commissioning_authorized false.",
+    "circuit_breakers": "release-v1.6.0-closeout-contract: attempts 9, limit 9, status active, note covers rounds 1-9 and the halt and recovery authorizations (limit raised from 7 at HEAD by the operator-authorized rounds 8 and 9; a further rejection would halt). release-v1.6.0-closeout-implementation: attempts 2, limit 3, note records attempt 1 Mode B rejection and attempt 2 start. Both consistent with the history.",
+    "verdict_files": "qa/release-v1.6.0-closeout-contract-review.json: round 9 approved, preserving round 8 and nested round 6. validator/release-v1.6.0-closeout-mode-a.json: round 9 approved, preserving round 8 approved, round 7 rejected and round 6 approved. validator/release-v1.6.0-closeout-mode-b.json: round 2 approved with round 1 rejected preserved. All three arrays empty at each top level; the contract status is approved with both gate flags true.",
+    "gaps_noted": "No run_state event yet records Mode B round 2 approval or this QA verdict; the Orchestrator should append them and set the QA artifact with this verdict (AT4 already allow-lists .agent/qa/release-v1.6.0-closeout.json). Not a defect in the implementation."
+  },
+  "summary": "QA PASS for implementation attempt 2. All five contract ATs re-executed by me on the real worktree exit 0 and agree with the Orchestrator captures 01-05 (each capture holds the verbatim command and EXIT:0); the 22:05:00Z evidence_disclosure entry changes no AT outcome. A full read of the prose in the seven editorial files, SELF_GOVERNANCE current-installation section and marker, README Local governance, HANDOVER section and marker, the operator_gates EXECUTED clause, the CHANGELOG entry and the added run_state entries finds no claim or implication of v1.6.0 commissioning, and the contract authorizes none. My adversarial check executed the README's CI-verification claim against the real verifier and four drift mutations, all detected, so the claim is supported. The lifecycle record is coherent and append-only, with prior rounds preserved in all three verdict files. Non-blocking follow-ups: H-CONSUMER-UPGRADE registry row refresh (outside scope) and recording Mode B round 2 and this QA in run_state. Scratch worktree removed; only this verdict file written; nothing committed.",
+  "canonical_for": "release-v1.6.0-closeout"
+}

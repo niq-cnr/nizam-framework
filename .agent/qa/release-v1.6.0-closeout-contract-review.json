@@ -1,0 +1,247 @@
+{
+  "gate": "contract-review",
+  "contract_id": "release-v1.6.0-closeout",
+  "round": 9,
+  "reviewed_revision": "e10d0af7... + uncommitted round-6/7/8/9 contract amendments (Loop 2 attempt 1 rejected by Mode B; MB-2 fix via round 9)",
+  "reviewer": "independent-evaluator",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "checks": {
+    "1_delta_isolation": {
+      "commands": "Parsed field-by-field comparison of the working-tree contract against the Orchestrator's round-8 snapshot (scratchpad contract.r8.json), after confirming that snapshot is identical to my own round-8 extracts (AT1-AT4 commands byte-equal to my round-8 at1..at4.sh); character-level diff of every changed AT4 string.",
+      "exit_codes": {
+        "compare": 0
+      },
+      "observations": [
+        "Changed paths only: /amendments (6 -> 7; entries 0-5 byte-identical to round 8), /scope/files_modify (7 -> 8; entries 0-6 byte-identical, including the README purpose), /status (approved -> proposed), /verification (4 -> 5), and verification[3] acceptance_test, command and expected. approvals unchanged ({true,true,3}).",
+        "AT1, AT2 and AT3 (command, expected, acceptance_test, evidence) are byte-identical to my round-8 text; the README purpose is byte-identical.",
+        "AT4 delta is character-exact: the command gains only \",'docs/planning/SELF_GOVERNANCE.md\" in the allow set; acceptance_test and expected change only 'seven' -> 'eight'. No admission logic changed.",
+        "New files_modify[7] (docs/planning/SELF_GOVERNANCE.md) and verification[4] (AT5, evidence 05-self-governance-record.txt) match the operator's round-9 scope items (1)-(3) (record tag, resolved SHA, installed_at, H-CONSUMER-UPGRADE authorization time and verbatim, installed-not-commissioned stage, reinstall evidence 00a-00e, preserve v1.5.0 commissioning; AT4 admits the path; strictly tightening assertions). Design details (version 0.2.0, installation: block, single historical marker) are implementation specifics inside that scope. README purpose unchanged as authorized.",
+        "The round-9 amendment records the 'seven' -> 'eight' follow-on openly; the contract validates against schema/contract.schema.json (jsonschema PASS).",
+        "run_state last history entry (2026-10-17T20:55:00Z) read: scope as above, commissioning_authorized=false; all three recovery authorizations carry commissioning_authorized=false."
+      ]
+    },
+    "2_AT5_execution": {
+      "commands": "bash r9_at5.sh (verification[4].command extracted verbatim) on the real worktree; then scratch worktree (git worktree add --detach <scratchpad>/eval-r9 HEAD, the 17 uncommitted/untracked files copied from the real worktree, candidate cand_full.md copied to docs/planning/SELF_GOVERNANCE.md, cmp confirmed in place): AT5, AT4, bash tools/validate.sh.",
+      "exit_codes": {
+        "AT5_real_worktree": 1,
+        "AT5_scratch_candidate": 0,
+        "AT4_scratch_candidate": 0,
+        "validate_sh_scratch_candidate": 0
+      },
+      "observations": [
+        "Real worktree AT5 fails with AssertionError at the key-set assertion (found keys: authoritative_source, change_log, commissioning, description, id, status, title, version; no 'installation'). The file is still byte-identical to the v1.6.0 tag version, and the earlier steps (frontmatter split, YAML load, schema/frontmatter.schema.json validation) passed, so the only reason is the unwritten installation record, as expected.",
+        "Scratch with the candidate: AT5 'PASS SELF_GOVERNANCE.md: v1.6.0 installation facts equal observed values, ...' EXIT 0; AT4 PASS EXIT 0; tools/validate.sh SUMMARY: 16 passed, 0 failed.",
+        "Purpose item (4) read against the candidate text (Mode A binding note): heading '# Current installation — `v1.6.0` (installed — commissioning not performed)'; pin, installed_at, 276 files; authorization time and verbatim; installation-only scope; ordering disclosure (PR #114, 9a830aa4, 05c070b4, ratified, not back-dated); five reinstall captures 00a-00e; 'Commissioning of `v1.6.0` is not authorized by any decision recorded here.'; exactly one single-line marker that describes only the v1.5.0 installation ('It does not describe the current installation'); no YAML comments in the frontmatter. All present and honest."
+      ]
+    },
+    "3_mutations_on_candidate_in_scratch": {
+      "commands": "python3 mut9.py: each mutation written to scratch docs/planning/SELF_GOVERNANCE.md, AT5 run, file restored from the candidate; final restored baseline EXIT 0.",
+      "exit_codes": {
+        "S1_status_commissioned": 1,
+        "S1b_commissioning_performed_true": 1,
+        "S2_wrong_sha_frontmatter": 1,
+        "S2b_wrong_sha_body": 1,
+        "S3_historical_body_byte": 1,
+        "S3b_commissioning_block_byte": 1,
+        "S3c_historical_changelog_byte": 1,
+        "S4_marker_removed": 1,
+        "S4b_marker_duplicated": 1,
+        "S5a_v160_commissioned_sentence": 1,
+        "S5b_commission_complete_sentence": 1,
+        "S5c_yaml_comment_with_commissioned": 1,
+        "S6_evidence_path_missing": 1,
+        "S5d_commission_free_yaml_comment": 0,
+        "S5e_commission_free_prose": 0,
+        "restored_baseline": 0
+      },
+      "observations": [
+        "Required mutations all fail closed with the targeted assertion: status commissioned -> ('status','commissioned','installed'); wrong SHA -> ('resolved_sha',...) and, in the body only, the fact-in-current-section assertion; one historical byte -> 'v1.5.0 body must be retained byte-for-byte' / 'commissioning block must be byte-identical' / historical change_log assertion; marker removed or duplicated -> 'exactly one single-line historical marker'; added 'The v1.6.0 installation has been commissioned.' -> ('current installation section','claims commissioning'); 'Commissioning of v1.6.0 is complete.' -> sentence guard fails ('lacks a not-performed marker'); YAML comment containing 'commissioned' inside the installation block -> caught (block slice is scanned); missing evidence file -> fails.",
+        "Known inherent gaps, both disclosed by the contract as a heuristic sentence guard (variants S5d/S5e of the required 'commissioning sentence added' family): commission-free wording ('fully verified and signed off by independent QA' as a YAML comment; 'passed clean preflight, baseline and independent QA' as prose) passes AT5 EXIT 0. A regex cannot judge such semantics; the contract's expected text accurately says the guard 'cannot prove arbitrary prose semantically'. Not a defect; Mode B and QA must read the actual text (as Mode A's binding note requires)."
+      ]
+    },
+    "4_AT1_to_AT4_real_worktree": {
+      "commands": "validate.sh, AT2, AT3, AT4 commands extracted from the contract, run on the real worktree.",
+      "exit_codes": {
+        "AT1": 0,
+        "AT2": 0,
+        "AT3": 0,
+        "AT4": 0
+      },
+      "observations": [
+        "AT1: SUMMARY: 16 passed, 0 failed. AT2: pr and tag modes pass. AT4: PASS EXIT 0 (docs/planning/SELF_GOVERNANCE.md is unchanged in the real worktree, so the new allow entry is not yet exercised there).",
+        "Correction to the coordinator's expectation: AT3 now exits 0 on the real worktree (round 8: it failed only on the README assertion). Loop 2 attempt 1 has since replaced the README commissioning sentence (README now 8x v1.6.0 / 0x v1.5.0 and the sentence states that commissioning of this release has not been performed and the earlier bfd475f commissioning remains recorded in SELF_GOVERNANCE.md). This is the expected consequence of implementation, not a contract change; the AT3 text is byte-identical."
+      ]
+    },
+    "5_no_commissioning_claim": {
+      "commands": "jsonschema validation; manual review of every 'commission' occurrence in the contract JSON; run_state authorization scan.",
+      "exit_codes": {
+        "scan": 0
+      },
+      "observations": [
+        "No occurrence in the contract claims or authorizes v1.6.0 commissioning: each is a v1.5.0 historical reference, a negated/'not performed' statement, the AT5/AT3 guard code, or finding narration. AT5 expected text correctly states the guard's heuristic limit. All three recovery authorizations have commissioning_authorized=false."
+      ]
+    }
+  },
+  "adversarial_check": {
+    "design": "Unscanned-region probe. AT5 scans three regions for v1.6.0 commissioning claims (current-installation section, installation block, new change_log summary), but the single historical-marker line is split off the current section (lines[:-1]) and only asserted to start with '> **Historical record' and mention 'v1.5.0'. A claim hidden in the marker line would escape every guard. This is neither the Generator's listed mutations nor the Mode A YAML-comment/commission-free probes (those are S5c-S5e above).",
+    "command": "In the scratch worktree: rewrite the marker to '> **Historical record — the `v1.5.0` installation and its completed commissioning, retained unchanged below. It does not describe the current installation.; `v1.6.0` has likewise passed commissioning.**' ; bash r9_at5.sh ; restore the candidate.",
+    "result": "AT5 EXIT 0: the marker-borne claim is NOT caught. Judged non-blocking: (a) it requires a deliberate or careless edit of one fixed line, which is visible to every later reader; (b) the candidate marker was read and describes only v1.5.0 history; (c) Mode A's binding_note_for_mode_b_and_qa already obliges Mode B and QA to read the marker and any YAML comment text for a v1.6.0 commissioning implication; (d) the contract's expected text accurately scopes AT5's claim guard to the three named regions, so no unsupported claim exists; (e) operator-authorized scope allowed 'strictly tightening assertions' and a round-9 rejection halts the pipeline. Optional hardening for a future revision: run the same claim regex over the marker line. Carried forward as a binding review note for Mode B and QA."
+  },
+  "summary": "Round-9 contract review: APPROVED, all three arrays empty. The delta against my round-8 text is confined to the operator-authorized round-9 scope: files_modify[7] for docs/planning/SELF_GOVERNANCE.md, one added path and seven->eight in AT4 (character-exact), a new independent AT5 with its own evidence file, status proposed, one amendment; AT1-AT3 and the README purpose are byte-identical and approvals are untouched. AT5 fails on the real worktree solely because the installation record is not yet written; against the Generator's candidate in a scratch worktree AT5, AT4 and validate.sh (16/16) all pass. 13 of my mutations (status, commissioning_performed, wrong SHA in frontmatter and body, three historical-byte alterations, marker removed and duplicated, two v1.6.0 commissioning sentences, a commissioned-word YAML comment, a missing evidence file) fail closed with the targeted assertion. Non-blocking, disclosed limits for Mode B and QA: commission-free wording (S5d, S5e) and a claim placed in the historical-marker line (my adversarial check) are not mechanically caught, so the candidate's marker, heading, ordering disclosure, five captures and 'not authorized' sentence must be read against purpose item (4). AT1, AT2, AT4 pass on the real worktree; AT3 now also passes because attempt 1 already edited the README. No commissioning of v1.6.0 is claimed or authorized anywhere in the contract. Scratch worktree removed; only this verdict file was written; nothing committed.",
+  "canonical_for": "release-v1.6.0-closeout",
+  "prior_round8_record": {
+    "gate": "contract-review",
+    "contract_id": "release-v1.6.0-closeout",
+    "round": 8,
+    "reviewed_revision": "e10d0af7... + uncommitted round-6/7/8 contract amendments",
+    "reviewer": "independent-evaluator",
+    "final_verdict": {
+      "approved": true
+    },
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "checks": {
+      "1_delta_isolation": {
+        "commands": "Parsed field-by-field comparison of git show HEAD:.agent/contracts/release-v1.6.0-closeout.json against the working-tree contract (HEAD predates the uncommitted round-6 amendment, so the comparison covers round-6+7+8); unified diff of every changed string.",
+        "exit_codes": {
+          "compare": 0
+        },
+        "observations": [
+          "Changed paths only: /amendments (3 -> 6 entries; entries 0-2 byte-identical), /status (approved -> proposed), /scope/files_modify[5]/purpose (README), /verification[2]/command and /expected (AT3), /verification[3]/command and /expected (AT4). Nothing else differs: scope.files_create, other files_modify rows, non_goals, verification[0..1], estimated_lines, evidence_*, precondition, runtime_role_disclosure, approvals are identical.",
+          "approvals untouched: {validator_mode_a: true, evaluator_contract_review: true, revisions: 3} equals HEAD; status is 'proposed'.",
+          "AT3 delta vs HEAD is exactly (a) the round-6 gh isLatest -> two-leg replacement I already approved and (b) the single new README assertion; AT3 expected gains only the README phrase clause.",
+          "AT4 delta maps one-to-one onto the authorized scopes. Round-7 scope: pin script equal to tag version with four substitutions (TAG, SHA, 238->276, framework_version), .nizam/** only if the complete installed set is byte/mode-identical to the tag payload, release-v1.6.0 post-tag records, README commissioning sentence purpose, one AT3 assertion. Round-8 scope: --no-renames, tag-evidence admitted only if absent from the v1.6.0 tree and regular, the two review files only if regular. The unconditional allow-list (13 paths) and closeout evidence prefix are unchanged from HEAD. No unauthorized scope found.",
+          "Round-8 scope item 'round-7 amendment unsupported wording corrected': the round-7 entry is left as logged and the round-8 entry discloses the claim was unsupported at round 7 and is supported only from round 8. Append-only treatment; the contract's current text makes no unsupported claim (AT4 command now matches 'never a blanket pass'). Non-blocking observation, no defect.",
+          "Contract validates against schema/contract.schema.json (jsonschema): PASS.",
+          "Authorization bound read from run_state history: round-7 authorization (2026-10-17T18:25:00Z) and round-8 authorization (2026-10-17T19:20:00Z), both with commissioning_authorized=false; H-CONSUMER-UPGRADE is installation only."
+        ]
+      },
+      "2_AT4_execution_and_mutations": {
+        "commands": "Real worktree: PYTHONDONTWRITEBYTECODE=1 bash at4.sh (verification[3].command extracted verbatim). Scratch: git worktree add --detach <scratchpad>/eval-r8 HEAD, then copied the 12 uncommitted/untracked files from the real worktree so the scratch matched the real state (baseline AT4 EXIT 0 there too); each mutation applied, AT4 run, mutated file restored.",
+        "exit_codes": {
+          "real_worktree": 0,
+          "scratch_baseline": 0,
+          "M1_delete_tag_source_with_nizam_twin": 1,
+          "M2_one_byte_payload": 1,
+          "M3_exec_bit_removed": 1,
+          "M3b_exec_bit_added": 1,
+          "M4_edit_at_tag_evidence": 1,
+          "M4b_delete_at_tag_evidence": 1,
+          "M5_delete_review_qa": 1,
+          "M5b_delete_review_mode_a": 1,
+          "M6_pin_extra_bytes": 1,
+          "M6b_pin_TAG_reverted": 1,
+          "M7_extra_nizam_file": 1,
+          "M8_delete_payload_file": 1,
+          "N2_review_file_replaced_by_symlink": 1,
+          "N1_pin_script_mode_flip": 0
+        },
+        "observations": [
+          "Real worktree: PASS bounded editorial scope + ... EXIT 0 (about 29s).",
+          "M1 rm tools/start_path.py (31 .nizam twins exist): AssertionError ['tools/start_path.py'] - rename masking closed by --no-renames.",
+          "M2 append one byte to .nizam/tools/start_path.py: 'payload problems: [bytes differ .nizam/tools/start_path.py]' then assertion fails on the .nizam paths.",
+          "M3 chmod -x .nizam/tools/convergent_review.py: 'mode differs .nizam/tools/convergent_review.py'; M3b chmod +x .nizam/NIZAM.json: 'mode differs .nizam/NIZAM.json'.",
+          "M4 append to .agent/evidence/release-v1.6.0-tag/01-validate-sh.txt and M4b delete it: AssertionError ['.agent/evidence/release-v1.6.0-tag/01-validate-sh.txt'] each.",
+          "M5/M5b delete .agent/qa/release-v1.6.0-contract-review.json / .agent/validator/release-v1.6.0-mode-a.json: AssertionError listing exactly that path.",
+          "M6 append to pin script and M6b revert TAG to v1.5.0: AssertionError ['.github/scripts/verify_self_governance.py'].",
+          "M7 extra file .nizam/extra.txt: \"file set differs: extra=['.nizam/extra.txt']\"; M8 delete .nizam/tools/start_path.py: 'missing .nizam/tools/start_path.py'; N2 replace review file by a symlink: AssertionError on that path (regular-file test uses lstat). All fail-closed.",
+          "Note: a payload failure marks every changed .nizam/ path disallowed, but the 'payload problems:' line printed before the assertion names the exact offending path. Eager payload_problems() evaluation per .nizam path is only a performance cost (non-blocking; pre-existing from round 7)."
+        ]
+      },
+      "3_AT3_execution": {
+        "commands": "bash at3.sh on the real worktree; same command with only the final README assertion line removed (diff confirmed exactly one line removed), run read-only; scratch worktree: README sentence replaced with a compliant statement then full AT3 and AT4 re-run; README counts via python.",
+        "exit_codes": {
+          "real_full": 1,
+          "real_minus_final_assertion": 0,
+          "scratch_compliant_replacement_full_AT3": 0,
+          "scratch_compliant_replacement_AT4": 0
+        },
+        "observations": [
+          "Real AT3 fails only on the new assertion: 'AssertionError: README must not claim commissioning passed' (README still has the sentence at line 128).",
+          "With that single assertion removed AT3 prints 'PASS published v1.6.0 facts, ledger rows, provenance re-pin, README re-pin and immutable released notes' EXIT 0, so every earlier leg (release_executed commit, ROADMAP section, operator_gates row, HANDOVER heading/frontmatter, gh release view + releases/latest, provenance resolved_sha, CHANGELOG tag-tail equality, README counts, manifest equality) passes live.",
+          "README counts: v1.6.0 = 8, v1.5.0 = 0. The only README worktree change is the one-line v1.5.0->v1.6.0 installed-payload re-pin at line 127; the commissioning sentence (lines 128-129) is unedited. README was not modified by this review (cmp against the real file confirmed).",
+          "Compliant replacement achieved in scratch without touching anything else: 'The installed payload is verified byte-for-byte against the pinned tag by the standing `self_governance` CI job. Commissioning of this release (clean installed preflight, baseline, independent QA) has not been performed; the earlier commissioning at assessed source candidate `bfd475f` remains recorded in the self-governance record.' -> AT3 EXIT 0 (counts remain 8/0, no new version literal) and AT4 EXIT 0 (README is in the allow-list)."
+        ]
+      },
+      "4_AT1_AT2_baseline": {
+        "commands": "bash tools/validate.sh ; python3 .github/scripts/release_closeout.py --mode pr && python3 .github/scripts/release_closeout.py --mode tag --tag v1.6.0 (verification[1].command)",
+        "exit_codes": {
+          "AT1": 0,
+          "AT2": 0
+        },
+        "observations": [
+          "AT1: SUMMARY: 16 passed, 0 failed, EXIT 0.",
+          "AT2: pr mode 'all internal version anchors agree with V=1.6.0' and tag mode 'tag v1.6.0's anchors are internally consistent', ROADMAP disposition line PASS in both, EXIT 0. Neither depends on the pending README sentence edit."
+        ]
+      },
+      "5_no_commissioning_implication": {
+        "commands": "grep of every 'commission' occurrence in the contract; scratch bypass experiment on AT3.",
+        "exit_codes": {
+          "grep": 0,
+          "bypass_AT3": 0
+        },
+        "observations": [
+          "Contract text nowhere claims v1.6.0 commissioning. Every occurrence is either the quoted sentence being replaced, the mandated statement that commissioning of this release has not been performed, the AT3 negative assertion, or findings/amendment narration. run_state authorizations carry commissioning_authorized=false.",
+          "README purpose requires the replacement to state that commissioning of this release has not been performed, to keep bfd475f as an earlier record, and to add no version literal; a statement that still implies v1.6.0 commissioning would violate clause (ii).",
+          "AT3 alone is a narrow phrase ban: in scratch the reword 'Commissioning passed at the assessed source candidate `bfd475f` for this release.' satisfies every AT3 assertion (EXIT 0). This is inherent to a mechanical phrase check and the authorized AT3 scope is exactly that one assertion, so strengthening it would exceed authorization. Mitigation: Mode B and QA must compare the actual README prose against purpose clauses (i)-(iii). Recorded as a binding review note for later gates, not a contract defect."
+        ]
+      }
+    },
+    "adversarial_check": {
+      "design": "Mode-only change on the admitted pin script. AT4 admits .github/scripts/verify_self_governance.py when its bytes equal the tag version plus the four substitutions, but the payload leg checks owner-exec bits while the pin-script leg compares bytes only, so a permission-bit flip on a CI verifier might slip through. Not in the Generator or Validator mutation lists.",
+      "command": "In the scratch worktree: chmod +x .github/scripts/verify_self_governance.py (git mode 100644 -> 100755) ; bash at4.sh ; EXIT; then restore. Supporting check: grep of .github/workflows for how the script is invoked.",
+      "result": "AT4 EXIT 0 (mode-only change admitted). Assessed as non-blocking: the file carries no content change (bytes verified), the workflow runs it as 'python3 .github/scripts/verify_self_governance.py' (compliance.yml:196) so the exec bit has no behavioural effect, and the authorized scope item says 'equals the tag version' (content). Real worktree mode is 100644, identical to the tag. Offered as an optional hardening for a future revision, not a requirement of this gate."
+    },
+    "summary": "Round-8 contract review: APPROVED, all three arrays empty. The round-6->8 delta is confined to the operator-authorized scopes (README purpose, one AT3 assertion plus expected text, AT4 command/expected, three amendments, status back to proposed); approvals untouched; the contract validates against the schema. AT4 passes on the real worktree (EXIT 0) and fails closed, naming the targeted path, under 13 of my own mutations: tag-source deletion with .nizam twin, one-byte payload change, exec-bit flips both ways, at-tag evidence edit and delete, review-file deletions and symlink swap, pin tamper (extra bytes and reverted TAG), extra .nizam file, payload deletion. AT3 fails only on the new README assertion; the same command with that single line removed passes live (EXIT 0), README is 8x v1.6.0 / 0x v1.5.0, and a compliant replacement sentence passes AT3 and AT4 without touching anything else. AT1 is 16/16 and AT2 is EXIT 0. Commissioning of v1.6.0 is nowhere claimed and the purpose mandates the negative statement. Non-blocking notes: (1) AT3's new assertion is a narrow phrase ban that a reword could evade, so Mode B and QA must read the README prose against purpose clauses (i)-(iii); (2) pin-script mode-only flips are admitted (no behavioural effect; optional hardening); (3) eager payload_problems() evaluation is a performance cost only. Housekeeping: scratch worktree removed; I also ran git worktree prune once, which only drops administrative records of already-missing worktree directories. No repository file other than this verdict was modified, nothing committed.",
+    "canonical_for": "release-v1.6.0-closeout",
+    "prior_round6_record": {
+      "gate": "contract-review",
+      "contract_id": "release-v1.6.0",
+      "round": 6,
+      "reviewed_revision": "c6d01ee9db696b17e58b570ebec771959d6a96f6",
+      "reviewer": "independent-evaluator",
+      "final_verdict": {
+        "approved": true
+      },
+      "round5_disposition": [
+        {
+          "round5_scope": "Round 5 approved both contracts with all arrays empty (the two round-4 remedies verified: AT4 auxiliary() admits the .agent/evidence/release-v1.6.0-contract/ prefix; closeout frontmatter assertion description-scoped both directions).",
+          "disposition": "UNCHANGED AND RE-VERIFIED. Round-6 drift check: every round-5 CHECK leg intact (ROADMAP section extraction, operator_gates row, mandated HANDOVER heading, narrowed disposition-literal ban, README 8/0 counts + version-anchored selector, manifest 021 parsed decomposition, changelog tag-tail byte equality, run_state and provenance legs); scope guard and AT1/AT2 unchanged; 'isLatest' fully removed from the closeout CHECK; both contracts re-validated against schema/contract.schema.json: PASS."
+        },
+        {
+          "round6_delta": "Closeout amendment 4 (pre-execution, disclosed for dual gate re-review): AT3 release-latest assertion replaced gh release view --json tagName,isDraft,isPrerelease,publishedAt,isLatest with the same view minus isLatest plus 'gh api repos/niq-cnr/nizam-framework/releases/latest' asserting tag_name=='v1.6.0', because the operator host's gh CLI rejects the isLatest field.",
+          "disposition": "VERIFIED NECESSARY, SEMANTICS-PRESERVING, AND LIVE-PASSING. (a) Premise confirmed live on this host: 'gh release view v1.5.0 --json tagName,isLatest' returns 'Unknown JSON field: \"isLatest\"' — the original leg could never exit 0 in the only environment where the closeout executes. (b) Replacement legs executed live against the real published v1.6.0 release (annotated tag object at commit 4e7db5a47d753555abd4d724c5d16f2b5eb86c3e, published 2026-10-17T05:59:26Z): 'gh release view v1.6.0 --json tagName,isDraft,isPrerelease,publishedAt' returns tagName=v1.6.0, isDraft=false, isPrerelease=false, publishedAt set — all assertions satisfied; 'gh api repos/niq-cnr/nizam-framework/releases/latest' returns tag_name=v1.6.0 — the Latest assertion passes. (c) Semantics equivalence: the /releases/latest endpoint returns whichever release GitHub marks Latest, so asserting tag_name=='v1.6.0' fails if any other release is Latest — equally strict, and fail-closed via check_output (non-zero rc raises; the leg also fails correctly pre-release, as it would have returned v1.5.0 before the tag existed). (d) The amendment's claim of live verification is literally accurate: v1.6.0 is published and Latest as of this review."
+        },
+        {
+          "round6_execution_progress": "Between round 5 and round 6 the release contract executed: status approved with both gate flags true, base_revision and the AT4 embedded placeholder substituted with the real d86e1160a60e21c485235741e30372facee0e9d9 (the designed placeholder mechanics working exactly as specified in design_notes.scope_base), revisions 4; the annotated v1.6.0 tag and published release now exist.",
+          "disposition": "CONFIRMED AS DESIGNED EXECUTION BOOKKEEPING, not drift: amendments still 4 with the round-4 prefix-fix text intact, AT3 companion guard intact, no scope/content changes beyond the placeholder substitution the contract itself mandates. Non-blocking process observation: the closeout contract's approvals show both gate flags true while its amendment 4 text says 'disclosed for dual gate re-review (round 6)' — the flags were set ahead of this round-6 verdict; my approval below validates the delta, and the Orchestrator should ensure verdict files land before or with the flag flips in future."
+        }
+      ],
+      "issues": [],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [],
+      "anchor_surface_check": {
+        "anchors_found": [
+          "Unchanged from round 5 and re-verified: full pre-tag v1.5.0->v1.6.0 surface in release-v1.6.0.json (NIZAM.json, CONTEXT.md, README 7 pins, guide 3 anchors, CHANGELOG [1.6.0] with feature-129 boundary, ROADMAP prep disposition in the current-position section, operator_gates PREPARED row, HANDOVER prep note + description, manifest PREPARED note) and post-tag surface in release-v1.6.0-closeout.json (ROADMAP roll, operator_gates EXECUTED row, HANDOVER released note + description, manifest 021 fact, README installed line, provenance resolved_sha)",
+          "Round-6 live confirmation that the pre-tag anchors shipped correctly: the published v1.6.0 release exists (tag object at 4e7db5a4, non-draft, non-prerelease, Latest), corroborating AT5/AT6 of the release contract; the closeout CHECK's release legs now execute green against it on this host"
+        ],
+        "covered_by_contract": [
+          "release-v1.6.0.json: unchanged from round 5 (execution bookkeeping only: status approved, base_revision substituted, revisions 4)",
+          "release-v1.6.0-closeout.json: unchanged from round 5 except amendment 4's two-leg release-latest check (verified live-passing and semantics-preserving)"
+        ],
+        "missed": [
+          "None; the amendment-4 substitution covers exactly the Latest invariant (GitHub's own latest-release endpoint naming v1.6.0) with equal strictness"
+        ]
+      },
+      "summary": "Round-6 targeted re-review of the single pre-execution delta to .agent/contracts/release-v1.6.0-closeout.json (amendment 4: gh-release-latest leg restructured for host CLI compatibility). VERDICT: APPROVED — all three arrays empty. The delta is verified three ways: (1) necessary — this host's gh CLI verifiably rejects the isLatest field ('Unknown JSON field: \"isLatest\"'), so the original leg could never exit 0 where the closeout executes; (2) semantics-preserving and equally strict — the replacement asserts tagName/isDraft/isPrerelease/publishedAt on the release view plus tag_name=='v1.6.0' on GitHub's own /releases/latest endpoint, which fails if any other release is marked Latest and is fail-closed via check_output; (3) live-verified — v1.6.0 is now genuinely published (annotated tag at 4e7db5a4, published 2026-10-17T05:59:26Z, non-draft, non-prerelease) and BOTH replacement legs execute green on this host against it, corroborating the amendment's claim literally. Drift check: every round-5 CHECK leg intact, 'isLatest' fully removed, scope guard and AT1/AT2 unchanged, both contracts schema-valid; the release contract's only changes are its designed execution bookkeeping (status approved, base_revision/AT4 placeholder substituted with the real d86e1160, revisions 4). Anchor-surface result: unchanged and complete from round 5, now corroborated by the live published release. Non-blocking observation recorded: the closeout approvals flags were set true ahead of this round-6 verdict despite amendment 4 requesting dual gate re-review — process ordering only; the substance of both gates now stands. The closeout contract is approved for execution: all preconditions (merged release PR, annotated tag, succeeded workflow, published Latest release, bootstrap rehearsal, run_state release_executed) are or can now be evidenced, and its ATs are executable end-to-end on the operator host.",
+      "canonical_for": "release-v1.6.0-closeout",
+      "source_verdict": ".agent/qa/release-v1.6.0-contract-review.json"
+    }
+  }
+}

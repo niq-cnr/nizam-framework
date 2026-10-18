@@ -2,10 +2,13 @@
 id: nizam-adversarial-tdd
 title: "Adversarial Test Design"
 description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: methodology/02_adversarial_tdd.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-11"
+    summary: "Define own execution context as fresh process, private build and committed fixtures with hermetic inputs."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add the External Anchor Rule (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8)."
@@ -51,6 +54,13 @@ false confidence in a pipeline: an agent grading its own work.
    personally captured. A verdict that says "confirmed working" with no
    externalised evidence path attached is treated as a rejection, not an
    equivocal pass.
+
+4. **Own execution context is a fresh environment.** The Evaluator MUST use a
+   fresh process and a fresh private build cache, with fixtures built from
+   committed source and hermetic relevant dependencies and external resources.
+   It MUST NOT reuse the Generator's warm runtime session, saved development
+   image, compiled artifacts or session results as acceptance evidence.
+   `10_live_runtime_sessions.md` Section 7 defines the session evidence boundary.
 
 ## 3. False-Pass Hunting
 
