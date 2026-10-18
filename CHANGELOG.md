@@ -7,6 +7,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **v1.7.0 post-release ledger refresh and self-adoption** (framework-envelope only).
+  `v1.7.0` is published: the annotated tag `v1.7.0` (`6a4cf599f3850ae31561ba38f9da29237d0a4a53`)
+  points at reviewed PR #117 merge `47851d857e0ab879b848610128ee6e9e13368f0d`;
+  `release.yml` run `39116785402` succeeded and published the GitHub Release at
+  `2026-10-18T09:48:38Z`. This repository's `.nizam/` installation is re-pinned to
+  the `v1.7.0` payload (`277` released files + `provenance.json`, `installed_at: 2026-10-18T09:49:41Z`)
+  via the reviewed post-tag re-bootstrap under `H-CONSUMER-UPGRADE`, and the planning
+  ledgers (`ROADMAP.md`, `operator_gates.md`, `SELF_GOVERNANCE.md`, `manifest.json`)
+  and `.agent/run_state.json` record the observed facts.
+
 ## [1.7.0] - 2026-10-18
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): the portable

@@ -2,11 +2,14 @@
 id: nizam-acceptance-bars
 title: "Comparator Acceptance Bars"
 description: "Defines comparator-based acceptance for quality-bearing deliverables: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface."
-version: "0.1.1"
+version: "0.1.2"
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/acceptance_bars.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-10-18"
+    summary: "Subordinate the comparator critic loop to methodology/03_circuit_breaker.md's 3-attempt hard operational cap: a round count never grants a pass, and a loop that has not achieved a blind win by attempt 3 halts and escalates rather than making a forbidden fourth autonomous attempt."
   - version: "0.1.1"
     date: "2026-10-13"
     summary: "Adopted into the payload (PR #92, merge commit 365ae2f): status draft -> active, proposal banner replaced with the adoption note, and the Definition of Done now cites this standard from its Gate-Done and Feature-Done layers."
@@ -78,12 +81,15 @@ Additional requirements:
   stripped where meaningful. Never the builder's reasoning, effort, or history.
 - **Binary job.** "Which is better, A or B" — then name the single biggest remaining
   gap. No numeric scores (they drift upward); praise is not useful.
-- **Exit = blind win, never a round count.** The loop ends when the critic picks ours
-  blind, or a human stops the run.
-- **Circuit-breaker interface.** `methodology/03_circuit_breaker.md` counts consecutive
-  stalls and failures; this loop governs convergence only. A loop making real progress
-  does not trip the breaker; the same gap rejected three times in a row DOES — escalate
-  instead of looping.
+- **Passing exit = blind win within the circuit-breaker budget, never a round count.**
+  Completing N rounds never converts a losing comparison into a pass. The loop exits with
+  a pass when the critic picks ours blind at or before attempt 3, or halts when the
+  circuit breaker trips or a human stops the run.
+- **Circuit-breaker interface (subordinate to `methodology/03_circuit_breaker.md`).**
+  `methodology/03_circuit_breaker.md`'s 3-attempt limit is the hard operational cap for
+  every autonomous loop. If the deliverable has not achieved a blind win by attempt 3,
+  the agent MUST halt and escalate per `methodology/03_circuit_breaker.md` Section 4
+  rather than making a forbidden fourth autonomous attempt.
 - **Verdict format.** Recorded as machine-parseable JSON verdict blocks per
   `standard/AGF.md` §4; prose may accompany, the block is the verdict. Suggested shape:
 
@@ -132,7 +138,7 @@ Extends the `standard/failure_modes.md` taxonomy with deliverable-quality blindn
 | Soft/vague bar | The naming test fails | Reject the bar; offer 2–3 candidates, let the accountable human pick |
 | Builder self-judging | Critic shares builder context | Enforce freshness; re-run the verdict |
 | Score drift | Numeric scoring appears | Binary A/B only |
-| Round-count exit | A cap is named as the exit | Replace with blind-win exit |
+| Round-count pass | Exhausting rounds is treated as a passing exit | Require a blind win within the 3-attempt breaker cap, or halt and escalate at attempt 3 |
 | Over-specification | The brief exceeds bar + loop in length | Minimal wins — cut to bar, loop, halves |
 | Broken/stale comparator | Pin re-verification fails at use | Record as defect; substitute with evidence |
 

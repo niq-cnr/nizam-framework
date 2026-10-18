@@ -2,10 +2,19 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.33.0
+version: 0.36.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.36.0"
+    date: "2026-10-18"
+    summary: "Document Phase 019 generic repository/worktree assurance profile preregistration (124), shadow comparison and promotion recommendation (125), seven profile regression cases, and the start_path.py task-routing/capture/status CLI."
+  - version: "0.35.0"
+    date: "2026-10-18"
+    summary: "Document authoritative five-job CI suite ownership, remove duplicate ci-candidate-bound/ci-blocker-rejected execution from fixtures_self_test.sh and duplicate fixtures_self_test.sh execution from convergent_review, and pin CI Python 3.12 with shared requirements."
+  - version: "0.34.0"
+    date: "2026-10-17"
+    summary: "Register the Docker trial-sandbox adapter, its pinned-image requirement and fail-closed behavior, adapter-specific conformance selection, and the Docker boundary/guard suite additions."
   - version: "0.33.0"
     date: "2026-10-15"
     summary: "Document per-call receipt input batching and four independent synthetic controls."
@@ -109,6 +118,26 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
+## Assurance profiles and task entry CLI — features 124–125
+
+[`workflow_assurance.py`](workflow_assurance.py) provides `preregister_profile_comparison`,
+`evaluate_profile_comparison`, and `verify_profiles_ready` (plus CLI subcommands
+`preregister-profile`, `evaluate-profile`, `verify-profiles-ready`, `verify-receipt`,
+`plan-transition`, and `route-failure`). Feature 124 preregisters `Routine`, `Standard`,
+and `High-assurance` tier applicability, exact `standard/AGF.md` and
+`standard/capability_profiles.md` role/profile bindings,
+stable A11 baseline controls, candidate/test-bundle digests, zero missed-blocker tolerance,
+and cost/latency bounds before any shadow run starts. Feature 125 evaluates same-candidate
+baseline vs. shadow runs, records every outcome including failures, rejects promotion
+recommendations on any missed baseline blocker or bound violation, and enforces
+`promoted: false` and `active_gates_reduced: false` (no self-promotion). Seven permanent
+selectors (`preregister-before-run`, `roles-reused`, `reject-unstable-baseline`,
+`same-candidate`, `missed-baseline-blocker`, `cost-latency-accounting`, `no-self-promotion`)
+and `--check profiles-ready` run through [`test_workflow_assurance.py`](test_workflow_assurance.py).
+[`start_path.py`](start_path.py) (tested by [`test_start_path.py`](test_start_path.py) and
+[`test_public_entry.py`](test_public_entry.py)) provides `classify`, `preflight`, `begin`,
+`capture`, `check-verdict`, `amend-contract`, `done`, `status`, and `resume`.
+
 ## Development runtime controller — features 126–127
 
 `runtime_session.py` provides a detached supervisor and one stub child per
@@ -217,10 +246,12 @@ afresh. Ownership rules, origin and ancestry checks retain their existing meanin
 `python3 tools/test_receipt_candidate_batching.py` runs four independent synthetic
 checks in order; `--check` selects `real-git-count-reduction`, `semantic-equivalence`,
 `fresh-mutations` or `literal-paths-and-modes`. The fixture shell suite invokes all
-four and retains its existing 166 fixture-file denominator and 48 Workflow Assurance
-cases. These checks establish real Git launch reduction, not a wall-time speedup
-or hosted qualification. Changed protected Source makes feature 123's existing
-current-readiness proof historical; this maintenance does not rebind that proof.
+four and retains its existing 166 fixture-file denominator, while the separate
+`python3 tools/test_workflow_assurance.py` step in `fixtures_self_test` owns all
+48 Workflow Assurance cases once per run. These checks establish real Git launch
+reduction, not a wall-time speedup or hosted qualification. Changed protected
+Source makes feature 123's existing current-readiness proof historical; this
+maintenance does not rebind that proof.
 
 ## Convergent findings to AGF verdict — feature 119
 
@@ -283,6 +314,7 @@ agent runtime through the same adapter contract — no per-runtime forks.
 | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
 | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
 | [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |
+| [`docker_trial_sandbox.sh`](docker_trial_sandbox.sh) | Trusted Docker-controller equivalent adapter (feature 134) implementing the same `ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS...` protocol on hosts whose kernel refuses `unshare --user`: one fresh `--network none --cap-drop ALL --no-new-privileges --read-only` container per trial over a digest-pinned `python:3-alpine` image, same-path bind mounts (trial root rw, runner and inner Landlock adapter ro), a fixed minimal container environment, and the inner `isolated_trial_adapter.py` with an explicit interpreter allowlist. It never auto-pulls and fails closed: exit 2 (arguments), 3 (daemon unreachable or pinned image absent), 4 (inner setup); `--probe` reports capability, `--print-image` prints the pinned digest. The pinned image must be pulled by an explicit reviewed step (the CI pull step or an operator pull) before use; when the rolling-tag digest is garbage-collected upstream, re-pinning is a reviewed debt-register act (NDEBT-056), never an automatic pull. Untrusted input can never select the image, mounts, or any runtime option. |
 | [`test_convergent_review.py`](test_convergent_review.py) | Permanent stdlib `unittest` suite exercising the frozen 12-case corpus and adversarial blocker regressions, including controlled Git reads, absent-versus-error object lookup, mode-only changes, commit-header parsing, sandbox no-execute, evaluator substitution, replay ancestors, and publication visibility/durability. |
 
 The optional session surface routes through [the adapter interface](interface.md),
@@ -412,9 +444,9 @@ ancestors, standalone ledger validation rejects unrelated initial lifecycle head
 non-consensus trial evidence, and a post-rename parent-`fsync` failure remains visible but
 not durable.
 
-On a host that cannot prove user-namespace isolation (for example one whose kernel refuses `unshare --user --map-root-user true`, as with `kernel.apparmor_restrict_unprivileged_userns = 1`), the five sandbox-dependent tests are not run. Each is reported on its own result line as `UNSUPPORTED` (an explicit skip whose reason begins `UNSUPPORTED: user-namespace isolation unavailable`), the run prints `CONFORMANCE: NOT FULL`, and the command exits non-zero: the required gate never passes on a host that cannot prove isolation. `--allow-unsupported-isolation` is for local development only and CI never passes it; it turns that same outcome into exit 0 while still printing every `UNSUPPORTED` line and `CONFORMANCE: NOT FULL`, and it never masks any other failure. On an isolation-capable host the sandbox tests execute and the run prints `CONFORMANCE: FULL`. `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` are not relaxed by this mode and still fail closed; the suite never runs a trial outside the sandbox.
+Sandbox capability selection is adapter-specific (feature 134). With no override, `tools/test_convergent_review.py` probes the native user-namespace adapter first and, only when that probe fails, probes the Docker adapter (`tools/docker_trial_sandbox.sh --probe` plus a smoke trial, requiring a reachable daemon and the digest-pinned image pulled locally); the first adapter with a passing probe is selected and recorded on stderr as one line naming the selected adapter path and its sha256. `--isolation-adapter PATH` forces an adapter for deterministic qualification runs and is honored before the remaining arguments pass through to unittest; a forced adapter whose capability probe fails is reported UNSUPPORTED like any unprovable host — selection never manufactures green and never falls back from a forced adapter. On a host that cannot prove isolation with any adapter (for example one whose kernel refuses `unshare --user --map-root-user true`, as with `kernel.apparmor_restrict_unprivileged_userns = 1`, with no reachable Docker daemon or no pinned image), the five sandbox-dependent tests are not run. Each is reported on its own result line as `UNSUPPORTED` (an explicit skip whose reason begins `UNSUPPORTED: user-namespace isolation unavailable`), the run prints `CONFORMANCE: NOT FULL`, and the command exits non-zero: the required gate never passes on a host that cannot prove isolation. `--allow-unsupported-isolation` is for local development only and CI never passes it; it turns that same outcome into exit 0 while still printing every `UNSUPPORTED` line and `CONFORMANCE: NOT FULL`, and it never masks any other failure. When an adapter is selected the sandbox tests execute under it — through the Docker adapter on a userns-restricted host with a reachable daemon they exercise for real, including live in-sandbox guards (zero effective capabilities, no daemon socket path, a fresh PID namespace, no ambient environment forwarding, and a host-existing ambient file unreadable inside) and omission controls proving each container boundary layer load-bearing (exec-permitted mutant 42, bad interpreter 53, mounted-sibling 40, in-container loopback 41). On an isolation-capable host the native adapter stays the default and its behavior is unchanged. `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` are not relaxed by this mode and still fail closed; the suite never runs a trial outside the sandbox.
 
-CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` and `pyyaml` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
+CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` and `pyyaml` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`. The same job then pulls the digest-pinned Docker trial-sandbox image and runs both the boundary suite and the required-conformance suite a second time with the Docker adapter forced (`.github/scripts/test_sandbox_boundaries.py --adapter tools/docker_trial_sandbox.sh` and `tools/test_convergent_review.py --isolation-adapter tools/docker_trial_sandbox.sh`), so the Docker adapter's boundary and conformance behavior is gated on every run; no host security control is relaxed or relied on by those steps.
 
 ## Compliance Coverage — C1–C16
 
@@ -474,15 +506,31 @@ The C13 interruption helper `.github/scripts/test_c13_cleanup.py` exercises the
 actual fixture swap and owned cleanup; its `--source-ref` mode demonstrates the
 unrepaired baseline failure before cleanup repair. The required sandbox helper
 `.github/scripts/test_sandbox_boundaries.py` uses a real outside listener and
-isolated namespace, filesystem and executable-permission omissions. Setup errors
-cannot count as confinement; an incapable host reports `UNSUPPORTED` with exit64.
+isolated namespace, filesystem and executable-permission omissions under the
+selected adapter (native auto-selected first; `--adapter PATH` forces one).
+Setup errors cannot count as confinement; an incapable host reports
+`UNSUPPORTED` with exit64. Under the Docker adapter the same suite additionally
+runs the live in-sandbox guards (zero capabilities, no daemon socket, fresh PID
+namespace, fixed minimal environment, ambient marker not forwarded, host-existing
+ambient file unreadable inside) and the container omission controls are
+short-lived ephemeral containers over scratch data with no daemon socket, no
+host mounts, and no sysctl/seccomp/AppArmor change.
 
-The standing CI jobs run these helpers and the required suite with these commands:
+The standing CI jobs in `.github/workflows/compliance.yml` assign each suite to
+one authoritative job owner (pinned to Python `3.12` and shared dependencies):
+`validate` runs `bash tools/validate.sh`; `e2e_bootstrap` runs
+`bash tools/e2e_bootstrap_test.sh`; `fixtures_self_test` runs the C13 cleanup
+helper, `bash tools/fixtures_self_test.sh`, and `python3 tools/test_workflow_assurance.py`
+once; `convergent_review` runs the native and Docker sandbox boundary and
+required-conformance suites plus conditional `WA123` steps; and `self_governance`
+runs the installed-payload drift verifiers and `bash .nizam/tools/validate.sh --payload`:
 
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+bash tools/fixtures_self_test.sh
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
 PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
-PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py
 ```
 
 The existing jobs emit checkout SHA and source digest receipts. Actual capable CI

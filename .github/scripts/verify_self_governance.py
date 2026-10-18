@@ -13,8 +13,8 @@ import stat
 import subprocess
 import sys
 
-TAG = "v1.6.0"
-SHA = "4e7db5a47d753555abd4d724c5d16f2b5eb86c3e"
+TAG = "v1.7.0"
+SHA = "47851d857e0ab879b848610128ee6e9e13368f0d"
 SOURCE = "https://github.com/niq-cnr/nizam-framework.git"
 MODULES = ("standard", "templates", "schema", "tools", "methodology", "ecosystem")
 REPO = Path(__file__).resolve().parents[2]
@@ -45,7 +45,7 @@ def verify(payload: Path) -> int:
         if kind != "blob" or mode not in ("100644", "100755"):
             raise GovernanceDrift(f"unsupported pinned file type: {path!r}")
         expected[path.decode()] = (mode, oid)
-    if len(expected) != 276 or "NIZAM.json" not in expected:
+    if len(expected) != 277 or "NIZAM.json" not in expected:
         raise GovernanceDrift("trusted payload tree is missing its expected inventory")
     actual: set[str] = set()
     for directory, dirs, files in os.walk(payload, followlinks=False):
@@ -68,7 +68,7 @@ def verify(payload: Path) -> int:
     keys = {"framework_version", "tag", "resolved_sha", "source_url", "installed_at"}
     if not isinstance(provenance, dict) or set(provenance) != keys:
         raise GovernanceDrift("provenance must contain exactly the bootstrap-generated fields")
-    for key, value in {"framework_version": "1.6.0", "tag": TAG, "resolved_sha": SHA, "source_url": SOURCE}.items():
+    for key, value in {"framework_version": "1.7.0", "tag": TAG, "resolved_sha": SHA, "source_url": SOURCE}.items():
         if provenance[key] != value:
             raise GovernanceDrift(f"provenance {key} disagrees with trusted pin")
     timestamp = provenance["installed_at"]
