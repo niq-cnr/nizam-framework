@@ -280,18 +280,56 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
     echo "assert_provenance_sha_pin: FAIL -- recorded resolved_sha (${recorded_sha}) != the tag's authoritative commit (${true_sha})"
     return 1
   fi
-  # (b) correct expected SHA -> PASS (exit 0)
-  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
-    echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha})"
+  # (b) correct expected SHA -> PASS (exit 0) and content_integrity=verified
+  local vo_out
+  if ! vo_out="$(ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" 2>&1)"; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha}): ${vo_out}"
     return 1
   fi
+  case "${vo_out}" in
+    *"content_integrity=verified"*) ;;
+    *)
+      echo "assert_provenance_sha_pin: FAIL -- --verify-only did not report content_integrity=verified: ${vo_out}"
+      return 1
+      ;;
+  esac
   # (c) wrong expected SHA -> drift FAIL (non-zero)
   if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
       --expected-sha "0000000000000000000000000000000000000000" >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
     return 1
   fi
-  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
+  # (d) V3 Case 2: harmless comment appended to installed tools/start_path.py -> FAIL
+  cp -p "${target}/tools/start_path.py" "${SCRATCH_DIR}/start_path.py.orig"
+  printf '\n# harmless audit comment\n' >> "${target}/tools/start_path.py"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted appended comment in tools/start_path.py (V3 content drift missed)"
+    return 1
+  fi
+  mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
+  # (e) V3 Case 3: unexpected extra file added under payload -> FAIL
+  printf 'unexpected\n' > "${target}/tools/unexpected_audit_file.txt"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    rm -f -- "${target}/tools/unexpected_audit_file.txt"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted unexpected extra file under payload (V3 inventory drift missed)"
+    return 1
+  fi
+  rm -f -- "${target}/tools/unexpected_audit_file.txt"
+  # (f) V3 mode drift: flipping executable bit on tools/start_path.py -> FAIL
+  chmod +x "${target}/tools/start_path.py"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    chmod -x "${target}/tools/start_path.py"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted executable mode drift on tools/start_path.py"
+    return 1
+  fi
+  chmod -x "${target}/tools/start_path.py"
+  # Restore check passes again
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only failed after restoring original payload"
+    return 1
+  fi
+  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --verify-only enforces SHA match, content bytes, file inventory, and executable modes."
   return 0
 }
 
@@ -519,8 +557,23 @@ assert_payload_validate_cwd_independent() {
     diff <(printf '%s\n' "${a_out}" | grep '^\[C') <(printf '%s\n' "${b_out}" | grep '^\[C') || true
     return 1
   fi
+  local expected_summary="SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed"
+  case "${a_out}" in
+    *"${expected_summary}"*) ;;
+    *)
+      echo "assert_payload_validate_cwd_independent: FORM A missing non-conflated payload summary line (V4 regression)"
+      return 1
+      ;;
+  esac
+  case "${b_out}" in
+    *"${expected_summary}"*) ;;
+    *)
+      echo "assert_payload_validate_cwd_independent: FORM B missing non-conflated payload summary line (V4 regression)"
+      return 1
+      ;;
+  esac
 
-  echo "assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under ${target})"
+  echo "assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent and reports non-conflated summary (both invocation forms green with identical [C*] verdicts under ${target})"
   return 0
 }
 
@@ -974,7 +1027,7 @@ PY
 # begin+done, amend-contract, capture -> publish -> build-receipt ->
 # verify-receipt -> resume, status, and validate.sh --payload) using ONLY its
 # installed `.nizam/` payload, with zero reach-back to the framework source
-# repository (A6).
+# repository (A6 + B5).
 assert_consumer_zero_reachback() {
   local tag="$1"
   local consumer="${SCRATCH_DIR}/zero-reachback-consumer"
@@ -1011,11 +1064,14 @@ def git(*args: str) -> str:
     return res.stdout.strip()
 
 
-def run_sp(*args: str, expected_rc: int = 0) -> subprocess.CompletedProcess[str]:
+def run_sp(*args: str, expected_rc: int = 0, extra_env: dict | None = None) -> subprocess.CompletedProcess[str]:
+    call_env = dict(env)
+    if extra_env:
+        call_env.update(extra_env)
     res = subprocess.run(
         [sys.executable, str(sp), *args],
         cwd=str(consumer),
-        env=env,
+        env=call_env,
         capture_output=True,
         text=True,
         check=False,
@@ -1195,7 +1251,7 @@ assert amend_doc["applied"] is True and amend_doc["re_approval_required"] is Fal
 git("add", ".agent/contracts/001.json")
 git("commit", "-qm", "commit amended contract 001")
 
-# 5. Full producer-to-consumer receipt chain using only .nizam/tools/
+# 5. Full producer-to-consumer receipt chain using only .nizam/tools/ (including V1 checks)
 head_commit = git("rev-parse", "HEAD")
 head_tree = git("rev-parse", "HEAD^{tree}")
 
@@ -1262,6 +1318,33 @@ cap_out = json.loads(
         "print('CONSUMER_RECEIPT_OK')",
     ).stdout
 )
+
+# V1 check (a): publish --mode prepare performs zero git commits and leaves HEAD unchanged
+pre_pub_head = git("rev-parse", "HEAD")
+prep_out = json.loads(
+    run_sp(
+        "publish",
+        "--mode",
+        "prepare",
+        "--capture",
+        cap_out["capture_path"],
+    ).stdout
+)
+assert prep_out["status"] == "pending_external_commit" and prep_out["stage"] == "outputs_pending"
+assert git("rev-parse", "HEAD") == pre_pub_head
+
+# V1 check (b): publish --mode publish respects NIZAM_MUTATION_POLICY=deny without creating a commit
+run_sp(
+    "publish",
+    "--mode",
+    "publish",
+    "--capture",
+    cap_out["capture_path"],
+    expected_rc=1,
+    extra_env={"NIZAM_MUTATION_POLICY": "deny"},
+)
+assert git("rev-parse", "HEAD") == pre_pub_head
+
 pub_out = json.loads(
     run_sp(
         "publish",
@@ -1356,7 +1439,27 @@ policy_path.write_text(json.dumps(policy_doc, sort_keys=True, separators=(",", "
 git("add", ".agent/evidence/001/policy.json")
 git("commit", "-qm", "commit consumer receipt policy")
 
+# V1 check (c): build-receipt without --commit rejects uncommitted 12-field closed capture without committing
+pre_br_head = git("rev-parse", "HEAD")
 receipt_path = consumer / ".agent" / "evidence" / "001" / "receipt.json"
+uncommitted_closed = consumer / ".agent" / "evidence" / "001" / "uncommitted.receipt-capture.json"
+uncommitted_closed.write_text(
+    json.dumps(pub_out["receipt_capture"], sort_keys=True, separators=(",", ":")) + "\n",
+    encoding="utf-8",
+)
+run_sp(
+    "build-receipt",
+    "--policy",
+    str(policy_path),
+    "--published",
+    str(uncommitted_closed),
+    "--output",
+    str(receipt_path),
+    expected_rc=1,
+)
+assert git("rev-parse", "HEAD") == pre_br_head
+uncommitted_closed.unlink()
+
 build_res = json.loads(
     run_sp(
         "build-receipt",
@@ -1419,16 +1522,17 @@ assert res2["action"] == "noop"
 st = json.loads(run_sp("status", "--format", "json").stdout)
 assert st["reconciled"] is True and st["contradictions"] == []
 
-# 7. Payload validation from consumer root
+# 7. Payload validation from consumer root (including V4 non-conflated summary check)
 val_res = subprocess.run(["bash", ".nizam/tools/validate.sh", "--payload"], cwd=str(consumer), env=env, capture_output=True, text=True, check=False)
 assert val_res.returncode == 0, f"validate.sh --payload failed: {val_res.stdout}\n{val_res.stderr}"
+assert "SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed" in val_res.stdout
 PY
   then
     echo "assert_consumer_zero_reachback: FAIL -- consumer zero-reach-back lifecycle exercise failed."
     return 1
   fi
 
-  echo "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back."
+  echo "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish(prepare+deny+publish)/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back."
   return 0
 }
 

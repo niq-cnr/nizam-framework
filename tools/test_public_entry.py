@@ -66,19 +66,22 @@ def forbid(text, needle, context):
         raise SystemExit(f"forbidden text in {context}: {needle}")
 
 
-def _copy_authored_payload(dest: Path, tag: str = "v1.8.0", sha: str = "606d11ee84deff0d3b7934cbfd715223d64ac79d") -> None:
+def _copy_authored_payload(dest: Path, tag: str | None = None, sha: str = "606d11ee84deff0d3b7934cbfd715223d64ac79d") -> str:
+    fw_ver = json.loads(NIZAM_INDEX.read_text(encoding="utf-8"))["framework"]["version"]
+    resolved_tag = tag or f"v{fw_ver}"
     dest.mkdir(parents=True, exist_ok=True)
     for mod in ("standard", "templates", "schema", "tools", "methodology", "ecosystem"):
         shutil.copytree(ROOT / mod, dest / mod)
     shutil.copy2(ROOT / "NIZAM.json", dest / "NIZAM.json")
     prov = {
-        "framework_version": "1.8.0",
+        "framework_version": fw_ver,
         "source_url": str(ROOT),
-        "tag": tag,
+        "tag": resolved_tag,
         "resolved_sha": sha,
         "installed_at": "2026-10-18T15:00:00Z",
     }
     (dest / "provenance.json").write_text(json.dumps(prov, indent=2) + "\n", encoding="utf-8")
+    return resolved_tag
 
 
 def verify_b3_and_b4() -> None:
@@ -125,7 +128,7 @@ def verify_b3_and_b4() -> None:
     with tempfile.TemporaryDirectory(prefix="nizam-b3b4-test-") as tmp:
         tmp_path = Path(tmp)
         payload = tmp_path / ".nizam"
-        _copy_authored_payload(payload)
+        test_tag = _copy_authored_payload(payload)
 
         # 1. Clean payload passes payload_integrity.py against source root
         r_clean = subprocess.run(
@@ -139,7 +142,7 @@ def verify_b3_and_b4() -> None:
 
         # 2. Clean payload passes bootstrap.sh --verify-only --source-root
         r_vo_clean = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", "v1.8.0", "--source-root", str(ROOT)],
+            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
@@ -152,7 +155,7 @@ def verify_b3_and_b4() -> None:
         orig_sp_bytes = sp_file.read_bytes()
         sp_file.write_bytes(orig_sp_bytes + b"\n# harmless comment appended\n")
         r_vo_comment = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", "v1.8.0", "--source-root", str(ROOT)],
+            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
@@ -165,7 +168,7 @@ def verify_b3_and_b4() -> None:
         extra_file = payload / "tools" / "unexpected_extra.txt"
         extra_file.write_text("unexpected\n", encoding="utf-8")
         r_vo_extra = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", "v1.8.0", "--source-root", str(ROOT)],
+            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
@@ -178,7 +181,7 @@ def verify_b3_and_b4() -> None:
         orig_mode = sp_file.stat().st_mode
         sp_file.chmod(orig_mode ^ stat.S_IXUSR)
         r_vo_mode = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", "v1.8.0", "--source-root", str(ROOT)],
+            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
@@ -189,7 +192,7 @@ def verify_b3_and_b4() -> None:
 
         # 6. Structural-only mode discloses content_integrity=not_checked and rejects --expected-sha without reference tree
         r_vo_struct = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--structural-only", "--target", str(payload), "--tag", "v1.8.0"],
+            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--structural-only", "--target", str(payload), "--tag", test_tag],
             env=env,
             text=True,
             capture_output=True,
@@ -206,7 +209,7 @@ def verify_b3_and_b4() -> None:
                 "--target",
                 str(payload),
                 "--tag",
-                "v1.8.0",
+                test_tag,
                 "--expected-sha",
                 "606d11ee84deff0d3b7934cbfd715223d64ac79d",
             ],

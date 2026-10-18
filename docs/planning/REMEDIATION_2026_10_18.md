@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.10.0
+version: 0.11.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.11.0"
+    date: "2026-10-18"
+    summary: "Record independent acceptance of Corrective Slice 1 (B0-B2 at 9cc9547ffc09694cea324bb009916811d786d2c5, closing V1, V2, and V7 regression) and Corrective Slice 2 (B3-B4 at f825908e80100a2e13b9157b6a4f72908dd26a24, closing V3, V4, V5, and V6), complete packet B5 end-to-end consumer discrimination in tools/e2e_bootstrap_test.sh, and prepare the v1.9.0 MINOR release anchors (NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/manifest.json, docs/planning/operator_gates.md) for integrated PR delivery, tag creation, and post-tag .nizam/ re-bootstrap (B6)."
   - version: "0.10.0"
     date: "2026-10-18"
     summary: "Adopt the v1.8.0 rollout corrective execution mandate (B0-B6, closing V1-V7 against audited release v1.8.0 at 606d11ee84deff0d3b7934cbfd715223d64ac79d and compared main 016a1b79e0be6bc5b7459baae3c67ee99f2803f6, compliance run 39133101798 in 13m35s): record continuing operator process-override authority, backlog mapping, and B0-B6 execution DAG."
@@ -190,13 +193,13 @@ Each check family has exactly one authoritative CI job owner inside the existing
 
 ### 6.2 Execution DAG & Slice Plan (`B0`–`B6`)
 
-1. **Corrective Slice 1 (`B0 + B1 + B2` → independent acceptance)**:
+1. **Corrective Slice 1 (`B0 + B1 + B2` → independent acceptance at `9cc9547ffc09694cea324bb009916811d786d2c5`)**:
    - `B0`: Baseline reconciliation (`v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`, `main` at `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`), single brief update (`v0.10.0`), transitional precedence in `AGENTS.md` (`v0.2.1`), and `.agent/run_state.json` record.
-   - `B1` (Closes `V1`): Noncommitting `prepare`, externally mediated `publish`, noncommitting `finalize`, and strictly noncommitting `build-receipt` in `tools/start_path.py`, consumer integration documentation in `tools/interface.md` and `standard/permission_classes.md`, and comprehensive unit/denial/conflict/recovery tests in `tools/test_start_path.py`.
+   - `B1` (Closes `V1`): Noncommitting `prepare`, externally mediated `publish`, noncommitting `finalize`, and strictly noncommitting default `build-receipt` in `tools/start_path.py`, consumer integration documentation in `tools/interface.md` and `standard/permission_classes.md`, and comprehensive unit/denial/conflict/recovery tests in `tools/test_start_path.py`.
    - `B2` (Closes `V2` & `V7` regression): Explicit `refs/tags/<tag>` fetch/peel, release-tag syntax enforcement, install-time `--expected-sha` verification before target replacement, and 3-form normal/worktree reproducibility regression in `bootstrap.sh`, `standard/GIP.md`, `ecosystem/00_ecosystem_bootstrap.md`, and `tools/e2e_bootstrap_test.sh`.
-2. **Corrective Slice 2 (`B3 + B4` → independent acceptance)**:
+2. **Corrective Slice 2 (`B3 + B4` → independent acceptance at `f825908e80100a2e13b9157b6a4f72908dd26a24`)**:
    - `B3` (Closes `V3` & `V4`): Shared trusted payload-integrity verifier (`tools/payload_integrity.py`) wired into `bootstrap.sh --verify-only` and `.github/scripts/verify_self_governance.py`, truthful `validate.sh --payload` scope/summary reporting (`10 exercised passed, 0 failed, 2 not-applicable, 1 skipped, 3 out-of-scope`), and updated tests.
-   - `B4` (Closes `V5` & `V6`): Coherent work-specific stopping policy across active docs/metadata/tools, `SKILL.md`/`skill.json` version parity enforced in C13, portable provenance/capability discovery in `tools/SKILL.md`, and clear explanation of authored release payload vs. repository self-installed `.nizam/`.
+   - `B4` (Closes `V5` & `V6`): Coherent work-specific stopping policy across active docs/metadata/tools, `SKILL.md`/`skill.json` version parity enforced in C13, portable provenance/capability discovery in `tools/SKILL.md` and `tools/README.md`, and clear explanation of authored release payload vs. repository self-installed `.nizam/` in `README.md` and `docs/planning/SELF_GOVERNANCE.md`.
 3. **Corrective Slice 3 (`B5 + B6` → independent acceptance, `v1.9.0` release, and `.nizam/` self-adoption)**:
-   - `B5`: Clean disposable consumer end-to-end acceptance (`tools/e2e_bootstrap_test.sh` + independent reviewer acceptance) covering all 10 discrimination areas in Section 10.
-   - `B6`: Prepare and release `v1.9.0` (MINOR increment reflecting the updated `start_path.py`, `bootstrap.sh`, and `validate.sh --payload` CLI contracts), re-bootstrap `.nizam/` to `v1.9.0`, verify installed payload integrity against the trusted `v1.9.0` tag tree, and exit temporary override mode cleanly.
+   - `B5`: Clean disposable consumer end-to-end acceptance (`tools/e2e_bootstrap_test.sh` + independent reviewer acceptance) covering all 10 discrimination areas in Section 10 (`V1`–`V7`).
+   - `B6`: Prepare and release `v1.9.0` (`278` released files, MINOR increment reflecting the updated `start_path.py`, `bootstrap.sh`, `payload_integrity.py`, and `validate.sh --payload` contracts), re-bootstrap `.nizam/` to `v1.9.0`, verify installed payload integrity against the trusted `v1.9.0` tag tree, and exit temporary override mode cleanly.
