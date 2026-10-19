@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.16.0
+version: 0.17.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.17.0"
+    date: "2026-10-19"
+    summary: "Complete v1.10.1 release, GitHub Pages deployment, and .nizam/ self-adoption: PR #125 merged at 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd (compliance.yml run 39239133568 succeeded in 17m16s); annotated tag v1.10.1 (5b6fdb64a5bc3bf1def755b8269696d9e95b3a41) published via release.yml run 39241606087 at 2026-10-19T11:01:33Z and GitHub Pages deployed via pages.yml run 39241597482; and .nizam/ re-bootstrapped to v1.10.1 (278 released files + provenance.json, installed_at 2026-10-19T11:03:39Z, evidence .agent/evidence/release-v1.10.1-closeout/)."
   - version: "0.16.0"
     date: "2026-10-19"
     summary: "Prepare v1.10.1 PATCH release packaging the operator-requested full documentation and GitHub Pages refresh across docs/guide/index.html, CONTEXT.md, ecosystem/01_clean_state_preflight.md (v0.1.5), methodology/10_live_runtime_sessions.md (v0.2.1), methodology/11_sbcl_runtime_binding.md (v0.1.2), schema/README.md (v0.20.2), tools/interface.md (v0.5.2), tools/README.md (v0.37.2), tools/SKILL.md (v0.8.2), tools/skill.json (v0.8.2), NIZAM.json (1.10.1), and tools/test_public_entry.py."

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.29
+version: 0.65.30
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.30"
+    date: "2026-10-19"
+    summary: "Post-release refresh: the Current position disposition line rolls from 'Release in preparation: v1.10.1' to 'Latest released tag: v1.10.1' carrying the observed facts -- annotated tag v1.10.1 (tag object 5b6fdb64a5bc3bf1def755b8269696d9e95b3a41) at reviewed PR #125 merge 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd (compliance.yml run 39239133568 succeeded in 17m16s), release.yml run 39241606087 and pages.yml run 39241597482 succeeded, GitHub Release published 2026-10-19T11:01:33Z and marked Latest, and local .nizam/ re-bootstrapped to v1.10.1 (278 released files + provenance.json, installed_at 2026-10-19T11:03:39Z). The v1.10.0, v1.9.0, v1.8.0, v1.7.0, and v1.6.0 prior-release records and all historical snapshots, phase records and budgets are preserved untouched."
   - version: "0.65.29"
     date: "2026-10-19"
     summary: "Record v1.10.1 PATCH release preparation: full refresh of docs/guide/index.html, CONTEXT.md, and residual phase-005/015 prose across ecosystem/01_clean_state_preflight.md, methodology/10_live_runtime_sessions.md, methodology/11_sbcl_runtime_binding.md, schema/README.md, tools/interface.md, tools/README.md, tools/SKILL.md, tools/skill.json, and NIZAM.json; Current position gains the 'Release in preparation: v1.10.1' disposition line ahead of the v1.10.0 latest-released record."
@@ -343,9 +346,9 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v1.10.1 (PATCH) — full documentation and GitHub Pages refresh (`docs/guide/index.html`, `CONTEXT.md`, and shipped payload prose in `ecosystem/01_clean_state_preflight.md`, `methodology/10_live_runtime_sessions.md`, `methodology/11_sbcl_runtime_binding.md`, `schema/README.md`, `tools/interface.md`, `tools/README.md`, `tools/SKILL.md`, `tools/skill.json`, and `NIZAM.json`) prepared on `docs/full-refresh-v1.10.1` under continuing operator authority; tag creation awaits PR merge.
+Latest released tag: v1.10.1 (PATCH) — RELEASED 2026-10-19 at `2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd` (PR #125, annotated tag object `5b6fdb64a5bc3bf1def755b8269696d9e95b3a41`); `release.yml` run 39241606087 and `pages.yml` run 39241597482 succeeded and the GitHub Release published at `2026-10-19T11:01:33Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.10.1` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T11:03:39Z`).
 
-Latest released tag: v1.10.0 (MINOR) — RELEASED 2026-10-19 at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7` (PR #123, annotated tag object `8971603d2091fd5f5602f556b49499a0c8aa7a29`); `release.yml` run 39218964275 succeeded and the GitHub Release published at `2026-10-19T07:54:01Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.10.0` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T07:56:18Z`).
+Prior released tag: v1.10.0 (MINOR) — RELEASED 2026-10-19 at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7` (PR #123, annotated tag object `8971603d2091fd5f5602f556b49499a0c8aa7a29`); `release.yml` run 39218964275 succeeded and the GitHub Release published at `2026-10-19T07:54:01Z` was marked Latest; local `.nizam/` was re-bootstrapped to `v1.10.0` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T07:56:18Z`).
 
 Prior released tag: v1.9.0 (MINOR) — RELEASED 2026-10-18 at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d` (PR #121, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87`); `release.yml` run 39172587918 succeeded and the GitHub Release published at `2026-10-18T22:31:27Z` was marked Latest; local `.nizam/` was re-bootstrapped to `v1.9.0` (`278` released files + `provenance.json`, `installed_at` `2026-10-18T22:32:25Z`).
 

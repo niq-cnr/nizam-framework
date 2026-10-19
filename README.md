@@ -96,7 +96,7 @@ Fetch `bootstrap.sh` pinned to the latest released tag and run it against your r
 ```sh
 curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
+GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/
 ```
 
 `--tag v1.10.1` (equivalently `GOVERNANCE_TAG=v1.10.1`) pins the inheritance to a real
@@ -126,7 +126,7 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 
 ```sh
 # Commit-bound content-integrity verification (verifies every file, mode, and digest against the expected commit in --git-repo):
-./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
+./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity
 
 # Unbound directory comparison (reports content_integrity=directory_match_unbound; does not satisfy --expected-sha or --require-content-integrity):
 ./bootstrap.sh --verify-only --tag v1.10.1 --source-root /path/to/unpacked-release/
@@ -143,7 +143,7 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 
 ## Local governance
 
-This repository has installed its public `v1.10.0` governance under `.nizam/`.
+This repository has installed its public `v1.10.1` governance under `.nizam/`.
 The installed payload is verified byte-for-byte against the pinned tag by the
 standing `self_governance` CI job (`verify_self_governance.py` and
 `bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).
