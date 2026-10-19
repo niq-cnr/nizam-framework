@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.8.0
+version: 0.8.1
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.8.1"
+    date: "2026-10-19"
+    summary: "Phase-019 v1.9.0 audit follow-up C2 (F2): document --git-repo DIR in bootstrap.sh for retaining the verified shallow tag clone outside .nizam/ at install time and running commit-bound content-integrity verification offline without executing ${TARGET_DIR}/tools/payload_integrity.py or reading expected SHA/reference paths from mutable provenance.json. Kept in lockstep with standard/GIP.md v0.7.1."
   - version: "0.8.0"
     date: "2026-10-18"
     summary: "Phase-019 v1.8.0 rollout corrective B2 (V2): enforce install-time --expected-sha comparison and explicit refs/tags/<tag> SemVer release-tag resolution in bootstrap.sh before staging or replacing the target payload. Updated Section 4 and Section 7 in lockstep with standard/GIP.md v0.7.0."
@@ -204,10 +207,13 @@ the source the payload was cloned from, and when it was installed, so that later
 detection (`standard/GIP.md` Section 4) and every stage's `framework_references` have a
 baseline to compare against. The `resolved_sha` makes the pin an **immutable commit**,
 not merely a tag *name*: a tag can be moved on the remote to replay a different payload,
-so given a caller-supplied expected SHA (`--expected-sha`, resolved out-of-band from the
-authentic tag), `bootstrap.sh` enforces `--expected-sha` both at install time (comparing
-`refs/tags/<tag>^{commit}` before staging or replacing the target) and during
-`bootstrap.sh --verify-only` (`NDEBT-033`, `B2`/`V2`). `bootstrap.sh` writes this
+so given an independently caller-supplied expected SHA (`--expected-sha`, resolved
+out-of-band from the authentic tag — never derived from mutable `provenance.json`),
+`bootstrap.sh` enforces `--expected-sha` both at install time (comparing
+`refs/tags/<tag>^{commit}` before staging or replacing the target, and optionally
+retaining the verified clone at `--git-repo <dir>` outside `<target>`) and during
+`bootstrap.sh --verify-only` against `--git-repo <dir>` without executing code from inside
+`<target>` (`NDEBT-033`, `B2`/`V2`, `C2`/`F2`). `bootstrap.sh` writes this
 artifact as part of its verified install; a consumer MUST NOT synthesize it by hand,
 since a hand-authored pin that does not match the injected payload is precisely the
 drift the artifact exists to detect. The framework pin recorded here -- not the

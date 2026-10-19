@@ -2,10 +2,19 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.12.0
+version: 0.14.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.14.0"
+    date: "2026-10-19"
+    summary: "Complete packet C4 independent acceptance (.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json) against immutable candidate 29ab5689652866cbb51c2f16b2911874ec591c19 across all 8 rows of the Section 8 acceptance matrix (C1 mediation/binding/recovery/observations, C2 trust/result-handling/ordinary-consumer, C3 continuation, and integrated entry) and proceed to C5 PR delivery, v1.10.0 release, and .nizam/ re-bootstrap."
+  - version: "0.13.1"
+    date: "2026-10-19"
+    summary: "Complete packets C1, C2, and C3 implementation and local verification (closing F1-F3 across tools/start_path.py, tools/payload_integrity.py, bootstrap.sh, methodology/00_planning.md, methodology/01_execution.md, schema/run_state.schema.json, standard/GIP.md, standard/permission_classes.md, ecosystem/00_ecosystem_bootstrap.md, tools/interface.md, tools/SKILL.md, tools/skill.json, tools/README.md, and test suites) and prepare the v1.10.0 MINOR release anchors (NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/operator_gates.md) for C4 independent acceptance and C5 delivery."
+  - version: "0.13.0"
+    date: "2026-10-19"
+    summary: "Adopt the v1.9.0 audit and follow-up execution mandate (C0-C5, closing F1-F3 against audited release v1.9.0 at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d and compared main 3efa3e02df56781960dfa8d0ecf143360c617ff8, compliance run 39175072688 in 17m25s): record continuing operator process-override authority, reconcile Issue #107 against completed Feature 134 and residual NDEBT-056, record one-shot C0 baseline probes (.agent/evidence/remediation-2026-10-18/c0-baseline-probes.json), and define packets C0-C5."
   - version: "0.12.0"
     date: "2026-10-18"
     summary: "Complete packet B6 and exit temporary corrective override mode: Corrective Slice 3 (B5 + B6 pre-tag at 40372780b328359fb4757651640920f11f14a23f) independently accepted and merged via PR #121 at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (compliance.yml run 39171134860 succeeded); annotated tag v1.9.0 (7e721b6e0fb2a0a3014efda388e1097378e3da87) published via release.yml run 39172587918 at 2026-10-18T22:31:27Z; .nizam/ re-bootstrapped to v1.9.0 (278 released files + provenance.json, installed_at 2026-10-18T22:32:25Z); and AGENTS.md (v0.3.0) transitional corrective banner removed."
@@ -49,29 +58,33 @@ change_log:
 
 # Critical Quality and Velocity Remediation — 2026-10-18
 
-## 1. Mandate Adoption & Continuing Follow-Up Authority (R0, A0 & B0)
+## 1. Mandate Adoption & Continuing Follow-Up Authority (R0, A0, B0 & C0)
 
 - **Initial mandate adopted at**: `2026-10-18T04:45:00Z`
 - **Follow-up audit & execution mandate (`A0`–`A8`) adopted at**: `2026-10-18T10:10:00Z`
 - **Completed `A8` & `v1.8.0` self-adoption at**: `2026-10-18T13:15:00Z` (PR #120 merged at `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`, `compliance.yml` run `39133101798` succeeded in `13m35s`)
 - **`v1.8.0` rollout corrective mandate (`B0`–`B6`) adopted at**: `2026-10-18T14:55:00Z`
-- **Completed `B6` & `v1.9.0` self-adoption at**: `2026-10-18T22:40:00Z` (PR #121 merged at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `compliance.yml` run `39171134860` succeeded; annotated tag `v1.9.0` `7e721b6e0fb2a0a3014efda388e1097378e3da87` published via `release.yml` run `39172587918` at `2026-10-18T22:31:27Z`; `.nizam/` re-bootstrapped to `v1.9.0` with `278` released files + `provenance.json`, `installed_at: 2026-10-18T22:32:25Z`)
+- **Completed `B6` & `v1.9.0` self-adoption at**: `2026-10-18T23:06:00Z` (PR #121 merged at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `compliance.yml` run `39171134860` succeeded; annotated tag `v1.9.0` `7e721b6e0fb2a0a3014efda388e1097378e3da87` published via `release.yml` run `39172587918` at `2026-10-18T22:31:27Z`; PR #122 merged `.nizam/` `v1.9.0` self-adoption at `3efa3e02df56781960dfa8d0ecf143360c617ff8`, `compliance.yml` run `39175072688` succeeded in `17m25s`)
+- **`v1.9.0` audit & follow-up mandate (`C0`–`C5`) adopted at**: `2026-10-19T05:50:00Z` (closing `F1`–`F3` against audited release `v1.9.0` `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d` and compared `main` `3efa3e02df56781960dfa8d0ecf143360c617ff8`)
 - **Repository**: `niq-cnr/nizam-framework` (`https://github.com/niq-cnr/nizam-framework.git`)
-- **Authoritative instructions**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt"), operator post-remediation audit & follow-up execution mandate dated 18 October 2026 ("Nizam framework: post-remediation audit and follow-up execution prompt", audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`), and operator `v1.8.0` rollout corrective execution mandate dated 18 October 2026 ("Nizam framework v1.8.0 rollout corrective execution prompt", audited release `v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`, compared `main` `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`), recorded in `.agent/run_state.json` and this single brief.
-- **Process precedence (`B0`–`B6` — Completed)**: Continuing operator authorization governed `B0`–`B6` until `B6` released `v1.9.0` and re-bootstrapped `.nizam/` to `v1.9.0` parity (`AGENTS.md` `v0.3.0`). All slices preserved:
-  1. Independent acceptance of each integrated, publishable corrective slice by a non-authoring reviewer.
+- **Authoritative instructions**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt"), operator post-remediation audit & follow-up execution mandate dated 18 October 2026 ("Nizam framework: post-remediation audit and follow-up execution prompt", audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`), operator `v1.8.0` rollout corrective execution mandate dated 18 October 2026 ("Nizam framework v1.8.0 rollout corrective execution prompt", audited release `v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`), and operator `v1.9.0` audit and follow-up execution mandate dated 19 October 2026 ("Nizam framework v1.9.0 audit and follow-up execution prompt", audited release `v1.9.0` at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, compared `main` `3efa3e02df56781960dfa8d0ecf143360c617ff8`), recorded in `.agent/run_state.json` and this single brief.
+- **Process precedence (`C0`–`C5` Active)**: Continuing operator authorization governs `C0`–`C5` (superseding conflicting repository-local or installed `.nizam/ v1.9.0` ceremony rules, phase sequencing, per-edit contract gates, line-count ceilings, and attempt counters) until `C5` releases the corrective version and re-bootstraps `.nizam/` to parity (`AGENTS.md` `v0.3.1`). All packets preserve:
+  1. Independent acceptance of the integrated candidate by a non-authoring reviewer (`C4`).
   2. Real, accurately captured verification results tied to the committed candidate and execution inputs.
   3. Security and correctness invariants (identity, authorization, isolation, source integrity, claimed vs. authenticated authority, and externally mediated Git commit boundaries).
   4. Ownership of writes, preservation of unrelated work, and recoverability.
   5. Honest lifecycle status across implemented, tested, independently accepted, merged, released, installed, and commissioned states.
 
-## 2. Live-Work Reconciliation (R0, A0 & B0)
+## 2. Live-Work Reconciliation (R0, A0, B0 & C0)
 
 - **Initial `main` baseline (`R0`)**: `e3748676f4f12a5a1a10bf1a100869db773b70ee` (PR #114 merge); PR #115 merged Feature 134 (`144e20e09bd17257c34873e1608a24bb6f05248d`), and PR #116 merged `R0`–`R11` at audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`.
 - **Follow-up `main` & release baseline (`A0`)**: PR #117 (`47851d857e0ab879b848610128ee6e9e13368f0d`) released tag `v1.7.0` (annotated tag object `6a4cf599f3850ae31561ba38f9da29237d0a4a53`; `release.yml` run `39116785402` succeeded), and PR #118 (`f64333c203ee4cf3693b32c2bf28735b088ab3f8`) merged the `v1.7.0` closeout and `.nizam/` re-bootstrap (`277` released files + `provenance.json`, `commissioning_performed: false` per `docs/planning/SELF_GOVERNANCE.md`).
-- **Completed follow-up delivery (`A0`–`A8`) & `B0` baseline**: Closed audit findings `F1`–`F6` across Slice 1 (`A0 + A1 + A2`), Slice 2 (`A3 + A4 + A5`), and Slice 3 (`A6 + A7 + A8`), merged PR #119 (`606d11ee84deff0d3b7934cbfd715223d64ac79d`), released `v1.8.0` (`faeb50dfdb055cc4d5018ab8d474979be71f876f`), and merged PR #120 (`016a1b79e0be6bc5b7459baae3c67ee99f2803f6`, `compliance.yml` run `39133101798` succeeded in `13m35s`) re-bootstrapping `.nizam/` to `v1.8.0` (`commissioning_performed: false`). Features `124`, `125`, `129`, `133`, and `134` remain complete; Phase 020 features `130`–`132` remain pending and off this correction's critical path.
+- **Completed follow-up delivery (`A0`–`A8`) & `B0`–`B6` baseline**: Closed audit findings `F1`–`F6` (`A0`–`A8`, `v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`, PR #120 at `016a1b79e0be6bc5b7459baae3c67ee99f2803f6`), and closed `V1`–`V7` (`B0`–`B6`, PR #121 at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, tag `v1.9.0` `7e721b6e0fb2a0a3014efda388e1097378e3da87`, PR #122 at `3efa3e02df56781960dfa8d0ecf143360c617ff8`, `compliance.yml` run `39175072688` in `17m25s`).
+- **`C0` Backlog & Issue `#107` Reconciliation**:
+  - `.agent/feature_list_019.json` (`124`, `125`), `.agent/feature_list_020.json` (`129`), `.agent/feature_list_021.json` (`133`), and `.agent/feature_list_022.json` (`134`) remain `complete`. Phase 020 features `130`–`132` (persistent SBCL runtime qualification) remain `pending` and off the critical path for `C0`–`C5`.
+  - GitHub Issue `#107` ("Docker sandbox adapter & live-model observation qualification (NDEBT-056)") was inspected against completed Feature `134` (PR #115 `144e20e09bd17257c34873e1608a24bb6f05248d`) and `docs/planning/DEBT.md` (`NDEBT-056`). Feature `134` delivered the Docker container sandbox adapter (`--sandbox-adapter=docker`) and adapter-specific conformance selection, while `NDEBT-056` and Issue `#107` explicitly retain the residual requirement for no-network live-model observation qualification and digest re-pin policy. Issue `#107` therefore remains open for that distinct residual debt item and does not conflict with or block `C0`–`C5`.
 
-## 3. Suite Ownership & Timing Baseline (R1, A0 & B0 Audited Hosted Runs)
+## 3. Suite Ownership & Timing Baseline (R1, A0, B0 & C0 Audited Hosted Runs)
 
 ### 3.1 Pre-Remediation and Post-PR #116 Hosted Timing Baseline
 
@@ -85,6 +98,7 @@ change_log:
 | Hosted Actions run `39115161856` (merged `main` `8815d311`, `2026-10-18T09:23:47Z`–`09:42:10Z`, total `18m23s`) | Full `compliance.yml` | `18m23s` | **~81.5% reduction** vs. PR #115 (`39075498443`) on the merged candidate (cross-revision hosted observation, not a controlled benchmark or agent active-time measurement) |
 | Hosted Actions run `39128908966` (PR #119 follow-up candidate `bbe5b415`, `2026-10-18T12:49:37Z`–`13:08:00Z`, total `18m23s`) | Full `compliance.yml` | `18m23s` | Preserves the **~81.5% reduction** vs. PR #115 (`39075498443`) while adding `assert_consumer_zero_reachback` (`e2e_bootstrap` `1m16s`) and the 12-task `profiles-ready` verification |
 | Hosted Actions run `39133101798` (merged `main` `016a1b79`, PR #120 `v1.8.0` self-adoption) | Full `compliance.yml` | `13m35s` | **~86.3% reduction** vs. PR #115 (`39075498443`) on the `v1.8.0` self-adopted `main` commit `016a1b79e0be6bc5b7459baae3c67ee99f2803f6` |
+| Hosted Actions run `39175072688` (merged `main` `3efa3e02`, PR #122 `v1.9.0` self-adoption) | Full `compliance.yml` | `17m25s` | Delivery evidence on the `v1.9.0` self-adopted `main` commit `3efa3e02df56781960dfa8d0ecf143360c617ff8` (not a controlled performance comparison) |
 
 ### 3.2 Authoritative Five-Job Suite Ownership (`compliance.yml`)
 
@@ -207,3 +221,27 @@ Each check family has exactly one authoritative CI job owner inside the existing
 3. **Corrective Slice 3 (`B5 + B6` → independent acceptance at `40372780b328359fb4757651640920f11f14a23f`, merged in PR #121 at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, released as `v1.9.0`, and re-bootstrapped under `.nizam/`)**:
    - `B5`: Clean disposable consumer end-to-end acceptance (`tools/e2e_bootstrap_test.sh` + independent reviewer acceptance at `40372780b328359fb4757651640920f11f14a23f`) covering all 10 discrimination areas in Section 10 (`V1`–`V7`).
    - `B6`: Released `v1.9.0` (`278` released files, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87` at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `release.yml` run `39172587918` published at `2026-10-18T22:31:27Z`), re-bootstrapped `.nizam/` to `v1.9.0` (`installed_at: 2026-10-18T22:32:25Z`, evidence `.agent/evidence/release-v1.9.0-closeout/`), verified installed payload integrity against the trusted `v1.9.0` tag tree, and exited temporary override mode cleanly (`AGENTS.md` `v0.3.0`).
+
+## 7. `v1.9.0` Audit Follow-Up Execution (`C0`–`C5` Closing `F1`–`F3`)
+
+### 7.1 Audited Findings, One-Shot Baseline Reproduction (`C0`), and Packet Mapping
+
+One-shot baseline reproduction probes were executed once against unmodified `3efa3e02df56781960dfa8d0ecf143360c617ff8` and recorded in [c0-baseline-probes.json](../../.agent/evidence/remediation-2026-10-18/c0-baseline-probes.json).
+
+| Finding | Severity | Packet | Scope & Ownership | Acceptance Obligation |
+|---|---|---|---|---|
+| `F1` | P1 (`+` P2 index mtime) | `C1` | `tools/start_path.py`, `tools/interface.md`, `standard/permission_classes.md`, `tools/SKILL.md`, `AGENTS.md`, `tools/test_start_path.py` | Make `prepare` the default mode of `publish`; remove the implicit local `git add`/`git commit` fallback from `_git_commit_literal_paths`; reject missing/empty/`{}`/boolean-only/denied/pending/failed adapter outcomes without local fallback; distinguish explicit denial from interrupted acknowledgement (`unknown_external_commit_outcome`) and reconcile/recover completed stages against actual repository state without duplicate commits or re-running captured commands; bind completion to repository/worktree, `intended_base`, branch/detached state, and exact owned stage file delta; prevent read-side `.git/index` refreshes via `GIT_OPTIONAL_LOCKS=0` / `--no-optional-locks`. |
+| `F2` | P1 | `C2` | `bootstrap.sh`, `tools/payload_integrity.py`, `README.md`, `tools/SKILL.md`, `tools/interface.md`, `standard/GIP.md`, `tools/README.md`, `.github/scripts/test_self_governance.py`, `tools/test_public_entry.py`, `tools/e2e_bootstrap_test.sh` | Never execute `${TARGET_DIR}/tools/payload_integrity.py`; expose `--git-repo DIR` through `bootstrap.sh` (loading verifier code and reference blobs from the verified immutable commit `<expected_sha>` in `--git-repo`, with optional install-time reference retention at `--git-repo DIR`); never derive expected SHA or reference repository from mutable `provenance.json` or ambient CWD; label unbound `--source-root` equality distinctly (`directory_match_unbound`) and forbid it from satisfying `--expected-sha` or `--require-content-integrity`; never downgrade helper exit `2` / parser / reference errors to `structural_only` pass. |
+| `F3` | P1 / P2 | `C3` | `tools/start_path.py`, `methodology/00_planning.md`, `methodology/01_execution.md`, `schema/run_state.schema.json`, `tools/test_start_path.py` | Replace unconditional `"max_attempts": 3` in `classify` and hard `attempt <= 3` in `capture` with executable work-specific stopping rules: allow continuation beyond attempt 3 when invariant/authority bounds hold and a bounded amendment, verified decomposition, or extended `circuit_breaker[<step_key>].limit` applies (retaining parent/repair history), while halting on a repeated unresolved defect signature without progress/decomposition, exhausted budget/limit, or invariant/authority breach; align the three residual universal "3-strike" summaries in `00_planning.md`, `01_execution.md`, and `run_state.schema.json`. |
+
+### 7.2 Execution DAG & Dependencies (`C0`–`C5`)
+
+1. **`C0` (Baseline refresh, backlog/Issue `#107` reconciliation, one-shot reproduction probes, and brief update — Complete)**:
+   - Recorded in this brief (`v0.13.0`), `AGENTS.md` (`v0.3.1`), `.agent/run_state.json`, and [c0-baseline-probes.json](../../.agent/evidence/remediation-2026-10-18/c0-baseline-probes.json).
+2. **`C1` (`F1` — Publication default `prepare`, strict external mediation, base/delta binding, and index lock preservation)**, **`C2` (`F2` — Trusted consumer integrity verification & `--git-repo` binding)**, and **`C3` (`F3` — Executable stopping policy & residual doc/schema alignment) — Complete (`29ab5689652866cbb51c2f16b2911874ec591c19`)**:
+   - Implemented across the authored source modules and verified by `tools/test_start_path.py`, `tools/test_public_entry.py`, `.github/scripts/test_self_governance.py`, `tools/validate.sh`, `tools/fixtures_self_test.sh`, and `tools/e2e_bootstrap_test.sh`.
+3. **`C4` (Independent Acceptance against the Integrated Candidate — Complete)**:
+   - Independently accepted (`APPROVE`, `0` blocking findings, `8/8` matrix rows `PASS`) by non-authoring Evaluator (`evaluator-adversarial`, subagent `a0777e6d-6905-46c4-be69-30965eea63eb`) against immutable candidate `29ab5689652866cbb51c2f16b2911874ec591c19`, recorded in [c4-independent-acceptance.json](../../.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json).
+4. **`C5` (Release, Post-Release `.nizam/` Self-Adoption, and Override Exit)**:
+   - Merge the accepted candidate via PR (`compliance.yml` green), publish the new immutable release tag (`v1.10.0`), re-bootstrap `.nizam/` to `v1.10.0`, verify self-governance and standalone strict consumer verification (`--verify-only --git-repo ... --expected-sha ... --require-content-integrity`), remove the transitional override banner in `AGENTS.md`, and merge the closeout PR.
+

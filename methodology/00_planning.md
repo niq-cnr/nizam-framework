@@ -2,10 +2,13 @@
 id: nizam-planning-enforcer
 title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: methodology/00_planning.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-19"
+    summary: "Align Section 10 reference to 03_circuit_breaker.md with the work-specific diagnostic stopping policy (removing the residual universal '3-strike limit' summary)."
   - version: "0.4.0"
     date: "2026-10-18"
     summary: "Align Section 6 Scope Budget Protocol with work-specific diagnostic stopping policy: per-feature and cumulative line-count thresholds serve as diagnostic telemetry signals rather than standalone mechanical hard stops when contract invariants hold."
@@ -223,5 +226,8 @@ future audit actually reads.
   four execution roles, including Planner) and the dual validator gate this
   protocol's output feeds into.
 - `01_execution.md` — the harness loop that consumes an eligible, planned feature.
-- `03_circuit_breaker.md` — the 3-strike limit that bounds contract-revision and
+- `03_circuit_breaker.md` — the work-specific diagnostic stopping policy
+  (initial 3-step strategy ladder, bounded continuation or decomposition when
+  invariants hold, and hard stops on repeated unresolved defect signatures or
+  invariant/authority breaches) governing contract-revision and
   implementation-rework loops downstream of planning.

@@ -121,7 +121,9 @@ def test_r5_classification_and_amendments(root: Path) -> None:
     res_trivial = run_raw("classify", "--files", "README.md", "--editorial")
     expect(res_trivial, 0, '"route": "trivial"')
     parsed_trivial = json.loads(res_trivial.stdout)
-    assert parsed_trivial["stopping_conditions"]["max_attempts"] == 3
+    assert parsed_trivial["stopping_conditions"]["initial_strategy_ladder_attempts"] == 3
+    assert parsed_trivial["stopping_conditions"]["hard_attempt_cap"] is None
+    assert parsed_trivial["stopping_conditions"]["attempt_counter_role"] == "telemetry"
     assert parsed_trivial["stopping_conditions"]["comparator_subordinate"] is True
 
     # 2. Bugfix route classification
@@ -580,7 +582,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
     )
     expect(res_cap_timeout, 1, '"completion_state": "interrupted"')
 
-    # Attempt 4 is rejected by the 3-attempt breaker cap
+    # Attempt 4 without a qualifying continuation basis is rejected with exit 2
     res_cap_4 = run_raw(
         "capture",
         "--id",
@@ -598,9 +600,167 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('forbidden')",
     )
-    expect(res_cap_4, 2, "attempt must be an integer between 1 and 3")
+    expect(res_cap_4, 2, "attempt must be between 1 and 3")
 
-    # 3. Full producer-to-consumer chain on ReceiptFixture: capture -> publish -> build-receipt -> verify-receipt -> resume (F2 + A2)
+    # C3 positive and negative stopping/continuation checks
+    res_cap_4_decomp = run_raw(
+        "capture",
+        "--id",
+        "demo",
+        "--step",
+        "verify",
+        "--attempt",
+        "4",
+        "--continuation-basis",
+        "verified-decomposition",
+        "--decomposition-of",
+        "verify-part-a",
+        "--repair-summary",
+        "Split verification into part A and part B after timeout",
+        "--output-dir",
+        str(root / ".agent/evidence/captures"),
+        "--root",
+        str(root),
+        "--",
+        sys.executable,
+        "-c",
+        "print('attempt-4-decomposed-ok')",
+    )
+    expect(res_cap_4_decomp, 0, '"continuation_basis": "verified-decomposition"')
+    cap_4_doc = json.loads(res_cap_4_decomp.stdout)
+    assert cap_4_doc["continuation_lineage"]["attempt"] == 4
+    assert cap_4_doc["continuation_lineage"]["parent_attempt"] == 3
+    assert cap_4_doc["continuation_lineage"]["decomposition_of"] == "verify-part-a"
+    assert len(cap_4_doc["continuation_lineage"]["prior_attempts"]) >= 3
+
+    # C3 positive: 4th attempt permitted by recorded contract amendment (amendments list in .agent/contracts/c1.json)
+    res_cap_4_amend = run_raw(
+        "capture",
+        "--id",
+        "c1",
+        "--step",
+        "verify",
+        "--attempt",
+        "4",
+        "--repair-summary",
+        "Continue after mechanical contract amendment on c1",
+        "--output-dir",
+        str(root / ".agent/evidence/captures"),
+        "--root",
+        str(root),
+        "--",
+        sys.executable,
+        "-c",
+        "print('attempt-4-amended-ok')",
+    )
+    expect(res_cap_4_amend, 0, '"continuation_basis": "bounded-amendment"')
+    assert json.loads(res_cap_4_amend.stdout)["continuation_lineage"]["contract_amendment_present"] is True
+
+    # C3 negative: invariant breach halts immediately
+    res_cap_inv = run_raw(
+        "capture",
+        "--id",
+        "demo",
+        "--step",
+        "verify",
+        "--attempt",
+        "2",
+        "--invariant-breach",
+        "--output-dir",
+        str(root / ".agent/evidence/captures"),
+        "--root",
+        str(root),
+        "--",
+        sys.executable,
+        "-c",
+        "print('never')",
+    )
+    expect(res_cap_inv, 2, "stopping policy halt: invariant or authority boundary breached")
+
+    # C3 negative: repeated identical unresolved defect signature across consecutive attempts without repair/amendment/decomposition halts
+    for att_idx in (1, 2):
+        rc_rep = run_raw(
+            "capture",
+            "--id",
+            "rep-defect",
+            "--step",
+            "check",
+            "--attempt",
+            str(att_idx),
+            "--defect-signature",
+            "sig-identical-01",
+            "--repair-summary" if att_idx == 2 else "--cause",
+            "tried minor tweak" if att_idx == 2 else "implementation",
+            "--output-dir",
+            str(root / ".agent/evidence/captures"),
+            "--root",
+            str(root),
+            "--",
+            sys.executable,
+            "-c",
+            "import sys; sys.exit(1)",
+        )
+        expect(rc_rep, 1, '"defect_signature": "sig-identical-01"')
+
+    res_rep_halt = run_raw(
+        "capture",
+        "--id",
+        "rep-defect",
+        "--step",
+        "check",
+        "--attempt",
+        "3",
+        "--defect-signature",
+        "sig-identical-01",
+        "--output-dir",
+        str(root / ".agent/evidence/captures"),
+        "--root",
+        str(root),
+        "--",
+        sys.executable,
+        "-c",
+        "print('should-halt')",
+    )
+    expect(res_rep_halt, 2, "stopping policy halt: repeated identical unresolved defect signature")
+
+    # C3 negative: exceeding configured step limit in .agent/run_state.json halts
+    write(
+        root,
+        ".agent/run_state.json",
+        {
+            "schema_version": "1.0.0",
+            "repository": "https://github.com/niq-cnr/nizam-framework.git",
+            "current_phase": "019",
+            "current_feature": "lim-task",
+            "status": "in_progress",
+            "updated_at": "2026-10-19T00:00:00Z",
+            "circuit_breaker": {
+                "lim-task-check": {"attempts": 2, "limit": 2, "status": "open"}
+            },
+            "history": [],
+        },
+    )
+    res_lim_halt = run_raw(
+        "capture",
+        "--id",
+        "lim-task",
+        "--step",
+        "check",
+        "--attempt",
+        "3",
+        "--output-dir",
+        str(root / ".agent/evidence/captures"),
+        "--root",
+        str(root),
+        "--",
+        sys.executable,
+        "-c",
+        "print('exceeds-limit')",
+    )
+    expect(res_lim_halt, 2, "exceeds configured step limit (2)")
+    (root / ".agent/run_state.json").unlink()
+
+    # 3. Full producer-to-consumer chain on ReceiptFixture: capture -> publish -> build-receipt -> verify-receipt -> resume (F2 + A2 + C1)
     import test_workflow_assurance as twa
     import workflow_assurance as wa
 
@@ -610,6 +770,38 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         froot = fixture.root
         cand_sha = twa.sha(twa.canonical(fixture.candidate))
         counter_file = froot / "proof" / "chain-exec-count.txt"
+
+        # Create an authorized test mutation adapter script that commits exact literal_pathspec files via a temp GIT_INDEX_FILE
+        adapter_script = Path(chain_dir) / "test_mutation_adapter.py"
+        adapter_script.write_text(
+            "#!/usr/bin/env python3\n"
+            "import json, os, shutil, subprocess, sys, tempfile\n"
+            "from pathlib import Path\n"
+            "req = json.loads(sys.stdin.read())\n"
+            "root = Path(req['repository_root']).resolve()\n"
+            "head = subprocess.run(['git', '--no-optional-locks', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True).stdout.strip()\n"
+            "if head != req['intended_base']:\n"
+            "    print(json.dumps({'approved': False, 'status': 'denied', 'reason': 'base mismatch'}))\n"
+            "    sys.exit(0)\n"
+            "specs = [f['literal_pathspec'] for f in req['files']]\n"
+            "with tempfile.TemporaryDirectory(prefix='nizam-adapter-idx-') as td:\n"
+            "    tmp_idx = Path(td) / 'index'\n"
+            "    env = {**os.environ, 'GIT_INDEX_FILE': str(tmp_idx)}\n"
+            "    subprocess.run(['git', '-C', str(root), 'read-tree', head], env=env, check=True)\n"
+            "    subprocess.run(['git', '-C', str(root), 'add', '--', *specs], env=env, check=True)\n"
+            "    c = subprocess.run(['git', '-C', str(root), 'commit', '-q', '-m', req['commit_message'], '--', *specs], env=env, capture_output=True, text=True)\n"
+            "    if c.returncode != 0:\n"
+            "        sys.stderr.write(c.stderr or c.stdout)\n"
+            "        sys.exit(c.returncode)\n"
+            "    subprocess.run(['git', '-C', str(root), 'reset', '-q', 'HEAD', '--', *specs], check=True)\n"
+            "new_head = subprocess.run(['git', '--no-optional-locks', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True).stdout.strip()\n"
+            "if os.environ.get('NIZAM_TEST_FAIL_AFTER_S1') == '1' and req['stage'] == 'outputs_pending':\n"
+            "    sys.exit(1)\n"
+            "print(json.dumps({'approved': True, 'status': 'committed', 'committed': True, 'revision': new_head}))\n",
+            encoding="utf-8",
+        )
+        adapter_script.chmod(0o755)
+        adapter_env = {**os.environ, "NIZAM_MUTATION_ADAPTER": f"{sys.executable} {adapter_script}"}
 
         cmd_code = (
             "import os, pathlib; "
@@ -654,11 +846,13 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         raw_cap = json.loads(res_chain_cap.stdout)
         assert len(counter_file.read_text(encoding="utf-8").splitlines()) == 1
 
-        # Publish the raw capture into Git and project the closed 12-field receipt capture
+        # Publish the raw capture into Git via --mode publish + NIZAM_MUTATION_ADAPTER and project the closed 12-field receipt capture
         res_pub = subprocess.run(
             [
                 sys.executable,
                 str(TOOL),
+                "publish",
+                "--mode",
                 "publish",
                 "--capture",
                 raw_cap["capture_path"],
@@ -666,6 +860,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                 str(froot),
             ],
             cwd=ROOT,
+            env=adapter_env,
             text=True,
             capture_output=True,
             check=False,
@@ -706,7 +901,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         state_path.write_text(json.dumps(fixture.state, indent=2) + "\n", encoding="utf-8")
         receipt_out_path = froot / "proof" / "chain-receipt.json"
 
-        # Build and verify receipt via build-receipt CLI
+        # Build and verify receipt via build-receipt CLI (--commit mediated by NIZAM_MUTATION_ADAPTER)
         res_build = subprocess.run(
             [
                 sys.executable,
@@ -724,6 +919,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                 str(froot),
             ],
             cwd=ROOT,
+            env=adapter_env,
             text=True,
             capture_output=True,
             check=False,
@@ -890,31 +1086,35 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         )
         expect(res_bad_route, 1, "trivial path cannot modify")
 
-        # --- B1 Discrimination Suite (Closing V1) ---
+        # --- B1 + C1 Discrimination Suite (Closing V1 and F1) ---
         def _git_head_and_index_sha(repo_root: Path) -> tuple[str, str]:
             h = subprocess.run(
-                ["git", "-C", str(repo_root), "rev-parse", "HEAD"],
+                ["git", "--no-optional-locks", "-C", str(repo_root), "rev-parse", "HEAD"],
                 capture_output=True, text=True, check=True,
             ).stdout.strip()
             idx_rel = subprocess.run(
-                ["git", "-C", str(repo_root), "rev-parse", "--git-path", "index"],
+                ["git", "--no-optional-locks", "-C", str(repo_root), "rev-parse", "--git-path", "index"],
                 capture_output=True, text=True, check=True,
             ).stdout.strip()
             idx_p = Path(idx_rel) if Path(idx_rel).is_absolute() else (repo_root / idx_rel)
             idx_sha = twa.sha(idx_p.read_bytes()) if idx_p.is_file() else "none"
             return h, idx_sha
 
-        # (B1.a) Repeated identical publication is a no-op with zero HEAD or .git/index mutations
+        # (B1.a + C1 P2 mtime check) Repeated identical publication and mtime-only touch preserve HEAD and .git/index bytes identically!
         head_before_noop, idx_before_noop = _git_head_and_index_sha(froot)
-        res_pub_noop = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", raw_cap["capture_path"], "--root", str(froot)],
-            cwd=ROOT, text=True, capture_output=True, check=False,
-        )
-        expect(res_pub_noop, 0, '"noop": true')
-        assert _git_head_and_index_sha(froot) == (head_before_noop, idx_before_noop)
+        cap_stdout_file = froot / raw_cap["stdout"]["path"]
+        os.utime(cap_stdout_file, (1893456000, 1893456000))
+        for noop_mode_args in ([], ["--mode", "prepare"], ["--mode", "finalize"], ["--mode", "publish"]):
+            res_pub_noop = subprocess.run(
+                [sys.executable, str(TOOL), "publish", *noop_mode_args, "--capture", raw_cap["capture_path"], "--root", str(froot)],
+                cwd=ROOT, text=True, capture_output=True, check=False,
+            )
+            expect(res_pub_noop, 0, '"noop": true')
+            assert _git_head_and_index_sha(froot) == (head_before_noop, idx_before_noop), (
+                f"mtime-only replay in mode {noop_mode_args} mutated HEAD or .git/index!"
+            )
 
         # (B1.b) Changed evidence attempting to overwrite prior accepted evidence is rejected
-        cap_stdout_file = froot / raw_cap["stdout"]["path"]
         orig_stdout_bytes = cap_stdout_file.read_bytes()
         raw_cap_file = froot / raw_cap["capture_path"]
         orig_raw_cap_bytes = raw_cap_file.read_bytes()
@@ -932,7 +1132,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         raw_cap_file.write_bytes(orig_raw_cap_bytes)
 
         # (B1.c) Raw closed-capture input to build-receipt without commit authority:
-        #   - Uncommitted raw closed capture fails closed WITHOUT calling _git_ensure_committed or mutating HEAD/.git/index
+        #   - Uncommitted raw closed capture fails closed WITHOUT mutating HEAD/.git/index
         #   - Committed raw closed capture succeeds read-only WITHOUT mutating HEAD/.git/index
         uncommitted_closed_path = froot / "proof" / "captures" / "uncommitted.receipt-capture.json"
         uncommitted_closed_path.write_bytes((froot / pub_doc["receipt_capture_ref"]["path"]).read_bytes())
@@ -964,8 +1164,8 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         expect(res_raw_committed, 0, '"verified": true')
         assert _git_head_and_index_sha(froot) == (head_before_raw, idx_before_raw)
 
-        # (B1.d) Noncommitting prepare -> external commit -> prepare -> external commit -> finalize workflow
-        #        plus commit denial (adapter & pre-commit hook) and same-path staged conflict & unrelated staged preservation
+        # (B1.d + C1) Default noncommitting publish (prepare), strict adapter mediation (no/empty/{}/bool/invalid/denied),
+        #             unknown_external_commit_outcome reconciliation, and base/branch/delta binding
         res_cap_b1 = subprocess.run(
             [
                 sys.executable, str(TOOL), "capture",
@@ -991,36 +1191,69 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         unrelated_unstaged.write_text("unrelated unstaged content\n", encoding="utf-8")
         head_with_staged, idx_with_staged = _git_head_and_index_sha(froot)
 
-        # Noncommitting prepare-publish (Stage 1)
+        # Default `publish` (without --mode) is noncommitting `prepare`!
         res_prep1 = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_prep1, 0, '"stage": "outputs_pending"')
+        expect(res_prep1, 0, '"status": "pending_external_commit"')
         assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
         prep1_doc = json.loads(res_prep1.stdout)
-        assert (froot / prep1_doc["publish_request_path"]).is_file()
+        req_b1_path = froot / prep1_doc["publish_request_path"]
+        assert req_b1_path.is_file()
+        assert prep1_doc["commit_request"]["intended_base"] == head_with_staged
+        assert "intended_branch" in prep1_doc["commit_request"]
+
+        # C1.1: `--mode publish` without NIZAM_MUTATION_ADAPTER fails closed without local commit fallback
+        env_no_adapter = {k: v for k, v in os.environ.items() if k not in ("NIZAM_MUTATION_ADAPTER", "NIZAM_MUTATION_POLICY")}
+        res_no_adapter = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=env_no_adapter, text=True, capture_output=True, check=False,
+        )
+        expect(res_no_adapter, 1, "external commit mediation required for --mode publish")
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
+
+        # C1.2: Adapter returning empty stdout, `{}`, `true`, invalid JSON, `approved=false`, or `status=denied/pending/failed` all fail closed
+        import shlex
+
+        for probe_code, expected_msg in (
+            ("", "returned empty stdout"),
+            ("print('{}')", "missing required completion fields"),
+            ("print('true')", "response must be a JSON object"),
+            ("print('not-json')", "returned invalid JSON"),
+            ('print(\'{"approved": false, "status": "denied"}\')', "git commit denied by runtime mutation adapter"),
+            ('print(\'{"status": "pending"}\')', "git commit pending by runtime mutation adapter"),
+            ('print(\'{"status": "failed"}\')', "git commit failed by runtime mutation adapter"),
+        ):
+            probe_env = {**env_no_adapter, "NIZAM_MUTATION_ADAPTER": f"{shlex.quote(sys.executable)} -c {shlex.quote(probe_code)}"}
+            res_probe = subprocess.run(
+                [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+                cwd=ROOT, env=probe_env, text=True, capture_output=True, check=False,
+            )
+            expect(res_probe, 1, expected_msg)
+            assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
 
         # Simulated commit denial via NIZAM_MUTATION_ADAPTER=deny leaves HEAD, .git/index, and unrelated staged unchanged
         deny_env = {**os.environ, "NIZAM_MUTATION_ADAPTER": "deny"}
         res_deny = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=deny_env, text=True, capture_output=True, check=False,
         )
         expect(res_deny, 1, "denied by runtime mutation authority")
         assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
 
-        # Real commit denial via failing .git/hooks/pre-commit leaves HEAD and .git/index byte-for-byte unchanged!
+        # Real commit denial via failing .git/hooks/pre-commit inside adapter leaves HEAD and .git/index byte-for-byte unchanged!
         hooks_dir = froot / ".git" / "hooks"
         hooks_dir.mkdir(parents=True, exist_ok=True)
         pre_commit_hook = hooks_dir / "pre-commit"
         pre_commit_hook.write_text("#!/usr/bin/env bash\necho 'hook denied commit' >&2\nexit 1\n", encoding="utf-8")
         pre_commit_hook.chmod(0o755)
         res_hook_deny = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
-            cwd=ROOT, text=True, capture_output=True, check=False,
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
-        expect(res_hook_deny, 1, "git commit failed during evidence publication")
+        expect(res_hook_deny, 1, "hook denied commit")
         assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
         pre_commit_hook.unlink()
 
@@ -1028,8 +1261,8 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         subprocess.run(["git", "-C", str(froot), "add", "--", cap_b1["stdout"]["path"]], check=True)
         _, idx_with_conflict = _git_head_and_index_sha(froot)
         res_conflict = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
-            cwd=ROOT, text=True, capture_output=True, check=False,
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
         expect(res_conflict, 1, "same-path staged conflict in .git/index")
         assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_conflict)
@@ -1049,20 +1282,75 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                 encoding="utf-8",
             )
             fake_git.chmod(0o755)
-            bad_git_env = {**os.environ, "PATH": f"{fake_git_dir}:{os.environ.get('PATH', '')}"}
+            bad_git_env = {**adapter_env, "PATH": f"{fake_git_dir}:{os.environ.get('PATH', '')}"}
             res_bad_diff = subprocess.run(
-                [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+                [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
                 cwd=ROOT, env=bad_git_env, text=True, capture_output=True, check=False,
             )
             expect(res_bad_diff, 1, "git diff --cached failed")
             assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
 
-        # External commit of Stage 1 -> noncommitting prepare-publish (Stage 2) -> external commit of Stage 2 -> noncommitting finalize-publish
-        s1_specs = [f["literal_pathspec"] for f in prep1_doc["commit_request"]["files"]]
-        subprocess.run(["git", "-C", str(froot), "add", "--", *s1_specs], check=True)
-        subprocess.run(["git", "-C", str(froot), "commit", "-qm", "ext s1", "--", *s1_specs], check=True)
-        head_s1, idx_s1 = _git_head_and_index_sha(froot)
+        # C1.3: Interrupted adapter (signal / unknown_external_commit_outcome) before commit and after commit reconciles cleanly
+        sig_env = {
+            **env_no_adapter,
+            "NIZAM_MUTATION_ADAPTER": f"{sys.executable} -c 'import os, signal; os.kill(os.getpid(), signal.SIGTERM)'",
+        }
+        res_sig = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=sig_env, text=True, capture_output=True, check=False,
+        )
+        expect(res_sig, 1, "status=unknown_external_commit_outcome")
+        assert json.loads(req_b1_path.read_text(encoding="utf-8"))["status"] == "unknown_external_commit_outcome"
+        assert _git_head_and_index_sha(froot) == (head_with_staged, idx_with_staged)
 
+        # Re-running prepare reconciles from unknown_external_commit_outcome when HEAD is still at intended_base
+        res_reconcile_prep = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_reconcile_prep, 0, '"reconciled_from_status": "unknown_external_commit_outcome"')
+
+        # Adapter commits Stage 1 and then exits non-zero before acknowledging -> records unknown_external_commit_outcome
+        fail_after_s1_env = {**adapter_env, "NIZAM_TEST_FAIL_AFTER_S1": "1"}
+        res_fail_after_s1 = subprocess.run(
+            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, env=fail_after_s1_env, text=True, capture_output=True, check=False,
+        )
+        expect(res_fail_after_s1, 1, "after HEAD advanced (status=unknown_external_commit_outcome)")
+        head_s1, idx_s1 = _git_head_and_index_sha(froot)
+        assert head_s1 != head_with_staged
+        assert json.loads(req_b1_path.read_text(encoding="utf-8"))["status"] == "unknown_external_commit_outcome"
+
+        # C1.4: Base/branch/delta binding negative probes on Stage 1 before Stage 2 preparation
+        orig_req_b1 = json.loads(req_b1_path.read_text(encoding="utf-8"))
+        # Wrong intended_base in publish-request is rejected
+        bad_base_req = dict(orig_req_b1, intended_base="0" * 40)
+        req_b1_path.write_text(json.dumps(bad_base_req), encoding="utf-8")
+        res_bad_base = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_bad_base, 1, "does not match publish-request intended_base")
+        # Wrong intended_branch in publish-request is rejected
+        bad_branch_req = dict(orig_req_b1, intended_branch="nonexistent-branch-name", detached_head=False)
+        req_b1_path.write_text(json.dumps(bad_branch_req), encoding="utf-8")
+        res_bad_branch = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_bad_branch, 1, "does not match publish-request intended_branch")
+        # Unauthorized file delta mismatch in publish-request is rejected
+        bad_delta_req = dict(orig_req_b1, files=orig_req_b1["files"][:1])
+        req_b1_path.write_text(json.dumps(bad_delta_req), encoding="utf-8")
+        res_bad_delta = subprocess.run(
+            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_bad_delta, 1, "delta mismatch against publish-request")
+        # Restore valid Stage 1 publish-request
+        req_b1_path.write_text(json.dumps(orig_req_b1), encoding="utf-8")
+
+        # Re-running prepare-publish reconciles the already-committed Stage 1 outputs and advances to Stage 2 receipt_capture_pending!
         res_prep2 = subprocess.run(
             [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
@@ -1070,6 +1358,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         expect(res_prep2, 0, '"stage": "receipt_capture_pending"')
         assert _git_head_and_index_sha(froot) == (head_s1, idx_s1)
         prep2_doc = json.loads(res_prep2.stdout)
+        assert prep2_doc["output_revision"] == head_s1
 
         # Finalize before Stage 2 is committed fails closed without mutating Git
         res_fin_early = subprocess.run(
@@ -1080,8 +1369,12 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         assert _git_head_and_index_sha(froot) == (head_s1, idx_s1)
 
         s2_specs = [f["literal_pathspec"] for f in prep2_doc["commit_request"]["files"]]
-        subprocess.run(["git", "-C", str(froot), "add", "--", *s2_specs], check=True)
-        subprocess.run(["git", "-C", str(froot), "commit", "-qm", "ext s2", "--", *s2_specs], check=True)
+        with tempfile.TemporaryDirectory(prefix="nizam-ext-s2-") as td2:
+            t_env2 = {**os.environ, "GIT_INDEX_FILE": str(Path(td2) / "index")}
+            subprocess.run(["git", "-C", str(froot), "read-tree", head_s1], env=t_env2, check=True)
+            subprocess.run(["git", "-C", str(froot), "add", "--", *s2_specs], env=t_env2, check=True)
+            subprocess.run(["git", "-C", str(froot), "commit", "-qm", "ext s2", "--", *s2_specs], env=t_env2, check=True)
+            subprocess.run(["git", "-C", str(froot), "reset", "-q", "HEAD", "--", *s2_specs], check=True)
         head_s2, idx_s2 = _git_head_and_index_sha(froot)
 
         res_fin = subprocess.run(
@@ -1115,12 +1408,12 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Stop after Stage 1 outputs (simulating interruption between Stage 1 and Stage 2)
         res_stop_s1 = subprocess.run(
             [
-                sys.executable, str(TOOL), "publish",
+                sys.executable, str(TOOL), "publish", "--mode", "publish",
                 "--capture", batch_caps[0], "--capture", batch_caps[1],
                 "--stop-after-stage", "outputs",
                 "--root", str(froot),
             ],
-            cwd=ROOT, text=True, capture_output=True, check=False,
+            cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
         expect(res_stop_s1, 0, '"status": "stopped_after_outputs"')
         head_after_batch_s1, _ = _git_head_and_index_sha(froot)
@@ -1128,11 +1421,11 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Resume publication across both captures: recovers from Stage 1 and commits Stage 2 in 1 commit without re-executing commands!
         res_batch_resume = subprocess.run(
             [
-                sys.executable, str(TOOL), "publish",
+                sys.executable, str(TOOL), "publish", "--mode", "publish",
                 "--capture", batch_caps[0], "--capture", batch_caps[1],
                 "--root", str(froot),
             ],
-            cwd=ROOT, text=True, capture_output=True, check=False,
+            cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
         expect(res_batch_resume, 0, '"published"')
         batch_pub_doc = json.loads(res_batch_resume.stdout)
@@ -1144,7 +1437,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # Verify unrelated staged and unstaged files were preserved untouched throughout!
         staged_now = subprocess.run(
-            ["git", "-C", str(froot), "diff", "--cached", "--name-only"],
+            ["git", "--no-optional-locks", "-C", str(froot), "diff", "--cached", "--name-only"],
             capture_output=True, text=True, check=True,
         ).stdout.strip().splitlines()
         assert staged_now == ["proof/unrelated-staged.txt"], f"expected unrelated staged file preserved, got {staged_now}"

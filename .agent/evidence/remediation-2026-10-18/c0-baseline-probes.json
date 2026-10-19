@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "evaluated_at": "2026-10-19T05:46:30Z",
+  "evaluated_commit": "3efa3e02df56781960dfa8d0ecf143360c617ff8",
+  "audited_release_tag": "v1.9.0",
+  "audited_release_commit": "0c9b1c5979a922c75499e0bfe4d9dbf9524f717d",
+  "audited_tag_object": "7e721b6e0fb2a0a3014efda388e1097378e3da87",
+  "purpose": "One-shot baseline reproduction of F1, F2, and F3 against audited v1.9.0 / compared main 3efa3e02df56781960dfa8d0ecf143360c617ff8 before C1-C3 implementation.",
+  "cases": {
+    "F1_default_no_adapter_commits_locally": {
+      "command": "python3 tools/start_path.py publish --root <disposable_repo> --capture <capture_path>",
+      "exit_code": 0,
+      "mutated_head": true,
+      "observation": "CLI defaults to mode=publish and falls through to local git add/commit when NIZAM_MUTATION_ADAPTER is unset."
+    },
+    "F1_empty_adapter_falls_through": {
+      "command": "NIZAM_MUTATION_ADAPTER='python3 -c \"import sys; sys.stdin.read()\"' python3 tools/start_path.py publish --root <disposable_repo> --capture <capture_path>",
+      "exit_code": 0,
+      "mutated_head": true,
+      "observation": "Adapter exiting 0 with empty stdout falls through to local git add/commit."
+    },
+    "F1_empty_json_adapter_falls_through": {
+      "command": "NIZAM_MUTATION_ADAPTER='python3 -c \"import sys; sys.stdin.read(); print(\\\"{}\\\")\"' python3 tools/start_path.py publish --root <disposable_repo> --capture <capture_path>",
+      "exit_code": 0,
+      "mutated_head": true,
+      "observation": "Adapter exiting 0 with {} falls through to local git add/commit."
+    },
+    "F1_finalize_mtime_mutates_git_index": {
+      "command": "python3 tools/start_path.py finalize-publish --root <disposable_repo> --capture <already_published_capture_with_bumped_mtime>",
+      "exit_code": 0,
+      "index_sha_before": "e28cb85255cdc2f97d19969d74dbedbac95d4af4b0a1b41ba042510c9fe12c7e",
+      "index_sha_after": "3af2d1bb91f896d32b2e5f755918c5318e82296e22f8ab707e1cb975e0ba81e8",
+      "index_mutated": true,
+      "observation": "Read-only git status inside _verify_git_status_and_no_staged_conflicts refreshes .git/index stat cache when mtime changes without GIT_OPTIONAL_LOCKS=0 / --no-optional-locks."
+    },
+    "F2_untrusted_target_checker_fallback": {
+      "command": "bash <standalone>/bootstrap.sh --verify-only --target <tampered_payload> --tag v1.9.0 --expected-sha 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d --require-content-integrity",
+      "exit_code": 0,
+      "stdout": "bootstrap.sh: verify-only: PASS (content_integrity=verified) -- '<tampered_payload>' matches pinned tag 'v1.9.0' (STUB OK).",
+      "observation": "Standalone bootstrap falls back to executing <target>/tools/payload_integrity.py inside the untrusted payload being verified."
+    },
+    "F2_unbound_directory_reference": {
+      "command": "bash bootstrap.sh --verify-only --target <modified_payload> --tag v1.9.0 --expected-sha 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d --source-root <equally_modified_dir> --require-content-integrity",
+      "exit_code": 0,
+      "stdout": "bootstrap.sh: verify-only: PASS (content_integrity=verified) -- '<modified_payload>' matches pinned tag 'v1.9.0' (PAYLOAD-INTEGRITY PASS: 278 released files + genuine provenance; v1.9.0 at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d (source_root:<equally_modified_dir>)).",
+      "observation": "Unbound --source-root directory comparison reports content_integrity=verified citing the release commit SHA even when both directories have identical modifications differing from the release commit."
+    },
+    "F2_required_check_downgrade_on_exit2": {
+      "command": "bash bootstrap.sh --verify-only --target <payload> --tag v1.9.0 --expected-sha 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d --source-root=--audit-invalid-reference --require-content-integrity",
+      "exit_code": 0,
+      "stdout": "bootstrap.sh: verify-only: PASS (structural_only; content_integrity=not_checked) ... payload_integrity.py: error: argument --source-root: expected one argument",
+      "observation": "Helper argparse exit code 2 is unconditionally downgraded by bootstrap.sh into structural_only PASS even when --expected-sha and --require-content-integrity are set."
+    },
+    "F3_classify_and_capture_attempt4": {
+      "classify_command": "python3 tools/start_path.py classify --files README.md --editorial",
+      "classify_stopping_conditions_max_attempts": 3,
+      "capture_command": "python3 tools/start_path.py capture --root <disposable_repo> --id t1 --step s1 --attempt 4 --output-dir .agent/evidence/t1 -- python3 -c \"print('ok')\"",
+      "capture_exit_code": 2,
+      "capture_stderr": "attempt must be an integer between 1 and 3 (circuit breaker cap)",
+      "observation": "classify unconditionally reports max_attempts=3 and capture unconditionally rejects attempt > 3 with no mechanism for policy-permitted bounded continuation."
+    }
+  }
+}

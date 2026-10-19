@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "packet": "C4",
+  "candidate_commit": "29ab5689652866cbb51c2f16b2911874ec591c19",
+  "compared_main": "3efa3e02df56781960dfa8d0ecf143360c617ff8",
+  "audited_release": "v1.9.0 (0c9b1c5979a922c75499e0bfe4d9dbf9524f717d)",
+  "author": {
+    "role": "Generator",
+    "profile": "generator-deterministic"
+  },
+  "evaluator": {
+    "role": "Evaluator",
+    "profile": "evaluator-adversarial",
+    "subagent_conversation_id": "a0777e6d-6905-46c4-be69-30965eea63eb",
+    "independent_of_author": true
+  },
+  "verdict": "APPROVE",
+  "blocking_findings": [],
+  "advisory_notes": [
+    "In tools/start_path.py capture, work-specific continuation and failure metadata are surfaced via --continuation-basis (bounded-amendment|verified-decomposition|configured-step-limit|operator-reset), --repair-summary, --decomposition-of, --defect-signature, and --invariant-breach (plus circuit_breaker[<step_key>].limit / invariant_breach / authority_denied in .agent/run_state.json and amendments in .agent/contracts/<id>.json), which cleanly and deterministically satisfy all C3 continuation and halt requirements.",
+    "Repository state in /home/cnross/workspace02/nizam-framework remained untouched throughout independent evaluation: HEAD=29ab5689652866cbb51c2f16b2911874ec591c19, .git/index SHA-256=d588463da9e3de7256002a3bc1937e8ec6b3b9ab87d1f381421e2e1b05d02ad3, and working tree clean."
+  ],
+  "c4_matrix": [
+    {
+      "row": "Row 1 (C1 mediation)",
+      "status": "PASS",
+      "commands_executed": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py publish --capture <capture_path> --root <disposable_repo>",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py publish --mode publish --capture <capture_path> --root <disposable_repo> (with NIZAM_MUTATION_ADAPTER unset, empty stdout, {}, boolean, array, malformed JSON, status=pending, status=denied, status=failed)",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py build-receipt --commit --policy <policy> --published <published> --output <out> --root <disposable_repo> (with NIZAM_MUTATION_ADAPTER unset, empty stdout, {}, boolean, malformed JSON, status=pending, status=denied, status=failed)"
+      ],
+      "observed_exits": {
+        "default_publish_prepare": 0,
+        "publish_mode_publish_unset_adapter": 1,
+        "publish_mode_publish_empty_stdout": 1,
+        "publish_mode_publish_empty_json": 1,
+        "publish_mode_publish_boolean_json": 1,
+        "publish_mode_publish_array_json": 1,
+        "publish_mode_publish_malformed_json": 1,
+        "publish_mode_publish_pending": 1,
+        "publish_mode_publish_denied": 1,
+        "publish_mode_publish_failed": 1,
+        "build_receipt_commit_all_incomplete_or_denied_adapters": 1
+      },
+      "evidence_summary": "Verified that publish defaults to --mode prepare (emitting stage=outputs_pending, status=pending_external_commit without mutating HEAD, refs, or .git/index), and that publish --mode publish and build-receipt --commit have no implicit local git add/commit fallback in _git_commit_literal_paths. All 9 incomplete/invalid/denied adapter cases failed closed (exit 1) with HEAD, refs, and .git/index SHA-256 unchanged."
+    },
+    {
+      "row": "Row 2 (C1 binding/recovery)",
+      "status": "PASS",
+      "commands_executed": [
+        "ADAPTER_FAIL_STAGE=outputs_pending NIZAM_MUTATION_ADAPTER=<adapter> python3 tools/start_path.py publish --mode publish --capture <capture_path> --root <disposable_repo>",
+        "python3 tools/start_path.py publish --mode prepare --capture <capture_path> --root <disposable_repo> (with tampered intended_base and tampered file delta in publish-request.json)",
+        "ADAPTER_FAIL_STAGE=receipt_capture_pending NIZAM_MUTATION_ADAPTER=<adapter> python3 tools/start_path.py publish --mode publish --capture <capture_path> --root <disposable_repo>",
+        "python3 tools/start_path.py publish --mode prepare --capture <capture_path> --root <disposable_repo>",
+        "python3 tools/start_path.py publish --mode finalize --capture <capture_path> --root <disposable_repo>"
+      ],
+      "observed_exits": {
+        "stage1_commit_then_nonzero_adapter": 1,
+        "tampered_intended_base_prepare": 1,
+        "tampered_delta_prepare": 1,
+        "stage2_reconcile_s1_commit_s2_then_nonzero_adapter": 1,
+        "post_s2_prepare_reconcile": 0,
+        "post_s2_finalize_reconcile": 0
+      },
+      "evidence_summary": "Verified that external adapter commits succeed when parented on intended_base with the exact stage file delta; wrong intended_base, wrong intended_branch, and extra/missing file deltas in _verify_request_commit_binding are rejected (exit 1). When Stage 1 or Stage 2 commits in Git before the adapter exits non-zero, publish records status=unknown_external_commit_outcome and subsequent prepare/publish/finalize reconciles and recovers the completed stage without creating a duplicate commit or re-executing the captured command (execution counter remained 1), while preserving unrelated staged and unstaged files intact."
+    },
+    {
+      "row": "Row 3 (C1 observations)",
+      "status": "PASS",
+      "commands_executed": [
+        "os.utime(<captured_stdout_and_receipt_capture>, (1900000000, 1900000000)) followed by python3 tools/start_path.py publish --mode prepare|finalize --capture <capture_path> --root <disposable_repo>",
+        "python3 tools/start_path.py build-receipt --policy <policy> --published <published> --output <out> --root <disposable_repo> after os.utime",
+        "python3 tools/start_path.py publish --mode prepare --capture <capture_with_tampered_stdout_bytes> --root <disposable_repo>"
+      ],
+      "observed_exits": {
+        "prepare_after_utime": 0,
+        "finalize_after_utime": 0,
+        "readonly_build_receipt_after_utime": 0,
+        "prepare_with_tampered_capture_bytes": 1,
+        "failed_git_observation_probe": 1
+      },
+      "evidence_summary": "Verified that all read-side Git queries run via _run_git_readonly with GIT_OPTIONAL_LOCKS=0 and git --no-optional-locks. After touching mtime on captured stdout and receipt-capture files via os.utime, prepare, finalize, and read-only build-receipt preserved HEAD, refs, and .git/index SHA-256 byte-for-byte (closing the C0 F1_finalize_mtime_mutates_git_index reproduction). Tampered capture bytes and simulated git diff --cached failures failed closed (exit 1) without mutating Git state."
+    },
+    {
+      "row": "Row 4 (C2 trust)",
+      "status": "PASS",
+      "commands_executed": [
+        "./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/ --require-content-integrity (with .nizam/tools/payload_integrity.py replaced by exit-0 stub)",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --source-root <equally_modified_unpacked_dir>",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --source-root <equally_modified_unpacked_dir> --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --require-content-integrity",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/ (against content drift, chmod 0755 mode drift, and extra file inventory drift)"
+      ],
+      "observed_exits": {
+        "tampered_target_payload_integrity_stub": 1,
+        "unbound_source_root_only": 0,
+        "unbound_source_root_with_expected_sha": 1,
+        "unbound_source_root_with_require_content_integrity": 1,
+        "git_repo_content_drift": 1,
+        "git_repo_mode_drift": 1,
+        "git_repo_inventory_drift": 1
+      },
+      "evidence_summary": "Verified in disposable standalone copies that (a) bootstrap.sh --verify-only never executes ${TARGET_DIR}/tools/payload_integrity.py (instead loading ${EXPECTED_SHA}:tools/payload_integrity.py from --git-repo) and rejects the tampered target with 'content drift: tools/payload_integrity.py'; (b) identical modifications in both target and --source-root report PASS (directory_match_unbound; content_integrity=directory_match_unbound) when invoked without commit-binding flags and fail closed (exit 1) when --expected-sha or --require-content-integrity is requested; and (c) --git-repo + --expected-sha rejects content, executable-mode, and file-inventory drift."
+    },
+    {
+      "row": "Row 5 (C2 result handling)",
+      "status": "PASS",
+      "commands_executed": [
+        "./bootstrap.sh --verify-only --tag v1.10.0 --source-root=--audit-invalid-reference --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --require-content-integrity",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --git-repo /nonexistent/repo --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --require-content-integrity",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --require-content-integrity",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --structural-only",
+        "./bootstrap.sh --verify-only --tag v1.10.0"
+      ],
+      "observed_exits": {
+        "invalid_source_root_flag_with_require_integrity": 1,
+        "nonexistent_git_repo_with_require_integrity": 1,
+        "require_integrity_without_reference": 1,
+        "expected_sha_without_git_repo": 1,
+        "structural_only_flag": 0,
+        "verify_only_no_reference": 0
+      },
+      "evidence_summary": "Verified that bootstrap.sh never downgrades non-zero helper exits (and _PayloadArgumentParser exits 1 on argument errors) or missing reference material to structural_only PASS when --require-content-integrity or --expected-sha is set. Optional structural verification (--structural-only or without reference flags) exits 0 and honestly labels output 'PASS (structural_only; content_integrity=not_checked)'."
+    },
+    {
+      "row": "Row 6 (C2 ordinary consumer)",
+      "status": "PASS",
+      "commands_executed": [
+        "./bootstrap.sh --repo-url file://<disposable_clone> --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/ --require-content-integrity",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --git-repo .nizam-ref/ --require-content-integrity (omitting --expected-sha)",
+        "./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/ --require-content-integrity (with provenance.json resolved_sha tampered)"
+      ],
+      "observed_exits": {
+        "standalone_install_retaining_git_repo": 0,
+        "standalone_verify_only_strict": 0,
+        "standalone_verify_only_missing_expected_sha": 1,
+        "standalone_verify_only_tampered_provenance_sha": 1
+      },
+      "evidence_summary": "Verified from a standalone consumer directory outside the author checkout (containing only bootstrap.sh) that installing with --git-repo .nizam-ref/ --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 retains the verified shallow tag clone at .nizam-ref/ and that subsequent ./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 29ab5689652866cbb51c2f16b2911874ec591c19 --git-repo .nizam-ref/ --require-content-integrity exits 0 with 'PASS (content_integrity=verified)' (278 released files + genuine provenance) without ambient author files, refuses to read expected_sha from mutable provenance.json when --expected-sha is omitted, and catches tampered resolved_sha in provenance.json."
+    },
+    {
+      "row": "Row 7 (C3 continuation)",
+      "status": "PASS",
+      "commands_executed": [
+        "python3 .nizam/tools/start_path.py classify --files README.md --editorial",
+        "python3 .nizam/tools/start_path.py capture --id t1 --step s1 --attempt 4 --output-dir .agent/evidence/t1 --root <consumer_dir> -- python3 -c \"print('no-basis')\"",
+        "python3 .nizam/tools/start_path.py capture --id t1 --step s1 --attempt 4 --continuation-basis bounded-amendment --repair-summary 'New diagnostic hypothesis and refined scope' --output-dir .agent/evidence/t1 --root <consumer_dir> -- python3 -c \"print('att4-amend-ok')\"",
+        "python3 .nizam/tools/start_path.py capture --id t1 --step s1-sub --attempt 4 --continuation-basis verified-decomposition --decomposition-of s1 --repair-summary 'Split s1 into s1-sub' --output-dir .agent/evidence/t1 --root <consumer_dir> -- python3 -c \"print('att4-decomp-ok')\"",
+        "python3 .nizam/tools/start_path.py capture --id t-rep --step s1 --attempt 2 --defect-signature ERR_SAME_SIG --output-dir .agent/evidence/t-rep --root <consumer_dir> -- python3 -c \"print('should-halt')\"",
+        "python3 .nizam/tools/start_path.py capture --id t-inv --step s1 --attempt 2 --invariant-breach --output-dir .agent/evidence/t-inv --root <consumer_dir> -- python3 -c \"print('should-halt')\"",
+        "python3 .nizam/tools/start_path.py capture --id t-lim --step s1 --attempt 4 --continuation-basis configured-step-limit --output-dir .agent/evidence/t-lim --root <consumer_dir> -- python3 -c \"print('should-halt')\" (with circuit_breaker limit=3 in .agent/run_state.json)",
+        "grep -inE '3-strike|three-strike|three strike|3 strike' methodology/00_planning.md methodology/01_execution.md schema/run_state.schema.json"
+      ],
+      "observed_exits": {
+        "classify_stopping_conditions": 0,
+        "capture_attempt4_no_basis": 2,
+        "capture_attempt4_bounded_amendment": 0,
+        "capture_attempt4_verified_decomposition": 0,
+        "capture_repeated_defect_signature": 2,
+        "capture_invariant_breach": 2,
+        "capture_exhausted_step_limit_3": 2
+      },
+      "evidence_summary": "Verified through the installed .nizam/tools/start_path.py that classify outputs initial_strategy_ladder_attempts=3 and hard_attempt_cap=null; capture permits attempt 4 when invariants hold and a bounded amendment/repair summary or verified decomposition is supplied (recording full continuation_lineage and prior_attempts); capture halts with exit 2 on repeated identical defect signatures without new progress, invariant/authority breaches, exhausted configured step limits (including limit=3), or attempt 4 without a continuation basis; and methodology/00_planning.md, methodology/01_execution.md, and schema/run_state.schema.json contain zero active universal 3-strike claims."
+    },
+    {
+      "row": "Row 8 (Integrated entry)",
+      "status": "PASS",
+      "commands_executed": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+        "PYTHONDONTWRITEBYTECODE=1 bash tools/e2e_bootstrap_test.sh",
+        "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+        "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_self_governance.py",
+        "git rev-parse HEAD && sha256sum .git/index && git status --porcelain"
+      ],
+      "observed_exits": {
+        "test_start_path_py": 0,
+        "test_public_entry_py": 0,
+        "e2e_bootstrap_test_sh": 0,
+        "validate_sh": 0,
+        "test_self_governance_py": 0,
+        "git_state_check": 0
+      },
+      "evidence_summary": "All integrated entry suites passed (test_start_path.py exit 0; test_public_entry.py exit 0; e2e_bootstrap_test_sh exit 0; validate.sh 16/16 checks passed, 0 failed; test_self_governance_py 10/10 drift negatives passed). Confirmed /home/cnross/workspace02/nizam-framework HEAD remained 29ab5689652866cbb51c2f16b2911874ec591c19, .git/index SHA-256 remained d588463da9e3de7256002a3bc1937e8ec6b3b9ab87d1f381421e2e1b05d02ad3, and git status --porcelain is empty."
+    }
+  ]
+}

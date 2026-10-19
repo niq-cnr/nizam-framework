@@ -84,8 +84,28 @@ def _copy_authored_payload(dest: Path, tag: str | None = None, sha: str = "606d1
     return resolved_tag
 
 
+def _create_ref_git_repo(ref_repo: Path, tag: str) -> str:
+    ref_repo.mkdir(parents=True, exist_ok=True)
+    for mod in ("standard", "templates", "schema", "tools", "methodology", "ecosystem"):
+        shutil.copytree(ROOT / mod, ref_repo / mod)
+    shutil.copy2(ROOT / "NIZAM.json", ref_repo / "NIZAM.json")
+    subprocess.run(["git", "-C", str(ref_repo), "init", "-q"], check=True)
+    subprocess.run(["git", "-C", str(ref_repo), "config", "user.email", "test@nizam.local"], check=True)
+    subprocess.run(["git", "-C", str(ref_repo), "config", "user.name", "Test Bot"], check=True)
+    subprocess.run(["git", "-C", str(ref_repo), "add", "."], check=True)
+    subprocess.run(["git", "-C", str(ref_repo), "commit", "-qm", "authored payload snapshot"], check=True)
+    subprocess.run(["git", "-C", str(ref_repo), "tag", "-a", tag, "-m", "release tag", "HEAD"], check=True)
+    res = subprocess.run(
+        ["git", "-C", str(ref_repo), "rev-parse", f"refs/tags/{tag}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return res.stdout.strip()
+
+
 def verify_b3_and_b4() -> None:
-    # V5: Skill version parity and active stopping-policy / provenance coherence
+    # V5 & C3: Skill version parity and active stopping-policy / provenance coherence
     skill_md_text = SKILL_MD.read_text(encoding="utf-8")
     skill_json_data = json.loads(SKILL_JSON.read_text(encoding="utf-8"))
     skill_md_ver = frontmatter_field(skill_md_text, "version")
@@ -105,6 +125,15 @@ def verify_b3_and_b4() -> None:
     forbid(ab_body, "rather than making a forbidden fourth autonomous attempt", "standard/acceptance_bars.md body")
     require(ab_body, "same unresolved\n  gap without a viable bounded decomposition")
 
+    planning_body = body_after_frontmatter((ROOT / "methodology" / "00_planning.md").read_text(encoding="utf-8"))
+    forbid(planning_body, "if 3 attempts fail, it halts and escalates", "methodology/00_planning.md body")
+
+    exec_body = body_after_frontmatter((ROOT / "methodology" / "01_execution.md").read_text(encoding="utf-8"))
+    forbid(exec_body, "A fourth attempt on the same contract is forbidden", "methodology/01_execution.md body")
+
+    run_state_schema_text = (ROOT / "schema" / "run_state.schema.json").read_text(encoding="utf-8")
+    forbid(run_state_schema_text, "3-strike attempt counters per feature/gate", "schema/run_state.schema.json")
+
     skill_body = body_after_frontmatter(skill_md_text)
     forbid(skill_body, "pending\nphase016; source routing does not upgrade the installed v1.5.0 payload", "tools/SKILL.md body")
     require(skill_body, ".nizam/provenance.json")
@@ -123,39 +152,86 @@ def verify_b3_and_b4() -> None:
     require(readme_text, "never the repository's own `.nizam/`")
     require(self_gov_body, "never the tagged tree's `.nizam/`")
 
-    # V3 & V4: Exercise payload_integrity.py, bootstrap.sh --verify-only, and validate.sh --payload
+    # V3, V4 & C2: Exercise payload_integrity.py, bootstrap.sh --verify-only, and validate.sh --payload
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     with tempfile.TemporaryDirectory(prefix="nizam-b3b4-test-") as tmp:
         tmp_path = Path(tmp)
+        fw_ver = json.loads(NIZAM_INDEX.read_text(encoding="utf-8"))["framework"]["version"]
+        test_tag = f"v{fw_ver}"
+        ref_repo = tmp_path / "ref-repo"
+        ref_sha = _create_ref_git_repo(ref_repo, test_tag)
         payload = tmp_path / ".nizam"
-        test_tag = _copy_authored_payload(payload)
+        _copy_authored_payload(payload, tag=test_tag, sha=ref_sha)
 
-        # 1. Clean payload passes payload_integrity.py against source root
-        r_clean = subprocess.run(
+        # 1. Clean payload against unbound --source-root reports directory_match_unbound (never verified)
+        r_clean_src = subprocess.run(
             [sys.executable, str(PAYLOAD_INTEGRITY_PY), "--payload-dir", str(payload), "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
         )
-        if r_clean.returncode != 0:
-            raise SystemExit(f"clean payload_integrity.py failed:\n{r_clean.stdout}{r_clean.stderr}")
+        if (
+            r_clean_src.returncode != 0
+            or "content_integrity=directory_match_unbound" not in r_clean_src.stdout
+            or "content_integrity=verified" in r_clean_src.stdout
+        ):
+            raise SystemExit(f"unbound --source-root payload_integrity.py failed:\n{r_clean_src.stdout}{r_clean_src.stderr}")
 
-        # 2. Clean payload passes bootstrap.sh --verify-only --source-root
-        r_vo_clean = subprocess.run(
+        r_vo_src = subprocess.run(
             ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
             env=env,
             text=True,
             capture_output=True,
         )
+        if (
+            r_vo_src.returncode != 0
+            or "content_integrity=directory_match_unbound" not in r_vo_src.stdout
+            or "content_integrity=verified" in r_vo_src.stdout
+        ):
+            raise SystemExit(f"unbound --source-root bootstrap.sh --verify-only failed:\n{r_vo_src.stdout}{r_vo_src.stderr}")
+
+        # 2. Clean payload with --git-repo + --expected-sha + --require-content-integrity passes with content_integrity=verified
+        r_vo_clean = subprocess.run(
+            [
+                "bash",
+                str(BOOTSTRAP_SH),
+                "--verify-only",
+                "--target",
+                str(payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
+            env=env,
+            text=True,
+            capture_output=True,
+        )
         if r_vo_clean.returncode != 0 or "content_integrity=verified" not in r_vo_clean.stdout:
-            raise SystemExit(f"clean bootstrap.sh --verify-only failed:\n{r_vo_clean.stdout}{r_vo_clean.stderr}")
+            raise SystemExit(f"clean commit-bound bootstrap.sh --verify-only failed:\n{r_vo_clean.stdout}{r_vo_clean.stderr}")
 
         # 3. Appended harmless comment to tools/start_path.py fails --verify-only (V3 case 2)
         sp_file = payload / "tools" / "start_path.py"
         orig_sp_bytes = sp_file.read_bytes()
         sp_file.write_bytes(orig_sp_bytes + b"\n# harmless comment appended\n")
         r_vo_comment = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
+            [
+                "bash",
+                str(BOOTSTRAP_SH),
+                "--verify-only",
+                "--target",
+                str(payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
             env=env,
             text=True,
             capture_output=True,
@@ -168,7 +244,20 @@ def verify_b3_and_b4() -> None:
         extra_file = payload / "tools" / "unexpected_extra.txt"
         extra_file.write_text("unexpected\n", encoding="utf-8")
         r_vo_extra = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
+            [
+                "bash",
+                str(BOOTSTRAP_SH),
+                "--verify-only",
+                "--target",
+                str(payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
             env=env,
             text=True,
             capture_output=True,
@@ -181,7 +270,20 @@ def verify_b3_and_b4() -> None:
         orig_mode = sp_file.stat().st_mode
         sp_file.chmod(orig_mode ^ stat.S_IXUSR)
         r_vo_mode = subprocess.run(
-            ["bash", str(BOOTSTRAP_SH), "--verify-only", "--target", str(payload), "--tag", test_tag, "--source-root", str(ROOT)],
+            [
+                "bash",
+                str(BOOTSTRAP_SH),
+                "--verify-only",
+                "--target",
+                str(payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
             env=env,
             text=True,
             capture_output=True,
@@ -190,7 +292,158 @@ def verify_b3_and_b4() -> None:
             raise SystemExit("bootstrap.sh --verify-only unexpectedly passed with executable mode drift")
         sp_file.chmod(orig_mode)
 
-        # 6. Structural-only mode discloses content_integrity=not_checked and rejects --expected-sha without reference tree
+        # 6. C2 ordinary consumer & C2 tampered checker:
+        # Exercise standalone bootstrap.sh in an ordinary consumer directory with no sibling tools/ directory.
+        consumer_dir = tmp_path / "ordinary-consumer"
+        consumer_dir.mkdir(parents=True, exist_ok=True)
+        standalone_bootstrap = consumer_dir / "bootstrap.sh"
+        shutil.copy2(BOOTSTRAP_SH, standalone_bootstrap)
+        consumer_payload = consumer_dir / ".nizam"
+        shutil.copytree(payload, consumer_payload)
+
+        # Ordinary consumer strict verification succeeds with --git-repo and --expected-sha
+        r_ord_ok = subprocess.run(
+            [
+                "bash",
+                str(standalone_bootstrap),
+                "--verify-only",
+                "--target",
+                str(consumer_payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
+            cwd=str(consumer_dir),
+            env=env,
+            text=True,
+            capture_output=True,
+        )
+        if r_ord_ok.returncode != 0 or "content_integrity=verified" not in r_ord_ok.stdout:
+            raise SystemExit(
+                f"ordinary consumer strict verification failed:\n{r_ord_ok.stdout}{r_ord_ok.stderr}"
+            )
+
+        # Ordinary consumer required verification without --git-repo fails (no provenance/CWD shortcut)
+        r_ord_no_repo = subprocess.run(
+            [
+                "bash",
+                str(standalone_bootstrap),
+                "--verify-only",
+                "--target",
+                str(consumer_payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--require-content-integrity",
+            ],
+            cwd=str(consumer_dir),
+            env=env,
+            text=True,
+            capture_output=True,
+        )
+        if r_ord_no_repo.returncode == 0 or "content_integrity=verified" in r_ord_no_repo.stdout:
+            raise SystemExit("ordinary consumer verification without --git-repo unexpectedly passed")
+
+        # C2 tampered checker: replace installed payload_integrity.py with print-only exit-0 stub + extra file
+        installed_checker = consumer_payload / "tools" / "payload_integrity.py"
+        orig_checker_bytes = installed_checker.read_bytes()
+        installed_checker.write_text("#!/usr/bin/env python3\nimport sys\nprint('STUB PASS')\nsys.exit(0)\n", encoding="utf-8")
+        (consumer_payload / "tools" / "unexpected_stub_extra.txt").write_text("tampered\n", encoding="utf-8")
+        r_tampered = subprocess.run(
+            [
+                "bash",
+                str(standalone_bootstrap),
+                "--verify-only",
+                "--target",
+                str(consumer_payload),
+                "--tag",
+                test_tag,
+                "--expected-sha",
+                ref_sha,
+                "--git-repo",
+                str(ref_repo),
+                "--require-content-integrity",
+            ],
+            cwd=str(consumer_dir),
+            env=env,
+            text=True,
+            capture_output=True,
+        )
+        if r_tampered.returncode == 0 or "content_integrity=verified" in r_tampered.stdout or "STUB PASS" in r_tampered.stdout:
+            raise SystemExit(
+                f"C2 tampered checker unexpectedly passed or executed target stub:\n{r_tampered.stdout}{r_tampered.stderr}"
+            )
+        installed_checker.write_bytes(orig_checker_bytes)
+        (consumer_payload / "tools" / "unexpected_stub_extra.txt").unlink()
+
+        # C2 unbound directory: modify NDS.md identically in consumer_payload and unbound source_root copy;
+        # running with --expected-sha and --require-content-integrity must fail and never report content_integrity=verified
+        unbound_src = tmp_path / "unbound-src"
+        shutil.copytree(ref_repo, unbound_src, ignore=shutil.ignore_patterns(".git"))
+        nds_payload = consumer_payload / "standard" / "NDS.md"
+        nds_src = unbound_src / "standard" / "NDS.md"
+        orig_nds = nds_payload.read_bytes()
+        nds_payload.write_bytes(orig_nds + b"\n<!-- identical unbound modification -->\n")
+        nds_src.write_bytes(orig_nds + b"\n<!-- identical unbound modification -->\n")
+        r_unbound_req = subprocess.run(
+            [
+                "bash",
+                str(standalone_bootstrap),
+                "--verify-only",
+                "--target",
+                str(consumer_payload),
+                "--tag",
+                test_tag,
+                "--source-root",
+                str(unbound_src),
+                "--expected-sha",
+                ref_sha,
+                "--require-content-integrity",
+            ],
+            cwd=str(consumer_dir),
+            env=env,
+            text=True,
+            capture_output=True,
+        )
+        if r_unbound_req.returncode == 0 or "content_integrity=verified" in r_unbound_req.stdout:
+            raise SystemExit(
+                f"C2 unbound directory with --expected-sha and --require-content-integrity unexpectedly succeeded:\n"
+                f"{r_unbound_req.stdout}{r_unbound_req.stderr}"
+            )
+        nds_payload.write_bytes(orig_nds)
+
+        # C2 downgrade bug: --source-root=--audit-invalid-reference with --require-content-integrity and --expected-sha
+        r_downgrade = subprocess.run(
+            [
+                "bash",
+                str(standalone_bootstrap),
+                "--verify-only",
+                "--target",
+                str(consumer_payload),
+                "--tag",
+                test_tag,
+                "--source-root=--audit-invalid-reference",
+                "--expected-sha",
+                ref_sha,
+                "--require-content-integrity",
+            ],
+            cwd=str(consumer_dir),
+            env=env,
+            text=True,
+            capture_output=True,
+        )
+        if r_downgrade.returncode == 0 or "PASS" in r_downgrade.stdout:
+            raise SystemExit(
+                f"C2 downgrade bug (--source-root=--audit-invalid-reference) unexpectedly passed:\n"
+                f"{r_downgrade.stdout}{r_downgrade.stderr}"
+            )
+
+        # 7. Structural-only mode discloses content_integrity=not_checked and rejects --expected-sha
         r_vo_struct = subprocess.run(
             ["bash", str(BOOTSTRAP_SH), "--verify-only", "--structural-only", "--target", str(payload), "--tag", test_tag],
             env=env,
@@ -211,18 +464,18 @@ def verify_b3_and_b4() -> None:
                 "--tag",
                 test_tag,
                 "--expected-sha",
-                "606d11ee84deff0d3b7934cbfd715223d64ac79d",
+                ref_sha,
             ],
             env=env,
             text=True,
             capture_output=True,
         )
         if r_vo_struct_sha.returncode == 0:
-            raise SystemExit("verify-only --structural-only with --expected-sha unexpectedly passed without reference tree")
+            raise SystemExit("verify-only --structural-only with --expected-sha unexpectedly passed")
 
-        # 7. validate.sh --payload reports non-conflated summary (V4)
+        # 8. validate.sh --payload reports non-conflated summary (V4)
         r_val_payload = subprocess.run(
-            ["bash", str( payload / "tools" / "validate.sh"), "--payload"],
+            ["bash", str(payload / "tools" / "validate.sh"), "--payload"],
             env=env,
             text=True,
             capture_output=True,
@@ -235,7 +488,7 @@ def verify_b3_and_b4() -> None:
         if r_val_payload.returncode != 0 or expected_summary not in r_val_payload.stdout:
             raise SystemExit(f"validate.sh --payload summary mismatch:\n{r_val_payload.stdout}{r_val_payload.stderr}")
 
-        # 8. C13 rejects version mismatch between tools/skill.json and tools/SKILL.md (V5)
+        # 9. C13 rejects version mismatch between tools/skill.json and tools/SKILL.md (V5)
         sj_path = payload / "tools" / "skill.json"
         sj_data = json.loads(sj_path.read_text(encoding="utf-8"))
         sj_data["version"] = "0.0.99"
