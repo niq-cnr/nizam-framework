@@ -2,10 +2,13 @@
 id: nizam-ecosystem-clean-state-preflight
 title: "Clean-State Preflight Protocol"
 description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
-version: 0.1.4
+version: 0.1.5
 status: active
 authoritative_source: ecosystem/01_clean_state_preflight.md
 change_log:
+  - version: "0.1.5"
+    date: "2026-10-19"
+    summary: "Align Section 1's reference to methodology/03_circuit_breaker.md with the framework's work-specific diagnostic stopping and circuit-breaker policy, replacing the legacy '3-strike attempt limit' phrasing."
   - version: "0.1.4"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): qualify the artifact rule as applying to every finalized preflight run, preserving the existing pending-decision behavior that emits preflight.pending.json and withholds preflight.json."
@@ -40,7 +43,7 @@ ecosystem-specific blocking conditions; they do not redefine its verdict
 vocabulary, its blocking discipline, or its operator-exception rule. Those
 three mechanics are defined once, here, exactly as the framework's Universal
 Circuit Breaker (`methodology/03_circuit_breaker.md`) is the single source of
-truth for the 3-strike attempt limit.
+truth for the work-specific diagnostic stopping and circuit-breaker policy.
 
 ## 2. When to Run
 

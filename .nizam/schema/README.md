@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.20.1
+version: 0.20.2
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.20.2"
+    date: "2026-10-19"
+    summary: "Replace stale 'All thirteen live conformance cases remain phase016 work' with the delivered bounded runtime controller/SBCL session loop (features 126-129) and Phase 020 (features 130-132) full live SBCL qualification boundary, and include ecosystem/ in the frontmatter.schema.json governed-directory list."
   - version: "0.20.1"
     date: "2026-10-16"
     summary: "Add bug-fix cause, bug-fix scope, and small-change intent schemas consumed by tools/start_path.py."
@@ -92,7 +95,10 @@ Every schema in this module:
 Runtime session and operation schemas validate declared record shape and
 invariants only. C12 adds relational identity checks; a valid record does not
 prove live ownership, process generation, lease enforcement or source/heap
-identity. All thirteen live conformance cases remain phase016 work. Payload
+identity. Bounded runtime controller and SBCL session loop coverage ships in
+`tools/runtime_session.py` and `tools/sbcl_session_loop.lisp` (features
+126–129); full live SBCL adapter qualification across all thirteen live
+conformance cases remains gated on Phase 020 (features 130–132). Payload
 validation does not sweep a consumer's session records automatically.
 
 ## Schemas
@@ -101,7 +107,7 @@ validation does not sweep a consumer's session records automatically.
 |--------|---------|-----------|
 | `runtime_session.schema.json` | Closed session provenance: owner, generation, lease, replayable handoff and declared fresh acceptance isolation. | Explicit session records; C12 fixtures, not live conformance. |
 | `runtime_operation.schema.json` | Closed operation provenance: request/outcome identity, honest rejection, failed-load consistency, wait outcomes and development-only evidence; C12 compares owner/generation/lease. | Explicit operation records; C12 fixtures, not live enforcement. |
-| `frontmatter.schema.json` | Validates the YAML frontmatter block required at the top of every governance Markdown file (`standard/`, `methodology/`, `templates/`, `tools/`, and module `README.md` files). Enforces the 6 required keys: `id`, `title`, `description`, `version`, `status` (`draft`\|`active`\|`deprecated`), `authoritative_source`. | Frontmatter on any governed `.md` file. |
+| `frontmatter.schema.json` | Validates the YAML frontmatter block required at the top of every governance Markdown file (`standard/`, `methodology/`, `templates/`, `tools/`, `ecosystem/`, and module `README.md` files). Enforces the 6 required keys: `id`, `title`, `description`, `version`, `status` (`draft`\|`active`\|`deprecated`), `authoritative_source`. | Frontmatter on any governed `.md` file. |
 | `manifest.schema.json` | Validates the planning manifest that names the current phase and lists every phase a repository tracks. | `docs/planning/manifest.json` |
 | `phase.schema.json` | Validates a phase definition. Implements **DD-3, Evidence Externalisation** (see below). | Phase definition documents produced from `templates/phase_template.yaml`. |
 | `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. The **era-safe complete-feature lifecycle rule** (a `complete` feature with a contract on disk must also have a QA verdict, and any `evidence_files` it lists must resolve) is enforced in code by `tools/validate.sh` C16. | `.agent/feature_list.json` |

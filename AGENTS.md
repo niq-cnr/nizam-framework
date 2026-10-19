@@ -2,10 +2,13 @@
 id: nizam-self-governance-agents
 title: "Nizam Framework — Local Agent Instructions"
 description: "Route work on this repository through its installed immutable Nizam governance."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: AGENTS.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-19"
+    summary: "Record re-bootstrapping of .nizam/ to the immutable patch release v1.10.1 (2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd) after the full documentation and GitHub Pages refresh."
   - version: "0.4.0"
     date: "2026-10-19"
     summary: "Exit temporary corrective override mode upon re-bootstrapping .nizam/ to the corrective immutable release v1.10.0 (6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7) and route local agent sessions through the installed v1.10.0 governance."
