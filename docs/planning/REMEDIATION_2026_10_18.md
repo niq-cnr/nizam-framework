@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.13.1
+version: 0.14.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.14.0"
+    date: "2026-10-19"
+    summary: "Complete packet C4 independent acceptance (.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json) against immutable candidate 29ab5689652866cbb51c2f16b2911874ec591c19 across all 8 rows of the Section 8 acceptance matrix (C1 mediation/binding/recovery/observations, C2 trust/result-handling/ordinary-consumer, C3 continuation, and integrated entry) and proceed to C5 PR delivery, v1.10.0 release, and .nizam/ re-bootstrap."
   - version: "0.13.1"
     date: "2026-10-19"
     summary: "Complete packets C1, C2, and C3 implementation and local verification (closing F1-F3 across tools/start_path.py, tools/payload_integrity.py, bootstrap.sh, methodology/00_planning.md, methodology/01_execution.md, schema/run_state.schema.json, standard/GIP.md, standard/permission_classes.md, ecosystem/00_ecosystem_bootstrap.md, tools/interface.md, tools/SKILL.md, tools/skill.json, tools/README.md, and test suites) and prepare the v1.10.0 MINOR release anchors (NIZAM.json, CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md, docs/planning/ROADMAP.md, docs/planning/operator_gates.md) for C4 independent acceptance and C5 delivery."
@@ -235,10 +238,10 @@ One-shot baseline reproduction probes were executed once against unmodified `3ef
 
 1. **`C0` (Baseline refresh, backlog/Issue `#107` reconciliation, one-shot reproduction probes, and brief update — Complete)**:
    - Recorded in this brief (`v0.13.0`), `AGENTS.md` (`v0.3.1`), `.agent/run_state.json`, and [c0-baseline-probes.json](../../.agent/evidence/remediation-2026-10-18/c0-baseline-probes.json).
-2. **`C1` (`F1` — Publication default `prepare`, strict external mediation, base/delta binding, and index lock preservation)**, **`C2` (`F2` — Trusted consumer integrity verification & `--git-repo` binding)**, and **`C3` (`F3` — Executable stopping policy & residual doc/schema alignment)**:
-   - Implemented across the authored source modules and verified by `tools/test_start_path.py`, `tools/test_public_entry.py`, `.github/scripts/test_self_governance.py`, `tools/validate.sh`, and `tools/e2e_bootstrap_test.sh`.
-3. **`C4` (Independent Acceptance against the Integrated Candidate)**:
-   - Non-authoring Reviewer/Evaluator inspects the integrated candidate commit and executes the bounded `C4` discrimination matrix across `C1`–`C3` and preserved `B0`–`B6` controls.
+2. **`C1` (`F1` — Publication default `prepare`, strict external mediation, base/delta binding, and index lock preservation)**, **`C2` (`F2` — Trusted consumer integrity verification & `--git-repo` binding)**, and **`C3` (`F3` — Executable stopping policy & residual doc/schema alignment) — Complete (`29ab5689652866cbb51c2f16b2911874ec591c19`)**:
+   - Implemented across the authored source modules and verified by `tools/test_start_path.py`, `tools/test_public_entry.py`, `.github/scripts/test_self_governance.py`, `tools/validate.sh`, `tools/fixtures_self_test.sh`, and `tools/e2e_bootstrap_test.sh`.
+3. **`C4` (Independent Acceptance against the Integrated Candidate — Complete)**:
+   - Independently accepted (`APPROVE`, `0` blocking findings, `8/8` matrix rows `PASS`) by non-authoring Evaluator (`evaluator-adversarial`, subagent `a0777e6d-6905-46c4-be69-30965eea63eb`) against immutable candidate `29ab5689652866cbb51c2f16b2911874ec591c19`, recorded in [c4-independent-acceptance.json](../../.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json).
 4. **`C5` (Release, Post-Release `.nizam/` Self-Adoption, and Override Exit)**:
    - Merge the accepted candidate via PR (`compliance.yml` green), publish the new immutable release tag (`v1.10.0`), re-bootstrap `.nizam/` to `v1.10.0`, verify self-governance and standalone strict consumer verification (`--verify-only --git-repo ... --expected-sha ... --require-content-integrity`), remove the transitional override banner in `AGENTS.md`, and merge the closeout PR.
 
