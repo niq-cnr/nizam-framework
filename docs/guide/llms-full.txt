@@ -1,0 +1,234 @@
+# Nizam Framework — Complete LLM & AI Agent Reference (llms-full.txt)
+
+> Nizam (`v1.10.1`) is a declarative, proportion-scaled governance and execution framework for AI-assisted and human software delivery. It installs into a consumer repository at `.nizam/` from an immutable release tag (`vX.Y.Z`) and governs change routing, role separation, exclusive execution evidence capture, and receipt-verified state transitions via `.agent/`.
+
+- **Version**: `1.10.1`
+- **Repository**: `https://github.com/niq-cnr/nizam-framework`
+- **Interactive Guide**: `https://niq-cnr.github.io/nizam-framework/`
+- **Concise LLM Index**: `https://niq-cnr.github.io/nizam-framework/llms.txt`
+- **License**: MIT (`Zero dependencies` — POSIX `sh`, `git`, `python3 >= 3.10` stdlib only)
+
+---
+
+## 0. One-Prompt Consumer Onboarding (`v1.10.1`)
+
+Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v1.10.1` (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`) with minimal friction:
+
+```text
+Onboard this repository to the Nizam governance framework (immutable release v1.10.1, commit 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd):
+
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.10.1 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v1.10.1 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity
+3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
+4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
+```
+
+---
+
+## 1. AI Agent Entry Protocol (Mandatory Operational Rules)
+
+When operating inside a repository that uses Nizam (or within the `nizam-framework` repository itself), follow this exact protocol:
+
+### 1.1 Discovery Order
+1. **Bootstrapped-consumer discovery** (primary): Check `.nizam/NIZAM.json` and `.nizam/tools/SKILL.md`. Resolve all paths inside `.nizam/NIZAM.json` relative to `.nizam/`.
+2. **Framework-checkout fallback** (authoring repo only): Consult root `NIZAM.json` and `tools/SKILL.md` when authoring the framework itself.
+
+### 1.2 Invariant Rules for AI Agents
+- **Immutable Payload**: Never edit files inside `.nizam/`. It is a verified snapshot of an immutable release tag (`v1.10.1`).
+- **No Bytecode Contamination**: Always prefix Python tool calls with `PYTHONDONTWRITEBYTECODE=1` so `__pycache__` does not pollute `.nizam/` or the repository tree.
+- **Proportion-Scaled Routing**: Always run `classify` before planning or editing. Do not invent ad-hoc workflows.
+- **Role & State Ownership**: The Orchestrator (`orchestrator-state`) owns `.agent/run_state.json` lifecycle fields (`lifecycle_stage`, `circuit_breakers`). Implementation agents (`generator-deterministic`) must preserve those fields intact.
+- **No Hidden Git Mutations**: `publish` defaults to `--mode prepare` (noncommitting). Actual external publication (`--mode publish`) requires an operator-configured `NIZAM_MUTATION_ADAPTER` that returns structured JSON (`{"status": "committed", "commit_sha": "<40-hex>"}`). Never bypass receipt verification.
+
+---
+
+## 2. The 5 Start-Path Routes
+
+Nizam scales governance ceremony to match the blast radius of the change:
+
+| Route | Trigger Criteria | Entry Command | Verification & Closeout | Stopping Rule |
+| :--- | :--- | :--- | :--- | :--- |
+| **`trivial`** | `<= 2` low-risk files (docs, comments, formatting) with no behavioral or authority flags | `tools/start_path.py begin trivial --summary "..." --paths ...` | Recorded verification command; close with `tools/start_path.py done trivial --verify-cmd "..."` | Work-specific (default initial strategy ladder: 3 attempts) |
+| **`bugfix`** | Scoped defect repair (`--bugfix`) without schema, migration, security, or cross-repo changes | `tools/start_path.py begin bugfix --summary "..." --cause "..." --paths ...` | Recorded verification command; close with `tools/start_path.py done bugfix --verify-cmd "..."` | Work-specific (default initial strategy ladder: 3 attempts) |
+| **`small-change`** | `<= 3` files of bounded non-feature maintenance without high-risk flags | `tools/start_path.py begin small-change --summary "..." --paths ...` | Recorded verification command; close with `tools/start_path.py done small-change --verify-cmd "..."` | Work-specific (default initial strategy ladder: 3 attempts) |
+| **`standard-feature`** | New feature (`--new-feature`), `> 3` files, or multi-component contract work | Approved contract under `.agent/contracts/` + `tools/start_path.py preflight` | Exclusive `capture`, staged `publish` + `build-receipt`, independent `Evaluator` review, `resume` | Work-specific ladder (`initial_strategy_ladder_attempts: 3`, `hard_attempt_cap: null`; attempt 4+ allowed with new hypothesis/scope when invariants hold) |
+| **`high-risk`** | Any high-risk flag (`--breaking-change`, `--security-sensitive`, `--schema-change`, `--migration`, `--cross-repo`, `--authority-change`) or protected paths (`.github/workflows/`, `schema/`, `standard/`, `bootstrap.sh`, `NIZAM.json`) | Approved contract + explicit operator authorization (`E1`) + `tools/start_path.py preflight` | Full contract stack + independent `Evaluator` acceptance + receipt-qualified transitions | Strict invariant enforcement; immediate halt (`exit 2`) on `invariant_breach`, `specification_contradiction`, or `authority_violation` |
+
+---
+
+## 3. Complete `tools/start_path.py` CLI Reference
+
+Always invoke with `PYTHONDONTWRITEBYTECODE=1 python3 <tools_dir>/start_path.py <subcommand>` (where `<tools_dir>` is `.nizam/tools` in consumer repos or `tools` in the framework repo).
+
+### 3.1 `classify`
+Classifies a task into `trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk`.
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py classify \
+  --paths src/app.py tests/test_app.py \
+  [--bugfix] [--new-feature] [--breaking-change] \
+  [--security-sensitive] [--schema-change] [--migration] \
+  [--cross-repo] [--authority-change] [--step-limit N]
+```
+Outputs JSON with `route`, `reasons`, `Canonical_Paths`, `required_ceremony`, and `stopping_rule` (`initial_strategy_ladder_attempts: 3`, `hard_attempt_cap`, `halt_conditions`, `continuation_requirements`).
+
+### 3.2 `preflight`
+Runs read-only preflight checks on repository state, `.agent/run_state.json`, active contracts, and worktree cleanliness before starting a governed attempt.
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py preflight
+```
+
+### 3.3 `begin` and `done` (Lightweight Routes: `trivial`, `bugfix`, `small-change`)
+Records a lightweight route entry and verified completion in `.agent/lightweight_log.jsonl` without requiring a feature contract or mutating `.agent/run_state.json`.
+```bash
+# Start a bugfix
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py begin bugfix \
+  --summary "Handle empty token list in parser" \
+  --cause "IndexError when input stream has zero tokens" \
+  --paths src/parser.py tests/test_parser.py
+
+# Complete the bugfix with recorded verification
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py done bugfix \
+  --verify-cmd "pytest -q tests/test_parser.py"
+```
+
+### 3.4 `amend-contract`
+Applies bounded mechanical updates (scope paths or verification commands) to an approved contract when goals, invariants, and risk boundaries are unchanged.
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py amend-contract \
+  --contract .agent/contracts/feature-101.md \
+  --add-path src/helper.py \
+  --reason "Extracted pure helper function during implementation"
+```
+
+### 3.5 `capture`
+Executes a verification command and writes an exclusive, tamper-evident per-execution JSON evidence record (`O_CREAT | O_EXCL`) under `.agent/evidence/<contract_id>/`. Enforces work-specific stopping rules and continuation lineage.
+```bash
+# Standard capture (attempts 1..3)
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py capture \
+  --contract-id 120 \
+  --stage implementation \
+  --attempt 1 \
+  -- python3 -m unittest
+
+# Attempt 4+ continuation (when invariants hold and a new hypothesis + refined scope exist)
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py capture \
+  --contract-id 120 \
+  --stage implementation \
+  --attempt 4 \
+  --Diagnostic-Hypothesis "Race condition in temp directory cleanup" \
+  --Refined-Scope "tools/test_start_path.py" \
+  --Defect-Signature "FileNotFoundError: /tmp/nizam_test" \
+  -- python3 -m unittest
+```
+- Halts with exit `2` if:
+  - `--Failure-Class` is `invariant_breach`, `specification_contradiction`, or `authority_violation`
+  - `--Defect-Signature` repeats identically without new progress
+  - `--Step-Limit` is exhausted
+  - Attempt `> 3` is invoked without `--Diagnostic-Hypothesis` + `--Refined-Scope` (or `--Split-From`).
+
+### 3.6 `publish` and `build-receipt`
+Manages two-stage receipt-qualified evidence publication without hidden local Git mutations:
+- **Stage 1 (`evidence_stage`)**: Commits the captured evidence artifacts under `.agent/evidence/<contract_id>/`.
+- **Stage 2 (`receipt_stage`)**: Binds the Stage 1 commit SHA into a cryptographic stage receipt (`stage-receipt-<stage>.json`) and commits the receipt.
+
+```bash
+# Default noncommitting preparation (writes publication plan, never mutates Git)
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py publish \
+  --contract-id 120 --stage implementation --mode prepare
+
+# External adapter-mediated publication (requires NIZAM_MUTATION_ADAPTER)
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py publish \
+  --contract-id 120 --stage implementation --mode publish
+
+# Finalize and verify receipt binding in read-only mode
+PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py publish \
+  --contract-id 120 --stage implementation --mode finalize
+```
+
+### 3.7 `status` and `resume`
+- `status`: Prints a concise, read-only summary of `.agent/run_state.json`, active lightweight route, and latest receipts.
+- `resume`: Verifies the stage receipt chain (`stage-receipt-<stage>.json`) against Git history and advances or recovers `.agent/run_state.json`.
+
+---
+
+## 4. Bootstrap & Supply-Chain Integrity (`bootstrap.sh`)
+
+Nizam installs into consumer repositories from an immutable release tag (`vX.Y.Z`). Floating refs (`main`, `master`, `HEAD`) are always refused.
+
+### 4.1 Consumer Installation
+```bash
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh | bash -s -- \
+  --repo https://github.com/niq-cnr/nizam-framework.git \
+  --tag v1.10.1
+```
+
+### 4.2 Commit-Bound Verification (`--verify-only`)
+`bootstrap.sh --verify-only` never executes `${TARGET_DIR}/tools/payload_integrity.py` from the untrusted target directory; it runs an embedded trusted verifier against an independent Git tag reference or source root.
+
+```bash
+# Full cryptographic commit-bound verification (content_integrity=verified)
+./bootstrap.sh --verify-only \
+  --tag v1.10.1 \
+  --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd \
+  --git-repo .nizam-ref/ \
+  --require-content-integrity
+
+# Structural verification only (honestly labeled content_integrity=not_checked)
+./bootstrap.sh --verify-only --structural-only
+```
+
+---
+
+## 5. Governance Architecture, Roles & Permission Classes
+
+### 5.1 The 5 AGF Roles & Capability Profiles
+| Role | Capability Profile | Primary Responsibility | Permitted Classes |
+| :--- | :--- | :--- | :--- |
+| **Planner / Architect** (`@architect`) | `planner-readonly` | Inspects codebase, drafts contracts under `.agent/contracts/`, defines invariants and scope | `R0` (Read), bounded `.agent/contracts/` draft |
+| **Orchestrator** (`@orchestrator`) | `orchestrator-state` | Owns `.agent/run_state.json` lifecycle transitions, circuit breakers, and receipt verification | `R0`, `M1` (State mutation) |
+| **Generator / Developer** (`@developer`) | `generator-deterministic` | Implements scoped code changes within approved contract paths and runs `capture` | `R0`, `W1` (Scoped write), `X1` (Scoped exec) |
+| **Evaluator / Reviewer** (`@reviewer`) | `evaluator-adversarial` | Independently audits diff, runs adversarial verification, and emits `APPROVE`/`REJECT` verdict | `R0`, `X1` (Verification exec) |
+| **Human Operator** | `operator-authority` | Approves contracts, authorizes `high-risk` / `E1` actions, configures `NIZAM_MUTATION_ADAPTER` | `E1` (External / high-consequence) |
+
+### 5.2 Permission Classes (`standard/permission_classes.md`)
+- **`R0` (Read-Only Observation)**: File inspection, search, `git status`, `start_path.py classify|status|preflight` (never mutates `.git/index` or working tree).
+- **`W1` (Scoped Workspace Write)**: Modifying files explicitly listed in the active contract's `Scope` or lightweight route's `Canonical_Paths`.
+- **`X1` (Bounded Verification Execution)**: Running local test suites and linters via `start_path.py capture`.
+- **`M1` (Governance State Mutation)**: Updating `.agent/run_state.json` or `.agent/contracts/` status (Orchestrator only).
+- **`E1` (External / High-Consequence Action)**: Pushing refs, creating commits via `NIZAM_MUTATION_ADAPTER`, modifying CI/CD workflows, or upgrading `.nizam/`. Requires explicit operator gate.
+
+### 5.3 Consumer Directory Anatomy
+- **`.nizam/` (Immutable Installed Framework)**:
+  - `NIZAM.json` — Machine-readable capability index
+  - `provenance.json` — Release tag, commit SHA (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`), and install timestamp
+  - `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`
+- **`.agent/` (Consumer Project Governance Workspace)**:
+  - `run_state.json` — Active lifecycle stage, contract pointer, and circuit-breaker counters
+  - `lightweight_log.jsonl` — Append-only audit log for `trivial`, `bugfix`, and `small-change` routes
+  - `contracts/` — Task contracts (`draft` -> `approved` -> `completed`)
+  - `evidence/<contract_id>/` — Exclusive capture records and cryptographic stage receipts
+
+---
+
+## 6. The 16 Validation Checks (`tools/validate.sh`)
+
+Running `PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh` enforces 16 structural and semantic checks across the repository:
+- **C1**: Required root files & 6 payload module directories exist
+- **C2**: YAML frontmatter valid across all Markdown files
+- **C3**: `NIZAM.json` valid JSON & every indexed path resolves on disk
+- **C4**: All JSON Schemas under `schema/` parse cleanly
+- **C5**: Zero internal branding or cluster hostname leakage
+- **C6**: Markdown relative links resolve to existing files
+- **C7**: `templates/` coverage matches `NIZAM.json`
+- **C8**: `ecosystem/` handoff catalog (`H-01`..`H-06`, `H-CONSUMER-UPGRADE`) consistent
+- **C9**: All file paths referenced in `docs/guide/index.html` resolve on disk
+- **C10**: `docs/guide/index.html` module lists, discovery order, and version metadata match `NIZAM.json`
+- **C11**: `tools/skill.json` valid & synchronized with `tools/SKILL.md`
+- **C12**: `schema/run_state.schema.json` & `.agent/run_state.json` valid
+- **C13**: Self-governance lockstep (`AGENTS.md`, `.nizam/`, `.agent/run_state.json`)
+- **C14**: Payload integrity (`tools/payload_integrity.py`) self-check passes
+- **C15**: `tools/start_path.py` unit & integration suite (`tools/test_start_path.py`) passes
+- **C16**: Public entry & documentation contract suite (`tools/test_public_entry.py`) passes
