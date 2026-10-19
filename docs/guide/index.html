@@ -6,55 +6,109 @@
 <meta name="framework-version" content="1.10.1">
 <meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
 <meta name="color-scheme" content="light dark">
-<title>Nizam User Guide</title>
+<title>Nizam Framework — Interactive Developer &amp; AI Agent Guide (v1.10.1)</title>
+<link rel="alternate" type="text/plain" title="LLM Concise Index (llms.txt)" href="llms.txt">
+<link rel="alternate" type="text/plain" title="LLM Full Reference (llms-full.txt)" href="llms-full.txt">
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #ffffff;
-    --bg-alt: #f6f8fa;
-    --fg: #1b1f23;
-    --fg-muted: #444c56;
-    --border: #d0d7de;
-    --accent: #0552b3;
+    --bg: #f8fafc;
+    --bg-alt: #ffffff;
+    --bg-elevated: #f1f5f9;
+    --fg: #0f172a;
+    --fg-muted: #475569;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --accent: #0f766e;
+    --accent-hover: #115e59;
+    --accent-soft: rgba(15, 118, 110, 0.1);
     --accent-contrast: #ffffff;
-    --code-bg: #eef1f4;
-    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --mono-stack: ui-monospace, SFMono-Regular, "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
+    --secondary: #4f46e5;
+    --secondary-soft: rgba(79, 70, 229, 0.1);
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+    --inline-code-bg: #e2e8f0;
+    --inline-code-fg: #0f172a;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --hero-gradient: radial-gradient(circle at 15% 20%, rgba(15, 118, 110, 0.10), transparent 45%),
+                     radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.10), transparent 45%),
+                     linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    --font-stack: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono-stack: ui-monospace, SFMono-Regular, "JetBrains Mono", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0d1117;
-      --bg-alt: #161b22;
-      --fg: #e6edf3;
-      --fg-muted: #9198a1;
-      --border: #30363d;
-      --accent: #79b8ff;
-      --accent-contrast: #0d1117;
-      --code-bg: #1b2129;
+      --bg: #0b0f19;
+      --bg-alt: #111827;
+      --bg-elevated: #1e293b;
+      --fg: #f1f5f9;
+      --fg-muted: #94a3b8;
+      --border: #1e293b;
+      --border-strong: #334155;
+      --accent: #2dd4bf;
+      --accent-hover: #5eead4;
+      --accent-soft: rgba(45, 212, 191, 0.12);
+      --accent-contrast: #042f2e;
+      --secondary: #818cf8;
+      --secondary-soft: rgba(129, 140, 248, 0.14);
+      --code-bg: #090d16;
+      --code-fg: #e2e8f0;
+      --inline-code-bg: #1e293b;
+      --inline-code-fg: #5eead4;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.45);
+      --hero-gradient: radial-gradient(circle at 15% 20%, rgba(45, 212, 191, 0.12), transparent 45%),
+                       radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12), transparent 45%),
+                       linear-gradient(180deg, #0b0f19 0%, #111827 100%);
     }
   }
 
   html[data-theme="light"] {
-    --bg: #ffffff;
-    --bg-alt: #f6f8fa;
-    --fg: #1b1f23;
-    --fg-muted: #444c56;
-    --border: #d0d7de;
-    --accent: #0552b3;
+    --bg: #f8fafc;
+    --bg-alt: #ffffff;
+    --bg-elevated: #f1f5f9;
+    --fg: #0f172a;
+    --fg-muted: #475569;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --accent: #0f766e;
+    --accent-hover: #115e59;
+    --accent-soft: rgba(15, 118, 110, 0.1);
     --accent-contrast: #ffffff;
-    --code-bg: #eef1f4;
+    --secondary: #4f46e5;
+    --secondary-soft: rgba(79, 70, 229, 0.1);
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+    --inline-code-bg: #e2e8f0;
+    --inline-code-fg: #0f172a;
+    --hero-gradient: radial-gradient(circle at 15% 20%, rgba(15, 118, 110, 0.10), transparent 45%),
+                     radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.10), transparent 45%),
+                     linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
   }
 
   html[data-theme="dark"] {
-    --bg: #0d1117;
-    --bg-alt: #161b22;
-    --fg: #e6edf3;
-    --fg-muted: #9198a1;
-    --border: #30363d;
-    --accent: #79b8ff;
-    --accent-contrast: #0d1117;
-    --code-bg: #1b2129;
+    --bg: #0b0f19;
+    --bg-alt: #111827;
+    --bg-elevated: #1e293b;
+    --fg: #f1f5f9;
+    --fg-muted: #94a3b8;
+    --border: #1e293b;
+    --border-strong: #334155;
+    --accent: #2dd4bf;
+    --accent-hover: #5eead4;
+    --accent-soft: rgba(45, 212, 191, 0.12);
+    --accent-contrast: #042f2e;
+    --secondary: #818cf8;
+    --secondary-soft: rgba(129, 140, 248, 0.14);
+    --code-bg: #090d16;
+    --code-fg: #e2e8f0;
+    --inline-code-bg: #1e293b;
+    --inline-code-fg: #5eead4;
+    --hero-gradient: radial-gradient(circle at 15% 20%, rgba(45, 212, 191, 0.12), transparent 45%),
+                     radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12), transparent 45%),
+                     linear-gradient(180deg, #0b0f19 0%, #111827 100%);
   }
 
   * {
@@ -70,11 +124,18 @@
     font-family: var(--font-stack);
     background: var(--bg);
     color: var(--fg);
-    line-height: 1.6;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
   }
 
   a {
     color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    color: var(--accent-hover);
   }
 
   .skip-link {
@@ -85,6 +146,7 @@
     color: var(--accent-contrast);
     padding: 0.5rem 1rem;
     z-index: 100;
+    border-radius: 0.35rem;
   }
 
   .skip-link:focus {
@@ -95,29 +157,40 @@
   nav {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
     background: var(--bg-alt);
-    border-bottom: 1px solid var(--border);
-    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 0.65rem 1.25rem;
     overflow-x: auto;
+    box-shadow: var(--shadow-sm);
   }
 
   nav ul {
     list-style: none;
     display: flex;
-    gap: 0.75rem;
-    margin: 0;
+    gap: 0.5rem;
+    margin: 0 auto;
     padding: 0;
+    max-width: 72rem;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
   }
 
   nav a {
-    color: var(--fg);
+    color: var(--fg-muted);
     text-decoration: none;
     font-size: 0.85rem;
-    padding: 0.3rem 0.55rem;
-    border-radius: 0.3rem;
+    font-weight: 600;
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.4rem;
     white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  nav a:hover {
+    background: var(--bg-elevated);
+    color: var(--fg);
   }
 
   nav a[aria-current="true"] {
@@ -126,38 +199,84 @@
   }
 
   header.hero {
-    padding: 3rem 1.5rem 2.5rem;
+    padding: 3.5rem 1.5rem 3rem;
     text-align: center;
+    background: var(--hero-gradient);
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.28rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
     background: var(--bg-alt);
-    border-bottom: 1px solid var(--border);
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .badge-accent {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .badge-secondary {
+    background: var(--secondary-soft);
+    color: var(--secondary);
+    border-color: var(--secondary);
   }
 
   header.hero h1 {
     margin: 0 0 0.75rem;
-    font-size: 2.5rem;
+    font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 
   .tagline {
-    max-width: 42rem;
+    max-width: 50rem;
     margin: 0 auto;
     color: var(--fg-muted);
-    font-size: 1.05rem;
+    font-size: 1.1rem;
   }
 
   .cta-group {
     display: flex;
-    gap: 1rem;
+    gap: 0.85rem;
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 1.75rem;
   }
 
   .cta {
-    display: inline-block;
-    padding: 0.65rem 1.25rem;
-    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1.3rem;
+    border-radius: 0.55rem;
     font-weight: 600;
+    font-size: 0.95rem;
     text-decoration: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
 
   .cta-human {
@@ -165,130 +284,345 @@
     color: var(--accent-contrast);
   }
 
+  .cta-human:hover {
+    color: var(--accent-contrast);
+  }
+
   .cta-agent {
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-strong);
     color: var(--fg);
-    background: transparent;
+    background: var(--bg-alt);
+  }
+
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.15rem;
+    max-width: 64rem;
+    margin: 2rem auto 0;
+    text-align: left;
+  }
+
+  .persona-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border-strong);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .persona-card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .persona-card p {
+    margin: 0.4rem 0;
+    font-size: 0.92rem;
+    color: var(--fg-muted);
+  }
+
+  .onboard-cta-box {
+    max-width: 64rem;
+    margin: 1.5rem auto 0;
+    text-align: left;
+    background: var(--bg-alt);
+    border: 2px solid var(--accent);
+    border-radius: 0.8rem;
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .onboard-cta-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.65rem;
+  }
+
+  .onboard-cta-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    border: none;
+    padding: 0;
+  }
+
+  .btn-copy-prompt {
+    background: var(--accent);
+    color: var(--accent-contrast);
+    border: none;
+    border-radius: 0.45rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+
+  .btn-copy-prompt:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
   }
 
   main {
-    max-width: 62rem;
+    max-width: 68rem;
     margin: 0 auto;
-    padding: 2rem 1.5rem 1rem;
+    padding: 2.5rem 1.5rem 1.5rem;
   }
 
   section {
-    margin-bottom: 3.5rem;
+    margin-bottom: 4rem;
+    scroll-margin-top: 4rem;
   }
 
   section h2 {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
+    font-size: 1.65rem;
+    letter-spacing: -0.015em;
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 0.55rem;
+    margin-bottom: 1.15rem;
+  }
+
+  section h3 {
+    font-size: 1.2rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
   }
 
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.15rem;
     margin-top: 1.25rem;
   }
 
   .card {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.7rem;
+    padding: 1.25rem 1.35rem;
     background: var(--bg-alt);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
   }
 
   .card h3 {
     margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .pre-wrapper {
+    position: relative;
+    margin: 1rem 0;
   }
 
   pre {
     background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 0.4rem;
-    padding: 1rem;
+    color: var(--code-fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 0.55rem;
+    padding: 1.1rem 1.2rem;
     overflow-x: auto;
     font-family: var(--mono-stack);
     font-size: 0.85rem;
+    line-height: 1.55;
+    box-shadow: var(--shadow-sm);
+    margin: 0.85rem 0;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.35rem;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.74rem;
+    font-family: var(--font-stack);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   code {
     font-family: var(--mono-stack);
-    background: var(--code-bg);
-    padding: 0.1rem 0.35rem;
-    border-radius: 0.25rem;
-    font-size: 0.9em;
+    background: var(--inline-code-bg);
+    color: var(--inline-code-fg);
+    padding: 0.12rem 0.38rem;
+    border-radius: 0.3rem;
+    font-size: 0.88em;
   }
 
   pre code {
     background: none;
+    color: inherit;
     padding: 0;
+    font-size: inherit;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.65rem;
+    background: var(--bg-alt);
+    box-shadow: var(--shadow-sm);
+  }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  table.data-table th,
+  table.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  table.data-table th {
+    background: var(--bg-elevated);
+    font-weight: 700;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+
+  table.data-table tr:last-child td {
+    border-bottom: none;
   }
 
   .loop-diagram {
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.9rem;
     padding: 0;
     margin: 1.5rem 0;
+    counter-reset: loop-step;
   }
 
   .loop-diagram li {
+    counter-increment: loop-step;
     background: var(--bg-alt);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 0.85rem 1.1rem;
-    flex: 1 1 11rem;
+    border: 1px solid var(--border-strong);
+    border-left: 4px solid var(--accent);
+    border-radius: 0.55rem;
+    padding: 0.95rem 1.1rem;
+    box-shadow: var(--shadow-sm);
     position: relative;
   }
 
-  .loop-diagram li:not(:last-child)::after {
-    content: "\2192";
-    position: absolute;
-    right: -1.1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--fg-muted);
-    font-size: 1.1rem;
+  .loop-diagram li::before {
+    content: "Step " counter(loop-step);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+  }
+
+  .callout {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .callout strong {
+    color: var(--fg);
   }
 
   dl.faq dt {
-    font-weight: 600;
-    margin-top: 1.25rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-top: 1.35rem;
+    color: var(--fg);
   }
 
   dl.faq dd {
     margin-left: 0;
+    margin-top: 0.35rem;
     color: var(--fg-muted);
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.85rem 1.1rem;
+  }
+
+  dl.ops {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  dl.ops div {
+    background: var(--bg-alt);
+    border: 1px solid var(--border-strong);
+    border-radius: 0.6rem;
+    padding: 1rem 1.15rem;
   }
 
   dl.ops dt {
-    font-weight: 600;
+    font-weight: 700;
     font-family: var(--mono-stack);
-    margin-top: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.35rem;
   }
 
   dl.ops dd {
     margin-left: 0;
+    font-size: 0.92rem;
+    color: var(--fg-muted);
   }
 
   #theme-toggle {
-    border: 1px solid var(--border);
-    background: transparent;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-alt);
     color: var(--fg);
-    border-radius: 0.3rem;
-    padding: 0.3rem 0.7rem;
+    border-radius: 0.4rem;
+    padding: 0.4rem 0.85rem;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  #theme-toggle:hover {
+    border-color: var(--accent);
   }
 
   footer {
-    padding: 2.5rem 1.5rem;
+    padding: 2.75rem 1.5rem;
     text-align: center;
-    border-top: 1px solid var(--border);
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border-strong);
     color: var(--fg-muted);
     font-size: 0.9rem;
   }
@@ -298,7 +632,7 @@
   }
 
   @media print {
-    nav, #theme-toggle, .cta-group, .skip-link {
+    nav, #theme-toggle, .cta-group, .skip-link, .copy-btn {
       display: none;
     }
     body {
@@ -316,19 +650,61 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 
 <header class="hero" id="hero">
-  <h1>Nizam</h1>
-  <p class="tagline">A generalised, AI-legible, versioned governance framework — one portable payload of
+  <div class="hero-badges">
+    <span class="badge badge-accent">Release v1.10.1</span>
+    <span class="badge">Zero Dependencies (POSIX sh + Python 3.10+)</span>
+    <span class="badge">16/16 Compliance Gates (C1&ndash;C16)</span>
+    <a class="badge badge-secondary" href="llms.txt">AI Index: llms.txt</a>
+    <a class="badge badge-secondary" href="llms-full.txt">AI Reference: llms-full.txt</a>
+  </div>
+  <h1>Nizam Framework</h1>
+  <p class="tagline">A generalised, AI-legible, versioned governance framework &mdash; one portable payload of
   documentation standards, planning and execution protocols, adversarial TDD, contract-first execution
   loops, durable agent state, and governance inheritance that any AI agent or engineering team can
   consume, in any runtime, for any project. Nizam ships no application code, infrastructure, or
   runtime services.</p>
-  <p>General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v1.10.1&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
+  <p style="font-size:0.95rem;color:var(--fg-muted);margin-top:0.85rem;">General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v1.10.1&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
+
   <div class="cta-group">
-    <a class="cta cta-human" href="#quickstart">Humans start here</a>
-    <span class="cta cta-agent">Agents load <code>tools/SKILL.md</code> via <code>NIZAM.json</code></span>
+    <a class="cta cta-human" href="#onboard-prompt-card">Copy 1-Prompt Agent Onboarding</a>
+    <a class="cta cta-agent" href="#quickstart">Humans start here &rarr; Quickstart</a>
+    <a class="cta cta-agent" href="#start-paths">Explore the 5 Start Paths</a>
+    <a class="cta cta-agent" href="llms.txt">Read <code>llms.txt</code></a>
+    <a class="cta cta-agent" href="llms-full.txt">Read <code>llms-full.txt</code></a>
   </div>
-  <p style="margin-top:1.5rem;">
-    <button type="button" id="theme-toggle" aria-pressed="false">Toggle light / dark</button>
+
+  <div class="onboard-cta-box" id="onboard-prompt-card">
+    <div class="onboard-cta-header">
+      <h2><span>Zero-Friction Onboarding: Copy &amp; Paste Into Your Coding Agent</span> <span class="badge badge-accent">1-Prompt Setup</span></h2>
+      <button type="button" class="btn-copy-prompt" id="copy-onboard-btn">Copy Onboarding Prompt</button>
+    </div>
+    <p style="margin:0 0 0.65rem;font-size:0.92rem;color:var(--fg-muted);">Paste this single prompt into Claude Code, Cursor, Antigravity, Codex, Windsurf, or any AI coding agent to bootstrap and verify <code>v1.10.1</code> automatically:</p>
+    <pre id="agent-onboard-prompt"><code>Onboard this repository to the Nizam governance framework (immutable release v1.10.1, commit 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd):
+
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.10.1 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v1.10.1 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https:&#47;&#47;raw.githubusercontent.com&#47;niq-cnr&#47;nizam-framework&#47;v1.10.1&#47;bootstrap.sh -o bootstrap.sh &amp;&amp; chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity
+3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
+4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.</code></pre>
+  </div>
+
+  <div class="persona-grid">
+    <div class="persona-card">
+      <h2><span>For Developers &amp; Engineering Leads</span> <span class="badge badge-accent">Human Track</span></h2>
+      <p>Install an immutable <code>.nizam/</code> release in 60 seconds, scale ceremony from 2-line bug fixes to multi-repo architecture changes, and verify every agent action with cryptographic stage receipts.</p>
+      <p><a href="#quickstart">1. Bootstrap <code>v1.10.1</code></a> &middot; <a href="#start-paths">2. Route Work</a> &middot; <a href="#execution-loop">3. Contract Loop</a> &middot; <a href="#modules">4. Module Catalog</a></p>
+    </div>
+    <div class="persona-card">
+      <h2><span>For AI Agents &amp; LLM Crawlers</span> <span class="badge badge-secondary">Agent Track</span></h2>
+      <p>Agents load <code>tools/SKILL.md</code> via <code>NIZAM.json</code>. Never bulk-read directories or mutate <code>.nizam/</code>. Route every task with <code>PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py classify</code>.</p>
+      <p><a href="llms.txt">1. Concise <code>llms.txt</code></a> &middot; <a href="llms-full.txt">2. Complete <code>llms-full.txt</code></a> &middot; <a href="#agent-integration">3. Runtime Discovery &amp; Receipts</a></p>
+    </div>
+  </div>
+
+  <p style="margin-top:1.5rem;margin-bottom:0;">
+    <button type="button" id="theme-toggle" aria-pressed="false">Toggle light / dark theme</button>
   </p>
 </header>
 
@@ -344,6 +720,7 @@
     <li><a href="#modules">Modules</a></li>
     <li><a href="#agent-integration">Agent Integration</a></li>
     <li><a href="#faq">FAQ</a></li>
+    <li><a href="llms.txt">llms.txt</a></li>
   </ul>
 </nav>
 
@@ -355,7 +732,7 @@
     pipelines. Each is binding on the framework's own implementation.</p>
     <div class="card-grid">
       <article class="card">
-        <h3>DD-1 &mdash; Tool-Driven State Management</h3>
+        <h3><span>DD-1 &mdash; Tool-Driven State Management</span> <span class="badge badge-accent">O(1) Lookup</span></h3>
         <p><strong>Flaw remediated:</strong> context exhaustion from bulk-reading governance
         directories.</p>
         <p>Agents route through the root <code>NIZAM.json</code> capability index (validated against
@@ -366,7 +743,7 @@
         <code>methodology/04_tool_driven_state.md</code>.</p>
       </article>
       <article class="card">
-        <h3>DD-2 &mdash; Universal Circuit Breaker</h3>
+        <h3><span>DD-2 &mdash; Universal Circuit Breaker</span> <span class="badge badge-accent">Bounded Retries</span></h3>
         <p><strong>Flaw remediated:</strong> infinite retry loops.</p>
         <p>Every execution loop embeds a work-specific diagnostic stopping and circuit-breaker policy:
         attempt counters drive escalating investigative posture or bounded decomposition when invariants
@@ -375,14 +752,14 @@
         Authoritative in <code>methodology/03_circuit_breaker.md</code>.</p>
       </article>
       <article class="card">
-        <h3>DD-3 &mdash; Evidence Externalisation</h3>
+        <h3><span>DD-3 &mdash; Evidence Externalisation</span> <span class="badge badge-accent">Tamper-Evident</span></h3>
         <p><strong>Flaw remediated:</strong> brittle proof pasted inline into YAML or JSON strings.</p>
         <p>Every piece of proof that a step succeeded is written to its own file under
         <code>.agent/evidence/</code> and referenced by path, never pasted inline. See
         <code>methodology/04_tool_driven_state.md</code> Section 3.</p>
       </article>
       <article class="card">
-        <h3>DD-4 &mdash; Unified Skill Payload</h3>
+        <h3><span>DD-4 &mdash; Unified Skill Payload</span> <span class="badge badge-accent">Runtime-Agnostic</span></h3>
         <p><strong>Flaw remediated:</strong> duplicated, per-runtime skill forks.</p>
         <p>Exactly one skill payload ships under <code>tools/</code> &mdash; no <code>.claude/</code>,
         <code>.codex/</code>, or other per-runtime fork directories. Any runtime loads the same
@@ -399,7 +776,7 @@
     header comment) into a single, reusable, runtime-agnostic script. From a checkout (or vendored
     copy) of
     the framework at a pinned tag, run:</p>
-    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/</code></pre>
+    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/</code></pre>
     <p><code>GOVERNANCE_TAG</code> (or the equivalent <code>--tag</code> flag) is required and never
     defaulted: an empty tag, <code>main</code>, <code>master</code>, <code>HEAD</code>, or any
     <code>refs/heads/*</code> branch reference is refused, because a floating branch is never an
@@ -418,7 +795,7 @@
 &#9500;&#9472;&#9472; NIZAM.json
 &#9492;&#9472;&#9472; provenance.json</code></pre>
     <p>To check an already-bootstrapped target for drift, with no network access and no write, run:</p>
-    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/ --require-content-integrity</code></pre>
+    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity</code></pre>
     <p><code>--verify-only</code> performs no network clone, no write, and never executes code from inside
     <code>.nizam/</code>: with <code>--git-repo .nizam-ref/</code> and <code>--expected-sha</code>, it
     verifies the complete file inventory, exact byte digests, and executable modes against the pinned
@@ -483,6 +860,57 @@
     those projects. A comparison sentence belongs only beside a recorded run of
     the preregistered study in <code>docs/planning/agentic-excellence.md</code>.
     That study has not been executed.</p>
+
+    <div class="table-wrap">
+      <table class="data-table" aria-label="Start-path routing matrix">
+        <thead>
+          <tr>
+            <th>Route</th>
+            <th>Trigger &amp; Blast Radius</th>
+            <th>Pre-Code Gate</th>
+            <th>Completion Gate</th>
+            <th>CLI Entry &amp; Closeout</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>trivial</code></strong></td>
+            <td><code>&lt;= 2</code> low-risk files (docs, comments, tests), zero risk flags</td>
+            <td>Recorded intent</td>
+            <td>Recorded verification result</td>
+            <td><code>tools/start_path.py begin trivial --id &lt;id&gt;</code> &rarr; <code>done trivial --id &lt;id&gt;</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>bugfix</code></strong></td>
+            <td>Scoped defect repair (<code>--bugfix</code>) inside existing behavior boundaries</td>
+            <td>Assessed cause + scoped fix</td>
+            <td>Recorded verification result</td>
+            <td><code>tools/start_path.py begin bugfix --id &lt;id&gt;</code> &rarr; <code>done bugfix --id &lt;id&gt;</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>small-change</code></strong></td>
+            <td><code>&lt;= 3</code> files of unambiguous maintenance, zero high-risk flags</td>
+            <td>Recorded intent</td>
+            <td>Recorded verification result</td>
+            <td><code>tools/start_path.py begin small-change --id &lt;id&gt;</code> &rarr; <code>done small-change --id &lt;id&gt;</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>standard-feature</code></strong></td>
+            <td>New feature (<code>--new-feature</code>) or <code>&gt; 3</code> files across modules</td>
+            <td>Approved contract (Validator Mode A + Evaluator review)</td>
+            <td>Validator Mode B + Evaluator QA verdict + stage receipts</td>
+            <td><code>tools/start_path.py preflight</code> &rarr; <code>capture</code> &rarr; <code>publish</code> &rarr; <code>resume</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>high-risk</code></strong></td>
+            <td>Protected paths or <code>--breaking-change</code>, <code>--security-sensitive</code>, <code>--authority-change</code></td>
+            <td>Approved contract + Human Operator gate (<code>E1</code>)</td>
+            <td>Full independent verification + receipt-qualified transition</td>
+            <td><code>tools/start_path.py classify</code> &rarr; Operator gate &rarr; contract loop</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <h3>New feature</h3>
     <p>Specify what to build and agree the design before planning the implementation.</p>
@@ -602,7 +1030,7 @@
     first; read only the module a task needs.</p>
     <div class="card-grid">
       <article class="card">
-        <h3><code>standard/</code></h3>
+        <h3><code>standard/</code> <span class="badge badge-accent">Constitutional Core</span></h3>
         <p>Documentation standard, governance inheritance protocol, agent governance framework, and
         universal anti-hallucination constraints every consumer repository inherits verbatim &mdash;
         including the Nizam Documentation Standard (NDS), <code>standard/NDS.md</code>.</p>
@@ -624,7 +1052,7 @@
         release close-out gate.</p>
       </article>
       <article class="card">
-        <h3><code>methodology/</code></h3>
+        <h3><code>methodology/</code> <span class="badge badge-accent">Execution Protocols</span></h3>
         <p>Planning enforcement, the contract-first execution harness loop, adversarial TDD, the
         universal circuit breaker, tool-driven durable state, and the release train protocol.</p>
         <p>Key documents: <code>methodology/00_planning.md</code>,
@@ -651,7 +1079,7 @@
         eval-gated-promotion requirements, but a consumer's runtime emits the traces and gates on the evals.</p>
       </article>
       <article class="card">
-        <h3><code>registry/</code></h3>
+        <h3><code>registry/</code> <span class="badge">Index Patterns</span></h3>
         <p>The JSON Schema the root index validates against, plus generalised scope-definition and
         registry patterns for consumer repositories building their own ecosystem-level registries on
         top of Nizam.</p>
@@ -659,7 +1087,7 @@
         <code>registry/scope_definition_patterns.md</code>, <code>registry/README.md</code>.</p>
       </article>
       <article class="card">
-        <h3><code>templates/</code></h3>
+        <h3><code>templates/</code> <span class="badge badge-accent">Consumer Scaffolds</span></h3>
         <p>Consumer-repo document and manifest templates a bootstrapped repository copies and fills in
         with its own content.</p>
         <p>Key documents: <code>templates/CONTEXT.md</code>, <code>templates/AGENTS.md</code>,
@@ -667,7 +1095,7 @@
         <code>templates/README.md</code>.</p>
       </article>
       <article class="card">
-        <h3><code>schema/</code></h3>
+        <h3><code>schema/</code> <span class="badge badge-accent">Draft 2020-12</span></h3>
         <p>JSON Schemas validating every machine-readable artifact the framework and its consumers
         produce.</p>
         <p>Key documents: <code>schema/frontmatter.schema.json</code>,
@@ -679,7 +1107,7 @@
         <code>schema/README.md</code>.</p>
       </article>
       <article class="card">
-        <h3><code>tools/</code></h3>
+        <h3><code>tools/</code> <span class="badge badge-accent">Unified Skill &amp; CLIs</span></h3>
         <p>The one unified, runtime-agnostic skill payload &mdash; manifest, instructions, and adapter
         interface &mdash; any agent runtime loads to act on the framework.</p>
         <p>Key documents: <code>tools/skill.json</code>, <code>tools/SKILL.md</code>,
@@ -689,7 +1117,7 @@
         <code>tools/runtime_session.py</code>, <code>tools/README.md</code>.</p>
       </article>
       <article class="card">
-        <h3><code>ecosystem/</code></h3>
+        <h3><code>ecosystem/</code> <span class="badge badge-accent">9-Stage Lifecycle</span></h3>
         <p>The reusable, schema-governed Ecosystem Engineering Cycle: a multi-repository governance
         lifecycle (Bootstrap, clean-state preflight, evidence baseline, engineering audit, dependency
         reconciliation, release-train coordination, simplification review, progress comparison, and GA
@@ -710,7 +1138,10 @@
   </section>
 
   <section id="agent-integration" aria-labelledby="agent-integration-heading">
-    <h2 id="agent-integration-heading">Agent Integration</h2>
+    <h2 id="agent-integration-heading">Agent Integration &amp; <code>llms.txt</code></h2>
+    <div class="callout">
+      <strong>Machine-Legible LLM Endpoints:</strong> External AI agents, IDE copilots, and documentation indexers can ingest <a href="llms.txt"><code>llms.txt</code></a> (concise operational index) or <a href="llms-full.txt"><code>llms-full.txt</code></a> (complete single-file CLI, role, permission-class, and schema reference) directly from the repository root or GitHub Pages site root.
+    </div>
     <p>An agent runtime discovers the skill payload per <code>tools/interface.md</code> Section 2, in
     this order:</p>
     <ol>
@@ -728,15 +1159,21 @@
     agent runtime can perform three core abstract operations (<code>tools/interface.md</code>
     Section 4), each mapped by the runtime's own adapter onto its native tool-calling primitives:</p>
     <dl class="ops">
-      <dt>read-state</dt>
-      <dd>Read the current durable-state content a task needs &mdash; <code>NIZAM.json</code>, a
-      governance module file, or a <code>.agent/</code> artifact.</dd>
-      <dt>write-evidence</dt>
-      <dd>Persist a material result &mdash; a document, a durable-state update, or captured
-      verification output &mdash; to its canonical durable location.</dd>
-      <dt>run-verification</dt>
-      <dd>Execute a contract's verification commands and capture the command's output and exit code as
-      evidence.</dd>
+      <div>
+        <dt>read-state</dt>
+        <dd>Read the current durable-state content a task needs &mdash; <code>NIZAM.json</code>, a
+        governance module file, or a <code>.agent/</code> artifact.</dd>
+      </div>
+      <div>
+        <dt>write-evidence</dt>
+        <dd>Persist a material result &mdash; a document, a durable-state update, or captured
+        verification output &mdash; to its canonical durable location.</dd>
+      </div>
+      <div>
+        <dt>run-verification</dt>
+        <dd>Execute a contract's verification commands and capture the command's output and exit code as
+        evidence.</dd>
+      </div>
     </dl>
     <p>For repository Git mutations during evidence publication (<code>tools/interface.md</code>
     Section 4.4), <code>tools/start_path.py publish</code> defaults to noncommitting
@@ -771,7 +1208,7 @@
 
       <dt>How is drift detected, and how is it fixed?</dt>
       <dd>A consumer periodically re-verifies its injected governance content against its retained
-      pinned tag repository (<code>./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/ --require-content-integrity</code>),
+      pinned tag repository (<code>./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity</code>),
       checking for local hand-mutation and staleness against newer releases
       (<code>standard/GIP.md</code> Section 4). The correct remediation is always to re-run
       <code>bootstrap.sh</code> against the appropriate tag &mdash; hand-patching an individual
@@ -786,7 +1223,7 @@
 </main>
 
 <footer>
-  <p>Nizam framework version <strong><span id="footer-version">1.10.1</span></strong>.</p>
+  <p>Nizam framework version <strong><span id="footer-version">1.10.1</span></strong> &middot; <a href="llms.txt">llms.txt</a> &middot; <a href="llms-full.txt">llms-full.txt</a></p>
   <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
 </footer>
 
@@ -833,6 +1270,45 @@
       toggleButton.addEventListener('click', toggleTheme);
     }
     applyStoredThemeOverride();
+
+    var copyOnboardBtn = document.getElementById('copy-onboard-btn');
+    var onboardPromptEl = document.getElementById('agent-onboard-prompt');
+    if (copyOnboardBtn && onboardPromptEl && navigator.clipboard) {
+      copyOnboardBtn.addEventListener('click', function () {
+        var text = onboardPromptEl.innerText || onboardPromptEl.textContent || '';
+        navigator.clipboard.writeText(text.trim()).then(function () {
+          copyOnboardBtn.textContent = 'Copied Onboarding Prompt!';
+          setTimeout(function () {
+            copyOnboardBtn.textContent = 'Copy Onboarding Prompt';
+          }, 1800);
+        });
+      });
+    }
+
+    var preBlocks = document.querySelectorAll('pre');
+    preBlocks.forEach(function (pre) {
+      if (! navigator.clipboard) {
+        return;
+      }
+      var wrapper = document.createElement('div');
+      wrapper.className = 'pre-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', function () {
+        var text = pre.innerText || pre.textContent || '';
+        navigator.clipboard.writeText(text.trim()).then(function () {
+          btn.textContent = 'Copied!';
+          setTimeout(function () {
+            btn.textContent = 'Copy';
+          }, 1500);
+        });
+      });
+      wrapper.appendChild(btn);
+    });
 
     var sections = document.querySelectorAll('main section[id]');
     var tocLinks = document.querySelectorAll('nav a[href^="#"]');

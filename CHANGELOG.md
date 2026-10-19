@@ -7,8 +7,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Machine-legible LLM documentation endpoints (`llms.txt` and `llms-full.txt`)**:
+  Added [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt) at the repository root and mirrored them at [`docs/guide/llms.txt`](docs/guide/llms.txt) and [`docs/guide/llms-full.txt`](docs/guide/llms-full.txt) for GitHub Pages deployment (`https://niq-cnr.github.io/nizam-framework/llms.txt` and `https://niq-cnr.github.io/nizam-framework/llms-full.txt`), providing AI coding agents and LLM crawlers with an instant operational entry protocol, start-path routing matrix, CLI subcommand reference, role/permission-class summary, and validation check catalog.
+
 ### Changed
 
+- **Developer & AI-agent front-door upgrade (`README.md` and `docs/guide/index.html`)**:
+  Upgraded `README.md` with release/guide/LLM badges, a dual-persona entry table, a "Why Nizam?" failure-to-remediation comparison matrix, an ASCII workspace & execution-loop diagram, a 5-route decision matrix under `## Start paths`, an `llms.txt` quick-load section, and a `C1–C16` compliance summary. Upgraded `docs/guide/index.html` with a modern light/dark design system, hero badges, dual Human/Agent track cards, one-click `Copy` buttons on all code blocks, a 5-route comparison table in `#start-paths`, numbered step cards in `#execution-loop`, module category pills, and `llms.txt` / `llms-full.txt` integration links.
 - **`v1.10.1` post-release closeout and `.nizam/` self-adoption**:
   Re-bootstrapped `.nizam/` to the released immutable tag `v1.10.1` (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`, annotated tag object `5b6fdb64a5bc3bf1def755b8269696d9e95b3a41`, `278` released files + `provenance.json`, `installed_at` `2026-10-19T11:03:39Z`, evidence `.agent/evidence/release-v1.10.1-closeout/`), and updated `.github/scripts/verify_self_governance.py`, `README.md`, `AGENTS.md` (`v0.5.0`), `docs/planning/SELF_GOVERNANCE.md` (`v0.7.0`), `docs/planning/ROADMAP.md` (`v0.65.30`), `docs/planning/operator_gates.md` (`v0.51.0`), `docs/planning/manifest.json`, and `docs/planning/REMEDIATION_2026_10_18.md` (`v0.17.0`).
 
