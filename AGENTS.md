@@ -2,10 +2,13 @@
 id: nizam-self-governance-agents
 title: "Nizam Framework — Local Agent Instructions"
 description: "Route work on this repository through its installed immutable Nizam governance."
-version: 0.3.1
+version: 0.4.0
 status: active
 authoritative_source: AGENTS.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-19"
+    summary: "Exit temporary corrective override mode upon re-bootstrapping .nizam/ to the corrective immutable release v1.10.0 (6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7) and route local agent sessions through the installed v1.10.0 governance."
   - version: "0.3.1"
     date: "2026-10-19"
     summary: "Record explicit transitional entry precedence during the v1.9.0 audit and follow-up execution mandate (C0-C5, closing F1-F3) until .nizam/ is re-bootstrapped to the corrective release in C5, and reflect default noncommitting publish mode (prepare)."
@@ -30,8 +33,6 @@ change_log:
 ---
 
 # Local agent instructions
-
-> **Transitional Precedence (`C0`–`C5` Active)**: During the `v1.9.0` audit and follow-up execution mandate (`C0`–`C5`, closing `F1`–`F3`), the operator's continuing remediation mandate recorded in [REMEDIATION_2026_10_18.md](docs/planning/REMEDIATION_2026_10_18.md) and the authored root tools/protocols supersede conflicting repository-local or installed `.nizam/ v1.9.0` ceremony rules until `.nizam/` is re-bootstrapped to the corrective release in `C5`.
 
 Before planning, editing or reviewing work in this repository, query
 `.nizam/NIZAM.json`, then load `.nizam/tools/SKILL.md`. Resolve the installed

@@ -324,7 +324,7 @@ def _main_begin_done(argv: list[str]) -> int:
 def _add_publish_arguments(p: argparse.ArgumentParser, *, default_mode: str | None = None) -> None:
     p.add_argument("--capture", action="append", required=True, type=Path, dest="captures", help="Path to raw <stem>.capture.json file (repeatable for multi-capture batching).")
     if default_mode is None:
-        p.add_argument("--mode", choices=("prepare", "publish", "finalize"), default="publish", help="Publication mode: noncommitting prepare, externally mediated publish, or noncommitting finalize.")
+        p.add_argument("--mode", choices=("prepare", "publish", "finalize"), default="prepare", help="Publication mode: noncommitting prepare (default), externally mediated publish, or noncommitting finalize.")
     else:
         p.set_defaults(mode=default_mode)
     p.add_argument("--output-revision", default=None, help="Optional expected 40-hex commit revision for Stage 1 capture outputs.")
@@ -374,6 +374,17 @@ def _main_extended(argv: list[str]) -> int:
     capture_p.add_argument("--env-var", action="append", default=None, dest="env_vars", help="Environment variable name to record (repeatable).")
     capture_p.add_argument("--proof-kind", choices=("success", "semantic-negative"), default="success")
     capture_p.add_argument("--cause-class", choices=("environment", "contract", "implementation", "verifier", "transient", "unknown"), default=None)
+    capture_p.add_argument(
+        "--continuation-basis",
+        choices=("bounded-amendment", "verified-decomposition", "configured-step-limit", "operator-reset"),
+        default=None,
+        help="Qualifying continuation basis when attempt > 3 or decomposing a task.",
+    )
+    capture_p.add_argument("--parent-attempt", type=int, default=None, help="Parent attempt number for repair/continuation lineage.")
+    capture_p.add_argument("--decomposition-of", default=None, help="Parent task/step identifier when continuing via verified decomposition.")
+    capture_p.add_argument("--repair-summary", default=None, help="Bounded repair, amendment, or decomposition summary differentiating this attempt.")
+    capture_p.add_argument("--defect-signature", default=None, help="Observed or targeted defect signature for repeated-failure detection.")
+    capture_p.add_argument("--invariant-breach", action="store_true", help="Signal an invariant or authority breach (forces immediate hard stop).")
     capture_p.add_argument("--agent-id", default="nizam-local-agent")
     capture_p.add_argument("--session-id", default="local-session")
     capture_p.add_argument("--timeout-sec", type=float, default=None)
@@ -468,6 +479,12 @@ def _main_extended(argv: list[str]) -> int:
                 env_vars=args.env_vars,
                 proof_kind=args.proof_kind,
                 cause_class=args.cause_class,
+                continuation_basis=args.continuation_basis,
+                parent_attempt=args.parent_attempt,
+                decomposition_of=args.decomposition_of,
+                repair_summary=args.repair_summary,
+                defect_signature=args.defect_signature,
+                invariant_breach=args.invariant_breach,
                 agent_id=args.agent_id,
                 session_id=args.session_id,
                 timeout_sec=args.timeout_sec,
@@ -600,16 +617,23 @@ def classify_task(
         "reasons": reasons,
         "required_gates": ROUTE_GATES[route],
         "stopping_conditions": {
-            "max_attempts": 3,
+            "initial_strategy_ladder_attempts": 3,
+            "hard_attempt_cap": None,
             "attempt_counter_role": "telemetry",
             "breaker_ref": "methodology/03_circuit_breaker.md",
             "comparator_subordinate": True,
+            "continuation_policy": (
+                "Continue beyond attempt 3 when goals, invariants, and authority boundaries hold and "
+                "a bounded contract amendment, verified task decomposition, or authorized circuit_breaker "
+                "step limit applies; retain all prior attempt and repair history."
+            ),
             "pass_condition": (
                 "All required_gates for route '" + route + "' exit 0 and blocking verdict arrays are empty."
             ),
             "halt_condition": (
-                "Stop and diagnose on repeated identical deterministic failure, contradiction with approved "
-                "contract/invariants, missing operator authority, or exhausted execution budget; "
+                "Stop and escalate on a repeated identical deterministic failure signature without a "
+                "recorded bounded amendment or decomposition, contradiction with approved contract/invariants, "
+                "missing operator authority, or exhausted execution budget/step limit; "
                 "comparator claims remain subordinate to stopping rules."
             ),
         },
@@ -995,24 +1019,14 @@ def preflight_capabilities(root: Path, *, require_sandbox: bool = False) -> dict
     if not capabilities["dont_write_bytecode"]:
         failures.append("PYTHONDONTWRITEBYTECODE=1 is required to avoid contaminating payload trees")
 
-    git_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    git_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
     if git_res.returncode == 0:
         capabilities["git_available"] = True
         capabilities["git_toplevel"] = git_res.stdout.strip()
     else:
         failures.append("git rev-parse --show-toplevel failed")
 
-    origin_res = subprocess.run(
-        ["git", "-C", str(root), "remote", "get-url", "origin"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    origin_res = _run_git_readonly(root, ["remote", "get-url", "origin"], text=True)
     if origin_res.returncode == 0:
         capabilities["origin_url"] = origin_res.stdout.strip()
 
@@ -1159,6 +1173,220 @@ def _resolve_candidate_and_env(
     return resolved_sha, binding_state, captured_vars
 
 
+def _run_git_readonly(
+    root: Path,
+    args: list[str],
+    *,
+    text: bool = False,
+) -> subprocess.CompletedProcess:
+    """Run a read-only Git query with GIT_OPTIONAL_LOCKS=0 and --no-optional-locks so .git/index is never refreshed."""
+    git_env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+    return subprocess.run(
+        ["git", "--no-optional-locks", "-C", str(root), *args],
+        env=git_env,
+        capture_output=True,
+        text=text,
+        check=False,
+    )
+
+
+def _evaluate_attempt_continuation(
+    root: Path,
+    *,
+    task_id: str,
+    step: str,
+    attempt: int,
+    target_dir: Path,
+    continuation_basis: str | None = None,
+    parent_attempt: int | None = None,
+    decomposition_of: str | None = None,
+    repair_summary: str | None = None,
+    defect_signature: str | None = None,
+    invariant_breach: bool = False,
+) -> dict[str, Any]:
+    """Evaluate work-specific stopping and continuation rules before executing a captured attempt."""
+    if invariant_breach:
+        raise StartPathError(
+            "stopping policy halt: invariant or authority boundary breached; autonomous continuation forbidden",
+            2,
+        )
+
+    configured_limit: int | None = None
+    has_operator_extension = False
+    state_path = root / ".agent" / "run_state.json"
+    if state_path.is_file():
+        try:
+            state_doc = json.loads(state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            state_doc = {}
+        if isinstance(state_doc, dict):
+            cb = state_doc.get("circuit_breaker")
+            if isinstance(cb, dict):
+                cb_entry = cb.get(f"{task_id}-{step}") or cb.get(task_id) or cb.get(step)
+                if isinstance(cb_entry, dict):
+                    if cb_entry.get("invariant_breach") is True or cb_entry.get("authority_denied") is True:
+                        raise StartPathError(
+                            f"stopping policy halt: invariant or authority boundary breached in circuit_breaker for {task_id}:{step}",
+                            2,
+                        )
+                    raw_limit = cb_entry.get("limit")
+                    if isinstance(raw_limit, int) and not isinstance(raw_limit, bool) and raw_limit >= 1:
+                        configured_limit = raw_limit
+                    if (
+                        cb_entry.get("human_authorized_extension")
+                        or cb_entry.get("human_authorized_restart")
+                        or cb_entry.get("authorization")
+                        or (configured_limit is not None and configured_limit >= attempt and configured_limit > 3)
+                    ):
+                        has_operator_extension = True
+
+    has_contract_amendment = False
+    contract_path = root / ".agent" / "contracts" / f"{task_id}.json"
+    if contract_path.is_file():
+        try:
+            contract_doc = json.loads(contract_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            contract_doc = {}
+        if isinstance(contract_doc, dict):
+            amendments = contract_doc.get("amendments")
+            if isinstance(amendments, list) and len(amendments) > 0:
+                has_contract_amendment = True
+
+    prior_attempts: list[dict[str, Any]] = []
+    if target_dir.is_dir():
+        candidates = list(target_dir.glob(f"{task_id}-{step}-attempt*.capture.json"))
+        if decomposition_of:
+            for pat in (f"{decomposition_of}-*.capture.json", f"{task_id}-{decomposition_of}-attempt*.capture.json"):
+                for extra_p in target_dir.glob(pat):
+                    if extra_p not in candidates:
+                        candidates.append(extra_p)
+        for cap_file in sorted(candidates):
+            try:
+                p_doc = json.loads(cap_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if not isinstance(p_doc, dict):
+                continue
+            p_rel = cap_file.relative_to(root).as_posix() if cap_file.is_relative_to(root) else cap_file.as_posix()
+            p_sig = p_doc.get("defect_signature") or (p_doc.get("stderr") or {}).get("sha256")
+            p_lin = p_doc.get("continuation_lineage") if isinstance(p_doc.get("continuation_lineage"), dict) else {}
+            prior_attempts.append({
+                "id": p_doc.get("id"),
+                "step": p_doc.get("step"),
+                "attempt": p_doc.get("attempt"),
+                "started_at": p_doc.get("started_at"),
+                "capture_path": p_rel,
+                "outcome": p_doc.get("outcome"),
+                "exit_code": p_doc.get("exit_code"),
+                "cause_class": p_doc.get("cause_class"),
+                "defect_signature": p_sig,
+                "repair_summary": p_lin.get("repair_summary"),
+            })
+        prior_attempts.sort(key=lambda x: (int(x.get("attempt") or 0), str(x.get("started_at") or "")))
+
+    if configured_limit is not None and attempt > configured_limit and not (
+        continuation_basis in ("bounded-amendment", "verified-decomposition", "operator-reset")
+        or has_contract_amendment
+        or bool(decomposition_of)
+    ):
+        raise StartPathError(
+            f"stopping policy halt: attempt {attempt} exceeds configured step limit ({configured_limit}) for {task_id}:{step}",
+            2,
+        )
+
+    same_step_priors = [p for p in prior_attempts if p.get("id") == task_id and p.get("step") == step]
+    if same_step_priors:
+        last_p = same_step_priors[-1]
+        last_failed = last_p.get("outcome") not in ("success", "semantic-negative")
+        if last_failed and defect_signature and defect_signature == last_p.get("defect_signature"):
+            if not (repair_summary or has_contract_amendment or decomposition_of):
+                raise StartPathError(
+                    f"stopping policy halt: repeated identical unresolved defect signature ({defect_signature!r}) without bounded amendment, repair progress, or task decomposition",
+                    2,
+                )
+        if len(same_step_priors) >= 2:
+            p1, p2 = same_step_priors[-2], same_step_priors[-1]
+            if (
+                p1.get("outcome") not in ("success", "semantic-negative")
+                and p2.get("outcome") not in ("success", "semantic-negative")
+                and p1.get("defect_signature")
+                and p1.get("defect_signature") == p2.get("defect_signature")
+                and not (repair_summary or has_contract_amendment or decomposition_of or has_operator_extension)
+            ):
+                raise StartPathError(
+                    "stopping policy halt: repeated identical unresolved defect signature across consecutive attempts without bounded amendment, repair progress, or decomposition",
+                    2,
+                )
+
+    resolved_basis: str | None = continuation_basis
+    if attempt > 3:
+        if continuation_basis == "bounded-amendment":
+            if not (has_contract_amendment or repair_summary):
+                raise StartPathError(
+                    "stopping policy halt: --continuation-basis bounded-amendment requires a recorded contract amendment or --repair-summary",
+                    2,
+                )
+        elif continuation_basis == "verified-decomposition":
+            if not (decomposition_of or repair_summary):
+                raise StartPathError(
+                    "stopping policy halt: --continuation-basis verified-decomposition requires --decomposition-of or --repair-summary",
+                    2,
+                )
+        elif continuation_basis == "configured-step-limit":
+            if not (configured_limit is not None and configured_limit >= attempt):
+                raise StartPathError(
+                    f"stopping policy halt: --continuation-basis configured-step-limit requires circuit_breaker limit >= {attempt} in .agent/run_state.json",
+                    2,
+                )
+        elif continuation_basis == "operator-reset":
+            if not (has_operator_extension or repair_summary):
+                raise StartPathError(
+                    "stopping policy halt: --continuation-basis operator-reset requires recorded operator authorization in .agent/run_state.json or --repair-summary",
+                    2,
+                )
+        elif decomposition_of:
+            resolved_basis = "verified-decomposition"
+        elif has_contract_amendment:
+            resolved_basis = "bounded-amendment"
+        elif has_operator_extension:
+            resolved_basis = "configured-step-limit"
+        else:
+            raise StartPathError(
+                f"attempt {attempt} exceeds the initial 3-step strategy ladder (attempt must be between 1 and 3 unless a bounded contract amendment, verified decomposition, or configured circuit_breaker limit >= {attempt} permits continuation)",
+                2,
+            )
+    else:
+        if resolved_basis is None:
+            if decomposition_of:
+                resolved_basis = "verified-decomposition"
+            elif has_contract_amendment and attempt > 1:
+                resolved_basis = "bounded-amendment"
+            elif attempt == 1:
+                resolved_basis = "initial-attempt"
+            else:
+                resolved_basis = "strategy-ladder"
+
+    resolved_parent = parent_attempt
+    if resolved_parent is None:
+        if same_step_priors:
+            resolved_parent = int(same_step_priors[-1].get("attempt") or (attempt - 1))
+        elif attempt > 1:
+            resolved_parent = attempt - 1
+
+    return {
+        "initial_strategy_ladder_attempts": 3,
+        "attempt": attempt,
+        "parent_attempt": resolved_parent,
+        "decomposition_of": decomposition_of,
+        "continuation_basis": resolved_basis,
+        "repair_summary": repair_summary,
+        "configured_step_limit": configured_limit if configured_limit is not None else 3,
+        "contract_amendment_present": has_contract_amendment,
+        "operator_extension_present": has_operator_extension,
+        "prior_attempts": prior_attempts,
+    }
+
+
 def capture_command_evidence(
     root: Path,
     *,
@@ -1171,6 +1399,12 @@ def capture_command_evidence(
     env_vars: list[str] | None = None,
     proof_kind: str = "success",
     cause_class: str | None = None,
+    continuation_basis: str | None = None,
+    parent_attempt: int | None = None,
+    decomposition_of: str | None = None,
+    repair_summary: str | None = None,
+    defect_signature: str | None = None,
+    invariant_breach: bool = False,
     agent_id: str = "nizam-local-agent",
     session_id: str = "local-session",
     timeout_sec: float | None = None,
@@ -1180,8 +1414,8 @@ def capture_command_evidence(
         raise StartPathError("task_id is not a single safe path token", 2)
     if not ID_PATTERN.fullmatch(step):
         raise StartPathError("step is not a single safe path token", 2)
-    if not isinstance(attempt, int) or isinstance(attempt, bool) or not (1 <= attempt <= 3):
-        raise StartPathError("attempt must be an integer between 1 and 3 (circuit breaker cap)", 2)
+    if not isinstance(attempt, int) or isinstance(attempt, bool) or attempt < 1:
+        raise StartPathError("attempt must be an integer between 1 and 3 (or >= 1 with a qualifying continuation basis)", 2)
     if not argv or not all(isinstance(x, str) and x for x in argv):
         raise StartPathError("argv must be a non-empty list of strings", 2)
     if proof_kind not in ("success", "semantic-negative"):
@@ -1197,12 +1431,21 @@ def capture_command_evidence(
     target_dir = resolve_project_file(root, rel_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    head_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    continuation_lineage = _evaluate_attempt_continuation(
+        root,
+        task_id=task_id,
+        step=step,
+        attempt=attempt,
+        target_dir=target_dir,
+        continuation_basis=continuation_basis,
+        parent_attempt=parent_attempt,
+        decomposition_of=decomposition_of,
+        repair_summary=repair_summary,
+        defect_signature=defect_signature,
+        invariant_breach=invariant_breach,
     )
+
+    head_res = _run_git_readonly(root, ["rev-parse", "HEAD"], text=True)
     revision = head_res.stdout.strip() if head_res.returncode == 0 else None
 
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -1289,6 +1532,12 @@ def capture_command_evidence(
         else:
             inferred_cause = "implementation"
 
+    stdout_sha = sha256_hex(stdout_bytes)
+    stderr_sha = sha256_hex(stderr_bytes)
+    effective_defect_sig = defect_signature
+    if effective_defect_sig is None and outcome != proof_kind:
+        effective_defect_sig = f"exit:{exit_code}:stderr:{stderr_sha}"
+
     capture_doc: dict[str, Any] = {
         "schema_version": 1,
         "id": task_id,
@@ -1320,16 +1569,18 @@ def capture_command_evidence(
         "outcome": outcome,
         "proof_kind": proof_kind,
         "cause_class": inferred_cause,
+        "defect_signature": effective_defect_sig,
+        "continuation_lineage": continuation_lineage,
         "exit_code": exit_code,
         "signal": signal_num,
         "stdout": {
             "path": stdout_rel,
-            "sha256": sha256_hex(stdout_bytes),
+            "sha256": stdout_sha,
             "revision": None,
         },
         "stderr": {
             "path": stderr_rel,
-            "sha256": sha256_hex(stderr_bytes),
+            "sha256": stderr_sha,
             "revision": None,
         },
         "capture_path": receipt_rel,
@@ -1339,22 +1590,20 @@ def capture_command_evidence(
     return capture_doc
 
 
+def _get_git_branch_state(root: Path) -> tuple[str | None, bool]:
+    """Return (branch_name_or_None, detached_head_bool) for root."""
+    sym_res = _run_git_readonly(root, ["symbolic-ref", "-q", "--short", "HEAD"], text=True)
+    if sym_res.returncode == 0 and sym_res.stdout.strip():
+        return sym_res.stdout.strip(), False
+    return None, True
+
+
 def _verify_git_worktree_root(root: Path) -> tuple[str, str, Path]:
     """Verify that root is the exact Git worktree toplevel and return (head_sha, origin_url, real_index_path)."""
-    wt_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--is-inside-work-tree"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    wt_res = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if wt_res.returncode != 0 or wt_res.stdout.strip() != "true":
         raise StartPathError(f"target root is not inside a Git working tree: {root}", 1)
-    top_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
     if top_res.returncode != 0 or not top_res.stdout.strip():
         raise StartPathError(f"git rev-parse --show-toplevel failed for {root}", 1)
     if Path(top_res.stdout.strip()).resolve() != root.resolve():
@@ -1362,33 +1611,18 @@ def _verify_git_worktree_root(root: Path) -> tuple[str, str, Path]:
             f"target root ({root.resolve()}) does not match Git worktree toplevel ({Path(top_res.stdout.strip()).resolve()})",
             1,
         )
-    head_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--verify", "HEAD^{commit}"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
     if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
         raise StartPathError("git rev-parse HEAD^{commit} failed during evidence publication", 1)
     head_sha = head_res.stdout.strip()
 
-    idx_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--git-path", "index"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    idx_res = _run_git_readonly(root, ["rev-parse", "--git-path", "index"], text=True)
     if idx_res.returncode != 0 or not idx_res.stdout.strip():
         raise StartPathError("git rev-parse --git-path index failed", 1)
     raw_idx = Path(idx_res.stdout.strip())
     real_index_path = raw_idx if raw_idx.is_absolute() else (root / raw_idx)
 
-    origin_res = subprocess.run(
-        ["git", "-C", str(root), "remote", "get-url", "origin"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    origin_res = _run_git_readonly(root, ["remote", "get-url", "origin"], text=True)
     origin_url = origin_res.stdout.strip() if origin_res.returncode == 0 and origin_res.stdout.strip() else str(root)
     return head_sha, origin_url, real_index_path
 
@@ -1412,24 +1646,16 @@ def _verify_git_status_and_no_staged_conflicts(
     *,
     check_staged_conflicts: bool = True,
 ) -> None:
-    """Verify git status and git diff --cached exit 0, and reject same-path staged entries in .git/index."""
+    """Verify git status and git diff --cached exit 0 without refreshing .git/index, and reject same-path staged entries."""
     if not norm_paths:
         return
     lit_specs = [f":(literal){p}" for p in norm_paths]
-    status_res = subprocess.run(
-        ["git", "-C", str(root), "status", "--porcelain", "-z", "--", *lit_specs],
-        capture_output=True,
-        check=False,
-    )
+    status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--", *lit_specs], text=False)
     if status_res.returncode != 0:
         err_msg = status_res.stderr.decode("utf-8", errors="replace").strip()
         raise StartPathError(f"git status failed during evidence publication: {err_msg}", 1)
 
-    diff_res = subprocess.run(
-        ["git", "-C", str(root), "diff", "--cached", "--name-only", "-z", "--", *lit_specs],
-        capture_output=True,
-        check=False,
-    )
+    diff_res = _run_git_readonly(root, ["diff", "--cached", "--name-only", "-z", "--", *lit_specs], text=False)
     if diff_res.returncode != 0:
         err_msg = diff_res.stderr.decode("utf-8", errors="replace").strip()
         raise StartPathError(f"git diff --cached failed during evidence publication: {err_msg}", 1)
@@ -1451,21 +1677,11 @@ def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[
     """Return (mode, sha256_hex) of rel_path at revision, or None if not present in the revision's tree."""
     if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
         raise StartPathError(f"invalid 40-hex Git revision: {revision!r}", 1)
-    commit_check = subprocess.run(
-        ["git", "-C", str(root), "cat-file", "-e", f"{revision}^{{commit}}"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    commit_check = _run_git_readonly(root, ["cat-file", "-e", f"{revision}^{{commit}}"], text=True)
     if commit_check.returncode != 0:
         raise StartPathError(f"Git commit does not exist: {revision}", 1)
 
-    ls_res = subprocess.run(
-        ["git", "-C", str(root), "ls-tree", revision, "--", f":(literal){rel_path}"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    ls_res = _run_git_readonly(root, ["ls-tree", revision, "--", f":(literal){rel_path}"], text=True)
     if ls_res.returncode != 0:
         raise StartPathError(f"git ls-tree failed for {revision}:{rel_path}: {ls_res.stderr.strip()}", 1)
     line = ls_res.stdout.strip()
@@ -1478,11 +1694,7 @@ def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[
     mode, obj_type, obj_hash = parts
     if obj_type != "blob":
         raise StartPathError(f"committed object at {revision}:{rel_path} is not a blob ({obj_type})", 1)
-    cat_res = subprocess.run(
-        ["git", "-C", str(root), "cat-file", "blob", obj_hash],
-        capture_output=True,
-        check=False,
-    )
+    cat_res = _run_git_readonly(root, ["cat-file", "blob", obj_hash], text=False)
     if cat_res.returncode != 0:
         raise StartPathError(f"git cat-file blob failed for {revision}:{rel_path}", 1)
     return mode, sha256_hex(cat_res.stdout)
@@ -1491,16 +1703,122 @@ def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[
 def _find_last_commit_for_paths(root: Path, revision: str, norm_paths: list[str]) -> str:
     """Return the most recent 40-hex commit in revision's history that touched norm_paths."""
     lit_specs = [f":(literal){p}" for p in norm_paths]
-    log_res = subprocess.run(
-        ["git", "-C", str(root), "log", "-n", "1", "--format=%H", revision, "--", *lit_specs],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    log_res = _run_git_readonly(root, ["log", "-n", "1", "--format=%H", revision, "--", *lit_specs], text=True)
     sha = log_res.stdout.strip()
     if log_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", sha):
         raise StartPathError(f"failed to resolve commit history for {', '.join(norm_paths)} at {revision}", 1)
     return sha
+
+
+def _get_commit_changed_paths(root: Path, revision: str) -> list[str]:
+    """Return sorted repository-relative paths changed in revision."""
+    dt_res = _run_git_readonly(
+        root,
+        ["diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "-z", revision],
+        text=False,
+    )
+    if dt_res.returncode != 0:
+        err_msg = dt_res.stderr.decode("utf-8", errors="replace").strip()
+        raise StartPathError(f"git diff-tree failed for {revision}: {err_msg}", 1)
+    return sorted(
+        p.decode("utf-8", errors="replace")
+        for p in dt_res.stdout.split(b"\x00")
+        if p
+    )
+
+
+def _is_git_ancestor(root: Path, ancestor: str, descendant: str) -> bool:
+    """Return True if ancestor is an ancestor of descendant in root."""
+    res = _run_git_readonly(root, ["merge-base", "--is-ancestor", ancestor, descendant], text=True)
+    return res.returncode == 0
+
+
+def _get_commit_parents(root: Path, revision: str) -> list[str]:
+    """Return the list of 40-hex parent commits for revision."""
+    res = _run_git_readonly(root, ["rev-list", "--parents", "-n", "1", revision], text=True)
+    if res.returncode != 0 or not res.stdout.strip():
+        raise StartPathError(f"git rev-list --parents failed for {revision}", 1)
+    parts = res.stdout.strip().split()
+    return parts[1:]
+
+
+def _verify_request_commit_binding(
+    root: Path,
+    commit_rev: str,
+    expected_files: list[dict[str, str]],
+    commit_req: dict[str, Any] | None = None,
+    *,
+    allowed_stage_paths: set[str] | None = None,
+    pre_execution_revision: str | None = None,
+) -> None:
+    """Verify that commit_rev is bound to the active worktree, branch/base, and exact owned stage file delta."""
+    head_sha, current_origin, _ = _verify_git_worktree_root(root)
+    if not _is_git_ancestor(root, commit_rev, head_sha):
+        raise StartPathError(
+            f"stage commit {commit_rev} is not an ancestor of current HEAD ({head_sha})",
+            1,
+        )
+    if pre_execution_revision is not None and not _is_git_ancestor(root, pre_execution_revision, commit_rev):
+        raise StartPathError(
+            f"pre-execution revision ({pre_execution_revision}) is not an ancestor of stage commit ({commit_rev})",
+            1,
+        )
+
+    changed_paths = set(_get_commit_changed_paths(root, commit_rev))
+    expected_path_set = {f["path"] for f in expected_files}
+    missing_in_delta = sorted(expected_path_set - changed_paths)
+    if missing_in_delta:
+        raise StartPathError(
+            f"stage commit {commit_rev} did not introduce expected stage file(s): {', '.join(missing_in_delta)}",
+            1,
+        )
+
+    if commit_req is not None and isinstance(commit_req.get("files"), list):
+        req_file_set = {
+            f["path"]
+            for f in commit_req["files"]
+            if isinstance(f, dict) and isinstance(f.get("path"), str)
+        }
+        if changed_paths != req_file_set:
+            extra = sorted(changed_paths - req_file_set)
+            missing = sorted(req_file_set - changed_paths)
+            raise StartPathError(
+                f"stage commit {commit_rev} delta mismatch against publish-request (extra={extra}, missing={missing})",
+                1,
+            )
+    else:
+        permitted = set(allowed_stage_paths) if allowed_stage_paths is not None else set(expected_path_set)
+        extra = sorted(changed_paths - permitted)
+        if extra:
+            raise StartPathError(
+                f"stage commit {commit_rev} modified unauthorized path(s) outside owned stage delta: {', '.join(extra)}",
+                1,
+            )
+
+    if commit_req is not None:
+        if commit_req.get("repository_root") and Path(str(commit_req["repository_root"])).resolve() != root.resolve():
+            raise StartPathError("publish-request repository_root does not match current worktree root", 1)
+        if commit_req.get("repository") and not _repository_urls_match(str(commit_req["repository"]), current_origin):
+            raise StartPathError("publish-request repository does not match current origin", 1)
+        cur_branch, cur_detached = _get_git_branch_state(root)
+        if "detached_head" in commit_req and bool(commit_req["detached_head"]) != cur_detached:
+            raise StartPathError(
+                f"current HEAD detached state ({cur_detached}) does not match publish-request detached_head ({commit_req.get('detached_head')})",
+                1,
+            )
+        if not cur_detached and commit_req.get("intended_branch") is not None and cur_branch != commit_req.get("intended_branch"):
+            raise StartPathError(
+                f"current branch ({cur_branch!r}) does not match publish-request intended_branch ({commit_req.get('intended_branch')!r})",
+                1,
+            )
+        intended_base = commit_req.get("intended_base")
+        if isinstance(intended_base, str) and re.fullmatch(r"[0-9a-f]{40}", intended_base):
+            parents = _get_commit_parents(root, commit_rev)
+            if len(parents) != 1 or parents[0] != intended_base:
+                raise StartPathError(
+                    f"stage commit {commit_rev} parent ({parents}) does not match publish-request intended_base ({intended_base})",
+                    1,
+                )
 
 
 def _check_files_committed_at_revision(
@@ -1564,7 +1882,28 @@ def _build_commit_request(
     *,
     pre_execution_revision: str | None = None,
     status: str = "pending_external_commit",
+    intended_branch: str | None = None,
+    detached_head: bool | None = None,
+    next_action: str | None = None,
 ) -> dict[str, Any]:
+    if intended_branch is None and detached_head is None:
+        intended_branch, detached_head = _get_git_branch_state(root)
+    if next_action is None:
+        if stage == "outputs_pending":
+            next_action = (
+                "Commit the exact listed literal_pathspec files on top of intended_base via the authorized "
+                "external commit path, then re-run 'tools/start_path.py publish --mode prepare' to project Stage 2."
+            )
+        elif stage == "receipt_capture_pending":
+            next_action = (
+                "Commit the exact listed literal_pathspec files on top of intended_base via the authorized "
+                "external commit path, then run 'tools/start_path.py publish --mode finalize' to write .published.json."
+            )
+        else:
+            next_action = (
+                "Commit the exact listed literal_pathspec files on top of intended_base via the authorized "
+                "external commit path."
+            )
     req: dict[str, Any] = {
         "schema_version": 1,
         "stage": stage,
@@ -1573,7 +1912,10 @@ def _build_commit_request(
         "repository": origin_url,
         "worktree": str(root),
         "intended_base": head_sha,
+        "intended_branch": intended_branch,
+        "detached_head": bool(detached_head),
         "commit_message": message,
+        "next_action": next_action,
         "files": [
             {
                 "path": f["path"],
@@ -1605,8 +1947,8 @@ def _git_commit_literal_paths(
     request_out_paths: list[Path] | None = None,
     pre_execution_revision: str | None = None,
 ) -> str:
-    """Commit literal paths via external mutation authority or isolated temporary GIT_INDEX_FILE."""
-    head_sha, origin_url, real_index_path = _verify_git_worktree_root(root)
+    """Commit literal paths strictly via an explicitly configured NIZAM_MUTATION_ADAPTER (no implicit local commit fallback)."""
+    head_sha, origin_url, _ = _verify_git_worktree_root(root)
     norm_paths: list[str] = []
     for item in expected_files:
         _, _, disk_sha = _verify_regular_file_mode_100644(root, item["path"])
@@ -1616,11 +1958,37 @@ def _git_commit_literal_paths(
 
     _verify_git_status_and_no_staged_conflicts(root, norm_paths, check_staged_conflicts=True)
 
+    req_paths = request_out_paths or []
+    prior_req: dict[str, Any] | None = None
+    for rp in req_paths:
+        if rp.is_file():
+            try:
+                loaded_rp = _read_json_file(rp)
+                if loaded_rp.get("stage") == stage:
+                    prior_req = loaded_rp
+                    break
+            except StartPathError:
+                pass
+
     already_rev = _check_files_committed_at_revision(root, head_sha, expected_files, check_worktree_clean=True)
     if already_rev is not None:
+        _verify_request_commit_binding(
+            root,
+            already_rev,
+            expected_files,
+            prior_req,
+            pre_execution_revision=pre_execution_revision,
+        )
         return already_rev
 
-    req_paths = request_out_paths or []
+    if prior_req is not None and prior_req.get("status") in ("unknown_external_commit_outcome", "in_flight_external_commit"):
+        prior_base = prior_req.get("intended_base")
+        if isinstance(prior_base, str) and re.fullmatch(r"[0-9a-f]{40}", prior_base) and head_sha != prior_base:
+            raise StartPathError(
+                f"cannot reconcile {prior_req.get('status')}: HEAD ({head_sha}) moved away from intended_base ({prior_base}) without committing expected stage files",
+                1,
+            )
+
     commit_req = _build_commit_request(
         root,
         origin_url,
@@ -1630,6 +1998,8 @@ def _git_commit_literal_paths(
         expected_files,
         pre_execution_revision=pre_execution_revision,
     )
+    if prior_req is not None and prior_req.get("status") in ("unknown_external_commit_outcome", "in_flight_external_commit"):
+        commit_req["reconciled_from_status"] = prior_req["status"]
 
     adapter = os.environ.get("NIZAM_MUTATION_ADAPTER", "").strip()
     policy_mode = os.environ.get("NIZAM_MUTATION_POLICY", "").strip().lower()
@@ -1646,10 +2016,33 @@ def _git_commit_literal_paths(
             1,
         )
 
-    if adapter:
-        import shlex
+    if not adapter:
+        commit_req["status"] = "pending_external_commit"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            "external commit mediation required for --mode publish (NIZAM_MUTATION_ADAPTER is not configured); "
+            "prepared publish-request written without mutating Git state",
+            1,
+        )
 
+    import shlex
+
+    try:
         adapter_argv = shlex.split(adapter)
+    except ValueError as exc:
+        commit_req["status"] = "denied_by_mutation_adapter"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(f"invalid NIZAM_MUTATION_ADAPTER command syntax: {exc}", 1) from exc
+    if not adapter_argv:
+        commit_req["status"] = "pending_external_commit"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            "external commit mediation required for --mode publish (NIZAM_MUTATION_ADAPTER is empty)",
+            1,
+        )
+    commit_req["status"] = "in_flight_external_commit"
+    _write_publish_requests(req_paths, commit_req)
+    try:
         adapter_res = subprocess.run(
             adapter_argv,
             input=canonical_bytes(commit_req) + b"\n",
@@ -1657,112 +2050,132 @@ def _git_commit_literal_paths(
             capture_output=True,
             check=False,
         )
-        if adapter_res.returncode != 0:
-            commit_req["status"] = "denied_by_mutation_adapter"
-            _write_publish_requests(req_paths, commit_req)
-            err_detail = (
-                adapter_res.stderr.decode("utf-8", errors="replace").strip()
-                or adapter_res.stdout.decode("utf-8", errors="replace").strip()
+    except OSError as exc:
+        commit_req["status"] = "denied_by_mutation_adapter"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(f"failed to execute runtime mutation adapter: {exc}", 1) from exc
+
+    post_head, _, _ = _verify_git_worktree_root(root)
+    if adapter_res.returncode < 0:
+        commit_req["status"] = "unknown_external_commit_outcome"
+        commit_req["recovery_hint"] = (
+            "Re-run publish (--mode prepare, --mode publish, or --mode finalize) to reconcile actual repository commit state."
+        )
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"runtime mutation adapter interrupted by signal {-adapter_res.returncode} (status=unknown_external_commit_outcome); "
+            "reconcile repository state before retry",
+            1,
+        )
+
+    if adapter_res.returncode != 0:
+        if post_head != head_sha:
+            commit_req["status"] = "unknown_external_commit_outcome"
+            commit_req["recovery_hint"] = (
+                "HEAD changed before adapter exited non-zero; re-run publish to verify and reconcile committed stage blobs."
             )
+            _write_publish_requests(req_paths, commit_req)
             raise StartPathError(
-                f"git commit denied by runtime mutation adapter (exit {adapter_res.returncode}): {err_detail}",
+                f"runtime mutation adapter exited {adapter_res.returncode} after HEAD advanced (status=unknown_external_commit_outcome); "
+                "re-run to reconcile repository state",
                 1,
             )
-        raw_out = adapter_res.stdout.decode("utf-8", errors="replace").strip()
-        if raw_out:
-            try:
-                resp = json.loads(raw_out)
-            except json.JSONDecodeError as exc:
-                commit_req["status"] = "invalid_mutation_adapter_response"
-                _write_publish_requests(req_paths, commit_req)
-                raise StartPathError(f"runtime mutation adapter returned invalid JSON: {exc.msg}", 1) from exc
-            if not isinstance(resp, dict):
-                raise StartPathError("runtime mutation adapter response must be a JSON object", 1)
-            if resp.get("approved") is False or resp.get("status") in ("denied", "pending"):
-                commit_req["status"] = str(resp.get("status", "denied"))
-                _write_publish_requests(req_paths, commit_req)
-                raise StartPathError(
-                    f"git commit {resp.get('status', 'denied')} by runtime mutation adapter",
-                    1,
-                )
-            if resp.get("committed") is True or isinstance(resp.get("revision"), str):
-                new_head, _, _ = _verify_git_worktree_root(root)
-                target_rev = resp.get("revision") if isinstance(resp.get("revision"), str) else new_head
-                verified_rev = _check_files_committed_at_revision(
-                    root,
-                    target_rev,
-                    expected_files,
-                    check_worktree_clean=True,
-                )
-                if verified_rev is None:
-                    raise StartPathError(
-                        "runtime mutation adapter claimed commit completion, but committed blobs were not found in Git",
-                        1,
-                    )
-                return verified_rev
-
-    lit_specs = [f":(literal){p}" for p in norm_paths]
-    with tempfile.TemporaryDirectory(prefix="nizam-git-index-") as tmp_idx_dir:
-        tmp_index = Path(tmp_idx_dir) / "index"
-        if real_index_path.is_file():
-            shutil.copy2(real_index_path, tmp_index)
-        git_env = {**os.environ, "GIT_INDEX_FILE": str(tmp_index)}
-
-        add_res = subprocess.run(
-            ["git", "-C", str(root), "add", "--", *lit_specs],
-            env=git_env,
-            capture_output=True,
-            text=True,
-            check=False,
+        commit_req["status"] = "denied_by_mutation_adapter"
+        _write_publish_requests(req_paths, commit_req)
+        err_detail = (
+            adapter_res.stderr.decode("utf-8", errors="replace").strip()
+            or adapter_res.stdout.decode("utf-8", errors="replace").strip()
         )
-        if add_res.returncode != 0:
-            commit_req["status"] = "git_add_failed"
-            _write_publish_requests(req_paths, commit_req)
-            raise StartPathError(f"git add failed during evidence publication: {add_res.stderr.strip()}", 1)
-
-        diff_res = subprocess.run(
-            ["git", "-C", str(root), "diff", "--cached", "--name-only", "-z", "--", *lit_specs],
-            env=git_env,
-            capture_output=True,
-            check=False,
+        raise StartPathError(
+            f"git commit denied by runtime mutation adapter (exit {adapter_res.returncode}): {err_detail}",
+            1,
         )
-        if diff_res.returncode != 0:
-            commit_req["status"] = "git_diff_failed"
-            _write_publish_requests(req_paths, commit_req)
-            err_msg = diff_res.stderr.decode("utf-8", errors="replace").strip()
-            raise StartPathError(f"git diff --cached failed during evidence publication: {err_msg}", 1)
-        if not diff_res.stdout.strip(b"\x00"):
-            commit_req["status"] = "git_diff_empty"
-            _write_publish_requests(req_paths, commit_req)
-            raise StartPathError("git diff --cached reported no staged changes for uncommitted evidence paths", 1)
 
-        commit_res = subprocess.run(
-            ["git", "-C", str(root), "commit", "-qm", message, "--", *lit_specs],
-            env=git_env,
-            capture_output=True,
-            text=True,
-            check=False,
+    raw_out = adapter_res.stdout.decode("utf-8", errors="replace").strip()
+    if not raw_out:
+        commit_req["status"] = "unknown_external_commit_outcome" if post_head != head_sha else "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"runtime mutation adapter returned empty stdout (status={commit_req['status']}); refusing implicit local commit fallback",
+            1,
         )
-        if commit_res.returncode != 0:
-            commit_req["status"] = "git_commit_failed"
-            _write_publish_requests(req_paths, commit_req)
-            err_detail = commit_res.stderr.strip() or commit_res.stdout.strip()
-            raise StartPathError(f"git commit failed during evidence publication: {err_detail}", 1)
 
-        new_head, _, _ = _verify_git_worktree_root(root)
-        verified_rev = _check_files_committed_at_revision(
-            root,
-            new_head,
-            expected_files,
-            check_worktree_clean=False,
+    try:
+        resp = json.loads(raw_out)
+    except json.JSONDecodeError as exc:
+        commit_req["status"] = "unknown_external_commit_outcome" if post_head != head_sha else "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"runtime mutation adapter returned invalid JSON ({exc.msg}; status={commit_req['status']})",
+            1,
+        ) from exc
+
+    if not isinstance(resp, dict):
+        commit_req["status"] = "unknown_external_commit_outcome" if post_head != head_sha else "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError("runtime mutation adapter response must be a JSON object", 1)
+
+    if resp.get("approved") is False or resp.get("status") in ("denied", "pending", "failed", "rejected"):
+        st = str(resp.get("status") or "denied")
+        commit_req["status"] = st
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"git commit {st} by runtime mutation adapter",
+            1,
         )
-        if verified_rev is None:
-            raise StartPathError("post-commit verification failed: committed blobs missing at HEAD", 1)
 
-        if tmp_index.is_file():
-            shutil.copy2(tmp_index, real_index_path)
+    if resp.get("status") in ("unknown", "interrupted", "unknown_external_commit_outcome"):
+        commit_req["status"] = "unknown_external_commit_outcome"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            "runtime mutation adapter reported unknown_external_commit_outcome; re-run to reconcile repository state",
+            1,
+        )
 
-    return new_head
+    target_rev = resp.get("revision") if isinstance(resp.get("revision"), str) else resp.get("commit_rev")
+    is_committed = (resp.get("committed") is True) or (resp.get("approved") is True and resp.get("status") == "committed")
+    if not is_committed or not isinstance(target_rev, str) or not re.fullmatch(r"[0-9a-f]{40}", target_rev):
+        commit_req["status"] = "unknown_external_commit_outcome" if post_head != head_sha else "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"runtime mutation adapter response is missing required completion fields (committed=true and 40-hex revision; status={commit_req['status']}); "
+            "refusing implicit local commit fallback",
+            1,
+        )
+
+    if target_rev != post_head:
+        commit_req["status"] = "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            f"runtime mutation adapter reported revision {target_rev} which does not match HEAD ({post_head})",
+            1,
+        )
+
+    verified_rev = _check_files_committed_at_revision(
+        root,
+        target_rev,
+        expected_files,
+        check_worktree_clean=True,
+    )
+    if verified_rev is None or verified_rev != target_rev:
+        commit_req["status"] = "invalid_mutation_adapter_response"
+        _write_publish_requests(req_paths, commit_req)
+        raise StartPathError(
+            "runtime mutation adapter claimed commit completion, but committed blobs were not found in Git at reported revision",
+            1,
+        )
+
+    _verify_request_commit_binding(
+        root,
+        target_rev,
+        expected_files,
+        commit_req,
+        pre_execution_revision=pre_execution_revision,
+    )
+    commit_req["status"] = "committed"
+    commit_req["revision"] = target_rev
+    _write_publish_requests(req_paths, commit_req)
+    return target_rev
 
 
 def _project_closed_capture(
@@ -1826,7 +2239,7 @@ def publish_captured_evidence(
     capture_paths: list[Path] | None = None,
     cause: str | None = None,
     proof_kind: str | None = None,
-    mode: str = "publish",
+    mode: str = "prepare",
     output_revision: str | None = None,
     capture_revision: str | None = None,
     stop_after_stage: str | None = None,
@@ -1891,12 +2304,7 @@ def publish_captured_evidence(
 
         if head_sha is None or origin_url is None:
             head_sha, origin_url, _ = _verify_git_worktree_root(root)
-        pre_check = subprocess.run(
-            ["git", "-C", str(root), "cat-file", "-e", f"{pre_rev}^{{commit}}"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        pre_check = _run_git_readonly(root, ["cat-file", "-e", f"{pre_rev}^{{commit}}"], text=True)
         if pre_check.returncode != 0:
             raise StartPathError(f"capture pre-execution revision does not exist in Git: {pre_rev}", 1)
 
@@ -1924,6 +2332,9 @@ def publish_captured_evidence(
             root=root,
             reject_symlinks=True,
         )
+        existing_req: dict[str, Any] | None = None
+        if request_path.is_file():
+            existing_req = _read_json_file(request_path)
 
         stage1_files = [
             {"path": stdout_rel, "sha256": stdout_sha, "mode": "100644"},
@@ -1999,6 +2410,7 @@ def publish_captured_evidence(
             "published_rel": published_rel,
             "request_path": request_path,
             "request_rel": request_rel,
+            "existing_req": existing_req,
             "stage1_files": stage1_files,
             "already_published_doc": already_published_doc,
         })
@@ -2011,24 +2423,50 @@ def publish_captured_evidence(
             return res
         return {"noop": True, "published": pub_list}
 
+    all_batch_s1_paths = {f["path"] for it in items for f in it["stage1_files"]}
     target_out_rev_check = output_revision or head_sha
     for it in items:
         if it["already_published_doc"] is not None:
             it["resolved_output_rev"] = it["already_published_doc"]["output_revision"]
             continue
-        it["resolved_output_rev"] = _check_files_committed_at_revision(
+        resolved_s1 = _check_files_committed_at_revision(
             root,
             target_out_rev_check,
             it["stage1_files"],
             check_worktree_clean=True,
         )
+        if resolved_s1 is not None:
+            s1_req = (
+                it["existing_req"]
+                if isinstance(it["existing_req"], dict) and it["existing_req"].get("stage") == "outputs_pending"
+                else None
+            )
+            _verify_request_commit_binding(
+                root,
+                resolved_s1,
+                it["stage1_files"],
+                s1_req,
+                allowed_stage_paths=all_batch_s1_paths,
+                pre_execution_revision=it["pre_rev"],
+            )
+        it["resolved_output_rev"] = resolved_s1
 
     if mode == "prepare":
         uncommitted_s1: list[dict[str, str]] = []
         req_paths_s1: list[Path] = []
         req_rels_s1: list[str] = []
+        reconciled_s1_status: str | None = None
         for it in items:
             if it["resolved_output_rev"] is None:
+                ex_req = it["existing_req"]
+                if isinstance(ex_req, dict) and ex_req.get("status") in ("unknown_external_commit_outcome", "in_flight_external_commit"):
+                    ex_base = ex_req.get("intended_base")
+                    if isinstance(ex_base, str) and re.fullmatch(r"[0-9a-f]{40}", ex_base) and head_sha != ex_base:
+                        raise StartPathError(
+                            f"cannot reconcile {ex_req.get('status')}: HEAD ({head_sha}) moved away from intended_base ({ex_base}) without committing Stage 1 files",
+                            1,
+                        )
+                    reconciled_s1_status = str(ex_req["status"])
                 uncommitted_s1.extend(it["stage1_files"])
                 req_paths_s1.append(it["request_path"])
                 req_rels_s1.append(it["request_rel"])
@@ -2044,6 +2482,8 @@ def publish_captured_evidence(
                 uncommitted_s1,
                 pre_execution_revision=first_it["pre_rev"],
             )
+            if reconciled_s1_status is not None:
+                req_doc["reconciled_from_status"] = reconciled_s1_status
             _write_publish_requests(req_paths_s1, req_doc)
             return {
                 "status": "pending_external_commit",
@@ -2057,6 +2497,9 @@ def publish_captured_evidence(
         req_paths_s2: list[Path] = []
         req_rels_s2: list[str] = []
         receipt_cap_rels: list[str] = []
+        all_batch_s2_paths = {it["receipt_cap_rel"] for it in items if it["already_published_doc"] is None}
+        committed_s2_revs: list[str] = []
+        reconciled_s2_status: str | None = None
         for it in items:
             if it["already_published_doc"] is not None:
                 continue
@@ -2081,10 +2524,52 @@ def publish_captured_evidence(
                     1,
                 )
             it["receipt_cap_path"].write_bytes(closed_bytes)
-            stage2_files.append({"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"})
-            req_paths_s2.append(it["request_path"])
-            req_rels_s2.append(it["request_rel"])
-            receipt_cap_rels.append(it["receipt_cap_rel"])
+            s2_entry = {"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"}
+            already_s2 = _check_files_committed_at_revision(root, head_sha, [s2_entry], check_worktree_clean=True)
+            if already_s2 is not None:
+                s2_req = (
+                    it["existing_req"]
+                    if isinstance(it["existing_req"], dict) and it["existing_req"].get("stage") == "receipt_capture_pending"
+                    else None
+                )
+                _verify_request_commit_binding(
+                    root,
+                    already_s2,
+                    [s2_entry],
+                    s2_req,
+                    allowed_stage_paths=all_batch_s2_paths,
+                    pre_execution_revision=it["pre_rev"],
+                )
+                committed_s2_revs.append(already_s2)
+                receipt_cap_rels.append(it["receipt_cap_rel"])
+            else:
+                ex_req = it["existing_req"]
+                if (
+                    isinstance(ex_req, dict)
+                    and ex_req.get("stage") == "receipt_capture_pending"
+                    and ex_req.get("status") in ("unknown_external_commit_outcome", "in_flight_external_commit")
+                ):
+                    ex_base = ex_req.get("intended_base")
+                    if isinstance(ex_base, str) and re.fullmatch(r"[0-9a-f]{40}", ex_base) and head_sha != ex_base:
+                        raise StartPathError(
+                            f"cannot reconcile {ex_req.get('status')}: HEAD ({head_sha}) moved away from intended_base ({ex_base}) without committing Stage 2 receipt-capture",
+                            1,
+                        )
+                    reconciled_s2_status = str(ex_req["status"])
+                stage2_files.append(s2_entry)
+                req_paths_s2.append(it["request_path"])
+                req_rels_s2.append(it["request_rel"])
+                receipt_cap_rels.append(it["receipt_cap_rel"])
+
+        if not stage2_files and committed_s2_revs:
+            return {
+                "status": "ready_to_finalize",
+                "stage": "finalize_pending",
+                "output_revision": items[0]["resolved_output_rev"],
+                "capture_revision": committed_s2_revs[0],
+                "receipt_capture_path": receipt_cap_rels[0] if len(receipt_cap_rels) == 1 else receipt_cap_rels,
+                "next_action": "Run 'tools/start_path.py publish --mode finalize' to write .published.json.",
+            }
 
         first_it = items[0]
         msg2 = f"publish receipt capture {first_it['base_stem']}"
@@ -2097,6 +2582,8 @@ def publish_captured_evidence(
             stage2_files,
             pre_execution_revision=first_it["pre_rev"],
         )
+        if reconciled_s2_status is not None:
+            req_doc2["reconciled_from_status"] = reconciled_s2_status
         _write_publish_requests(req_paths_s2, req_doc2)
         return {
             "status": "pending_external_commit",
@@ -2111,6 +2598,7 @@ def publish_captured_evidence(
     if mode == "finalize":
         published_results: list[dict[str, Any]] = []
         target_cap_rev_check = capture_revision or head_sha
+        all_batch_s2_paths = {it["receipt_cap_rel"] for it in items if it["already_published_doc"] is None}
         for it in items:
             if it["already_published_doc"] is not None:
                 published_results.append(it["already_published_doc"])
@@ -2145,10 +2633,11 @@ def publish_captured_evidence(
                     f"finalize failed: on-disk {it['receipt_cap_rel']} does not match projected closed capture",
                     1,
                 )
+            s2_entry = {"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"}
             cap_rev = _check_files_committed_at_revision(
                 root,
                 target_cap_rev_check,
-                [{"path": it["receipt_cap_rel"], "sha256": closed_sha, "mode": "100644"}],
+                [s2_entry],
                 check_worktree_clean=True,
             )
             if cap_rev is None:
@@ -2156,6 +2645,24 @@ def publish_captured_evidence(
                     f"finalize failed: {it['receipt_cap_rel']} is not committed in Git at {target_cap_rev_check}",
                     1,
                 )
+            if cap_rev == it["resolved_output_rev"] or not _is_git_ancestor(root, it["resolved_output_rev"], cap_rev):
+                raise StartPathError(
+                    f"finalize failed: Stage 1 output_revision ({it['resolved_output_rev']}) must be a strict ancestor of Stage 2 capture_revision ({cap_rev})",
+                    1,
+                )
+            s2_req = (
+                it["existing_req"]
+                if isinstance(it["existing_req"], dict) and it["existing_req"].get("stage") == "receipt_capture_pending"
+                else None
+            )
+            _verify_request_commit_binding(
+                root,
+                cap_rev,
+                [s2_entry],
+                s2_req,
+                allowed_stage_paths=all_batch_s2_paths,
+                pre_execution_revision=it["pre_rev"],
+            )
             receipt_capture_ref = {
                 "path": it["receipt_cap_rel"],
                 "sha256": closed_sha,
@@ -2213,6 +2720,7 @@ def publish_captured_evidence(
     s2_files_to_commit: list[dict[str, str]] = []
     s2_req_paths: list[Path] = []
     s2_req_rels: list[str] = []
+    all_batch_s2_paths = {it["receipt_cap_rel"] for it in items if it["already_published_doc"] is None}
     for it in items:
         if it["already_published_doc"] is not None:
             continue
@@ -2247,6 +2755,20 @@ def publish_captured_evidence(
             [s2_entry],
             check_worktree_clean=True,
         )
+        if already_s2_rev is not None:
+            s2_req = (
+                it["existing_req"]
+                if isinstance(it["existing_req"], dict) and it["existing_req"].get("stage") == "receipt_capture_pending"
+                else None
+            )
+            _verify_request_commit_binding(
+                root,
+                already_s2_rev,
+                [s2_entry],
+                s2_req,
+                allowed_stage_paths=all_batch_s2_paths,
+                pre_execution_revision=it["pre_rev"],
+            )
         it["resolved_capture_rev"] = already_s2_rev
         if already_s2_rev is None:
             s2_files_to_commit.append(s2_entry)
@@ -2665,19 +3187,9 @@ def _discover_cross_surface_status(root: Path) -> tuple[list[str], list[str], bo
 
 def generate_status_view(root: Path) -> dict[str, Any]:
     """Derive a concise read-only status/readiness view from authoritative live records."""
-    head_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    head_res = _run_git_readonly(root, ["rev-parse", "HEAD"], text=True)
     head_sha = head_res.stdout.strip() if head_res.returncode == 0 else None
-    origin_res = subprocess.run(
-        ["git", "-C", str(root), "remote", "get-url", "origin"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    origin_res = _run_git_readonly(root, ["remote", "get-url", "origin"], text=True)
     origin_url = origin_res.stdout.strip() if origin_res.returncode == 0 else None
 
     state_path = root / ".agent" / "run_state.json"
@@ -2884,28 +3396,18 @@ def verify_route_scope_eligibility(
 def verify_actual_changed_scope(root: Path, route: str, declared_files: list[str]) -> None:
     """Verify declared scope remains eligible and that no undeclared non-.agent working-tree changes exist."""
     scoped = verify_route_scope_eligibility(root, route, declared_files)
-    git_check = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--is-inside-work-tree"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
         return
 
-    top_res = subprocess.run(
-        ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
     if top_res.returncode != 0 or Path(top_res.stdout.strip()).resolve() != root.resolve():
         return
 
-    status_res = subprocess.run(
-        ["git", "-C", str(root), "status", "--porcelain", "-z", "--untracked-files=all"],
-        capture_output=True,
-        check=False,
+    status_res = _run_git_readonly(
+        root,
+        ["status", "--porcelain", "-z", "--untracked-files=all"],
+        text=False,
     )
     if status_res.returncode != 0:
         return

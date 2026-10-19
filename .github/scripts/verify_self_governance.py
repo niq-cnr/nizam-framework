@@ -13,8 +13,8 @@ if str(REPO / "tools") not in sys.path:
 
 from payload_integrity import GovernanceDrift, verify_payload_integrity  # noqa: E402
 
-TAG = "v1.9.0"
-SHA = "0c9b1c5979a922c75499e0bfe4d9dbf9524f717d"
+TAG = "v1.10.0"
+SHA = "6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7"
 SOURCE = "https://github.com/niq-cnr/nizam-framework.git"
 EXPECTED_FILE_COUNT = 278
 

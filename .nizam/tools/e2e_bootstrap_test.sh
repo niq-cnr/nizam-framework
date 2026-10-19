@@ -280,9 +280,9 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
     echo "assert_provenance_sha_pin: FAIL -- recorded resolved_sha (${recorded_sha}) != the tag's authoritative commit (${true_sha})"
     return 1
   fi
-  # (b) correct expected SHA -> PASS (exit 0) and content_integrity=verified
+  # (b) correct expected SHA + --git-repo -> PASS (exit 0) and content_integrity=verified
   local vo_out
-  if ! vo_out="$(ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" 2>&1)"; then
+  if ! vo_out="$(ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity 2>&1)"; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha}): ${vo_out}"
     return 1
   fi
@@ -293,8 +293,23 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
       return 1
       ;;
   esac
+  # (b2) C2: --expected-sha without --git-repo -> FAIL (never derive repo from provenance.json or ambient CWD)
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted --expected-sha without --git-repo"
+    return 1
+  fi
+  # (b3) C2: --source-root with --expected-sha or --require-content-integrity -> FAIL (unbound directory cannot satisfy commit-bound integrity)
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --source-root "$(pwd)" --expected-sha "${recorded_sha}" --require-content-integrity >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only allowed unbound --source-root to satisfy --expected-sha / --require-content-integrity"
+    return 1
+  fi
+  # (b4) C2 downgrade bug: --source-root=--audit-invalid-reference with --expected-sha and --require-content-integrity -> FAIL
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --source-root=--audit-invalid-reference --expected-sha "${recorded_sha}" --require-content-integrity >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only downgraded --source-root=--audit-invalid-reference to pass"
+    return 1
+  fi
   # (c) wrong expected SHA -> drift FAIL (non-zero)
-  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --git-repo "$(pwd)" \
       --expected-sha "0000000000000000000000000000000000000000" >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
     return 1
@@ -302,7 +317,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   # (d) V3 Case 2: harmless comment appended to installed tools/start_path.py -> FAIL
   cp -p "${target}/tools/start_path.py" "${SCRATCH_DIR}/start_path.py.orig"
   printf '\n# harmless audit comment\n' >> "${target}/tools/start_path.py"
-  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity >/dev/null 2>&1; then
     mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted appended comment in tools/start_path.py (V3 content drift missed)"
     return 1
@@ -310,7 +325,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   mv -f "${SCRATCH_DIR}/start_path.py.orig" "${target}/tools/start_path.py"
   # (e) V3 Case 3: unexpected extra file added under payload -> FAIL
   printf 'unexpected\n' > "${target}/tools/unexpected_audit_file.txt"
-  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity >/dev/null 2>&1; then
     rm -f -- "${target}/tools/unexpected_audit_file.txt"
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted unexpected extra file under payload (V3 inventory drift missed)"
     return 1
@@ -318,18 +333,30 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   rm -f -- "${target}/tools/unexpected_audit_file.txt"
   # (f) V3 mode drift: flipping executable bit on tools/start_path.py -> FAIL
   chmod +x "${target}/tools/start_path.py"
-  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity >/dev/null 2>&1; then
     chmod -x "${target}/tools/start_path.py"
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted executable mode drift on tools/start_path.py"
     return 1
   fi
   chmod -x "${target}/tools/start_path.py"
+  # (g) C2 tampered checker: replacing installed tools/payload_integrity.py with print-only exit-0 stub + extra file -> FAIL
+  cp -p "${target}/tools/payload_integrity.py" "${SCRATCH_DIR}/payload_integrity.py.orig"
+  printf '#!/usr/bin/env python3\nimport sys\nprint("STUB PASS")\nsys.exit(0)\n' > "${target}/tools/payload_integrity.py"
+  printf 'unexpected\n' > "${target}/tools/unexpected_stub_file.txt"
+  if ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity >/dev/null 2>&1; then
+    mv -f "${SCRATCH_DIR}/payload_integrity.py.orig" "${target}/tools/payload_integrity.py"
+    rm -f -- "${target}/tools/unexpected_stub_file.txt"
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted tampered installed payload_integrity.py stub"
+    return 1
+  fi
+  mv -f "${SCRATCH_DIR}/payload_integrity.py.orig" "${target}/tools/payload_integrity.py"
+  rm -f -- "${target}/tools/unexpected_stub_file.txt"
   # Restore check passes again
-  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+  if ! ALLOW_FIXTURE_TAG=1 bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" --git-repo "$(pwd)" --require-content-integrity >/dev/null 2>&1; then
     echo "assert_provenance_sha_pin: FAIL -- --verify-only failed after restoring original payload"
     return 1
   fi
-  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --verify-only enforces SHA match, content bytes, file inventory, and executable modes."
+  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --verify-only enforces --git-repo + --expected-sha match, content bytes, file inventory, executable modes, and C2 guards."
   return 0
 }
 
@@ -1319,13 +1346,11 @@ cap_out = json.loads(
     ).stdout
 )
 
-# V1 check (a): publish --mode prepare performs zero git commits and leaves HEAD unchanged
+# C1 & V1 check (a): default publish (no --mode) defaults to noncommitting prepare and leaves HEAD unchanged
 pre_pub_head = git("rev-parse", "HEAD")
 prep_out = json.loads(
     run_sp(
         "publish",
-        "--mode",
-        "prepare",
         "--capture",
         cap_out["capture_path"],
     ).stdout
@@ -1333,7 +1358,39 @@ prep_out = json.loads(
 assert prep_out["status"] == "pending_external_commit" and prep_out["stage"] == "outputs_pending"
 assert git("rev-parse", "HEAD") == pre_pub_head
 
-# V1 check (b): publish --mode publish respects NIZAM_MUTATION_POLICY=deny without creating a commit
+# C1 & V1 check (b): publish --mode publish rejects missing adapter, empty stdout, {}, and NIZAM_MUTATION_POLICY=deny without committing
+run_sp(
+    "publish",
+    "--mode",
+    "publish",
+    "--capture",
+    cap_out["capture_path"],
+    expected_rc=1,
+)
+assert git("rev-parse", "HEAD") == pre_pub_head
+
+run_sp(
+    "publish",
+    "--mode",
+    "publish",
+    "--capture",
+    cap_out["capture_path"],
+    expected_rc=1,
+    extra_env={"NIZAM_MUTATION_ADAPTER": f"{sys.executable} -c 'pass'"},
+)
+assert git("rev-parse", "HEAD") == pre_pub_head
+
+run_sp(
+    "publish",
+    "--mode",
+    "publish",
+    "--capture",
+    cap_out["capture_path"],
+    expected_rc=1,
+    extra_env={"NIZAM_MUTATION_ADAPTER": f"{sys.executable} -c 'print(\"{{}}\")'"},
+)
+assert git("rev-parse", "HEAD") == pre_pub_head
+
 run_sp(
     "publish",
     "--mode",
@@ -1345,11 +1402,40 @@ run_sp(
 )
 assert git("rev-parse", "HEAD") == pre_pub_head
 
+# Write a consumer-local runtime mutation adapter outside the tracked consumer tree
+adapter_script = consumer.parent / "consumer_mutation_adapter.py"
+adapter_script.write_text(
+    "import json, os, shutil, subprocess, sys, tempfile\n"
+    "req = json.load(sys.stdin)\n"
+    "repo = req['repository_root']\n"
+    "specs = [f':(literal){f[\"path\"]}' for f in req['files']]\n"
+    "git_dir = subprocess.run(['git', '-C', repo, 'rev-parse', '--absolute-git-dir'], capture_output=True, text=True, check=True).stdout.strip()\n"
+    "real_idx = os.path.join(git_dir, 'index')\n"
+    "fd, tmp_idx = tempfile.mkstemp(prefix='adapter-idx-')\n"
+    "os.close(fd)\n"
+    "os.unlink(tmp_idx)\n"
+    "if os.path.exists(real_idx):\n"
+    "    shutil.copy2(real_idx, tmp_idx)\n"
+    "env = dict(os.environ, GIT_INDEX_FILE=tmp_idx)\n"
+    "subprocess.run(['git', '-C', repo, 'read-tree', 'HEAD'], env=env, check=True)\n"
+    "subprocess.run(['git', '-C', repo, 'add', '--', *specs], env=env, check=True)\n"
+    "subprocess.run(['git', '-C', repo, 'commit', '-q', '-m', req['commit_message'], '--', *specs], env=env, check=True)\n"
+    "subprocess.run(['git', '-C', repo, 'reset', '-q', 'HEAD', '--', *specs], check=True)\n"
+    "os.unlink(tmp_idx)\n"
+    "rev = subprocess.run(['git', '--no-optional-locks', '-C', repo, 'rev-parse', 'HEAD'], capture_output=True, text=True, check=True).stdout.strip()\n"
+    "print(json.dumps({'approved': True, 'status': 'committed', 'committed': True, 'revision': rev, 'commit_rev': rev}))\n",
+    encoding="utf-8",
+)
+adapter_env = {"NIZAM_MUTATION_ADAPTER": f"{sys.executable} {adapter_script}"}
+
 pub_out = json.loads(
     run_sp(
         "publish",
+        "--mode",
+        "publish",
         "--capture",
         cap_out["capture_path"],
+        extra_env=adapter_env,
     ).stdout
 )
 assert set(pub_out["receipt_capture"].keys()) == {
@@ -1470,6 +1556,7 @@ build_res = json.loads(
         "--output",
         str(receipt_path),
         "--commit",
+        extra_env=adapter_env,
     ).stdout
 )
 assert build_res["verified"] is True

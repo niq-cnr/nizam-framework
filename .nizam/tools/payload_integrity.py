@@ -47,42 +47,24 @@ def _repo_has_commit(repo: Path, sha: str) -> bool:
     return res.returncode == 0
 
 
+def _is_subpath_or_equal(candidate: Path, root: Path) -> bool:
+    return candidate == root or root in candidate.parents
+
+
 def _resolve_candidate_git_repo(
     *,
     payload: Path,
     git_repo: Path | None,
-    source_url: str,
-    resolved_sha: str,
 ) -> Path | None:
-    if git_repo is not None:
-        return git_repo.resolve()
-
-    candidates: list[Path] = []
-    if source_url.startswith("file://"):
-        raw_path = source_url[len("file://") :]
-        if raw_path:
-            candidates.append(Path(raw_path))
-    elif os.path.isdir(source_url):
-        candidates.append(Path(source_url))
-
-    cwd = Path.cwd().resolve()
-    candidates.append(cwd)
-    script_repo = Path(__file__).resolve().parents[1]
-    if script_repo != payload.resolve():
-        candidates.append(script_repo)
-
-    seen: set[Path] = set()
-    for cand in candidates:
-        try:
-            resolved = cand.resolve()
-        except OSError:
-            continue
-        if resolved in seen:
-            continue
-        seen.add(resolved)
-        if _repo_has_commit(resolved, resolved_sha):
-            return resolved
-    return None
+    if git_repo is None:
+        return None
+    if git_repo.is_symlink() or not git_repo.is_dir():
+        raise GovernanceDrift(f"git repository must be a real directory: {git_repo}")
+    resolved_repo = git_repo.resolve()
+    resolved_payload = payload.resolve()
+    if _is_subpath_or_equal(resolved_repo, resolved_payload):
+        raise GovernanceDrift(f"git repository reference must be outside payload directory: {resolved_repo}")
+    return resolved_repo
 
 
 def load_and_validate_provenance(
@@ -194,6 +176,12 @@ def _walk_directory_inventory(root: Path, *, subpaths: tuple[str, ...] | None = 
     return inventory
 
 
+class _PayloadArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        print(f"PAYLOAD-INTEGRITY FAIL: argument error: {message}", file=sys.stderr)
+        raise SystemExit(1)
+
+
 def verify_payload_integrity(
     payload: Path,
     *,
@@ -205,9 +193,19 @@ def verify_payload_integrity(
     expected_framework_version: str | None = None,
     expected_file_count: int | None = None,
     require_tag_ref: bool = False,
+    require_reference_tree: bool = False,
 ) -> dict[str, Any]:
     if payload.is_symlink() or not payload.is_dir():
         raise GovernanceDrift("payload root must be a real directory")
+    resolved_payload = payload.resolve()
+
+    if git_repo is not None and source_root is not None:
+        raise GovernanceDrift("cannot combine --git-repo and --source-root")
+
+    if expected_sha is not None and not SHA40_RE.fullmatch(expected_sha):
+        raise GovernanceDrift(
+            f"--expected-sha must be a 40-character lowercase hexadecimal commit SHA: {expected_sha!r}"
+        )
 
     provenance = load_and_validate_provenance(
         payload,
@@ -218,30 +216,49 @@ def verify_payload_integrity(
     )
 
     tag = expected_tag or provenance["tag"]
-    sha = expected_sha or provenance["resolved_sha"]
 
     expected_git: dict[str, tuple[str, str]] = {}
     expected_fs: dict[str, tuple[str, bytes]] = {}
     ref_source = ""
     resolved_repo: Path | None = None
+    content_integrity = ""
 
     if source_root is not None:
+        if expected_sha is not None or require_reference_tree or require_tag_ref:
+            raise GovernanceDrift(
+                "--source-root performs an unbound directory comparison (directory_match_unbound) and cannot satisfy "
+                "--expected-sha, --require-reference-tree, or --require-tag-ref; supply --git-repo with --expected-sha "
+                "for commit-bound content-integrity verification"
+            )
         if source_root.is_symlink() or not source_root.is_dir():
             raise GovernanceDrift(f"source root must be a real directory: {source_root}")
+        resolved_source_root = source_root.resolve()
+        if _is_subpath_or_equal(resolved_source_root, resolved_payload):
+            raise GovernanceDrift(f"source root must be outside payload directory: {resolved_source_root}")
         expected_fs = _walk_directory_inventory(source_root, subpaths=(*MODULES, "NIZAM.json"))
-        ref_source = f"source_root:{source_root.resolve()}"
+        ref_source = f"source_root:{resolved_source_root}"
         expected_paths = set(expected_fs.keys())
+        content_integrity = "directory_match_unbound"
     else:
         resolved_repo = _resolve_candidate_git_repo(
             payload=payload,
             git_repo=git_repo,
-            source_url=provenance["source_url"],
-            resolved_sha=sha,
         )
         if resolved_repo is None:
+            _walk_directory_inventory(payload)
+            if expected_sha is not None or require_reference_tree or require_tag_ref:
+                raise GovernanceDrift(
+                    "commit-bound content-integrity verification requires an explicit --git-repo and 40-hex --expected-sha"
+                )
             raise ReferenceTreeUnavailable(
-                f"no local git repository or --source-root contains commit {sha} for tag {tag}"
+                "no --git-repo or --source-root supplied for content comparison"
             )
+        if not expected_sha:
+            raise GovernanceDrift(
+                "--git-repo verification requires an explicit 40-character lowercase hex --expected-sha "
+                "(never derived solely from mutable provenance.json)"
+            )
+        sha = expected_sha
         tag_ref_check = subprocess.run(
             ["git", "-C", str(resolved_repo), "rev-parse", "-q", "--verify", f"refs/tags/{tag}^{{commit}}"],
             capture_output=True,
@@ -256,7 +273,7 @@ def verify_payload_integrity(
             raise GovernanceDrift(f"local {tag} does not resolve to the trusted commit")
 
         if not _repo_has_commit(resolved_repo, sha):
-            raise ReferenceTreeUnavailable(f"commit {sha} is not present in {resolved_repo}")
+            raise GovernanceDrift(f"commit {sha} is not present in {resolved_repo}")
 
         for entry in _run_git(resolved_repo, "ls-tree", "-r", "-z", sha, "--", *MODULES, "NIZAM.json").split(b"\0"):
             if not entry:
@@ -268,6 +285,7 @@ def verify_payload_integrity(
             expected_git[path_bytes.decode("utf-8")] = (mode, oid)
         ref_source = f"git:{resolved_repo}@{sha}"
         expected_paths = set(expected_git.keys())
+        content_integrity = "verified"
 
     if "NIZAM.json" not in expected_paths:
         raise GovernanceDrift("trusted payload tree is missing its expected inventory")
@@ -305,21 +323,22 @@ def verify_payload_integrity(
         "framework_version": provenance["framework_version"],
         "source_url": provenance["source_url"],
         "reference_source": ref_source,
+        "content_integrity": content_integrity,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = _PayloadArgumentParser(description=__doc__)
     parser.add_argument("--payload-dir", type=Path, required=True, help="Installed .nizam/ payload directory.")
     parser.add_argument("--git-repo", type=Path, default=None, help="Git repository containing the pinned commit/tag.")
-    parser.add_argument("--source-root", type=Path, default=None, help="Unpacked framework release source root.")
+    parser.add_argument("--source-root", type=Path, default=None, help="Unpacked framework release source root (unbound directory match only).")
     parser.add_argument("--expected-tag", default=None, help="Expected release tag in provenance.json.")
-    parser.add_argument("--expected-sha", default=None, help="Expected 40-hex commit SHA in provenance.json.")
+    parser.add_argument("--expected-sha", default=None, help="Expected 40-hex commit SHA in provenance.json and --git-repo.")
     parser.add_argument("--expected-source-url", default=None, help="Expected source_url in provenance.json.")
     parser.add_argument("--expected-framework-version", default=None, help="Expected framework_version in provenance.json.")
     parser.add_argument("--expected-file-count", type=int, default=None, help="Expected count of released files (excluding provenance.json).")
     parser.add_argument("--require-tag-ref", action="store_true", help="Require refs/tags/<tag>^{commit} in --git-repo.")
-    parser.add_argument("--require-reference-tree", action="store_true", help="Exit 1 if no reference tree is reachable.")
+    parser.add_argument("--require-reference-tree", action="store_true", help="Exit 1 unless commit-bound reference verification succeeds.")
     args = parser.parse_args(argv)
 
     try:
@@ -333,6 +352,7 @@ def main(argv: list[str] | None = None) -> int:
             expected_framework_version=args.expected_framework_version,
             expected_file_count=args.expected_file_count,
             require_tag_ref=args.require_tag_ref,
+            require_reference_tree=args.require_reference_tree,
         )
     except ReferenceTreeUnavailable as exc:
         if args.require_reference_tree:
@@ -344,8 +364,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"PAYLOAD-INTEGRITY FAIL: {exc}", file=sys.stderr)
         return 1
 
+    if result["content_integrity"] == "directory_match_unbound":
+        print(
+            f"PAYLOAD-INTEGRITY DIRECTORY-MATCH (content_integrity=directory_match_unbound): "
+            f"{result['verified_files']} files match unbound source root ({result['reference_source']}); "
+            f"commit tree not verified"
+        )
+        return 0
+
     print(
-        f"PAYLOAD-INTEGRITY PASS: {result['verified_files']} released files + genuine provenance; "
+        f"PAYLOAD-INTEGRITY PASS (content_integrity=verified): {result['verified_files']} released files + genuine provenance; "
         f"{result['tag']} at {result['resolved_sha']} ({result['reference_source']})"
     )
     return 0

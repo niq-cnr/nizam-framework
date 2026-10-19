@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.8.0
+version: 0.8.1
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.8.1"
+    date: "2026-10-19"
+    summary: "Default tools/start_path.py publish to --mode prepare (noncommitting), require explicit NIZAM_MUTATION_ADAPTER completion responses for --mode publish / build-receipt --commit without local commit fallback, and record executable continuation_lineage checks in capture/classify."
   - version: "0.8.0"
     date: "2026-10-18"
     summary: "Document publish --mode prepare|publish|finalize and build-receipt runtime mutation-authority mediation (V1), align skill.json version parity (C13), and replace static installed-version/phase claims in Section 10 with provenance and capability discovery (V5)."
@@ -131,12 +134,15 @@ command update without changing goals, `non_goals`, or security invariants, use
 `tools/start_path.py amend-contract` (which classifies mechanical vs. semantic
 changes and flags `re_approval_required: true` on semantic changes). Use
 `tools/start_path.py preflight` before a governed attempt,
-`tools/start_path.py capture` for exclusive per-execution evidence capture,
-`tools/start_path.py publish` (`--mode prepare|publish|finalize`, separating
-read-only plan preparation from externally mediated Git commit publication and
-finalization) and `tools/start_path.py build-receipt` (requiring an
-already-published capture envelope unless `--commit` is explicitly passed under
-runtime mutation authority) to bind receipt-qualified stage evidence,
+`tools/start_path.py capture` for exclusive per-execution evidence capture with
+executable work-specific continuation and lineage checks,
+`tools/start_path.py publish` (`--mode prepare|publish|finalize`, defaulting to
+`--mode prepare`, separating noncommitting plan preparation from `--mode publish`
+externally mediated via `NIZAM_MUTATION_ADAPTER` without local commit fallback
+and `--mode finalize`)
+and `tools/start_path.py build-receipt` (requiring an already-published capture
+envelope unless `--commit` is explicitly passed under runtime mutation adapter
+authority) to bind receipt-qualified stage evidence,
 `tools/start_path.py status` for a concise read-only status view, and
 `tools/start_path.py resume` for receipt-verified stage transitions. No feature
 implementation may begin against a contract that is not `approved`.

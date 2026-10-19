@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.5.0
+version: 0.5.1
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.5.1"
+    date: "2026-10-19"
+    summary: "Default tools/start_path.py publish to --mode prepare (noncommitting), remove implicit local Git add/commit fallback from _git_commit_literal_paths, require explicit NIZAM_MUTATION_ADAPTER completion responses, distinguish denial from unknown_external_commit_outcome reconciliation, bind stage commits to intended_base/branch/delta, and use GIT_OPTIONAL_LOCKS=0 for read-side Git queries."
   - version: "0.5.0"
     date: "2026-10-18"
     summary: "Document externally mediated evidence publication (prepare/publish/finalize separation, literal pathspecs, temporary GIT_INDEX_FILE isolation, and the architectural boundary that an unrestricted interpreter with .git write access cannot be made commit-restricted solely by denying one top-level command spelling) and replace hardcoded v1.5.0/phase016 status text with provenance discovery."
@@ -150,27 +153,37 @@ top-level `git commit` command spelling in a tool dispatcher. To respect the
 host runtime's actual mutation-authority boundary without concealing Git
 mutations inside read/verify helpers:
 
-- **Noncommitting helpers perform zero Git mutations.** `tools/start_path.py
-  capture`, `prepare-publish` (`publish --mode prepare`), `finalize-publish`
+- **Noncommitting helpers perform zero Git mutations and never refresh `.git/index`.**
+  `tools/start_path.py capture`, `publish` (which defaults to `--mode prepare`),
+  `prepare-publish` (`publish --mode prepare`), `finalize-publish`
   (`publish --mode finalize`), and `build-receipt` (without `--commit`,
   including when given a raw closed-capture input) never stage, reset, or
-  commit in Git; `HEAD`, refs, and `.git/index` remain byte-for-byte unchanged.
-- **Explicit prepare / external commit / finalize workflow.** In runtimes where
-  Git commits require separate host mediation, the agent runs `prepare-publish`
-  to validate captured outputs (`100644` regular files and SHA-256 digests) and
-  emit `<stem>.publish-request.json` naming the exact repository root, worktree,
-  intended base revision, and literal pathspecs (`:(literal)<path>`), delegates
-  the two commits (capture outputs, then projected `<stem>.receipt-capture.json`)
-  to the runtime's authorized commit primitive, and runs `finalize-publish` to
-  verify the committed blobs/modes and emit `<stem>.published.json`.
-- **Externally mediated `publish` mode.** When `publish` (or `build-receipt
-  --commit`) is invoked directly, it honors `NIZAM_MUTATION_ADAPTER` /
-  `NIZAM_MUTATION_POLICY` from the host runtime environment, never accepts a
-  caller-controlled `--authorized` boolean flag, rejects same-path staged
-  conflicts, stages via an isolated temporary `GIT_INDEX_FILE` with literal
-  pathspecs so a denied or failed commit leaves `.git/index` and `HEAD`
-  untouched, and supports batching multiple `--capture` inputs into one output
-  commit and one receipt-capture commit.
+  commit in Git; read-side Git queries run with `GIT_OPTIONAL_LOCKS=0` /
+  `git --no-optional-locks` so `HEAD`, refs, and `.git/index` remain
+  byte-for-byte unchanged even after file `mtime` changes.
+- **Explicit prepare / external commit / finalize workflow (default).** Calling
+  `tools/start_path.py publish` (or `prepare-publish`) validates captured
+  outputs (`100644` regular files and SHA-256 digests) and emits
+  `<stem>.publish-request.json` naming the exact `repository_root`, `repository`,
+  `worktree`, `intended_base`, `intended_branch`, `detached_head`, and literal
+  pathspecs (`:(literal)<path>`). The caller delegates the two commits (Stage 1
+  capture outputs on top of `intended_base`, then Stage 2 projected
+  `<stem>.receipt-capture.json` on top of the Stage 1 commit) to the runtime's
+  authorized commit primitive, and runs `finalize-publish` (`publish --mode
+  finalize`) to verify the committed blobs, modes, parent/base/branch lineage,
+  and exact stage file delta (`git diff-tree`) before emitting
+  `<stem>.published.json`.
+- **Externally mediated `--mode publish` without local commit fallback.** When
+  `publish --mode publish` (or `build-receipt --commit`) is invoked explicitly,
+  it requires a configured `NIZAM_MUTATION_ADAPTER` from the host runtime
+  environment and never falls back to local `git add` / `git commit`. Missing
+  adapter configuration, explicit policy/adapter denials, empty stdout, `{}`,
+  boolean or non-object JSON, invalid JSON, or missing `{"committed": true,
+  "revision": "<40-hex>"}` completion fields fail closed without local Git
+  commits. An interrupted or post-HEAD-advance ambiguous adapter exit records
+  `status: "unknown_external_commit_outcome"` so a subsequent `prepare`,
+  `publish`, or `finalize` run reconciles against actual repository commit state
+  without re-running captured commands or creating duplicate commits.
 
 ## 5. Adapter Conformance Checklist
 
