@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.14.0
+version: 0.15.0
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.15.0"
+    date: "2026-10-19"
+    summary: "Complete packet C5 and exit temporary corrective override mode: PR #123 merged at 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 (compliance.yml run 39216541409 succeeded in 17m19s); annotated tag v1.10.0 (8971603d2091fd5f5602f556b49499a0c8aa7a29) published via release.yml run 39218964275 at 2026-10-19T07:54:01Z; .nizam/ re-bootstrapped to v1.10.0 (278 released files + provenance.json, installed_at 2026-10-19T07:56:18Z, evidence .agent/evidence/release-v1.10.0-closeout/ including standalone strict consumer --verify-only rehearsal); and AGENTS.md (v0.4.0) transitional corrective banner removed."
   - version: "0.14.0"
     date: "2026-10-19"
     summary: "Complete packet C4 independent acceptance (.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json) against immutable candidate 29ab5689652866cbb51c2f16b2911874ec591c19 across all 8 rows of the Section 8 acceptance matrix (C1 mediation/binding/recovery/observations, C2 trust/result-handling/ordinary-consumer, C3 continuation, and integrated entry) and proceed to C5 PR delivery, v1.10.0 release, and .nizam/ re-bootstrap."
@@ -66,9 +69,10 @@ change_log:
 - **`v1.8.0` rollout corrective mandate (`B0`–`B6`) adopted at**: `2026-10-18T14:55:00Z`
 - **Completed `B6` & `v1.9.0` self-adoption at**: `2026-10-18T23:06:00Z` (PR #121 merged at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, `compliance.yml` run `39171134860` succeeded; annotated tag `v1.9.0` `7e721b6e0fb2a0a3014efda388e1097378e3da87` published via `release.yml` run `39172587918` at `2026-10-18T22:31:27Z`; PR #122 merged `.nizam/` `v1.9.0` self-adoption at `3efa3e02df56781960dfa8d0ecf143360c617ff8`, `compliance.yml` run `39175072688` succeeded in `17m25s`)
 - **`v1.9.0` audit & follow-up mandate (`C0`–`C5`) adopted at**: `2026-10-19T05:50:00Z` (closing `F1`–`F3` against audited release `v1.9.0` `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d` and compared `main` `3efa3e02df56781960dfa8d0ecf143360c617ff8`)
+- **Completed `C5` & `v1.10.0` self-adoption at**: `2026-10-19T07:58:00Z` (PR #123 merged at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7`, `compliance.yml` run `39216541409` succeeded in `17m19s`; annotated tag `v1.10.0` `8971603d2091fd5f5602f556b49499a0c8aa7a29` published via `release.yml` run `39218964275` at `2026-10-19T07:54:01Z`; `.nizam/` re-bootstrapped to `v1.10.0` at `2026-10-19T07:56:18Z`, `278` released files + `provenance.json`, evidence `.agent/evidence/release-v1.10.0-closeout/`)
 - **Repository**: `niq-cnr/nizam-framework` (`https://github.com/niq-cnr/nizam-framework.git`)
 - **Authoritative instructions**: Operator remediation mandate dated 18 October 2026 ("Nizam framework critical quality and velocity remediation prompt"), operator post-remediation audit & follow-up execution mandate dated 18 October 2026 ("Nizam framework: post-remediation audit and follow-up execution prompt", audited source `8815d311ea512d3bbd7dafddfc124a6197b38c72`), operator `v1.8.0` rollout corrective execution mandate dated 18 October 2026 ("Nizam framework v1.8.0 rollout corrective execution prompt", audited release `v1.8.0` at `606d11ee84deff0d3b7934cbfd715223d64ac79d`), and operator `v1.9.0` audit and follow-up execution mandate dated 19 October 2026 ("Nizam framework v1.9.0 audit and follow-up execution prompt", audited release `v1.9.0` at `0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, compared `main` `3efa3e02df56781960dfa8d0ecf143360c617ff8`), recorded in `.agent/run_state.json` and this single brief.
-- **Process precedence (`C0`–`C5` Active)**: Continuing operator authorization governs `C0`–`C5` (superseding conflicting repository-local or installed `.nizam/ v1.9.0` ceremony rules, phase sequencing, per-edit contract gates, line-count ceilings, and attempt counters) until `C5` releases the corrective version and re-bootstraps `.nizam/` to parity (`AGENTS.md` `v0.3.1`). All packets preserve:
+- **Process precedence (`C0`–`C5` Completed & Override Exited)**: Temporary corrective override mode exited cleanly upon re-bootstrapping `.nizam/` to the released `v1.10.0` tag (`6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7`) and removing the transitional override banner in `AGENTS.md` (`v0.4.0`). All packets preserved:
   1. Independent acceptance of the integrated candidate by a non-authoring reviewer (`C4`).
   2. Real, accurately captured verification results tied to the committed candidate and execution inputs.
   3. Security and correctness invariants (identity, authorization, isolation, source integrity, claimed vs. authenticated authority, and externally mediated Git commit boundaries).
@@ -242,6 +246,6 @@ One-shot baseline reproduction probes were executed once against unmodified `3ef
    - Implemented across the authored source modules and verified by `tools/test_start_path.py`, `tools/test_public_entry.py`, `.github/scripts/test_self_governance.py`, `tools/validate.sh`, `tools/fixtures_self_test.sh`, and `tools/e2e_bootstrap_test.sh`.
 3. **`C4` (Independent Acceptance against the Integrated Candidate — Complete)**:
    - Independently accepted (`APPROVE`, `0` blocking findings, `8/8` matrix rows `PASS`) by non-authoring Evaluator (`evaluator-adversarial`, subagent `a0777e6d-6905-46c4-be69-30965eea63eb`) against immutable candidate `29ab5689652866cbb51c2f16b2911874ec591c19`, recorded in [c4-independent-acceptance.json](../../.agent/evidence/remediation-2026-10-18/c4-independent-acceptance.json).
-4. **`C5` (Release, Post-Release `.nizam/` Self-Adoption, and Override Exit)**:
-   - Merge the accepted candidate via PR (`compliance.yml` green), publish the new immutable release tag (`v1.10.0`), re-bootstrap `.nizam/` to `v1.10.0`, verify self-governance and standalone strict consumer verification (`--verify-only --git-repo ... --expected-sha ... --require-content-integrity`), remove the transitional override banner in `AGENTS.md`, and merge the closeout PR.
+4. **`C5` (Release, Post-Release `.nizam/` Self-Adoption, and Override Exit — Complete)**:
+   - Merged the accepted candidate via PR #123 at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7` (`compliance.yml` run `39216541409` green in `17m19s`), published annotated tag `v1.10.0` (`8971603d2091fd5f5602f556b49499a0c8aa7a29`, `release.yml` run `39218964275` succeeded at `2026-10-19T07:54:01Z`), re-bootstrapped `.nizam/` to `v1.10.0` (`278` released files + `provenance.json`, `installed_at: 2026-10-19T07:56:18Z`), verified self-governance and standalone strict consumer verification (`--verify-only --git-repo .nizam-ref/ --expected-sha 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 --require-content-integrity`, captured in `.agent/evidence/release-v1.10.0-closeout/`), and removed the transitional override banner in `AGENTS.md` (`v0.4.0`).
 

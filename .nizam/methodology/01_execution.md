@@ -2,10 +2,13 @@
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: methodology/01_execution.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-19"
+    summary: "Align Section 7 reference to 03_circuit_breaker.md with the work-specific diagnostic stopping policy (removing the residual universal '3-strike limit' summary)."
   - version: "0.4.0"
     date: "2026-10-18"
     summary: "Align Section 2.1 with Routine/Standard/High-assurance role allocation (independent Evaluator across all tiers), unify scope eligibility and actual-diff verification across classify/begin/done, document publish and build-receipt producer-to-receipt integration, distinguish mechanical vs. semantic contract amendments, and align Section 5 with work-specific diagnostic stopping."
@@ -245,7 +248,10 @@ Dependency Enforcement Rule) to select the next eligible feature.
   receives control back on completion via the Dependency Enforcement Rule.
 - `02_adversarial_tdd.md` — the independence and rigor requirements binding the
   Evaluator's contract review and QA verdict steps above.
-- `03_circuit_breaker.md` — the 3-strike limit bounding every revision and
-  rework step named in Sections 2, 3, and 5 of this document.
+- `03_circuit_breaker.md` — the work-specific diagnostic stopping policy
+  (initial 3-step strategy ladder, bounded continuation or decomposition when
+  invariants hold, and hard stops on repeated unresolved defect signatures or
+  invariant/authority breaches) governing every revision and rework step named
+  in Sections 2, 3, and 5 of this document.
 - `04_tool_driven_state.md` — the durable-state artifacts (contracts, QA
   verdicts, run state) this loop reads from and writes to at every stage.

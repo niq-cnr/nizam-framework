@@ -56,7 +56,7 @@
     },
     "circuit_breaker": {
       "type": "object",
-      "description": "Attempt counters keyed by step id, enforcing the mandatory 3-strike circuit breaker.",
+      "description": "Attempt telemetry and step limits keyed by step id, supporting the work-specific diagnostic stopping policy (initial 3-step strategy ladder, bounded continuation or decomposition when invariants hold, and hard stops on repeated unresolved defect signatures or invariant/authority breaches).",
       "additionalProperties": {
         "type": "object",
         "properties": {

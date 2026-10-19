@@ -2,11 +2,14 @@
 id: nizam-permission-classes
 title: "Permission and Sandbox Policy"
 description: "Deny-by-default role permission classes and Kubernetes RBAC allocations for agentic systems."
-version: 0.4.0
+version: 0.4.1
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/permission_classes.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-10-19"
+    summary: "Clarify Section 6 so tools/start_path.py publish defaults to --mode prepare (noncommitting), --mode publish / build-receipt --commit require explicit NIZAM_MUTATION_ADAPTER mediation without local git add/commit fallback, and read-side Git queries run with GIT_OPTIONAL_LOCKS=0."
   - version: "0.4.0"
     date: "2026-10-18"
     summary: "Document the repository mutation-authority boundary: an unrestricted interpreter with .git write access cannot be made robustly commit-restricted by denying a single command spelling; noncommitting prepare/finalize/build-receipt helpers perform zero Git mutations and committing helpers require external runtime mediation or isolated literal-pathspec commits."
@@ -80,10 +83,15 @@ An unrestricted interpreter (such as `python3` or `bash`) with write access to
 `git commit` command spelling in a tool dispatcher. Runtimes that enforce
 commit-level permission boundaries MUST either mediate `.git/` writes at the
 sandbox/OS layer or route evidence publication through the noncommitting
-prepare/finalize workflow (`tools/start_path.py prepare-publish` and
-`finalize-publish`) or an external runtime mutation adapter
-(`NIZAM_MUTATION_ADAPTER` / `NIZAM_MUTATION_POLICY`). Noncommitting helpers
-(`capture`, `prepare-publish`, `finalize-publish`, and `build-receipt` without
-`--commit`) perform zero Git staging, index, ref, or commit mutations, and no
-helper accepts a caller-controlled `--authorized` flag as a security boundary.
+prepare/finalize workflow (`tools/start_path.py publish`, which defaults to
+`--mode prepare`, and `finalize-publish` / `publish --mode finalize`) or an
+explicitly configured external runtime mutation adapter (`NIZAM_MUTATION_ADAPTER`
+/ `NIZAM_MUTATION_POLICY`). Noncommitting helpers (`capture`, `publish` /
+`prepare-publish`, `finalize-publish`, and `build-receipt` without `--commit`)
+perform zero Git staging, index, ref, or commit mutations (`GIT_OPTIONAL_LOCKS=0`),
+`publish --mode publish` and `build-receipt --commit` never fall back to local
+`git add` / `git commit` when an adapter is absent or returns an incomplete
+response, and no helper accepts a caller-controlled `--authorized` flag as a
+security boundary.
+
 

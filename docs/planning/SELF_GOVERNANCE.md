@@ -2,10 +2,13 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-19"
+    summary: "Record the v1.10.0 installation from observed facts: stage installed, commissioning not performed (278 released files + provenance.json at 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7, installed_at 2026-10-19T07:56:18Z). The v1.9.0, v1.8.0, v1.7.0, v1.6.0, and v1.5.0 installation records below are retained unchanged as history."
   - version: "0.5.0"
     date: "2026-10-18"
     summary: "Record the v1.9.0 installation from observed facts: stage installed, commissioning not performed (278 released files + provenance.json at 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d, installed_at 2026-10-18T22:32:25Z). The v1.8.0, v1.7.0, v1.6.0, and v1.5.0 installation records below are retained unchanged as history."
@@ -31,22 +34,22 @@ installation:
   repository: niq-cnr/nizam-framework
   local_scope:
     - niq-cnr/nizam-framework
-  tag: v1.9.0
-  resolved_sha: 0c9b1c5979a922c75499e0bfe4d9dbf9524f717d
+  tag: v1.10.0
+  resolved_sha: 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7
   authorization_gate: H-CONSUMER-UPGRADE
-  authorization_recorded_at: "2026-10-18T16:40:00Z"
-  authorization_verbatim: "Where the session already authorizes a concrete commit, merge, release, or self-upgrade, use that authority without requesting it again."
+  authorization_recorded_at: "2026-10-19T06:00:00Z"
+  authorization_verbatim: "Reuse existing session authorization for concrete commits, merges, releases, and this repository's supported self-adoption."
   status: installed
   commissioning_performed: false
   released_file_count: 278
   evidence:
-    tree_identity: .agent/evidence/release-v1.9.0-closeout/00a-reinstall-tree-identity.txt
-    verify_self_governance: .agent/evidence/release-v1.9.0-closeout/00b-reinstall-verify-self-governance.txt
-    test_self_governance: .agent/evidence/release-v1.9.0-closeout/00c-reinstall-test-self-governance.txt
-    payload_validate: .agent/evidence/release-v1.9.0-closeout/00d-reinstall-payload-validate.txt
-    bootstrap_verify_only: .agent/evidence/release-v1.9.0-closeout/00e-reinstall-bootstrap-verify-only.txt
+    tree_identity: .agent/evidence/release-v1.10.0-closeout/00a-reinstall-tree-identity.txt
+    verify_self_governance: .agent/evidence/release-v1.10.0-closeout/00b-reinstall-verify-self-governance.txt
+    test_self_governance: .agent/evidence/release-v1.10.0-closeout/00c-reinstall-test-self-governance.txt
+    payload_validate: .agent/evidence/release-v1.10.0-closeout/00d-reinstall-payload-validate.txt
+    bootstrap_verify_only: .agent/evidence/release-v1.10.0-closeout/00e-reinstall-bootstrap-verify-only.txt
   source_url: https://github.com/niq-cnr/nizam-framework.git
-  installed_at: "2026-10-18T22:32:25Z"
+  installed_at: "2026-10-19T07:56:18Z"
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
@@ -68,7 +71,48 @@ commissioning:
   installed_at: "2026-10-10T18:12:44Z"
 ---
 
-# Current installation — `v1.9.0` (installed — commissioning not performed)
+# Current installation — `v1.10.0` (installed — commissioning not performed)
+
+This repository has installed the public immutable `v1.10.0` release under
+`.nizam/`. The stage is **installed — commissioning not performed**. Its machine
+values are `installation.status: installed` and
+`installation.commissioning_performed: false`. The clean installed preflight,
+baseline and independent QA that completed the `v1.5.0` commissioning have not been
+performed for `v1.10.0`.
+
+The pin is tag `v1.10.0` (annotated tag object `8971603d2091fd5f5602f556b49499a0c8aa7a29`),
+resolved commit `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7`, installed at
+`2026-10-19T07:56:18Z` as recorded in `.nizam/provenance.json`. The installation
+contains 278 released files and that provenance record.
+
+Because an immutable Git tag cannot contain a commit created after the tag is
+cut, the repository's `.nizam/` directory at any release tag `vX.Y.Z` holds the
+prior self-installed release (`v1.9.0` inside the `v1.10.0` tag tree, `v1.8.0` inside
+the `v1.9.0` tag tree). A release tag's consumer payload is always the six authored
+root modules (`standard/`, `methodology/`, `templates/`, `schema/`, `tools/`,
+`ecosystem/`) plus root `NIZAM.json` copied by `bootstrap.sh`, never the tagged
+tree's `.nizam/` directory. After the tag is published, a separate self-adoption
+commit runs `bootstrap.sh` against that published tag to update this repository's
+`.nizam/`.
+
+The operator authorization is gate `H-CONSUMER-UPGRADE`, recorded in
+`.agent/run_state.json` at `2026-10-19T06:00:00Z` before the re-bootstrap ran. The
+operator's verbatim instructions were: "Reuse existing session authorization for
+concrete commits, merges, releases, and this repository's supported self-adoption."
+The authorization covers local installation for this single repository.
+
+The installation was verified against the tag: the payload trees are identical to
+the tag, and `verify_self_governance.py`, its drift tests, `validate.sh --payload`
+and `bootstrap.sh --verify-only` (which shares `tools/payload_integrity.py` with
+`verify_self_governance.py` and never executes code from inside `.nizam/`) all exited 0. Captures:
+`.agent/evidence/release-v1.10.0-closeout/00a-reinstall-tree-identity.txt`,
+`00b-reinstall-verify-self-governance.txt`, `00c-reinstall-test-self-governance.txt`,
+`00d-reinstall-payload-validate.txt` and `00e-reinstall-bootstrap-verify-only.txt`
+in the same directory.
+
+> **Historical record — the `v1.9.0` installation, retained unchanged below. It does not describe the current installation.**
+
+# Prior installation — `v1.9.0` (installed — commissioning not performed)
 
 This repository has installed the public immutable `v1.9.0` release under
 `.nizam/`. The stage is **installed — commissioning not performed**. Its machine

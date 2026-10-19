@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.7.0
+version: 0.7.1
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.7.1"
+    date: "2026-10-19"
+    summary: "v1.9.0 audit follow-up C2 (F2): require explicit --git-repo DIR and --expected-sha SHA (outside the target payload) for commit-bound content-integrity verification in bootstrap.sh --verify-only and tools/payload_integrity.py, never execute verifier code from inside the target payload, label unbound --source-root equality as directory_match_unbound, and forbid downgrading helper exit 2 or reference errors to structural pass."
   - version: "0.7.0"
     date: "2026-10-18"
     summary: "Phase-019 v1.8.0 rollout corrective B2 (V2): enforce install-time --expected-sha comparison and explicit refs/tags/<tag> SemVer release-tag resolution in bootstrap.sh before staging or replacing the target payload. Updated Section 2, Section 2.1, and Section 4 point 5."
@@ -135,14 +138,21 @@ process of catching this divergence.
    released since the consumer's recorded pin, the consumer is stale relative to the
    framework's current governance content, even if its own injected copy is internally
    unmodified.
-5. **Detecting a moved tag.** A tag *name* is not immutable — it can be moved on the remote
-   to point at a different commit, replaying a different payload under the same name. Both
-   install and `--verify-only` enforce the commit pin: given a caller-supplied expected
-   commit (`--expected-sha`, resolved out-of-band from the authentic tag), `bootstrap.sh`
-   at install time verifies `refs/tags/<tag>^{commit}` equals `--expected-sha` before staging
-   or replacing the target, and `bootstrap.sh --verify-only` requires the recorded
-   `resolved_sha` to be present and equal to `--expected-sha` (NDEBT-033, B2/V2). A payload
-   predating this recorded commit has no `resolved_sha` and is itself treated as drift.
+5. **Detecting a moved tag and verifying commit-bound integrity.** A tag *name* is not
+   immutable — it can be moved on the remote to point at a different commit, replaying a
+   different payload under the same name. Both install and `--verify-only` enforce the commit
+   pin: given a caller-supplied expected commit (`--expected-sha`, resolved out-of-band from
+   the authentic tag), `bootstrap.sh` at install time verifies `refs/tags/<tag>^{commit}`
+   equals `--expected-sha` before staging or replacing the target (and optionally retains the
+   verified shallow tag clone at `--git-repo DIR` outside the target). In `--verify-only`
+   mode, commit-bound content-integrity verification (`content_integrity=verified`) requires
+   both `--git-repo DIR` and `--expected-sha SHA` (outside the target payload), loads the
+   verifier from outside the target (never executing `${TARGET_DIR}/tools/payload_integrity.py`
+   or deriving the expected SHA or reference repository from mutable `provenance.json`), and
+   verifies the full released file inventory, modes, and blob digests against that commit
+   tree. Comparing against an unpacked `--source-root DIR` is labeled `directory_match_unbound`
+   and cannot satisfy `--expected-sha` or `--require-content-integrity`. A payload predating
+   the recorded commit pin has no `resolved_sha` and is itself treated as drift.
 6. **Remediation: re-bootstrap, don't hand-patch.** The correct remediation for both local
    mutation and staleness is to re-run `bootstrap.sh` against the appropriate pinned tag
    (the same tag, to undo local mutation, or a newer tag, to resolve staleness) and let
