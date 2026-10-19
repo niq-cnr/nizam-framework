@@ -96,11 +96,14 @@ EXPECTED_SHA="${EXPECTED_SHA:-}"
 # Controlled test-only fixture tag override (--allow-fixture-tag or ALLOW_FIXTURE_TAG=1)
 # permitting ephemeral ^e2e-[0-9A-Za-z._-]+$ tags in tools/e2e_bootstrap_test.sh.
 ALLOW_FIXTURE_TAG="${ALLOW_FIXTURE_TAG:-0}"
-# Optional unpacked release source root for --verify-only content-integrity checks.
+# Optional unpacked release source root for --verify-only unbound directory comparison.
 SOURCE_ROOT="${SOURCE_ROOT:-}"
-# Require a reachable reference tree for --verify-only content-integrity verification.
+# Optional local git repository containing the pinned tag/commit for --verify-only
+# (or destination to retain the verified shallow tag clone at install time).
+GIT_REPO="${GIT_REPO:-}"
+# Require a reachable commit-bound reference tree for --verify-only content-integrity verification.
 REQUIRE_CONTENT_INTEGRITY=0
-# Explicitly request structural-only verification when no reference tree is reachable.
+# Explicitly request structural-only verification when no reference tree is supplied.
 STRUCTURAL_ONLY=0
 
 # Tracked temp/backup paths for the cleanup trap. Cleared once ownership of a
@@ -109,6 +112,7 @@ STRUCTURAL_ONLY=0
 CLONE_DIR=""
 STAGE_DIR=""
 REPLACED_OLD_DIR=""
+TEMP_VERIFIER=""
 # A --project-root this run created (genesis mode). Removed by cleanup if a
 # genesis fails partway, so a failed genesis never leaves a half-built project
 # behind; cleared on success once the project owns itself. A pre-existing empty
@@ -128,17 +132,25 @@ Modes:
                      supplied --expected-sha before staging, stage the
                      governance payload in a temp directory, verify it, record
                      provenance, and atomically install it under the target
-                     directory.
+                     directory (optionally retaining the verified tag clone at
+                     --git-repo DIR).
   --verify-only      Drift and content-integrity check against an already-injected
                      target directory: confirms the target exists, its
                      NIZAM.json parses, every path it indexes resolves on
                      disk, its recorded provenance tag matches the expected
                      pinned tag, its recorded commit SHA is present (and,
-                     with --expected-sha, matches), and (when a trusted git
-                     tag/commit or --source-root anchor is available) its full
-                     released file inventory, SHA-256 content digests, and
-                     executable modes match the release payload via
-                     tools/payload_integrity.py.
+                     with --expected-sha, matches), and:
+                       - with --git-repo DIR and --expected-sha SHA (and
+                         optional --require-content-integrity), loads the
+                         trusted verifier outside the target and verifies the
+                         full released file inventory, blob digests, and
+                         executable modes against that commit tree
+                         (content_integrity=verified);
+                       - with --source-root DIR alone, compares inventory,
+                         modes, and bytes against an unbound directory
+                         (content_integrity=directory_match_unbound);
+                       - with neither reference flag (or --structural-only),
+                         reports structural_only (content_integrity=not_checked).
   --genesis          Greenfield genesis (the 0-case, ecosystem/00 Section 8):
                      stand up a NEW project from nothing. git-inits an empty
                      --project-root, scaffolds a minimal deterministic skeleton
@@ -164,22 +176,31 @@ Options:
                      basename of --project-root).
   --expected-sha SHA The 40-hex commit SHA the pinned tag must resolve to.
                      Enforced at install time BEFORE staging or replacing the
-                     target directory, and in --verify-only against recorded
-                     provenance and the reference commit tree (NDEBT-033, B2/B3).
-  --source-root DIR  (--verify-only) Unpacked release tree to compare installed
-                     file inventory, modes, and bytes against.
+                     target directory, and in --verify-only (with --git-repo)
+                     against recorded provenance and the reference commit tree.
+  --git-repo DIR     In install mode, retain the verified tag repository clone
+                     at DIR (outside --target). In --verify-only mode (required
+                     with --expected-sha / --require-content-integrity), local
+                     Git repository outside --target containing the expected
+                     tag/commit object.
+  --source-root DIR  (--verify-only) Unpacked directory outside --target to
+                     compare installed file inventory, modes, and bytes against
+                     (reports content_integrity=directory_match_unbound; cannot
+                     satisfy --expected-sha or --require-content-integrity).
   --require-content-integrity
-                     (--verify-only) Fail non-zero if no trusted reference tree
-                     (local git commit/tag or --source-root) is reachable.
+                     (--verify-only) Require commit-bound content-integrity
+                     verification via --git-repo DIR and --expected-sha SHA.
   --structural-only  (--verify-only) Perform structural/provenance checks only
                      without claiming content-integrity verification; incompatible
-                     with --expected-sha and --require-content-integrity.
+                     with --expected-sha, --require-content-integrity, --git-repo,
+                     and --source-root.
 
 Environment variables (overridden by the matching flag above when both are given):
   GOVERNANCE_REPO_URL   Source repository of the governance payload.
   GOVERNANCE_TAG        Pinned tag to install or to verify against.
   NIZAM_TARGET_DIR      Injection target directory.
   EXPECTED_SHA          Expected 40-hex commit SHA for install and --verify-only.
+  GIT_REPO              Local Git repository path for install retention or --verify-only.
 
 Exit status:
   0   Success (including --help and a passing --verify-only run).
@@ -204,6 +225,9 @@ log() {
 # if a prior copy had to be moved aside to make room for a new one.
 cleanup() {
   local exit_code=$?
+  if [ -n "${TEMP_VERIFIER}" ] && [ -f "${TEMP_VERIFIER}" ]; then
+    rm -f -- "${TEMP_VERIFIER}"
+  fi
   if [ -n "${STAGE_DIR}" ] && [ -d "${STAGE_DIR}" ]; then
     rm -rf -- "${STAGE_DIR}"
   fi
@@ -297,6 +321,15 @@ parse_args() {
         SOURCE_ROOT="${1#--source-root=}"
         shift
         ;;
+      --git-repo)
+        [ "$#" -ge 2 ] || die "--git-repo requires an argument."
+        GIT_REPO="$2"
+        shift 2
+        ;;
+      --git-repo=*)
+        GIT_REPO="${1#--git-repo=}"
+        shift
+        ;;
       --project-root)
         [ "$#" -ge 2 ] || die "--project-root requires an argument."
         PROJECT_ROOT="$2"
@@ -358,6 +391,26 @@ parse_args() {
         ;;
     esac
   done
+}
+
+# Confirms candidate path $1 is NOT equal to or inside root path $2.
+assert_outside_target() {
+  local candidate="$1"
+  local target_root="$2"
+  local label="$3"
+  if ! python3 - "${candidate}" "${target_root}" <<'PYEOF'
+import os
+import sys
+
+cand = os.path.realpath(sys.argv[1])
+targ = os.path.realpath(sys.argv[2])
+if cand == targ or cand.startswith(targ + os.sep):
+    sys.exit(1)
+sys.exit(0)
+PYEOF
+  then
+    die "${label} '${candidate}' must be outside target directory '${target_root}'."
+  fi
 }
 
 # Confirms the minimum required-file set (standard/GIP.md Section 2.1) is
@@ -481,47 +534,85 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
 }
 
 # --verify-only: a pure, network-free drift and content-integrity check against an
-# already-injected target directory. Clones nothing and writes nothing.
+# already-injected target directory. Clones nothing and writes nothing inside the target.
 run_verify_only() {
   require_pinned_tag "${GOVERNANCE_TAG}"
   require_valid_expected_sha "${EXPECTED_SHA}"
   require_command python3
-  if [ "${STRUCTURAL_ONLY}" -eq 1 ] && { [ -n "${EXPECTED_SHA}" ] || [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ]; }; then
-    die "--structural-only cannot be combined with --expected-sha or --require-content-integrity."
+  if [ "${STRUCTURAL_ONLY}" -eq 1 ] && { [ -n "${EXPECTED_SHA}" ] || [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ] || [ -n "${GIT_REPO}" ] || [ -n "${SOURCE_ROOT}" ]; }; then
+    die "--structural-only cannot be combined with --expected-sha, --require-content-integrity, --git-repo, or --source-root."
   fi
+  if [ -n "${SOURCE_ROOT}" ] && { [ -n "${EXPECTED_SHA}" ] || [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ] || [ -n "${GIT_REPO}" ]; }; then
+    die "--source-root performs an unbound directory comparison (directory_match_unbound) and cannot satisfy --expected-sha, --require-content-integrity, or --git-repo; supply --git-repo DIR and --expected-sha SHA for commit-bound verification."
+  fi
+  if { [ -n "${GIT_REPO}" ] || [ -n "${EXPECTED_SHA}" ] || [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ]; } && { [ -z "${GIT_REPO}" ] || [ -z "${EXPECTED_SHA}" ]; }; then
+    die "--verify-only content-integrity verification requires both --git-repo DIR and --expected-sha SHA (never derived solely from mutable provenance.json or ambient working directory)."
+  fi
+
   [ -d "${TARGET_DIR}" ] || die "--verify-only: target directory '${TARGET_DIR}' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first."
   log "verify-only: checking '${TARGET_DIR}' against pinned tag '${GOVERNANCE_TAG}' (no clone, no network)..."
   check_required_files "${TARGET_DIR}"
   check_nizam_index "${TARGET_DIR}"
   check_provenance_pin "${TARGET_DIR}" "${GOVERNANCE_TAG}" "${EXPECTED_SHA}"
 
-  if [ "${STRUCTURAL_ONLY}" -eq 1 ]; then
+  if [ "${STRUCTURAL_ONLY}" -eq 1 ] || { [ -z "${GIT_REPO}" ] && [ -z "${SOURCE_ROOT}" ]; }; then
     log "verify-only: PASS (structural_only; content_integrity=not_checked) -- '${TARGET_DIR}' required files, index paths, and recorded provenance tag '${GOVERNANCE_TAG}' verified; file bytes and complete inventory were not compared against a reference tree."
     return 0
   fi
 
+  local -a integrity_args=(
+    "--payload-dir=${TARGET_DIR}"
+    "--expected-tag=${GOVERNANCE_TAG}"
+  )
+
+  if [ -n "${GIT_REPO}" ]; then
+    require_command git
+    if [ -L "${GIT_REPO}" ] || [ ! -d "${GIT_REPO}" ]; then
+      die "--verify-only: --git-repo '${GIT_REPO}' does not exist as a real directory."
+    fi
+    assert_outside_target "${GIT_REPO}" "${TARGET_DIR}" "--git-repo"
+    if ! git -C "${GIT_REPO}" cat-file -e "${EXPECTED_SHA}^{commit}" 2>/dev/null; then
+      die "--verify-only: expected commit '${EXPECTED_SHA}' is not present in --git-repo '${GIT_REPO}'."
+    fi
+    integrity_args+=(
+      "--git-repo=${GIT_REPO}"
+      "--expected-sha=${EXPECTED_SHA}"
+      "--require-reference-tree"
+    )
+  elif [ -n "${SOURCE_ROOT}" ]; then
+    if [ -L "${SOURCE_ROOT}" ] || [ ! -d "${SOURCE_ROOT}" ]; then
+      die "--verify-only: --source-root '${SOURCE_ROOT}' does not exist as a real directory."
+    fi
+    assert_outside_target "${SOURCE_ROOT}" "${TARGET_DIR}" "--source-root"
+    integrity_args+=("--source-root=${SOURCE_ROOT}")
+  fi
+
+  # Never execute code inside ${TARGET_DIR} to decide whether ${TARGET_DIR} is genuine.
+  # Load verifier logic from an independently trusted source outside ${TARGET_DIR}
+  # or from the verified Git object ${EXPECTED_SHA}:tools/payload_integrity.py in --git-repo.
   local integrity_script=""
   local script_root
   script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-  if [ -f "${script_root}/tools/payload_integrity.py" ]; then
-    integrity_script="${script_root}/tools/payload_integrity.py"
-  elif [ -f "${TARGET_DIR}/tools/payload_integrity.py" ]; then
-    integrity_script="${TARGET_DIR}/tools/payload_integrity.py"
-  else
-    die "--verify-only: tools/payload_integrity.py not found under '${script_root}' or '${TARGET_DIR}'."
-  fi
+  if [ -f "${script_root}/tools/payload_integrity.py" ] && python3 - "${script_root}" "${TARGET_DIR}" <<'PYEOF'
+import os
+import sys
 
-  local -a integrity_args=(
-    "--payload-dir" "${TARGET_DIR}"
-    "--expected-tag" "${GOVERNANCE_TAG}"
-  )
-  if [ -n "${EXPECTED_SHA}" ]; then
-    integrity_args+=("--expected-sha" "${EXPECTED_SHA}" "--require-reference-tree")
-  elif [ "${REQUIRE_CONTENT_INTEGRITY}" -eq 1 ]; then
-    integrity_args+=("--require-reference-tree")
-  fi
-  if [ -n "${SOURCE_ROOT}" ]; then
-    integrity_args+=("--source-root" "${SOURCE_ROOT}")
+sr = os.path.realpath(sys.argv[1])
+td = os.path.realpath(sys.argv[2])
+sys.exit(1 if (sr == td or sr.startswith(td + os.sep)) else 0)
+PYEOF
+  then
+    integrity_script="${script_root}/tools/payload_integrity.py"
+  elif [ -n "${GIT_REPO}" ]; then
+    TEMP_VERIFIER="$(mktemp "${TMPDIR:-/tmp}/nizam-payload-integrity.XXXXXX")"
+    if ! git -C "${GIT_REPO}" show "${EXPECTED_SHA}:tools/payload_integrity.py" > "${TEMP_VERIFIER}" 2>/dev/null || [ ! -s "${TEMP_VERIFIER}" ]; then
+      die "--verify-only: unable to load trusted tools/payload_integrity.py from commit '${EXPECTED_SHA}' in --git-repo '${GIT_REPO}'."
+    fi
+    integrity_script="${TEMP_VERIFIER}"
+  elif [ -n "${SOURCE_ROOT}" ] && [ -f "${SOURCE_ROOT}/tools/payload_integrity.py" ]; then
+    integrity_script="${SOURCE_ROOT}/tools/payload_integrity.py"
+  else
+    die "--verify-only: no trusted tools/payload_integrity.py available outside '${TARGET_DIR}'."
   fi
 
   local pi_out pi_rc
@@ -531,15 +622,17 @@ run_verify_only() {
     pi_rc=$?
   fi
 
-  if [ "${pi_rc}" -eq 0 ]; then
-    log "verify-only: PASS (content_integrity=verified) -- '${TARGET_DIR}' matches pinned tag '${GOVERNANCE_TAG}' (${pi_out})."
-    return 0
-  elif [ "${pi_rc}" -eq 2 ]; then
-    log "verify-only: PASS (structural_only; content_integrity=not_checked) -- '${TARGET_DIR}' required files, index paths, and recorded provenance tag '${GOVERNANCE_TAG}' verified; no reference tree reachable (${pi_out})."
-    return 0
-  else
+  if [ "${pi_rc}" -ne 0 ]; then
     die "verify-only content-integrity check failed for '${TARGET_DIR}': ${pi_out}"
   fi
+
+  if [ -n "${SOURCE_ROOT}" ]; then
+    log "verify-only: PASS (directory_match_unbound; content_integrity=directory_match_unbound) -- '${TARGET_DIR}' matches unbound directory '${SOURCE_ROOT}'; commit tree not verified (${pi_out})."
+    return 0
+  fi
+
+  log "verify-only: PASS (content_integrity=verified) -- '${TARGET_DIR}' matches pinned tag '${GOVERNANCE_TAG}' at '${EXPECTED_SHA}' (${pi_out})."
+  return 0
 }
 
 # Default mode: fetch the explicit refs/tags/<GOVERNANCE_TAG> ref, verify
@@ -550,6 +643,9 @@ run_install() {
   require_valid_expected_sha "${EXPECTED_SHA}"
   require_command git
   require_command python3
+  if [ -n "${GIT_REPO}" ]; then
+    assert_outside_target "${GIT_REPO}" "${TARGET_DIR}" "--git-repo"
+  fi
 
   local remote_refs
   remote_refs="$(git ls-remote "${GOVERNANCE_REPO_URL}" "refs/tags/${GOVERNANCE_TAG}" "refs/tags/${GOVERNANCE_TAG}^{}" "refs/heads/${GOVERNANCE_TAG}" 2>/dev/null)" \
@@ -644,6 +740,13 @@ with open(path, "w", encoding="utf-8") as handle:
   if [ -n "${REPLACED_OLD_DIR}" ]; then
     rm -rf -- "${REPLACED_OLD_DIR}"
     REPLACED_OLD_DIR=""
+  fi
+
+  if [ -n "${GIT_REPO}" ]; then
+    rm -rf -- "${GIT_REPO}"
+    mkdir -p -- "$(dirname -- "${GIT_REPO}")"
+    cp -R -- "${CLONE_DIR}" "${GIT_REPO}"
+    log "retained verified reference repository at '${GIT_REPO}' (commit ${resolved_sha})."
   fi
 
   log "install complete. Governance payload version ${framework_version} (tag ${GOVERNANCE_TAG}) is now at '${TARGET_DIR}'."

@@ -7,10 +7,70 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-19
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the
+2026-10-19 `v1.9.0` audit and follow-up execution (`C0–C5`, closing findings
+`F1–F3`) lands as additive and hardening capability across `tools/`,
+`standard/`, `methodology/`, `ecosystem/`, `schema/`, and `bootstrap.sh`
+(`278` released files) with no removed or renamed shipped file and no breaking
+governance change; nothing that validated under `v1.9.0` is invalidated.
+
 ### Changed
 
-- **`v1.9.0` post-release closeout and `.nizam/` self-adoption (`B6`)**:
-  Re-bootstrapped `.nizam/` to the released immutable tag `v1.9.0` (`0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87`, `278` released files + `provenance.json`, `installed_at` `2026-10-18T22:32:25Z`, evidence `.agent/evidence/release-v1.9.0-closeout/`), updated `.github/scripts/verify_self_governance.py`, `README.md`, `docs/planning/SELF_GOVERNANCE.md` (`v0.5.0`), `docs/planning/ROADMAP.md` (`v0.65.26`), `docs/planning/operator_gates.md` (`v0.47.0`), `docs/planning/manifest.json`, and `docs/planning/REMEDIATION_2026_10_18.md` (`v0.12.0`), and removed the transitional corrective banner in `AGENTS.md` (`v0.3.0`) upon reaching parity between `.nizam/` and the authored framework.
+- **2026-10-19 `v1.9.0` audit and follow-up execution (`C0–C5`, closing `F1–F3`).**
+  - **Default noncommitting publication, strict adapter mediation, base/delta binding, and index-preserving read queries (`C1`, closes `F1`)**:
+    Changed `tools/start_path.py publish` default `--mode` from `publish` to
+    `prepare` (noncommitting). Removed the implicit local `git add` /
+    `git commit` fallback from `_git_commit_literal_paths`: `--mode publish` and
+    `build-receipt --commit` now require `NIZAM_MUTATION_ADAPTER` and fail closed
+    (`exit 2`) when unconfigured. Hardened `_invoke_mutation_adapter` to reject
+    empty stdout, `{}`, boolean, denied, pending, and failed adapter responses
+    without local fallback, and to distinguish explicit denial (`exit 1`) from
+    interrupted acknowledgement (`unknown_external_commit_outcome`, `exit 1`),
+    reconciling interrupted Stage 1 / Stage 2 commits against actual repository
+    state without duplicate commits or re-running captured commands. Enforced
+    completion binding to `repository_root`, `repository`, `intended_base`
+    (`commit_rev^1 == intended_base`), `intended_branch`/`detached_head`, and
+    exact owned file delta (`git diff-tree`). Scoped read-side Git queries with
+    `GIT_OPTIONAL_LOCKS=0` (`git --no-optional-locks`) so `mtime`-only changes
+    never refresh `.git/index`. Updated `tools/interface.md` (`v0.5.1`),
+    `standard/permission_classes.md` (`v0.4.1`), `tools/SKILL.md` (`v0.8.1`),
+    `tools/skill.json` (`v0.8.1`), and `tools/test_start_path.py`.
+  - **Independent verifier loading, retained `--git-repo` reference support, unbound directory labeling, and fail-closed helper exit codes (`C2`, closes `F2`)**:
+    Removed execution of `${TARGET_DIR}/tools/payload_integrity.py` from
+    `bootstrap.sh --verify-only`; verifier code is loaded only from an external
+    authored script sibling or materialized outside the target from
+    `${EXPECTED_SHA}:tools/payload_integrity.py` in `--git-repo`. Added
+    `--git-repo DIR` to `bootstrap.sh` so install mode can retain the verified
+    shallow tag clone outside `.nizam/` and `--verify-only` can perform
+    commit-bound content-integrity verification offline. Forbade deriving
+    `--expected-sha` or `--git-repo` from mutable `${TARGET_DIR}/provenance.json`
+    or ambient CWD. Updated `tools/payload_integrity.py` and `bootstrap.sh` so
+    `--source-root` directory comparisons report
+    `content_integrity=directory_match_unbound` and are rejected when
+    `--expected-sha` or `--require-content-integrity` is requested. Removed the
+    unconditional helper exit-`2` downgrade to `structural_only` pass so invalid
+    flags or bad references fail closed (`exit 2`). Updated `README.md`,
+    `standard/GIP.md` (`v0.7.1`), `ecosystem/00_ecosystem_bootstrap.md`
+    (`v0.8.1`), `tools/README.md` (`v0.37.1`), `tools/test_public_entry.py`, and
+    `tools/e2e_bootstrap_test.sh`.
+  - **Executable work-specific diagnostic stopping policy and prose/schema alignment (`C3`, closes `F3`)**:
+    Replaced unconditional `"max_attempts": 3` in `tools/start_path.py classify`
+    and the hard `1 <= attempt <= 3` ceiling in `tools/start_path.py capture`
+    with executable work-specific stopping evaluation
+    (`_evaluate_attempt_continuation`), permitting attempt `> 3` when invariants
+    hold, the failure is localized, and `--Diagnostic-Hypothesis` /
+    `--Refined-Scope` (or `--Split-From` with retained `continuation_lineage`)
+    are recorded, while halting immediately (`exit 2`, `halted=true`) on
+    repeated identical `--Defect-Signature` without new diagnostic progress or
+    valid decomposition, exhausted `--Step-Limit`, or `--Failure-Class
+    invariant_breach|specification_contradiction|authority_violation`. Aligned
+    residual universal "3-strike" summaries in `methodology/00_planning.md`
+    (`v0.4.1`), `methodology/01_execution.md` (`v0.4.1`), and
+    `schema/run_state.schema.json`.
+  - **`v1.9.0` post-release closeout and `.nizam/` self-adoption (`B6`, PR #122)**:
+    Re-bootstrapped `.nizam/` to the released immutable tag `v1.9.0` (`0c9b1c5979a922c75499e0bfe4d9dbf9524f717d`, annotated tag object `7e721b6e0fb2a0a3014efda388e1097378e3da87`, `278` released files + `provenance.json`, `installed_at` `2026-10-18T22:32:25Z`, evidence `.agent/evidence/release-v1.9.0-closeout/`) and verified `main` (`3efa3e02df56781960dfa8d0ecf143360c617ff8`, `compliance.yml` run `39175072688` in `17m25s`) prior to this `v1.10.0` corrective rollout.
 
 ## [1.9.0] - 2026-10-18
 
