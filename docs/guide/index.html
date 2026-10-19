@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="framework-version" content="1.10.0">
+<meta name="framework-version" content="1.10.1">
 <meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
 <meta name="color-scheme" content="light dark">
 <title>Nizam User Guide</title>
@@ -322,7 +322,7 @@
   loops, durable agent state, and governance inheritance that any AI agent or engineering team can
   consume, in any runtime, for any project. Nizam ships no application code, infrastructure, or
   runtime services.</p>
-  <p>General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v1.10.0&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
+  <p>General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v1.10.1&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
   <div class="cta-group">
     <a class="cta cta-human" href="#quickstart">Humans start here</a>
     <span class="cta cta-agent">Agents load <code>tools/SKILL.md</code> via <code>NIZAM.json</code></span>
@@ -361,7 +361,8 @@
         <p>Agents route through the root <code>NIZAM.json</code> capability index (validated against
         <code>registry/nizam-index.schema.json</code>) to locate only the minimal governance files a
         task needs, instead of reading an entire <code>standard/</code>, <code>methodology/</code>,
-        <code>templates/</code>, or <code>tools/</code> directory "just in case." Authoritative in
+        <code>templates/</code>, <code>schema/</code>, <code>tools/</code>, or <code>ecosystem/</code>
+        directory "just in case." Authoritative in
         <code>methodology/04_tool_driven_state.md</code>.</p>
       </article>
       <article class="card">
@@ -398,26 +399,33 @@
     header comment) into a single, reusable, runtime-agnostic script. From a checkout (or vendored
     copy) of
     the framework at a pinned tag, run:</p>
-    <pre><code>GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --tag v0.1.0</code></pre>
+    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/</code></pre>
     <p><code>GOVERNANCE_TAG</code> (or the equivalent <code>--tag</code> flag) is required and never
     defaulted: an empty tag, <code>main</code>, <code>master</code>, <code>HEAD</code>, or any
     <code>refs/heads/*</code> branch reference is refused, because a floating branch is never an
     acceptable inheritance pin (<code>standard/GIP.md</code> Section 2, point 1).</p>
-    <p>This clones the pinned tag, stages the governance payload, verifies it landed correctly, and
-    only then atomically installs it under the target directory (<code>.nizam/</code> by default).
-    What you get:</p>
+    <p>This clones the pinned tag, verifies <code>--expected-sha</code> before staging, stages the
+    governance payload, verifies it landed correctly, retains the verified tag repository at
+    <code>.nizam-ref/</code> when <code>--git-repo</code> is supplied, and only then atomically installs
+    the payload under the target directory (<code>.nizam/</code> by default). What you get:</p>
     <pre><code>.nizam/
 &#9500;&#9472;&#9472; standard/
 &#9500;&#9472;&#9472; templates/
 &#9500;&#9472;&#9472; schema/
 &#9500;&#9472;&#9472; tools/
+&#9500;&#9472;&#9472; methodology/
+&#9500;&#9472;&#9472; ecosystem/
 &#9500;&#9472;&#9472; NIZAM.json
 &#9492;&#9472;&#9472; provenance.json</code></pre>
     <p>To check an already-bootstrapped target for drift, with no network access and no write, run:</p>
-    <pre><code>GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --verify-only --tag v0.1.0</code></pre>
-    <p><code>--verify-only</code> confirms the target directory exists, its <code>NIZAM.json</code>
-    parses, every path it indexes resolves on disk, and its recorded <code>provenance.json</code> tag
-    matches the expected pinned tag &mdash; performing no clone and no write.</p>
+    <pre><code>GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/ --require-content-integrity</code></pre>
+    <p><code>--verify-only</code> performs no network clone, no write, and never executes code from inside
+    <code>.nizam/</code>: with <code>--git-repo .nizam-ref/</code> and <code>--expected-sha</code>, it
+    verifies the complete file inventory, exact byte digests, and executable modes against the pinned
+    commit tree (<code>content_integrity=verified</code>). For an unpacked release directory without a Git
+    repository, <code>--source-root DIR</code> reports <code>content_integrity=directory_match_unbound</code>;
+    <code>--structural-only</code> checks structure and provenance pins only
+    (<code>content_integrity=not_checked</code>).</p>
   </section>
 
   <section id="adoption-paths" aria-labelledby="adoption-paths-heading">
@@ -426,11 +434,12 @@
     <h3>New repository</h3>
     <p>Per the Governance Inheritance Protocol (GIP) (<code>standard/GIP.md</code> Section 2): clone a
     pinned semantic-version git tag of the framework (never <code>main</code> or any floating branch),
-    inject <code>standard/</code>, <code>templates/</code>, <code>schema/</code>, and
-    <code>tools/</code> together with the root <code>NIZAM.json</code> capability index into your
-    workspace, load the injected documents into working context before acting, and record the pinned
-    tag as your inheritance baseline. <code>bootstrap.sh</code> performs this as one atomic
-    clone &rarr; inject &rarr; verify operation (Section 2.1).</p>
+    inject <code>standard/</code>, <code>methodology/</code>, <code>templates/</code>,
+    <code>schema/</code>, <code>tools/</code>, and <code>ecosystem/</code> together with the root
+    <code>NIZAM.json</code> capability index into your workspace, load the injected documents into
+    working context before acting, and record the pinned tag as your inheritance baseline.
+    <code>bootstrap.sh</code> performs this as one atomic clone &rarr; inject &rarr; verify operation
+    (Section 2.1).</p>
 
     <h3>Existing repository</h3>
     <p>A repository is rarely empty when it first adopts Nizam. <code>standard/GIP.md</code> Section 5
@@ -438,8 +447,9 @@
     <ul>
       <li><strong>Conflict rules.</strong> A pre-existing <code>CONTEXT.md</code>,
       <code>AGENTS.md</code>, or CI (continuous integration) configuration is never silently
-      overwritten. Bootstrap injects only <code>standard/</code>, <code>templates/</code>,
-      <code>schema/</code>, <code>tools/</code>, and <code>NIZAM.json</code>; a colliding pre-existing
+      overwritten. Bootstrap injects only <code>standard/</code>, <code>methodology/</code>,
+      <code>templates/</code>, <code>schema/</code>, <code>tools/</code>, <code>ecosystem/</code>,
+      and <code>NIZAM.json</code>; a colliding pre-existing
       file is preserved under a renamed path (for example <code>CONTEXT.md.pre-nizam</code>) so a
       human or agent can diff it against the framework's <code>templates/</code> version and reconcile
       by hand. Existing CI is reconciled &mdash; the recommended compliance checks are added to it, not
@@ -511,6 +521,21 @@
       <li><code>.agent/qa/&lt;id&gt;.json</code> — the recorded verification result, with command output under <code>.agent/evidence/</code>.</li>
     </ul>
     <p>Implementation may begin once the intent is recorded. <code>tools/start_path.py begin small-change --id &lt;id&gt;</code> is that decision, and <code>tools/start_path.py done small-change --id &lt;id&gt;</code> checks the recorded verification result. The small-change path records intent and a verification result and does not require the full feature-gate stack. Use the feature path when the change needs a new contract.</p>
+
+    <h3>Semantic task routing and execution helpers</h3>
+    <p>Before starting work, run <code>tools/start_path.py classify</code> to classify the change into
+    <code>trivial</code>, <code>bugfix</code>, <code>small-change</code>, <code>standard-feature</code>,
+    or <code>high-risk</code> based on canonical relative paths and semantic change properties, along with
+    work-specific diagnostic stopping rules. The CLI also provides
+    <code>tools/start_path.py begin trivial --id &lt;id&gt;</code> and
+    <code>tools/start_path.py done trivial --id &lt;id&gt;</code> for bounded doc/comment/test-only edits,
+    <code>amend-contract</code> for mechanical scope or command updates to an approved contract,
+    <code>preflight</code> for host capability discovery, <code>capture</code> for exclusive
+    non-overwriting evidence capture with continuation-lineage tracking,
+    <code>publish</code> (defaulting to noncommitting <code>--mode prepare</code>, with
+    <code>--mode publish</code> externally mediated via <code>NIZAM_MUTATION_ADAPTER</code> and
+    <code>--mode finalize</code> verifying committed stage deltas), <code>build-receipt</code>,
+    <code>status</code>, and <code>resume</code>.</p>
   </section>
 
   <section id="execution-loop" aria-labelledby="execution-loop-heading">
@@ -583,7 +608,8 @@
         including the Nizam Documentation Standard (NDS), <code>standard/NDS.md</code>.</p>
         <p>Key documents: <code>standard/NDS.md</code>, <code>standard/GIP.md</code>,
         <code>standard/AGF.md</code>, <code>standard/anti_hallucination.md</code>,
-        <code>standard/README.md</code>.</p>
+        <code>standard/definition_of_done.md</code>, <code>standard/convergent_code_review.md</code>,
+        <code>standard/acceptance_bars.md</code>, <code>standard/README.md</code>.</p>
         <p>Constitutional policy surface (the v0.4.0 NMF-hybrid layer): <code>standard/capability_profiles.md</code>
         and <code>standard/provenance_policy.md</code> are <em>partially enforced</em> &mdash; their
         capability-profile&#8596;role correspondence and SHA-pinned-Actions rule are verified by
@@ -610,10 +636,16 @@
         <code>methodology/07_eval_gated_promotion.md</code>,
         <code>methodology/08_cross_repo_dependency_gate.md</code>,
         <code>methodology/09_review_gate_flake_management.md</code>,
-        <a href="..&#47;..&#47;methodology&#47;10_live_runtime_sessions.md"><code>methodology/10_live_runtime_sessions.md</code></a>.</p>
-        <p>The neutral live-runtime protocol defines ownership, serialized operations, durable
-        handoffs and fresh acceptance. Runtime enforcement is <em>consumer-aspirational</em>;
-        schemas, adapters and a controller belong to later features.</p>
+        <a href="..&#47;..&#47;methodology&#47;10_live_runtime_sessions.md"><code>methodology/10_live_runtime_sessions.md</code></a>,
+        <code>methodology/11_sbcl_runtime_binding.md</code>.</p>
+        <p>The neutral live-runtime protocol (<code>methodology/10_live_runtime_sessions.md</code>) defines
+        ownership, serialized operations, durable handoffs, and fresh acceptance. It is
+        <em>partially enforced</em> through the shipped runtime provenance schemas, C12 relational
+        validation, and the bounded runtime controller and SBCL session loop
+        (<code>tools/runtime_session.py</code>, <code>tools/sbcl_session_loop.lisp</code>), while
+        <code>methodology/11_sbcl_runtime_binding.md</code> is <em>consumer-aspirational</em> with full
+        live SBCL adapter qualification across all thirteen live conformance cases gated on Phase 020
+        (features 130&ndash;132).</p>
         <p><code>methodology/05_eval_and_trace.md</code> and <code>methodology/07_eval_gated_promotion.md</code>
         are <em>consumer-aspirational</em> (Track 3, feature 058): the framework defines the trace-envelope and
         eval-gated-promotion requirements, but a consumer's runtime emits the traces and gates on the evals.</p>
@@ -640,21 +672,29 @@
         produce.</p>
         <p>Key documents: <code>schema/frontmatter.schema.json</code>,
         <code>schema/contract.schema.json</code>, <code>schema/qa_verdict.schema.json</code>,
-        <code>schema/run_state.schema.json</code>, <code>schema/README.md</code>.</p>
+        <code>schema/bugfix_cause.schema.json</code>, <code>schema/bugfix_scope.schema.json</code>,
+        <code>schema/small_change_intent.schema.json</code>,
+        <code>schema/run_state.schema.json</code>, <code>schema/runtime_session.schema.json</code>,
+        <code>schema/runtime_operation.schema.json</code>, <code>schema/review_ledger.schema.json</code>,
+        <code>schema/README.md</code>.</p>
       </article>
       <article class="card">
         <h3><code>tools/</code></h3>
         <p>The one unified, runtime-agnostic skill payload &mdash; manifest, instructions, and adapter
         interface &mdash; any agent runtime loads to act on the framework.</p>
         <p>Key documents: <code>tools/skill.json</code>, <code>tools/SKILL.md</code>,
-        <code>tools/interface.md</code>, <code>tools/validate.sh</code>, <code>tools/README.md</code>.</p>
+        <code>tools/interface.md</code>, <code>tools/validate.sh</code>,
+        <code>tools/payload_integrity.py</code>, <code>tools/start_path.py</code>,
+        <code>tools/convergent_review.py</code>, <code>tools/workflow_assurance.py</code>,
+        <code>tools/runtime_session.py</code>, <code>tools/README.md</code>.</p>
       </article>
       <article class="card">
         <h3><code>ecosystem/</code></h3>
         <p>The reusable, schema-governed Ecosystem Engineering Cycle: a multi-repository governance
-        lifecycle (clean-state preflight, evidence baseline, engineering audit, progress comparison)
-        extending Nizam's repository-local contract-first loop to ecosystem scale. Framework-side
-        only so far, self-dogfooded against this repository's own tree.</p>
+        lifecycle (Bootstrap, clean-state preflight, evidence baseline, engineering audit, dependency
+        reconciliation, release-train coordination, simplification review, progress comparison, and GA
+        gate) extending Nizam's repository-local contract-first loop across the full 0&ndash;n
+        repository spectrum for any consumer repository or multi-repository ecosystem.</p>
         <p>Key documents: <code>ecosystem/README.md</code>,
         <code>ecosystem/00_ecosystem_bootstrap.md</code>,
         <code>ecosystem/01_clean_state_preflight.md</code>,
@@ -685,7 +725,7 @@
       checkout of that pinned tag.</li>
     </ol>
     <p>Once <code>tools/skill.json</code> is located, every protocol this skill summarizes assumes an
-    agent runtime can perform exactly three abstract operations (<code>tools/interface.md</code>
+    agent runtime can perform three core abstract operations (<code>tools/interface.md</code>
     Section 4), each mapped by the runtime's own adapter onto its native tool-calling primitives:</p>
     <dl class="ops">
       <dt>read-state</dt>
@@ -698,6 +738,14 @@
       <dd>Execute a contract's verification commands and capture the command's output and exit code as
       evidence.</dd>
     </dl>
+    <p>For repository Git mutations during evidence publication (<code>tools/interface.md</code>
+    Section 4.4), <code>tools/start_path.py publish</code> defaults to noncommitting
+    <code>--mode prepare</code> (emitting a <code>.publish-request.json</code> envelope so the host
+    runtime can commit Stage 1 and Stage 2 on top of <code>intended_base</code> and verify them with
+    <code>--mode finalize</code>). When <code>publish --mode publish</code> or
+    <code>build-receipt --commit</code> is invoked directly, it requires an explicit
+    <code>NIZAM_MUTATION_ADAPTER</code> from the host runtime and never falls back to local
+    <code>git add</code> or <code>git commit</code>.</p>
     <p>An integrator adapting a new runtime checks conformance against <code>tools/interface.md</code>
     Section 5's numbered checklist, condensed here: the adapter locates <code>tools/skill.json</code>,
     loads its <code>entry_point</code> (<code>tools/SKILL.md</code>) content verbatim rather than a
@@ -717,13 +765,14 @@
       templates &mdash; it does not ship application code, infrastructure, or runtime services.</dd>
 
       <dt>How is a version pinned?</dt>
-      <dd>Consumers clone a specific semantic-version git tag (for example <code>v0.1.0</code>), never
-      <code>main</code> or any other floating branch reference (<code>standard/GIP.md</code>
-      Section 2, point 1).</dd>
+      <dd>Consumers clone a specific semantic-version git tag (for example <code>v1.10.1</code>) and
+      verify its expected commit digest (<code>--expected-sha</code>), never <code>main</code> or any
+      other floating branch reference (<code>standard/GIP.md</code> Section 2, point 1).</dd>
 
       <dt>How is drift detected, and how is it fixed?</dt>
-      <dd>A consumer periodically re-verifies its injected governance content against its recorded
-      pinned tag, checking for local hand-mutation and staleness against newer releases
+      <dd>A consumer periodically re-verifies its injected governance content against its retained
+      pinned tag repository (<code>./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha &lt;40-hex-sha&gt; --git-repo .nizam-ref/ --require-content-integrity</code>),
+      checking for local hand-mutation and staleness against newer releases
       (<code>standard/GIP.md</code> Section 4). The correct remediation is always to re-run
       <code>bootstrap.sh</code> against the appropriate tag &mdash; hand-patching an individual
       injected file is prohibited, because it reintroduces exactly the divergence drift detection
@@ -737,7 +786,7 @@
 </main>
 
 <footer>
-  <p>Nizam framework version <strong><span id="footer-version">1.10.0</span></strong>.</p>
+  <p>Nizam framework version <strong><span id="footer-version">1.10.1</span></strong>.</p>
   <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
 </footer>
 

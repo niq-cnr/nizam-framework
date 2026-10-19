@@ -7,8 +7,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-10-19
+
+**Patch release** (`methodology/06_release_train.md` Section 3.3): refreshes the
+HTML user guide (`docs/guide/index.html`), `CONTEXT.md`, and residual phase-005 /
+phase-015 era prose across the shipped payload (`ecosystem/01_clean_state_preflight.md`,
+`methodology/10_live_runtime_sessions.md`, `methodology/11_sbcl_runtime_binding.md`,
+`schema/README.md`, `tools/interface.md`, `tools/README.md`, `tools/SKILL.md`,
+`tools/skill.json`, and `NIZAM.json`) with zero schema, CLI, or behavioral changes.
+
 ### Changed
 
+- **Full documentation and GitHub Pages refresh (`v1.10.1`)**:
+  - Updated `docs/guide/index.html` (`1.10.1`) to replace legacy `v0.1.0` pins in `#quickstart` and `#faq` with `v1.10.1` (`--expected-sha`, `--git-repo .nizam-ref/`, and `--require-content-integrity`), list all six injected payload directories (`standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`) in `DD-1`, `#quickstart`, and `#adoption-paths`, document `tools/start_path.py` semantic task routing and execution helpers (`classify`, `begin`/`done`, `amend-contract`, `preflight`, `capture`, `publish` default `--mode prepare`, `build-receipt`, `status`, `resume`) under `#start-paths`, refresh `#modules` cards (`standard/`, `methodology/`, `schema/`, `tools/`, `ecosystem/`) to remove stale pre-phase-008/015 claims, and document Section 4.4 external mutation mediation (`NIZAM_MUTATION_ADAPTER`) under `#agent-integration`.
+  - Updated `CONTEXT.md` (`1.10.1`), `ecosystem/01_clean_state_preflight.md` (`v0.1.5`), `methodology/10_live_runtime_sessions.md` (`v0.2.1`), `methodology/11_sbcl_runtime_binding.md` (`v0.1.2`), `schema/README.md` (`v0.20.2`), `tools/interface.md` (`v0.5.2`), `tools/README.md` (`v0.37.2`), `tools/SKILL.md` (`v0.8.2`), `tools/skill.json` (`v0.8.2`), and `NIZAM.json` (`1.10.1`) to retire residual `"3-strike attempt limit"`, `"phase016"`, `"Feature 117 entry checks"`, and `"consumer-aspirational"` runtime-protocol labels in favor of the delivered bounded runtime controller (`features 126–129`), work-specific diagnostic stopping policy, and Phase 020 (`features 130–132`) full live SBCL qualification boundary.
+  - Added permanent regression checks in `tools/test_public_entry.py` guarding `docs/guide/index.html` and shipped payload documentation against stale `v0.1.0` pins, pre-015/016 placeholder text, and universal 3-strike claims.
 - **`v1.10.0` post-release closeout and `.nizam/` self-adoption (`C5`)**:
   Re-bootstrapped `.nizam/` to the released immutable tag `v1.10.0` (`6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7`, annotated tag object `8971603d2091fd5f5602f556b49499a0c8aa7a29`, `278` released files + `provenance.json`, `installed_at` `2026-10-19T07:56:18Z`, evidence `.agent/evidence/release-v1.10.0-closeout/`), updated `.github/scripts/verify_self_governance.py`, `README.md`, `docs/planning/SELF_GOVERNANCE.md` (`v0.6.0`), `docs/planning/ROADMAP.md` (`v0.65.28`), `docs/planning/operator_gates.md` (`v0.49.0`), `docs/planning/manifest.json`, and `docs/planning/REMEDIATION_2026_10_18.md` (`v0.15.0`), and removed the transitional corrective banner in `AGENTS.md` (`v0.4.0`) upon reaching parity between `.nizam/` and the authored framework.
 

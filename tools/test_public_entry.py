@@ -540,6 +540,40 @@ def main():
     require(paths, "Spec Kit")
     require(paths, "Superpowers")
     require(paths, "BMAD Method")
+
+    # Ensure docs/guide/index.html has no stale v0.1.0 pins or pre-015/016 claims
+    for stale_guide in (
+        "v0.1.0",
+        "Framework-side only so far",
+        "schemas, adapters and a controller belong to later features",
+    ):
+        if stale_guide in guide:
+            raise SystemExit(f"stale token in docs/guide/index.html: {stale_guide}")
+    require(guide, f"--tag v{fw_version}")
+    require(guide, "NIZAM_MUTATION_ADAPTER")
+    require(guide, "tools/start_path.py classify")
+    require(guide, "tools/start_path.py publish")
+
+    # Ensure shipped payload docs have no residual universal 3-strike or phase016 placeholder claims in their bodies
+    def _strip_frontmatter(md_text: str) -> str:
+        if md_text.startswith("---\n"):
+            parts = md_text.split("\n---\n", 1)
+            if len(parts) == 2:
+                return parts[1]
+        return md_text
+
+    preflight_body = _strip_frontmatter((ROOT / "ecosystem" / "01_clean_state_preflight.md").read_text(encoding="utf-8"))
+    if "3-strike attempt limit" in preflight_body:
+        raise SystemExit("stale '3-strike attempt limit' in ecosystem/01_clean_state_preflight.md")
+    for rel_doc in (
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/11_sbcl_runtime_binding.md",
+        "schema/README.md",
+    ):
+        doc_body = _strip_frontmatter((ROOT / rel_doc).read_text(encoding="utf-8"))
+        if "phase016" in doc_body:
+            raise SystemExit(f"stale 'phase016' reference in {rel_doc}")
+
     verify_b3_and_b4()
     print("public-entry: feature, bug-fix, and small-change paths present")
     print("public-entry: install pin, payload integrity, payload summary, and policy/metadata coherence verified")
@@ -548,4 +582,5 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
 

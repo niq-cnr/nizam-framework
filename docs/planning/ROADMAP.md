@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.28
+version: 0.65.29
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.29"
+    date: "2026-10-19"
+    summary: "Record v1.10.1 PATCH release preparation: full refresh of docs/guide/index.html, CONTEXT.md, and residual phase-005/015 prose across ecosystem/01_clean_state_preflight.md, methodology/10_live_runtime_sessions.md, methodology/11_sbcl_runtime_binding.md, schema/README.md, tools/interface.md, tools/README.md, tools/SKILL.md, tools/skill.json, and NIZAM.json; Current position gains the 'Release in preparation: v1.10.1' disposition line ahead of the v1.10.0 latest-released record."
   - version: "0.65.28"
     date: "2026-10-19"
     summary: "Post-release refresh (the 0.65.17/0.65.22/0.65.24/0.65.26 precedent): the Current position disposition line rolls from 'Release in preparation: v1.10.0' to 'Latest released tag: v1.10.0' carrying the observed facts -- annotated tag v1.10.0 (tag object 8971603d2091fd5f5602f556b49499a0c8aa7a29) at reviewed PR #123 merge 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 (compliance.yml run 39216541409 succeeded in 17m19s), release.yml run 39218964275 succeeded, GitHub Release published 2026-10-19T07:54:01Z and marked Latest, local .nizam/ re-bootstrapped to v1.10.0 (278 released files + provenance.json, installed_at 2026-10-19T07:56:18Z), and temporary override mode exited cleanly. The v1.9.0, v1.8.0, v1.7.0, and v1.6.0 prior-release records and all historical snapshots, phase records and budgets are preserved untouched."
@@ -339,6 +342,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v1.10.1 (PATCH) — full documentation and GitHub Pages refresh (`docs/guide/index.html`, `CONTEXT.md`, and shipped payload prose in `ecosystem/01_clean_state_preflight.md`, `methodology/10_live_runtime_sessions.md`, `methodology/11_sbcl_runtime_binding.md`, `schema/README.md`, `tools/interface.md`, `tools/README.md`, `tools/SKILL.md`, `tools/skill.json`, and `NIZAM.json`) prepared on `docs/full-refresh-v1.10.1` under continuing operator authority; tag creation awaits PR merge.
 
 Latest released tag: v1.10.0 (MINOR) — RELEASED 2026-10-19 at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7` (PR #123, annotated tag object `8971603d2091fd5f5602f556b49499a0c8aa7a29`); `release.yml` run 39218964275 succeeded and the GitHub Release published at `2026-10-19T07:54:01Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.10.0` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T07:56:18Z`).
 

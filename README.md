@@ -94,19 +94,19 @@ Implementation may begin once the intent is recorded. `tools/start_path.py begin
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.10.0 ./bootstrap.sh --tag v1.10.0 --expected-sha 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 --git-repo .nizam-ref/
+GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
 ```
 
-`--tag v1.10.0` (equivalently `GOVERNANCE_TAG=v1.10.0`) pins the inheritance to a real
+`--tag v1.10.1` (equivalently `GOVERNANCE_TAG=v1.10.1`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, verifies `--expected-sha` before staging, stages the governance
 payload, verifies it landed correctly, and atomically installs it under `.nizam/` (the
 default target). Passing `--git-repo .nizam-ref/` (outside `.nizam/`) retains the
 verified shallow tag repository so later offline `--verify-only` checks can verify
 commit-bound content integrity without re-cloning over the network (or you can fetch
-the tag into `.nizam-ref/` at any time with `git init .nizam-ref/ && git -C .nizam-ref/ fetch --depth 1 --no-tags https://github.com/niq-cnr/nizam-framework.git refs/tags/v1.10.0:refs/tags/v1.10.0`).
+the tag into `.nizam-ref/` at any time with `git init .nizam-ref/ && git -C .nizam-ref/ fetch --depth 1 --no-tags https://github.com/niq-cnr/nizam-framework.git refs/tags/v1.10.1:refs/tags/v1.10.1`).
 What you get:
 
 ```
@@ -126,16 +126,16 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 
 ```sh
 # Commit-bound content-integrity verification (verifies every file, mode, and digest against the expected commit in --git-repo):
-./bootstrap.sh --verify-only --tag v1.10.0 --expected-sha 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 --git-repo .nizam-ref/ --require-content-integrity
+./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
 
 # Unbound directory comparison (reports content_integrity=directory_match_unbound; does not satisfy --expected-sha or --require-content-integrity):
-./bootstrap.sh --verify-only --tag v1.10.0 --source-root /path/to/unpacked-release/
+./bootstrap.sh --verify-only --tag v1.10.1 --source-root /path/to/unpacked-release/
 
 # Structural and provenance-pin check only (reports structural_only; content_integrity=not_checked):
-./bootstrap.sh --verify-only --tag v1.10.0 --structural-only
+./bootstrap.sh --verify-only --tag v1.10.1 --structural-only
 ```
 
-See the [v1.10.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.10.0)
+See the [v1.10.1 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.10.1)
 and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the

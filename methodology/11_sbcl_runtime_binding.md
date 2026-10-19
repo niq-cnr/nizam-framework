@@ -2,11 +2,14 @@
 id: nizam-sbcl-runtime-binding
 title: "SBCL Runtime Binding"
 description: "Normative SBCL reference binding and folded language profile for live development, honest outcomes and fresh hermetic acceptance."
-version: 0.1.1
+version: 0.1.2
 status: active
 enforcement: consumer-aspirational
 authoritative_source: methodology/11_sbcl_runtime_binding.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-10-19"
+    summary: "Replace stale phase-016 pending prose with the delivered bounded runtime controller and SBCL session loop (tools/runtime_session.py, tools/sbcl_session_loop.lisp, features 126-129) while keeping full live SBCL adapter qualification across all thirteen live conformance cases gated on Phase 020 (features 130-132)."
   - version: "0.1.1"
     date: "2026-10-12"
     summary: "Link the delivered optional adapter interface without changing the aspirational SBCL binding or live-proof boundary."
@@ -28,17 +31,20 @@ mechanism. The existing <a href="..&#47;schema/runtime_session.schema.json">sess
 <a href="..&#47;schema/runtime_operation.schema.json">operation</a> schemas describe records;
 record validation cannot establish live ownership or runtime conformance.
 
-The normative document is delivered; executable controller/adapter enforcement
-and all thirteen live proofs remain pending phase016 work. ASDF forms below are
-illustrative until phase016 live verification. Observed local SBCL2.2.9.debian
-availability is not conformance or proof of host isolation. Consumers MUST obtain
-required capable isolated CI evidence before claiming live acceptance. This
-binding does not authorize changing workstation sysctls or installed governance.
+The normative document and the bounded runtime controller and SBCL session loop
+(`tools/runtime_session.py`, `tools/sbcl_session_loop.lisp`, features 126–129)
+are delivered; full live SBCL adapter qualification across all thirteen live
+conformance cases remains gated on Phase 020 (features 130–132). ASDF forms
+below are illustrative until Phase 020 live verification. Observed local
+SBCL2.2.9.debian availability is not conformance or proof of host isolation.
+Consumers MUST obtain required capable isolated CI evidence before claiming
+live acceptance. This binding does not authorize changing workstation sysctls
+or installed governance.
 
 The [optional adapter interface](..&#47;tools/interface.md) publishes the seven
-session calls and conditional checks. Its publication supplies no executable
-SBCL adapter or live conformance proof and does not change this binding's
-consumer-aspirational enforcement.
+session calls and conditional checks. Its publication and the bounded session
+loop do not by themselves claim full live SBCL conformance and do not change
+this binding's consumer-aspirational enforcement.
 
 ## 2. Reference language profile
 
@@ -188,9 +194,10 @@ paths against the profile; reject inherited fasls or shared build caches.
 
 The following ASDF configuration forms are **illustrative**, not a tested
 launcher. The named directories represent a sealed candidate source/dependency
-set and its new empty private output directory. Phase016 must verify the forms,
-configuration precedence and compile/load/test sequence with the pinned versions
-on capable required isolated CI before any live conformance claim.
+set and its new empty private output directory. Phase 020 (features 130–132)
+must verify the forms, configuration precedence and compile/load/test sequence
+with the pinned versions on capable required isolated CI before any live
+conformance claim.
 
 ```lisp
 (asdf:initialize-source-registry
@@ -264,4 +271,4 @@ they do not prove controller behavior or all thirteen live cases.
   support Sections5,7–9.
 - ASDF's [source registry](https://asdf.common-lisp.dev/asdf%2Ehtml#Controlling-where-ASDF-searches-for-systems)
   and [output translations](https://asdf.common-lisp.dev/asdf%2Ehtml#Controlling-where-ASDF-saves-compiled-files)
-  support Section9; the forms remain illustrative pending phase016 proof.
+  support Section9; the forms remain illustrative pending Phase 020 (features 130–132) proof.
