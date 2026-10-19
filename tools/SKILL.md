@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.8.1
+version: 0.8.2
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.8.2"
+    date: "2026-10-19"
+    summary: "Include schema/ and ecosystem/ in Section 2's directory enumeration, reference Section 4.4 external mutation mediation in Section 11's tools/interface.md entry, and maintain C13 version parity with tools/skill.json (v0.8.2)."
   - version: "0.8.1"
     date: "2026-10-19"
     summary: "Default tools/start_path.py publish to --mode prepare (noncommitting), require explicit NIZAM_MUTATION_ADAPTER completion responses for --mode publish / build-receipt --commit without local commit fallback, and record executable continuation_lineage checks in capture/classify."
@@ -73,9 +76,9 @@ reading it in full.
    enough metadata to resolve the minimal file set the current task needs.
    `NIZAM.json` validates against `registry/nizam-index.schema.json`.
 2. **Read only the module the task needs.** Bulk-reading an entire governance
-   directory (`standard/`, `methodology/`, `templates/`, `tools/`) "just in
-   case" is prohibited. Resolve the specific capability path `NIZAM.json`
-   names for the current task, read that one file, and stop.
+   directory (`standard/`, `methodology/`, `templates/`, `schema/`, `tools/`,
+   `ecosystem/`) "just in case" is prohibited. Resolve the specific capability
+   path `NIZAM.json` names for the current task, read that one file, and stop.
 3. **Follow cross-references only on demand.** Every protocol document
    cross-references related documents by path. Follow such a reference only
    when the current task genuinely requires the referenced content, not
@@ -302,8 +305,9 @@ an authorized re-bootstrap.
 - `tools/skill.json` — the capability manifest this document is the payload
   for.
 - `tools/interface.md` — how any agent runtime discovers and loads this
-  payload, and the adapter contract for the three abstract operations
-  (read-state, write-evidence, run-verification).
+  payload, and the adapter contract for the three core abstract operations
+  (read-state, write-evidence, run-verification) plus Section 4.4 external
+  mutation-authority mediation (`NIZAM_MUTATION_ADAPTER`).
 - `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`,
   `methodology/04_tool_driven_state.md`, `standard/anti_hallucination.md`,
   `standard/convergent_code_review.md`, `methodology/07_eval_gated_promotion.md`,

@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.37.1
+version: 0.37.2
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.37.2"
+    date: "2026-10-19"
+    summary: "Align interface.md table row and DD-4 bullet with Section 4.4 external mutation-authority mediation (NIZAM_MUTATION_ADAPTER), and retire residual pre-delivery 'Feature 117 entry checks and feature 118 foundation closure remain pending' / 'belong to features 116-118' prose from the historical feature 115/116 subsections."
   - version: "0.37.1"
     date: "2026-10-19"
     summary: "v1.9.0 audit follow-up (C1-C3): default start_path.py publish to noncommitting --mode prepare, require explicit NIZAM_MUTATION_ADAPTER for --mode publish and build-receipt --commit with request/commit binding, enforce GIT_OPTIONAL_LOCKS=0 on read-side Git queries, require explicit --git-repo and --expected-sha for commit-bound payload_integrity.py verification while labeling --source-root as directory_match_unbound, and evaluate work-specific continuation lineage in start_path.py classify and capture."
@@ -319,7 +322,7 @@ agent runtime through the same adapter contract — no per-runtime forks.
 |---|---|
 | [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version (which C13 enforces must match `SKILL.md` frontmatter `version`), its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. The optional live_runtime_session requirement is false; adapter and SBCL binding capabilities route to their authoritative sources. |
 | [`SKILL.md`](SKILL.md) | The single instructions payload any agent runtime loads to act on the framework: when to load it, how to consume the framework by querying the root index rather than bulk-reading, a summary of the contract-first execution loop, the circuit-breaker and anti-hallucination obligations every role carries, the durable-state and evidence-by-path obligations, and the verdict JSON formats every gate produces. |
-| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the ten-item Adapter Conformance Checklist an integrator ticks through. Section 6 adds seven optional session calls and conditional S1–S9 for claiming adapters. |
+| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three core abstract operations (`read-state`, `write-evidence`, `run-verification`) plus Section 4.4 external mutation mediation (`NIZAM_MUTATION_ADAPTER`) onto its own native tool primitives, and the ten-item Adapter Conformance Checklist an integrator ticks through. Section 6 adds seven optional session calls and conditional S1–S9 for claiming adapters. |
 | [`payload_integrity.py`](payload_integrity.py) | Shared installed-payload integrity comparator invoked from outside the target payload by `bootstrap.sh --verify-only` and `.github/scripts/verify_self_governance.py`: compares the complete file inventory (excluding only `provenance.json`), exact byte content, regular-file/no-symlink rules, and executable file modes (`100755` vs `100644`) of an installed payload against an explicit `--git-repo` + `--expected-sha` commit tree (`content_integrity=verified`) or an unbound `--source-root` directory (`content_integrity=directory_match_unbound`). |
 | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
 | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
@@ -361,13 +364,12 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --base-cases
 PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
 ```
 
-The regression flag runs the eleven feature 115 cases; the default suite now runs
-those plus five feature 116 cases in the existing CI job. Use independently
-reviewed inputs and output evidence; local role records are not cryptographic
-authentication or runtime permission enforcement. Feature 117 entry checks and
-feature 118 foundation closure remain pending. Earlier feature 115 documentation
-below records its initial eleven-case suite; the current default count is sixteen.
-The authored tool does not silently mutate the installed `.nizam/` payload.
+The regression flag runs the eleven feature 115 cases; the default suite runs
+those plus the later Workflow Assurance cases (features 116–125 and 133) in the
+`fixtures_self_test` CI job. Use independently reviewed inputs and output
+evidence; local role records are not cryptographic authentication or runtime
+permission enforcement. The authored tool does not silently mutate the installed
+`.nizam/` payload.
 
 ## Assessed-source identity and record continuity
 
@@ -398,14 +400,16 @@ python3 tools/workflow_assurance.py record --before "$WA_BEFORE_RECORD_FILE" --a
 PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
 ```
 
-The last command runs eleven independently authored feature 115 cases and is
-permanent in the existing `fixtures_self_test` CI job. Unknown cases, invalid JSON,
+The last command runs the full Workflow Assurance regression suite and is
+permanent in the `fixtures_self_test` CI job. Unknown cases, invalid JSON,
 missing observations and unsafe paths exit nonzero. Keep CLI input/output files
 outside the assessed repository unless they have a declared record mask.
-This local identity utility does not authenticate callers or authorize entry;
-sealed-bundle enforcement, entry/role checks and foundation closure belong to
-features 116–118. It implements no runtime controller or live acceptance and does
-not silently mutate the installed `.nizam/` payload.
+This local identity utility does not cryptographically authenticate callers;
+sealed-bundle verification, entry/role checks, foundation readiness, receipt
+transitions, conflict lanes, cause routing, CI controls, and generic assurance
+profiles are provided by the sibling `workflow_assurance.py` subcommands above.
+It implements no runtime controller or live acceptance and does not silently
+mutate the installed `.nizam/` payload.
 
 ## Design Decision — DD-4: Unified Skill Payload
 
@@ -425,10 +429,10 @@ rule is unconditional:
   runtime-native pointer to `SKILL.md` is expected to reference or include it
   verbatim (`interface.md` Section 3.3), never to restate its content.
 - **One adapter contract, many adapters.** `interface.md` defines the single
-  contract (discovery, loading, the three abstract operations) that any
-  number of runtime-specific adapters can each independently implement,
-  without the framework itself ever needing to know how many runtimes exist
-  or what any one of them is called.
+  contract (discovery, loading, the three core abstract operations plus
+  Section 4.4 external mutation mediation) that any number of runtime-specific
+  adapters can each independently implement, without the framework itself ever
+  needing to know how many runtimes exist or what any one of them is called.
 
 *Acceptance anchor:* exactly one `SKILL.md` exists in the whole repository,
 and no per-runtime skill fork directory exists under `tools/`

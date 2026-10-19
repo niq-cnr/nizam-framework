@@ -1,11 +1,14 @@
 ---
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
-description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.5.1
+description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
+version: 0.5.2
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.5.2"
+    date: "2026-10-19"
+    summary: "Align frontmatter description, Section 4 intro, and Section 6 intro with Section 4.4 external mutation-authority mediation (NIZAM_MUTATION_ADAPTER) and the delivered bounded runtime controller and SBCL session loop (tools/runtime_session.py, tools/sbcl_session_loop.lisp, features 126-129; full live SBCL qualification gated on Phase 020 features 130-132)."
   - version: "0.5.1"
     date: "2026-10-19"
     summary: "Default tools/start_path.py publish to --mode prepare (noncommitting), remove implicit local Git add/commit fallback from _git_commit_literal_paths, require explicit NIZAM_MUTATION_ADAPTER completion responses, distinguish denial from unknown_external_commit_outcome reconciliation, bind stage commits to intended_base/branch/delta, and use GIT_OPTIONAL_LOCKS=0 for read-side Git queries."
@@ -33,11 +36,12 @@ change_log:
 This document specifies how an agent runtime — any host environment capable of
 reading files, executing commands, and holding instructions in its working
 context — discovers and loads the framework's one unified skill payload, and
-how that runtime's own native tool primitives satisfy the three abstract
-operations the payload's protocols assume. It describes the adapter contract
-only. It ships no runtime-specific adapter implementation and no per-runtime
-fork directory (DD-4): there is exactly one skill payload, `tools/SKILL.md`,
-and every runtime loads that same file.
+how that runtime's own native tool primitives satisfy the three core abstract
+operations the payload's protocols assume (plus external mutation-authority
+mediation for committing evidence publication in Section 4.4). It describes the
+adapter contract only. It ships no runtime-specific adapter implementation and
+no per-runtime fork directory (DD-4): there is exactly one skill payload,
+`tools/SKILL.md`, and every runtime loads that same file.
 
 ## 2. Discovery
 
@@ -93,9 +97,10 @@ Once discovered, the runtime loads the payload as follows:
 ## 4. The Three Abstract Operations
 
 Every protocol document this skill summarizes assumes an agent runtime can
-perform exactly three abstract operations. Each runtime's adapter maps these
-onto its own native tool-calling primitives; the mapping is the adapter's
-entire job.
+perform three core abstract operations (plus external mutation-authority
+mediation for committing evidence publication in Section 4.4). Each runtime's
+adapter maps these onto its own native tool-calling primitives; the mapping is
+the adapter's entire job.
 
 ### 4.1 `read-state`
 
@@ -222,7 +227,11 @@ MUST be satisfied.
 `live_runtime_session` is optional (`required: false`).
 Adapters that do not claim it remain conformant under Section 5.
 Only claiming adapters MUST satisfy the seven calls and conditional S1–S9 below.
-This is a normative interface, not executable adapter/controller delivery.
+This section defines the normative adapter interface; bounded reference
+controller and SBCL session loop coverage ship in `tools/runtime_session.py`
+and `tools/sbcl_session_loop.lisp` (features 126–129), while full live SBCL
+adapter qualification across all thirteen live conformance cases remains gated
+on Phase 020 (features 130–132).
 
 | Call | Meaning and execution boundary |
 | --- | --- |

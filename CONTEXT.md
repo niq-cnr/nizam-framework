@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.10.0
+version: 1.10.1
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.10.1"
+    date: "2026-10-19"
+    summary: "Prepare the v1.10.1 PATCH release: full repository-wide documentation and GitHub Pages accuracy refresh across docs/guide/index.html (retiring all v0.1.0 pins, 4-directory payload enumerations, 'Framework-side only so far', and pre-controller runtime-session prose; adding all 6 injected modules, --git-repo/--expected-sha/--require-content-integrity verification modes, semantic 5-route task routing and capture/publish/build-receipt helpers, and Section 4.4 external mutation mediation), CONTEXT.md (complete Module Map and Execution Commands), ecosystem/01_clean_state_preflight.md (v0.1.5 work-specific diagnostic stopping policy reference), methodology/10_live_runtime_sessions.md (v0.2.1) and methodology/11_sbcl_runtime_binding.md (v0.1.2) and schema/README.md (v0.20.2) (replacing stale phase016 pending prose with delivered features 126-129 bounded runtime controller/SBCL loop and Phase 020 features 130-132 full live SBCL qualification boundary), tools/interface.md (v0.5.2), tools/README.md (v0.37.2), tools/SKILL.md (v0.8.2), tools/skill.json (v0.8.2), NIZAM.json (v1.10.1), and tools/test_public_entry.py regression guards. Pure documentation/prose patch with 278 released files and no schema or behavioral break. The installed .nizam/ payload remains pinned to v1.10.0 until the reviewed post-tag re-bootstrap to v1.10.1. H-FRAMEWORK-RELEASE sign-off, tag, and pin authorization continue under the operator's 2026-10-19 mandate; the annotated tag act remains the separate post-merge Orchestrator mechanic (methodology/06_release_train.md Section 6)."
   - version: "1.10.0"
     date: "2026-10-19"
     summary: "Prepare the v1.10.0 MINOR release: the 2026-10-19 v1.9.0 audit and follow-up execution (C0-C5, closing findings F1-F3: default noncommitting --mode prepare in tools/start_path.py publish, removal of implicit local Git add/commit fallback from _git_commit_literal_paths, explicit NIZAM_MUTATION_ADAPTER requirement for committing publish/build-receipt, strict rejection of missing/empty/{}/boolean/denied/pending/failed adapter responses, unknown_external_commit_outcome reconciliation against actual repository state without duplicate commits or re-running captured commands, full branch/intended_base/diff-tree delta binding, and GIT_OPTIONAL_LOCKS=0 on read-side Git queries; elimination of ${TARGET_DIR}/tools/payload_integrity.py execution from bootstrap.sh --verify-only, --git-repo DIR support for install-time retained tag repositories and commit-bound content-integrity verification, explicit caller-supplied --expected-sha and --git-repo rules without mutable provenance.json fallback, distinct content_integrity=directory_match_unbound reporting for --source-root, and fail-closed helper exit-code handling; and executable work-specific diagnostic stopping policy in tools/start_path.py classify and capture with continuation_lineage tracking across attempts/splits plus aligned methodology/00_planning.md, methodology/01_execution.md, and schema/run_state.schema.json) lands as additive and hardening capability with 278 released files. The installed .nizam/ payload remains pinned to v1.9.0 until the reviewed post-tag re-bootstrap to v1.10.0. H-FRAMEWORK-RELEASE sign-off, tag, and pin authorization continue under the operator's 2026-10-19 mandate; the annotated tag act remains the separate post-merge Orchestrator mechanic (methodology/06_release_train.md Section 6)."
@@ -76,14 +79,14 @@ infrastructure, and not a runtime service.
 
 ## Module Map (Hybrid Mono-Repo)
 
-- `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state).
-- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), and the layered Definition of Done.
-- `methodology/` — Planning, execution, adversarial TDD, circuit breaker, tool-driven state, release train protocols.
-- `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
-- `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
+- `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, contract review, QA verdict, bug-fix cause/scope, small-change intent, run state, work packet, debt, capability profile, ecosystem preflight/baseline/finding/delta/membership/reconciliation/release-train, runtime session/operation, and convergent review packet/trial/ledger/suppression/replay).
+- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), the layered Definition of Done, Convergent Automated Code Review, and Acceptance Bars.
+- `methodology/` — Planning, contract-first execution, adversarial TDD, work-specific diagnostic stopping and circuit breaker, tool-driven durable state, eval and trace, release train, eval-gated promotion, cross-repo dependency gate, review-gate flake management, live runtime sessions, and SBCL runtime binding protocols.
+- `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, DoD, convergent-review prompt, work-packet, phase, manifest).
+- `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md` and `tools/skill.json`, together with `tools/interface.md`, `tools/validate.sh`, `tools/payload_integrity.py`, `tools/start_path.py`, `tools/convergent_review.py`, `tools/workflow_assurance.py`, and `tools/runtime_session.py`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
-- `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).
-- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols: Bootstrap (`00`), clean-state preflight (`01`), evidence baseline (`02`), engineering audit (`03`), dependency reconciliation (`04`, the Plan stage), release-train coordination (`05`, the Promote stage), and progress comparison (`07`) — now consumer-adoptable (a consumer bootstraps the framework and runs the full 0–n lifecycle), not framework-side only.
+- `docs/` — Architecture Decision Records (`docs/architecture/`), migration guidance (`docs/migration-v1.0.0.md`), and the self-contained HTML user guide (`docs/guide/index.html`).
+- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols: Bootstrap (`00`), clean-state preflight (`01`), evidence baseline (`02`), engineering audit (`03`), dependency reconciliation (`04`, the Plan stage), release-train coordination (`05`, the Promote stage), simplification review (`06`, the Repeat stage), progress comparison (`07`), and GA gate (`08`, the Promote-stage GA declaration) — consumer-adoptable across the full 0–n repository spectrum.
 
 Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
 `tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`
@@ -102,10 +105,18 @@ plan, execute, gate, and durably record work.
 
 ## Execution Commands
 
-- Bootstrap a consumer repo: `bootstrap.sh` clones a pinned framework tag, injects the
-  six governance directories `standard/`, `templates/`, `schema/`, `tools/`,
-  `methodology/`, and `ecosystem/` plus the root `NIZAM.json` capability index, and
-  verifies compliance before declaring success.
+- Bootstrap a consumer repo: `bootstrap.sh` clones a pinned framework tag, verifies
+  `--expected-sha` before staging, injects the six governance directories `standard/`,
+  `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/` plus the root
+  `NIZAM.json` capability index (optionally retaining the verified tag repository at
+  `--git-repo .nizam-ref/`), and verifies compliance before declaring success.
+- Re-verify an installed payload offline without executing code from inside `.nizam/`:
+  `./bootstrap.sh --verify-only --tag <vX.Y.Z> --expected-sha <40-hex-sha> --git-repo .nizam-ref/ --require-content-integrity`
+  (or `--source-root <dir>` for `content_integrity=directory_match_unbound`, or
+  `--structural-only` for `content_integrity=not_checked`).
+- Route, capture, publish, and verify governed task state via `tools/start_path.py`
+  (`classify`, `begin`, `done`, `amend-contract`, `preflight`, `capture`, `publish`
+  defaulting to `--mode prepare`, `build-receipt`, `verify-receipt`, `resume`, `status`).
 - Validate framework artifacts against their schemas using any standard JSON Schema
   validator against the files under `schema/`, or run `tools/validate.sh` for the
   repo-local compliance check that `.github/workflows/compliance.yml` runs in CI.

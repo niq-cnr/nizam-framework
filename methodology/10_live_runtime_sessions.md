@@ -2,11 +2,14 @@
 id: nizam-live-runtime-sessions
 title: "Live Runtime Sessions"
 description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
-version: 0.2.0
+version: 0.2.1
 status: active
 enforcement: partially-enforced
 authoritative_source: methodology/10_live_runtime_sessions.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-10-19"
+    summary: "Replace stale phase-016 pending-controller prose with the delivered bounded runtime controller and SBCL session loop (tools/runtime_session.py, tools/sbcl_session_loop.lisp, features 126-129) while keeping full live SBCL adapter qualification across all thirteen live conformance cases gated on Phase 020 (features 130-132)."
   - version: "0.2.0"
     date: "2026-10-12"
     summary: "Publish the optional adapter crosslink and partially-enforced record-validation boundary; live runtime enforcement remains pending."
@@ -23,16 +26,17 @@ change_log:
 
 # Live Runtime Sessions
 
-This normative protocol is **partially-enforced** only through the existing
-runtime provenance schemas and C12 record-relational validation. Consumers must
-enforce session rules in their runtime. These schema/C12 checks establish record
-shape and declared invariants only; they cannot prove live ownership, generation
-or lease enforcement, source/heap identity or runtime conformance. The normative
-SBCL reference binding is published in [the binding document](11_sbcl_runtime_binding.md),
-and the optional adapter capability is published in
-[the adapter interface](..&#47;tools/interface.md). Executable session controller,
-adapter/SBCL binding enforcement and all thirteen live conformance proofs remain
-pending phase016 features115–120.
+This normative protocol is **partially-enforced** through the shipped runtime
+provenance schemas, C12 record-relational validation, and the bounded runtime
+controller and SBCL session loop (`tools/runtime_session.py`,
+`tools/sbcl_session_loop.lisp`, delivered in features 126–129). Consumers must
+enforce session rules in their runtime. Schema/C12 checks establish record
+shape and declared invariants only, and the bounded controller proves only its
+covered fixture and loop cases; full live SBCL adapter qualification across all
+thirteen live conformance cases remains gated on Phase 020 (features 130–132).
+The normative SBCL reference binding is published in
+[the binding document](11_sbcl_runtime_binding.md), and the optional adapter
+capability is published in [the adapter interface](..&#47;tools/interface.md).
 
 A runtime session is a long-lived process and its mutable image used for
 interactive development. An agent session is an agent's conversational or
@@ -227,10 +231,12 @@ independently captured acceptance evidence and QA verdicts. Implementation agent
 preserve fields they do not own. The two schemas and executable C12 relational
 checks validate session and operation records. They establish declared record
 validity, never live runtime behavior or acceptance of a warm image. The normative
-SBCL reference binding is delivered. The optional adapter capability is published
-in [the adapter interface](..&#47;tools/interface.md); executable controller/adapter/
-SBCL binding enforcement and live conformance proofs remain pending phase016
-features115–120.
+SBCL reference binding is delivered, the optional adapter capability is published
+in [the adapter interface](..&#47;tools/interface.md), and the bounded runtime
+controller and SBCL session loop ship in `tools/runtime_session.py` and
+`tools/sbcl_session_loop.lisp` (features 126–129); full live SBCL adapter
+qualification across all thirteen live conformance cases remains gated on
+Phase 020 (features 130–132).
 
 | requirement-id | normative-rule | evidence-boundary |
 | --- | --- | --- |
