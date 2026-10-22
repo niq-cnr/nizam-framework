@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.30
+version: 0.65.31
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.31"
+    date: "2026-10-22"
+    summary: "Make the Jev readiness program the active current position: point to docs/planning/jev-readiness/PROGRAM.md, record the locally landed JR-02/JR-03/JR-04 repairs as pending independent verification, distinguish the completed 2026-10-18 remediation from the active directive, reconcile the open-debt roll to NDEBT-034, NDEBT-040 and NDEBT-056 (NDEBT-055 resolved), and preserve all dated release/phase/snapshot facts."
   - version: "0.65.30"
     date: "2026-10-19"
     summary: "Post-release refresh: the Current position disposition line rolls from 'Release in preparation: v1.10.1' to 'Latest released tag: v1.10.1' carrying the observed facts -- annotated tag v1.10.1 (tag object 5b6fdb64a5bc3bf1def755b8269696d9e95b3a41) at reviewed PR #125 merge 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd (compliance.yml run 39239133568 succeeded in 17m16s), release.yml run 39241606087 and pages.yml run 39241597482 succeeded, GitHub Release published 2026-10-19T11:01:33Z and marked Latest, and local .nizam/ re-bootstrapped to v1.10.1 (278 released files + provenance.json, installed_at 2026-10-19T11:03:39Z). The v1.10.0, v1.9.0, v1.8.0, v1.7.0, and v1.6.0 prior-release records and all historical snapshots, phase records and budgets are preserved untouched."
@@ -297,20 +300,36 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — quality and velocity remediation, 2026-10-18
+## Current position — Jev readiness program, 2026-10-22
 
-On 2026-10-18 the operator issued the critical quality and velocity remediation mandate
-([REMEDIATION_2026_10_18.md](REMEDIATION_2026_10_18.md)), making R0–R11 the highest-priority
-engineering work ahead of unrelated backlog items, reconciling open PR #115 (feature **134**
-portable Docker trial-sandbox adapter and adapter-specific conformance selection), and
-moving Phase **019** (features **124–125**) generic repository/worktree assurance-profile
-comparison and shadow recommendation ahead of Phase **020** features **130–132** (which
-remain prerequisites only for persistent-runtime / SBCL profile claims).
+The active engineering direction is the 2026-10-22 operator mandate
+`NIZAM-JEV-OWNER-2026-10-22`, recorded in
+[/docs/planning/jev-readiness/PROGRAM.md](/docs/planning/jev-readiness/PROGRAM.md). That file is the durable
+program record; its "Immediate next action" is ordered, and its §5 plus
+[/docs/planning/jev-readiness/AUTHORITY.md](/docs/planning/jev-readiness/AUTHORITY.md) name the gates that need separate
+authorization. Program status: **IN PROGRESS** — JR-02/JR-03/JR-04 deterministic
+repairs have landed locally in `tools/start_path.py` with a standalone
+regression control, but the full suite, independent review, merge, release,
+live execution and Operator closure remain open.
+
+Safe next work, in order: independent review and a Landlock-qualified full-suite
+run of the control diff; then JR-01/JR-25 architecture inventory, JR-18/JR-19
+measurement/reproduction and JR-12/JR-27 typed semantic contracts. Blocked
+frontier: live provider calls, spending, merged delivery, release, consumer
+migration, operational comparison and independent program acceptance. The
+working tree intentionally holds the uncommitted control repairs; no acceptance
+or release state should be inferred from them.
+
+The 2026-10-18 quality and velocity remediation
+([REMEDIATION_2026_10_18.md](REMEDIATION_2026_10_18.md)) is **COMPLETE as a
+predecessor**, not the active directive. It reconciled PR #115 (feature **134**
+portable Docker trial-sandbox adapter), moved Phase **019** (features **124–125**)
+ahead of Phase **020** features **130–132**, and its R9 pilot record remains in
+the remediation brief. Its dated execution facts below remain historical.
 
 The 2026-10-16 recovery2 handover goal (branch `chore/handover-2026-10-16-recovery2`,
-checkpoint `b07b1e3c`) is **SUPERSEDED**: the operator's active directive is now
-the 2026-10-18 remediation mandate. The historical
-handover packets and all snapshot sections below retain their dated facts.
+checkpoint `b07b1e3c`) remains **SUPERSEDED**. The historical handover packets and
+all snapshot sections below retain their dated facts.
 
 Phase **020** is active under H-PHASE-020. Feature **129** (SBCL loop and confirmed
 cancellation) is **COMPLETE**: approved contract `.agent/contracts/129.json`, canonical
@@ -339,8 +358,11 @@ and the five-success main CI proof is recorded in run_state (`133-main-hosted-de
 its budget gate retains the recorded delivery exception (3,024 against the 2,600
 ceiling, `budget_gate_passed` false under standing operator authority).
 
-Open debt is limited to NDEBT-034 and NDEBT-040 (both Low); NDEBT-034 awaits an
-operator close decision (its deferral trigger is extinct). Comparative superiority
+Open debt is NDEBT-034 and NDEBT-040 (both Low; NDEBT-034 awaits an operator
+close decision because its deferral trigger is extinct) plus NDEBT-056 (Medium:
+Docker digest re-pin policy and the preserved live-model observation gap, issue
+#107). NDEBT-055 is resolved. The authoritative rows are in
+[DEBT.md](DEBT.md); this summary does not close or create debt. Comparative superiority
 remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 adapter
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status

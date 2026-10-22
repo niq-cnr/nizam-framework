@@ -1,0 +1,94 @@
+{
+  "schema": "nizam-jev-readiness-baseline",
+  "schema_version": "1.0.0",
+  "recorded_at": "2026-10-22T00:00:00Z",
+  "mandate": {
+    "id": "NIZAM-JEV-OWNER-2026-10-22",
+    "version": "1.0",
+    "source_plan": "NIZAM-JEV-READY-2026-10-22",
+    "source_plan_schema": "2.0.0",
+    "requirements": 36,
+    "parent_packages": 47,
+    "acceptance_criteria": 239
+  },
+  "repository": {
+    "origin": "https://github.com/niq-cnr/nizam-framework.git",
+    "branch": "main",
+    "head": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3",
+    "tracking": "main...origin/main",
+    "worktree_clean": true,
+    "dirty_paths": [],
+    "untracked_paths": [],
+    "acquisition": "existing local clone inspected read-write; not a fresh clone and not a remote-only read"
+  },
+  "versions": {
+    "source_nizam_json": "1.10.1",
+    "installed_framework_version": "1.10.1",
+    "installed_tag": "v1.10.1",
+    "installed_resolved_sha": "2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd",
+    "installed_at": "2026-10-19T11:03:39Z",
+    "installed_vs_source_distinct": true
+  },
+  "history": {
+    "audit_baseline": "c5297f6ad2ef726ee85ca0b86e3df25fdcd0060a",
+    "latest_inspected_main": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3",
+    "merged_cleanup_prs": [
+      {"number": 128, "merged_sha": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3", "merged_at": "2026-10-22T14:26:17Z", "ancestor_of_head": true, "reuse": "archive resolver, maintained fixtures, lifecycle distinction"},
+      {"number": 129, "merged_sha": "da7bd31831bbe74c7612226e50521062776f7261", "merged_at": "2026-10-22T13:48:15Z", "ancestor_of_head": true, "reuse": "bounded preservation and three canonical byte-format vectors"},
+      {"number": 130, "merged_sha": "25db77d02cdea2f64e8e32f538f341c519f8eb48", "merged_at": "2026-10-22T13:47:21Z", "ancestor_of_head": true, "reuse": "sparse acquisition, retained reference checkout, staged replacement/rollback"}
+    ]
+  },
+  "remote": {
+    "open_pull_requests": [],
+    "open_issues": [
+      {"number": 107, "title": "Convergent review: portable equivalent sandbox adapter and adapter-specific conformance", "reconcile_with": ["Feature 134", "NDEBT-056"]}
+    ],
+    "latest_ci": {
+      "run_id": 39795674036,
+      "workflow": "compliance",
+      "event": "push",
+      "branch": "main",
+      "status": "completed",
+      "conclusion": "success",
+      "duration": "33m16s",
+      "head_sha": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3"
+    }
+  },
+  "lifecycle": {
+    "run_state_phase": "020-sbcl-fresh-acceptance",
+    "current_feature": "130",
+    "status": "in_progress",
+    "active_contract_id": null,
+    "note": "Feature 130 is distinct from merged PR #130. Preserve its identity, counters and authority."
+  },
+  "host": {
+    "platform": "darwin",
+    "kernel": "Darwin 27.0.0 arm64",
+    "python": "3.14.6",
+    "bash": "5.3.15(1)-release",
+    "git_available": true,
+    "sandbox_available": false,
+    "sandbox_probe": "tools/isolated_trial_adapter.py exits 1: OSError [Errno 14] Bad address in Landlock probe",
+    "supported_host_claim": "macOS host is NOT a qualified isolated-review host"
+  },
+  "local_evidence": [
+    {"command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py", "result": "exit 1", "stage": "preflight sandbox probe", "classification": "host-specific NOT_RUN of isolation-dependent assertion", "not_a_control_failure": true},
+    {"command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh", "result": "timeout at 180s", "classification": "NOT_RUN complete on this host"}
+  ],
+  "preserved_facts": [
+    "The 12 paired / 24 captured historical pilot records are retained under their original labels.",
+    "The 61.1% / 45.1% figures are supplied-unit / local-study results, not measured end-to-end LLM savings.",
+    "Seeded blockers were not independent defect discoveries.",
+    "Linux-only and Landlock-dependent historical tests remain NOT_RUN/unsupported on this host.",
+    "The cleanup record's H-CONSOLIDATION gate remains outstanding; cleanup PR merges are not evidence it completed.",
+    "Full publish_captured_evidence decomposition remains deferred; canonical byte vectors do not prove it completed."
+  ],
+  "claim": {
+    "program_status": "in_progress",
+    "offline_readiness_gate_passed": false,
+    "live_qualification": false,
+    "release_or_rollout": false,
+    "independent_acceptance": false,
+    "operator_acceptance": false
+  }
+}

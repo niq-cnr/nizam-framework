@@ -25,6 +25,8 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the active 2026-10-22 engineering direction is the [Jev readiness program](docs/planning/jev-readiness/PROGRAM.md), whose deterministic control repairs are landed locally and awaiting independent verification. `v1.10.1` remains the latest released and installed payload; source work does not change it.
+
 ### Copy & Paste Single-Prompt Agent Onboarding (`v1.10.1`)
 
 Want your AI coding agent (Claude Code, Cursor, Antigravity, Codex, Windsurf, or any CLI/IDE agent) to onboard your repository to the latest immutable Nizam release with zero manual setup? **Copy and paste this single prompt into your coding agent:**
