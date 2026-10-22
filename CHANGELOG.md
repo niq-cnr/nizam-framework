@@ -9,6 +9,29 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Historical evidence archive and bounded preservation**:
+  Added `.agent/evidence-archive/index.json`, `schema/evidence_archive.schema.json`,
+  and `tools/evidence_archive.py` to bind completed historical evidence tranches
+  to Git blobs retained by ordinary history (type, oid, mode, length and raw-byte
+  SHA-256, deduplicated by content). C16 now resolves archived paths only for an
+  unchanged completed feature; current acceptance never falls back to historical
+  bytes. Added `tools/evidence_preservation.py` for content-addressed input
+  inventories with distinct per-run receipts, and fixed canonical-format
+  compatibility vectors in `tools/test_canonical_formats.py`.
+
+### Changed
+
+- **Development tree and consumer installation footprint**:
+  Moved 14,828 files / 420,194,201 logical bytes of completed feature evidence
+  out of the active tree into verifiable Git-object archive form. Promoted live
+  workflow-assurance fixtures and frozen control policies to
+  `tools/fixtures/workflow_assurance/`. `bootstrap.sh` now retrieves the payload
+  with a `blob:none` filter and precise sparse checkout, retains only the sparse
+  reference, stages both halves before replacement with rollback, and refuses a
+  silently unfiltered download. See
+  `docs/planning/cleanup/EVIDENCE_LIFECYCLE.md`.
+
+
 - **Machine-legible LLM documentation endpoints (`llms.txt` and `llms-full.txt`)**:
   Added [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt) at the repository root and mirrored them at [`docs/guide/llms.txt`](docs/guide/llms.txt) and [`docs/guide/llms-full.txt`](docs/guide/llms-full.txt) for GitHub Pages deployment (`https://niq-cnr.github.io/nizam-framework/llms.txt` and `https://niq-cnr.github.io/nizam-framework/llms-full.txt`), providing AI coding agents and LLM crawlers with an instant operational entry protocol, start-path routing matrix, CLI subcommand reference, role/permission-class summary, and validation check catalog.
 

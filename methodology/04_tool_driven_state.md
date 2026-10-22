@@ -2,10 +2,13 @@
 id: nizam-tool-driven-state
 title: "Tool-Driven State Management (DD-1 + DD-3)"
 description: "The query-not-bulk-read discipline for locating governance files via the root capability index, evidence externalisation to .agent/evidence/, and the durable-state artifact families every run maintains."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/04_tool_driven_state.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-22"
+    summary: "Add Section 5.2: the historical evidence lifecycle. Completed tranches may leave the active tree only after a content-addressed archive index binds their Git blobs; current acceptance never falls back to archived bytes, and new captures reuse identical preservation inventories instead of copying worktrees."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 correction: the durable handoff chain now explicitly includes Orchestrator intake/routing and Evaluator-to-Orchestrator completion, aligning it with AGF's five-role model."
@@ -151,6 +154,39 @@ estimated, guessed, or reconstructed after the fact from context; an
 estimated timestamp risks being non-monotonic against surrounding history
 entries and, if later found wrong, requires a corrective annotation rather
 than simply having been correct the first time.
+
+### 5.2 Historical Evidence Lifecycle
+
+The ordinary checkout holds **current acceptance evidence**, plus the
+contracts, QA verdicts, run state, authority records and unresolved findings
+that make that acceptance interpretable. Completed historical transcripts may
+leave the active tree only through a verified forward migration:
+
+1. **Index before removal.** `.agent/evidence-archive/index.json` binds every
+   removed canonical path to its Git blob object id, file mode, byte length and
+   raw-byte SHA-256. The archive commit is an ordinary ancestor of the cleaned
+   mainline; no ref, tag, receipt or approval is rewritten.
+2. **Content-addressed deduplication.** Identical preservation content is
+   stored once by digest. Each execution still keeps a distinct run identity,
+   command, producer, timing, exit status and evidence reference.
+3. **Eligibility-gated resolution.** A missing current artifact is an error.
+   Historical bytes resolve only for an explicitly completed feature whose
+   original contract and QA digests still match the recorded binding. A changed
+   or reopened feature, a changed contract/QA, or a new current acceptance
+   attempt requires fresh current evidence. Archived integrity is never labelled
+   a fresh test pass.
+4. **Offline verification only.** Integrity checks read local Git objects
+   without fetching, mutating refs, executing restored code, or repairing the
+   worktree. Hydration is a separate explicit operation into a fresh directory
+   outside the active checkout.
+5. **Bounded producers.** New captures that need input-integrity proof use
+   `tools/evidence_preservation.py`, which derives a deterministic inventory
+   from declared paths, commits and trees — never a recursive working-tree copy.
+   `tools/evidence_archive.py check-growth` enforces the bounded-growth guard in
+   CI.
+
+The lifecycle is documented for consumers in `docs/planning/cleanup/` and
+`tools/README.md`; validator check C16 implements the resolution rule.
 
 ## 6. References
 

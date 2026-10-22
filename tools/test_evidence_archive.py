@@ -141,6 +141,24 @@ def main() -> int:
         assert "changed contract" in changed.stderr
         contract.write_bytes(original)
 
+        feature_list = root / ".agent/feature_list_900.json"
+        original_list = feature_list.read_bytes()
+        reopened = json.loads(original_list)
+        reopened["features"][0]["status"] = "in_progress"
+        feature_list.write_text(json.dumps(reopened) + "\n", encoding="utf-8")
+        not_complete = run(
+            "resolve-for-feature", "--feature", "900", "--path", ".agent/evidence/900/hello.txt",
+            cwd=root, expect=1,
+        )
+        assert "not complete" in not_complete.stderr
+        feature_list.write_bytes(original_list)
+
+        state = root / ".agent/run_state.json"
+        state.write_text('{"current_feature":"900"}\n', encoding="utf-8")
+        before = state.read_bytes()
+        run("resolve-for-feature", "--feature", "900", "--path", ".agent/evidence/900/hello.txt", cwd=root)
+        assert state.read_bytes() == before, "historical resolution mutated run state"
+
         doc = json.loads(out.read_text(encoding="utf-8"))
         digest = doc["tranches"][0]["entries"][0][2]
         doc["objects"][digest][0] = "0" * 40

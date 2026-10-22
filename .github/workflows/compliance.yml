@@ -95,6 +95,19 @@ jobs:
       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
       - run: bash tools/fixtures_self_test.sh
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+      - name: Historical archive integrity and preservation deduplication
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_archive.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_preservation.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_canonical_formats.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py verify
+      - name: Bound new generated evidence growth
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          if [ -z "${BASE}" ]; then BASE="${{ github.event.before }}"; fi
+          if [ -z "${BASE}" ] || [ "${BASE}" = "0000000000000000000000000000000000000000" ]; then BASE="HEAD~1"; fi
+          if ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then BASE="HEAD~1"; fi
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py check-growth --base "${BASE}"
 
   convergent_review:
     runs-on: ubuntu-latest
