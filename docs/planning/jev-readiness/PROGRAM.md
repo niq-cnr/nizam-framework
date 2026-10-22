@@ -177,6 +177,7 @@ comparison and independent closure remain required for the claimed support.
 - `baseline.json` — machine-readable refreshed baseline.
 - `backlog-map.md` — requirement/AC/JR reconciliation and dispositions.
 - `execution-dag.json` — versioned reference graph with typed edges/status.
+- `support-matrix.json` — supported/held/unsupported cells for the primitive/family/mode/role surface.
 - `measurement-policy.md` — evidence classes and economics definitions.
 - `AUTHORITY.md` — concrete external gates and what each one unlocks.
 
