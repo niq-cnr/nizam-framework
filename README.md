@@ -193,7 +193,10 @@ stages and verifies the payload, and atomically installs it under `.nizam/` (the
 default target). Development-only paths — `.agent/`, `.nizam/`, `docs/`, `registry/`
 and the historical evidence archive — are neither downloaded as blobs nor checked out.
 The installer fails closed if the transport cannot honor the filter instead of silently
-performing a full download.
+performing a full download. The published `v1.10.1` script predates this retrieval
+change: the pinned example commands below remain valid for that immutable release,
+while the `bootstrap.sh` at this repository's HEAD uses the filtered/sparse path for
+the next release.
 
 Passing `--git-repo .nizam-ref/` (outside `.nizam/`) retains the verified **sparse**
 reference: only the selected payload working files plus the Git commit/tree/blob objects
