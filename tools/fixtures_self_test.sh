@@ -1016,6 +1016,7 @@ fi
 FIXTURE_CLAIMS=(
   "convergent_review|tools/test_convergent_review.py"
   "runtime_session|tools/test_runtime_session.py"
+  "workflow_assurance|tools/test_workflow_assurance.py"
 )
 
 # Keep this function self-contained so scheduling can be tested without recursion.
