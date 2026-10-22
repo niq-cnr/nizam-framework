@@ -88,6 +88,10 @@ def test_fixture_cases_cover_all_four_categories():
 
 def test_family_questions_valid_and_no_self_activation():
     sf.validate_family_questions()
+    # all seven families have typed question definitions (JR-28..33 covered)
+    assert set(sf.FAMILY_QUESTIONS) == {f"DF-0{i}" for i in range(1, 8)}
+    for family, questions in sf.FAMILY_QUESTIONS.items():
+        assert len(questions) >= 1, family
     # the family registry is static; a model/authored value cannot expand it
     assert "DF-08" not in sf.FAMILY_QUESTIONS
 

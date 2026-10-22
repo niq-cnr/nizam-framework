@@ -54,6 +54,152 @@ DF01_QUESTION = {
     "depends_on": [],
 }
 
+DF02_RISK_CLASS = {
+    "family": "DF-02",
+    "question_id": "risk_class.v1",
+    "version": "risk_class.v1",
+    "primitive": "choice",
+    "instructions": (
+        "Classify the behavioral risk of the change beyond its filename and author label, using the "
+        "verified protected-path and risk facts plus the candidate delta. Verified facts dominate any "
+        "favorable impression. Select exactly one:\n"
+        "- low_risk: no behavioral, security, authorization, schema or blast-radius consequence.\n"
+        "- bounded_risk: a contained behavioral consequence inside declared scope.\n"
+        "- consequential_risk: a security, authorization, contract, irreversibility or cross-component "
+        "consequence a filename would miss.\n"
+        "- unknown_risk: the facts are insufficient or conflicting. Unknown must never read as low."
+    ),
+    "options": ["low_risk", "bounded_risk", "consequential_risk", "unknown_risk"],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
+DF02_ESCALATE = {
+    "family": "DF-02",
+    "question_id": "risk_escalate.v1",
+    "version": "risk_escalate.v1",
+    "primitive": "noul",
+    "polarity": "yes",
+    "instructions": (
+        "Probability that this change genuinely requires conservative escalation to a higher assurance "
+        "review, given the verified protected-path and risk facts. Absence of a clear answer is unknown, "
+        "never a low probability."
+    ),
+    "max_mode": "advisory",
+    "depends_on": ["risk_class.v1"],
+}
+
+DF03_RELEVANCE = {
+    "family": "DF-03",
+    "question_id": "evidence_relevance.v1",
+    "version": "evidence_relevance.v1",
+    "primitive": "score",
+    "instructions": (
+        "Score the relevance of this optional evidence excerpt for the downstream decision. Mandatory "
+        "contracts, findings and audit scope are retained deterministically and are never filtered; only "
+        "optional excerpt ranking is scored. Levels: irrelevant, marginal, material, critical."
+    ),
+    "rubric": [
+        {"level": "irrelevant", "description": "No bearing on the decision."},
+        {"level": "marginal", "description": "Weakly related context."},
+        {"level": "material", "description": "Directly affects the decision."},
+        {"level": "critical", "description": "Decision-determinative; omission is unsafe."},
+    ],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
+DF04_PROFILE = {
+    "family": "DF-04",
+    "question_id": "reasoning_profile.v1",
+    "version": "reasoning_profile.v1",
+    "primitive": "choice",
+    "instructions": (
+        "Select the reasoning/effort profile for the named deficit. Only configured approved profiles may "
+        "be selected; more reasoning cannot repair missing evidence or authority. Select exactly one:\n"
+        "- routine: bounded judgment with an existing short answer.\n"
+        "- standard: normal implementation reasoning.\n"
+        "- extended: multi-step investigation with a bounded stopping condition.\n"
+        "- specialist: a specialist domain analysis.\n"
+        "A stated deficit that is missing evidence or authority must resolve to routine, not extended."
+    ),
+    "options": ["routine", "standard", "extended", "specialist"],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
+DF05_DIAGNOSIS = {
+    "family": "DF-05",
+    "question_id": "failure_class.v1",
+    "version": "failure_class.v1",
+    "primitive": "choice",
+    "instructions": (
+        "Classify the observed failure from the captured logs and signatures. Select exactly one:\n"
+        "- infrastructure: transport, host or provider infrastructure failure.\n"
+        "- environment: missing capability or dependency in the environment.\n"
+        "- evidence: missing or insufficient evidence.\n"
+        "- scope_conflict: a contract or scope conflict.\n"
+        "- defect: a deterministic implementation defect.\n"
+        "- decomposition_needed: the task must be decomposed.\n"
+        "- unknown: insufficient information to classify.\n"
+        "Diagnosis is not authority: it can never authorize an attempt or relabel a valid rejection as a "
+        "transient failure."
+    ),
+    "options": [
+        "infrastructure",
+        "environment",
+        "evidence",
+        "scope_conflict",
+        "defect",
+        "decomposition_needed",
+        "unknown",
+    ],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
+DF06_SUPPORT = {
+    "family": "DF-06",
+    "question_id": "claim_support.v1",
+    "version": "claim_support.v1",
+    "primitive": "choice",
+    "instructions": (
+        "Assess whether a claim is supported by its cited source. Existence, digest, freshness and anchor "
+        "are verified exactly in code before this question runs; this question assesses semantic support "
+        "only. Select exactly one:\n"
+        "- supported: the source entails the claim.\n"
+        "- partial: the source partly supports the claim.\n"
+        "- contradicted: the source contradicts the claim.\n"
+        "- unrelated: the valid link does not bear on the claim.\n"
+        "- insufficient_evidence: the citations are insufficient. A positive result can never replace a "
+        "missing capture."
+    ),
+    "options": ["supported", "partial", "contradicted", "unrelated", "insufficient_evidence"],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
+DF07_VALUE = {
+    "family": "DF-07",
+    "question_id": "outcome_value.v1",
+    "version": "outcome_value.v1",
+    "primitive": "score",
+    "instructions": (
+        "Score the realized value of the accepted change against the original user goal and approved "
+        "requirements, separating execution, passing checks, coverage, independent acceptance and observed "
+        "user outcome. Missing user feedback is unknown. Levels: unsatisfactory, partial, satisfactory, "
+        "excellent."
+    ),
+    "rubric": [
+        {"level": "unsatisfactory", "description": "Goal not met; required failures remain."},
+        {"level": "partial", "description": "Goal partly met; material residual work."},
+        {"level": "satisfactory", "description": "Goal met within accepted scope."},
+        {"level": "excellent", "description": "Goal met with measured user outcome."},
+    ],
+    "max_mode": "advisory",
+    "depends_on": [],
+}
+
 # Mandatory state sources per family. A request missing any of these refuses
 # dispatch with reason ``missing_context`` before any network activity.
 MANDATORY_SOURCES: dict[str, tuple[str, ...]] = {
@@ -68,6 +214,12 @@ MANDATORY_SOURCES: dict[str, tuple[str, ...]] = {
 
 FAMILY_QUESTIONS: dict[str, list[dict[str, Any]]] = {
     "DF-01": [DF01_QUESTION],
+    "DF-02": [DF02_RISK_CLASS, DF02_ESCALATE],
+    "DF-03": [DF03_RELEVANCE],
+    "DF-04": [DF04_PROFILE],
+    "DF-05": [DF05_DIAGNOSIS],
+    "DF-06": [DF06_SUPPORT],
+    "DF-07": [DF07_VALUE],
 }
 
 
