@@ -152,7 +152,7 @@ jobs:
         run: |
           python3 - <<'PYCODE'
           import json, os, pathlib, re
-          source = pathlib.Path('.agent/evidence/123/selection.json')
+          source = pathlib.Path('tools/fixtures/workflow_assurance/wa123_selection.json')
           if source.exists():
               selected = json.loads(source.read_bytes())
               mode = selected['mode']
@@ -168,12 +168,12 @@ jobs:
         if: steps.wa123.outputs.mode == 'capture'
         env:
           PYTHONDONTWRITEBYTECODE: "1"
-        run: python3 tools/workflow_assurance_ci.py capture --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-capture"
+        run: python3 tools/workflow_assurance_ci.py capture --selection tools/fixtures/workflow_assurance/wa123_selection.json --output "$RUNNER_TEMP/wa123-capture"
       - name: WA123 verify
         if: steps.wa123.outputs.mode == 'verify'
         env:
           PYTHONDONTWRITEBYTECODE: "1"
-        run: python3 tools/workflow_assurance_ci.py verify --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-verify"
+        run: python3 tools/workflow_assurance_ci.py verify --selection tools/fixtures/workflow_assurance/wa123_selection.json --output "$RUNNER_TEMP/wa123-verify"
       - name: Preserve actual WA123 proof
         if: always() && steps.wa123.outputs.mode != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, official Root-observed pin
