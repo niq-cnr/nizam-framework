@@ -53,8 +53,9 @@ complete.**
   optional Jev adapter with mock transport (JR-14), provider accounting
   (JR-07), cohort economics (JR-08), and the evaluation corpus/harness
   (JR-16/JR-17) are implemented offline and covered by adversarial tests.
-- All of the above is committed on `feat/jev-readiness-2026-10-22` and under
-  review in PR #131. It is local/offline evidence, not independent acceptance.
+- All of the above was merged to `main` via PR #131 (merge `86d467ef`) with all
+  six CI checks green. It is CI-verified offline evidence, not independent
+  acceptance, not release, and not live qualification.
 - Not yet implemented: wiring the families into the supported routes and roles
   (JR-34), architecture inventory (JR-01/JR-25), authority-boundary fixtures
   (JR-26), review-slot persistence (JR-09/JR-10), entry context (JR-11), CI
@@ -325,7 +326,7 @@ the invariant-breach halt ordering relative to the reuse check.
 - Independent acceptance, merge, release, consumer upgrade, live provider
   execution, and Operator closure remain gated. Nothing in this wave
   self-certifies those.
-- Proof is now committed and pushed to `feat/jev-readiness-2026-10-22` (PR
-  #131) and is under review; it is offline/local evidence, not independent
-  acceptance. The adopt-a-PR-and-merge-when-clean authorization applies to this
-  branch only, and does not waive the live/migration/rollout/Operator gates.
+- Proof is merged to `main` via PR #131 (merge `86d467ef`) with all six CI
+  checks green, including `test_start_path.py` on Linux (landlock-qualified)
+  and `tools/validate.sh` 16/16. This is CI-verified offline evidence, not
+  independent acceptance; the live/migration/rollout/Operator gates remain.
