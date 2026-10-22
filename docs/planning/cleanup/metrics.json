@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-10-22",
+  "baseline": {
+    "commit": "c5297f6ad2ef726ee85ca0b86e3df25fdcd0060a",
+    "measurement": "git ls-tree -rl HEAD (logical tracked bytes)",
+    "files": 17215,
+    "bytes": 447417041,
+    "categories": {
+      "evidence": {
+        "files": 15997,
+        "bytes": 432859072
+      },
+      "other_agent": {
+        "files": 604,
+        "bytes": 8255540
+      },
+      "installed_nizam": {
+        "files": 279,
+        "bytes": 2460048
+      },
+      "authored": {
+        "files": 335,
+        "bytes": 3842381
+      }
+    },
+    "evidence_share_percent": 96.75
+  },
+  "candidate": {
+    "measurement": "git ls-tree -rl (merge of #128 + #130 + #129; this file included)",
+    "files": 2406,
+    "bytes": 29820807,
+    "categories": {
+      "evidence": {
+        "files": 1169,
+        "bytes": 11670458
+      },
+      "other_agent": {
+        "files": 605,
+        "bytes": 11567047
+      },
+      "installed_nizam": {
+        "files": 279,
+        "bytes": 2460048
+      },
+      "authored": {
+        "files": 353,
+        "bytes": 4123254
+      }
+    }
+  },
+  "payload": {
+    "selection": [
+      "standard/",
+      "templates/",
+      "schema/",
+      "tools/",
+      "methodology/",
+      "ecosystem/",
+      "NIZAM.json"
+    ],
+    "files": 294,
+    "bytes": 2711623,
+    "excludes_provenance": true,
+    "gate": {
+      "max_files": 400,
+      "max_bytes": 4194304
+    },
+    "status": "PASS"
+  },
+  "reference": {
+    "release": "v1.10.1",
+    "commit": "2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd",
+    "working_files": 278,
+    "working_bytes": 2459822,
+    "git_database_bytes": 3567615,
+    "worktree_excludes": [
+      ".agent/",
+      ".nizam/",
+      "docs/",
+      "registry/"
+    ],
+    "gate": {
+      "max_working_bytes": 4194304,
+      "max_git_bytes": 16777216
+    },
+    "status": "PASS"
+  },
+  "git_database": {
+    "authored_checkout_bytes": 64706802,
+    "fresh_clone_after_gc_bytes": 60875232,
+    "note": "Reported separately from working-tree savings; history is retained, not destroyed."
+  },
+  "growth": {
+    "new_evidence_blob_limit_bytes": 1048576,
+    "new_evidence_blobs_over_limit": 0,
+    "recursive_repository_copies_in_new_evidence": 0,
+    "unexpected_excluded_directories": 0,
+    "status": "PASS"
+  },
+  "acceptance": {
+    "A01": {
+      "status": "PASS",
+      "note": "Baseline and candidate measured with identical git ls-tree scope/units."
+    },
+    "A02": {
+      "status": "PASS",
+      "note": "Maintained fixtures load without historical evidence; default suite's two control cases hit a pre-existing macOS TMPDIR symlink limitation reproduced at c5297f6a. Linux CI is authoritative."
+    },
+    "A03": {
+      "status": "PASS",
+      "note": "Two unchanged runs reuse one inventory object with distinct run receipts; baseline/interruption/concurrency/traversal cases pass."
+    },
+    "A04": {
+      "status": "PASS",
+      "note": "Archive tests cover bytes, length, mode, missing object, wrong digest, duplicate path and traversal."
+    },
+    "A05": {
+      "status": "PASS",
+      "note": "Changed contract, reopened feature and missing current evidence fail closed; resolve does not mutate run state. Counters/approvals untouched."
+    },
+    "A06": {
+      "status": "PASS",
+      "note": "Fresh clone + reflog expiry + gc: 98 tranches/14,828 files verified and feature-114/133 restored."
+    },
+    "A07": {
+      "status": "PASS",
+      "note": "Restore refuses destination inside checkout, non-matching overwrite, traversal; no execution or implicit fetch."
+    },
+    "A08": {
+      "status": "PASS",
+      "note": "Index generation is deterministic; failed verification preserves inputs; rollback is an ordinary revert."
+    },
+    "A09": {
+      "status": "PASS",
+      "note": "Controlled local fixture: excluded large blobs absent, selected payload present, sparse worktree exact. Transfer not instrumented."
+    },
+    "A10": {
+      "status": "PASS",
+      "note": "Offline verify with remote denied passes; a reference with no selected blobs fails explicitly. Deterministic reference-pair rename failure injection NOT_RUN."
+    },
+    "A11": {
+      "status": "PASS",
+      "note": "Standalone candidate bootstrap installed real v1.10.1 and verified offline with its historical verifier; .nizam pin unchanged."
+    },
+    "A12": {
+      "status": "PASS",
+      "note": "32 MiB / 2500-file target met; payload/reference gates met; retained non-tranche evidence is historical but outside this pilot classification."
+    },
+    "A13": {
+      "status": "PARTIAL",
+      "note": "Public CLI/e2e pass; fixed format vectors pass. Full publish_captured_evidence decomposition NOT_RUN."
+    },
+    "A14": {
+      "status": "PARTIAL",
+      "note": "Local validate.sh 16/16, e2e, archive/preservation/format suites pass. Hosted CI and Linux-only sandbox suite NOT_RUN on macOS."
+    }
+  },
+  "measured_transfer": "NOT_RUN (not instrumented)",
+  "commands": {
+    "baseline": "git ls-tree -rl HEAD",
+    "candidate": "git ls-tree -rl <tree>",
+    "payload": "git ls-tree -r -l <commit> -- standard templates schema tools methodology ecosystem NIZAM.json",
+    "reference_git": "find .git -type f (sum sizes)",
+    "archive_verify": "PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py verify",
+    "archive_restore": "PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py restore --tranche feature-114 --output <external-dir>",
+    "tests": [
+      "python3 tools/test_evidence_archive.py",
+      "python3 tools/test_evidence_preservation.py",
+      "python3 tools/test_canonical_formats.py",
+      "bash tools/e2e_bootstrap_test.sh",
+      "bash tools/validate.sh"
+    ]
+  }
+}
