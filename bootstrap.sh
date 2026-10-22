@@ -77,6 +77,23 @@ readonly REQUIRED_MODULE_DIRS=(
   "ecosystem"
 )
 
+# Exact payload selection. Retrieval fetches a blob:none partial clone and
+# materializes only these paths; .agent/, .nizam/, docs/, registry/ and the
+# development evidence archive are neither downloaded as blobs nor checked out.
+readonly PAYLOAD_TREE_PATHS=(
+  "${REQUIRED_MODULE_DIRS[@]}"
+  "NIZAM.json"
+)
+readonly SPARSE_PATTERNS=(
+  "/NIZAM.json"
+  "/standard/"
+  "/templates/"
+  "/schema/"
+  "/tools/"
+  "/methodology/"
+  "/ecosystem/"
+)
+
 GOVERNANCE_REPO_URL="${GOVERNANCE_REPO_URL:-${DEFAULT_GOVERNANCE_REPO_URL}}"
 GOVERNANCE_TAG="${GOVERNANCE_TAG:-}"
 TARGET_DIR="${NIZAM_TARGET_DIR:-${DEFAULT_TARGET_DIR}}"
@@ -111,7 +128,9 @@ STRUCTURAL_ONLY=0
 # move), so cleanup never deletes something it no longer owns.
 CLONE_DIR=""
 STAGE_DIR=""
+REF_STAGE_DIR=""
 REPLACED_OLD_DIR=""
+REPLACED_OLD_REF=""
 TEMP_VERIFIER=""
 # A --project-root this run created (genesis mode). Removed by cleanup if a
 # genesis fails partway, so a failed genesis never leaves a half-built project
@@ -231,8 +250,20 @@ cleanup() {
   if [ -n "${STAGE_DIR}" ] && [ -d "${STAGE_DIR}" ]; then
     rm -rf -- "${STAGE_DIR}"
   fi
+  if [ -n "${REF_STAGE_DIR}" ] && [ -d "${REF_STAGE_DIR}" ]; then
+    rm -rf -- "${REF_STAGE_DIR}"
+  fi
   if [ -n "${CLONE_DIR}" ] && [ -d "${CLONE_DIR}" ]; then
     rm -rf -- "${CLONE_DIR}"
+  fi
+  if [ -n "${REPLACED_OLD_REF}" ] && [ -e "${REPLACED_OLD_REF}" ]; then
+    if [ -n "${GIT_REPO}" ] && [ ! -e "${GIT_REPO}" ]; then
+      # The previous verified reference was moved aside but the new sparse
+      # reference never took its place: restore the previous recoverable pair.
+      mv -- "${REPLACED_OLD_REF}" "${GIT_REPO}"
+    else
+      rm -rf -- "${REPLACED_OLD_REF}"
+    fi
   fi
   if [ -n "${REPLACED_OLD_DIR}" ] && [ -d "${REPLACED_OLD_DIR}" ]; then
     if [ ! -d "${TARGET_DIR}" ]; then
@@ -533,9 +564,111 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   fi
 }
 
+# Fail closed unless every payload blob selected from the committed tree is
+# already present locally. `rev-list --missing=print` inspects the local object
+# database without triggering a lazy promisor fetch, so an offline verification
+# can never silently download the excluded development archive.
+verify_reference_selected_objects() {
+  local repo="$1"
+  local sha="$2"
+  python3 - "${repo}" "${sha}" "${PAYLOAD_TREE_PATHS[@]}" <<'PYEOF'
+import subprocess
+import sys
+
+repo, sha = sys.argv[1], sys.argv[2]
+paths = sys.argv[3:]
+
+
+def git(*args):
+    result = subprocess.run(["git", "-C", repo, *args], capture_output=True, check=False)
+    if result.returncode != 0:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        raise SystemExit(f"git {' '.join(args)} failed in {repo}: {detail}")
+    return result.stdout
+
+
+selected = {}
+for entry in git("ls-tree", "-r", "-z", sha, "--", *paths).split(b"\0"):
+    if not entry:
+        continue
+    meta, path = entry.split(b"\t", 1)
+    mode, kind, oid = meta.decode("utf-8").split()
+    if kind != "blob" or mode not in ("100644", "100755"):
+        raise SystemExit(f"unsupported reference entry {path!r}: {kind} {mode}")
+    selected[oid] = path.decode("utf-8")
+
+missing = set()
+for line in git("rev-list", "--objects", "--missing=print", sha).decode("utf-8").splitlines():
+    if line.startswith("?"):
+        missing.add(line[1:].split(" ", 1)[0])
+
+lost = sorted((selected[oid], oid) for oid in selected if oid in missing)
+if lost:
+    print(
+        "reference is missing required payload object(s): "
+        + ", ".join(f"{path} ({oid})" for path, oid in lost[:10]),
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+print(f"reference payload objects present: {len(selected)} file(s)")
+PYEOF
+}
+
+# Refuse a silently full acquisition. A blob-filtered fetch leaves excluded
+# blobs absent from the local object database; if none are absent, the transport
+# ignored the filter and the efficiency contract is not satisfied.
+assert_blob_filter_applied() {
+  local repo="$1"
+  local sha="$2"
+  python3 - "${repo}" "${sha}" <<'PYEOF'
+import subprocess
+import sys
+
+repo, sha = sys.argv[1], sys.argv[2]
+result = subprocess.run(
+    ["git", "-C", repo, "rev-list", "--objects", "--missing=print", sha],
+    capture_output=True,
+    check=False,
+)
+if result.returncode != 0:
+    detail = result.stderr.decode("utf-8", errors="replace").strip()
+    raise SystemExit(f"cannot inspect fetched object set in {repo}: {detail}")
+missing = [line for line in result.stdout.decode("utf-8", errors="replace").splitlines() if line.startswith("?")]
+if not missing:
+    print(
+        "transport did not honor the blob filter: the fetch appears to have "
+        "downloaded the full tree. Refusing to report a filtered installation.",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+print(f"blob filter applied: {len(missing)} excluded object(s) absent locally")
+PYEOF
+}
+
+# Materialize exactly the selected payload paths and nothing else.
+verify_sparse_worktree() {
+  local repo="$1"
+  local sha="$2"
+  local expected actual unexpected
+  expected="$(git -C "${repo}" ls-tree -r --name-only "${sha}" -- "${PAYLOAD_TREE_PATHS[@]}" | wc -l | tr -d ' ')"
+  actual="$(find "${repo}" -path "${repo}/.git" -prune -o -type f -print | wc -l | tr -d ' ')"
+  if [ "${expected}" != "${actual}" ]; then
+    die "sparse reference retained ${actual} working file(s) but the selected payload has ${expected}; refusing an incomplete or over-broad checkout."
+  fi
+  for unexpected in .agent .nizam docs registry; do
+    if [ -e "${repo}/${unexpected}" ]; then
+      die "sparse reference contains unexpected excluded directory '${unexpected}'."
+    fi
+  done
+}
+
 # --verify-only: a pure, network-free drift and content-integrity check against an
 # already-injected target directory. Clones nothing and writes nothing inside the target.
 run_verify_only() {
+  # Offline verification must never lazily fetch a missing object from a
+  # partial-clone promisor. Missing selected objects fail the explicit
+  # pre-check below with a precise diagnostic instead.
+  export GIT_NO_LAZY_FETCH=1
   require_pinned_tag "${GOVERNANCE_TAG}"
   require_valid_expected_sha "${EXPECTED_SHA}"
   require_command python3
@@ -574,6 +707,8 @@ run_verify_only() {
     if ! git -C "${GIT_REPO}" cat-file -e "${EXPECTED_SHA}^{commit}" 2>/dev/null; then
       die "--verify-only: expected commit '${EXPECTED_SHA}' is not present in --git-repo '${GIT_REPO}'."
     fi
+    verify_reference_selected_objects "${GIT_REPO}" "${EXPECTED_SHA}" \
+      || die "--verify-only: --git-repo '${GIT_REPO}' is missing required payload objects for commit '${EXPECTED_SHA}' (offline verification never fetches missing history)."
     integrity_args+=(
       "--git-repo=${GIT_REPO}"
       "--expected-sha=${EXPECTED_SHA}"
@@ -658,13 +793,16 @@ run_install() {
   fi
 
   CLONE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/nizam-bootstrap-clone.XXXXXX")"
-  log "fetching ${GOVERNANCE_REPO_URL} at explicit tag ref refs/tags/${GOVERNANCE_TAG} (--depth 1)..."
+  log "fetching ${GOVERNANCE_REPO_URL} at explicit tag ref refs/tags/${GOVERNANCE_TAG} (--depth 1, blob-filtered, sparse payload)..."
   git -C "${CLONE_DIR}" init -q \
     || die "git init failed in temporary clone directory '${CLONE_DIR}'."
-  git -C "${CLONE_DIR}" fetch --depth 1 --no-tags "${GOVERNANCE_REPO_URL}" "refs/tags/${GOVERNANCE_TAG}:refs/tags/${GOVERNANCE_TAG}" >/dev/null 2>&1 \
-    || die "git fetch of 'refs/tags/${GOVERNANCE_TAG}' from '${GOVERNANCE_REPO_URL}' failed."
-  git -C "${CLONE_DIR}" checkout -q --detach "refs/tags/${GOVERNANCE_TAG}" \
-    || die "git checkout of 'refs/tags/${GOVERNANCE_TAG}' failed."
+  git -C "${CLONE_DIR}" remote add origin "${GOVERNANCE_REPO_URL}" >/dev/null 2>&1 \
+    || die "git remote setup failed in temporary clone directory '${CLONE_DIR}'."
+  git -C "${CLONE_DIR}" config remote.origin.promisor true
+  git -C "${CLONE_DIR}" config remote.origin.partialclonefilter blob:none
+  git -C "${CLONE_DIR}" config extensions.partialClone origin
+  git -C "${CLONE_DIR}" fetch --depth 1 --filter=blob:none --no-tags "${GOVERNANCE_REPO_URL}" "refs/tags/${GOVERNANCE_TAG}:refs/tags/${GOVERNANCE_TAG}" >/dev/null 2>&1 \
+    || die "blob-filtered git fetch of 'refs/tags/${GOVERNANCE_TAG}' from '${GOVERNANCE_REPO_URL}' failed. This installer requires a transport that supports Git partial-clone blob filters; a full download is never silently substituted."
 
   # Resolve the pinned tag to the exact commit SHA it points at via refs/tags/<tag>^{commit}.
   local resolved_sha
@@ -675,6 +813,20 @@ run_install() {
   if [ -n "${EXPECTED_SHA}" ] && [ "${resolved_sha}" != "${EXPECTED_SHA}" ]; then
     die "expected-sha mismatch at install time: tag 'refs/tags/${GOVERNANCE_TAG}' resolved to '${resolved_sha}' but --expected-sha required '${EXPECTED_SHA}' -- refusing to stage or replace '${TARGET_DIR}'."
   fi
+
+  assert_blob_filter_applied "${CLONE_DIR}" "${resolved_sha}" \
+    || die "filtered retrieval could not be confirmed for '${GOVERNANCE_REPO_URL}'; refusing to report success for an unfiltered download."
+
+  git -C "${CLONE_DIR}" sparse-checkout init --no-cone \
+    || die "git sparse-checkout init failed in temporary clone directory '${CLONE_DIR}'."
+  printf '%s\n' "${SPARSE_PATTERNS[@]}" | git -C "${CLONE_DIR}" sparse-checkout set --stdin --no-cone \
+    || die "git sparse-checkout set failed in temporary clone directory '${CLONE_DIR}'."
+  git -C "${CLONE_DIR}" checkout -q --detach "refs/tags/${GOVERNANCE_TAG}" \
+    || die "git sparse checkout of 'refs/tags/${GOVERNANCE_TAG}' failed."
+
+  verify_reference_selected_objects "${CLONE_DIR}" "${resolved_sha}" \
+    || die "filtered reference is missing required payload objects for commit '${resolved_sha}'."
+  verify_sparse_worktree "${CLONE_DIR}" "${resolved_sha}"
 
   local parent_dir
   parent_dir="$(dirname -- "${TARGET_DIR}")"
@@ -728,25 +880,69 @@ with open(path, "w", encoding="utf-8") as handle:
 ' "${STAGE_DIR}/provenance.json" "${framework_version}" "${GOVERNANCE_TAG}" "${resolved_sha}" "${GOVERNANCE_REPO_URL}" "${installed_at}" \
     || die "failed to write provenance.json into the staged payload."
 
+  # Stage the retained reference before replacing either installed location, so
+  # both halves of the recoverable installation are verified first.
+  if [ -n "${GIT_REPO}" ]; then
+    mkdir -p -- "$(dirname -- "${GIT_REPO}")"
+    REF_STAGE_DIR="$(mktemp -d "$(dirname -- "${GIT_REPO}")/.nizam-ref-stage.XXXXXX")"
+    cp -R -- "${CLONE_DIR}/." "${REF_STAGE_DIR}/" \
+      || die "failed to stage the verified sparse reference at '${REF_STAGE_DIR}'."
+    verify_reference_selected_objects "${REF_STAGE_DIR}" "${resolved_sha}" \
+      || die "staged reference failed offline object verification."
+    verify_sparse_worktree "${REF_STAGE_DIR}" "${resolved_sha}"
+  fi
+
   if [ -d "${TARGET_DIR}" ]; then
     REPLACED_OLD_DIR="${TARGET_DIR}.old.$$"
     mv -- "${TARGET_DIR}" "${REPLACED_OLD_DIR}"
   fi
-  mv -- "${STAGE_DIR}" "${TARGET_DIR}"
+  if ! mv -- "${STAGE_DIR}" "${TARGET_DIR}"; then
+    if [ -n "${REPLACED_OLD_DIR}" ] && [ -d "${REPLACED_OLD_DIR}" ]; then
+      mv -- "${REPLACED_OLD_DIR}" "${TARGET_DIR}"
+      REPLACED_OLD_DIR=""
+    fi
+    die "failed to install the staged payload into '${TARGET_DIR}'; the previous target was restored."
+  fi
   # Ownership of the staged directory has transferred to TARGET_DIR: clear
   # the tracker so cleanup does not attempt to remove the (now relocated)
   # path a second time.
   STAGE_DIR=""
+
+  if [ -n "${GIT_REPO}" ]; then
+    if [ -e "${GIT_REPO}" ]; then
+      REPLACED_OLD_REF="${GIT_REPO}.old.$$"
+      mv -- "${GIT_REPO}" "${REPLACED_OLD_REF}"
+    fi
+    local reference_replace_ok=1
+    if [ "${NIZAM_BOOTSTRAP_TEST_FAIL_REFERENCE:-0}" = "1" ] && [ "${ALLOW_FIXTURE_TAG}" = "1" ]; then
+      reference_replace_ok=0
+    fi
+    if [ "${reference_replace_ok}" -eq 1 ] && mv -- "${REF_STAGE_DIR}" "${GIT_REPO}"; then
+      # Restore the previous valid target/reference pair. A failed reference
+      # replacement must never leave a successful-looking target without its
+      # offline verification objects.
+      rm -rf -- "${TARGET_DIR}"
+      if [ -n "${REPLACED_OLD_DIR}" ] && [ -d "${REPLACED_OLD_DIR}" ]; then
+        mv -- "${REPLACED_OLD_DIR}" "${TARGET_DIR}"
+        REPLACED_OLD_DIR=""
+      fi
+      if [ -n "${REPLACED_OLD_REF}" ] && [ -e "${REPLACED_OLD_REF}" ]; then
+        mv -- "${REPLACED_OLD_REF}" "${GIT_REPO}"
+        REPLACED_OLD_REF=""
+      fi
+      die "failed to install the verified sparse reference at '${GIT_REPO}'; the previous target/reference pair was restored."
+    fi
+    REF_STAGE_DIR=""
+    if [ -n "${REPLACED_OLD_REF}" ]; then
+      rm -rf -- "${REPLACED_OLD_REF}"
+      REPLACED_OLD_REF=""
+    fi
+    log "retained verified sparse reference repository at '${GIT_REPO}' (commit ${resolved_sha})."
+  fi
+
   if [ -n "${REPLACED_OLD_DIR}" ]; then
     rm -rf -- "${REPLACED_OLD_DIR}"
     REPLACED_OLD_DIR=""
-  fi
-
-  if [ -n "${GIT_REPO}" ]; then
-    rm -rf -- "${GIT_REPO}"
-    mkdir -p -- "$(dirname -- "${GIT_REPO}")"
-    cp -R -- "${CLONE_DIR}" "${GIT_REPO}"
-    log "retained verified reference repository at '${GIT_REPO}' (commit ${resolved_sha})."
   fi
 
   log "install complete. Governance payload version ${framework_version} (tag ${GOVERNANCE_TAG}) is now at '${TARGET_DIR}'."
