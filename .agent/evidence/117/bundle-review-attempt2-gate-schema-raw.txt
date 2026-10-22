@@ -1,7 +1,0 @@
-COMMAND: ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-test-bundle-review.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert set(v)=={'review','feature','actor','reviewer_session_id','seal_sha256','issues','missing_acceptance_coverage','unsupported_claims','final_verdict'}; assert set(v['final_verdict'])=={'approved','summary'} and v['final_verdict']['approved'] is True and type(v['final_verdict']['summary']) is str; assert all(type(v[k]) is list and v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims']); assert v['actor']==v['reviewer_session_id']=='/root/wa_validator' and v['feature']=='117' and v['seal_sha256']=='6dbc11e384a02a059441c0be39be39434ffa46cd7d5ccd8a2af8773b35d601c8'; print('PASS installed verdict schema; exact nine-field independent strict approval')"]
-REVISION: 94f1b2c1b8bee7aefb72c4518e94340460a49245
-EXIT: 0
-STDOUT:
-PASS installed verdict schema; exact nine-field independent strict approval
-
-STDERR:

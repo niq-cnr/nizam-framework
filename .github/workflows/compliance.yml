@@ -95,6 +95,19 @@ jobs:
       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
       - run: bash tools/fixtures_self_test.sh
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+      - name: Historical archive integrity and preservation deduplication
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_archive.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_preservation.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_canonical_formats.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py verify
+      - name: Bound new generated evidence growth
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          if [ -z "${BASE}" ]; then BASE="${{ github.event.before }}"; fi
+          if [ -z "${BASE}" ] || [ "${BASE}" = "0000000000000000000000000000000000000000" ]; then BASE="HEAD~1"; fi
+          if ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then BASE="HEAD~1"; fi
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py check-growth --base "${BASE}"
 
   convergent_review:
     runs-on: ubuntu-latest
@@ -152,7 +165,7 @@ jobs:
         run: |
           python3 - <<'PYCODE'
           import json, os, pathlib, re
-          source = pathlib.Path('.agent/evidence/123/selection.json')
+          source = pathlib.Path('tools/fixtures/workflow_assurance/wa123_selection.json')
           if source.exists():
               selected = json.loads(source.read_bytes())
               mode = selected['mode']
@@ -168,12 +181,12 @@ jobs:
         if: steps.wa123.outputs.mode == 'capture'
         env:
           PYTHONDONTWRITEBYTECODE: "1"
-        run: python3 tools/workflow_assurance_ci.py capture --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-capture"
+        run: python3 tools/workflow_assurance_ci.py capture --selection tools/fixtures/workflow_assurance/wa123_selection.json --output "$RUNNER_TEMP/wa123-capture"
       - name: WA123 verify
         if: steps.wa123.outputs.mode == 'verify'
         env:
           PYTHONDONTWRITEBYTECODE: "1"
-        run: python3 tools/workflow_assurance_ci.py verify --selection .agent/evidence/123/selection.json --output "$RUNNER_TEMP/wa123-verify"
+        run: python3 tools/workflow_assurance_ci.py verify --selection tools/fixtures/workflow_assurance/wa123_selection.json --output "$RUNNER_TEMP/wa123-verify"
       - name: Preserve actual WA123 proof
         if: always() && steps.wa123.outputs.mode != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, official Root-observed pin

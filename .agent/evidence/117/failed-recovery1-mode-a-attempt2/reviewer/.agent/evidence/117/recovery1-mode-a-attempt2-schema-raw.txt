@@ -1,8 +1,0 @@
-COMMAND ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-mode-a-recovery1.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert type(v['revision_reviewed']) is int and v['revision_reviewed']==2 and v['final_verdict']['approved'] is False; print('PASS installed review schema; strict false verdict; unfinished actual audit')"]
-REVISION 4bade3a4bca5341b2ed4470716acae77c49519a0
-STDOUT
-PASS installed review schema; strict false verdict; unfinished actual audit
-
-STDERR
-
-EXIT 0

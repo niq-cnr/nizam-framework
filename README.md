@@ -186,13 +186,24 @@ GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667
 ```
 
 `--tag v1.10.1` (equivalently `GOVERNANCE_TAG=v1.10.1`) pins the inheritance to a real
-released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
-clones the pinned tag, verifies `--expected-sha` before staging, stages the governance
-payload, verifies it landed correctly, and atomically installs it under `.nizam/` (the
-default target). Passing `--git-repo .nizam-ref/` (outside `.nizam/`) retains the
-verified shallow tag repository so later offline `--verify-only` checks can verify
-commit-bound content integrity without re-cloning over the network (or you can fetch
-the tag into `.nizam-ref/` at any time with `git init .nizam-ref/ && git -C .nizam-ref/ fetch --depth 1 --no-tags https://github.com/niq-cnr/nizam-framework.git refs/tags/v1.10.1:refs/tags/v1.10.1`).
+released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). The
+current bootstrap verifies `--expected-sha` before staging, fetches the tag with a
+Git **blob filter** (`blob:none`), sparse-materializes only the payload roots below,
+stages and verifies the payload, and atomically installs it under `.nizam/` (the
+default target). Development-only paths — `.agent/`, `.nizam/`, `docs/`, `registry/`
+and the historical evidence archive — are neither downloaded as blobs nor checked out.
+The installer fails closed if the transport cannot honor the filter instead of silently
+performing a full download. The published `v1.10.1` script predates this retrieval
+change: the pinned example commands below remain valid for that immutable release,
+while the `bootstrap.sh` at this repository's HEAD uses the filtered/sparse path for
+the next release.
+
+Passing `--git-repo .nizam-ref/` (outside `.nizam/`) retains the verified **sparse**
+reference: only the selected payload working files plus the Git commit/tree/blob objects
+needed for later offline `--verify-only` checks. `.nizam-ref/` is ignored by Git and is
+never part of the framework history. Offline verification sets `GIT_NO_LAZY_FETCH=1`
+and fails with a precise diagnostic when a required local object is absent; it never
+silently re-downloads missing history.
 What you get:
 
 ```text
@@ -222,6 +233,30 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 # Structural and provenance-pin check only (reports structural_only; content_integrity=not_checked):
 ./bootstrap.sh --verify-only --tag v1.10.1 --structural-only
 ```
+
+### Repository footprint and historical evidence
+
+The ordinary checkout no longer carries every completed feature's raw evidence
+transcript. `.agent/evidence-archive/index.json` binds each archived path to the Git
+blob that still holds its bytes in ordinary history. The active tree keeps current
+acceptance evidence, contracts, QA records, run state and authority records.
+
+```sh
+# Verify the archive offline (no fetch, no ref mutation, no code execution)
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py verify
+
+# Materialize one completed tranche into a fresh directory outside the checkout
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py restore \
+  --tranche feature-133 --output /tmp/nizam-evidence-133
+```
+
+Validator check C16 resolves an archived path only for a completed feature whose
+recorded contract/QA digests still match. A reopened or changed feature, a new current
+acceptance attempt, or a missing current artifact still requires fresh on-disk evidence;
+archived bytes are historical integrity, never a fresh test pass. New captures that need
+input-integrity evidence use `tools/evidence_preservation.py`, which stores one
+content-addressed inventory per unchanged input set and keeps each run's command,
+producer and timings in a separate receipt.
 
 ### 3. Classify & Govern Your First Change
 

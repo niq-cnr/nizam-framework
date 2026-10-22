@@ -1,7 +1,0 @@
-COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,jsonschema,pathlib; v=json.load(open('"'"'.agent/qa/116-contract-review.json'"'"')); jsonschema.validate(v,json.load(open('"'"'.nizam/schema/contract_review.schema.json'"'"'))); assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is False and len(v['"'"'issues'"'"'])==1; assert all(pathlib.Path(p).is_file() for p in v['"'"'evidence'"'"']); print('"'"'PASS installed contract-review schema and referenced proof existence; REJECTED with one blocking finding'"'"')'
-REVISION: f91b3ab383f1537c79201262c154367d03da7cce
-EXIT: 0
-STDOUT:
-PASS installed contract-review schema and referenced proof existence; REJECTED with one blocking finding
-
-STDERR:

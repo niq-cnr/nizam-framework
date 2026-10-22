@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.37.2
+version: 0.38.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.38.0"
+    date: "2026-10-22"
+    summary: "Document evidence_archive.py (deterministic historical index, offline object verification, eligibility-gated C16 resolution, external restore, bounded growth guard) and evidence_preservation.py (content-addressed input inventories with distinct per-run receipts), with fixtures promoted to tools/fixtures/workflow_assurance/."
   - version: "0.37.2"
     date: "2026-10-19"
     summary: "Align interface.md table row and DD-4 bullet with Section 4.4 external mutation-authority mediation (NIZAM_MUTATION_ADAPTER), and retire residual pre-delivery 'Feature 117 entry checks and feature 118 foundation closure remain pending' / 'belong to features 116-118' prose from the historical feature 115/116 subsections."
@@ -599,3 +602,44 @@ runtime with the local interpreter. `--check controls-ready` retains the same
 boundary. Strict review, QA, evidence capture and canonical closure remain
 separate gates. The experiment configures its own selected Git transport; live
 Root binding migration and the installed payload remain unchanged.
+
+
+## Historical evidence archive and bounded preservation
+
+`tools/evidence_archive.py` manages completed historical evidence without
+rewriting history:
+
+```bash
+# Verify every bound Git object offline; no fetch, ref mutation, or execution.
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py verify
+
+# Resolve one archived path only for an unchanged completed feature.
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py resolve-for-feature \
+  --feature 133 --path .agent/evidence/133/qa1/check-NNN.execution.json
+
+# Restore one tranche into a fresh directory outside the active checkout.
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py restore \
+  --tranche feature-133 --output /tmp/nizam-evidence-133
+
+# CI growth guard: fail on newly added evidence blobs over 1 MiB or nested repos.
+PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py check-growth --base origin/main
+```
+
+The index (`.agent/evidence-archive/index.json`, schema
+`schema/evidence_archive.schema.json`) deduplicates identical content by raw
+SHA-256. Each tranche still binds the completed feature's original contract and
+QA digests, so a changed/reopened feature cannot reuse historical bytes as fresh
+acceptance. `tools/verify_lib.sh` C16 calls `resolve-for-feature` only after a
+current evidence path is missing; a current artifact or a current acceptance
+attempt is never satisfied from the archive.
+
+`tools/evidence_preservation.py capture` is the bounded producer for new input
+integrity evidence. It records declared tracked/untracked inputs against an exact
+commit and tree, writes one atomic content-addressed inventory, and keeps each
+run's command, producer, timestamps and exit status in a distinct receipt.
+Interrupted writes leave only orphan temporaries; concurrent differing content
+fails closed.
+
+Maintained workflow-assurance fixtures and frozen control policies live in
+`tools/fixtures/workflow_assurance/`; historical originals remain immutable in
+Git history and in the archive index.

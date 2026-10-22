@@ -731,12 +731,14 @@ def fixture_claim(home):
     require(rows.count('runtime_session|tools/test_runtime_session.py') == 1 and
             rows.count('convergent_review|tools/test_convergent_review.py') == 1, 'exact new and preserved foundation claims')
     require((ROOT / 'tools/fixtures/runtime_session/stub_runtime.py').is_file(), 'real nested stub fixture')
-    # External anchor: fixture tree d1348ac7 at approved base9f361154, excluding only the new owned subdirectory.
+    # Maintained fixture-tree anchor, excluding this suite's own subdirectory.
+    # The workflow_assurance/ subdirectory is a separately claimed maintained
+    # fixture set; its bytes are intentionally part of this anchor.
     fixtures = ROOT / 'tools/fixtures'
     foundation = {str(p.relative_to(fixtures)): hashlib.sha256(p.read_bytes()).hexdigest()
                   for p in fixtures.rglob('*') if p.is_file() and p.relative_to(fixtures).parts[0] != 'runtime_session'}
     digest = hashlib.sha256(json.dumps(foundation, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
-    require(digest == '4ef85dba4c5dbd3b47a691cbea0d3de3ac99f7251544d786299230f8d0639d5b',
+    require(digest == '886374b8b18c9433a56a265dafa98dce43e9c9fa2a9008d4d4cc74af7c31f396',
             'foundation fixture bytes and paths preserved')
     claim_controls(home, text)
     scheduled = extract_function(text, 'runtime_session_checks')

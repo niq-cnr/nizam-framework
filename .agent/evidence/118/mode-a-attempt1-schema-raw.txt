@@ -1,7 +1,0 @@
-COMMAND: ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/118-mode-a.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert v['feature']=='118' and type(v['revision_reviewed']) is int and v['revision_reviewed']==0 and v['final_verdict']['approved'] is False and len(v['issues'])==1; print('PASS installed review schema and strict declared revision0 rejection producer')"]
-REVISION: 2428607f3133a7b9eab7a1595d6096204d4bb791
-EXIT: 0
-STDOUT:
-PASS installed review schema and strict declared revision0 rejection producer
-
-STDERR:

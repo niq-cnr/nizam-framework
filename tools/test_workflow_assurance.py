@@ -327,7 +327,7 @@ BUNDLE_CASES = ('reject-self-review', 'reject-seal-change', 'reject-missing-red'
 CASES = BASE_CASES + BUNDLE_CASES
 
 
-BundleFixture = load_api(ROOT / '.agent/evidence/116/bundle-fixtures.py').BundleFixture
+BundleFixture = load_api(ROOT / 'tools/fixtures/workflow_assurance/bundle_fixtures.py').BundleFixture
 
 
 def bundle_rejected(api, fixture, message):
@@ -443,7 +443,7 @@ CASES = PRE_ENTRY_CASES + ENTRY_CASES
 
 
 def run_entry_case(name, api):
-    helper = load_api(ROOT / '.agent/evidence/117/entry-fixtures.py')
+    helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/entry_fixtures.py')
     helper.run_case(name, api)
 
 
@@ -2476,7 +2476,7 @@ def run_controls_ready(api):
     """Observe only completed independently selected hosted proof; never execute it."""
     if not callable(getattr(api,'verify_controls_ready',None)):
         print('SETUP_ERROR: missing verify_controls_ready; never intended semantic red',file=sys.stderr);raise SystemExit(2)
-    policy_path=ROOT/'.agent/evidence/123/controls-policy.json'
+    policy_path=ROOT/'tools/fixtures/workflow_assurance/wa123_controls_policy.json'
     policy=api.parse_json(api.regular_file(ROOT,str(policy_path.relative_to(ROOT))).read_bytes())
     reference=policy['evidence_ref']
     evidence=api.parse_json(api._receipt_artifact(ROOT,reference))
@@ -3114,7 +3114,7 @@ def run_profiles_ready(api):
     if not callable(getattr(api, 'verify_profiles_ready', None)):
         print('SETUP_ERROR: missing verify_profiles_ready; never intended semantic red', file=sys.stderr)
         raise SystemExit(2)
-    policy_path = ROOT / '.agent/evidence/125/profiles-policy.json'
+    policy_path = ROOT / 'tools/fixtures/workflow_assurance/wa125_profiles_policy.json'
     policy = api.parse_json(api.regular_file(ROOT, str(policy_path.relative_to(ROOT))).read_bytes())
     evidence = api.parse_json(api._receipt_artifact(ROOT, policy['evidence_ref']))
     before = copy.deepcopy((policy, evidence))
@@ -3222,7 +3222,7 @@ def main():
     args = parser.parse_args()
     if args.scope_118 or args.scope_controls_118:
         if not args.base: parser.error('scope commands require --base')
-        helper = load_api(ROOT / '.agent/evidence/118/scope-guard.py')
+        helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_118.py')
         (helper.scope_controls if args.scope_controls_118 else helper.scope)(args.base); return
     if args.check == 'controls-ready':
         if args.base: parser.error('--base requires a scope command')
@@ -3232,18 +3232,18 @@ def main():
         run_profiles_ready(load_api()); return
     if args.check:
         if args.base: parser.error('--base requires a scope command')
-        load_api(ROOT / '.agent/evidence/118/foundation-fixtures.py').run_foundation(load_api()); return
+        load_api(ROOT / 'tools/fixtures/workflow_assurance/foundation_fixtures.py').run_foundation(load_api()); return
     if args.scope_117 or args.scope_controls_117:
         if not args.base: parser.error('scope commands require --base')
-        helper = load_api(ROOT / '.agent/evidence/117/scope-guard.py')
+        helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_117.py')
         (helper.scope_controls if args.scope_controls_117 else helper.scope)(args.base); return
     if args.scope_116 or args.scope_controls_116:
         if not args.base: parser.error('scope commands require --base')
-        helper = load_api(ROOT / '.agent/evidence/116/scope-guard.py')
+        helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_116.py')
         (helper.scope_controls if args.scope_controls_116 else helper.scope)(args.base); return
     if args.scope or args.scope_controls:
         if not args.base: parser.error('scope commands require --base')
-        helper = load_api(ROOT / '.agent/evidence/115/recovery-scope-guard.py')
+        helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_115.py')
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()

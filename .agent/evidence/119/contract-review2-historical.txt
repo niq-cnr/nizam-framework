@@ -1,8 +1,0 @@
-python3 -c 'import contextlib,pathlib,subprocess,tempfile; revision="8ac94f6808e8197111197c9acbf59b2aa92efc7c"; stack=contextlib.ExitStack(); root=pathlib.Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="nizam119-review-historical-")))/"repo"; subprocess.run(["git","clone","--quiet","--shared","--no-checkout",".",str(root)],check=True); subprocess.run(["git","-C",str(root),"checkout","--quiet","--detach",revision],check=True); print("REVIEW_INPUT",subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),flush=True); print("EXERCISED_REVISION",subprocess.check_output(["git","-C",str(root),"rev-parse","HEAD"],text=True).strip(),flush=True); command="PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready"; print("HISTORICAL_COMMAND",command,flush=True); r=subprocess.run(command,shell=True,cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=120); print(r.stdout,end="",flush=True); print("HISTORICAL_ACTUAL_EXIT",r.returncode,flush=True); status=subprocess.check_output(["git","-C",str(root),"status","--porcelain","--untracked-files=all"],text=True); print("HISTORICAL_STATUS",repr(status),flush=True); assert r.returncode==0 and not status; stack.close()'
-REVIEW_INPUT a02f8feb6ab1c1c65d2f9b10f8e28d0cc054ea97
-EXERCISED_REVISION 8ac94f6808e8197111197c9acbf59b2aa92efc7c
-HISTORICAL_COMMAND PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready
-PASS foundation-ready: valid current20 receipt and independent typed/proof/identity/continuity attacks
-HISTORICAL_ACTUAL_EXIT 0
-HISTORICAL_STATUS ''
-EXIT:0

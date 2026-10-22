@@ -838,16 +838,43 @@ vlib_feature_list_lifecycle() {
 import glob
 import json
 import os
+import subprocess
 import sys
 
 import jsonschema
 
 SCHEMA_PATH = "schema/feature_list.schema.json"
+ARCHIVE_TOOL = "tools/evidence_archive.py"
+ARCHIVE_INDEX = ".agent/evidence-archive/index.json"
 
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def historical_resolution(feature_id, evidence_path):
+    """Return a diagnostic when archived evidence resolves, else None.
+
+    Historical bytes never become fresh acceptance: the resolver only succeeds
+    for a completed feature whose recorded contract/QA digests still match.
+    """
+    if not (os.path.isfile(ARCHIVE_TOOL) and os.path.isfile(ARCHIVE_INDEX)):
+        return None
+    proc = subprocess.run(
+        [sys.executable, ARCHIVE_TOOL, "--root", ".", "resolve-for-feature",
+         "--feature", feature_id, "--path", evidence_path],
+        capture_output=True,
+        text=True,
+        env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"),
+        check=False,
+    )
+    if proc.returncode == 0:
+        return proc.stdout.strip() or "archived historical evidence (integrity verified)"
+    detail = (proc.stderr or proc.stdout).strip()
+    if "not present in the historical archive" in detail:
+        return None
+    return "historical resolution failed: " + detail
 
 
 lists = sorted(glob.glob(".agent/feature_list*.json"))
@@ -960,10 +987,23 @@ for path in lists:
             for evidence_path in evidence_files:
                 if isinstance(evidence_path, str):
                     if not os.path.isfile(evidence_path):
-                        errors.append(
-                            f"{path}: feature '{fid}': evidence file listed in {qa_path} "
-                            f"does not exist: {evidence_path}"
-                        )
+                        historical = historical_resolution(fid, evidence_path)
+                        if historical and not historical.startswith("historical resolution failed"):
+                            print(
+                                f"vlib_feature_list_lifecycle: feature '{fid}': historical "
+                                f"evidence resolved: {evidence_path} ({historical})"
+                            )
+                            non_empty_count += 1
+                        elif historical:
+                            errors.append(
+                                f"{path}: feature '{fid}': evidence file listed in {qa_path} "
+                                f"does not exist and {historical}: {evidence_path}"
+                            )
+                        else:
+                            errors.append(
+                                f"{path}: feature '{fid}': evidence file listed in {qa_path} "
+                                f"does not exist: {evidence_path}"
+                            )
                     elif os.path.getsize(evidence_path) > 0:
                         non_empty_count += 1
             if is_contemporary and evidence_files and non_empty_count == 0:

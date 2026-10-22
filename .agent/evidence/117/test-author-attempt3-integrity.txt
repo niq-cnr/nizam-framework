@@ -1,7 +1,0 @@
-COMMAND: ["/usr/bin/python3", "-c", "import ast,pathlib,json,subprocess,hashlib\nr=pathlib.Path.cwd();base='cdc78b98abb1a9b9aec95dfc85c862b69b3a921b'\nold=ast.parse(subprocess.check_output(['git','show',base+':tools/test_workflow_assurance.py']));now=ast.parse((r/'tools/test_workflow_assurance.py').read_bytes())\nfunctions={x.name:ast.dump(x,include_attributes=False) for x in now.body if isinstance(x,(ast.FunctionDef,ast.ClassDef))}\nfor node in old.body:\n if isinstance(node,(ast.FunctionDef,ast.ClassDef)) and node.name!='main': assert functions[node.name]==ast.dump(node,include_attributes=False),node.name\npaths=['tools/workflow_assurance.py','.agent/contracts/117.json','.agent/run_state.json','.agent/feature_list_017.json','docs','.nizam','.agent/evidence/115','.agent/evidence/116','.agent/evidence/117/failed-test-author-attempt1','.agent/evidence/117/failed-bundle-review-attempt1']\nassert subprocess.check_output(['git','diff','--name-only',base,'--',*paths],text=True)==''\nv=json.loads((r/'.agent/evidence/117/acceptance-bundle.json').read_text())\nfor row in v['inputs']: assert hashlib.sha256((r/row['path']).read_bytes()).hexdigest()==row['sha256']\nprint('PASS old16 bodies exact; product/lifecycle/contract/history/archives unchanged; all27 frozen inputs current')\n"]
-REVISION: 3881400fc4715b1ed3d5b7c70912368ed03f6d2a
-EXIT: 0
-STDOUT:
-PASS old16 bodies exact; product/lifecycle/contract/history/archives unchanged; all27 frozen inputs current
-
-STDERR:

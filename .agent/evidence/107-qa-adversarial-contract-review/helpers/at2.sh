@@ -1,1 +1,0 @@
-python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'status: active' 'status: accepted' --expect-rc 1 --expect '^\[C1\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\.md' -- bash tools/validate.sh

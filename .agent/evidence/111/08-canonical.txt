@@ -1,5 +1,0 @@
-COMMAND: bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_foreign_executed.json > .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt 2>&1; fixture_exit=$?; test "$fixture_exit" -eq 1 && rg -F "[C12] FAIL" .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt'
-CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
-[C12] FAIL ecosystem-fixtures --target routed: runtime_operation
-
-EXIT: 0

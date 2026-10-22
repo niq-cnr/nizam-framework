@@ -1,7 +1,0 @@
-COMMAND: ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-mode-b.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert v['feature']=='117' and v['actor']=='/root/wa_validator' and v['final_verdict']['approved'] is False; assert len(v['source_sha256'])==4 and len(v['sealed_dependencies_sha256'])==27; print('PASS installed review schema and truthful failed ModeB producer fields')"]
-REVISION: 2ab311bde4e104ec4a2b1b739fe8fa91b48fe5b7
-EXIT: 0
-STDOUT:
-PASS installed review schema and truthful failed ModeB producer fields
-
-STDERR:

@@ -385,15 +385,16 @@ assert_install_tag_and_sha_pin_and_worktree_reproducibility() {
   mkdir -p "${b2_dir}"
 
   # (1a) Public path must reject e2e-* fixture tag when ALLOW_FIXTURE_TAG=0
-  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${fixture_tag}" --target "${b2_dir}/reject-fixture" >/dev/null 2>&1; then
+  if ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${E2E_SOURCE}" --tag "${fixture_tag}" --target "${b2_dir}/reject-fixture" >/dev/null 2>&1; then
     echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- public path accepted non-SemVer fixture tag '${fixture_tag}'"
     return 1
   fi
 
   # Prepare a disposable source repository cloned from this checkout
-  git clone --quiet "file://$(pwd)" "${src_repo}"
+  git clone --quiet "file://${E2E_SOURCE}" "${src_repo}"
   git -C "${src_repo}" config user.email "b2-test@nizam.local"
   git -C "${src_repo}" config user.name "B2 Pin Test"
+  git -C "${src_repo}" config uploadpack.allowFilter true
   head_sha="$(git -C "${src_repo}" rev-parse HEAD)"
 
   # Create branch-only ref, release-shaped branch ref, ambiguous branch+tag,
@@ -621,6 +622,10 @@ cleanup() {
     rm -rf -- "${SCRATCH_DIR}"
   fi
 
+  if [ -n "${E2E_SOURCE_DIR:-}" ] && [ -d "${E2E_SOURCE_DIR}" ]; then
+    rm -rf -- "${E2E_SOURCE_DIR}"
+  fi
+
   if [ -n "${EPHEMERAL_TAG:-}" ] && git rev-parse -q --verify "refs/tags/${EPHEMERAL_TAG}" >/dev/null 2>&1; then
     git tag -d "${EPHEMERAL_TAG}" >/dev/null 2>&1 || true
   fi
@@ -672,13 +677,22 @@ main() {
   SCRATCH_DIR="$(mktemp -d)"
   local target="${SCRATCH_DIR}/.nizam"
 
+  # Controlled local transport: file:// upload-pack does not advertise blob
+  # filters unless the source repository opts in. Use a disposable full mirror
+  # so the installer exercises the real filtered/sparse path without mutating
+  # this checkout's local Git configuration.
+  E2E_SOURCE_DIR="$(mktemp -d)"
+  E2E_SOURCE="${E2E_SOURCE_DIR}/source-repo"
+  git clone --quiet "file://$(pwd)" "${E2E_SOURCE}"
+  git -C "${E2E_SOURCE}" config uploadpack.allowFilter true
+
   # Explicitly opt in to controlled e2e-* fixture tags for the hermetic harness;
   # assert_install_tag_and_sha_pin_and_worktree_reproducibility tests the public
   # path with ALLOW_FIXTURE_TAG=0.
   export ALLOW_FIXTURE_TAG=1
 
   echo "e2e_bootstrap_test.sh: installing pinned tag '${EPHEMERAL_TAG}' from 'file://$(pwd)' into '${target}' (hermetic -- local file:// clone, no network)..."
-  bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${EPHEMERAL_TAG}" --target "${target}"
+  bash bootstrap.sh --repo-url "file://${E2E_SOURCE}" --tag "${EPHEMERAL_TAG}" --target "${target}"
 
   assert_payload_present "${target}"
   assert_nizam_index_valid "${target}"
@@ -786,7 +800,7 @@ assert_genesis() {
 
   # (a) genesis-from-nothing: create + scaffold + inject in one command.
   if ! bash bootstrap.sh --genesis --project-root "${proj}" --project-name e2e-demo \
-      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+      --tag "${tag}" --repo-url "file://${E2E_SOURCE}" >/dev/null 2>&1; then
     echo "assert_genesis: FAIL -- bootstrap.sh --genesis did not stand up a new project at '${proj}'."
     return 1
   fi
@@ -833,7 +847,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   mkdir -p "${nonempty}"
   printf 'existing\n' > "${nonempty}/existing.txt"
   if bash bootstrap.sh --genesis --project-root "${nonempty}" \
-      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+      --tag "${tag}" --repo-url "file://${E2E_SOURCE}" >/dev/null 2>&1; then
     echo "assert_genesis: FAIL -- genesis did NOT refuse a non-empty --project-root '${nonempty}'."
     return 1
   fi
@@ -883,7 +897,7 @@ assert_multirepo() {
   # its scaffold so only the injected untracked .nizam/ remains (Preflight-clean).
   for member in "${members[@]}"; do
     if ! bash bootstrap.sh --genesis --project-root "${eco}/${member}" --project-name "${member}" \
-        --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+        --tag "${tag}" --repo-url "file://${E2E_SOURCE}" >/dev/null 2>&1; then
       echo "assert_multirepo: FAIL -- bootstrap.sh --genesis did not stand up member '${member}'."
       return 1
     fi
@@ -1060,7 +1074,7 @@ assert_consumer_zero_reachback() {
   local consumer="${SCRATCH_DIR}/zero-reachback-consumer"
 
   if ! bash bootstrap.sh --genesis --project-root "${consumer}" --project-name zero-reachback \
-      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+      --tag "${tag}" --repo-url "file://${E2E_SOURCE}" >/dev/null 2>&1; then
     echo "assert_consumer_zero_reachback: FAIL -- bootstrap.sh --genesis failed for '${consumer}'."
     return 1
   fi

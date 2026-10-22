@@ -1,8 +1,0 @@
-COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c "import importlib.util\nfrom pathlib import Path\ns=importlib.util.spec_from_file_location('old114',Path('.agent/evidence/114/private/controls.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\ntext=m.dossier_fixture()+'\\nRecorded SBCL version 2.2.9.debian is a toolchain input; framework release remains v1.5.0.\\n'\ntry: m.C.dossier(text)\nexcept m.C.Failure as error:\n print('ACTUAL OLD COMPONENT FALSEFAIL: '+str(error));raise SystemExit(1)\nprint('OLD COMPONENT PASS')\n"
-EXERCISED_REVISION: 480c102a5f3119fd8b645d3cf2f3e2ad793e2b9a
-STDOUT:
-ACTUAL OLD COMPONENT FALSEFAIL: FIXED_FUTURE_VERSION
-
-STDERR:
-
-EXIT: 1

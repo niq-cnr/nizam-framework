@@ -1,9 +1,0 @@
-python3 -c 'import json; from pathlib import Path; c=json.loads(Path('"'"'.agent/contracts/112.json'"'"').read_text()); p=json.loads(Path('"'"'.agent/contracts/111.json'"'"').read_text()); f=next(x for x in json.loads(Path('"'"'.agent/feature_list_015.json'"'"').read_text())['"'"'features'"'"'] if x['"'"'id'"'"']=='"'"'112'"'"'); print('"'"'canonical_commands_byte_exact:'"'"',f['"'"'acceptance_tests'"'"']==[v['"'"'command'"'"'] for v in c['"'"'verification'"'"'][:7]]); print('"'"'estimated_lines:'"'"',c['"'"'estimated_lines'"'"']); print('"'"'status:'"'"',c['"'"'status'"'"']); print('"'"'verification_count:'"'"',len(c['"'"'verification'"'"'])); a={v['"'"'path'"'"'] for v in c['"'"'scope'"'"']['"'"'files_modify'"'"']}; b={v['"'"'path'"'"'] for v in p['"'"'scope'"'"']['"'"'files_modify'"'"']}; print('"'"'shared_current_products:'"'"',sorted(a & b)); print('"'"'AT11:'"'"',c['"'"'verification'"'"'][10]['"'"'acceptance_test'"'"'])'
-canonical_commands_byte_exact: True
-estimated_lines: 1200
-status: proposed
-verification_count: 20
-shared_current_products: ['.agent/feature_list_015.json', '.agent/run_state.json', 'CHANGELOG.md', 'NIZAM.json', 'docs/planning/backlog_dag.json', 'docs/planning/manifest.json', 'docs/planning/phase_015.yaml', 'methodology/10_live_runtime_sessions.md']
-AT11: AT11: Historical014/110/111 proof/contracts/specs/checkers/QA and original111 source products immutable against fixed base; published release anchors unchanged; no old checker execution.
-
-EXIT:0

@@ -1,7 +1,0 @@
-COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import ast,pathlib,subprocess; r=pathlib.Path.cwd(); p='"'"'tools/test_workflow_assurance.py'"'"'; old=subprocess.check_output(['"'"'git'"'"','"'"'show'"'"','"'"'904d6c68d79f935380835cde6d4e988f6db26480:'"'"'+p]).decode(); new=(r/p).read_text(); assert old[:old.index('"'"'def main():'"'"')]==new[:new.index('"'"'BASE_CASES = CASES'"'"')]; product='"'"'tools/workflow_assurance.py'"'"'; assert (r/product).read_bytes()==subprocess.check_output(['"'"'git'"'"','"'"'show'"'"','"'"'904d6c68d79f935380835cde6d4e988f6db26480:'"'"'+product]); [ast.parse((r/x).read_text()) for x in [p,'"'"'.agent/evidence/116/bundle-fixtures.py'"'"','"'"'.agent/evidence/116/scope-guard.py'"'"','"'"'.agent/evidence/116/naive-policy.py'"'"','"'"'.agent/evidence/116/baseline-driver.py'"'"']]; print('"'"'PASS source read-only, all115 function bytes exact, frozen Python syntax'"'"')'
-REVISION: 430d4df354a5c3a689ea0258fee87a245f8b0b14
-EXIT: 0
-STDOUT:
-PASS source read-only, all115 function bytes exact, frozen Python syntax
-
-STDERR:
