@@ -1,0 +1,47 @@
+{
+  "family": "DF-01",
+  "question_version": "component_requirement.v1",
+  "label_rubric": {
+    "direct_requirement": "The component directly implements an approved requirement.",
+    "necessary_support": "The component is necessary support (security, validation, compatibility, migration, or another named concern) for an approved requirement even though no feature sentence names it explicitly.",
+    "unsupported_extension": "The component is speculative scope not grounded in an approved requirement.",
+    "insufficient_evidence": "The supplied sources are not enough to decide."
+  },
+  "cases": [
+    {
+      "id": "df01-explicit-001",
+      "requirements": ["R1: the framework must record an evidence file per executed check"],
+      "non_goals": [],
+      "component": {"path": "tools/start_path.py", "proposal": "record per-check evidence paths"},
+      "expected": "direct_requirement"
+    },
+    {
+      "id": "df01-support-001",
+      "requirements": ["R1: the framework must gate completion on recorded verification"],
+      "non_goals": ["no new review sandbox"],
+      "component": {"path": "tools/isolated_trial_adapter.py", "proposal": "enforce review-trial filesystem isolation"},
+      "expected": "necessary_support"
+    },
+    {
+      "id": "df01-extension-001",
+      "requirements": ["R1: record per-check evidence paths"],
+      "non_goals": ["no daemon", "no generic workflow engine"],
+      "component": {"path": "tools/daemon.py", "proposal": "a resident scheduling daemon"},
+      "expected": "unsupported_extension"
+    },
+    {
+      "id": "df01-insufficient-001",
+      "requirements": [],
+      "non_goals": [],
+      "component": {"path": "tools/mystery.py", "proposal": "an unexplained change"},
+      "expected": "insufficient_evidence"
+    },
+    {
+      "id": "df01-support-002",
+      "requirements": ["R1: record an evidence file per executed check"],
+      "non_goals": ["no new feature loop"],
+      "component": {"path": "tools/validate.sh", "proposal": "schema and index integrity validation for the evidence artifacts"},
+      "expected": "necessary_support"
+    }
+  ]
+}

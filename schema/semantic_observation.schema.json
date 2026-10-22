@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:semantic_observation.schema.json",
+  "title": "Nizam Semantic Observation Schema",
+  "description": "A versioned, authority-free record of one bounded semantic observation (Choice, Noul or Score). Semantic answer, execution status and policy disposition are separate concerns; this schema owns only the answer and execution status and never carries approval, suppression or authority fields.",
+  "type": "object",
+  "required": ["schema_version", "task", "binding", "question", "model", "transport", "execution", "answer"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "task": {
+      "type": "object",
+      "required": ["task_id", "operation_id", "attempt"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": { "type": "string", "minLength": 1 },
+        "operation_id": { "type": "string", "minLength": 1 },
+        "attempt": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "required": ["base_revision", "candidate", "requirement_refs", "contract_refs"],
+      "additionalProperties": false,
+      "properties": {
+        "base_revision": { "type": "string", "minLength": 1 },
+        "candidate": { "type": "string", "minLength": 1 },
+        "requirement_refs": { "type": "array", "items": { "type": "string" } },
+        "contract_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "question": {
+      "type": "object",
+      "required": ["family", "version", "primitive", "instructions"],
+      "properties": {
+        "family": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "primitive": { "enum": ["choice", "noul", "score"] },
+        "instructions": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+        "polarity": { "enum": ["yes", "no"] },
+        "rubric": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["requested"],
+      "additionalProperties": false,
+      "properties": {
+        "requested": { "type": "string", "minLength": 1 },
+        "resolved": { "type": ["string", "null"] },
+        "provider_request_id": { "type": ["string", "null"] }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "required": ["transmitted_body_sha256", "raw_response_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "transmitted_body_sha256": { "type": "string", "minLength": 1 },
+        "raw_response_sha256": { "type": "string", "minLength": 1 }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": { "enum": ["disabled", "ineligible", "succeeded", "unavailable", "invalid_response", "cancelled"] },
+        "reason_code": { "type": ["string", "null"], "enum": ["missing_context", "missing_evidence", "denied_egress", "budget_exhausted", "timeout", "unsupported_capability", "invalid_response", "cancelled_before_dispatch", "provider_unavailable", "rate_limited", "lost_response", null] }
+      }
+    },
+    "answer": {
+      "description": "The primitive-specific semantic answer. Required when execution.status is succeeded; must be null otherwise. Shape depends on question.primitive.",
+      "type": ["object", "null"]
+    }
+  }
+}

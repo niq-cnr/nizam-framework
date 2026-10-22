@@ -1,0 +1,60 @@
+{
+  "schema": "nizam-jev-readiness-support-matrix",
+  "schema_version": "1.0.0",
+  "base": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3",
+  "candidate_scope": "feat/jev-readiness-2026-10-22 (PR #131)",
+  "note": "This matrix bounds the claimed support surface. It records the current state as of the 2026-10-22 wave: the semantic primitives, families, modes and evaluation/accounting machinery are implemented at the module level (offline, tested) but are NOT yet wired into the supported routes and roles (JR-34 open). Every live cell is unsupported until its actual qualification (JR-23/24/41/42/43). 'implemented' means local/offline evidence, never qualified or adopted.",
+  "dimensions": {
+    "primitives": ["choice", "noul", "score"],
+    "families": ["DF-01", "DF-02", "DF-03", "DF-04", "DF-05", "DF-06", "DF-07"],
+    "modes": ["off", "mock", "replay", "shadow", "advisory", "governed"],
+    "routes": ["trivial", "bugfix", "small-change", "standard-feature", "high-risk"],
+    "roles": ["planner", "implementer", "completion-preparation", "verifier", "operator", "orchestrator", "evaluator", "failure-router", "context-preparation", "post-run-evaluation", "authorized-orchestrator"]
+  },
+  "primitive_status": {
+    "choice": {"implemented_offline": true, "validated": "tools/test_semantic_contract.py", "integrated": false, "live": false},
+    "noul": {"implemented_offline": true, "validated": "tools/test_semantic_contract.py", "integrated": false, "live": false},
+    "score": {"implemented_offline": true, "validated": "tools/test_semantic_contract.py", "integrated": false, "live": false}
+  },
+  "family_status": {
+    "DF-01": {"question": "component_requirement.v1", "fixtures": "tools/fixtures/semantic/df01_cases.json", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-02": {"question": "risk_class.v1 + risk_escalate.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-03": {"question": "evidence_relevance.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-04": {"question": "reasoning_profile.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-05": {"question": "failure_class.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-06": {"question": "claim_support.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false},
+    "DF-07": {"question": "outcome_value.v1", "implemented_offline": true, "integrated": false, "evaluated": false, "qualified": false}
+  },
+  "mode_status": {
+    "off": "supported (default; zero provider import/call)",
+    "mock": "implemented_offline (mock transport); not a supported live mode",
+    "replay": "policy-level; replay binds stored observation identity (JR-13)",
+    "shadow": "machinery only; live shadow gated on JR-23",
+    "advisory": "machinery only; live admission gated on JR-23/JR-24",
+    "governed": "machinery only; qualified influence gated on JR-24/JR-43"
+  },
+  "deterministic_controls": {
+    "JR-02": "strict QA acceptance",
+    "JR-03": "complete-delta scope binding",
+    "JR-04": "contract consistency",
+    "JR-05": "monotonic authoritative attempts",
+    "JR-06": "verified continuation authority"
+  },
+  "adapter_status": {
+    "jev": {"implemented_offline": true, "mock_transport": "tools/test_jev_adapter.py", "live_qualification": false, "blocked_by": "provider account, permitted data, exact model, budget, deadline"}
+  },
+  "evaluation_status": {
+    "corpus": "tools/evaluation_corpus.py (freeze + lineage split)",
+    "harness": "tools/evaluation_harness.py (A/B/C/D arms + preregistration)",
+    "live_cohorts": "unsupported until JR-23/JR-24 authorization"
+  },
+  "gated_packages": {
+    "JR-22": {"offline_acceptance": "needs an independent assurance reviewer"},
+    "JR-23": {"live_shadow": "needs provider account, permitted data, budget, frozen corpus"},
+    "JR-24": {"advisory_operational": "needs shadow evidence + advisory admission + predeclared criteria"},
+    "JR-41": {"live_review": "needs trusted installed release + qualified runtime"},
+    "JR-42": {"pilot_release_upgrade": "needs release + pilot consumer authorization"},
+    "JR-43": {"staged_rollout": "needs qualified configurations + rollout authority"},
+    "JR-44": {"program_closure": "needs complete evidence + Operator acceptance"}
+  }
+}

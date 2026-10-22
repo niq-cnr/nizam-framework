@@ -544,21 +544,24 @@ def decide(decision: str, kind: str, path_id: str, root: Path) -> str:
     if kind == "bugfix":
         cause, scope = load_bugfix(root, path_id)
         if decision == "begin":
+            _record_task_base(root, path_id)
             return f"bugfix {cause['id']}: implementation may begin"
-        verify_actual_changed_scope(root, "bugfix", scope["files"])
+        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id)
         load_passing_qa(root, path_id)
         return f"bugfix {scope['id']}: recorded verification result exists"
     if kind == "trivial":
         intent = load_trivial_intent(root, path_id)
         if decision == "begin":
+            _record_task_base(root, path_id)
             return f"trivial {intent['id']}: implementation may begin"
-        verify_actual_changed_scope(root, "trivial", intent["files"])
+        verify_actual_changed_scope(root, "trivial", intent["files"], path_id)
         load_passing_qa(root, path_id)
         return f"trivial {intent['id']}: recorded verification result exists"
     intent = load_intent(root, path_id)
     if decision == "begin":
+        _record_task_base(root, path_id)
         return f"small-change {intent['id']}: implementation may begin"
-    verify_actual_changed_scope(root, "small-change", intent["files"])
+    verify_actual_changed_scope(root, "small-change", intent["files"], path_id)
     load_passing_qa(root, path_id)
     return f"small-change {intent['id']}: recorded verification result exists"
 
@@ -1190,6 +1193,70 @@ def _run_git_readonly(
     )
 
 
+def _authoritative_consumed_attempts(root: Path, task_id: str, step: str) -> int:
+    """Return the highest already-consumed attempt number for a task/step.
+
+    Authoritative across output directories, sessions and model switches: the
+    durable circuit_breaker counter plus every prior capture file under the
+    canonical evidence tree. A caller cannot reset this by choosing a different
+    ``--output-dir`` or a lower ``--attempt``.
+    """
+    consumed = 0
+    state_path = root / ".agent" / "run_state.json"
+    if state_path.is_file():
+        try:
+            state_doc = json.loads(state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            state_doc = {}
+        if isinstance(state_doc, dict):
+            cb = state_doc.get("circuit_breaker")
+            if isinstance(cb, dict):
+                for key in (f"{task_id}-{step}", task_id, step):
+                    entry = cb.get(key)
+                    if isinstance(entry, dict):
+                        raw = entry.get("attempts")
+                        if isinstance(raw, int) and not isinstance(raw, bool):
+                            consumed = max(consumed, raw)
+    evidence_root = root / ".agent" / "evidence"
+    if evidence_root.is_dir():
+        for cap_file in evidence_root.rglob(f"{task_id}-{step}-attempt*.capture.json"):
+            match = re.search(r"-attempt(\d+)-", cap_file.name)
+            if match:
+                consumed = max(consumed, int(match.group(1)))
+        for res_file in evidence_root.rglob(f"{task_id}-{step}-attempt*.reservation.json"):
+            match = re.search(r"-attempt(\d+)\.reservation\.json$", res_file.name)
+            if match:
+                consumed = max(consumed, int(match.group(1)))
+    return consumed
+
+
+def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
+    """Atomically reserve an attempt number before dispatch.
+
+    The reservation marker lives in the canonical evidence tree (not the
+    caller's output directory), so concurrent allocations and output-directory
+    changes cannot share or reset a sequence number. Exclusive create is the
+    compare-and-swap; a pre-existing marker means the number is already taken.
+    """
+    marker = root / ".agent" / "evidence" / f"{task_id}-{step}-attempt{attempt}.reservation.json"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    doc = {
+        "schema_version": 1,
+        "id": task_id,
+        "step": step,
+        "attempt": attempt,
+        "reserved_at": utc_now_iso(),
+    }
+    try:
+        with marker.open("xb") as fh:
+            fh.write(canonical_bytes(doc) + b"\n")
+    except FileExistsError:
+        raise StartPathError(
+            f"attempt {attempt} for {task_id}:{step} is already reserved; concurrent allocation refused",
+            2,
+        )
+
+
 def _evaluate_attempt_continuation(
     root: Path,
     *,
@@ -1208,6 +1275,13 @@ def _evaluate_attempt_continuation(
     if invariant_breach:
         raise StartPathError(
             "stopping policy halt: invariant or authority boundary breached; autonomous continuation forbidden",
+            2,
+        )
+
+    consumed = _authoritative_consumed_attempts(root, task_id, step)
+    if attempt <= consumed:
+        raise StartPathError(
+            f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step} (authoritative next attempt is {consumed + 1})",
             2,
         )
 
@@ -1321,15 +1395,15 @@ def _evaluate_attempt_continuation(
     resolved_basis: str | None = continuation_basis
     if attempt > 3:
         if continuation_basis == "bounded-amendment":
-            if not (has_contract_amendment or repair_summary):
+            if not has_contract_amendment:
                 raise StartPathError(
-                    "stopping policy halt: --continuation-basis bounded-amendment requires a recorded contract amendment or --repair-summary",
+                    "stopping policy halt: --continuation-basis bounded-amendment requires a recorded contract amendment; --repair-summary is explanatory and grants no authority",
                     2,
                 )
         elif continuation_basis == "verified-decomposition":
-            if not (decomposition_of or repair_summary):
+            if not decomposition_of:
                 raise StartPathError(
-                    "stopping policy halt: --continuation-basis verified-decomposition requires --decomposition-of or --repair-summary",
+                    "stopping policy halt: --continuation-basis verified-decomposition requires --decomposition-of; --repair-summary is explanatory and grants no authority",
                     2,
                 )
         elif continuation_basis == "configured-step-limit":
@@ -1339,9 +1413,9 @@ def _evaluate_attempt_continuation(
                     2,
                 )
         elif continuation_basis == "operator-reset":
-            if not (has_operator_extension or repair_summary):
+            if not has_operator_extension:
                 raise StartPathError(
-                    "stopping policy halt: --continuation-basis operator-reset requires recorded operator authorization in .agent/run_state.json or --repair-summary",
+                    "stopping policy halt: --continuation-basis operator-reset requires recorded operator authorization in .agent/run_state.json; --repair-summary is explanatory and grants no authority",
                     2,
                 )
         elif decomposition_of:
@@ -1444,6 +1518,8 @@ def capture_command_evidence(
         defect_signature=defect_signature,
         invariant_breach=invariant_breach,
     )
+
+    _reserve_attempt(root, task_id, step, attempt)
 
     head_res = _run_git_readonly(root, ["rev-parse", "HEAD"], text=True)
     revision = head_res.stdout.strip() if head_res.returncode == 0 else None
@@ -3393,51 +3469,209 @@ def verify_route_scope_eligibility(
     return scoped
 
 
-def verify_actual_changed_scope(root: Path, route: str, declared_files: list[str]) -> None:
-    """Verify declared scope remains eligible and that no undeclared non-.agent working-tree changes exist."""
-    scoped = verify_route_scope_eligibility(root, route, declared_files)
-    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
-    if git_check.returncode != 0 or git_check.stdout.strip() != "true":
-        return
-
-    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
-    if top_res.returncode != 0 or Path(top_res.stdout.strip()).resolve() != root.resolve():
-        return
-
-    status_res = _run_git_readonly(
-        root,
-        ["status", "--porcelain", "-z", "--untracked-files=all"],
-        text=False,
-    )
-    if status_res.returncode != 0:
-        return
-
-    declared_set = set(scoped)
-    undeclared: list[str] = []
-    entries = status_res.stdout.split(b"\x00")
+def _parse_porcelain_z(data: bytes) -> list[dict[str, Any]]:
+    """Parse `git status --porcelain=v1 -z` including both endpoints of renames/copies."""
+    entries = data.split(b"\x00")
+    parsed: list[dict[str, Any]] = []
     idx = 0
     while idx < len(entries):
         entry = entries[idx]
         idx += 1
         if not entry or len(entry) < 4:
             continue
-        xy = entry[:2].decode("ascii", errors="replace")
-        raw_path = entry[3:].decode("utf-8", errors="replace")
-        if "R" in xy or "C" in xy:
+        code = entry[:2].decode("ascii", errors="replace")
+        paths = [entry[3:].decode("utf-8", errors="surrogateescape")]
+        if "R" in code or "C" in code:
+            if idx < len(entries) and entries[idx]:
+                paths.append(entries[idx].decode("utf-8", errors="surrogateescape"))
+                idx += 1
+        parsed.append({"code": code, "paths": paths})
+    return parsed
+
+
+def _parse_name_status_z(data: bytes) -> list[dict[str, Any]]:
+    """Parse `git diff --name-status -z` including both endpoints of renames/copies."""
+    parts = data.split(b"\x00")
+    parsed: list[dict[str, Any]] = []
+    idx = 0
+    while idx < len(parts):
+        status = parts[idx].decode("ascii", errors="replace")
+        idx += 1
+        if not status:
+            continue
+        if status[0] in ("R", "C"):
+            if idx + 1 >= len(parts):
+                raise StartPathError("malformed git diff --name-status -z rename record", 1)
+            paths = [
+                parts[idx].decode("utf-8", errors="surrogateescape"),
+                parts[idx + 1].decode("utf-8", errors="surrogateescape"),
+            ]
+            idx += 2
+        else:
+            if idx >= len(parts):
+                raise StartPathError("malformed git diff --name-status -z record", 1)
+            paths = [parts[idx].decode("utf-8", errors="surrogateescape")]
             idx += 1
+        parsed.append({"status": status, "paths": paths})
+    return parsed
+
+
+def _task_owned_governance_path(norm: str, path_id: str) -> bool:
+    """Allow only the current task's own evidence/QA outputs, never shared authority records."""
+    if norm == f".agent/evidence/{path_id}-base.json":
+        return True
+    if norm.startswith(f".agent/evidence/{path_id}-"):
+        return True
+    if norm.startswith(f".agent/evidence/{path_id}/"):
+        return True
+    if norm == f".agent/qa/{path_id}.json":
+        return True
+    return False
+
+
+def _record_task_base(root: Path, path_id: str) -> None:
+    """Record the immutable task base and pre-existing dirty snapshot before implementation.
+
+    Idempotent: an existing marker is never overwritten, so a later `begin` cannot
+    silently re-pin a task to a more favorable base.
+    """
+    marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
+    if marker.exists():
+        return
+    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
+    if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+        return
+    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
+    if top_res.returncode != 0 or Path(top_res.stdout.strip()).resolve() != root.resolve():
+        raise StartPathError("cannot record task base: root is not the exact Git worktree toplevel", 1)
+    head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
+    if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
+        raise StartPathError("cannot record task base: HEAD is not a resolvable commit", 1)
+    status_res = _run_git_readonly(
+        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
+    )
+    if status_res.returncode != 0:
+        raise StartPathError("cannot record task base: git status failed", 1)
+    baseline_entries = _parse_porcelain_z(status_res.stdout)
+    doc = {
+        "schema_version": 1,
+        "id": path_id,
+        "base_revision": head_res.stdout.strip(),
+        "recorded_at": utc_now_iso(),
+        "pre_existing_entries": baseline_entries,
+    }
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    with marker.open("xb") as fh:
+        fh.write(canonical_bytes(doc) + b"\n")
+
+
+def _load_task_base(root: Path, path_id: str) -> dict[str, Any] | None:
+    marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
+    if not marker.is_file():
+        return None
+    try:
+        doc = json.loads(marker.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise StartPathError(f"recorded task base is unreadable: {marker}", 1) from exc
+    if not isinstance(doc, dict) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
+        raise StartPathError(f"recorded task base is malformed: {marker}", 1)
+    return doc
+
+
+def verify_actual_changed_scope(
+    root: Path,
+    route: str,
+    declared_files: list[str],
+    path_id: str | None = None,
+) -> None:
+    """Bind completion to the complete committed/staged/unstaged/untracked delta.
+
+    A Git-backed project fails closed on any inspection failure. A genuinely
+    non-Git project keeps the historical local-only behavior (no Git state to
+    bind); that mode is not a claim of Git-backed completion.
+    """
+    scoped = verify_route_scope_eligibility(root, route, declared_files)
+    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
+    if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+        return
+
+    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
+    if top_res.returncode != 0 or not top_res.stdout.strip():
+        raise StartPathError(f"{route} completion failed: Git toplevel could not be resolved", 1)
+    if Path(top_res.stdout.strip()).resolve() != root.resolve():
+        raise StartPathError(
+            f"{route} completion failed: root is not the exact Git worktree toplevel", 1
+        )
+
+    if path_id is None:
+        raise StartPathError(f"{route} completion failed: task id is required for scope binding", 1)
+    base_doc = _load_task_base(root, path_id)
+    if base_doc is None:
+        raise StartPathError(
+            f"{route} completion failed: no recorded task base for {path_id}; restart through the supported begin path",
+            1,
+        )
+
+    head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
+    if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
+        raise StartPathError(f"{route} completion failed: HEAD is not a resolvable commit", 1)
+    head = head_res.stdout.strip()
+    base_revision = base_doc["base_revision"]
+
+    ancestor = _run_git_readonly(root, ["merge-base", "--is-ancestor", base_revision, head], text=True)
+    if ancestor.returncode != 0:
+        raise StartPathError(
+            f"{route} completion failed: recorded task base {base_revision} is not an ancestor of HEAD {head}",
+            1,
+        )
+
+    diff_res = _run_git_readonly(
+        root, ["diff", "--name-status", "-z", base_revision, head, "--"], text=False
+    )
+    if diff_res.returncode != 0:
+        raise StartPathError(f"{route} completion failed: committed delta inspection failed", 1)
+
+    status_res = _run_git_readonly(
+        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
+    )
+    if status_res.returncode != 0:
+        raise StartPathError(f"{route} completion failed: working-tree inspection failed", 1)
+
+    declared_set = set(scoped)
+    pre_existing = {
+        (entry.get("code"), tuple(entry.get("paths") or []))
+        for entry in (base_doc.get("pre_existing_entries") or [])
+        if isinstance(entry, dict)
+    }
+    undeclared: list[str] = []
+
+    def consider(raw_path: str) -> None:
         try:
             norm = normalize_relative_path(raw_path, root=root, forbid_nizam_payload=False)
         except StartPathError:
             norm = raw_path.strip()
-        if norm.startswith(".agent/"):
+        if _task_owned_governance_path(norm, path_id):
+            return
+        if norm in declared_set or norm in undeclared:
+            return
+        undeclared.append(norm)
+
+    for entry in _parse_name_status_z(diff_res.stdout):
+        for raw_path in entry["paths"]:
+            consider(raw_path)
+
+    for entry in _parse_porcelain_z(status_res.stdout):
+        key = (entry.get("code"), tuple(entry.get("paths") or []))
+        if key in pre_existing:
             continue
-        if norm not in declared_set and norm not in undeclared:
-            undeclared.append(norm)
+        for raw_path in entry["paths"]:
+            consider(raw_path)
 
     if undeclared:
         raise StartPathError(
             f"{route} completion failed: working tree contains undeclared changes outside scoped files: "
-            + ", ".join(undeclared),
+            + ", ".join(undeclared)
+            + f" (delta from task base {base_revision})",
             1,
         )
 
@@ -3522,6 +3756,20 @@ def require_inside_contract(root: Path, contract_id: str, files: list[str]) -> N
             "named contract is not already approved",
             1,
         )
+    if isinstance(contract.get("contract_id"), str) and contract["contract_id"] != contract_id:
+        raise StartPathError(
+            f"contract record identity {contract['contract_id']!r} does not match requested contract {contract_id!r}",
+            1,
+        )
+    if (
+        isinstance(contract.get("feature_id"), str)
+        and isinstance(contract.get("contract_id"), str)
+        and contract["feature_id"] != contract["contract_id"]
+    ):
+        raise StartPathError(
+            "contract feature_id and contract_id disagree; refusing an ambiguous contract binding",
+            1,
+        )
     allowed: set[str] = set()
     scope = contract.get("scope")
     if isinstance(scope, dict):
@@ -3558,6 +3806,20 @@ def load_passing_qa(root: Path, path_id: str) -> None:
     evidence = listed_evidence(verdict)
     if not evidence:
         raise StartPathError("recorded verification result names no evidence file", 1)
+    if "qa_pass" in verdict:
+        checks_run = verdict.get("checks_run")
+        if isinstance(checks_run, int) and not isinstance(checks_run, bool) and len(evidence) < checks_run:
+            raise StartPathError(
+                "recorded verification result claims more executed checks than it names evidence for", 1
+            )
+    current_head = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
+    head_sha = current_head.stdout.strip() if current_head.returncode == 0 else None
+    bound_candidate = verdict.get("candidate_sha256") or verdict.get("candidate")
+    if isinstance(bound_candidate, str) and head_sha and re.fullmatch(r"[0-9a-f]{40}", bound_candidate):
+        if bound_candidate != head_sha:
+            raise StartPathError(
+                "recorded verification result is stale: candidate is not the current HEAD", 1
+            )
     for relative in evidence:
         path = resolve_project_file(root, relative)
         if not path.is_file():
@@ -3566,9 +3828,41 @@ def load_passing_qa(root: Path, path_id: str) -> None:
             raise StartPathError("evidence file is empty (non-empty verification output required): " + relative, 1)
 
 
+QA_BLOCKING_KEYS = (
+    "issues",
+    "unsupported_claims",
+    "missing_acceptance_coverage",
+    "required_fixes",
+)
+
+
 def qa_passes(verdict: dict) -> bool:
-    """Apply the pass rule for either shipped QA verdict shape, requiring >=1 executed passing check."""
-    if verdict.get("qa_pass") is True:
+    """One strict normalized predicate for every new completion path.
+
+    Both historical shapes are normalized to the same requirements: at least one
+    successfully executed check, no contradictory approval field, no non-empty
+    blocking array, and an evidence binding for every claimed check. Historical
+    records remain displayable, but they cannot select a weaker new completion
+    rule.
+    """
+    if not isinstance(verdict, dict):
+        return False
+
+    # Contradictory shape markers are never a pass.
+    if "qa_pass" in verdict and "verdict" in verdict:
+        if verdict.get("qa_pass") is True and verdict.get("verdict") != "pass":
+            return False
+        if verdict.get("qa_pass") is False and verdict.get("verdict") == "pass":
+            return False
+
+    has_evolved = "qa_pass" in verdict
+    has_legacy = "verdict" in verdict
+    if not has_evolved and not has_legacy:
+        return False
+
+    if has_evolved:
+        if verdict.get("qa_pass") is not True:
+            return False
         checks_run = verdict.get("checks_run")
         checks_passed = verdict.get("checks_passed")
         if not isinstance(checks_run, int) or isinstance(checks_run, bool) or checks_run < 1:
@@ -3576,25 +3870,55 @@ def qa_passes(verdict: dict) -> bool:
         if not isinstance(checks_passed, int) or isinstance(checks_passed, bool) or checks_passed != checks_run:
             return False
         final_verdict = verdict.get("final_verdict")
-        approved = isinstance(final_verdict, dict) and final_verdict.get("approved") is True
-        blocked = any(
-            verdict.get(key)
-            for key in (
-                "issues",
-                "unsupported_claims",
-                "missing_acceptance_coverage",
-                "required_fixes",
-            )
-        )
-        return approved and not blocked
-    if verdict.get("verdict") == "pass":
+        if not isinstance(final_verdict, dict) or final_verdict.get("approved") is not True:
+            return False
+        if any(verdict.get(key) for key in QA_BLOCKING_KEYS):
+            return False
+        evidence_files = verdict.get("evidence_files")
+        if not isinstance(evidence_files, list) or len(evidence_files) < checks_run:
+            return False
+        if any(not isinstance(item, str) or not item.strip() for item in evidence_files):
+            return False
         checks = verdict.get("checks")
-        if not isinstance(checks, list) or len(checks) < 1:
-            return False
-        if any(not isinstance(c, dict) or c.get("status") not in (None, "pass") for c in checks):
-            return False
-        return not verdict.get("required_fixes")
-    return False
+        if checks is not None:
+            if not isinstance(checks, list) or len(checks) < checks_run:
+                return False
+            if any(not _qa_check_executed_ok(item) for item in checks):
+                return False
+        return True
+
+    # Legacy shape: a favorable overall word cannot override a failed/uncaptured
+    # check, a non-empty blocking array, or an explicit non-approval field.
+    if verdict.get("verdict") != "pass":
+        return False
+    final_verdict = verdict.get("final_verdict")
+    if isinstance(final_verdict, dict) and final_verdict.get("approved") is False:
+        return False
+    if any(verdict.get(key) for key in QA_BLOCKING_KEYS):
+        return False
+    checks = verdict.get("checks")
+    if not isinstance(checks, list) or len(checks) < 1:
+        return False
+    if not all(_qa_check_executed_ok(item) for item in checks):
+        return False
+    return True
+
+
+def _qa_check_executed_ok(check: Any) -> bool:
+    """A check counts only when it actually executed successfully and names evidence."""
+    if not isinstance(check, dict):
+        return False
+    if check.get("executed") is False:
+        return False
+    exit_code = check.get("exit_code")
+    if not isinstance(exit_code, int) or isinstance(exit_code, bool) or exit_code != 0:
+        return False
+    if check.get("status") not in (None, "pass", "passed"):
+        return False
+    evidence = check.get("evidence")
+    if not isinstance(evidence, str) or not evidence.strip():
+        return False
+    return True
 
 
 def listed_evidence(verdict: dict) -> list[str]:

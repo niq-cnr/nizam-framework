@@ -1,0 +1,778 @@
+{
+  "schema": "nizam-jev-readiness-dag",
+  "schema_version": "1.0.0",
+  "dag_version": "1.0.0",
+  "base": "3b94a9e5fc2bd7a21d8cdee2246f958d310d52a3",
+  "note": "Reference parent graph refined from Appendix B. Parents are hard behavioural/data prerequisites unless marked acceptance/resource. Development may start against a pinned contract before a producer integrates; dependent acceptance waits for the integrated artifact. This is not a delivery-time claim.",
+  "status_vocabulary": [
+    "planned",
+    "in_progress",
+    "blocked",
+    "qualified",
+    "held",
+    "rejected",
+    "unsupported"
+  ],
+  "nodes": [
+    {
+      "id": "JR-00",
+      "owner": "integrator",
+      "status": "in_progress",
+      "parents": [],
+      "gate": "G0",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-01",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-00",
+        "JR-25"
+      ],
+      "gate": "G0",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-02",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-01"
+      ],
+      "gate": "G1",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-03",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-02",
+        "JR-26"
+      ],
+      "gate": "G1",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-04",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-03"
+      ],
+      "gate": "G1",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-05",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-04",
+        "JR-26"
+      ],
+      "gate": "G1",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-06",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-05"
+      ],
+      "gate": "G1",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-07",
+      "owner": "controls",
+      "status": "in_progress",
+      "parents": [
+        "JR-06"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-08",
+      "owner": "assurance",
+      "status": "in_progress",
+      "parents": [
+        "JR-07"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-09",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-07",
+        "JR-35"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-10",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-09"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-11",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-07"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-12",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-01"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-13",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-04",
+        "JR-11",
+        "JR-12"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-14",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-07",
+        "JR-13",
+        "JR-35",
+        "JR-38"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-15",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-03",
+        "JR-10",
+        "JR-12",
+        "JR-27"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-16",
+      "owner": "assurance",
+      "status": "in_progress",
+      "parents": [
+        "JR-08",
+        "JR-15",
+        "JR-28",
+        "JR-29",
+        "JR-30",
+        "JR-31",
+        "JR-32",
+        "JR-33"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-17",
+      "owner": "assurance",
+      "status": "in_progress",
+      "parents": [
+        "JR-08",
+        "JR-13",
+        "JR-14",
+        "JR-16",
+        "JR-34"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-18",
+      "owner": "assurance",
+      "status": "planned",
+      "parents": [
+        "JR-00",
+        "JR-08",
+        "JR-10",
+        "JR-13",
+        "JR-34"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-19",
+      "owner": "delivery",
+      "status": "planned",
+      "parents": [
+        "JR-00",
+        "JR-14",
+        "JR-38"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-20",
+      "owner": "delivery",
+      "status": "planned",
+      "parents": [
+        "JR-19"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-21",
+      "owner": "integrator",
+      "status": "planned",
+      "parents": [
+        "JR-06",
+        "JR-08",
+        "JR-10",
+        "JR-11",
+        "JR-13",
+        "JR-14",
+        "JR-15",
+        "JR-17",
+        "JR-18",
+        "JR-19",
+        "JR-20",
+        "JR-34",
+        "JR-36",
+        "JR-37",
+        "JR-40",
+        "JR-45",
+        "JR-46"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-22",
+      "owner": "independent-assurance",
+      "status": "blocked",
+      "parents": [
+        "JR-21",
+        "JR-39"
+      ],
+      "gate": "G5",
+      "offline": true,
+      "auth": false,
+      "blocker": "independent reviewer assignment"
+    },
+    {
+      "id": "JR-23",
+      "owner": "evaluation",
+      "status": "blocked",
+      "parents": [
+        "JR-22",
+        "JR-41",
+        "JR-42"
+      ],
+      "gate": "G6",
+      "offline": false,
+      "auth": true,
+      "blocker": "provider account/data/budget/plan"
+    },
+    {
+      "id": "JR-24",
+      "owner": "operator+evaluation",
+      "status": "blocked",
+      "parents": [
+        "JR-23"
+      ],
+      "gate": "G7",
+      "offline": false,
+      "auth": true,
+      "blocker": "advisory admission"
+    },
+    {
+      "id": "JR-25",
+      "owner": "architect+controls",
+      "status": "planned",
+      "parents": [
+        "JR-00"
+      ],
+      "gate": "G0",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-26",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-01"
+      ],
+      "gate": "G0",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-27",
+      "owner": "architect+adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-12",
+        "JR-25"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-28",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-03",
+        "JR-04"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-29",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-10"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-30",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-28",
+        "JR-07"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-31",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-06"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-32",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-02",
+        "JR-03"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-33",
+      "owner": "adapter",
+      "status": "in_progress",
+      "parents": [
+        "JR-13",
+        "JR-27",
+        "JR-08"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-34",
+      "owner": "controls+adapter",
+      "status": "planned",
+      "parents": [
+        "JR-14",
+        "JR-15",
+        "JR-28",
+        "JR-29",
+        "JR-30",
+        "JR-31",
+        "JR-32",
+        "JR-33",
+        "JR-25"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-35",
+      "owner": "controls",
+      "status": "planned",
+      "parents": [
+        "JR-07",
+        "JR-12"
+      ],
+      "gate": "G2",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-36",
+      "owner": "assurance",
+      "status": "planned",
+      "parents": [
+        "JR-09",
+        "JR-14",
+        "JR-18"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-37",
+      "owner": "delivery",
+      "status": "planned",
+      "parents": [
+        "JR-34",
+        "JR-35"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-38",
+      "owner": "security",
+      "status": "planned",
+      "parents": [
+        "JR-12",
+        "JR-26"
+      ],
+      "gate": "G3",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-39",
+      "owner": "delivery+verifier",
+      "status": "planned",
+      "parents": [
+        "JR-21"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-40",
+      "owner": "delivery",
+      "status": "planned",
+      "parents": [
+        "JR-19",
+        "JR-27",
+        "JR-34",
+        "JR-37"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-41",
+      "owner": "independent-assurance",
+      "status": "blocked",
+      "parents": [
+        "JR-42",
+        "JR-46"
+      ],
+      "gate": "G6",
+      "offline": false,
+      "auth": true,
+      "blocker": "trusted installed release + live runtime"
+    },
+    {
+      "id": "JR-42",
+      "owner": "release+operator",
+      "status": "blocked",
+      "parents": [
+        "JR-22"
+      ],
+      "gate": "G6",
+      "offline": false,
+      "auth": true,
+      "blocker": "release authorization + pilot cohort"
+    },
+    {
+      "id": "JR-43",
+      "owner": "release+operator",
+      "status": "blocked",
+      "parents": [
+        "JR-24",
+        "JR-37",
+        "JR-39",
+        "JR-40",
+        "JR-41",
+        "JR-42"
+      ],
+      "gate": "G7",
+      "offline": false,
+      "auth": true,
+      "blocker": "qualified configurations + rollout authority"
+    },
+    {
+      "id": "JR-44",
+      "owner": "operator+independent",
+      "status": "blocked",
+      "parents": [
+        "JR-43",
+        "JR-45"
+      ],
+      "gate": "G8",
+      "offline": false,
+      "auth": false,
+      "blocker": "complete evidence + Operator decision"
+    },
+    {
+      "id": "JR-45",
+      "owner": "delivery",
+      "status": "planned",
+      "parents": [
+        "JR-20"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    },
+    {
+      "id": "JR-46",
+      "owner": "controls+security",
+      "status": "planned",
+      "parents": [
+        "JR-09",
+        "JR-26",
+        "JR-36"
+      ],
+      "gate": "G4",
+      "offline": true,
+      "auth": false
+    }
+  ],
+  "gates": {
+    "G0": [
+      "JR-00",
+      "JR-25",
+      "JR-01",
+      "JR-26"
+    ],
+    "G1": [
+      "JR-02",
+      "JR-03",
+      "JR-04",
+      "JR-05",
+      "JR-06"
+    ],
+    "G2": [
+      "JR-07",
+      "JR-08",
+      "JR-09",
+      "JR-10",
+      "JR-11",
+      "JR-35"
+    ],
+    "G3": [
+      "JR-12",
+      "JR-13",
+      "JR-14",
+      "JR-15",
+      "JR-27",
+      "JR-28",
+      "JR-29",
+      "JR-30",
+      "JR-31",
+      "JR-32",
+      "JR-33",
+      "JR-34",
+      "JR-38"
+    ],
+    "G4": [
+      "JR-16",
+      "JR-17",
+      "JR-18",
+      "JR-19",
+      "JR-20",
+      "JR-36",
+      "JR-37",
+      "JR-40",
+      "JR-45",
+      "JR-46",
+      "JR-21",
+      "JR-39"
+    ],
+    "G5": [
+      "JR-22"
+    ],
+    "G6": [
+      "JR-42",
+      "JR-41",
+      "JR-23"
+    ],
+    "G7": [
+      "JR-24",
+      "JR-43"
+    ],
+    "G8": [
+      "JR-44"
+    ]
+  },
+  "critical_path": [
+    "JR-01",
+    "JR-02",
+    "JR-03",
+    "JR-04",
+    "JR-05",
+    "JR-06",
+    "JR-07",
+    "JR-35",
+    "JR-09",
+    "JR-10",
+    "JR-12",
+    "JR-27",
+    "JR-15",
+    "JR-28",
+    "JR-34",
+    "JR-37",
+    "JR-40",
+    "JR-21",
+    "JR-39",
+    "JR-22",
+    "JR-42",
+    "JR-41",
+    "JR-23",
+    "JR-24",
+    "JR-43",
+    "JR-44"
+  ],
+  "resource_constraints": {
+    "start-path-core": [
+      "JR-02",
+      "JR-03",
+      "JR-04",
+      "JR-05",
+      "JR-06",
+      "JR-11",
+      "JR-13",
+      "JR-34"
+    ],
+    "assurance-core": [
+      "JR-02",
+      "JR-04",
+      "JR-05",
+      "JR-07",
+      "JR-08",
+      "JR-34"
+    ],
+    "review-evaluator": [
+      "JR-07",
+      "JR-09",
+      "JR-10",
+      "JR-46"
+    ],
+    "interface-doc": [
+      "JR-01",
+      "JR-13",
+      "JR-34",
+      "JR-40"
+    ],
+    "live-evaluation-budget": [
+      "JR-23",
+      "JR-24"
+    ],
+    "release-execution": [
+      "JR-42",
+      "JR-43"
+    ]
+  },
+  "ready_frontier": [
+    "JR-00",
+    "JR-01",
+    "JR-25",
+    "JR-38"
+  ],
+  "next_replan_triggers": [
+    "candidate base changes or main advances",
+    "a reproduced counterexample is already fixed",
+    "a contract/schema version changes",
+    "an independent review rejects the change",
+    "host capability changes (Docker/Landlock availability)",
+    "budget or external authorization changes"
+  ]
+}
