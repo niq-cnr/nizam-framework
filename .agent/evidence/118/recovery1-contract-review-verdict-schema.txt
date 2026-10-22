@@ -1,7 +1,0 @@
-COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,hashlib;from pathlib import Path;from jsonschema import Draft202012Validator;v=json.loads(Path('"'"'.agent/qa/118-contract-review-recovery1.json'"'"').read_text());Draft202012Validator(json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text())).validate(v);assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==3;assert type(v['"'"'actor'"'"']) is str and v['"'"'actor'"'"'];assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is True;assert all(type(v[k]) is list and not v[k] for k in ('"'"'issues'"'"','"'"'missing_acceptance_coverage'"'"','"'"'unsupported_claims'"'"'));assert v['"'"'proposal_sha256'"'"']==hashlib.sha256(Path('"'"'.agent/contracts/118.json'"'"').read_bytes()).hexdigest();assert v['"'"'api_sha256'"'"']==hashlib.sha256(Path('"'"'.agent/evidence/118/api-interface.json'"'"').read_bytes()).hexdigest();print('"'"'PASS installed verdict schema and strict recovery1 revision3 approval with exact proposal/API inputs'"'"')'
-REVISION: 79df77ef3854875b39ef59213c06eaf4b4fbf50b
-EXIT: 0
-STDOUT:
-PASS installed verdict schema and strict recovery1 revision3 approval with exact proposal/API inputs
-
-STDERR:

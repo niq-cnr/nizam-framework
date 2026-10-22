@@ -1,7 +1,0 @@
-COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json; from pathlib import Path; from jsonschema import Draft202012Validator; p=Path('"'"'.agent/validator/118-mode-a-rev1.json'"'"'); v=json.loads(p.read_text()); s=json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text()); Draft202012Validator.check_schema(s); Draft202012Validator(s).validate(v); assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==1; assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is True; assert all(type(v[k]) is list and not v[k] for k in ['"'"'issues'"'"','"'"'missing_acceptance_coverage'"'"','"'"'unsupported_claims'"'"']); assert v['"'"'actor'"'"']=='"'"'/root/wa_validator118'"'"'; print('"'"'PASS installed contract_review schema and strict revision1 verdict parse'"'"')'
-REVISION: a51600409fdfa80c527bd3106be934efc071837d
-EXIT: 0
-STDOUT:
-PASS installed contract_review schema and strict revision1 verdict parse
-
-STDERR:

@@ -1,8 +1,0 @@
-COMMAND ["python3", "-c", "import json,pathlib,jsonschema; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-mode-a.json').read_text()); jsonschema.Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert v['final_verdict']['approved'] is False and len(v['issues'])==1; print('VALID installed contract-review schema; strict rejection; one concrete finding')"]
-REVISION 05ad79430b1df030fdf679cc9d16043125f5dee7
-STDOUT
-VALID installed contract-review schema; strict rejection; one concrete finding
-
-STDERR
-
-EXIT 0

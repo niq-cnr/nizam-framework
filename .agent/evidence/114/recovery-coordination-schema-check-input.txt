@@ -1,4 +1,0 @@
-import json,yaml,jsonschema
-for p,s in [('.agent/feature_list_015.json','feature_list'),('docs/planning/phase_015.yaml','phase'),('.agent/run_state.json','run_state')]:
- d=yaml.safe_load(open(p)) if p.endswith('yaml') else json.load(open(p));jsonschema.validate(d,json.load(open('.nizam/schema/'+s+'.schema.json')))
-print('Current canonical feature/phase and derived state schemas PASS.')

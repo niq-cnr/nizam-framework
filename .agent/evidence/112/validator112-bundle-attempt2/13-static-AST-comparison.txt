@@ -1,7 +1,0 @@
-python3 -c 'import ast,json; from pathlib import Path; a={x.name:ast.dump(x,include_attributes=False) for x in ast.parse(Path('"'"'.agent/evidence/112/failed-checker-attempt1/check_112.py'"'"').read_text()).body if isinstance(x,(ast.FunctionDef,ast.ClassDef))}; b={x.name:ast.dump(x,include_attributes=False) for x in ast.parse(Path('"'"'.agent/evidence/112/check_112.py'"'"').read_text()).body if isinstance(x,(ast.FunctionDef,ast.ClassDef))}; print('"'"'changed_existing_AST'"'"',[k for k in a if a[k]!=b.get(k)]); print('"'"'new_AST'"'"',[k for k in b if k not in a]); c=json.loads(Path('"'"'.agent/evidence/112/failed-checker-attempt1/controls.json'"'"').read_text()); d=json.loads(Path('"'"'.agent/evidence/112/controls.json'"'"').read_text()); print('"'"'all26_controls_preserved'"'"',c['"'"'mutations'"'"']==d['"'"'mutations'"'"']); print('"'"'other_control_fields_preserved'"'"',c=={k:v for k,v in d.items() if k!='"'"'measurement_equivalence'"'"'})'
-changed_existing_AST ['budget', 'negative']
-new_AST ['frozen_measure', 'measurement_equivalence']
-all26_controls_preserved True
-other_control_fields_preserved True
-
-EXIT:0

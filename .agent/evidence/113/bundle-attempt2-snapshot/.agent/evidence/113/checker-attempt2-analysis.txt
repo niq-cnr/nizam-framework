@@ -1,4 +1,0 @@
-Actor: /root/adapter_test_author_113
-Strategy: type/interface analysis
-Approved revision: 6bc5a654cf09d2654b4a42d9cdeb93f2491c2582
-Old checker compared raw ../ tokens. C9 runs vlib_path_resolves on extracted slash-qualified tokens from repository cwd; a literal ../ crosslink may correctly render but fail C9. Established ..&#47; HTML slash encoding renders the same document-relative target and lets C9 extract the valid root-qualified tail. Updated checker grades only actual Markdown/HTML hrefs, decodes HTML/URL entities, resolves against document parent, requires the exact contracted existing target and a repository-contained resolution. Bounded SBCL/README paragraph selection uses the same predicate. Code and plaintext path mentions do not qualify. Original37invariants, canonical ACs, installed payload/product/old113bundle snapshot remain unchanged. Additional7negative controls and3actual scratchC9 target runs preregistered before execution. No initialRED replay.
