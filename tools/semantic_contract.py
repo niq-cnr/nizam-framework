@@ -51,6 +51,9 @@ REASON_CODES = (
     "unsupported_capability",
     "invalid_response",
     "cancelled_before_dispatch",
+    "provider_unavailable",
+    "rate_limited",
+    "lost_response",
 )
 
 PROBABILITY_SUM_TOLERANCE = 1e-6
