@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:provider_attempt_event.schema.json",
+  "title": "Nizam Provider-Attempt Event Schema",
+  "description": "One event at the real boundary of a governed provider/model call: pre-dispatch, completion or reconciliation. Absent usage is unknown, never zero; a batched request is one operation charged once; provider identity is explicit or unknown, never inferred from a role label. No credential or authorization header is ever stored here.",
+  "type": "object",
+  "required": ["schema_version", "event_id", "kind", "operation_id", "model"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "event_id": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["pre_dispatch", "completion", "reconciliation"] },
+    "operation_id": { "type": "string", "minLength": 1 },
+    "dispatched": { "type": "boolean" },
+    "replayed": { "type": "boolean" },
+    "outcome": { "enum": ["success", "failed", "timeout", "cancelled", "unknown"] },
+    "model": {
+      "type": "object",
+      "required": ["requested"],
+      "additionalProperties": false,
+      "properties": {
+        "requested": { "type": "string", "minLength": 1 },
+        "resolved": { "type": ["string", "null"] },
+        "provider": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "provider_request_id": { "type": ["string", "null"] },
+    "transport_attempt": { "type": "integer", "minimum": 1 },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "output_tokens": { "type": ["integer", "null"], "minimum": 0 },
+        "cache_tokens": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    },
+    "billing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measured": { "type": ["number", "null"] },
+        "currency": { "type": ["string", "null"] },
+        "price_basis": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
