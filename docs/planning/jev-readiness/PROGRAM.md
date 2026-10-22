@@ -2,10 +2,13 @@
 id: nizam-jev-readiness-program
 title: "Comprehensive Jev Readiness Program"
 description: "Execution record for mandate NIZAM-JEV-OWNER-2026-10-22: baseline, backlog reconciliation, execution DAG, deterministic repairs, semantic architecture, qualification and rollout."
-version: 0.6.0
+version: 0.9.0
 status: active
 authoritative_source: docs/planning/jev-readiness/PROGRAM.md
 change_log:
+  - version: "0.9.0"
+    date: "2026-10-22"
+    summary: "Land the semantic foundation and accounting/evaluation wave on branch feat/jev-readiness-2026-10-22 (PR #131): JR-07 provider-attempt accounting, JR-08 cohort economics, JR-14 optional Jev adapter (mock transport), JR-27 catalog, JR-15/JR-28..33 seven-family question definitions, JR-16/JR-17 evaluation corpora and four-arm harness. Offline, tested; independent review, JR-34 integration, the remaining operational packages and all gated live/migration/rollout/acceptance work remain open."
   - version: "0.6.0"
     date: "2026-10-22"
     summary: "Implement JR-13 mode isolation and pure deterministic policy composition: tools/semantic_policy.py (off-default global/per-family ModeState with authorized widening and rollback, veto-first compose_policy bounded by mode) and tools/test_semantic_policy.py adversarial tests. Off/mock/replay/shadow never influence the baseline."
@@ -36,31 +39,33 @@ the current source win.
 
 ## 1. Current claim
 
-**Program status: IN PROGRESS — deterministic repairs landed locally;
-independent verification and the semantic program remain open.**
+**Program status: IN PROGRESS — the deterministic repairs, provider-neutral
+semantic architecture and the accounting/evaluation foundation are implemented
+offline and under review; integration, the remaining operational packages and
+every live/migration/rollout/acceptance gate remain open. The program is not
+complete.**
 
-- The baseline is refreshed and reconciled (JR-00).
-- JR-02/JR-03/JR-04 are implemented in the working tree and covered by the
-  standalone regression control; full-suite and independent review remain open
-  (see §8).
-- JR-05 authoritative monotonic attempt allocation is implemented in the working
-  tree and covered by its own standalone regression control; the full suite and
-  independent review remain open (see §8).
-- JR-06 continuation-authority verification is implemented in the working tree
-  and covered by its own standalone regression control; the full suite and
-  independent review remain open (see §8).
-- JR-12 typed semantic contracts (Choice/Noul/Score discriminated union,
-  validation and observation binding) are implemented offline and covered by
-  `tools/test_semantic_contract.py`; feature contract approval, integration and
-  independent review remain open (see §8).
-- JR-13 mode isolation and pure policy composition are implemented offline and
-  covered by `tools/test_semantic_policy.py`; the live adapters (JR-14) and
-  integration remain open (see §8).
-- ROADMAP, DEBT, README and the 2026-10-18 remediation record now point at this
-  record; the remediation is a completed predecessor, not the active directive
-  (see §7).
-- No Jev/semantic implementation, live call, release, consumer upgrade,
-  operational comparison or independent program acceptance has occurred.
+- Baseline refreshed and reconciled (JR-00).
+- Deterministic governance (JR-02/JR-03/JR-04/JR-05/JR-06) implemented and
+  covered by standalone regressions.
+- Typed contracts (JR-12), mode-isolated policy (JR-13), the versioned catalog
+  and the seven family question definitions (JR-27, JR-15, JR-28..JR-33), the
+  optional Jev adapter with mock transport (JR-14), provider accounting
+  (JR-07), cohort economics (JR-08), and the evaluation corpus/harness
+  (JR-16/JR-17) are implemented offline and covered by adversarial tests.
+- All of the above is committed on `feat/jev-readiness-2026-10-22` and under
+  review in PR #131. It is local/offline evidence, not independent acceptance.
+- Not yet implemented: wiring the families into the supported routes and roles
+  (JR-34), architecture inventory (JR-01/JR-25), authority-boundary fixtures
+  (JR-26), review-slot persistence (JR-09/JR-10), entry context (JR-11), CI
+  profiling (JR-18), reproducible prerequisites (JR-19), budgets/cancellation
+  (JR-35), isolation-host qualification (JR-36), operations/drift (JR-37),
+  external-data hardening beyond the adapter (JR-38), documentation (JR-40),
+  packaging decision (JR-20/JR-45), reviewer binding (JR-46), release candidate
+  (JR-21) and migration rehearsal (JR-39).
+- Every gated live package remains open: shadow/advisory (JR-23/JR-24), live
+  review qualification (JR-41), pilot release/upgrade (JR-42), staged rollout
+  (JR-43), and independent acceptance and Operator closure (JR-22/JR-44).
 - Off mode remains the only supported semantic mode by default.
 
 No statement in this record is an independent acceptance verdict or an
@@ -68,17 +73,15 @@ Operator acceptance decision.
 
 ### Immediate next action
 
-1. Obtain independent review of the JR-02/JR-03/JR-04/JR-05/JR-06 diff and run the full
-   `tools/test_start_path.py` suite on a Landlock-qualified Linux host
-   (`tools/validate.sh` already passes 16/16 locally but should be re-run with
-   the review). Do not mark these controls accepted from the macOS standalone
-   run alone.
-2. If accepted, integrate the repairs through the repository's normal review
-   and merge path. The working tree is intentionally uncommitted until that
-   review.
-3. Then resume the ready frontier in order: JR-01/JR-25 inventory, JR-18/JR-19
-   measurement/reproduction, JR-12/JR-27 typed semantic contracts.
-4. Stop at the external gates in §5 and `AUTHORITY.md`; none of them are
+1. Let PR #131 CI run clean and obtain independent review of the JR-02..06 diff,
+   then run the full `tools/test_start_path.py` suite on a Landlock-qualified
+   Linux host. Do not mark the controls accepted from the macOS standalone run
+   alone.
+2. Implement the remaining offline packages in dependency order: JR-34 family
+   integration, JR-26 authority boundary, JR-09/JR-10 review-slot recovery,
+   JR-35 budgets, JR-11/JR-18/JR-19/JR-40 consumer/CI/onboarding, JR-21/JR-39
+   release candidate and migration, then JR-36/JR-37/JR-45/JR-46.
+3. Stop at the external gates in §5 and `AUTHORITY.md`; none of them are
    unlocked by this program record.
 
 ## 2. Refreshed baseline (2026-10-22)
@@ -138,35 +141,16 @@ Linux-only tests that were NOT_RUN on the earlier host; the cleanup record's
 
 ## 4. Ready frontier (safe now)
 
-1. **Complete:** JR-00 baseline/reconciliation and the documentation
-   reconciliation recorded in §8.
-2. **Landed locally, review required:** JR-02 strict QA predicate, JR-03
-   complete-delta scope binding, and JR-04 contract consistency, all covered by
-   `test_jev_readiness_controls`.
-3. **Landed locally, review required:** JR-05 authoritative monotonic attempt
-   allocation (reuse rejection + atomic reservation), covered by
-   `test_jev_readiness_attempts`.
-4. **Landed locally, review required:** JR-06 continuation-authority
-   verification, covered by `test_jev_readiness_authority`.
-5. **Landed locally, review required:** JR-12 typed semantic contracts,
-   covered by `tools/test_semantic_contract.py`; feature contract approval and
-   integration still open.
-6. **Landed locally, review required:** JR-13 mode isolation and pure policy
-   composition, covered by `tools/test_semantic_policy.py`.
-7. **Next safe work:** independent review and a Landlock-qualified full-suite
-   run of the JR-02/JR-03/JR-04/JR-05/JR-06 diff.
-8. **Then:** JR-01/JR-25 architecture inventory, then JR-27 versioned
-   question/policy catalog, then JR-15 first family (DF-01) and JR-14 adapter.
-6. **Then:** JR-18 CI profiling and JR-19 prerequisite reproduction (offline, no
-   spend).
-7. **Then:** JR-12/JR-27 typed semantic contracts and catalog
-   (design/implementation against a pinned contract; no live calls).
-4. **Then:** JR-01/JR-25 architecture inventory and shared-predicate contracts
-   (read-only discovery + additive planning).
-5. **Then:** JR-18 CI profiling and JR-19 prerequisite reproduction (offline, no
-   spend).
-6. **Then:** JR-12/JR-27 typed semantic contracts and catalog
-   (design/implementation against a pinned contract; no live calls).
+1. **Complete / under review:** JR-00 baseline, JR-02..JR-06 deterministic
+   repairs, JR-07/JR-08 accounting and economics, JR-12/JR-13 semantic
+   contracts and policy, JR-14 mock adapter, JR-27 catalog, JR-15/JR-28..JR-33
+   family definitions, JR-16/JR-17 evaluation foundation (PR #131).
+2. **Next safe offline work:** JR-34 family integration, JR-26 authority
+   boundary, JR-09/JR-10 review-slot recovery, JR-35 budgets/cancellation,
+   JR-11/JR-18/JR-19/JR-40 context/CI/onboarding/docs, JR-21/JR-39 release
+   candidate and migration rehearsal, then JR-36/JR-37/JR-45/JR-46.
+3. **Blocked by the review host:** a Landlock-qualified full-suite run of
+   `tools/test_start_path.py` (macOS cannot run the native sandbox probe).
 
 ## 5. Gated / blocked frontier
 
@@ -263,6 +247,24 @@ comparison and independent closure remain required for the claimed support.
   disposition stays inside the mode's bounded set (off/mock/replay/shadow never
   influence the baseline).
 
+- **JR-27/JR-15/JR-28..33** — `tools/semantic_catalog.py` defines the seven
+  families with typed questions and dependency/cycle validation;
+  `tools/semantic_families.py` defines every family's question, admission gate and
+  bounded state projection, with DF-01 fixtures covering all four categories.
+- **JR-14** — `tools/providers/jev.py` is the optional host-side adapter: exact
+  pinned model (no floating alias), TLS-enforced trusted endpoint, no redirects,
+  sealed credential, one transport attempt, and the Jev SystemOne wire format
+  translated into provider-neutral observations. 429/5xx/timeout/malformed/
+  model-mismatch/missing-answer/lost-response return bounded fallbacks.
+- **JR-07/JR-08** — `tools/usage_accounting.py` records and reconciles
+  provider-attempt events (charged-once, unknown-not-zero, append-only);
+  `tools/cohort_economics.py` computes cost per accepted change with an undefined
+  zero-denominator and keeps corrected historical measurement labels.
+- **JR-16/JR-17** — `tools/evaluation_corpus.py` freezes independently
+  adjudicated corpora and splits by lineage group without leakage;
+  `tools/evaluation_harness.py` validates the A/B/C/D arms, matched inputs,
+  arm-D applicability and the preregistration contract.
+
 ### Documentation reconciliation
 
 - `ROADMAP.md` now names this program as the active position, states the
@@ -293,6 +295,12 @@ acceptance.
 | standalone `test_jev_readiness_authority()` | PASS — narrative summary cannot grant the three continuation bases |
 | `python3 tools/test_semantic_contract.py` | PASS — Choice/Noul/Score validation + observation binding adversarial cases |
 | `python3 tools/test_semantic_policy.py` | PASS — off-default modes, veto-first composition, authorized transitions |
+| `python3 tools/test_semantic_catalog.py` | PASS — seven-family registry and question-dependency validation |
+| `python3 tools/test_semantic_families.py` | PASS — DF-01 admission/projection and four-category fixtures |
+| `python3 tools/test_jev_adapter.py` | PASS — trust boundary, bounded fallbacks, secret isolation (mock transport) |
+| `python3 tools/test_usage_accounting.py` | PASS — charged-once, unknown-not-zero, append-only reconciliation |
+| `python3 tools/test_cohort_economics.py` | PASS — undefined zero denominator, dedup, unknown/shadow separation |
+| `python3 tools/test_evaluation.py` | PASS — leakage-free split, matched arms, preregistration |
 | `PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py` | NOT_COMPLETED — host sandbox probe fails before the suite (`OSError: [Errno 14] Bad address`) |
 | `PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh` (after documentation edits) | PASS — 16/16 checks, 0 failed |
 
@@ -316,8 +324,7 @@ the invariant-breach halt ordering relative to the reuse check.
 - Independent acceptance, merge, release, consumer upgrade, live provider
   execution, and Operator closure remain gated. Nothing in this wave
   self-certifies those.
-- The documentation reconciliation (`docs-reconcile-2026-10-22`, small-change)
-  is intentionally left uncommitted and not marked `done`: independent QA is
-  open, and the recorded task base predates the uncommitted JR-02/JR-03/JR-04
-  tool diff, so a `done` call would also correctly flag that out-of-scope
-  delta until the control repairs are reviewed separately.
+- Proof is now committed and pushed to `feat/jev-readiness-2026-10-22` (PR
+  #131) and is under review; it is offline/local evidence, not independent
+  acceptance. The adopt-a-PR-and-merge-when-clean authorization applies to this
+  branch only, and does not waive the live/migration/rollout/Operator gates.

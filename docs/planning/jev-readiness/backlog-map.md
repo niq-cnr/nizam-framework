@@ -22,8 +22,8 @@ the obligation is real and unstarted; it is not a completion claim.
 
 | ID | Target requirement (short) | Canonical JR | Current implementation / evidence | Disposition |
 | --- | --- | --- | --- | --- |
-| F01 | Relabel efficiency claims; retain captures | JR-08 | Remediation/cleanup records already distinguish smoke/parser evidence; 61.1%/45.1% remain mis-locatable in narrative | extend: verify and correct every remaining label |
-| F02 | Comprehensive provider usage capture | JR-07 | No provider-attempt event contract found | new work (planned) |
+| F01 | Relabel efficiency claims; retain captures | JR-08 | `cohort_economics.py` encodes corrected labels and separations; historical text still needs the final sweep | partially implemented; label sweep open |
+| F02 | Comprehensive provider usage capture | JR-07 | `usage_accounting.py` event contract + charged-once/unknown accounting implemented | **partially implemented; live boundary instrumentation open** |
 | F03 | One strict normalized completion predicate | JR-02 | `qa_passes` has legacy-shape gaps (missing status accepted; no capture binding) | **implemented locally; independent verification open** |
 | F04 | Bind complete delta to immutable base; no fail-open | JR-03 | `verify_actual_changed_scope` ignores committed changes, blanket-skips `.agent/`, returns on Git error | **implemented locally; independent verification open** |
 | F05 | Validated contract context end to end | JR-04 | `done` re-loads the bugfix scope/contract but lacks contract consistency checks | **implemented locally; independent verification open** |
@@ -41,19 +41,19 @@ the obligation is real and unstarted; it is not a completion claim.
 | F17 | Qualify supported hosts; retain live gap | JR-00/JR-09/JR-14/JR-22 | macOS Landlock probe fails; issue #107/NDEBT-056 open | reconcile-and-qualify |
 | F18 | Version new writes; keep old records readable | JR-01/JR-21 | Canonical vectors exist; no versioned semantic/attempt state | planned |
 | J01 | Facts/judgment/authority separated | JR-12/JR-13 | Typed contracts + veto-first policy composition landed offline; no authority fields present | **partially implemented; integration pending** |
-| J02 | Start with component→requirement Choice | JR-15/JR-16 | None | planned |
+| J02 | Start with component→requirement Choice | JR-15/JR-16 | DF-01 question + fixtures + admission/projection implemented | **partially implemented; live dispatch open** |
 | J03 | Validate distributions/abstention; calibrate | JR-12/JR-17 | Choice/Noul/Score validation + abstention/tie semantics implemented; held-out calibration pending | **partially implemented; evaluation pending** |
 | J04 | Batch only independent questions over same state | JR-10/JR-15 | None | planned |
-| J05 | Implement/qualify all seven families | JR-28…JR-33, JR-23/24 | None | planned |
-| J06 | Off default; optional provider | JR-12/13/14 | Off-default mode state + mock/replay/shadow isolation landed offline; optional adapter pending | **partially implemented; adapter pending** |
+| J05 | Implement/qualify all seven families | JR-28…JR-33, JR-23/24 | Seven family question definitions + mandatory sources implemented; qualification open | **partially implemented; qualification gated** |
+| J06 | Off default; optional provider | JR-12/13/14 | Off-default modes + mock/replay/shadow isolation + optional Jev adapter (mock transport) implemented | **partially implemented; live transport gated** |
 | J07 | Pin model, bind observation, explicit replay | JR-12/13/14 | Observation binding (requested/resolved model, digests) implemented; adapter/dispatch/replay pending | **partially implemented; adapter pending** |
 | J08 | Explicit external-processing boundary | JR-14/JR-15 | Review sandbox boundary exists; no provider egress policy | planned |
-| J09 | Four-arm, held-out, all-in economics | JR-07/08/16/17/23/24 | Historical pilot only, correctly reclassified | planned + gated |
+| J09 | Four-arm, held-out, all-in economics | JR-07/08/16/17/23/24 | Accounting, economics, corpus split and four-arm harness implemented; live arms gated | **partially implemented; live comparison gated** |
 | J10 | Readiness is not savings or promotion | JR-22/23/24/41/42/43/44 | None | planned + gated |
 | X01 | Reconcile cleanup; do not duplicate/delete | JR-00 | PRs 128–130 merged and ancestors of HEAD; archive resolver/vectors present | **reconciled, reuse** |
 | C01 | Complete control-surface coverage | JR-25/34/40/44 | Partial map implied by `start_path` routes; no full matrix | planned |
-| C02 | Full typed architecture and policy ownership | JR-12/26/27/34 | None | planned |
-| C03 | All material semantic families | JR-15/28…33 + evaluation | None | planned |
+| C02 | Full typed architecture and policy ownership | JR-12/26/27/34 | Contracts, policy, catalog implemented; JR-34 integration and JR-26 boundary open | **partially implemented** |
+| C03 | All material semantic families | JR-15/28…33 + evaluation | All seven family definitions implemented; DF-01 fixtures; evaluation corpus/harness landed | **partially implemented; qualification gated** |
 | C04 | Operational resilience and data control | JR-14/35/36/37/38 | Attempt/capture primitives exist; no budgets/provider controls | planned |
 | C05 | Actual independent-review qualification | JR-09/36/41/46 | Issue #107 + NDEBT-056; no live model observations | planned + gated |
 | C06 | Migration and supported release | JR-19/21/39/40/42/43/45 | Bootstrap sparse/rollback work landed; active-state migration not rehearsed for Jev | planned |
