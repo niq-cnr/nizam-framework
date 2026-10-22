@@ -44,6 +44,7 @@ ABSTAIN = "abstain"
 VETO = "veto"
 
 _DISPOSITIONS = (NO_EFFECT, ADVISORY, CONSERVATIVE_ESCALATION, CLARIFY, ABSTAIN, VETO)
+DISPOSITIONS = _DISPOSITIONS
 
 # The dispositions each mode is permitted to emit. Off/mock/replay/shadow never
 # influence the baseline actors; advisory may suggest (never bind); governed may

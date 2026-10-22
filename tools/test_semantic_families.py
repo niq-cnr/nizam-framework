@@ -77,7 +77,7 @@ def _d(labels, modal):
 
 def test_fixture_cases_cover_all_four_categories():
     # AC-15-01: fixtures include explicit, support, extension and missing-evidence cases
-    fixture = json.loads((ROOT / "tools/fixtures/semantic/df01_cases.json").read_text())
+    fixture = json.loads((ROOT / "docs/planning/jev-readiness/df01_corpus.json").read_text())
     expected = {case["expected"] for case in fixture["cases"]}
     assert expected == set(sf.DF01_QUESTION["options"])
     # every case names immutable ids and a requirement/component (AC-16-01 seed)
