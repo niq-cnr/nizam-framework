@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:semantic_catalog.schema.json",
+  "title": "Nizam Semantic Question and Policy Catalog Schema",
+  "description": "Validates a versioned machine-readable catalog of the seven semantic families and their typed questions: each family's primitives, consumers, permitted effects, state sources and consequential error, and each question's primitive, ordered options/rubric/polarity, dependencies and max_mode. Activation never comes from task text or a model; a catalog change is a reviewed, versioned record.",
+  "type": "object",
+  "required": ["schema_version", "families", "questions"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "families": {
+      "type": "object",
+      "propertyNames": { "pattern": "^DF-0[1-7]$" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name", "primitives", "consumers", "permitted_effects", "state_sources", "consequential_error", "core_package"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "primitives": { "type": "array", "items": { "enum": ["choice", "noul", "score"] }, "minItems": 1 },
+          "consumers": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "permitted_effects": { "type": "array", "items": { "enum": ["no_effect", "advisory", "conservative_escalation", "clarify", "abstain", "veto"] } },
+          "state_sources": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "consequential_error": { "type": "string", "minLength": 1 },
+          "core_package": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["family", "question_id", "version", "primitive", "instructions"],
+        "additionalProperties": false,
+        "properties": {
+          "family": { "enum": ["DF-01", "DF-02", "DF-03", "DF-04", "DF-05", "DF-06", "DF-07"] },
+          "question_id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "primitive": { "enum": ["choice", "noul", "score"] },
+          "instructions": { "type": "string", "minLength": 1 },
+          "options": { "type": "array", "items": { "type": "string" } },
+          "polarity": { "enum": ["yes", "no"] },
+          "rubric": { "type": "array", "items": { "type": "object" } },
+          "max_mode": { "enum": ["off", "mock", "replay", "shadow", "advisory", "governed"] },
+          "depends_on": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

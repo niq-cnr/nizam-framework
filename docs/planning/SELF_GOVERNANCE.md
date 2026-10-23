@@ -2,9 +2,13 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
+change_log:
+  - version: "0.8.0"
+    date: "2026-10-23"
+    summary: "Record the v1.11.0 installation from observed facts: stage installed, commissioning not performed (316 released files + provenance.json at 6fc683580941adf19860d9d9d00fdc81d38d8088, installed_at 2026-10-23T01:21:26Z), verified byte-for-byte against the v1.11.0 tag (annotated tag object 5b09fc0b179ff4f06ea4aec7878a34170654ade6). The v1.10.1, v1.10.0, v1.9.0, v1.8.0, v1.7.0, v1.6.0 and v1.5.0 installation records below are retained unchanged as history."
 change_log:
   - version: "0.7.0"
     date: "2026-10-19"
@@ -37,22 +41,22 @@ installation:
   repository: niq-cnr/nizam-framework
   local_scope:
     - niq-cnr/nizam-framework
-  tag: v1.10.1
-  resolved_sha: 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd
+  tag: v1.11.0
+  resolved_sha: 6fc683580941adf19860d9d9d00fdc81d38d8088
   authorization_gate: H-CONSUMER-UPGRADE
-  authorization_recorded_at: "2026-10-19T06:00:00Z"
-  authorization_verbatim: "Reuse existing session authorization for concrete commits, merges, releases, and this repository's supported self-adoption."
+  authorization_recorded_at: "2026-10-23T00:00:00Z"
+  authorization_verbatim: "Prepare the project for the next release. - self install. - update the version references ready for tagging."
   status: installed
   commissioning_performed: false
-  released_file_count: 278
+  released_file_count: 316
   evidence:
-    bootstrap_install: .agent/evidence/release-v1.10.1-closeout/bootstrap-install.txt
-    verify_self_governance: .agent/evidence/release-v1.10.1-closeout/verify-self-governance.txt
-    test_self_governance: .agent/evidence/release-v1.10.1-closeout/test-self-governance.txt
-    payload_validate: .agent/evidence/release-v1.10.1-closeout/payload-validate.txt
-    bootstrap_verify_only: .agent/evidence/release-v1.10.1-closeout/bootstrap-verify-only.txt
+    bootstrap_install: .agent/evidence/release-v1.11.0-closeout/bootstrap-install.txt
+    verify_self_governance: .agent/evidence/release-v1.11.0-closeout/verify-self-governance.txt
+    test_self_governance: .agent/evidence/release-v1.11.0-closeout/test-self-governance.txt
+    payload_validate: .agent/evidence/release-v1.11.0-closeout/payload-validate.txt
+    bootstrap_verify_only: .agent/evidence/release-v1.11.0-closeout/bootstrap-verify-only.txt
   source_url: https://github.com/niq-cnr/nizam-framework.git
-  installed_at: "2026-10-19T11:03:39Z"
+  installed_at: "2026-10-23T01:21:26Z"
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
@@ -74,7 +78,47 @@ commissioning:
   installed_at: "2026-10-10T18:12:44Z"
 ---
 
-# Current installation — `v1.10.1` (installed — commissioning not performed)
+# Current installation — `v1.11.0` (installed — commissioning not performed)
+
+This repository has installed the public immutable `v1.11.0` release under
+`.nizam/`. The stage is **installed — commissioning not performed**. Its machine
+values are `installation.status: installed` and
+`installation.commissioning_performed: false`. The clean installed preflight,
+baseline and independent QA that completed the `v1.5.0` commissioning have not
+been performed for `v1.11.0`.
+
+The pin is tag `v1.11.0` (annotated tag object
+`5b09fc0b179ff4f06ea4aec7878a34170654ade6`), resolved commit
+`6fc683580941adf19860d9d9d00fdc81d38d8088`, installed at
+`2026-10-23T01:21:26Z` as recorded in `.nizam/provenance.json`. The installation
+contains 316 released files and that provenance record.
+
+Because an immutable Git tag cannot contain a commit created after the tag is
+cut, the repository's `.nizam/` directory in the `v1.11.0` tag tree holds the
+prior self-installed release (`v1.10.1`). A release tag's consumer payload is
+always the six authored root modules (`standard/`, `methodology/`, `templates/`,
+`schema/`, `tools/`, `ecosystem/`) plus root `NIZAM.json` copied by
+`bootstrap.sh`, never the tagged tree's `.nizam/` directory. After the tag was
+published, this separate self-adoption commit re-ran `bootstrap.sh` against that
+published tag to update this repository's `.nizam/`.
+
+The operator authorization is gate `H-CONSUMER-UPGRADE`, recorded in
+`.agent/run_state.json` for this self-adoption. The operator's instructions were:
+"Prepare the project for the next release. - self install. - update the version
+references ready for tagging." under the session's existing manage/triage/merge
+authority. The authorization covers local installation for this single
+repository.
+
+The installation was verified against the tag: the payload trees are identical
+to the tag, and `verify_self_governance.py`, its drift test, `validate.sh
+--payload` and `bootstrap.sh --verify-only` all exited 0. Captures:
+`.agent/evidence/release-v1.11.0-closeout/bootstrap-install.txt`,
+`verify-self-governance.txt`, `test-self-governance.txt`,
+`payload-validate.txt` and `bootstrap-verify-only.txt` in the same directory.
+
+> **Historical record — the `v1.10.1` installation, retained unchanged below. It does not describe the current installation.**
+
+# Prior installation — `v1.10.1` (installed — commissioning not performed)
 
 This repository has installed the public immutable `v1.10.1` release under
 `.nizam/`. The stage is **installed — commissioning not performed**. Its machine

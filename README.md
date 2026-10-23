@@ -25,20 +25,20 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v1.10.1` remains the latest released and installed payload; `v1.11.0` is in preparation.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v1.11.0` is the latest released and installed payload.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v1.11.0`)
 
 Want your AI coding agent (Claude Code, Cursor, Antigravity, Codex, Windsurf, or any CLI/IDE agent) to onboard your repository to the latest immutable Nizam release with zero manual setup? **Copy and paste this single prompt into your coding agent:**
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v1.11.0, commit <40-hex-commit-sha>):
+Onboard this repository to the Nizam governance framework (immutable release v1.11.0, commit 6fc683580941adf19860d9d9d00fdc81d38d8088):
 
 1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.11.0 AI Agent Entry Protocol and CLI reference.
 2. Fetch and run the official bootstrap script pinned to v1.11.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
    curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
+   GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -184,7 +184,7 @@ Fetch `bootstrap.sh` pinned to the latest released tag and run it against your r
 ```sh
 curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
+GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/
 ```
 
 `--tag v1.11.0` (equivalently `GOVERNANCE_TAG=v1.11.0`) pins the inheritance to a real
@@ -224,7 +224,7 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 
 ```sh
 # Commit-bound content-integrity verification (verifies every file, mode, and digest against the expected commit in --git-repo):
-./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
+./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/ --require-content-integrity
 
 # Unbound directory comparison (reports content_integrity=directory_match_unbound; does not satisfy --expected-sha or --require-content-integrity):
 ./bootstrap.sh --verify-only --tag v1.11.0 --source-root /path/to/unpacked-release/
@@ -300,7 +300,7 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ## Local governance
 
-This repository has installed its public `v1.10.1` governance under `.nizam/`; `v1.11.0` is in preparation.
+This repository has installed its public `v1.11.0` governance under `.nizam/`.
 The installed payload is verified byte-for-byte against the pinned tag by the
 standing `self_governance` CI job (`verify_self_governance.py` and
 `bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).

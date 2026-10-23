@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:semantic_policy_result.schema.json",
+  "title": "Nizam Semantic Policy Result Schema",
+  "description": "The deterministic disposition a family policy computes from verified facts and one or more validated observations. This is separate from the observations themselves: it owns no semantic answer and cannot approve, suppress, allocate attempts or waive assurance. Hard vetoes are recorded before any aggregate score, and an average can never erase a veto.",
+  "type": "object",
+  "required": ["schema_version", "family", "question_version", "disposition", "vetoes", "basis"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "family": { "type": "string", "minLength": 1 },
+    "question_version": { "type": "string", "minLength": 1 },
+    "disposition": {
+      "type": "object",
+      "required": ["outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "outcome": { "enum": ["no_effect", "advisory", "conservative_escalation", "clarify", "abstain", "veto"] },
+        "reason": { "type": "string" }
+      }
+    },
+    "vetoes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "triggered"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "triggered": { "type": "boolean" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "basis": {
+      "type": "object",
+      "required": ["facts", "observations"],
+      "additionalProperties": false,
+      "properties": {
+        "facts": { "type": "array", "items": { "type": "string" } },
+        "observations": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

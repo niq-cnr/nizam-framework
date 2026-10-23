@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:evidence_archive.schema.json",
+  "title": "Nizam Historical Evidence Archive Index Schema",
+  "description": "Validates .agent/evidence-archive/index.json, the versioned index that binds completed historical evidence tranches to Git blobs retained by ordinary history. Structural validation is necessary but not sufficient: tools/evidence_archive.py additionally verifies object type, length, raw-byte SHA-256, path uniqueness, and feature/contract/QA eligibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generator_version", "repository", "objects", "tranches"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Archive index schema version. It is independent of the framework release version."
+    },
+    "generator_version": {
+      "type": "string",
+      "description": "Version of tools/evidence_archive.py that produced the index, so a regenerated index is distinguishable."
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "archive_commit", "archive_tree"],
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Exact origin URL recorded before archiving; repository identity, never a moving ref."
+        },
+        "archive_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Immutable commit whose tree still contained the archived paths at index generation time. Historical evidence blobs remain reachable because this commit is an ancestor of the cleaned mainline."
+        },
+        "archive_tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Tree object of archive_commit."
+        }
+      }
+    },
+    "objects": {
+      "type": "object",
+      "description": "Content-addressed object table. Each key is the raw-byte SHA-256 of a Git blob; the value binds the Git blob object id and its byte length. Identical content is stored once even when several executions reference it.",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "prefixItems": [
+          {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$",
+            "description": "Git blob object id."
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Raw blob byte length."
+          }
+        ],
+        "items": false
+      }
+    },
+    "tranches": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One tranche per explicitly archived completed feature. Entries are sorted by path and must be globally unique across tranches.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "feature_id",
+          "feature_lists",
+          "archive_commit",
+          "archive_tree",
+          "proved_source_commit",
+          "contract",
+          "qa",
+          "object_type",
+          "entries"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^feature-[0-9A-Za-z._-]+$"
+          },
+          "feature_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "feature_lists": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" },
+            "description": "Feature-list files that recorded this feature as complete at archive time."
+          },
+          "archive_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "archive_tree": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "proved_source_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$",
+            "description": "Source candidate identity proved by the original completion record. Distinct from archive_commit, which only describes storage."
+          },
+          "contract": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+            }
+          },
+          "qa": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": { "type": "string" },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+            }
+          },
+          "object_type": {
+            "type": "string",
+            "const": "blob"
+          },
+          "entries": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "prefixItems": [
+                {
+                  "type": "string",
+                  "pattern": "^\\.agent/evidence/",
+                  "description": "Canonical repository-relative evidence path."
+                },
+                {
+                  "type": "string",
+                  "enum": ["100644", "100755"],
+                  "description": "Git file mode."
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "description": "Key into the top-level objects table."
+                }
+              ],
+              "items": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

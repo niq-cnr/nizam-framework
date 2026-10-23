@@ -1495,6 +1495,202 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
     assert any("non-terminal features: 134" in c for c in bad_status_doc["contradictions"])
 
 
+def _git(root: Path, *args: str) -> None:
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, text=True)
+
+
+def test_jev_readiness_controls() -> None:
+    """Prove strict QA normalization, complete-delta scope binding and contract identity consistency."""
+    with tempfile.TemporaryDirectory(prefix="nizam-jev-qa-") as qa_dir:
+        root = Path(qa_dir).resolve()
+        legacy_ok = {
+            "feature_id": "gate",
+            "verdict": "pass",
+            "executed_at": "2026-10-22T00:00:00Z",
+            "checks": [
+                {"command": "true", "exit_code": 0, "evidence": ".agent/evidence/gate-out.txt"}
+            ],
+            "required_fixes": [],
+        }
+        legacy_failed = dict(legacy_ok)
+        legacy_failed["checks"] = [
+            {"command": "false", "exit_code": 1, "evidence": ".agent/evidence/gate-out.txt"}
+        ]
+        legacy_blocked = dict(legacy_ok)
+        legacy_blocked["issues"] = [{"description": "real blocker"}]
+        evolved_contradiction = qa("gate", ".agent/evidence/gate-out.txt")
+        evolved_contradiction["final_verdict"] = {"approved": False, "summary": "rejected"}
+        evolved_short_evidence = qa("gate", ".agent/evidence/gate-out.txt")
+        evolved_short_evidence["checks_run"] = 2
+        evolved_short_evidence["checks_passed"] = 2
+
+        write(
+            root,
+            ".agent/evidence/gate-intent.json",
+            {
+                "id": "gate",
+                "path": "trivial",
+                "summary": "Probe the normalized QA predicate.",
+                "needs_new_contract": False,
+                "files": ["README.md"],
+            },
+        )
+        (root / "README.md").write_text("# Demo\n", encoding="utf-8")
+        (root / ".agent/evidence/gate-out.txt").write_text("captured output\n", encoding="utf-8")
+
+        for payload, code, text in (
+            (legacy_ok, 0, "recorded verification result exists"),
+            (legacy_failed, 1, "does not pass"),
+            (legacy_blocked, 1, "does not pass"),
+            (evolved_contradiction, 1, "does not pass"),
+            (evolved_short_evidence, 1, "does not pass"),
+        ):
+            write(root, ".agent/qa/gate.json", payload)
+            expect(run(root, "begin", "trivial", "--id", "gate"), 0, "implementation may begin")
+            expect(run(root, "done", "trivial", "--id", "gate"), code, text)
+            (root / ".agent/evidence/gate-base.json").unlink(missing_ok=True)
+
+    with tempfile.TemporaryDirectory(prefix="nizam-jev-scope-") as git_dir:
+        git_root = Path(git_dir).resolve()
+        _git(git_root, "init", "-q")
+        _git(git_root, "config", "user.name", "Test")
+        _git(git_root, "config", "user.email", "test@example.invalid")
+        (git_root / "README.md").write_text("# Demo\n", encoding="utf-8")
+        (git_root / "OLD.txt").write_text("old\n", encoding="utf-8")
+        _git(git_root, "add", "-A")
+        _git(git_root, "commit", "-qm", "init")
+        write(
+            git_root,
+            ".agent/evidence/delta-intent.json",
+            {
+                "id": "delta",
+                "path": "small-change",
+                "summary": "Update README only.",
+                "needs_new_contract": False,
+                "files": ["README.md"],
+            },
+        )
+        expect(run(git_root, "begin", "small-change", "--id", "delta"), 0, "implementation may begin")
+        (git_root / "README.md").write_text("# Demo updated\n", encoding="utf-8")
+        (git_root / ".agent/evidence/delta-out.txt").write_text("captured\n", encoding="utf-8")
+        write(git_root, ".agent/qa/delta.json", qa("delta", ".agent/evidence/delta-out.txt"))
+
+        (git_root / "UNDECLARED.py").write_text("print('x')\n", encoding="utf-8")
+        expect(run(git_root, "done", "small-change", "--id", "delta"), 1, "UNDECLARED.py")
+        (git_root / "UNDECLARED.py").unlink()
+
+        expect(
+            run(git_root, "done", "small-change", "--id", "delta"),
+            0,
+            "recorded verification result exists",
+        )
+
+        (git_root / "COMMITTED.py").write_text("print('c')\n", encoding="utf-8")
+        _git(git_root, "add", "COMMITTED.py")
+        _git(git_root, "commit", "-qm", "undeclared committed change")
+        expect(run(git_root, "done", "small-change", "--id", "delta"), 1, "COMMITTED.py")
+
+        _git(git_root, "rm", "-q", "COMMITTED.py")
+        _git(git_root, "commit", "-qm", "remove committed")
+        _git(git_root, "mv", "OLD.txt", "RENAMED.txt")
+        _git(git_root, "commit", "-qm", "rename")
+        expect(run(git_root, "done", "small-change", "--id", "delta"), 1, "RENAMED.txt")
+
+        _git(git_root, "mv", "RENAMED.txt", "OLD.txt")
+        _git(git_root, "commit", "-qm", "rename back")
+        (git_root / ".agent/run_state.json").write_text("{}\n", encoding="utf-8")
+        expect(run(git_root, "done", "small-change", "--id", "delta"), 1, ".agent/run_state.json")
+
+    with tempfile.TemporaryDirectory(prefix="nizam-jev-contract-") as contract_dir:
+        croot = Path(contract_dir).resolve()
+        mismatched = contract("approved", ["README.md"])
+        mismatched["feature_id"] = "different-task"
+        write(croot, ".agent/contracts/c1.json", mismatched)
+        write(croot, ".agent/evidence/bound-scope.json", scope("bound", ["README.md"], "c1"))
+        write(croot, ".agent/evidence/bound-cause.json", cause("bound"))
+        expect(run(croot, "begin", "bugfix", "--id", "bound"), 1, "disagree")
+
+    print("jev-readiness: strict QA, complete-delta scope and contract identity controls pass")
+
+
+def test_jev_readiness_attempts() -> None:
+    """Prove authoritative monotonic attempt allocation (F06/JR-05)."""
+    with tempfile.TemporaryDirectory(prefix="nizam-jev-attempt-") as attempt_dir:
+        root = Path(attempt_dir).resolve()
+        out = str(root / ".agent/evidence/captures")
+
+        res1 = run_raw(
+            "capture", "--id", "mono", "--step", "check", "--attempt", "1",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('one')",
+        )
+        expect(res1, 0, '"outcome": "success"')
+
+        res_reuse = run_raw(
+            "capture", "--id", "mono", "--step", "check", "--attempt", "1",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('reuse')",
+        )
+        expect(res_reuse, 2, "reuses already-consumed attempt history")
+
+        out2 = str(root / ".agent/evidence/other")
+        res_hidden = run_raw(
+            "capture", "--id", "mono", "--step", "check", "--attempt", "1",
+            "--output-dir", out2, "--root", str(root), "--",
+            sys.executable, "-c", "print('hidden')",
+        )
+        expect(res_hidden, 2, "reuses already-consumed attempt history")
+
+        res2 = run_raw(
+            "capture", "--id", "mono", "--step", "check", "--attempt", "2",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('two')",
+        )
+        expect(res2, 0, '"outcome": "success"')
+
+        assert (root / ".agent/evidence/mono-check-attempt1.reservation.json").is_file()
+        assert (root / ".agent/evidence/mono-check-attempt2.reservation.json").is_file()
+
+    print("jev-readiness: authoritative monotonic attempt allocation passes")
+
+
+def test_jev_readiness_authority() -> None:
+    """Prove narrative summaries cannot substitute for verified continuation authority (F07/JR-06)."""
+    with tempfile.TemporaryDirectory(prefix="nizam-jev-auth-") as auth_dir:
+        root = Path(auth_dir).resolve()
+        (root / ".agent").mkdir(parents=True)
+        out = str(root / ".agent/evidence/captures")
+
+        res_op = run_raw(
+            "capture", "--id", "op", "--step", "verify", "--attempt", "4",
+            "--continuation-basis", "operator-reset",
+            "--repair-summary", "operator said to continue",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('op')",
+        )
+        expect(res_op, 2, "requires recorded operator authorization")
+
+        res_am = run_raw(
+            "capture", "--id", "am", "--step", "verify", "--attempt", "4",
+            "--continuation-basis", "bounded-amendment",
+            "--repair-summary", "I amended the contract",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('am')",
+        )
+        expect(res_am, 2, "requires a recorded contract amendment")
+
+        res_dc = run_raw(
+            "capture", "--id", "dc", "--step", "verify", "--attempt", "4",
+            "--continuation-basis", "verified-decomposition",
+            "--repair-summary", "I decomposed the task",
+            "--output-dir", out, "--root", str(root), "--",
+            sys.executable, "-c", "print('dc')",
+        )
+        expect(res_dc, 2, "requires --decomposition-of")
+
+    print("jev-readiness: continuation authority cannot be granted by narrative summary")
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="nizam-start-path-") as name:
         root = Path(name)
@@ -1576,6 +1772,9 @@ def main() -> int:
         test_a1_f1_f5_scope_completion_and_amendments(root)
         test_r6_r7_r8_preflight_capture_status_and_resume(root)
 
+    test_jev_readiness_controls()
+    test_jev_readiness_attempts()
+    test_jev_readiness_authority()
     print("start-path: bugfix, small-change, trivial, classify, amend-contract, preflight, capture, publish, build-receipt, and status gates pass")
     return 0
 
