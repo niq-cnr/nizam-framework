@@ -2,9 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.31
+version: 0.65.32
 status: active
 authoritative_source: docs/planning/ROADMAP.md
+change_log:
+  - version: "0.65.32"
+    date: "2026-10-23"
+    summary: "Record v1.11.0 MINOR release preparation: the provider-neutral semantic observation architecture (off by default), the deterministic governance-close-out repairs, the factual-evidence archive/bounded preservation, the sparse bootstrap, llms.txt and the README/guide refresh are merged (PR #131 et al.); the Current position section gains the 'Release in preparation: v1.11.0' disposition line ahead of the v1.10.1 latest-released record. The annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.11.0' roll land in the post-tag closeout."
 change_log:
   - version: "0.65.31"
     date: "2026-10-22"
@@ -367,6 +371,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v1.11.0 (MINOR) — prepared 2026-10-23.
 
 Latest released tag: v1.10.1 (PATCH) — RELEASED 2026-10-19 at `2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd` (PR #125, annotated tag object `5b6fdb64a5bc3bf1def755b8269696d9e95b3a41`); `release.yml` run 39241606087 and `pages.yml` run 39241597482 succeeded and the GitHub Release published at `2026-10-19T11:01:33Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.10.1` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T11:03:39Z`).
 

@@ -1,8 +1,8 @@
 # Nizam Framework — Complete LLM & AI Agent Reference (llms-full.txt)
 
-> Nizam (`v1.10.1`) is a declarative, proportion-scaled governance and execution framework for AI-assisted and human software delivery. It installs into a consumer repository at `.nizam/` from an immutable release tag (`vX.Y.Z`) and governs change routing, role separation, exclusive execution evidence capture, and receipt-verified state transitions via `.agent/`.
+> Nizam (`v1.11.0`) is a declarative, proportion-scaled governance and execution framework for AI-assisted and human software delivery. It installs into a consumer repository at `.nizam/` from an immutable release tag (`vX.Y.Z`) and governs change routing, role separation, exclusive execution evidence capture, and receipt-verified state transitions via `.agent/`.
 
-- **Version**: `1.10.1`
+- **Version**: `1.11.0`
 - **Repository**: `https://github.com/niq-cnr/nizam-framework`
 - **Interactive Guide**: `https://niq-cnr.github.io/nizam-framework/`
 - **Concise LLM Index**: `https://niq-cnr.github.io/nizam-framework/llms.txt`
@@ -10,18 +10,18 @@
 
 ---
 
-## 0. One-Prompt Consumer Onboarding (`v1.10.1`)
+## 0. One-Prompt Consumer Onboarding (`v1.11.0`)
 
-Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v1.10.1` (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`) with minimal friction:
+Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v1.11.0` (`<40-hex-commit-sha>`) with minimal friction:
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v1.10.1, commit 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd):
+Onboard this repository to the Nizam governance framework (immutable release v1.11.0, commit <40-hex-commit-sha>):
 
-1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.10.1 AI Agent Entry Protocol and CLI reference.
-2. Fetch and run the official bootstrap script pinned to v1.10.1 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
-   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.11.0 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v1.11.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -37,7 +37,7 @@ When operating inside a repository that uses Nizam (or within the `nizam-framewo
 2. **Framework-checkout fallback** (authoring repo only): Consult root `NIZAM.json` and `tools/SKILL.md` when authoring the framework itself.
 
 ### 1.2 Invariant Rules for AI Agents
-- **Immutable Payload**: Never edit files inside `.nizam/`. It is a verified snapshot of an immutable release tag (`v1.10.1`).
+- **Immutable Payload**: Never edit files inside `.nizam/`. It is a verified snapshot of an immutable release tag (`v1.11.0`).
 - **No Bytecode Contamination**: Always prefix Python tool calls with `PYTHONDONTWRITEBYTECODE=1` so `__pycache__` does not pollute `.nizam/` or the repository tree.
 - **Proportion-Scaled Routing**: Always run `classify` before planning or editing. Do not invent ad-hoc workflows.
 - **Role & State Ownership**: The Orchestrator (`orchestrator-state`) owns `.agent/run_state.json` lifecycle fields (`lifecycle_stage`, `circuit_breakers`). Implementation agents (`generator-deterministic`) must preserve those fields intact.
@@ -160,9 +160,9 @@ Nizam installs into consumer repositories from an immutable release tag (`vX.Y.Z
 
 ### 4.1 Consumer Installation
 ```bash
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh | bash -s -- \
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh | bash -s -- \
   --repo https://github.com/niq-cnr/nizam-framework.git \
-  --tag v1.10.1
+  --tag v1.11.0
 ```
 
 ### 4.2 Commit-Bound Verification (`--verify-only`)
@@ -171,8 +171,8 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/boo
 ```bash
 # Full cryptographic commit-bound verification (content_integrity=verified)
 ./bootstrap.sh --verify-only \
-  --tag v1.10.1 \
-  --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd \
+  --tag v1.11.0 \
+  --expected-sha <40-hex-commit-sha> \
   --git-repo .nizam-ref/ \
   --require-content-integrity
 
@@ -203,7 +203,7 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/boo
 ### 5.3 Consumer Directory Anatomy
 - **`.nizam/` (Immutable Installed Framework)**:
   - `NIZAM.json` — Machine-readable capability index
-  - `provenance.json` — Release tag, commit SHA (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`), and install timestamp
+  - `provenance.json` — Release tag, commit SHA (`<40-hex-commit-sha>`), and install timestamp
   - `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`
 - **`.agent/` (Consumer Project Governance Workspace)**:
   - `run_state.json` — Active lifecycle stage, contract pointer, and circuit-breaker counters
