@@ -7,40 +7,74 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-10-23
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): adds the
+provider-neutral semantic observation architecture (off by default), the
+deterministic governance-close-out repairs, and the earlier evidence-archive,
+sparse-bootstrap, `llms.txt` and front-door documentation work. No shipped schema
+was narrowed and no required key was added, so a `v1.10.x`-compliant consumer that
+upgrades by re-bootstrap remains compliant without remediation.
+
 ### Added
 
-- **Historical evidence archive and bounded preservation**:
-  Added `.agent/evidence-archive/index.json`, `schema/evidence_archive.schema.json`,
-  and `tools/evidence_archive.py` to bind completed historical evidence tranches
-  to Git blobs retained by ordinary history (type, oid, mode, length and raw-byte
-  SHA-256, deduplicated by content). C16 now resolves archived paths only for an
-  unchanged completed feature; current acceptance never falls back to historical
-  bytes. Added `tools/evidence_preservation.py` for content-addressed input
-  inventories with distinct per-run receipts, and fixed canonical-format
-  compatibility vectors in `tools/test_canonical_formats.py`.
+- **Provider-neutral semantic observation architecture (Jev-ready foundation, off by default)**:
+  Added `tools/semantic_contract.py` (versioned discriminated Choice/Noul/Score
+  union, per-primitive validation and the authority-free observation binding),
+  `tools/semantic_policy.py` (off-default global/per-family mode state with
+  authorized widening and rollback, and veto-first pure deterministic
+  composition), `tools/semantic_catalog.py` (the seven decision families
+  `DF-01`..`DF-07` and typed question/dependency validation),
+  `tools/semantic_families.py` (per-family question definitions, admission gates
+  and bounded state projection), `tools/providers/jev.py` (optional host-side Jev
+  adapter — exact pinned model, TLS-enforced trusted endpoint, no redirects,
+  sealed credentials, one transport attempt, bounded fallbacks),
+  `tools/usage_accounting.py` and `tools/cohort_economics.py` (charged-once,
+  unknown-not-zero accounting and undefined-zero-denominator economics), and
+  `tools/evaluation_corpus.py` / `tools/evaluation_harness.py`
+  (independently-adjudicated corpora with leakage-free lineage splits and the
+  four-arm A/B/C/D harness with a preregistration contract). Six new JSON schemas
+  (`semantic_observation`, `semantic_request`, `semantic_policy_result`,
+  `semantic_catalog`, `provider_attempt_event`) are indexed in `NIZAM.json`. No
+  semantic mode is active by default; off performs no provider import or call.
 
-### Changed
-
-- **Development tree and consumer installation footprint**:
-  Moved 14,828 files / 420,194,201 logical bytes of completed feature evidence
-  out of the active tree into verifiable Git-object archive form. Promoted live
-  workflow-assurance fixtures and frozen control policies to
-  `tools/fixtures/workflow_assurance/`. `bootstrap.sh` now retrieves the payload
-  with a `blob:none` filter and precise sparse checkout, retains only the sparse
-  reference, stages both halves before replacement with rollback, and refuses a
-  silently unfiltered download. See
-  `docs/planning/cleanup/EVIDENCE_LIFECYCLE.md`.
-
+- **Historical evidence archive and bounded preservation**: added
+  `.agent/evidence-archive/index.json`, `schema/evidence_archive.schema.json` and
+  `tools/evidence_archive.py` to bind completed historical evidence tranches to
+  Git blobs retained by ordinary history; `tools/evidence_preservation.py` for
+  content-addressed input inventories; and canonical-format compatibility vectors
+  in `tools/test_canonical_formats.py`.
 
 - **Machine-legible LLM documentation endpoints (`llms.txt` and `llms-full.txt`)**:
-  Added [`llms.txt`](llms.txt) and [`llms-full.txt`](llms-full.txt) at the repository root and mirrored them at [`docs/guide/llms.txt`](docs/guide/llms.txt) and [`docs/guide/llms-full.txt`](docs/guide/llms-full.txt) for GitHub Pages deployment (`https://niq-cnr.github.io/nizam-framework/llms.txt` and `https://niq-cnr.github.io/nizam-framework/llms-full.txt`), providing AI coding agents and LLM crawlers with an instant operational entry protocol, start-path routing matrix, CLI subcommand reference, role/permission-class summary, and validation check catalog.
+  added at the repository root and mirrored under `docs/guide/` for GitHub Pages,
+  providing an AI-agent entry protocol, start-path routing matrix, CLI reference,
+  role/permission summary and validation check catalog.
 
 ### Changed
 
+- **Deterministic governance-close-out repairs**: `tools/start_path.py` now uses
+  one strict normalized QA predicate across both verdict shapes (rejecting
+  contradictory markers, missing per-check evidence, skipped checks and stale
+  candidates), binds completion to the complete committed/staged/unstaged/untracked
+  delta from the recorded task base, propagates one validated contract/context end
+  to end, allocates authoritative monotonic attempts atomically before dispatch
+  (rejecting reuse across sessions or output paths), and requires a verified
+  amendment/decomposition/operator record for continuation (a narrative
+  `--repair-summary` no longer grants authority).
+
+- **Development tree and consumer installation footprint**: moved completed
+  feature evidence out of the active tree into verifiable Git-object archive form;
+  `bootstrap.sh` now retrieves the payload with a `blob:none` filter and precise
+  sparse checkout, retains only the sparse reference, stages both halves before
+  replacement with rollback, and refuses a silently unfiltered download. The
+  `v1.11.0` script performs this filtered/sparse retrieval.
+
 - **Developer & AI-agent front-door upgrade (`README.md` and `docs/guide/index.html`)**:
-  Upgraded `README.md` with release/guide/LLM badges, a dual-persona entry table, a "Why Nizam?" failure-to-remediation comparison matrix, an ASCII workspace & execution-loop diagram, a 5-route decision matrix under `## Start paths`, an `llms.txt` quick-load section, and a `C1–C16` compliance summary. Upgraded `docs/guide/index.html` with a modern light/dark design system, hero badges, dual Human/Agent track cards, one-click `Copy` buttons on all code blocks, a 5-route comparison table in `#start-paths`, numbered step cards in `#execution-loop`, module category pills, and `llms.txt` / `llms-full.txt` integration links.
-- **`v1.10.1` post-release closeout and `.nizam/` self-adoption**:
-  Re-bootstrapped `.nizam/` to the released immutable tag `v1.10.1` (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`, annotated tag object `5b6fdb64a5bc3bf1def755b8269696d9e95b3a41`, `278` released files + `provenance.json`, `installed_at` `2026-10-19T11:03:39Z`, evidence `.agent/evidence/release-v1.10.1-closeout/`), and updated `.github/scripts/verify_self_governance.py`, `README.md`, `AGENTS.md` (`v0.5.0`), `docs/planning/SELF_GOVERNANCE.md` (`v0.7.0`), `docs/planning/ROADMAP.md` (`v0.65.30`), `docs/planning/operator_gates.md` (`v0.51.0`), `docs/planning/manifest.json`, and `docs/planning/REMEDIATION_2026_10_18.md` (`v0.17.0`).
+  added release/guide/LLM badges, a dual-persona entry table, a
+  failure-to-remediation comparison matrix, an ASCII workspace / execution-loop
+  diagram, a 5-route decision matrix, an `llms.txt` quick-load section, a
+  `C1`–`C16` compliance summary, and a modern light/dark guide design with copy
+  buttons and dual Human/Agent track cards.
 
 ## [1.10.1] - 2026-10-19
 

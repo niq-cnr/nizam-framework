@@ -1,4 +1,4 @@
-# Nizam Framework (v1.10.1)
+# Nizam Framework (v1.11.0)
 
 > Nizam is a generalised, AI-legible, versioned governance framework: a single portable payload (`standard/`, `methodology/`, `templates/`, `schema/`, `tools/`, `ecosystem/`, and `NIZAM.json`) that any AI coding agent or engineering team can inherit into any repository, in any runtime, with zero application-code or service dependencies.
 
@@ -8,18 +8,18 @@ Nizam solves four systemic failure modes in agent-driven software engineering:
 3. **Unverifiable chat claims** -> solved by **DD-3 (Evidence Externalisation)**: all proof lives in durable `.agent/` files and cryptographic command receipts under `.agent/evidence/`, never in chat history.
 4. **Per-runtime prompt forks** -> solved by **DD-4 (Unified Skill Payload)**: one runtime-agnostic skill (`tools/SKILL.md` + `tools/skill.json`) loaded via `tools/interface.md`.
 
-## One-Prompt Consumer Onboarding (`v1.10.1`)
+## One-Prompt Consumer Onboarding (`v1.11.0`)
 
-Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v1.10.1` (`2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd`) with minimal friction:
+Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v1.11.0` (`<40-hex-commit-sha>`) with minimal friction:
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v1.10.1, commit 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd):
+Onboard this repository to the Nizam governance framework (immutable release v1.11.0, commit <40-hex-commit-sha>):
 
-1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.10.1 AI Agent Entry Protocol and CLI reference.
-2. Fetch and run the official bootstrap script pinned to v1.10.1 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
-   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v1.10.1 ./bootstrap.sh --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.11.0 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v1.11.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -42,46 +42,46 @@ Onboard this repository to the Nizam governance framework (immutable release v1.
    - `tools/start_path.py publish` — defaults to noncommitting `--mode prepare` (emits `.publish-request.json`); `--mode publish` requires `NIZAM_MUTATION_ADAPTER` and never falls back to local `git add`/`git commit`; `--mode finalize` verifies committed stage deltas
    - `tools/start_path.py build-receipt` / `verify-receipt` / `resume` / `status`
 5. **Never hand-edit `.nizam/`**:
-   - Installed `.nizam/` files are immutable and verified byte-for-byte against the pinned release tag via `./bootstrap.sh --verify-only --tag v1.10.1 --expected-sha 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd --git-repo .nizam-ref/ --require-content-integrity`.
+   - Installed `.nizam/` files are immutable and verified byte-for-byte against the pinned release tag via `./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha <40-hex-commit-sha> --git-repo .nizam-ref/ --require-content-integrity`.
 
 ## Core Documentation & Index
 
-- [NIZAM.json](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/NIZAM.json): Machine-readable capability index, routing rules, and module inventory.
-- [README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/README.md): Human and agent quickstart, start paths, and bootstrap integrity verification.
+- [NIZAM.json](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/NIZAM.json): Machine-readable capability index, routing rules, and module inventory.
+- [README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/README.md): Human and agent quickstart, start paths, and bootstrap integrity verification.
 - [HTML User Guide](https://niq-cnr.github.io/nizam-framework/): Self-contained interactive user guide covering problem/solution, start paths, execution loop, anatomy, modules, and agent integration.
 - [llms-full.txt](https://niq-cnr.github.io/nizam-framework/llms-full.txt): Complete consolidated technical reference (all CLI subcommands, 5 start paths, 5 AGF roles, 16 compliance gates, schemas, and ecosystem lifecycle).
-- [CONTEXT.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/CONTEXT.md): Repository architectural context, module map, and execution commands.
-- [AGENTS.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/AGENTS.md): Repository-local agent routing instructions.
+- [CONTEXT.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/CONTEXT.md): Repository architectural context, module map, and execution commands.
+- [AGENTS.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/AGENTS.md): Repository-local agent routing instructions.
 
 ## Unified Skill & CLI Tools (`tools/`)
 
-- [tools/SKILL.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/SKILL.md): Canonical instructions-tier skill payload loaded by any agent runtime.
-- [tools/skill.json](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/skill.json): Machine-readable skill manifest and capability map (version `0.8.2` in lockstep with `SKILL.md`).
-- [tools/interface.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/interface.md): Runtime adapter specification (`read-state`, `write-evidence`, `run-verification`, and Section 4.4 external mutation mediation via `NIZAM_MUTATION_ADAPTER`).
-- [tools/start_path.py](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/start_path.py): Task classifier, start-path gate CLI, contract amendment helper, evidence capture/publish pipeline, and status viewer.
-- [tools/validate.sh](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/validate.sh): 16-check repository compliance validator (`C1`–`C16` in full sweep; 10 exercised structural checks in `--payload` mode).
-- [tools/payload_integrity.py](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/tools/payload_integrity.py): Trusted commit-bound payload inventory, byte digest, mode, and provenance verifier.
+- [tools/SKILL.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/SKILL.md): Canonical instructions-tier skill payload loaded by any agent runtime.
+- [tools/skill.json](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/skill.json): Machine-readable skill manifest and capability map (version `0.8.2` in lockstep with `SKILL.md`).
+- [tools/interface.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/interface.md): Runtime adapter specification (`read-state`, `write-evidence`, `run-verification`, and Section 4.4 external mutation mediation via `NIZAM_MUTATION_ADAPTER`).
+- [tools/start_path.py](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/start_path.py): Task classifier, start-path gate CLI, contract amendment helper, evidence capture/publish pipeline, and status viewer.
+- [tools/validate.sh](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/validate.sh): 16-check repository compliance validator (`C1`–`C16` in full sweep; 10 exercised structural checks in `--payload` mode).
+- [tools/payload_integrity.py](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/tools/payload_integrity.py): Trusted commit-bound payload inventory, byte digest, mode, and provenance verifier.
 
 ## Standards (`standard/`)
 
-- [standard/AGF.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/AGF.md): Agent Governance Framework — five roles (`Planner`, `Generator`, `Validator`, `Evaluator`, `Orchestrator`), durable state, and machine-parseable verdict rules.
-- [standard/GIP.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/GIP.md): Governance Inheritance Protocol — immutable SemVer tag pinning, atomic bootstrap, brownfield coexistence, and drift detection.
-- [standard/NDS.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/NDS.md): Nizam Documentation Standard — YAML frontmatter, version/changelog discipline, and tagged code fences.
-- [standard/definition_of_done.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/definition_of_done.md): Eight layered Definition of Done criteria (`Step`, `Handoff`, `Gate`, `Feature`, `Plan`, `Merge`, `Release`, `Ecosystem`).
-- [standard/acceptance_bars.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/acceptance_bars.md): Risk-tiered acceptance bars (`Routine`, `Standard`, `High-assurance`).
-- [standard/permission_classes.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/standard/permission_classes.md): Permission classes (`R0` Read-Only, `W1` Workspace Write, `X1` Local Verification, `M1` Externally Mediated Repository Mutation, `E1` External/Privileged Gate).
+- [standard/AGF.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/AGF.md): Agent Governance Framework — five roles (`Planner`, `Generator`, `Validator`, `Evaluator`, `Orchestrator`), durable state, and machine-parseable verdict rules.
+- [standard/GIP.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/GIP.md): Governance Inheritance Protocol — immutable SemVer tag pinning, atomic bootstrap, brownfield coexistence, and drift detection.
+- [standard/NDS.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/NDS.md): Nizam Documentation Standard — YAML frontmatter, version/changelog discipline, and tagged code fences.
+- [standard/definition_of_done.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/definition_of_done.md): Eight layered Definition of Done criteria (`Step`, `Handoff`, `Gate`, `Feature`, `Plan`, `Merge`, `Release`, `Ecosystem`).
+- [standard/acceptance_bars.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/acceptance_bars.md): Risk-tiered acceptance bars (`Routine`, `Standard`, `High-assurance`).
+- [standard/permission_classes.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/standard/permission_classes.md): Permission classes (`R0` Read-Only, `W1` Workspace Write, `X1` Local Verification, `M1` Externally Mediated Repository Mutation, `E1` External/Privileged Gate).
 
 ## Methodology (`methodology/`)
 
-- [methodology/00_planning.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/00_planning.md): Specification and acyclic feature-list planning protocol.
-- [methodology/01_execution.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/01_execution.md): Two-loop contract-first execution harness and right-sized start paths (`trivial`, `bugfix`, `small-change`, `standard-feature`, `high-risk`).
-- [methodology/02_adversarial_tdd.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/02_adversarial_tdd.md): Adversarial test-driven verification and `tools/verify_lib.sh` assertions.
-- [methodology/03_circuit_breaker.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/03_circuit_breaker.md): Work-specific diagnostic stopping policy, strategy ladder, and bounded decomposition.
-- [methodology/04_tool_driven_state.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/04_tool_driven_state.md): Index-driven discovery and externalised `.agent/evidence/` capture.
-- [methodology/06_release_train.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/06_release_train.md): SemVer release classification, internal version-anchor closeout, and operator-gated tagging.
-- [methodology/10_live_runtime_sessions.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/methodology/10_live_runtime_sessions.md): Language-neutral live runtime session protocol (`partially-enforced`).
+- [methodology/00_planning.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/00_planning.md): Specification and acyclic feature-list planning protocol.
+- [methodology/01_execution.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/01_execution.md): Two-loop contract-first execution harness and right-sized start paths (`trivial`, `bugfix`, `small-change`, `standard-feature`, `high-risk`).
+- [methodology/02_adversarial_tdd.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/02_adversarial_tdd.md): Adversarial test-driven verification and `tools/verify_lib.sh` assertions.
+- [methodology/03_circuit_breaker.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/03_circuit_breaker.md): Work-specific diagnostic stopping policy, strategy ladder, and bounded decomposition.
+- [methodology/04_tool_driven_state.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/04_tool_driven_state.md): Index-driven discovery and externalised `.agent/evidence/` capture.
+- [methodology/06_release_train.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/06_release_train.md): SemVer release classification, internal version-anchor closeout, and operator-gated tagging.
+- [methodology/10_live_runtime_sessions.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/methodology/10_live_runtime_sessions.md): Language-neutral live runtime session protocol (`partially-enforced`).
 
 ## Ecosystem Lifecycle (`ecosystem/`) & Schemas (`schema/`)
 
-- [ecosystem/README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/ecosystem/README.md): Nine-stage Ecosystem Engineering Cycle (`Bootstrap` -> `Preflight` -> `Baseline` -> `Audit` -> `Plan` -> `Execute` -> `Verify` -> `Promote` -> `Compare`) across `0..n` repositories.
-- [schema/README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.10.1/schema/README.md): JSON Schema catalog validating `.agent/` contracts, verdicts, run state, receipts, and ecosystem artifacts.
+- [ecosystem/README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/ecosystem/README.md): Nine-stage Ecosystem Engineering Cycle (`Bootstrap` -> `Preflight` -> `Baseline` -> `Audit` -> `Plan` -> `Execute` -> `Verify` -> `Promote` -> `Compare`) across `0..n` repositories.
+- [schema/README.md](https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/schema/README.md): JSON Schema catalog validating `.agent/` contracts, verdicts, run state, receipts, and ecosystem artifacts.
