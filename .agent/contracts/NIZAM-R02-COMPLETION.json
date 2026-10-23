@@ -1,0 +1,629 @@
+{
+  "contract_id": "NIZAM-R02-COMPLETION",
+  "feature_id": "NIZAM-R02-COMPLETION",
+  "name": "Preserve completion contract context and content-bind inherited dirty state",
+  "status": "approved",
+  "version": "0.2.0",
+  "revision": 2,
+  "spec_ref": ".agent/evidence/NIZAM-R02-COMPLETION/planner-spec.md",
+  "route": "high-risk",
+  "assurance_tier": "High-assurance",
+  "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "source_before_sha256": {
+    "tools/start_path.py": "1591e9755c6f146e5f7dc0e660ac82fb8668ba3843d0dc544e03a6e6117c340a",
+    "tools/test_start_path.py": "1843770a877682b9b5c2ae9a6613401a5219e6a7de7b9be0431a216678df3c46"
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Preserve approved bugfix contract context and compare content-bound inherited dirty snapshots at completion."
+      },
+      {
+        "path": "tools/test_start_path.py",
+        "purpose": "Add real-Git F1/F2 positive, negative, compatibility and observation-failure regressions to the existing suite."
+      }
+    ]
+  },
+  "non_goals": [
+    "Product implementation requires both independent Loop 1 approvals, Orchestrator contract approval and a genuinely successful applicable high-risk preflight in the recorded implementation environment. All remaining independent review, QA and evidence gates remain mandatory.",
+    "No F3/F4 QA capture/freshness, receipt-candidate binding, continuation-authority or Jev scoring/attempt-policy repair in this bounded change.",
+    "No installed .nizam, root or installed schemas, public CLI shape, CI workflow, sandbox policy, publication/mutation adapter, release pin, tag or consumer re-bootstrap change.",
+    "No cleanup, deletion, compaction or rewriting of prior evidence; no change to phase020, shared run_state or unrelated authority records.",
+    "No ignored-file policy redesign, whole-tree audit, clean-path filter or assume-unchanged audit, submodule recursion, or hostile concurrent-writer isolation claim.",
+    "No automatic migration that invents historical fingerprints, refreshes an existing task baseline or discards another actor's dirty work.",
+    "No merge, release, deployment, operator gate execution or source publication by the Generator. Orchestrator publication authority is separate from implementation and qualification gates."
+  ],
+  "requirements": {
+    "R1": "Thread the same named contract context into completion eligibility and revalidate it at completion. Continue to require current supported approved/implemented/complete status, matching contract identity and coverage of all declared paths. Missing/proposed/invalidated/out-of-scope contracts and all installed-payload writes remain rejected.",
+    "R2": "Record version-2 task-base observations for every inherited dirty path whose preservation may authorize exemption. Keep index stage/mode/object identity separate from no-follow worktree kind, permission bits and exact byte identity. Include rename/copy endpoints and explicit missing state. At done compare all inherited endpoints, even absent from current status. Only unchanged unrelated inherited state may be exempt; declared task edits remain allowed.",
+    "R3": "Validate marker identity, supported version, base commit and snapshot structure. Existing markers remain byte-immutable. Version 1 may complete only when every inherited dirty entry belongs to declared scope or existing task-owned metadata, so no unrelated dirty exemption is required. Otherwise fail closed with a preserve-and-reviewed-restart/new-task diagnostic; never infer prior hashes from current content.",
+    "R4": "Git-backed observation failures, malformed/partial observations, read errors, unsafe path traversal and unsupported dirty object states fail closed. Preserve genuinely non-Git behavior without turning a failed Git query into a non-Git success. Do not follow symlink targets or read special files. Read-only verification must not modify index, worktree, permissions, inherited evidence or existing markers.",
+    "R5": "Retain exact task-owned evidence/QA exclusions and complete committed/staged/unstaged/untracked scope checking. No blanket .agent exclusion. No changes outside the declared product scope and explicitly separate task metadata."
+  },
+  "snapshot_semantics": {
+    "format": "schema_version: 2; retain id, base_revision and recorded_at, and use explicitly validated per-path observations. The existing internal task-base artifact has no separate shipped schema; this contract does not create or modify a public schema.",
+    "worktree_regular_file": "Represent kind, stat.S_IMODE permission bits and SHA256 of exact bytes; use bounded streaming reads rather than retaining source content in the marker. A zero-byte file has a valid digest. A failed read never becomes a missing or empty file.",
+    "worktree_symlink": "Represent kind and SHA256 of the link target text bytes obtained without following the link. Reject unsafe ancestor traversal. No target file contents are read, even when the target is external or dangling.",
+    "missing": "Represent actual absence explicitly; fingerprint both endpoints of rename/copy observations, including the original missing endpoint. Copy coverage refers to actual reported C records; supported Git configuration and fixture preconditions must be proven, not simulated as a successful product observation.",
+    "index": "Represent the exact stage/mode/Git object identity entries for each observed path and explicit absence; never substitute worktree content for staged content.",
+    "unsupported": "Reject dirty submodule/conflicted-index or unsupported FIFO/socket/device observations with an explicit nonzero diagnostic; no recursive or blocking fallback.",
+    "legacy": "Version-1 acceptance is limited to entries wholly inside declared scope or existing task-owned exclusions. Unknown versions, mismatched id, malformed observation shape and unrelated dirty entries without historical identities fail closed.",
+    "performance_and_limit": "Cost is proportional to observed dirty-path content at begin and completion. This is bounded-memory content identity, not a scan of every unchanged repository file or protection from concurrent hostile filesystem mutation."
+  },
+  "acceptance_matrix": [
+    {
+      "id": "AC01",
+      "requirement": "R1",
+      "given": "Valid approved contract covers a schema or protected path and valid task QA exists.",
+      "when": "begin bugfix then scoped change then done bugfix",
+      "expect": "Both commands exit 0; contract context survives the completion eligibility check.",
+      "regression_function": "test_r02_completion_ac01",
+      "verification_id": "AC01"
+    },
+    {
+      "id": "AC02",
+      "requirement": "R1",
+      "given": "Missing, proposed, mismatched-identity or scope-incomplete named contract; also a contract invalidated after begin.",
+      "when": "begin or done bugfix as applicable",
+      "expect": "Nonzero exit; no fallback to uncontracted authority. Existing implemented/complete allowed statuses remain compatible.",
+      "regression_function": "test_r02_completion_ac02",
+      "verification_id": "AC02"
+    },
+    {
+      "id": "AC03",
+      "requirement": "R2",
+      "given": "Pre-existing unrelated tracked/untracked/staged dirty state is unchanged.",
+      "when": "A declared file changes and done runs",
+      "expect": "Exit 0; exact inherited state is preserved and legitimate task work is not rejected.",
+      "regression_function": "test_r02_completion_ac03",
+      "verification_id": "AC03"
+    },
+    {
+      "id": "AC04",
+      "requirement": "R2",
+      "given": "Pre-existing tracked modification has the same porcelain status after different bytes are written.",
+      "when": "done",
+      "expect": "Nonzero exit naming the undeclared changed path.",
+      "regression_function": "test_r02_completion_ac04",
+      "verification_id": "AC04"
+    },
+    {
+      "id": "AC05",
+      "requirement": "R2",
+      "given": "Pre-existing untracked file changes bytes or is deleted; include a zero-byte baseline.",
+      "when": "done",
+      "expect": "Nonzero exit; deletion or a valid empty content hash must not be confused with a read failure.",
+      "regression_function": "test_r02_completion_ac05",
+      "verification_id": "AC05"
+    },
+    {
+      "id": "AC06",
+      "requirement": "R2",
+      "given": "Pre-existing staged path receives new index bytes while its status code remains the same; also exercise index-to-worktree transitions, removed/recreated index entries and unchanged worktree bytes with different staged bytes.",
+      "when": "done",
+      "expect": "Nonzero exit for each undeclared state transition; both index and worktree must retain inherited state for exemption. Unchanged index/worktree pairs are the positive control.",
+      "regression_function": "test_r02_completion_ac06",
+      "verification_id": "AC06"
+    },
+    {
+      "id": "AC07",
+      "requirement": "R2",
+      "given": "A pre-existing dirty file changes relevant permission/executable bits without changing its porcelain status.",
+      "when": "done",
+      "expect": "Nonzero exit; unchanged mode is a positive control.",
+      "regression_function": "test_r02_completion_ac07",
+      "verification_id": "AC07"
+    },
+    {
+      "id": "AC08",
+      "requirement": "R2/R4",
+      "given": "A pre-existing dirty symlink changes link target; its old/new targets may be dangling or external.",
+      "when": "begin/done observe it",
+      "expect": "Target-text mutation is rejected without reading target bytes; ancestor symlink traversal is rejected.",
+      "regression_function": "test_r02_completion_ac08",
+      "verification_id": "AC08"
+    },
+    {
+      "id": "AC09",
+      "requirement": "R2",
+      "given": "An inherited staged rename or copy keeps the same reported original/destination pair. For copies use real Git with status.renames=copies, a staged-modified original and a staged destination containing the prior original bytes; assert the actual NUL-delimited porcelain observation is C with both endpoints before testing.",
+      "when": "Run begin and done with the pair unchanged, then in separate fixtures mutate the destination bytes or the original endpoint while testing each required index/worktree binding.",
+      "expect": "Unchanged inherited rename and copy pairs complete successfully; any new out-of-scope endpoint change fails with the affected path. Both reported endpoints are fingerprinted. No copy-detection redesign, synthetic success or skipped copy case is permitted.",
+      "regression_function": "test_r02_completion_ac09",
+      "verification_id": "AC09"
+    },
+    {
+      "id": "AC10",
+      "requirement": "R2",
+      "given": "An inherited dirty file is restored to HEAD and disappears from current status, or an inherited deletion is restored.",
+      "when": "done",
+      "expect": "Nonzero exit for the new undeclared change; comparison is not restricted to current status rows.",
+      "regression_function": "test_r02_completion_ac10",
+      "verification_id": "AC10"
+    },
+    {
+      "id": "AC11",
+      "requirement": "R2/R5",
+      "given": "New undeclared committed, staged, unstaged, untracked or rename changes and shared run_state changes.",
+      "when": "done",
+      "expect": "All remain rejected; the repair does not weaken existing complete-delta controls.",
+      "regression_function": "test_r02_completion_ac11",
+      "verification_id": "AC11"
+    },
+    {
+      "id": "AC12",
+      "requirement": "R3",
+      "given": "Version-1 base marker has no unrelated pre-existing dirty entries requiring exemption.",
+      "when": "begin/done",
+      "expect": "Compatible completion works without rewriting the old marker.",
+      "regression_function": "test_r02_completion_ac12",
+      "verification_id": "AC12"
+    },
+    {
+      "id": "AC13",
+      "requirement": "R3",
+      "given": "Version-1 marker has unrelated inherited dirty entries, or a marker has unknown version, mismatched task identity or malformed snapshot fields.",
+      "when": "begin/done consumes it",
+      "expect": "Clear nonzero failure. Old records and worktree bytes remain unchanged; no silent baseline upgrade/re-pin.",
+      "regression_function": "test_r02_completion_ac13",
+      "verification_id": "AC13"
+    },
+    {
+      "id": "AC14",
+      "requirement": "R3",
+      "given": "Valid versioned marker exists and source/worktree state later changes.",
+      "when": "Repeated begin",
+      "expect": "Marker bytes and base revision remain identical; repeated begin cannot refresh preservation authority.",
+      "regression_function": "test_r02_completion_ac14",
+      "verification_id": "AC14"
+    },
+    {
+      "id": "AC15",
+      "requirement": "R4",
+      "given": "Git status/index/revision observation fails or returns malformed/partial data; a required fingerprint read fails.",
+      "when": "begin/done",
+      "expect": "Nonzero failure, never empty/success or non-Git fallback. A valid non-Git local task retains its documented existing behavior.",
+      "regression_function": "test_r02_completion_ac15",
+      "verification_id": "AC15"
+    },
+    {
+      "id": "AC16",
+      "requirement": "R4",
+      "given": "Unsupported FIFO/socket/submodule/unmerged-index observation or unsafe pathname/ancestor traversal.",
+      "when": "A dirty snapshot would require that observation",
+      "expect": "Explicit nonzero unsupported/unsafe diagnostic, no external file follow or blocking special-file read.",
+      "regression_function": "test_r02_completion_ac16",
+      "verification_id": "AC16"
+    },
+    {
+      "id": "AC17",
+      "requirement": "R5",
+      "given": "Task-owned evidence/QA additions coexist with unchanged unrelated evidence.",
+      "when": "done",
+      "expect": "Existing task-owned exclusions remain exactly scoped; unrelated evidence is preserved and no blanket .agent exemption is added.",
+      "regression_function": "test_r02_completion_ac17",
+      "verification_id": "AC17"
+    },
+    {
+      "id": "AC18",
+      "requirement": "R5",
+      "given": "Complete candidate implementation.",
+      "when": "Inspect exact diff and execute existing suite/compliance",
+      "expect": "Only the two declared product files change; .nizam, phase020, existing evidence and out-of-scope behavior remain untouched.",
+      "verification_id": [
+        "SCOPE-CONTROLS",
+        "SCOPE",
+        "FULL-SUITE",
+        "COMPLIANCE"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "id": "AC01",
+      "acceptance_test": "AC01: Both commands exit 0; contract context survives the completion eligibility check.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac01\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Valid approved contract covers a schema or protected path and valid task QA exists.",
+        "begin bugfix then scoped change then done bugfix",
+        "Both commands exit 0; contract context survives the completion eligibility check."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC02",
+      "acceptance_test": "AC02: Nonzero exit; no fallback to uncontracted authority. Existing implemented/complete allowed statuses remain compatible.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac02\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Missing, proposed, mismatched-identity or scope-incomplete named contract; also a contract invalidated after begin.",
+        "begin or done bugfix as applicable",
+        "Nonzero exit; no fallback to uncontracted authority. Existing implemented/complete allowed statuses remain compatible."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC03",
+      "acceptance_test": "AC03: Exit 0; exact inherited state is preserved and legitimate task work is not rejected.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac03\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Pre-existing unrelated tracked/untracked/staged dirty state is unchanged.",
+        "A declared file changes and done runs",
+        "Exit 0; exact inherited state is preserved and legitimate task work is not rejected."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC04",
+      "acceptance_test": "AC04: Nonzero exit naming the undeclared changed path.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac04\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Pre-existing tracked modification has the same porcelain status after different bytes are written.",
+        "done",
+        "Nonzero exit naming the undeclared changed path."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC05",
+      "acceptance_test": "AC05: Nonzero exit; deletion or a valid empty content hash must not be confused with a read failure.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac05\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Pre-existing untracked file changes bytes or is deleted; include a zero-byte baseline.",
+        "done",
+        "Nonzero exit; deletion or a valid empty content hash must not be confused with a read failure."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC06",
+      "acceptance_test": "AC06: Nonzero exit for each undeclared state transition; both index and worktree must retain inherited state for exemption. Unchanged index/worktree pairs are the positive control.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac06\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Pre-existing staged path receives new index bytes while its status code remains the same; also exercise index-to-worktree transitions, removed/recreated index entries and unchanged worktree bytes with different staged bytes.",
+        "done",
+        "Nonzero exit for each undeclared state transition; both index and worktree must retain inherited state for exemption. Unchanged index/worktree pairs are the positive control."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC07",
+      "acceptance_test": "AC07: Nonzero exit; unchanged mode is a positive control.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac07\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "A pre-existing dirty file changes relevant permission/executable bits without changing its porcelain status.",
+        "done",
+        "Nonzero exit; unchanged mode is a positive control."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC08",
+      "acceptance_test": "AC08: Target-text mutation is rejected without reading target bytes; ancestor symlink traversal is rejected.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac08\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "A pre-existing dirty symlink changes link target; its old/new targets may be dangling or external.",
+        "begin/done observe it",
+        "Target-text mutation is rejected without reading target bytes; ancestor symlink traversal is rejected."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC09",
+      "acceptance_test": "AC09: Unchanged inherited rename and copy pairs complete successfully; any new out-of-scope endpoint change fails with the affected path. Both reported endpoints are fingerprinted. No copy-detection redesign, synthetic success or skipped copy case is permitted.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac09\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "An inherited staged rename or copy keeps the same reported original/destination pair. For copies use real Git with status.renames=copies, a staged-modified original and a staged destination containing the prior original bytes; assert the actual NUL-delimited porcelain observation is C with both endpoints before testing.",
+        "Run begin and done with the pair unchanged, then in separate fixtures mutate the destination bytes or the original endpoint while testing each required index/worktree binding.",
+        "Unchanged inherited rename and copy pairs complete successfully; any new out-of-scope endpoint change fails with the affected path. Both reported endpoints are fingerprinted. No copy-detection redesign, synthetic success or skipped copy case is permitted."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC10",
+      "acceptance_test": "AC10: Nonzero exit for the new undeclared change; comparison is not restricted to current status rows.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac10\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "An inherited dirty file is restored to HEAD and disappears from current status, or an inherited deletion is restored.",
+        "done",
+        "Nonzero exit for the new undeclared change; comparison is not restricted to current status rows."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC11",
+      "acceptance_test": "AC11: All remain rejected; the repair does not weaken existing complete-delta controls.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac11\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "New undeclared committed, staged, unstaged, untracked or rename changes and shared run_state changes.",
+        "done",
+        "All remain rejected; the repair does not weaken existing complete-delta controls."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC12",
+      "acceptance_test": "AC12: Compatible completion works without rewriting the old marker.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac12\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Version-1 base marker has no unrelated pre-existing dirty entries requiring exemption.",
+        "begin/done",
+        "Compatible completion works without rewriting the old marker."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC13",
+      "acceptance_test": "AC13: Clear nonzero failure. Old records and worktree bytes remain unchanged; no silent baseline upgrade/re-pin.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac13\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Version-1 marker has unrelated inherited dirty entries, or a marker has unknown version, mismatched task identity or malformed snapshot fields.",
+        "begin/done consumes it",
+        "Clear nonzero failure. Old records and worktree bytes remain unchanged; no silent baseline upgrade/re-pin."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC14",
+      "acceptance_test": "AC14: Marker bytes and base revision remain identical; repeated begin cannot refresh preservation authority.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac14\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Valid versioned marker exists and source/worktree state later changes.",
+        "Repeated begin",
+        "Marker bytes and base revision remain identical; repeated begin cannot refresh preservation authority."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC15",
+      "acceptance_test": "AC15: Nonzero failure, never empty/success or non-Git fallback. A valid non-Git local task retains its documented existing behavior.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac15\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Git status/index/revision observation fails or returns malformed/partial data; a required fingerprint read fails.",
+        "begin/done",
+        "Nonzero failure, never empty/success or non-Git fallback. A valid non-Git local task retains its documented existing behavior."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC16",
+      "acceptance_test": "AC16: Explicit nonzero unsupported/unsafe diagnostic, no external file follow or blocking special-file read.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac16\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Unsupported FIFO/socket/submodule/unmerged-index observation or unsafe pathname/ancestor traversal.",
+        "A dirty snapshot would require that observation",
+        "Explicit nonzero unsupported/unsafe diagnostic, no external file follow or blocking special-file read."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "AC17",
+      "acceptance_test": "AC17: Existing task-owned exclusions remain exactly scoped; unrelated evidence is preserved and no blanket .agent exemption is added.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac17\"]()'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "required_assertions": [
+        "Task-owned evidence/QA additions coexist with unchanged unrelated evidence.",
+        "done",
+        "Existing task-owned exclusions remain exactly scoped; unrelated evidence is preserved and no blanket .agent exemption is added."
+      ],
+      "note": "This callable is a required future deliverable in the existing procedural runner, not an existing test or a passing result. Missing callable must fail rather than fall back to main or ignore a selector."
+    },
+    {
+      "id": "BASELINE-REPRO",
+      "acceptance_test": "AC01, AC02, AC03, AC04, AC05, AC06, AC07, AC08 and AC09: retained real-Git F1/F2 cases must satisfy all nine expected outcomes on the candidate.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py --framework . --output .agent/evidence/NIZAM-R02-COMPLETION/candidate-reproductions-01",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "note": "The original planner-baseline-01 results remain immutable. A new exclusive output directory is required for each separately captured execution; changing only that task-owned output directory is a recorded mechanical verification amendment, not a changed assertion."
+    },
+    {
+      "id": "SCOPE",
+      "acceptance_test": "AC18: complete committed, staged, working-tree and untracked path delta stays within the two product files and explicitly owned new task metadata.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json,re,subprocess; base=\"00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\"'\"'\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json'\"'\"', '\"'\"'\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json'\"'\"']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected'",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed",
+      "note": "The union independently observes base-to-HEAD, base-to-index, base-to-worktree and untracked paths. --no-renames retains deletion/addition paths instead of losing a renamed original. Anchored review and capture-reservation families admit only this task metadata."
+    },
+    {
+      "id": "FULL-SUITE",
+      "acceptance_test": "AC01 through AC18: all existing start-path tests and every new R02 acceptance function run from the unchanged public runner command.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed"
+    },
+    {
+      "id": "COMPLIANCE",
+      "acceptance_test": "AC18: existing repository compliance remains passing; unrelated/pre-existing failures are preserved and reported, never silently repaired or waived by this contract.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed"
+    },
+    {
+      "id": "ISOLATION",
+      "acceptance_test": "Required high-risk isolation gate; no unsupported-isolation allowance or mock result establishes a pass.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "expected_exit": 0,
+      "phase": "post-implementation",
+      "status": "not-executed"
+    },
+    {
+      "id": "SCOPE-CONTROLS",
+      "acceptance_test": "AC18 verification-plan controls: clean/declared edits, versioned task QA/reviews and actual official capture reservations pass; masked committed changes, masked staged changes, out-of-scope rename originals, unstaged/untracked changes and unrelated metadata are rejected.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/generator-scope-controls-02.py --framework . --contract .agent/contracts/NIZAM-R02-COMPLETION.json --output .agent/evidence/NIZAM-R02-COMPLETION/candidate-scope-controls-01",
+      "expected_exit": 0,
+      "phase": "Independent verification-plan review and post-implementation re-execution",
+      "status": "not-executed",
+      "note": "This pre-code fixture program tests the exact SCOPE predicate, substituting only its baseline literal for each real disposable fixture commit. It creates no product fix. Use a fresh, separately captured task-owned output path for each role/attempt; preserve earlier outputs. The implementation hold still applies."
+    }
+  ],
+  "verification_design": {
+    "runner": "tools/test_start_path.py is a procedural Python runner, not unittest CLI discovery. Required future functions test_r02_completion_ac01 through test_r02_completion_ac17 take no arguments, own disposable fixtures and raise on mismatched outcomes. main() must call all of them without suppressing failures.",
+    "fixtures": "Use real disposable Git repositories for all supported state transitions, positive and negative controls. Narrow observation-failure injection is permitted only for deterministic error paths that portable real fixtures cannot reliably trigger; it may not replace actual Git state behavior.",
+    "coverage": "Each acceptance row binds to an individually callable future regression with the stated variants and controls. An implementation with a missing function, vacuous assertion, swallowed exception or omitted main() call fails review/QA.",
+    "original_probe": "The retained Planner probe is an additional unchanged cross-check of nine cases. It is not sufficient coverage for all 18 acceptance rows and is not independent implementation QA.",
+    "output_capture": "Actual argv, cwd, source candidate identity, start/completion times, exit status and separate stdout/stderr paths must be captured for every required execution. Negative child outcomes are tested inside assertion wrappers; wrapper success never re-labels a failed raw command as a successful command.",
+    "environment": "Use the project existing Python/Git dependencies and a runtime with successful required isolation capability. Do not hard-code transient /tmp package paths in the product or treat local dependency availability as isolation qualification.",
+    "scope_controls": "Retained generator-scope-controls-02.py runs 14 disposable real-Git cases against the current contract SCOPE snippet. Assert exact unexpected paths and expected exits, not any unrelated error. It asserts masked-commit/index preconditions and uses the unchanged installed capture command for its reservation positive control. Independent reviews may add adversarial controls; none changes product scope."
+  },
+  "implementation_hold": {
+    "active": false,
+    "reason": "Release conditions satisfied for the recorded genuine full-system Linux guest. The original host remains unqualified; its failures and prior proposed contracts are preserved.",
+    "preflight_ref": ".agent/evidence/NIZAM-R02-COMPLETION/preflight-01.json",
+    "independent_disposition_ref": ".agent/evidence/NIZAM-R02-COMPLETION/validator-preflight-disposition-01.json",
+    "release_conditions": [
+      "Both independent Loop 1 verdicts approve this exact contract with empty blocking arrays.",
+      "Orchestrator records contract approval without changing acceptance intent.",
+      "Run and capture PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight --route high-risk --root . in the actual capable implementation environment; require exit 0 and ok=true.",
+      "Preserve all failed preflight evidence and perform applicable remaining role, isolation and evidence gates."
+    ],
+    "draft_publication": "A contract/evidence-only draft PR may preserve the proposal and reproductions. Draft status does not authorize code implementation or assert fixes have shipped.",
+    "previous_reason": "The actual high-risk preflight recorded ok=false and non-operational sandbox with Landlock ENOSYS. Product implementation has not begun and is not permitted by the recorded gate disposition.",
+    "released_at": "2026-10-23T17:59:34.787140+00:00",
+    "release_record_ref": ".agent/evidence/NIZAM-R02-COMPLETION/contract-approval-01.json",
+    "implementation_environment": {
+      "kind": "genuine full-system QEMU TCG Ubuntu guest",
+      "root": "/opt/nizam-work/nizam-framework",
+      "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+      "kernel": "6.8.0-147-generic",
+      "boot_id": "380fdeb3-fdb8-40f0-a67a-e18de3032f9d",
+      "preflight_ref": ".agent/evidence/NIZAM-R02-COMPLETION/environment-vm/guest/preflight.json",
+      "preflight_sha256": "b651d73626274cfe9b7984e4600497f058d2f93237b6191bddfad9785b7553b5",
+      "required_execution_location": "All product edits and product QA occur in this qualified guest; host is transport, review and publication only."
+    }
+  },
+  "metadata_ownership": {
+    "product_scope_is_exact": true,
+    "allowed_new_task_metadata_prefixes": [
+      ".agent/evidence/NIZAM-R02-COMPLETION/"
+    ],
+    "allowed_task_record_paths": [
+      ".agent/contracts/NIZAM-R02-COMPLETION.json",
+      ".agent/qa/NIZAM-R02-COMPLETION.json",
+      ".agent/qa/NIZAM-R02-COMPLETION-contract-review.json"
+    ],
+    "record_owners": {
+      "Planner": "Planner spec, requirements and preserved pristine-source diagnostic evidence.",
+      "Generator": "Proposed contract and own future implementation evidence, within the admitted scope only.",
+      "Validator": "Own Mode A/Mode B records; no source or contract repair.",
+      "Evaluator": "Own independent contract review and QA evidence; no authoring of implementation.",
+      "Orchestrator": "Official routing, approvals, counters, publication and evidence-gate decisions; this contract grants no shared lifecycle-file mutation to other roles. Official capture owns the narrowly admitted task/step/attempt reservation family."
+    },
+    "existing_evidence_preservation": "Task-owned record authors preserve earlier attempts. New output paths are exclusive; no overwrite or inferred reconstruction of lost captures.",
+    "allowed_task_record_patterns": [
+      "\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\.json",
+      "\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\.reservation\\.json"
+    ],
+    "pattern_semantics": "Apply re.fullmatch to the entire repository-relative path. QA/review suffixes are numeric 2+ digit attempt labels or revN. Capture reservation step exactly follows the installed safe-token grammar (1..64 characters) and positive attempt numbers. This is path ownership only, not approval of record contents. Other task prefixes and shared state remain forbidden."
+  },
+  "role_allocation": {
+    "Orchestrator": "/root",
+    "Planner": "/root/ci_gate_generator_r02",
+    "Generator": "/root/framework_contract_generator",
+    "Validator": "/root/recovery_integration_r02",
+    "Evaluator": "/root/framework_contract_evaluator",
+    "combination": "None for this high-assurance task."
+  },
+  "estimated_lines": 650,
+  "estimate_note": "Estimate includes versioned read-only observation and compatibility logic plus 17 acceptance functions with multiple real-Git variants; not a scope or stopping-rule waiver.",
+  "evidence_dir": ".agent/evidence/NIZAM-R02-COMPLETION",
+  "evidence_convention": "Exclusive <role>-<step>-<attempt> records and capture directories beneath .agent/evidence/NIZAM-R02-COMPLETION/. Retain exact command result and output paths; independent roles own their records. Candidate/source and contract SHA256 bindings are recorded. No capture or gate success is asserted in this proposed contract.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 1
+  },
+  "baseline_evidence": [
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01.execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01/summary.json"
+  ],
+  "baseline_observation": {
+    "case_count": 9,
+    "requirements_failed": 7,
+    "aggregate_exit": 1,
+    "qualification": "Pristine-source diagnostic only; failed requirements remain unfixed."
+  },
+  "proposal_status": "Contract preparation only. No product implementation, test addition, release or completion claim.",
+  "amendments": [
+    {
+      "revision": 2,
+      "status": "proposed",
+      "basis": "Independent Mode A and contract-testability rejections of revision 1",
+      "prior_contract_ref": ".agent/evidence/NIZAM-R02-COMPLETION/contract-proposed-01.json",
+      "prior_contract_sha256": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+      "review_refs": [
+        ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01.json",
+        ".agent/qa/NIZAM-R02-COMPLETION-contract-review-01.json"
+      ],
+      "findings_addressed": [
+        "ECT-01",
+        "ECT-02",
+        "NCA1-01",
+        "NCA1-02",
+        "NCA1-03",
+        "ECT-A01"
+      ],
+      "changes": [
+        "Observe all four independent Git delta projections without losing rename originals.",
+        "Admit exact versioned task QA/reviews and official reservation families; retain unrelated metadata rejection.",
+        "Add executable verification-plan controls and explicit real-Git copy-pair acceptance coverage.",
+        "Reconcile actual independent Evaluator identity."
+      ],
+      "unchanged": "Exact two-file product scope, F1/F2 goals, all 18 acceptance row identities, independent approval requirement and active high-risk implementation hold."
+    }
+  ]
+}

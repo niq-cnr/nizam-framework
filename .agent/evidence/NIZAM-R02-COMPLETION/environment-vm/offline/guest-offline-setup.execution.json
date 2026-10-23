@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "ssh",
+    "-i",
+    "/tmp/nizam-landlock-vm/guest-access-key",
+    "-p",
+    "22222",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "-o",
+    "StrictHostKeyChecking=yes",
+    "-o",
+    "UserKnownHostsFile=/tmp/nizam-landlock-vm/known_hosts",
+    "ubuntu@127.0.0.1",
+    "sudo -n bash -s"
+  ],
+  "stdin_script": "guest-offline-setup.sh",
+  "exit_code": 0,
+  "started_at": "2026-10-23T17:55:55.907240+00:00",
+  "finished_at": "2026-10-23T17:56:45.877404+00:00"
+}

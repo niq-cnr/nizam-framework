@@ -1,0 +1,42 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import json,re,subprocess; base=\"1ff80bb56f3933fdfaa1a9d11edb5df2c381995d\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json', '\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "case": "official-capture-reservation",
+  "command_substitution": "Only the pinned baseline literal was replaced by the fixture base; projections, path policy and assertion are unchanged.",
+  "completed_at": "2026-10-23T15:57:34.136857+00:00",
+  "cwd": "/tmp/nizam-contract-scope-02-hopjjf62",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "expected_unexpected_paths": [],
+  "fixture_base": "1ff80bb56f3933fdfaa1a9d11edb5df2c381995d",
+  "observed": {
+    "base": "1ff80bb56f3933fdfaa1a9d11edb5df2c381995d",
+    "changed_paths": [
+      ".agent/evidence/NIZAM-R02-COMPLETION-scope-attempt1.reservation.json",
+      ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.capture.json",
+      ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.stderr.txt",
+      ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.stdout.txt"
+    ],
+    "projections": {
+      "committed": [],
+      "index": [],
+      "untracked": [
+        ".agent/evidence/NIZAM-R02-COMPLETION-scope-attempt1.reservation.json",
+        ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.capture.json",
+        ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.stderr.txt",
+        ".agent/evidence/NIZAM-R02-COMPLETION/scope-control-capture/NIZAM-R02-COMPLETION-scope-attempt1-20261023T155733Z-fa087c88.stdout.txt"
+      ],
+      "worktree": []
+    },
+    "unexpected": []
+  },
+  "passed": true,
+  "started_at": "2026-10-23T15:57:34.065098+00:00",
+  "stderr_path": "stderr.txt",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_path": "stdout.txt",
+  "stdout_sha256": "9e4acc5908b1fdd949559872be931f0743d23588f86dd92adde82d7ecf19a447"
+}

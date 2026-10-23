@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import json,re,subprocess; base=\"7d1c7a8c67ac651c1b4ff347fdc5fba2c67971e8\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json', '\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "case": "shared-state",
+  "command_substitution": "Only the pinned baseline literal was replaced by the fixture base; projections, path policy and assertion are unchanged.",
+  "completed_at": "2026-10-23T15:57:35.273176+00:00",
+  "cwd": "/tmp/nizam-contract-scope-02-xyerwdxy",
+  "exit_code": 1,
+  "expected_exit": 1,
+  "expected_unexpected_paths": [
+    ".agent/run_state.json"
+  ],
+  "fixture_base": "7d1c7a8c67ac651c1b4ff347fdc5fba2c67971e8",
+  "observed": {
+    "base": "7d1c7a8c67ac651c1b4ff347fdc5fba2c67971e8",
+    "changed_paths": [
+      ".agent/run_state.json"
+    ],
+    "projections": {
+      "committed": [],
+      "index": [],
+      "untracked": [
+        ".agent/run_state.json"
+      ],
+      "worktree": []
+    },
+    "unexpected": [
+      ".agent/run_state.json"
+    ]
+  },
+  "passed": true,
+  "started_at": "2026-10-23T15:57:35.175075+00:00",
+  "stderr_path": "stderr.txt",
+  "stderr_sha256": "a206f3f13bbb0c8eae8a6a4ccaaa885caa0089f5d1c2d3c9c878de79769d8780",
+  "stdout_path": "stdout.txt",
+  "stdout_sha256": "bf7dbfca8a4fc62ff6577f3704736ee87ad1ca123393e56d9e2ef26abd1baa42"
+}

@@ -1,0 +1,282 @@
+{
+  "record_type": "independent-product-qa-preparation",
+  "feature_id": "NIZAM-R02-COMPLETION",
+  "author": "/root/framework_contract_evaluator",
+  "created_at": "2026-10-23T18:17:43.863896+00:00",
+  "readiness": "prepared; awaiting frozen committed candidate, Mode B approval and assigned fresh guest QA workspace",
+  "product_qa_executed": false,
+  "product_or_installed_source_modified": false,
+  "approved_contract": {
+    "path": ".agent/contracts/NIZAM-R02-COMPLETION.json",
+    "sha256": "d09625c6fd43936e19a54b14ffd76b8a19162a2f5435fd34fd52d162920dfc75"
+  },
+  "approval_record": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/contract-approval-01.json",
+    "sha256": "2e64f5ce5247fcd2ce2129ae42e31c4e97a2fde5e1e5e6b9e190e576bb004b02"
+  },
+  "reviewed_proposal_sha256": "504f0939544b936d4f8a67661dbd811a1af42526860584f3a97a9181eb9b9066",
+  "approved_source_base": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "scope": {
+    "product_files": [
+      "tools/start_path.py",
+      "tools/test_start_path.py"
+    ],
+    "excluded_followups": [
+      "F3",
+      "F4"
+    ],
+    "shared_state_owner": "/root"
+  },
+  "qualification": {
+    "kind": "genuine full-system QEMU TCG Ubuntu guest",
+    "root": "/opt/nizam-work/nizam-framework",
+    "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+    "kernel": "6.8.0-147-generic",
+    "boot_id": "380fdeb3-fdb8-40f0-a67a-e18de3032f9d",
+    "preflight_ref": ".agent/evidence/NIZAM-R02-COMPLETION/environment-vm/guest/preflight.json",
+    "preflight_sha256": "b651d73626274cfe9b7984e4600497f058d2f93237b6191bddfad9785b7553b5",
+    "required_execution_location": "All product edits and product QA occur in this qualified guest; host is transport, review and publication only."
+  },
+  "prerequisites": [
+    "Root supplies full frozen candidate commit and tree IDs plus exact SHA256 identities of both product files. Candidate includes the corrected test helper; no shorthand hash is sufficient.",
+    "Independent Validator Mode B approves that exact candidate and approved contract with all blocking arrays empty; its evidence record is available for independent read.",
+    "Root supplies exact qualified guest and separate newly created QA checkout path based on committed candidate, current canonical QA step/attempt identity, and retained Generator AC04 failure/retry evidence paths.",
+    "QA starts in a fresh process with private temporary/cache directories, using existing qualified guest dependencies. No Generator warm sessions or generated caches are reused.",
+    "Before acceptance, independently confirm guest boot/kernel identity, origin, HEAD/tree, contract and candidate hashes; compare full installed payload inventory and run/capture genuine high-risk preflight from the fresh QA checkout.",
+    "Root records the two exclusive evaluator output-path substitutions listed below before execution. No existing command output is overwritten."
+  ],
+  "execution_sequence": [
+    "Read frozen product diff and test bodies to map all acceptance variants, verify actual helper return types, and check that main() calls all 17 acceptance functions without exception suppression.",
+    "Record independent source/installed inventory and qualified preflight. These are setup gates, not substitutes for contracted checks.",
+    "Execute every contracted verification as a separate captured fresh process. Expected-negative child exits are asserted inside the test wrapper; the required wrapper exit remains zero.",
+    "Execute exactly one additional evaluator-originated real-Git adversarial spot-check with both positive and negative controls.",
+    "Capture final source/installed inventory and complete scope observations; preserve all failed command output and diagnose the concrete cause without source repair.",
+    "Write a schema-valid independent QA verdict referencing every execution and stream, exact candidate and contract hashes, acceptance coverage and adversarial evidence. Root alone owns publication, evidence gate and shared lifecycle state."
+  ],
+  "contracted_command_count": 23,
+  "verification": [
+    {
+      "id": "AC01",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac01\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac01",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC02",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac02\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac02",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC03",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac03\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac03",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC04",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac04\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac04",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC05",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac05\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac05",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC06",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac06\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac06",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC07",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac07\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac07",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC08",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac08\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac08",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC09",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac09\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac09",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC10",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac10\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac10",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC11",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac11\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac11",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC12",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac12\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac12",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC13",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac13\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac13",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC14",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac14\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac14",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC15",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac15\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac15",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC16",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac16\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac16",
+      "status": "not-executed"
+    },
+    {
+      "id": "AC17",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import runpy; runpy.run_path(\"tools/test_start_path.py\")[\"test_r02_completion_ac17\"]()'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-ac17",
+      "status": "not-executed"
+    },
+    {
+      "id": "BASELINE-REPRO",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py --framework . --output .agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/reproductions",
+      "expected_exit": 0,
+      "capture_step": "evaluator-baseline-repro",
+      "status": "not-executed"
+    },
+    {
+      "id": "SCOPE",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json,re,subprocess; base=\"00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\"'\"'\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json'\"'\"', '\"'\"'\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json'\"'\"']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected'",
+      "expected_exit": 0,
+      "capture_step": "evaluator-scope",
+      "status": "not-executed"
+    },
+    {
+      "id": "FULL-SUITE",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py",
+      "expected_exit": 0,
+      "capture_step": "evaluator-full-suite",
+      "status": "not-executed"
+    },
+    {
+      "id": "COMPLIANCE",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0,
+      "capture_step": "evaluator-compliance",
+      "status": "not-executed"
+    },
+    {
+      "id": "ISOLATION",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "expected_exit": 0,
+      "capture_step": "evaluator-isolation",
+      "status": "not-executed"
+    },
+    {
+      "id": "SCOPE-CONTROLS",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/generator-scope-controls-02.py --framework . --contract .agent/contracts/NIZAM-R02-COMPLETION.json --output .agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/scope-controls",
+      "expected_exit": 0,
+      "capture_step": "evaluator-scope-controls",
+      "status": "not-executed"
+    }
+  ],
+  "mechanical_output_path_substitutions": [
+    {
+      "verification_id": "BASELINE-REPRO",
+      "kind": "exclusive evaluator output directory only",
+      "original_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py --framework . --output .agent/evidence/NIZAM-R02-COMPLETION/candidate-reproductions-01",
+      "planned_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py --framework . --output .agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/reproductions",
+      "changes_assertions": false,
+      "activation": "Orchestrator records this mechanical output-path substitution before QA; no product/contract acceptance change."
+    },
+    {
+      "verification_id": "SCOPE-CONTROLS",
+      "kind": "exclusive evaluator output directory only",
+      "original_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/generator-scope-controls-02.py --framework . --contract .agent/contracts/NIZAM-R02-COMPLETION.json --output .agent/evidence/NIZAM-R02-COMPLETION/candidate-scope-controls-01",
+      "planned_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/generator-scope-controls-02.py --framework . --contract .agent/contracts/NIZAM-R02-COMPLETION.json --output .agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/scope-controls",
+      "changes_assertions": false,
+      "activation": "Orchestrator records this mechanical output-path substitution before QA; no product/contract acceptance change."
+    }
+  ],
+  "additional_adversarial_check": {
+    "id": "EQA-ADV-01",
+    "title": "Content identity remains independent of inode and timestamp coincidences",
+    "planned_behavior": "In independently authored disposable real-Git fixtures, unchanged inherited dirty bytes and permission bits still pass after same-content inode replacement; different same-length bytes still fail after restoring the baseline mtime. Assert actual Git preconditions, exact affected-path rejection and marker/evidence preservation.",
+    "why_additional": "Adds explicit inode replacement and restored-stat-metadata discrimination beyond the listed command selectors; tests both false rejection and metadata-only false acceptance without changing product source.",
+    "capture_step": "evaluator-adversarial",
+    "evidence_name": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/NIZAM-R02-COMPLETION-qa-adversarial.txt",
+    "status": "not-authored/not-executed; will be created and run only in qualified guest after candidate freeze and Mode B approval"
+  },
+  "capture_plan": {
+    "tool": ".nizam/tools/start_path.py capture",
+    "task_id": "NIZAM-R02-COMPLETION",
+    "agent_id": "/root/framework_contract_evaluator",
+    "session_id": "assigned at QA activation",
+    "attempt": "assigned by Root; never reset by process/workspace handoff",
+    "output_dir": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-qa-01/captures",
+    "candidate": "full canonical candidate identity/digest assigned at activation",
+    "required_metadata": [
+      "argv",
+      "cwd",
+      "revision",
+      "candidate_sha256",
+      "guest boot/kernel identity",
+      "contract_sha256",
+      "start/completion times",
+      "exit_code",
+      "completion_state",
+      "stdout path/digest",
+      "stderr path/digest"
+    ],
+    "proof_policy": "Each required wrapper must actually execute and exit zero. A timeout, setup failure, skip, missing function, swallowed error or missing expected diagnostic is not a pass. Empty raw stdout/stderr is permitted with intact capture identity."
+  },
+  "failure_policy": {
+    "first_concrete_failure": "Preserve capture and report precise failing acceptance/assertion and candidate. Do bounded read-only diagnosis; do not edit implementation or rerun to manufacture success.",
+    "remaining_checks": "May continue independent checks when safe to identify other concrete blockers; do not claim unexecuted checks passed.",
+    "repair": "Generator owns correction in a fresh governed attempt; changed candidate requires renewed Mode B and appropriately fresh QA.",
+    "authority_or_isolation_breach": "Stop immediately and notify Root; no waivers or synthetic capability proof."
+  },
+  "known_context_limits": [
+    "Generator AC01-03 success and AC04 helper failure are reported handoff context only until their retained evidence is read; no independent product result is inferred.",
+    "Product source hash prefix 6609f1f6 is not a frozen candidate identity.",
+    "Existing F3/F4 diagnostic results are excluded from F1/F2 acceptance and do not assert those followups are repaired.",
+    "Preparation itself is neither a QA verdict nor a completion/merge/publication approval."
+  ]
+}

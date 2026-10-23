@@ -1,0 +1,20 @@
+{
+  "contract_sha256": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+  "purpose": "Predeclared contract-verifier diagnostic. Both defects are expected observations; no product implementation or acceptance test is executed.",
+  "results": [
+    {
+      "case": "masked-committed-path",
+      "observed_exit": 0,
+      "outcome": "False pass: undeclared committed path is hidden by staged restoration.",
+      "record": "validator-mode-a-01-masked-committed-path.execution.json"
+    },
+    {
+      "case": "official-capture-reservation",
+      "observed_exit": 1,
+      "outcome": "False fail: the official task capture reservation is excluded from permitted metadata.",
+      "record": "validator-mode-a-01-official-capture-reservation.execution.json"
+    }
+  ],
+  "product_changed": false,
+  "contract_changed": false
+}

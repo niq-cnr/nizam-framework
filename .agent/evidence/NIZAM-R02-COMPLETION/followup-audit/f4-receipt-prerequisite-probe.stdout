@@ -1,0 +1,140 @@
+{
+  "kind": "read-only unmodified source diagnostic using disposable upstream fixture",
+  "scope": "OUTSIDE F1/F2 implementation scope; not acceptance or passing QA",
+  "limits": "Synthetic QA/authority records; actual successful receipt command. No source mutation or actual governance transition.",
+  "results": [
+    {
+      "case": "aggregate_pass_with_empty_per_check_evidence",
+      "direct_qa_predicate_passes": false,
+      "fresh_qa": {
+        "adversarial": {
+          "performed": true
+        },
+        "approved_contract_sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+        "checks_passed": 1,
+        "checks_run": 1,
+        "evidence_files": [],
+        "feature_id": "120",
+        "final_verdict": {
+          "approved": true,
+          "metadata": {
+            "nested": [
+              1
+            ]
+          },
+          "summary": "independent"
+        },
+        "issues": [],
+        "missing_acceptance_coverage": [],
+        "qa_pass": true,
+        "required_fixes": [],
+        "reviewed_revision": "df7dd67b1f9a23512d54ec7fb9222d6e701073b6",
+        "reviewer": "fixture-qa",
+        "unsupported_claims": []
+      },
+      "receipt_own_capture": {
+        "executed": true,
+        "exit_code": 0,
+        "outcome": "success"
+      },
+      "receipt_accepted": true,
+      "proposed_transition": "advance"
+    },
+    {
+      "case": "aggregate_pass_with_declared_failed_check_and_missing_evidence",
+      "direct_qa_predicate_passes": false,
+      "fresh_qa": {
+        "adversarial": {
+          "performed": true
+        },
+        "approved_contract_sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+        "checks": [
+          {
+            "command": "ordinary-failed-check",
+            "evidence": "proof/never-executed.json",
+            "executed": true,
+            "exit_code": 7,
+            "status": "failed"
+          }
+        ],
+        "checks_passed": 1,
+        "checks_run": 1,
+        "evidence_files": [
+          "proof/never-executed.json"
+        ],
+        "feature_id": "120",
+        "final_verdict": {
+          "approved": true,
+          "metadata": {
+            "nested": [
+              1
+            ]
+          },
+          "summary": "independent"
+        },
+        "issues": [],
+        "missing_acceptance_coverage": [],
+        "qa_pass": true,
+        "required_fixes": [],
+        "reviewed_revision": "df7dd67b1f9a23512d54ec7fb9222d6e701073b6",
+        "reviewer": "fixture-qa",
+        "unsupported_claims": []
+      },
+      "receipt_own_capture": {
+        "executed": true,
+        "exit_code": 0,
+        "outcome": "success"
+      },
+      "receipt_accepted": true,
+      "proposed_transition": "advance"
+    },
+    {
+      "case": "aggregate_fail_control",
+      "direct_qa_predicate_passes": false,
+      "fresh_qa": {
+        "adversarial": {
+          "performed": true
+        },
+        "approved_contract_sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+        "checks": [
+          {
+            "command": "ordinary-failed-check",
+            "evidence": "proof/never-executed.json",
+            "executed": true,
+            "exit_code": 7,
+            "status": "failed"
+          }
+        ],
+        "checks_passed": 1,
+        "checks_run": 1,
+        "evidence_files": [
+          "proof/never-executed.json"
+        ],
+        "feature_id": "120",
+        "final_verdict": {
+          "approved": true,
+          "metadata": {
+            "nested": [
+              1
+            ]
+          },
+          "summary": "independent"
+        },
+        "issues": [],
+        "missing_acceptance_coverage": [],
+        "qa_pass": false,
+        "required_fixes": [],
+        "reviewed_revision": "df7dd67b1f9a23512d54ec7fb9222d6e701073b6",
+        "reviewer": "fixture-qa",
+        "unsupported_claims": []
+      },
+      "receipt_own_capture": {
+        "executed": true,
+        "exit_code": 0,
+        "outcome": "success"
+      },
+      "receipt_accepted": false,
+      "diagnostic": "receipt fresh QA predicate"
+    }
+  ]
+}

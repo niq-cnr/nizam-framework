@@ -1,0 +1,31 @@
+{
+  "status": "qualified-guest-high-risk-preflight-exit0",
+  "source_repository": "https://github.com/niq-cnr/nizam-framework.git",
+  "source_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "emulator": "QEMU 8.2.2 full-system x86_64, TCG software acceleration",
+  "guest_image_url": "https://cloud-images.ubuntu.com/minimal/releases/noble/release-20261017/ubuntu-24.04-minimal-cloudimg-amd64.img",
+  "guest_image_sha256": "b3296484e362ba2e713489a5de6225c719d9500962bde25d15f2f21e512c7658",
+  "guest_resources": {
+    "memory_mib": 2048,
+    "vcpus": 2,
+    "disk_virtual_gib": 8
+  },
+  "runtime_directory": "/tmp/nizam-landlock-vm",
+  "ssh_endpoint": "127.0.0.1:22222",
+  "guest_checkout": "/opt/nizam-work/nizam-framework",
+  "guest_evidence": "/opt/nizam-environment",
+  "host_changes": "No package installation, host kernel, sysctl, or security changes. Verified downloaded packages extracted into temporary directory.",
+  "authorization": "Root-authorized reversible environment preparation only; no product changes.",
+  "limitations": [
+    "Host remains Landlock-unavailable; this qualification belongs only to the actual running guest.",
+    "All implementation and code/QA execution must occur inside the same guest via the supplied interface.",
+    "Guest DNS remains unavailable; packages installed offline from authenticated Ubuntu archive downloads.",
+    "Passing operational preflight is not a replacement for later contract, begin, QA, or done gates."
+  ],
+  "guest_identity": "guest/identity.json",
+  "preflight_stdout": "guest/preflight.json",
+  "preflight_stderr": "guest/preflight.stderr.txt",
+  "preflight_exit": "guest/preflight.exit.txt",
+  "active_qemu_argv": "qemu-argv-04.json",
+  "actual_landlock": "guest/landlock-abi.txt"
+}

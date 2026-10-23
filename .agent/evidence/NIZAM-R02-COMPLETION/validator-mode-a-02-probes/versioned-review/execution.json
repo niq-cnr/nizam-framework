@@ -1,0 +1,139 @@
+{
+  "case": "versioned-review",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-c",
+        "user.name=Independent validator fixture",
+        "-c",
+        "user.email=validator@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "init",
+        "-q"
+      ],
+      "completed_at": "2026-10-23T15:56:36.934507+00:00",
+      "cwd": "/tmp/validator-r02-contract-02-fcw9jc9b",
+      "exit_code": 0,
+      "label": "git-00",
+      "started_at": "2026-10-23T15:56:36.927920+00:00",
+      "stderr_path": "git-00.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "git-00.stdout.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "user.name=Independent validator fixture",
+        "-c",
+        "user.email=validator@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "add",
+        "."
+      ],
+      "completed_at": "2026-10-23T15:56:36.938452+00:00",
+      "cwd": "/tmp/validator-r02-contract-02-fcw9jc9b",
+      "exit_code": 0,
+      "label": "git-01",
+      "started_at": "2026-10-23T15:56:36.934688+00:00",
+      "stderr_path": "git-01.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "git-01.stdout.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "user.name=Independent validator fixture",
+        "-c",
+        "user.email=validator@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "commit",
+        "-qm",
+        "validator baseline"
+      ],
+      "completed_at": "2026-10-23T15:56:36.946123+00:00",
+      "cwd": "/tmp/validator-r02-contract-02-fcw9jc9b",
+      "exit_code": 0,
+      "label": "git-02",
+      "started_at": "2026-10-23T15:56:36.938470+00:00",
+      "stderr_path": "git-02.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "git-02.stdout.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "user.name=Independent validator fixture",
+        "-c",
+        "user.email=validator@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        "rev-parse",
+        "HEAD"
+      ],
+      "completed_at": "2026-10-23T15:56:36.948470+00:00",
+      "cwd": "/tmp/validator-r02-contract-02-fcw9jc9b",
+      "exit_code": 0,
+      "label": "git-03",
+      "started_at": "2026-10-23T15:56:36.946142+00:00",
+      "stderr_path": "git-03.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "git-03.stdout.txt",
+      "stdout_sha256": "423b3bd4889bc77e122b5406f7dbc715f443f53d05d8855f9d94f35ab2ef0fcf"
+    },
+    {
+      "argv": [
+        "/tmp/nxos-ci-evaluator2/bin/python",
+        "-c",
+        "import json,re,subprocess; base=\"95481d2d3a43cfb5d2ab52954e3d293e0cbe5c47\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json', '\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+      ],
+      "completed_at": "2026-10-23T15:56:37.008395+00:00",
+      "cwd": "/tmp/validator-r02-contract-02-fcw9jc9b",
+      "exit_code": 0,
+      "label": "scope",
+      "started_at": "2026-10-23T15:56:36.948710+00:00",
+      "stderr_path": "scope.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "scope.stdout.txt",
+      "stdout_sha256": "7db97a812367345447add7385e85d466fa3ff447802a38fde1b682123bd8262d"
+    }
+  ],
+  "expected_exit": 0,
+  "expected_unexpected": [],
+  "fixture_base": "95481d2d3a43cfb5d2ab52954e3d293e0cbe5c47",
+  "observed": {
+    "base": "95481d2d3a43cfb5d2ab52954e3d293e0cbe5c47",
+    "changed_paths": [
+      ".agent/qa/NIZAM-R02-COMPLETION-contract-review-02.json"
+    ],
+    "projections": {
+      "committed": [],
+      "index": [],
+      "untracked": [
+        ".agent/qa/NIZAM-R02-COMPLETION-contract-review-02.json"
+      ],
+      "worktree": []
+    },
+    "unexpected": []
+  },
+  "observed_exit": 0,
+  "passed": true,
+  "substitution": "Only pinned source_revision literal replaced with disposable fixture base."
+}

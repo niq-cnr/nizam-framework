@@ -1,0 +1,76 @@
+{
+  "review": "contract-testability",
+  "feature": "NIZAM-R02-COMPLETION",
+  "contract_id": "NIZAM-R02-COMPLETION",
+  "revision_reviewed": 1,
+  "reviewed_contract": {
+    "path": ".agent/contracts/NIZAM-R02-COMPLETION.json",
+    "sha256": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+    "bytes": 38212,
+    "status": "proposed"
+  },
+  "reviewer": {
+    "role": "Evaluator",
+    "agent_id": "/root/framework_contract_evaluator",
+    "independent_of_generator": true,
+    "assignment": "Root delegated this independent testability review; the proposed role_allocation still names /root/authority_contract_r02 and should be reconciled by the Orchestrator."
+  },
+  "reviewed_at": "2026-10-23T15:44:12.123004+00:00",
+  "issues": [
+    {
+      "id": "ECT-01",
+      "verification_index": 18,
+      "criterion": "AC18 complete scope and preservation of pre-existing out-of-scope paths",
+      "evidence": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/rename-outside-into-evidence/execution.json",
+      "observation": "On a clean disposable clone of the pinned source, git mv README.md .agent/evidence/NIZAM-R02-COMPLETION/borrowed-readme.md removes an out-of-scope source path. The exact contract SCOPE command exits 0 and lists only the allowed destination with unexpected=[]. Git rename detection omits the original endpoint in its --name-only output.",
+      "required_fix": "Make every diff projection retain both rename/copy endpoints, for example add --no-renames to both complete-delta diff commands, or parse NUL-delimited --name-status rename/copy records correctly. Include an executable positive clean/allowed-edit control and this out-of-scope-source-to-allowed-destination negative control. Do not expand the allowed product paths.",
+      "severity": "high"
+    },
+    {
+      "id": "ECT-02",
+      "verification_index": 18,
+      "criterion": "AC18 legitimate independent review evidence must not cause false scope rejection",
+      "evidence": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/allowed-versioned-review/execution.json",
+      "observation": "The exact contract SCOPE command exits 1 when the only new path is the Root-assigned .agent/qa/NIZAM-R02-COMPLETION-contract-review-01.json. Its exact allowlist and metadata_ownership only admit the unsuffixed contract-review.json path. The installed contract-review schema explicitly supports revision-suffixed review artifacts.",
+      "required_fix": "Align metadata_ownership and the executable scope predicate with the precise versioned review/QA paths the task will retain. Use exact paths or a narrowly anchored task-specific revision pattern, and preserve unrelated evidence rejection. Keep prior review records immutable.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "All 18 acceptance rows have prospective verification mapping. The existing runner is procedural, and runpy named-callable commands fail if a required future function is absent; no unittest selector is incorrectly assumed.",
+    "Requirements cover index/worktree identities, unchanged inherited-state controls, absent endpoints, modes, symlink link bytes and ancestor traversal, repeated begin immutability, fail-closed legacy markers, observation failures and narrow metadata exclusions.",
+    "Future negative regressions must assert the intended refusal class/path and preconditions, not accept an unrelated exit 1. The retained Planner diagnostic is explicitly supplemental and does not establish all acceptance rows.",
+    "The proposed contract schema validates; all 22 command strings tokenize and embedded Python snippets parse. These are planning checks, not future verification executions.",
+    "The clean-clone SCOPE positive control exits 0; two adverse probes reproduce the reported verifier defects. All mutations were confined to disposable clones; product source hashes and the proposed contract bytes remain unchanged."
+  ],
+  "required_fixes": [
+    "ECT-01",
+    "ECT-02"
+  ],
+  "advisory_minor": [
+    {
+      "id": "ECT-A01",
+      "note": "Reconcile role_allocation with the actual independent Evaluator assignment; keep five-role separation and the implementation hold."
+    }
+  ],
+  "evidence_files": [
+    ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/summary.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/clean-control/execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/rename-outside-into-evidence/execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/allowed-versioned-review/execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes.py"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "NIZAM-R02-COMPLETION",
+    "summary": "Reject proposal revision 1: the executable SCOPE check has a demonstrated rename false-pass and versioned-review false-fail. Correct these without widening product scope, then re-review. No product acceptance or isolation qualification is claimed."
+  },
+  "implementation_gate": {
+    "allowed": false,
+    "preflight_hold_preserved": true,
+    "reason": "The independently recorded high-risk Landlock ENOSYS preflight remains a separate blocking prerequisite. A corrected contract review would not waive it."
+  },
+  "qualification": "Independent pre-code testability review only. No product implementation, post-code QA, complete-feature or merge-ready claim."
+}

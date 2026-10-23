@@ -1,0 +1,28 @@
+{
+  "case": "rename-outside-into-evidence",
+  "expected": "nonzero: source README is outside allowed scope",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import json,pathlib,subprocess; base=\"00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); paths=set(run([\"diff\",\"--name-only\",\"-z\",base,\"--\"])+run([\"diff\",\"--cached\",\"--name-only\",\"-z\",base,\"--\"])+run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])); paths.discard(\"\"); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\")); print(json.dumps({\"base\":base,\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "cwd": "/tmp/nizam-contract-review-ocu3n0ge/repo",
+  "started_at": "2026-10-23T15:43:06.835065+00:00",
+  "completed_at": "2026-10-23T15:43:07.022704+00:00",
+  "exit_code": 0,
+  "stdout": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/rename-outside-into-evidence/stdout.txt",
+    "bytes": 149,
+    "sha256": "dabbb9796507b4d30aa018b308f33590c48e86bb3db09297d34a60469feb0fd1"
+  },
+  "stderr": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/rename-outside-into-evidence/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/rename-outside-into-evidence/status.txt",
+    "bytes": 72,
+    "sha256": "8c74ae38eafbd7cad37b6660aec9ab6706382e549bccfdce87016fc007cbafef"
+  }
+}

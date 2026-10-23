@@ -1,0 +1,28 @@
+{
+  "kind": "read-only diagnostic against unmodified source; disposable Git repository only",
+  "scope": "OUTSIDE F1/F2 implementation scope; not acceptance or passing QA",
+  "capture_fixture": "synthetic contradictory metadata, not an official executed capture",
+  "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "results": [
+    {
+      "case": "ordinary_failed_capture_with_current_head",
+      "accepted": true
+    },
+    {
+      "case": "ordinary_failed_capture_with_unchecked_sha256",
+      "accepted": true
+    },
+    {
+      "case": "stale_40hex_candidate_control",
+      "accepted": false,
+      "exit_code": 1,
+      "diagnostic": "recorded verification result is stale: candidate is not the current HEAD"
+    },
+    {
+      "case": "declared_failed_check_control",
+      "accepted": false,
+      "exit_code": 1,
+      "diagnostic": "recorded verification result does not pass"
+    }
+  ]
+}

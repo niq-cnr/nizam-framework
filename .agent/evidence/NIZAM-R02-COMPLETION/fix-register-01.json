@@ -1,0 +1,103 @@
+{
+  "repository": "niq-cnr/nizam-framework",
+  "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "recorded_at": "2026-10-23T17:55:40.133982+00:00",
+  "producer": "/root",
+  "status": "four confirmed defects; source implementation has not begun",
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Preserve the approved bugfix contract at completion",
+      "failure": "begin authorizes a schema edit with its approved contract; done rechecks eligibility without contract_id and rejects the valid task.",
+      "correction": "Carry contract_id through completion and retain approved-status, identity and scope validation.",
+      "evidence": {
+        "path": ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01/summary.json",
+        "sha256": "e172f2438a2e566d20357b3ed8d02463a46708ab4ab05a95d264497c2391177a",
+        "bytes": 1927
+      },
+      "source_refs": [
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L540-L551",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3691-L3702",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3581-L3593"
+      ],
+      "delivery_scope": "NIZAM-R02-COMPLETION"
+    },
+    {
+      "id": "F2",
+      "title": "Content-bind inherited dirty work",
+      "failure": "Matching porcelain status/path tuples exempt inherited paths even when their bytes, index objects, mode or link target change.",
+      "correction": "Immutable versioned index and no-follow worktree observations; compare every inherited rename/copy endpoint including paths absent from current status; refuse legacy exemptions that lack historical proof.",
+      "evidence": {
+        "path": ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01/summary.json",
+        "sha256": "e172f2438a2e566d20357b3ed8d02463a46708ab4ab05a95d264497c2391177a",
+        "bytes": 1927
+      },
+      "source_refs": [
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3532-L3565",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3640-L3668"
+      ],
+      "delivery_scope": "NIZAM-R02-COMPLETION"
+    },
+    {
+      "id": "F3",
+      "title": "Validate QA capture contents and exact candidate identity",
+      "failure": "Passing declared check references ordinary failed capture metadata; direct completion accepts it. A 64-character candidate_sha256 is not checked by its 40-character HEAD comparison.",
+      "correction": "Bind each structured capture to assessed candidate, command, actual result and stream hashes; distinguish source commit from candidate manifest identity.",
+      "evidence": [
+        {
+          "path": ".agent/evidence/NIZAM-R02-COMPLETION/followup-audit/f3-capture-binding-probe.execution.json",
+          "sha256": "2cd6e7a09f1d4a43ff8250d9ce1450bc610912f71b5f7bd19c6d648fecbc2d80",
+          "bytes": 1937
+        },
+        {
+          "path": ".agent/evidence/NIZAM-R02-COMPLETION/followup-audit/f3-capture-binding-probe.stdout",
+          "sha256": "689cca2b450036d3856d241aabe2d11cd232bd47f9c88d994dc324753d4d7829",
+          "bytes": 917
+        }
+      ],
+      "source_refs": [
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3791-L3828",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3839-L3921"
+      ],
+      "delivery_scope": "separate proof-validation change; outside F1/F2 contract",
+      "limits": "Synthetic contradictory capture fixture in disposable Git repo. Explicit failed declared checks and stale 40-character candidates are already rejected."
+    },
+    {
+      "id": "F4",
+      "title": "Use the same QA proof rule for receipt prerequisites",
+      "failure": "Receipt fresh-qa aggregate counters can pass with absent per-check evidence or an explicit failed check; verifier accepts and transition planner proposes advance while direct qa_passes rejects.",
+      "correction": "Shared structured QA validation for direct completion and receipt prerequisites, retaining existing receipt command proof checks.",
+      "evidence": [
+        {
+          "path": ".agent/evidence/NIZAM-R02-COMPLETION/followup-audit/f4-receipt-prerequisite-probe.execution.json",
+          "sha256": "b0035809a7b9eec731cb7796f15034fe5db7f2bb36d72a85463ac39c257c1ce0",
+          "bytes": 1942
+        },
+        {
+          "path": ".agent/evidence/NIZAM-R02-COMPLETION/followup-audit/f4-receipt-prerequisite-probe.stdout",
+          "sha256": "8534045369cdcc49aa1cdb42152e721a00820ccc7b72e098c0a3d82e32bdfd8c",
+          "bytes": 4120
+        }
+      ],
+      "source_refs": [
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/workflow_assurance.py#L938-L945",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/workflow_assurance.py#L990-L994",
+        "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/workflow_assurance.py#L1055-L1084"
+      ],
+      "delivery_scope": "separate proof-validation change; outside F1/F2 contract",
+      "limits": "Synthetic QA/authority in disposable upstream ReceiptFixture, actual successful receipt command. No real transition applied. Receipt own captures already validate execution, result, argv, candidate and stream references."
+    }
+  ],
+  "additional_design_concern": {
+    "description": "verify_route_scope_eligibility accepts a candidate parameter without inspecting it. Candidate-to-scope linkage needs explicit treatment in proof-validation design.",
+    "evidence_status": "source-confirmed; no separate end-to-end exploit claim",
+    "source_ref": "https://github.com/niq-cnr/nizam-framework/blob/00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6/tools/start_path.py#L3413-L3469"
+  },
+  "proof_semantics_to_preserve": [
+    "An expected-negative test needs an explicit expected-result predicate; an ordinary failed capture does not qualify as a pass.",
+    "Empty stdout or stderr is valid when its exact byte identity and the test predicate are satisfied.",
+    "A hash establishes artifact identity; interpreting and validating its contents is still required."
+  ],
+  "implementation_gate": "Both pre-code reviews approve the F1/F2 contract; the approved-contract record and actual successful high-risk preflight in a usable implementation environment remain necessary.",
+  "excluded_other_repository_fix": "CL-040 empty Git blob handling belongs to nizamiq/cl-nizamiq; it is not a nizam-framework defect."
+}

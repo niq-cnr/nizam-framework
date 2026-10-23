@@ -1,0 +1,85 @@
+{
+  "review": "validator-mode-a",
+  "feature": "NIZAM-R02-COMPLETION",
+  "contract_id": "NIZAM-R02-COMPLETION",
+  "revision_reviewed": 2,
+  "contract_version": "0.2.0",
+  "reviewer": "/root/recovery_integration_r02",
+  "reviewed_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "contract_path": ".agent/contracts/NIZAM-R02-COMPLETION.json",
+  "contract_sha256": "504f0939544b936d4f8a67661dbd811a1af42526860584f3a97a9181eb9b9066",
+  "contract_bytes": 44038,
+  "source_sha256": {
+    "tools/start_path.py": "1591e9755c6f146e5f7dc0e660ac82fb8668ba3843d0dc544e03a6e6117c340a",
+    "tools/test_start_path.py": "1843770a877682b9b5c2ae9a6613401a5219e6a7de7b9be0431a216678df3c46"
+  },
+  "review_scope": "Independent pre-code re-review of revision 2 against preserved revision 1, focused on the three Validator defects and related Evaluator rename/metadata findings. Unchanged semantics were reused only after field-by-field comparison; no product implementation or application acceptance was evaluated.",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "resolved_findings": [
+    {
+      "ids": [
+        "NCA1-01",
+        "ECT-01"
+      ],
+      "resolution": "SCOPE explicitly unions base-to-HEAD, base-to-index, base-to-worktree and untracked paths. --no-renames retains the undeclared original path when renamed into allowed evidence. Independent exact-predicate fixtures reject masked committed and staged changes and the out-of-scope rename original with the expected affected path.",
+      "evidence": [
+        "validator-mode-a-02-probes/masked-commit/execution.json",
+        "validator-mode-a-02-probes/masked-index/execution.json",
+        "validator-mode-a-02-probes/rename-to-metadata/execution.json"
+      ]
+    },
+    {
+      "ids": [
+        "NCA1-02",
+        "ECT-02"
+      ],
+      "resolution": "Metadata ownership and executable SCOPE now admit bounded full-match task review and official reservation families. Independent unchanged installed capture created a real reservation and the predicate accepted it; versioned review is accepted while foreign reservation and shared run-state are rejected.",
+      "evidence": [
+        "validator-mode-a-02-probes/official-reservation/execution.json",
+        "validator-mode-a-02-probes/versioned-review/execution.json",
+        "validator-mode-a-02-probes/foreign-reservation/execution.json",
+        "validator-mode-a-02-probes/shared-state/execution.json"
+      ]
+    },
+    {
+      "ids": [
+        "NCA1-03"
+      ],
+      "resolution": "AC09 now requires unchanged and changed original/destination endpoint cases for real Git rename and copy observations, with index/worktree binding and no simulated passing copy case. An independent disposable real Git fixture produced the required C record with both paths; this demonstrates fixture feasibility only.",
+      "evidence": [
+        "validator-mode-a-02-probes/actual-copy-observation/execution.json"
+      ]
+    },
+    {
+      "ids": [
+        "ECT-A01"
+      ],
+      "resolution": "The role allocation names the actual separate Evaluator /root/framework_contract_evaluator."
+    }
+  ],
+  "observations": [
+    "The exact two product files, F1/F2 requirements, non-goals and active implementation hold are unchanged. All 18 acceptance identifiers remain; only AC09 and AC18 changed. Only AC09 and SCOPE verification entries changed and SCOPE-CONTROLS was added, giving 23 prospective entries.",
+    "Both product files remain byte-identical to the pinned source commit, and the 17 future product test callables are absent as declared. Neither baseline failure reproduction nor contract-plan probe success is a product fix or acceptance result.",
+    "Eight independent SCOPE controls passed with exact exits and unexpected-path assertions, and one independent actual Git copy-observation feasibility check passed. A read-only SCOPE observation of the current proposal package exited 0 with no unexpected paths.",
+    "Revision 1 proposal and rejecting Validator verdict retain their original hashes. This approval does not retroactively change that rejection.",
+    "The high-risk preflight hold remains active. This is one independent contract approval only: no implementation authorization, sandbox qualification, G4/completion, release, or merge is claimed. No result is claimed for the separate capable-environment feasibility investigation."
+  ],
+  "input_checks_path": ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-02-input-checks.json",
+  "input_checks_sha256": "ddc29bb04928a9aeacf9d099f5b23448d0bc53482a6dfd27cd77263979744611",
+  "evidence_refs": [
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-02-probes.execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-02-probes/summary.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-02-package-scope.execution.json"
+  ],
+  "implementation_authorized": false,
+  "qualification_claimed": false,
+  "recorded_at": "2026-10-23T15:57:53.158252+00:00",
+  "final_verdict": {
+    "approved": true,
+    "feature": "NIZAM-R02-COMPLETION",
+    "summary": "Revision 2 resolves the concrete prior contract defects without expanding product scope. Mode A approves the reviewed proposal with empty blocking arrays. The independent Evaluator gate and recorded high-risk implementation hold remain separate and mandatory."
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "task": "NIZAM-R02-COMPLETION",
+  "reviewer": "/root/recovery_integration_r02",
+  "reviewed_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "input_sha256": {
+    "AGENTS.md": "375e8f60db5249de8c6b0bc8d42319735fde883ca79ba696b6a444c1d7a97e1f",
+    ".nizam/NIZAM.json": "a40d65add02ac9a515af56049e680e0aa4037632cb88cea50aefc7f805bd1a73",
+    ".nizam/provenance.json": "34985c17acbbb7deb496bbdfb8ba3c6b4f96cf86789abe39f9e5b4e8960e1b85",
+    ".nizam/tools/SKILL.md": "bcaa4655b9dd9b067b889262f845166afea5b8ebef994701337b0c5bf0683768",
+    ".nizam/methodology/01_execution.md": "7d2847275d74b2187bdbf8bfb60d3bde0dc1f3f56e3428587398574449214670",
+    ".nizam/methodology/03_circuit_breaker.md": "744b6451753aa9fe9f4da0f2649765b6436955bbe4260e805b6fdaa031d8c1bc",
+    ".nizam/standard/AGF.md": "ad3b8f80d650520b3a3e38cb3274176438a354e6d2844579c44291886700f94b",
+    ".nizam/tools/start_path.py": "1591e9755c6f146e5f7dc0e660ac82fb8668ba3843d0dc544e03a6e6117c340a",
+    ".agent/evidence/NIZAM-R02-COMPLETION/classification-01.json": "4f431d13f47f1622d0f63ddde21bc44978c9f28ed679b9f939cba7bbe098c669",
+    ".agent/evidence/NIZAM-R02-COMPLETION/preflight-01.json": "16d38fc8792ff46e305d163a15608c2d9b53de6c01566941a34c65e8e2872ea7"
+  },
+  "installed_release": {
+    "framework_version": "1.11.0",
+    "tag": "v1.11.0",
+    "resolved_sha": "6fc683580941adf19860d9d9d00fdc81d38d8088",
+    "source_url": "https://github.com/niq-cnr/nizam-framework.git",
+    "installed_at": "2026-10-23T01:21:26Z"
+  },
+  "root_and_installed_rule_pairs_identical": {
+    "tools/SKILL.md": true,
+    "methodology/01_execution.md": true,
+    "methodology/03_circuit_breaker.md": true,
+    "standard/AGF.md": true,
+    "tools/start_path.py": true
+  },
+  "observed_route": "high-risk",
+  "required_gates": [
+    "loop1:contract_approval",
+    "capability_preflight",
+    "loop2:validator_mode_b",
+    "loop2:evaluator_qa",
+    "convergent_review_or_isolation_suite",
+    "loop2:evidence_capture"
+  ],
+  "observed_preflight": {
+    "ok": false,
+    "status": "degraded",
+    "qualified": true,
+    "operational": false,
+    "sandbox_operational": false,
+    "failure_kind": "Landlock syscall ENOSYS"
+  },
+  "application_tests_executed": false,
+  "preflight_rerun_by_reviewer": false,
+  "second_escalated_preflight": "Reported by Orchestrator; no separate raw capture independently inspected by this reviewer."
+}

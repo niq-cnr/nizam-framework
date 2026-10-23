@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/opt/nizam-work/nizam-framework/.nizam/tools/start_path.py", line 3995, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/nizam-work/nizam-framework/.nizam/tools/start_path.py", line 298, in main
+    return _main_extended(raw_argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/nizam-work/nizam-framework/.nizam/tools/start_path.py", line 459, in _main_extended
+    result = preflight_capabilities(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/nizam-work/nizam-framework/.nizam/tools/start_path.py", line 1025, in preflight_capabilities
+    git_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/nizam-work/nizam-framework/.nizam/tools/start_path.py", line 1187, in _run_git_readonly
+    return subprocess.run(
+           ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'git'

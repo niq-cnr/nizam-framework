@@ -1,0 +1,28 @@
+{
+  "case": "allowed-versioned-review",
+  "expected": "zero: parent-authorized versioned independent review output",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import json,re,subprocess; base=\"00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); projections={\"committed\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"HEAD\",\"--\"]),\"index\":run([\"diff\",\"--cached\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"worktree\":run([\"diff\",\"--no-renames\",\"--name-only\",\"-z\",base,\"--\"]),\"untracked\":run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])}; paths=set(p for ps in projections.values() for p in ps if p); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; patterns=['\\\\.agent/qa/NIZAM-R02-COMPLETION(?:-contract-review)?-(?:[0-9]{2,}|rev[1-9][0-9]*)\\\\.json', '\\\\.agent/evidence/NIZAM-R02-COMPLETION-[A-Za-z0-9][A-Za-z0-9._-]{0,63}-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\") and not any(re.fullmatch(q,p) for q in patterns)); print(json.dumps({\"base\":base,\"projections\":{k:sorted(p for p in v if p) for k,v in projections.items()},\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "cwd": "/tmp/nizam-contract-review-80jk0fsi/repo",
+  "started_at": "2026-10-23T15:57:34.631850+00:00",
+  "completed_at": "2026-10-23T15:57:35.040848+00:00",
+  "exit_code": 0,
+  "stdout": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-02-probes/allowed-versioned-review/stdout.txt",
+    "bytes": 284,
+    "sha256": "07efb5844853e308aa677dee7dec21a22b732e5520ef3df34707a87f30cc02de"
+  },
+  "stderr": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-02-probes/allowed-versioned-review/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "status": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-02-probes/allowed-versioned-review/status.txt",
+    "bytes": 58,
+    "sha256": "ba2a2dd52dee75c111c8e209f7195946348179ea5f4eadf0cc6f1342a7ee6326"
+  }
+}

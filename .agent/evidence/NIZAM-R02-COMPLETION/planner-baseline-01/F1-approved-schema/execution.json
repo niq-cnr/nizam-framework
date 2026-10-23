@@ -1,0 +1,112 @@
+{
+  "actual_exit": 1,
+  "after": {
+    "executable": false,
+    "kind": "file",
+    "sha256": "51a958f07bb9f183061ed3bc80306a21abe56c3325edd49b8f3783c41aba0dc5"
+  },
+  "before": {
+    "executable": false,
+    "kind": "file",
+    "sha256": "51a958f07bb9f183061ed3bc80306a21abe56c3325edd49b8f3783c41aba0dc5"
+  },
+  "case": "F1-approved-schema",
+  "events": [
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "completed_at": "2026-10-23T15:32:51.680178+00:00",
+      "cwd": "/tmp/nizam-f1f2-probe-7md61rim",
+      "exit_code": 0,
+      "label": "status-before",
+      "started_at": "2026-10-23T15:32:51.671615+00:00",
+      "stderr": {
+        "path": "status-before.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "status-before.stdout.txt",
+        "sha256": "fafcd9520ac7e6a0c3bc8bea0fa8755f2833a8d366eb30ae3497b6e0ec2ab23a"
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/58c4bfe533de/nizam-framework-pr/tools/start_path.py",
+        "begin",
+        "bugfix",
+        "--id",
+        "probe",
+        "--root",
+        "/tmp/nizam-f1f2-probe-7md61rim"
+      ],
+      "completed_at": "2026-10-23T15:32:51.895476+00:00",
+      "cwd": "/tmp/nizam-f1f2-probe-7md61rim",
+      "exit_code": 0,
+      "label": "begin",
+      "started_at": "2026-10-23T15:32:51.680520+00:00",
+      "stderr": {
+        "path": "begin.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "begin.stdout.txt",
+        "sha256": "7efb2cdf9f07c0f0914c14f58dd8e2cc122dda20f0be75232d060d9cfc3ed2a8"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "completed_at": "2026-10-23T15:32:51.900117+00:00",
+      "cwd": "/tmp/nizam-f1f2-probe-7md61rim",
+      "exit_code": 0,
+      "label": "status-after",
+      "started_at": "2026-10-23T15:32:51.896431+00:00",
+      "stderr": {
+        "path": "status-after.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "path": "status-after.stdout.txt",
+        "sha256": "cf3308c46d80290c60cb9b248a6a2e6e922f43531a25b4b84f217683bc052d62"
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/58c4bfe533de/nizam-framework-pr/tools/start_path.py",
+        "done",
+        "bugfix",
+        "--id",
+        "probe",
+        "--root",
+        "/tmp/nizam-f1f2-probe-7md61rim"
+      ],
+      "completed_at": "2026-10-23T15:32:52.138112+00:00",
+      "cwd": "/tmp/nizam-f1f2-probe-7md61rim",
+      "exit_code": 1,
+      "label": "done",
+      "started_at": "2026-10-23T15:32:51.900381+00:00",
+      "stderr": {
+        "path": "done.stderr.txt",
+        "sha256": "b909d0296ff200854c3a20edea397d892c4eaffd78bfc2c40d51943667d51786"
+      },
+      "stdout": {
+        "path": "done.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "expected_exit": 0,
+  "requirement_met": false
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "argv": [
+      "/tmp/nizam-landlock-vm/qemu-root/usr/bin/genisoimage",
+      "-output",
+      "/tmp/nizam-landlock-vm/seed.iso",
+      "-volid",
+      "cidata",
+      "-joliet",
+      "-rock",
+      "/tmp/nizam-landlock-vm/seed"
+    ],
+    "returncode": 0,
+    "stdout": "logs/seed-iso.stdout.txt",
+    "stderr": "logs/seed-iso.stderr.txt"
+  },
+  {
+    "argv": [
+      "/tmp/nizam-landlock-vm/qemu-root/usr/bin/qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "/tmp/nizam-landlock-vm/downloads/ubuntu-24.04-minimal-cloudimg-amd64.img",
+      "/tmp/nizam-landlock-vm/guest.qcow2",
+      "8G"
+    ],
+    "returncode": 0,
+    "stdout": "logs/overlay.stdout.txt",
+    "stderr": "logs/overlay.stderr.txt"
+  },
+  {
+    "argv": [
+      "/tmp/nizam-landlock-vm/qemu-root/usr/bin/qemu-system-x86_64",
+      "-machine",
+      "q35",
+      "-accel",
+      "tcg,thread=multi",
+      "-cpu",
+      "max",
+      "-smp",
+      "2",
+      "-m",
+      "2048",
+      "-L",
+      "/tmp/nizam-landlock-vm/qemu-root/usr/share/qemu",
+      "-drive",
+      "if=pflash,format=raw,readonly=on,file=/tmp/nizam-landlock-vm/qemu-root/usr/share/OVMF/OVMF_CODE_4M.fd",
+      "-drive",
+      "if=pflash,format=raw,file=/tmp/nizam-landlock-vm/OVMF_VARS_4M.fd",
+      "-drive",
+      "file=/tmp/nizam-landlock-vm/guest.qcow2,format=qcow2,if=virtio",
+      "-drive",
+      "file=/tmp/nizam-landlock-vm/seed.iso,format=raw,media=cdrom,readonly=on",
+      "-nic",
+      "user,model=virtio-net-pci,hostfwd=tcp:127.0.0.1:22222-:22",
+      "-display",
+      "none",
+      "-serial",
+      "file:/tmp/nizam-landlock-vm/logs/serial.log",
+      "-monitor",
+      "none",
+      "-pidfile",
+      "/tmp/nizam-landlock-vm/qemu.pid",
+      "-daemonize"
+    ],
+    "returncode": 1,
+    "stdout": "logs/qemu-launch.stdout.txt",
+    "stderr": "logs/qemu-launch.stderr.txt"
+  }
+]

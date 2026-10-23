@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "ssh",
+    "-i",
+    "/tmp/nizam-landlock-vm/guest-access-key",
+    "-p",
+    "22222",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "-o",
+    "StrictHostKeyChecking=yes",
+    "-o",
+    "UserKnownHostsFile=/tmp/nizam-landlock-vm/known_hosts",
+    "ubuntu@127.0.0.1",
+    "sudo -n python3 -"
+  ],
+  "stdin": "from pathlib import Path\nimport subprocess, json, ctypes\np=Path('/opt/nizam-environment')\nfiles={str(v):v.read_text(errors='replace') for v in p.glob('*') if v.is_file()}\nlog=Path('/var/log/nizam-environment-setup.log')\nc=ctypes.CDLL(None,use_errno=True); abi=c.syscall(444,0,0,1)\nprint(json.dumps({'uname':subprocess.run(['uname','-a'],capture_output=True,text=True).stdout,'landlock_abi':abi,'landlock_errno':ctypes.get_errno(),'git_present':Path('/usr/bin/git').exists(),'preflight_exit_exists':(p/'preflight.exit.txt').exists(),'files':files,'setup_log':log.read_text(errors='replace') if log.exists() else None},indent=2))\n",
+  "exit_code": 0,
+  "started_at": "2026-10-23T17:53:46.419128+00:00",
+  "finished_at": "2026-10-23T17:54:01.338146+00:00"
+}

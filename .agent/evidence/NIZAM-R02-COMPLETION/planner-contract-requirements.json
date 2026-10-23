@@ -1,0 +1,62 @@
+{
+  "artifact_kind": "planner_contract_requirements",
+  "task_id": "NIZAM-R02-COMPLETION",
+  "role": "Planner",
+  "status": "proposed-for-generator-contract",
+  "source_revision": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "spec_ref": ".agent/evidence/NIZAM-R02-COMPLETION/planner-spec.md",
+  "route": "high-risk",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {"path": "tools/start_path.py", "purpose": "Preserve approved bugfix contract context and compare content-bound inherited dirty snapshots at completion."},
+      {"path": "tools/test_start_path.py", "purpose": "Add real-Git F1/F2 positive, negative, compatibility and observation-failure regressions to the existing suite."}
+    ]
+  },
+  "acceptance_matrix": [
+    {"id": "AC01", "requirement": "R1", "given": "Valid approved contract covers a schema or protected path and valid task QA exists.", "when": "begin bugfix then scoped change then done bugfix", "expect": "Both commands exit 0; contract context survives the completion eligibility check."},
+    {"id": "AC02", "requirement": "R1", "given": "Missing, proposed, mismatched-identity or scope-incomplete named contract; also a contract invalidated after begin.", "when": "begin or done bugfix as applicable", "expect": "Nonzero exit; no fallback to uncontracted authority. Existing implemented/complete allowed statuses remain compatible."},
+    {"id": "AC03", "requirement": "R2", "given": "Pre-existing unrelated tracked/untracked/staged dirty state is unchanged.", "when": "A declared file changes and done runs", "expect": "Exit 0; exact inherited state is preserved and legitimate task work is not rejected."},
+    {"id": "AC04", "requirement": "R2", "given": "Pre-existing tracked modification has the same porcelain status after different bytes are written.", "when": "done", "expect": "Nonzero exit naming the undeclared changed path."},
+    {"id": "AC05", "requirement": "R2", "given": "Pre-existing untracked file changes bytes or is deleted; include a zero-byte baseline.", "when": "done", "expect": "Nonzero exit; deletion or a valid empty content hash must not be confused with a read failure."},
+    {"id": "AC06", "requirement": "R2", "given": "Pre-existing staged path receives new index bytes while its status code remains the same; also exercise index-to-worktree transitions, removed/recreated index entries and unchanged worktree bytes with different staged bytes.", "when": "done", "expect": "Nonzero exit for each undeclared state transition; both index and worktree must retain inherited state for exemption. Unchanged index/worktree pairs are the positive control."},
+    {"id": "AC07", "requirement": "R2", "given": "A pre-existing dirty file changes relevant permission/executable bits without changing its porcelain status.", "when": "done", "expect": "Nonzero exit; unchanged mode is a positive control."},
+    {"id": "AC08", "requirement": "R2/R4", "given": "A pre-existing dirty symlink changes link target; its old/new targets may be dangling or external.", "when": "begin/done observe it", "expect": "Target-text mutation is rejected without reading target bytes; ancestor symlink traversal is rejected."},
+    {"id": "AC09", "requirement": "R2", "given": "An inherited staged rename keeps the same path pair while destination bytes change; original endpoint can also change.", "when": "done", "expect": "Nonzero exit; both endpoints are fingerprinted. An unchanged inherited rename is allowed."},
+    {"id": "AC10", "requirement": "R2", "given": "An inherited dirty file is restored to HEAD and disappears from current status, or an inherited deletion is restored.", "when": "done", "expect": "Nonzero exit for the new undeclared change; comparison is not restricted to current status rows."},
+    {"id": "AC11", "requirement": "R2/R5", "given": "New undeclared committed, staged, unstaged, untracked or rename changes and shared run_state changes.", "when": "done", "expect": "All remain rejected; the repair does not weaken existing complete-delta controls."},
+    {"id": "AC12", "requirement": "R3", "given": "Version-1 base marker has no unrelated pre-existing dirty entries requiring exemption.", "when": "begin/done", "expect": "Compatible completion works without rewriting the old marker."},
+    {"id": "AC13", "requirement": "R3", "given": "Version-1 marker has unrelated inherited dirty entries, or a marker has unknown version, mismatched task identity or malformed snapshot fields.", "when": "begin/done consumes it", "expect": "Clear nonzero failure. Old records and worktree bytes remain unchanged; no silent baseline upgrade/re-pin."},
+    {"id": "AC14", "requirement": "R3", "given": "Valid versioned marker exists and source/worktree state later changes.", "when": "Repeated begin", "expect": "Marker bytes and base revision remain identical; repeated begin cannot refresh preservation authority."},
+    {"id": "AC15", "requirement": "R4", "given": "Git status/index/revision observation fails or returns malformed/partial data; a required fingerprint read fails.", "when": "begin/done", "expect": "Nonzero failure, never empty/success or non-Git fallback. A valid non-Git local task retains its documented existing behavior."},
+    {"id": "AC16", "requirement": "R4", "given": "Unsupported FIFO/socket/submodule/unmerged-index observation or unsafe pathname/ancestor traversal.", "when": "A dirty snapshot would require that observation", "expect": "Explicit nonzero unsupported/unsafe diagnostic, no external file follow or blocking special-file read."},
+    {"id": "AC17", "requirement": "R5", "given": "Task-owned evidence/QA additions coexist with unchanged unrelated evidence.", "when": "done", "expect": "Existing task-owned exclusions remain exactly scoped; unrelated evidence is preserved and no blanket .agent exemption is added."},
+    {"id": "AC18", "requirement": "R5", "given": "Complete candidate implementation.", "when": "Inspect exact diff and execute existing suite/compliance", "expect": "Only the two declared product files change; .nizam, phase020, existing evidence and out-of-scope behavior remain untouched."}
+  ],
+  "verification": [
+    {"acceptance_test": "AC01/AC02 and the six directly reproduced F2 variants", "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py --framework . --output .agent/evidence/NIZAM-R02-COMPLETION/generator-reproductions-01", "expected_exit": 0, "note": "Use a fresh exclusive output directory on each authorized execution; the immutable original baseline is retained."},
+    {"acceptance_test": "AC01 through AC17 durable regression coverage", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py", "expected_exit": 0},
+    {"acceptance_test": "AC18 existing repository compliance", "command": "bash tools/validate.sh", "expected_exit": 0, "note": "Existing pre-existing/unrelated gate failures must be reported with evidence and not fixed or waived under this contract."}
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/NIZAM-R02-COMPLETION",
+  "non_goals": [
+    "No QA capture/freshness, receipt-candidate or continuation-authority repair in this bounded change.",
+    "No changes to installed .nizam, schemas, CI workflow, release pin, sandbox policy or mutation adapter.",
+    "No deletion, compaction or cleanup of existing evidence; no alteration of phase020 work.",
+    "No broad whole-tree audit, ignored-file policy redesign, clean-path filter/assume-unchanged audit, or hostile concurrent-writer isolation redesign.",
+    "No source publication, commit, merge, tag or consumer re-bootstrap by this Planner."
+  ],
+  "role_handoff": {
+    "generator": "Author the formal proposed contract from these requirements; implement only after both pre-code gate approvals and Root authorization.",
+    "validator": "Independently check boundedness and complete acceptance coverage before code, then exact implementation scope afterward.",
+    "evaluator": "Independently review testability before code and execute meaningful acceptance cases afterward.",
+    "orchestrator": "Own official preflight, lifecycle/counters, protocol-qualified advancement and any publication authority."
+  },
+  "baseline_evidence": [
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01.execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01/summary.json"
+  ],
+  "approvals": {"validator_mode_a": false, "evaluator_contract_review": false},
+  "qualification_claim": "None. This is a proposed Planner handoff with reproduced baseline defects, not an approved implementation contract or QA verdict."
+}

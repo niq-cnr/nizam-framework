@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/apt-get",
+    "-c",
+    "/tmp/nizam-landlock-vm/apt.conf",
+    "-o",
+    "Dir::State::status=/tmp/nizam-landlock-vm/offline/guest-dpkg-status",
+    "-o",
+    "Dir::Cache=/tmp/nizam-landlock-vm/offline/cache",
+    "--download-only",
+    "--yes",
+    "--no-install-recommends",
+    "install",
+    "git",
+    "python3-jsonschema"
+  ],
+  "exit_code": 0
+}

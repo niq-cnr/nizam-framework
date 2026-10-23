@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "ssh",
+    "-i",
+    "/tmp/nizam-landlock-vm/guest-access-key",
+    "-p",
+    "22222",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "-o",
+    "StrictHostKeyChecking=yes",
+    "-o",
+    "UserKnownHostsFile=/tmp/nizam-landlock-vm/known_hosts",
+    "ubuntu@127.0.0.1",
+    "sudo -n python3 -"
+  ],
+  "stdin": "from pathlib import Path\nimport json,subprocess,os,sys,hashlib,platform,importlib.metadata,datetime\nr=Path('/opt/nizam-work/nizam-framework');e=Path('/opt/nizam-environment')\ndef git(args):\n p=subprocess.run(['git','-C',str(r),*args],capture_output=True,text=True);return {'argv':['git','-C',str(r),*args],'exit_code':p.returncode,'stdout':p.stdout,'stderr':p.stderr}\nfiles={v.name:v.read_text(errors='replace') for v in e.iterdir() if v.is_file()}\npaths=['tools/start_path.py','tools/test_start_path.py','.nizam/tools/start_path.py','.nizam/tools/isolated_trial_adapter.py','.nizam/tools/linux_trial_sandbox.sh','.nizam/provenance.json']\nhashes={v:hashlib.sha256((r/v).read_bytes()).hexdigest() for v in paths if (r/v).exists()}\ninstalled={str(v.relative_to(r)):hashlib.sha256(v.read_bytes()).hexdigest() for v in sorted((r/'.nizam').rglob('*')) if v.is_file() and not v.is_symlink()}\nidentity={'observed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'uid':os.geteuid(),'hostname':platform.node(),'uname':list(platform.uname()),'boot_id':Path('/proc/sys/kernel/random/boot_id').read_text().strip(),'python':sys.version,'jsonschema':importlib.metadata.version('jsonschema'),'git_version':git(['--version']),'head':git(['rev-parse','HEAD']),'source_status':git(['status','--porcelain=v1']),'critical_sha256':hashes,'installed_tree_sha256':installed}\nprint(json.dumps({'identity':identity,'guest_files':files},indent=2))\n",
+  "exit_code": 0,
+  "started_at": "2026-10-23T17:57:48.939927+00:00",
+  "finished_at": "2026-10-23T17:58:15.751858+00:00"
+}

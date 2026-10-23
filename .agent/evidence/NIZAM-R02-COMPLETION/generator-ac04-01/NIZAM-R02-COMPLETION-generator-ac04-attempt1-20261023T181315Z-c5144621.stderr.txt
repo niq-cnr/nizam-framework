@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "tools/test_start_path.py", line 1818, in test_r02_completion_ac04
+    before = next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+                                 ^^^^^^^^^^^^^^^^^^^^
+  File "tools/test_start_path.py", line 1762, in _r02_porcelain
+    return _git(root, "--no-optional-locks", "status", "--porcelain", "-z", "--untracked-files=all").stdout
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'stdout'
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 228, in partial_apport_excepthook
+    return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 114, in apport_excepthook
+    report["ExecutableTimestamp"] = str(int(os.stat(binary).st_mtime))
+                                            ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/opt/nizam-work/nizam-framework/-c'
+
+Original exception was:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "tools/test_start_path.py", line 1818, in test_r02_completion_ac04
+    before = next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+                                 ^^^^^^^^^^^^^^^^^^^^
+  File "tools/test_start_path.py", line 1762, in _r02_porcelain
+    return _git(root, "--no-optional-locks", "status", "--porcelain", "-z", "--untracked-files=all").stdout
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'stdout'

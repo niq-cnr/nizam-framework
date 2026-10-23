@@ -1,0 +1,28 @@
+{
+  "case": "allowed-versioned-review",
+  "expected": "zero: parent-authorized versioned independent review output",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import json,pathlib,subprocess; base=\"00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); paths=set(run([\"diff\",\"--name-only\",\"-z\",base,\"--\"])+run([\"diff\",\"--cached\",\"--name-only\",\"-z\",base,\"--\"])+run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])); paths.discard(\"\"); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\")); print(json.dumps({\"base\":base,\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "cwd": "/tmp/nizam-contract-review-_yw20xtt/repo",
+  "started_at": "2026-10-23T15:43:07.571103+00:00",
+  "completed_at": "2026-10-23T15:43:07.751830+00:00",
+  "exit_code": 1,
+  "stdout": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/allowed-versioned-review/stdout.txt",
+    "bytes": 204,
+    "sha256": "9651852a89ff519d786a5dbc11034d81acd163d88eac15cf13a93def524ea2d7"
+  },
+  "stderr": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/allowed-versioned-review/stderr.txt",
+    "bytes": 149,
+    "sha256": "4d5edcecdeabf41f76ee25fe3a6300d1bae5a53c62c5f6e0a5923c64e7955bf0"
+  },
+  "status": {
+    "path": ".agent/evidence/NIZAM-R02-COMPLETION/evaluator-contract-01-probes/allowed-versioned-review/status.txt",
+    "bytes": 58,
+    "sha256": "ba2a2dd52dee75c111c8e209f7195946348179ea5f4eadf0cc6f1342a7ee6326"
+  }
+}

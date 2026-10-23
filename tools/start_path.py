@@ -38,6 +38,7 @@ import os
 import platform
 import re
 import secrets
+import stat
 import shutil
 import subprocess
 import sys
@@ -544,22 +545,24 @@ def decide(decision: str, kind: str, path_id: str, root: Path) -> str:
     if kind == "bugfix":
         cause, scope = load_bugfix(root, path_id)
         if decision == "begin":
-            _record_task_base(root, path_id)
+            _record_task_base(root, path_id, scope["files"])
             return f"bugfix {cause['id']}: implementation may begin"
-        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id)
+        verify_actual_changed_scope(
+            root, "bugfix", scope["files"], path_id, contract_id=scope.get("contract_id")
+        )
         load_passing_qa(root, path_id)
         return f"bugfix {scope['id']}: recorded verification result exists"
     if kind == "trivial":
         intent = load_trivial_intent(root, path_id)
         if decision == "begin":
-            _record_task_base(root, path_id)
+            _record_task_base(root, path_id, intent["files"])
             return f"trivial {intent['id']}: implementation may begin"
         verify_actual_changed_scope(root, "trivial", intent["files"], path_id)
         load_passing_qa(root, path_id)
         return f"trivial {intent['id']}: recorded verification result exists"
     intent = load_intent(root, path_id)
     if decision == "begin":
-        _record_task_base(root, path_id)
+        _record_task_base(root, path_id, intent["files"])
         return f"small-change {intent['id']}: implementation may begin"
     verify_actual_changed_scope(root, "small-change", intent["files"], path_id)
     load_passing_qa(root, path_id)
@@ -3469,51 +3472,97 @@ def verify_route_scope_eligibility(
     return scoped
 
 
+def _scope_path_name(raw: str) -> str:
+    """Keep Git's exact pathname bytes; never normalize an unsafe alias into authority."""
+    if (not isinstance(raw, str) or not raw or "\x00" in raw or "\\" in raw
+            or raw.startswith("/") or any(p in ("", ".", "..", ".git") for p in raw.split("/"))):
+        raise StartPathError(f"unsafe path in scope observation: {raw!r}", 1)
+    return raw
+
+
+def _scope_path(root: Path, raw: str) -> Path:
+    """Reject symlink ancestors while permitting a no-follow observation of the leaf."""
+    raw = _scope_path_name(raw)
+    cur = root
+    for part in raw.split("/")[:-1]:
+        cur = cur / part
+        try:
+            mode = cur.lstat().st_mode
+        except FileNotFoundError:
+            break
+        except OSError as exc:
+            raise StartPathError(f"cannot inspect scope path ancestor: {raw}", 1) from exc
+        if not stat.S_ISDIR(mode):
+            raise StartPathError(f"unsafe non-directory or symlink ancestor in scope path: {raw}", 1)
+    return root / raw
+
+
+def _git_z_parts(data: bytes, label: str) -> list[bytes]:
+    if not isinstance(data, bytes) or (data and not data.endswith(b"\x00")):
+        raise StartPathError(f"malformed or partial Git {label} observation", 1)
+    parts = data[:-1].split(b"\x00") if data else []
+    if any(not part for part in parts):
+        raise StartPathError(f"malformed Git {label} observation: empty record", 1)
+    return parts
+
+
+def _status_paths(code: str, paths: list[str]) -> None:
+    if (not isinstance(code, str) or len(code) != 2 or code == "  "
+            or any(c not in " MADRCUT?" for c in code)
+            or ("?" in code and code != "??")
+            or not isinstance(paths, list) or len(paths) != (2 if "R" in code or "C" in code else 1)):
+        raise StartPathError("malformed Git status entry in task base or observation", 1)
+    for path in paths:
+        _scope_path_name(path)
+
+
 def _parse_porcelain_z(data: bytes) -> list[dict[str, Any]]:
-    """Parse `git status --porcelain=v1 -z` including both endpoints of renames/copies."""
-    entries = data.split(b"\x00")
+    """Parse complete porcelain-v1 records, including both rename/copy endpoints."""
+    parts = _git_z_parts(data, "status")
     parsed: list[dict[str, Any]] = []
     idx = 0
-    while idx < len(entries):
-        entry = entries[idx]
+    while idx < len(parts):
+        entry = parts[idx]
         idx += 1
-        if not entry or len(entry) < 4:
-            continue
-        code = entry[:2].decode("ascii", errors="replace")
+        if len(entry) < 4 or entry[2:3] != b" ":
+            raise StartPathError("malformed Git status observation", 1)
+        try:
+            code = entry[:2].decode("ascii")
+        except UnicodeDecodeError as exc:
+            raise StartPathError("malformed Git status code", 1) from exc
         paths = [entry[3:].decode("utf-8", errors="surrogateescape")]
         if "R" in code or "C" in code:
-            if idx < len(entries) and entries[idx]:
-                paths.append(entries[idx].decode("utf-8", errors="surrogateescape"))
-                idx += 1
+            if idx >= len(parts):
+                raise StartPathError("partial Git status rename/copy observation", 1)
+            paths.append(parts[idx].decode("utf-8", errors="surrogateescape"))
+            idx += 1
+        _status_paths(code, paths)
         parsed.append({"code": code, "paths": paths})
     return parsed
 
 
 def _parse_name_status_z(data: bytes) -> list[dict[str, Any]]:
-    """Parse `git diff --name-status -z` including both endpoints of renames/copies."""
-    parts = data.split(b"\x00")
+    """Parse complete committed-delta records without dropping either endpoint."""
+    parts = _git_z_parts(data, "diff")
     parsed: list[dict[str, Any]] = []
     idx = 0
     while idx < len(parts):
-        status = parts[idx].decode("ascii", errors="replace")
+        try:
+            code = parts[idx].decode("ascii")
+        except UnicodeDecodeError as exc:
+            raise StartPathError("malformed Git diff status code", 1) from exc
         idx += 1
-        if not status:
-            continue
-        if status[0] in ("R", "C"):
-            if idx + 1 >= len(parts):
-                raise StartPathError("malformed git diff --name-status -z rename record", 1)
-            paths = [
-                parts[idx].decode("utf-8", errors="surrogateescape"),
-                parts[idx + 1].decode("utf-8", errors="surrogateescape"),
-            ]
-            idx += 2
-        else:
-            if idx >= len(parts):
-                raise StartPathError("malformed git diff --name-status -z record", 1)
-            paths = [parts[idx].decode("utf-8", errors="surrogateescape")]
-            idx += 1
-        parsed.append({"status": status, "paths": paths})
+        if not re.fullmatch(r"(?:[ADMTUXB]|[RC][0-9]{1,3}|M[0-9]{1,3})", code):
+            raise StartPathError("malformed Git diff status code", 1)
+        count = 2 if code[0] in "RC" else 1
+        if idx + count > len(parts):
+            raise StartPathError("partial Git diff rename/copy or path observation", 1)
+        paths = [_scope_path_name(part.decode("utf-8", errors="surrogateescape"))
+                 for part in parts[idx:idx + count]]
+        idx += count
+        parsed.append({"status": code, "paths": paths})
     return parsed
+
 
 
 def _task_owned_governance_path(norm: str, path_id: str) -> bool:
@@ -3529,53 +3578,200 @@ def _task_owned_governance_path(norm: str, path_id: str) -> bool:
     return False
 
 
-def _record_task_base(root: Path, path_id: str) -> None:
-    """Record the immutable task base and pre-existing dirty snapshot before implementation.
-
-    Idempotent: an existing marker is never overwritten, so a later `begin` cannot
-    silently re-pin a task to a more favorable base.
-    """
-    marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
-    if marker.exists():
-        return
-    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
-    if git_check.returncode != 0 or git_check.stdout.strip() != "true":
-        return
-    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
-    if top_res.returncode != 0 or Path(top_res.stdout.strip()).resolve() != root.resolve():
-        raise StartPathError("cannot record task base: root is not the exact Git worktree toplevel", 1)
-    head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
-    if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
-        raise StartPathError("cannot record task base: HEAD is not a resolvable commit", 1)
-    status_res = _run_git_readonly(
-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
-    )
-    if status_res.returncode != 0:
-        raise StartPathError("cannot record task base: git status failed", 1)
-    baseline_entries = _parse_porcelain_z(status_res.stdout)
-    doc = {
-        "schema_version": 1,
-        "id": path_id,
-        "base_revision": head_res.stdout.strip(),
-        "recorded_at": utc_now_iso(),
-        "pre_existing_entries": baseline_entries,
-    }
-    marker.parent.mkdir(parents=True, exist_ok=True)
-    with marker.open("xb") as fh:
-        fh.write(canonical_bytes(doc) + b"\n")
-
-
-def _load_task_base(root: Path, path_id: str) -> dict[str, Any] | None:
-    marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
-    if not marker.is_file():
-        return None
+def _scope_git(root: Path, args: list[str], *, text: bool = False) -> subprocess.CompletedProcess:
     try:
-        doc = json.loads(marker.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        result = _run_git_readonly(root, args, text=text)
+    except OSError as exc:
+        raise StartPathError(f"Git {args[0]} scope observation could not run", 1) from exc
+    if result.returncode != 0:
+        raise StartPathError(f"Git {args[0]} scope observation failed", 1)
+    if not isinstance(result.stdout, str if text else bytes):
+        raise StartPathError(f"malformed Git {args[0]} scope observation", 1)
+    return result
+
+
+def _scope_worktree(root: Path, path_id: str) -> bool:
+    """Recognize local-only roots before querying Git; query errors never authorize fallback."""
+    marker = _scope_path(root, f".agent/evidence/{path_id}-base.json")
+    candidates = [marker, *(parent / ".git" for parent in (root, *root.parents))]
+    git_expected = any(os.environ.get(key) for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"))
+    try:
+        for candidate in candidates:
+            try:
+                candidate.lstat()
+                git_expected = True
+            except FileNotFoundError:
+                pass
+        # A bare Git repository is not the historical local-only case either.
+        git_expected = git_expected or ((root / "HEAD").is_file() and (root / "objects").is_dir())
+    except OSError as exc:
+        raise StartPathError("cannot inspect Git/task-base context for scope binding", 1) from exc
+    if not git_expected:
+        return False
+    check = _scope_git(root, ["rev-parse", "--is-inside-work-tree"], text=True)
+    if check.stdout.strip() != "true":
+        raise StartPathError("scope binding requires a Git worktree", 1)
+    top = _scope_git(root, ["rev-parse", "--show-toplevel"], text=True).stdout.strip()
+    if not top or Path(top).resolve() != root.resolve():
+        raise StartPathError("scope binding root is not the exact Git worktree toplevel", 1)
+    return True
+
+
+def _scope_commit(root: Path, revision: str) -> str:
+    value = _scope_git(root, ["rev-parse", "--verify", revision + "^{commit}"], text=True).stdout.strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", value) or (revision != "HEAD" and value != revision):
+        raise StartPathError(f"Git revision observation is not a resolvable commit: {revision}", 1)
+    return value
+
+
+def _open_scope_regular(path: Path):
+    """Never open a symlink target or block on a special file during observation."""
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    fd = os.open(path, flags)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise StartPathError(f"unsupported non-regular scope observation: {path}", 1)
+        return os.fdopen(fd, "rb")
+    except BaseException:
+        os.close(fd)
+        raise
+
+
+def _worktree_identity(root: Path, raw: str) -> dict[str, Any]:
+    path = _scope_path(root, raw)
+    try:
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            return {"kind": "missing"}
+        if stat.S_ISLNK(info.st_mode):
+            return {"kind": "symlink", "sha256": sha256_hex(os.readlink(os.fsencode(path)))}
+        if not stat.S_ISREG(info.st_mode):
+            raise StartPathError(f"unsupported dirty object in scope observation: {raw}", 1)
+        digest = hashlib.sha256()
+        with _open_scope_regular(path) as fh:
+            mode = stat.S_IMODE(os.fstat(fh.fileno()).st_mode)
+            for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return {"kind": "regular", "mode": mode, "sha256": digest.hexdigest()}
+    except OSError as exc:
+        raise StartPathError(f"cannot read worktree scope identity: {raw}", 1) from exc
+
+
+def _dirty_observations(root: Path, paths: set[str]) -> dict[str, Any]:
+    """Read only observed dirty paths, with separate index and bounded-memory worktree identities."""
+    ordered = sorted(paths)
+    index: dict[str, list[dict[str, Any]]] = {path: [] for path in ordered}
+    for offset in range(0, len(ordered), 128):
+        batch = ordered[offset:offset + 128]
+        result = _scope_git(root, ["ls-files", "--stage", "-z", "--",
+                                   *(":(literal)" + _scope_path_name(path) for path in batch)])
+        for entry in _git_z_parts(result.stdout, "index"):
+            header, separator, raw = entry.partition(b"\t")
+            if not separator or not re.fullmatch(rb"[0-7]{6} [0-9a-f]{40} [0-3]", header):
+                raise StartPathError("malformed Git index scope observation", 1)
+            path = _scope_path_name(raw.decode("utf-8", errors="surrogateescape"))
+            mode, oid, stage = header.decode("ascii").split(" ")
+            if path not in batch or index[path]:
+                raise StartPathError(f"unexpected or duplicate Git index scope path: {path}", 1)
+            if stage != "0" or mode not in ("100644", "100755", "120000"):
+                raise StartPathError(f"unsupported submodule or unmerged index scope state: {path}", 1)
+            index[path].append({"stage": 0, "mode": mode, "object_id": oid})
+    return {path: {"index": index[path], "worktree": _worktree_identity(root, path)} for path in ordered}
+
+
+def _valid_observation(value: Any) -> bool:
+    if not isinstance(value, dict) or set(value) != {"index", "worktree"}:
+        return False
+    entries, tree = value["index"], value["worktree"]
+    if not isinstance(entries, list) or len(entries) > 1 or not isinstance(tree, dict):
+        return False
+    for entry in entries:
+        if (not isinstance(entry, dict) or set(entry) != {"stage", "mode", "object_id"}
+                or type(entry["stage"]) is not int or entry["stage"] != 0
+                or entry["mode"] not in ("100644", "100755", "120000")
+                or not isinstance(entry["object_id"], str)
+                or not re.fullmatch(r"[0-9a-f]{40}", entry["object_id"])):
+            return False
+    kind = tree.get("kind")
+    if kind == "missing":
+        return set(tree) == {"kind"}
+    if kind not in ("regular", "symlink") or not isinstance(tree.get("sha256"), str):
+        return False
+    if not re.fullmatch(r"[0-9a-f]{64}", tree["sha256"]):
+        return False
+    if kind == "symlink":
+        return set(tree) == {"kind", "sha256"}
+    return (set(tree) == {"kind", "mode", "sha256"} and type(tree.get("mode")) is int
+            and 0 <= tree["mode"] <= 0o7777)
+
+
+def _load_task_base(root: Path, path_id: str, declared_files: list[str]) -> dict[str, Any] | None:
+    marker = _scope_path(root, f".agent/evidence/{path_id}-base.json")
+    try:
+        try:
+            info = marker.lstat()
+        except FileNotFoundError:
+            return None
+        if not stat.S_ISREG(info.st_mode):
+            raise StartPathError(f"recorded task base is not a regular file: {marker}", 1)
+        with _open_scope_regular(marker) as fh:
+            doc = json.load(fh)
+    except (OSError, ValueError, UnicodeError) as exc:
         raise StartPathError(f"recorded task base is unreadable: {marker}", 1) from exc
-    if not isinstance(doc, dict) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
-        raise StartPathError(f"recorded task base is malformed: {marker}", 1)
+    fields = {"schema_version", "id", "base_revision", "recorded_at", "pre_existing_entries"}
+    if not isinstance(doc, dict) or type(doc.get("schema_version")) is not int or doc["schema_version"] not in (1, 2):
+        raise StartPathError(f"recorded task base has unsupported or malformed version: {marker}", 1)
+    version = doc["schema_version"]
+    if (set(doc) != fields | ({"observations"} if version == 2 else set())
+            or doc.get("id") != path_id or not isinstance(doc.get("base_revision"), str)
+            or not re.fullmatch(r"[0-9a-f]{40}", doc["base_revision"])
+            or not isinstance(doc.get("recorded_at"), str) or not doc["recorded_at"]
+            or not isinstance(doc.get("pre_existing_entries"), list)):
+        raise StartPathError(f"recorded task base has malformed identity or snapshot: {marker}", 1)
+    paths: set[str] = set()
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+    for entry in doc["pre_existing_entries"]:
+        if not isinstance(entry, dict) or set(entry) != {"code", "paths"}:
+            raise StartPathError(f"recorded task base has malformed entries: {marker}", 1)
+        _status_paths(entry["code"], entry["paths"])
+        key = (entry["code"], tuple(entry["paths"]))
+        if key in seen:
+            raise StartPathError(f"recorded task base has duplicate entries: {marker}", 1)
+        seen.add(key)
+        paths.update(entry["paths"])
+    if version == 1:
+        outside = sorted(p for p in paths if p not in declared_files and not _task_owned_governance_path(p, path_id))
+        if outside:
+            raise StartPathError(
+                "legacy task base lacks historical content identities for unrelated dirty paths: "
+                + ", ".join(outside) + "; preserve this marker and work, then use a reviewed restart/new task", 1)
+    elif (not isinstance(doc.get("observations"), dict) or set(doc["observations"]) != paths
+          or not all(_valid_observation(value) for value in doc["observations"].values())):
+        raise StartPathError(f"recorded task base has malformed content observations: {marker}", 1)
+    _scope_commit(root, doc["base_revision"])
     return doc
+
+
+def _record_task_base(root: Path, path_id: str, declared_files: list[str]) -> None:
+    """Create version 2 once; validate existing records without refreshing their authority."""
+    if not _scope_worktree(root, path_id):
+        return
+    if _load_task_base(root, path_id, declared_files) is not None:
+        return
+    revision = _scope_commit(root, "HEAD")
+    entries = _parse_porcelain_z(_scope_git(root, ["status", "--porcelain", "-z", "--untracked-files=all"]).stdout)
+    paths = {path for entry in entries for path in entry["paths"]}
+    doc = {"schema_version": 2, "id": path_id, "base_revision": revision,
+           "recorded_at": utc_now_iso(), "pre_existing_entries": entries,
+           "observations": _dirty_observations(root, paths)}
+    marker = _scope_path(root, f".agent/evidence/{path_id}-base.json")
+    try:
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        with marker.open("xb") as fh:
+            fh.write(canonical_bytes(doc) + b"\n")
+    except OSError as exc:
+        raise StartPathError(f"cannot exclusively record task base: {marker}", 1) from exc
 
 
 def verify_actual_changed_scope(
@@ -3583,97 +3779,51 @@ def verify_actual_changed_scope(
     route: str,
     declared_files: list[str],
     path_id: str | None = None,
+    *,
+    contract_id: str | None = None,
 ) -> None:
-    """Bind completion to the complete committed/staged/unstaged/untracked delta.
-
-    A Git-backed project fails closed on any inspection failure. A genuinely
-    non-Git project keeps the historical local-only behavior (no Git state to
-    bind); that mode is not a claim of Git-backed completion.
-    """
-    scoped = verify_route_scope_eligibility(root, route, declared_files)
-    git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
-    if git_check.returncode != 0 or git_check.stdout.strip() != "true":
-        return
-
-    top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
-    if top_res.returncode != 0 or not top_res.stdout.strip():
-        raise StartPathError(f"{route} completion failed: Git toplevel could not be resolved", 1)
-    if Path(top_res.stdout.strip()).resolve() != root.resolve():
-        raise StartPathError(
-            f"{route} completion failed: root is not the exact Git worktree toplevel", 1
-        )
-
+    """Verify the committed delta and every inherited index/worktree identity, including vanished status rows."""
+    scoped = verify_route_scope_eligibility(root, route, declared_files, contract_id=contract_id)
+    if contract_id is not None:
+        require_inside_contract(root, contract_id, scoped)
     if path_id is None:
         raise StartPathError(f"{route} completion failed: task id is required for scope binding", 1)
-    base_doc = _load_task_base(root, path_id)
+    if not _scope_worktree(root, path_id):
+        return
+    base_doc = _load_task_base(root, path_id, scoped)
     if base_doc is None:
         raise StartPathError(
-            f"{route} completion failed: no recorded task base for {path_id}; restart through the supported begin path",
-            1,
-        )
-
-    head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
-    if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
-        raise StartPathError(f"{route} completion failed: HEAD is not a resolvable commit", 1)
-    head = head_res.stdout.strip()
+            f"{route} completion failed: no recorded task base for {path_id}; restart through the supported begin path", 1)
+    head = _scope_commit(root, "HEAD")
     base_revision = base_doc["base_revision"]
-
-    ancestor = _run_git_readonly(root, ["merge-base", "--is-ancestor", base_revision, head], text=True)
-    if ancestor.returncode != 0:
-        raise StartPathError(
-            f"{route} completion failed: recorded task base {base_revision} is not an ancestor of HEAD {head}",
-            1,
-        )
-
-    diff_res = _run_git_readonly(
-        root, ["diff", "--name-status", "-z", base_revision, head, "--"], text=False
-    )
-    if diff_res.returncode != 0:
-        raise StartPathError(f"{route} completion failed: committed delta inspection failed", 1)
-
-    status_res = _run_git_readonly(
-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
-    )
-    if status_res.returncode != 0:
-        raise StartPathError(f"{route} completion failed: working-tree inspection failed", 1)
-
+    _scope_git(root, ["merge-base", "--is-ancestor", base_revision, head], text=True)
+    committed = _parse_name_status_z(_scope_git(root, ["diff", "--name-status", "-z", base_revision, head, "--"]).stdout)
+    current = _parse_porcelain_z(_scope_git(root, ["status", "--porcelain", "-z", "--untracked-files=all"]).stdout)
+    inherited = base_doc.get("observations", {})
+    observed = _dirty_observations(root, set(inherited) | {path for entry in current for path in entry["paths"]})
     declared_set = set(scoped)
-    pre_existing = {
-        (entry.get("code"), tuple(entry.get("paths") or []))
-        for entry in (base_doc.get("pre_existing_entries") or [])
-        if isinstance(entry, dict)
-    }
-    undeclared: list[str] = []
+    undeclared: set[str] = set()
 
-    def consider(raw_path: str) -> None:
-        try:
-            norm = normalize_relative_path(raw_path, root=root, forbid_nizam_payload=False)
-        except StartPathError:
-            norm = raw_path.strip()
-        if _task_owned_governance_path(norm, path_id):
-            return
-        if norm in declared_set or norm in undeclared:
-            return
-        undeclared.append(norm)
+    def consider(path: str) -> None:
+        _scope_path(root, path)
+        if path not in declared_set and not _task_owned_governance_path(path, path_id):
+            undeclared.add(path)
 
-    for entry in _parse_name_status_z(diff_res.stdout):
-        for raw_path in entry["paths"]:
-            consider(raw_path)
-
-    for entry in _parse_porcelain_z(status_res.stdout):
-        key = (entry.get("code"), tuple(entry.get("paths") or []))
-        if key in pre_existing:
-            continue
-        for raw_path in entry["paths"]:
-            consider(raw_path)
-
+    for entry in committed:
+        for path in entry["paths"]:
+            consider(path)
+    for path, before in inherited.items():
+        if observed[path] != before:
+            consider(path)
+    for entry in current:
+        for path in entry["paths"]:
+            if path not in inherited or observed[path] != inherited[path]:
+                consider(path)
     if undeclared:
         raise StartPathError(
             f"{route} completion failed: working tree contains undeclared changes outside scoped files: "
-            + ", ".join(undeclared)
-            + f" (delta from task base {base_revision})",
-            1,
-        )
+            + ", ".join(sorted(undeclared)) + f" (delta from task base {base_revision})", 1)
+
 
 
 def load_bugfix(root: Path, path_id: str) -> tuple[dict, dict]:

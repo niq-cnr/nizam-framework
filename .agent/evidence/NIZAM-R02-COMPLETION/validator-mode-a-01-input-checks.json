@@ -1,0 +1,75 @@
+{
+  "task": "NIZAM-R02-COMPLETION",
+  "reviewer": "/root/recovery_integration_r02",
+  "reviewed_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "contract_sha256": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+  "contract_bytes": 38212,
+  "contract_schema_valid": true,
+  "acceptance_rows": 18,
+  "verification_entries": 22,
+  "planner_acceptance_mapping_identical": true,
+  "product_files_unchanged": true,
+  "future_regression_functions_absent_as_declared": [
+    "test_r02_completion_ac01",
+    "test_r02_completion_ac02",
+    "test_r02_completion_ac03",
+    "test_r02_completion_ac04",
+    "test_r02_completion_ac05",
+    "test_r02_completion_ac06",
+    "test_r02_completion_ac07",
+    "test_r02_completion_ac08",
+    "test_r02_completion_ac09",
+    "test_r02_completion_ac10",
+    "test_r02_completion_ac11",
+    "test_r02_completion_ac12",
+    "test_r02_completion_ac13",
+    "test_r02_completion_ac14",
+    "test_r02_completion_ac15",
+    "test_r02_completion_ac16",
+    "test_r02_completion_ac17"
+  ],
+  "baseline_diagnostic": {
+    "cases": 9,
+    "requirements_failed": 7,
+    "aggregate_exit": 1,
+    "streams_and_source_hashes_verified": true
+  },
+  "scope_command_fixture_probes": [
+    {
+      "case": "masked-committed-path",
+      "observed_exit": 0,
+      "outcome": "False pass: undeclared committed path is hidden by staged restoration.",
+      "record": "validator-mode-a-01-masked-committed-path.execution.json"
+    },
+    {
+      "case": "official-capture-reservation",
+      "observed_exit": 1,
+      "outcome": "False fail: the official task capture reservation is excluded from permitted metadata.",
+      "record": "validator-mode-a-01-official-capture-reservation.execution.json"
+    }
+  ],
+  "source_implementation_executed": false,
+  "source_implementation_authorized": false,
+  "input_sha256": {
+    "AGENTS.md": "375e8f60db5249de8c6b0bc8d42319735fde883ca79ba696b6a444c1d7a97e1f",
+    ".nizam/NIZAM.json": "a40d65add02ac9a515af56049e680e0aa4037632cb88cea50aefc7f805bd1a73",
+    ".nizam/tools/SKILL.md": "bcaa4655b9dd9b067b889262f845166afea5b8ebef994701337b0c5bf0683768",
+    ".nizam/methodology/01_execution.md": "7d2847275d74b2187bdbf8bfb60d3bde0dc1f3f56e3428587398574449214670",
+    ".nizam/standard/AGF.md": "ad3b8f80d650520b3a3e38cb3274176438a354e6d2844579c44291886700f94b",
+    ".nizam/schema/contract.schema.json": "17af6d016888f3740f466fcbeba1510e95d2667dbbe3e37601c534b7f03352a7",
+    ".nizam/schema/contract_review.schema.json": "a169df1771ecc30e61bcc4c3e08cc870ce430b85b4a087320f49b7308c957082",
+    "tools/start_path.py": "1591e9755c6f146e5f7dc0e660ac82fb8668ba3843d0dc544e03a6e6117c340a",
+    "tools/test_start_path.py": "1843770a877682b9b5c2ae9a6613401a5219e6a7de7b9be0431a216678df3c46",
+    "tools/test_convergent_review.py": "bb5654866310788150737e985cd10710560d5088e54ac8f2660cff8f7e231f5f",
+    ".agent/contracts/NIZAM-R02-COMPLETION.json": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-spec.md": "d231b17654898ddbe3ad47b6bb95bff29f3244d0346928c081dbb53cddebb70f",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-contract-requirements.json": "15ea855a05340207b4acec57b70c0830dcaea82360f372bf39512c63f7162d58",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-reproduce-f1f2.py": "43ad477651b0b6bac762921b8a216d453d415fc699df85b96f0f3d2746421183",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01/summary.json": "e172f2438a2e566d20357b3ed8d02463a46708ab4ab05a95d264497c2391177a",
+    ".agent/evidence/NIZAM-R02-COMPLETION/planner-baseline-01.execution.json": "181273b1dec73973412f5d7db096170438edbb1db3ef51d7367734a7420b51ce",
+    ".agent/evidence/NIZAM-R02-COMPLETION/preflight-01.json": "16d38fc8792ff46e305d163a15608c2d9b53de6c01566941a34c65e8e2872ea7",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-preflight-disposition-01.json": "0fff7df6cbba6dc7c96586d78a4e377b0455d5573a160fdbd68e97f77bc3f5fb",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-scope-probe.py": "276bd7a6d85457638128508ba9bf203ede0f06eb4087202d70bf70e08c4a6cba",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-scope-probe-summary.json": "73807c1f0685a1225301f6e44f905f71667dde68b4d59114ff46b4455288034c"
+  }
+}

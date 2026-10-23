@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "ssh",
+    "-i",
+    "/tmp/nizam-landlock-vm/guest-access-key",
+    "-p",
+    "22222",
+    "-o",
+    "BatchMode=yes",
+    "-o",
+    "ConnectTimeout=8",
+    "-o",
+    "StrictHostKeyChecking=yes",
+    "-o",
+    "UserKnownHostsFile=/tmp/nizam-landlock-vm/known_hosts",
+    "ubuntu@127.0.0.1",
+    "sudo -n env PYTHONDONTWRITEBYTECODE=1 python3 /opt/nizam-work/nizam-framework/.nizam/tools/start_path.py preflight --route high-risk --root /opt/nizam-work/nizam-framework"
+  ],
+  "exit_code": 1,
+  "started_at": "2026-10-23T17:54:18.479779+00:00",
+  "finished_at": "2026-10-23T17:54:30.638395+00:00"
+}

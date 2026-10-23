@@ -1,0 +1,85 @@
+{
+  "review": "validator-mode-a",
+  "feature": "NIZAM-R02-COMPLETION",
+  "contract_id": "NIZAM-R02-COMPLETION",
+  "revision_reviewed": 1,
+  "reviewer": "/root/recovery_integration_r02",
+  "reviewed_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "contract_sha256": "023aac22cf2d17f3396c2f2f44fda6e6bff2224d6e59215ed7b9fb672e0af65b",
+  "issues": [
+    {
+      "id": "NCA1-01",
+      "verification_index": 18,
+      "criterion": "AC18/SCOPE: inspect complete committed, staged, working-tree and untracked path delta.",
+      "severity": "high",
+      "evidence": "validator-mode-a-01-masked-committed-path.execution.json and its separate stdout/stderr captures: an undeclared edit is committed, then both index and worktree are restored to the base; the proposed SCOPE command returns 0 with unexpected empty although base-to-HEAD contains outside.txt. Only the pinned baseline literal was replaced by the disposable fixture base.",
+      "required_fix": "Include an explicit base-to-HEAD committed-path set in the union and preserve both endpoints of renames/copies when deriving every checked delta. Add a contract-verifier negative control for a committed undeclared edit masked by a staged/worktree restoration, and the independently reported rename-into-metadata counterexample. Preserve existing index/worktree/untracked coverage."
+    },
+    {
+      "id": "NCA1-02",
+      "verification_index": 18,
+      "criterion": "AC18/SCOPE and metadata ownership must admit the task-specific metadata produced by required official evidence capture.",
+      "severity": "medium",
+      "evidence": "validator-mode-a-01-official-capture-reservation.execution.json and separate stdout/stderr: the proposed SCOPE command exits 1 for .agent/evidence/NIZAM-R02-COMPLETION-scope-attempt1.reservation.json. Installed .nizam/tools/start_path.py lines 1233-1241 and 1522 reserve this task/step/attempt path even when capture output_dir is inside the slash-prefixed task directory.",
+      "required_fix": "Add a narrow, role-owned allowance for this task's official capture reservation filenames to both the ownership declaration and executable scope check. Keep shared/unrelated metadata forbidden. Reconcile any actually selected revision-suffixed review paths with the same allowlist or place those records in the already allowed task directory."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    {
+      "id": "NCA1-03",
+      "requirement": "R2 / snapshot_semantics.missing: fingerprint both rename and copy endpoints.",
+      "criterion": "The contract explicitly promises copy-endpoint handling, but AC09 and its required assertions name only renames; no existing start-path copy regression supplies that coverage.",
+      "required_fix": "Extend the existing AC09 regression requirements to cover copy endpoints with unchanged and changed-endpoint cases under the supported observation format, or explicitly reconcile a narrower supported-state rule through the Planner. This requires no additional product file or unrelated feature."
+    }
+  ],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "feature": "NIZAM-R02-COMPLETION",
+    "summary": "The two-file repair boundary, prospective implementation status and explicit high-risk hold are sound. Revision 1 requires corrections to the SCOPE verifier and explicit copy-endpoint acceptance coverage before approval."
+  },
+  "required_fixes": [
+    {
+      "id": "NCA1-01",
+      "action": "Include an explicit base-to-HEAD committed-path set in the union and preserve both endpoints of renames/copies when deriving every checked delta. Add a contract-verifier negative control for a committed undeclared edit masked by a staged/worktree restoration, and the independently reported rename-into-metadata counterexample. Preserve existing index/worktree/untracked coverage."
+    },
+    {
+      "id": "NCA1-02",
+      "action": "Add a narrow, role-owned allowance for this task's official capture reservation filenames to both the ownership declaration and executable scope check. Keep shared/unrelated metadata forbidden. Reconcile any actually selected revision-suffixed review paths with the same allowlist or place those records in the already allowed task directory."
+    },
+    {
+      "id": "NCA1-03",
+      "action": "Extend the existing AC09 regression requirements to cover copy endpoints with unchanged and changed-endpoint cases under the supported observation format, or explicitly reconcile a narrower supported-state rule through the Planner. This requires no additional product file or unrelated feature."
+    }
+  ],
+  "observations": [
+    "Contract JSON validates; all 18 Planner acceptance rows are preserved and all 22 verification entries remain prospective.",
+    "The proposed version-2 observation distinguishes index stage/mode/object identity from no-follow worktree bytes/kind/permissions, validates all inherited endpoints, and refuses unsafe/unsupported observation states.",
+    "Legacy version-1 continuation is explicitly restricted to histories requiring no unrelated dirty exemption; old markers must remain byte-immutable and repeated begin cannot repin authority.",
+    "The 17 planned no-argument runpy callables and required main() inclusion are a valid design for the existing procedural runner. They do not exist yet and have not been reported as implemented or tested.",
+    "The isolation command omits the unsupported-isolation allowance; its existing runner returns nonzero for unsupported required isolation. Runtime implementation remains held by the separate failed preflight, regardless of contract review outcome.",
+    "F3/F4, installed payload, public schemas, CI workflows, phase020 and shared lifecycle-state changes remain excluded."
+  ],
+  "implementation_hold": {
+    "active": true,
+    "disposition_ref": ".agent/evidence/NIZAM-R02-COMPLETION/validator-preflight-disposition-01.json",
+    "not_a_contract_defect": "The hold is independent of the concrete contract defects above; this review neither waives nor relaxes it."
+  },
+  "input_checks_path": ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-input-checks.json",
+  "input_checks_sha256": "3d7b2a4beb48b81f2e4e18401c11408e73b8716fb7142487c676d354d1b76089",
+  "evidence": [
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-scope-probe.py",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-scope-probe-summary.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-masked-committed-path.execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-masked-committed-path.stdout.txt",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-masked-committed-path.stderr.txt",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-official-capture-reservation.execution.json",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-official-capture-reservation.stdout.txt",
+    ".agent/evidence/NIZAM-R02-COMPLETION/validator-mode-a-01-official-capture-reservation.stderr.txt"
+  ],
+  "limitations": [
+    "No product source, tests, contract or installed payload were edited.",
+    "No implementation acceptance, QA, completion or qualification is claimed.",
+    "The two executed disposable-fixture checks diagnose the contract's scope-verification command, not a proposed product implementation."
+  ]
+}

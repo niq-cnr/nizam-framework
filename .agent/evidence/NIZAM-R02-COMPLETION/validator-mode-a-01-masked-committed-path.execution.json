@@ -1,0 +1,19 @@
+{
+  "case": "masked-committed-path",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,pathlib,subprocess; base=\"7bd52321b2790a1506824b5ad1f6ecd7a8c87db8\"; run=lambda a: subprocess.check_output([\"git\",*a]).decode(\"utf-8\").split(\"\\0\"); paths=set(run([\"diff\",\"--name-only\",\"-z\",base,\"--\"])+run([\"diff\",\"--cached\",\"--name-only\",\"-z\",base,\"--\"])+run([\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"])); paths.discard(\"\"); exact={\"tools/start_path.py\",\"tools/test_start_path.py\",\".agent/contracts/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION.json\",\".agent/qa/NIZAM-R02-COMPLETION-contract-review.json\"}; unexpected=sorted(p for p in paths if p not in exact and not p.startswith(\".agent/evidence/NIZAM-R02-COMPLETION/\")); print(json.dumps({\"base\":base,\"changed_paths\":sorted(paths),\"unexpected\":unexpected},sort_keys=True)); assert not unexpected, unexpected"
+  ],
+  "cwd": "/tmp/nizam-mode-a-scope-fg9yu5sv",
+  "duration_ms": 78,
+  "exit_code": 0,
+  "stdout": "validator-mode-a-01-masked-committed-path.stdout.txt",
+  "stderr": "validator-mode-a-01-masked-committed-path.stderr.txt",
+  "committed_delta_paths": [
+    "outside.txt"
+  ],
+  "fixture_base": "7bd52321b2790a1506824b5ad1f6ecd7a8c87db8",
+  "fixture_head": "ff54adfe77ecad6bbcd62f84bad599b2b1acac60",
+  "only_command_substitution": "Pinned repository base commit replaced by disposable fixture base commit; queries, allowlist and assertion unchanged."
+}

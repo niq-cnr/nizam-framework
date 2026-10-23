@@ -3,7 +3,14 @@
 
 from __future__ import annotations
 
+import hashlib
+import importlib.util
 import json
+import os
+import socket
+import stat
+from contextlib import contextmanager
+from unittest import mock
 import shutil
 import subprocess
 import sys
@@ -1691,6 +1698,481 @@ def test_jev_readiness_authority() -> None:
     print("jev-readiness: continuation authority cannot be granted by narrative summary")
 
 
+def _r02_git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    # The older _git helper intentionally returns None; these controls inspect actual output.
+    return subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, text=True,
+                          env={**os.environ, "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+
+
+@contextmanager
+def _r02_fixture(*, bugfix: bool = False):
+    """Real disposable Git state; no network, inherited hooks or global Git configuration."""
+    with tempfile.TemporaryDirectory(prefix="nizam-r02-") as tmp:
+        root = Path(tmp)
+        _r02_git(root, "init", "-q")
+        _r02_git(root, "config", "user.name", "R02 Fixture")
+        _r02_git(root, "config", "user.email", "r02@example.invalid")
+        _r02_git(root, "config", "core.hooksPath", "/dev/null")
+        _r02_git(root, "config", "commit.gpgsign", "false")
+        _r02_git(root, "config", "core.filemode", "true")
+        (root / "in_scope.py").write_text("original scoped content\n")
+        (root / "outside.py").write_text("original outside content\n" * 20)
+        (root / "outside.py").chmod(0o644)
+        write(root, ".agent/run_state.json", {"status": "preserve"})
+        if bugfix:
+            write(root, "schema/demo.schema.json", {"type": "object"})
+            write(root, ".agent/contracts/c1.json", contract("approved", ["in_scope.py", "schema/demo.schema.json"]))
+        _r02_git(root, "add", ".")
+        _r02_git(root, "commit", "-qm", "fixture baseline")
+        if bugfix:
+            write(root, ".agent/evidence/r02-cause.json", cause("r02"))
+            write(root, ".agent/evidence/r02-scope.json", scope("r02", ["in_scope.py", "schema/demo.schema.json"], "c1"))
+        else:
+            write(root, ".agent/evidence/r02-intent.json", {
+                "id": "r02", "path": "small-change", "summary": "Bounded content change",
+                "needs_new_contract": False, "files": ["in_scope.py"],
+            })
+        yield root
+
+
+def _r02_command(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run([sys.executable, str(TOOL), *args, "--root", str(root)],
+                          cwd=ROOT, text=True, capture_output=True, check=False, timeout=60,
+                          env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+
+
+def _r02_begin(root: Path, route: str = "small-change") -> None:
+    expect(_r02_command(root, "begin", route, "--id", "r02"), 0, "implementation may begin")
+    (root / "in_scope.py").write_text("legitimate task edit\n")
+
+
+def _r02_qa(root: Path) -> None:
+    evidence = ".agent/evidence/r02-check.txt"
+    (root / evidence).write_text("fixture acceptance evidence\n")
+    write(root, ".agent/qa/r02.json", qa("r02", evidence))
+
+
+def _r02_done(root: Path, code: int = 0, needle: str = "recorded verification result exists", *, route: str = "small-change") -> None:
+    _r02_qa(root)
+    result = _r02_command(root, "done", route, "--id", "r02")
+    expect(result, code, needle)
+    if code == 1 and needle.endswith((".py", ".txt", ".json")):
+        assert "undeclared changes" in result.stderr, result.stderr
+
+
+def _r02_marker(root: Path) -> Path:
+    return root / ".agent/evidence/r02-base.json"
+
+
+def _r02_porcelain(root: Path) -> str:
+    return _r02_git(root, "--no-optional-locks", "status", "--porcelain", "-z", "--untracked-files=all").stdout
+
+
+def test_r02_completion_ac01() -> None:
+    with _r02_fixture(bugfix=True) as root:
+        _r02_begin(root, "bugfix")
+        write(root, "schema/demo.schema.json", {"type": "string"})
+        _r02_done(root, route="bugfix")
+
+
+def test_r02_completion_ac02() -> None:
+    variants = {"missing": "required record", "no-id": "approved contract_id", "proposed": "not already approved",
+                "identity": "identity", "scope": "not inside the named contract"}
+    for variant, needle in variants.items():
+        with _r02_fixture(bugfix=True) as root:
+            doc = contract("approved", ["in_scope.py", "schema/demo.schema.json"])
+            if variant == "missing":
+                (root / ".agent/contracts/c1.json").unlink()
+            elif variant == "no-id":
+                write(root, ".agent/evidence/r02-scope.json", scope("r02", ["in_scope.py", "schema/demo.schema.json"]))
+            else:
+                if variant == "proposed": doc["status"] = "proposed"
+                if variant == "identity": doc["contract_id"] = doc["feature_id"] = "other"
+                if variant == "scope": doc["scope"]["files_modify"] = [{"path": "in_scope.py", "purpose": "repair"}]
+                write(root, ".agent/contracts/c1.json", doc)
+            expect(_r02_command(root, "begin", "bugfix", "--id", "r02"), 1, needle)
+            assert not _r02_marker(root).exists()
+    for status in ("approved", "implemented", "complete"):
+        with _r02_fixture(bugfix=True) as root:
+            write(root, ".agent/contracts/c1.json", contract(status, ["in_scope.py", "schema/demo.schema.json"]))
+            _r02_begin(root, "bugfix")
+            _r02_done(root, route="bugfix")
+            write(root, ".agent/contracts/c1.json", contract("proposed", ["in_scope.py", "schema/demo.schema.json"]))
+            _r02_done(root, 1, "not already approved", route="bugfix")
+    with _r02_fixture(bugfix=True) as root:
+        write(root, ".agent/evidence/r02-scope.json", scope("r02", [".nizam/payload.json"], "c1"))
+        expect(_r02_command(root, "begin", "bugfix", "--id", "r02"), 1, "installed .nizam/ payload is immutable")
+
+
+def test_r02_completion_ac03() -> None:
+    for variant in ("tracked", "untracked", "staged"):
+        with _r02_fixture() as root:
+            path = root / ("new.txt" if variant == "untracked" else "outside.py")
+            path.write_bytes(b"inherited dirty bytes\n")
+            if variant == "staged": _r02_git(root, "add", "outside.py")
+            _r02_begin(root)
+            before = (path.read_bytes(), (root / ".git/index").read_bytes(), _r02_marker(root).read_bytes())
+            _r02_done(root)
+            assert before == (path.read_bytes(), (root / ".git/index").read_bytes(), _r02_marker(root).read_bytes())
+
+
+def test_r02_completion_ac04() -> None:
+    with _r02_fixture() as root:
+        path = root / "outside.py"
+        path.write_text("inherited modification\n")
+        _r02_begin(root)
+        before = next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+        path.write_text("new undeclared bytes\n")
+        after = next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+        assert before == after == " M outside.py"
+        _r02_done(root, 1, "outside.py")
+
+
+def test_r02_completion_ac05() -> None:
+    for variant in ("unchanged-empty", "changed", "deleted"):
+        with _r02_fixture() as root:
+            path = root / "new.txt"
+            path.write_bytes(b"")
+            _r02_begin(root)
+            obs = json.loads(_r02_marker(root).read_text())["observations"]["new.txt"]
+            assert obs["index"] == [] and obs["worktree"]["sha256"] == hashlib.sha256(b"").hexdigest()
+            if variant == "changed": path.write_bytes(b"new bytes")
+            if variant == "deleted": path.unlink()
+            _r02_done(root, 0 if variant == "unchanged-empty" else 1,
+                      "recorded verification result exists" if variant == "unchanged-empty" else "new.txt")
+
+
+def test_r02_completion_ac06() -> None:
+    for variant in ("unchanged", "new-index", "index-to-worktree", "removed", "recreated", "worktree-only"):
+        with _r02_fixture() as root:
+            path = root / "outside.py"
+            path.write_text("inherited staged bytes\n")
+            _r02_git(root, "add", "outside.py")
+            _r02_begin(root)
+            before_code = next(row[:2] for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+            if variant == "new-index":
+                path.write_text("different staged bytes\n")
+                _r02_git(root, "add", "outside.py")
+                assert next(row[:2] for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py")) == before_code
+            if variant == "index-to-worktree": _r02_git(root, "reset", "-q", "HEAD", "--", "outside.py")
+            if variant in ("removed", "recreated"):
+                _r02_git(root, "rm", "--cached", "-q", "outside.py")
+            if variant == "recreated":
+                path.write_text("replacement staged bytes\n")
+                _r02_git(root, "add", "outside.py")
+                path.write_text("inherited staged bytes\n")
+            if variant == "worktree-only": path.write_text("new unstaged bytes\n")
+            _r02_done(root, 0 if variant == "unchanged" else 1,
+                      "recorded verification result exists" if variant == "unchanged" else "outside.py")
+
+
+def test_r02_completion_ac07() -> None:
+    with _r02_fixture() as root:
+        path = root / "outside.py"
+        path.write_text("inherited dirty bytes\n")
+        _r02_begin(root)
+        _r02_done(root)
+        before = next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py"))
+        path.chmod(0o640)
+        assert next(row for row in _r02_porcelain(root).split("\x00") if row.endswith("outside.py")) == before
+        _r02_done(root, 1, "outside.py")
+
+
+def test_r02_completion_ac08() -> None:
+    with tempfile.TemporaryDirectory(prefix="nizam-r02-external-") as external, _r02_fixture() as root:
+        target = Path(external) / "unreadable-special-target"
+        os.mkfifo(target)
+        link = root / "outside-link"
+        link.symlink_to(target)
+        _r02_begin(root)
+        _r02_done(root)
+        assert stat.S_ISFIFO(target.lstat().st_mode)
+        link.unlink()
+        link.symlink_to(Path(external) / "dangling-target")
+        _r02_done(root, 1, "outside-link")
+    with _r02_fixture() as root, tempfile.TemporaryDirectory(prefix="nizam-r02-ancestor-") as external:
+        nested = root / "nested"
+        nested.mkdir()
+        (nested / "child.txt").write_text("tracked\n")
+        _r02_git(root, "add", "nested/child.txt")
+        _r02_git(root, "commit", "-qm", "nested baseline")
+        (nested / "child.txt").write_text("inherited dirty\n")
+        _r02_begin(root)
+        (nested / "child.txt").unlink()
+        nested.rmdir()
+        external_child = Path(external) / "child.txt"
+        external_child.write_text("external bytes must stay untouched\n")
+        nested.symlink_to(external, target_is_directory=True)
+        _r02_done(root, 1, "symlink ancestor")
+        assert external_child.read_text() == "external bytes must stay untouched\n"
+
+
+def test_r02_completion_ac09() -> None:
+    for kind in ("rename", "copy"):
+        for variant in ("unchanged", "destination-worktree", "original-worktree", "destination-index", "original-index"):
+            with _r02_fixture() as root:
+                original, destination = root / "outside.py", root / "destination.py"
+                old = original.read_bytes()
+                if kind == "rename":
+                    _r02_git(root, "mv", "outside.py", "destination.py")
+                else:
+                    _r02_git(root, "config", "status.renames", "copies")
+                    destination.write_bytes(old)
+                    original.write_text("modified copy original\n" * 20)
+                    _r02_git(root, "add", "outside.py", "destination.py")
+                actual = _r02_porcelain(root)
+                expected = ("R" if kind == "rename" else "C") + "  destination.py\x00outside.py\x00"
+                assert expected in actual, (kind, actual)
+                _r02_begin(root)
+                observations = json.loads(_r02_marker(root).read_text())["observations"]
+                assert {"outside.py", "destination.py"} <= observations.keys()
+                path = original if variant.startswith("original") else destination
+                inherited = path.read_bytes() if path.exists() else None
+                if variant != "unchanged":
+                    path.write_text("new endpoint bytes\n")
+                    if variant.endswith("index"):
+                        _r02_git(root, "add", path.name)
+                        if inherited is None: path.unlink()
+                        else: path.write_bytes(inherited)
+                _r02_done(root, 0 if variant == "unchanged" else 1,
+                          "recorded verification result exists" if variant == "unchanged" else path.name)
+
+
+def test_r02_completion_ac10() -> None:
+    for variant in ("modified", "deleted"):
+        with _r02_fixture() as root:
+            path = root / "outside.py"
+            if variant == "modified": path.write_text("inherited modification\n")
+            else: path.unlink()
+            _r02_begin(root)
+            _r02_git(root, "checkout", "HEAD", "--", "outside.py")
+            assert "outside.py" not in _r02_porcelain(root)
+            _r02_done(root, 1, "outside.py")
+
+
+def test_r02_completion_ac11() -> None:
+    for variant in ("committed", "masked-commit", "staged", "unstaged", "untracked", "rename", "shared-state"):
+        with _r02_fixture() as root:
+            _r02_begin(root)
+            base = _r02_git(root, "rev-parse", "HEAD").stdout.strip()
+            expected = "outside.py"
+            if variant == "untracked":
+                expected = "new.txt"
+                (root / expected).write_text("new undeclared\n")
+            elif variant == "rename":
+                _r02_git(root, "mv", "outside.py", "renamed.py")
+            elif variant == "shared-state":
+                expected = ".agent/run_state.json"
+                write(root, expected, {"status": "undeclared"})
+            else:
+                (root / "outside.py").write_text("new undeclared\n")
+                if variant in ("staged", "committed", "masked-commit"):
+                    _r02_git(root, "add", "outside.py")
+                if variant in ("committed", "masked-commit"):
+                    _r02_git(root, "commit", "-qm", "undeclared commit")
+                if variant == "masked-commit":
+                    _r02_git(root, "checkout", base, "--", "outside.py")
+                    assert not _r02_git(root, "diff", base, "--", "outside.py").stdout
+                    assert _r02_git(root, "diff", base, "HEAD", "--", "outside.py").stdout
+            _r02_done(root, 1, expected)
+
+
+def test_r02_completion_ac12() -> None:
+    for inherited_declared in (False, True):
+        with _r02_fixture() as root:
+            if inherited_declared: (root / "in_scope.py").write_text("inherited declared change\n")
+            _r02_begin(root)
+            doc = json.loads(_r02_marker(root).read_text())
+            doc["schema_version"] = 1
+            del doc["observations"]
+            _r02_marker(root).write_text(json.dumps(doc))
+            before = _r02_marker(root).read_bytes()
+            _r02_begin(root)
+            _r02_done(root)
+            assert _r02_marker(root).read_bytes() == before
+
+
+def test_r02_completion_ac13() -> None:
+    for variant in ("legacy", "version", "identity", "digest", "coverage", "index", "shape", "commit", "json"):
+        with _r02_fixture() as root:
+            (root / "outside.py").write_text("inherited dirty bytes\n")
+            _r02_begin(root)
+            marker = _r02_marker(root)
+            doc = json.loads(marker.read_text())
+            needle = "recorded task base"
+            if variant == "legacy":
+                doc["schema_version"] = 1
+                del doc["observations"]
+                needle = "preserve this marker and work"
+            if variant == "version": doc["schema_version"] = 99
+            if variant == "identity": doc["id"] = "wrong-task"
+            if variant == "digest": doc["observations"]["outside.py"]["worktree"]["sha256"] = "not-a-digest"
+            if variant == "coverage": del doc["observations"]["outside.py"]
+            if variant == "index": doc["observations"]["outside.py"]["index"][0]["stage"] = True
+            if variant == "shape": doc["pre_existing_entries"] = None
+            if variant == "commit":
+                doc["base_revision"] = "0" * 40
+                needle = "Git rev-parse scope observation failed"
+            marker.write_text("{" if variant == "json" else json.dumps(doc))
+            before = (marker.read_bytes(), (root / "outside.py").read_bytes(), (root / ".git/index").read_bytes())
+            expect(_r02_command(root, "begin", "small-change", "--id", "r02"), 1, needle)
+            _r02_done(root, 1, needle)
+            assert before == (marker.read_bytes(), (root / "outside.py").read_bytes(), (root / ".git/index").read_bytes())
+
+
+def test_r02_completion_ac14() -> None:
+    with _r02_fixture() as root:
+        (root / "outside.py").write_text("inherited dirty bytes\n")
+        _r02_begin(root)
+        marker_before = _r02_marker(root).read_bytes()
+        _r02_git(root, "add", "in_scope.py")
+        _r02_git(root, "commit", "-qm", "declared task commit")
+        (root / "outside.py").write_text("new undeclared bytes\n")
+        _r02_begin(root)
+        assert _r02_marker(root).read_bytes() == marker_before
+        assert json.loads(marker_before)["base_revision"] != _r02_git(root, "rev-parse", "HEAD").stdout.strip()
+        _r02_done(root, 1, "outside.py")
+
+
+def _r02_module():
+    spec = importlib.util.spec_from_file_location("nizam_r02_start_path", TOOL)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _r02_reject(module, call, needle: str) -> None:
+    try:
+        call()
+    except module.StartPathError as exc:
+        assert needle in str(exc), (needle, str(exc))
+    else:
+        raise AssertionError(f"observation unexpectedly passed: {needle}")
+
+
+def test_r02_completion_ac15() -> None:
+    module = _r02_module()
+    cases = [("rev-parse", "failure", None), ("status", "failure", None), ("ls-files", "failure", None),
+             ("status", "malformed", b" M outside.py"), ("status", "malformed", b"M\x00"),
+             ("status", "partial", b"R  renamed.py\x00"), ("ls-files", "malformed", b"broken\x00"),
+             ("ls-files", "partial", b"100644 " + b"a" * 40 + b" 0\toutside.py"),
+             ("rev-parse", "commit", "not-a-commit\n")]
+    for decision in ("begin", "done"):
+        for target, kind, output in cases:
+            with _r02_fixture() as root:
+                (root / "outside.py").write_text("inherited dirty bytes\n")
+                if decision == "done": _r02_begin(root)
+                _r02_qa(root)
+                original = module._run_git_readonly
+                def broken(where, args, *, text=False):
+                    matches = args[0] == target and (kind != "commit" or "--verify" in args)
+                    if matches:
+                        value = output if output is not None else ("" if text else b"")
+                        return subprocess.CompletedProcess(args, 1 if kind == "failure" else 0, value, "" if text else b"")
+                    return original(where, args, text=text)
+                marker_before = _r02_marker(root).read_bytes() if _r02_marker(root).exists() else None
+                with mock.patch.object(module, "_run_git_readonly", side_effect=broken):
+                    _r02_reject(module, lambda: module.decide(decision, "small-change", "r02", root),
+                                "observation" if kind != "failure" else "failed")
+                assert (_r02_marker(root).read_bytes() if _r02_marker(root).exists() else None) == marker_before
+        with _r02_fixture() as root:
+            (root / "outside.py").write_text("inherited dirty bytes\n")
+            if decision == "done": _r02_begin(root)
+            _r02_qa(root)
+            original_open = module.os.open
+            def unreadable(path, flags, *args, **kwargs):
+                if Path(path) == root / "outside.py": raise PermissionError("injected required fingerprint read error")
+                return original_open(path, flags, *args, **kwargs)
+            with mock.patch.object(module.os, "open", side_effect=unreadable):
+                _r02_reject(module, lambda: module.decide(decision, "small-change", "r02", root), "cannot read worktree scope identity")
+    with _r02_fixture() as root:
+        _r02_begin(root)
+        _r02_qa(root)
+        original = module._run_git_readonly
+        def incomplete_diff(where, args, *, text=False):
+            if args[0] == "diff": return subprocess.CompletedProcess(args, 0, b"R100\x00only-one\x00", b"")
+            return original(where, args, text=text)
+        with mock.patch.object(module, "_run_git_readonly", side_effect=incomplete_diff):
+            _r02_reject(module, lambda: module.decide("done", "small-change", "r02", root), "partial Git diff")
+    with tempfile.TemporaryDirectory(prefix="nizam-r02-local-") as tmp:
+        root = Path(tmp)
+        (root / "in_scope.py").write_text("local content\n")
+        write(root, ".agent/evidence/r02-intent.json", {"id": "r02", "path": "small-change", "summary": "local",
+                                                        "needs_new_contract": False, "files": ["in_scope.py"]})
+        _r02_begin(root)
+        assert not _r02_marker(root).exists()
+        _r02_done(root)
+
+
+def test_r02_completion_ac16() -> None:
+    for kind in ("fifo", "socket", "submodule", "unmerged"):
+        with _r02_fixture() as root:
+            handle = None
+            try:
+                if kind in ("fifo", "socket"):
+                    (root / "outside.py").unlink()
+                    if kind == "fifo": os.mkfifo(root / "outside.py")
+                    else:
+                        handle = socket.socket(socket.AF_UNIX)
+                        handle.bind(str(root / "outside.py"))
+                elif kind == "submodule":
+                    nested = root / "vendor"
+                    nested.mkdir()
+                    _r02_git(nested, "init", "-q")
+                    _r02_git(nested, "config", "user.name", "Nested Fixture")
+                    _r02_git(nested, "config", "user.email", "nested@example.invalid")
+                    _r02_git(nested, "config", "commit.gpgsign", "false")
+                    (nested / "file.txt").write_text("nested\n")
+                    _r02_git(nested, "add", "file.txt")
+                    _r02_git(nested, "commit", "-qm", "nested fixture")
+                    commit = _r02_git(nested, "rev-parse", "HEAD").stdout.strip()
+                    _r02_git(root, "update-index", "--add", "--cacheinfo", f"160000,{commit},vendor")
+                else:
+                    oid = _r02_git(root, "rev-parse", "HEAD:outside.py").stdout.strip()
+                    payload = "0 " + "0" * 40 + "\toutside.py\n" + "".join(f"100644 {oid} {stage}\toutside.py\n" for stage in (1, 2, 3))
+                    subprocess.run(["git", "-C", str(root), "update-index", "--index-info"], input=payload,
+                                   text=True, capture_output=True, check=True)
+                expect(_r02_command(root, "begin", "small-change", "--id", "r02"), 1, "unsupported")
+                assert not _r02_marker(root).exists()
+            finally:
+                if handle is not None: handle.close()
+    for unsafe in ("../escape", "/absolute", "nested/../escape", "nested//file"):
+        with _r02_fixture() as root:
+            (root / "outside.py").write_text("inherited dirty bytes\n")
+            _r02_begin(root)
+            doc = json.loads(_r02_marker(root).read_text())
+            for entry in doc["pre_existing_entries"]:
+                entry["paths"] = [unsafe if path == "outside.py" else path for path in entry["paths"]]
+            doc["observations"][unsafe] = doc["observations"].pop("outside.py")
+            _r02_marker(root).write_text(json.dumps(doc))
+            before = _r02_marker(root).read_bytes()
+            _r02_done(root, 1, "unsafe path")
+            assert _r02_marker(root).read_bytes() == before
+
+
+def test_r02_completion_ac17() -> None:
+    with _r02_fixture() as root:
+        foreign = root / ".agent/evidence/other-task/old.txt"
+        foreign.parent.mkdir(parents=True)
+        foreign.write_text("preserved unrelated evidence\n")
+        _r02_begin(root)
+        (root / ".agent/evidence/r02-note.txt").write_text("owned output\n")
+        owned = root / ".agent/evidence/r02/nested.txt"
+        owned.parent.mkdir()
+        owned.write_text("owned nested output\n")
+        _r02_done(root)
+        assert foreign.read_text() == "preserved unrelated evidence\n"
+        foreign.write_text("unauthorized evidence rewrite\n")
+        _r02_done(root, 1, ".agent/evidence/other-task/old.txt")
+    with _r02_fixture() as root:
+        _r02_begin(root)
+        foreign = root / ".agent/evidence/other-task/new.txt"
+        foreign.parent.mkdir(parents=True)
+        foreign.write_text("new unrelated evidence\n")
+        _r02_done(root, 1, ".agent/evidence/other-task/new.txt")
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="nizam-start-path-") as name:
         root = Path(name)
@@ -1775,6 +2257,15 @@ def main() -> int:
     test_jev_readiness_controls()
     test_jev_readiness_attempts()
     test_jev_readiness_authority()
+    for check in (
+        test_r02_completion_ac01, test_r02_completion_ac02, test_r02_completion_ac03,
+        test_r02_completion_ac04, test_r02_completion_ac05, test_r02_completion_ac06,
+        test_r02_completion_ac07, test_r02_completion_ac08, test_r02_completion_ac09,
+        test_r02_completion_ac10, test_r02_completion_ac11, test_r02_completion_ac12,
+        test_r02_completion_ac13, test_r02_completion_ac14, test_r02_completion_ac15,
+        test_r02_completion_ac16, test_r02_completion_ac17,
+    ):
+        check()
     print("start-path: bugfix, small-change, trivial, classify, amend-contract, preflight, capture, publish, build-receipt, and status gates pass")
     return 0
 
