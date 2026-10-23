@@ -456,6 +456,26 @@ assert_install_tag_and_sha_pin_and_worktree_reproducibility() {
     return 1
   fi
 
+  # (3c) --git-repo install retention (regression guard): a successful install
+  # retains the verified sparse reference, and a subsequent --verify-only
+  # --git-repo content-integrity check passes against it.
+  local ref_target="${b2_dir}/ok-ref/.nizam"
+  local ref_repo="${b2_dir}/ok-ref/reference"
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --repo-url "file://${src_repo}" --tag v99.1.0 \
+      --expected-sha "${head_sha}" --target "${ref_target}" --git-repo "${ref_repo}" >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- --git-repo install retention failed"
+    return 1
+  fi
+  if [ ! -d "${ref_repo}/.git" ]; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- --git-repo install did not retain the verified reference"
+    return 1
+  fi
+  if ! ALLOW_FIXTURE_TAG=0 bash bootstrap.sh --verify-only --tag v99.1.0 --expected-sha "${head_sha}" \
+      --target "${ref_target}" --git-repo "${ref_repo}" --require-content-integrity >/dev/null 2>&1; then
+    echo "assert_install_tag_and_sha_pin_and_worktree_reproducibility: FAIL -- --verify-only --git-repo content integrity failed after install retention"
+    return 1
+  fi
+
   # (4) Worktree reproducibility (V7 regression guard):
   # Compare normal clone install (ok-annotated/.nizam), invocation from inside a linked git worktree,
   # and file:// source pointing at a linked git worktree.

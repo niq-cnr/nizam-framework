@@ -917,7 +917,8 @@ with open(path, "w", encoding="utf-8") as handle:
     if [ "${NIZAM_BOOTSTRAP_TEST_FAIL_REFERENCE:-0}" = "1" ] && [ "${ALLOW_FIXTURE_TAG}" = "1" ]; then
       reference_replace_ok=0
     fi
-    if [ "${reference_replace_ok}" -eq 1 ] && mv -- "${REF_STAGE_DIR}" "${GIT_REPO}"; then
+    # Failure path: reference_replace_ok==0 (test-injected) OR the mv failed.
+    if [ "${reference_replace_ok}" -eq 0 ] || ! mv -- "${REF_STAGE_DIR}" "${GIT_REPO}"; then
       # Restore the previous valid target/reference pair. A failed reference
       # replacement must never leave a successful-looking target without its
       # offline verification objects.
