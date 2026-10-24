@@ -128,8 +128,11 @@
             }
           },
           "expected_exit": {
-            "type": "integer",
-            "minimum": 0
+            "type": [
+              "integer",
+              "string"
+            ],
+            "description": "Historical verification may describe its expected result in prose; typed proof entries require an integer exit code."
           },
           "proof_kind": {
             "enum": [
@@ -216,7 +219,13 @@
                     }
                   }
                 }
-              ]
+              ],
+              "properties": {
+                "expected_exit": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
             }
           }
         ]

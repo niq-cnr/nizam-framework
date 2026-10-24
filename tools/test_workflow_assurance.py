@@ -1102,10 +1102,18 @@ def r02_schema_matrix():
     intent=dict(id='fixture',path='bugfix',files=['README.md'],non_goals=[])
     small=dict(id='fixture',path='small-change',files=['README.md'],summary='fixture change',needs_new_contract=False)
     contract=json.loads((ROOT/'.agent/contracts/120.json').read_text())
+    historical_contract=copy.deepcopy(contract)
+    historical_contract['verification']=[dict(acceptance_test='historical prose',command='true',expected_exit='0 with the required diagnostic')]
+    schemas['contract'].validate(historical_contract)
+    # Historical prose stays readable, while typed refusal predicates remain integer-only.
+    for invalid_exit in ('7', False):
+        negative_contract=copy.deepcopy(contract)
+        negative_contract['verification']=[dict(typed,acceptance_test='typed negative',command='false',expected_exit=invalid_exit,proof_kind='semantic-negative',diagnostic='EXPECTED_REFUSAL')]
+        invalid('contract',negative_contract)
     for name,record in (('bugfix_scope',intent),('small_change_intent',small),('contract',contract)):
         value=copy.deepcopy(record);value['verification']=[dict(typed,acceptance_test='proof',command='python -c pass') if name=='contract' else typed]
         schemas[name].validate(value)
-        for field,bad in (('argv',[]),('expected_exit',True),('expected_exit',7),('diagnostic','unexpected'),('proof_kind','invented')):
+        for field,bad in (('argv',[]),('expected_exit',True),('expected_exit','0'),('expected_exit',7),('diagnostic','unexpected'),('proof_kind','invented')):
             broken=copy.deepcopy(value);broken['verification'][0][field]=bad;invalid(name,broken)
         broken=copy.deepcopy(value);broken['verification'][0].pop('argv');invalid(name,broken)
     print('PASS r02 proof schema historical/v2 and typed policy negative cases')

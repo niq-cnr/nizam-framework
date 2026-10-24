@@ -1,0 +1,24 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "reviewer": "r02-validator",
+  "mode": "B-delta",
+  "feature": "r02-proof-validation",
+  "reviewed_commit": "53c47491",
+  "file_sha256": {
+    "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+    "tools/test_workflow_assurance.py": "c767641bf00c5c1564066b8b9eec8cd2e3505abae5a91d526abb5e4ae544576d"
+  },
+  "diff_ref": ".agent/evidence/r02-proof-validation/validator-legacy-schema.diff",
+  "diff_sha256": "9288c2c2eaec4dcb86f99f28c2c5c72c105726117caf59c2d060423bf3b327d5",
+  "review_basis": [
+    "Exact schema delta permits historical expected_exit prose in readable legacy verification entries while typed marker branch explicitly requires nonnegative integer expected_exit.",
+    "Existing runtime qa_required_checks independently requires exact integer type and pinned expected predicate; no new completion path accepts prose or boolean exits.",
+    "Tests add readable historical prose positive and typed negative string/boolean exit refusals, plus typed success string refusal across schemas. No proof-validation product implementation changes.",
+    "This is bounded compatibility correction for concrete compliance failure, retaining typed-proof authority and legacy readability."
+  ]
+}
