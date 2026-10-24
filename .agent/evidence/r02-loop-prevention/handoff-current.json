@@ -1,0 +1,51 @@
+{
+  "updated_at": "2026-10-24T03:31:40.570552+00:00",
+  "user_authority": "Implement all4 findings; fix recurring governance loops; publish/manage/triage own PRs and merge once clean. No release or installed upgrade requested.",
+  "source_branches": {
+    "completion": {
+      "branch": "fix/r02-completion",
+      "tip": "02c54239af1e646d79f344ffd0ff2ae64f51905b",
+      "pr": 134,
+      "qa": "complete; all5 remoteCIpassed; MERGED",
+      "merge_commit": "45dd97777a6b23750fafbdd0d92e70e37f06733c"
+    },
+    "proof": {
+      "branch": "fix/r02-proof-validation",
+      "candidate": "b2d1ad66429aa2745e3ab900efbc13444ca43b36",
+      "workspace": "/home/cnross/.tmp/nizam-r02-10DF50/repo",
+      "qa": "COMPLETE all5commands+1extra0; sharedproof original andrealrelocatedclone pass; actualrefs+sourcehashesrootverified",
+      "tip": "40ce1742b90ea486751a69856c6ab6c6538e4d56",
+      "pr": 135
+    },
+    "loop": {
+      "branch": "fix/r02-loop-prevention",
+      "candidate": "71e5f7d0",
+      "workspace": "/home/cnross/.tmp/nizam-r02-loop",
+      "qa_root": "/home/cnross/.tmp/nizam-r02-loop-qa2",
+      "supervisor": "/home/cnross/.tmp/nizam-r02-loop-qa2-supervisor.json",
+      "log": "/home/cnross/.tmp/nizam-r02-loop-qa2-supervisor.log",
+      "result": ".agent/evidence/r02-loop-prevention/root-qa-attempt2/result.json",
+      "qa": "COMPLETE all4commands+scope+independentadversarial0; candidate revalidated; completion.json contains rawcapture refs; twelveproductsourcehashes matchreview."
+    }
+  },
+  "agents": {
+    "generator": "read-only134CI/reviewmonitor",
+    "evaluator": "proofQA3",
+    "validator": "independent allsourceapprovals stored; no pending new sourcechanges"
+  },
+  "superseded_pr": {
+    "number": 133,
+    "state": "closed; originalbranch/evidencepreserved; superseded134"
+  },
+  "remaining": [
+    "Publish final loop branch PR targeting main, dependent on135.",
+    "Wait remoteCI/reviews on135 andloopPR; merge135thenloop preservinganchors, noforcepush/deletion.",
+    "Fastforward originalworkspace to mergedmain ifclean; no installedpayload upgrade."
+  ],
+  "no_loop_rules": [
+    "No new design or scope additions.",
+    "Only exact failing test/review allows bounded repair.",
+    "No duplicate suites on identical candidate.",
+    "Restart recovery checks captures/processes before repeating."
+  ]
+}

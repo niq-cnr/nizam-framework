@@ -1,0 +1,89 @@
+expected exit 2 and 'stopping policy halt: repeated identical unresolved defect signature'
+got exit 0 for ['/usr/bin/python', '/home/cnross/.tmp/nizam-r02-loop/tools/start_path.py', 'capture', '--id', 'rep-defect', '--step', 'check', '--attempt', '3', '--defect-signature', 'sig-identical-01', '--output-dir', '/home/cnross/.tmp/nizam-start-path-o6kvffmf/.agent/evidence/captures', '--root', '/home/cnross/.tmp/nizam-start-path-o6kvffmf', '--', '/usr/bin/python', '-c', "print('should-halt')"]
+stdout={
+  "argv": [
+    "/usr/bin/python",
+    "-c",
+    "print('should-halt')"
+  ],
+  "attempt": 3,
+  "binding_state": "unbound",
+  "candidate_sha256": null,
+  "capture_path": ".agent/evidence/captures/rep-defect-check-attempt3-20261024T023947Z-fe5fe553.capture.json",
+  "cause_class": null,
+  "completed_at": "2026-10-24T02:39:47Z",
+  "completion_state": "completed",
+  "continuation_lineage": {
+    "attempt": 3,
+    "configured_step_limit": 3,
+    "continuation_basis": "strategy-ladder",
+    "contract_amendment_present": false,
+    "decomposition_of": null,
+    "failed_execution_count": 2,
+    "initial_strategy_ladder_attempts": 3,
+    "operator_extension_present": false,
+    "parent_attempt": null,
+    "prior_attempts": [
+      {
+        "attempt": 1,
+        "capture_path": ".agent/evidence/captures/rep-defect-check-attempt1-20261024T023947Z-f8b8e4a8.capture.json",
+        "defect_signature": "sig-identical-01",
+        "exit_code": 1,
+        "id": "rep-defect",
+        "outcome": "failed",
+        "step": "check"
+      },
+      {
+        "attempt": 2,
+        "capture_path": ".agent/evidence/captures/rep-defect-check-attempt2-20261024T023947Z-852b3463.capture.json",
+        "defect_signature": "sig-identical-01",
+        "exit_code": 1,
+        "id": "rep-defect",
+        "outcome": "failed",
+        "step": "check"
+      }
+    ],
+    "repair_summary": null,
+    "task_failed_execution_ceiling": 6
+  },
+  "cwd": "/home/cnross/.tmp/nizam-start-path-o6kvffmf",
+  "defect_signature": "sig-identical-01",
+  "duration_ms": 11,
+  "environment": {
+    "runtime": {
+      "implementation": "CPython",
+      "machine": "x86_64",
+      "system": "Linux",
+      "version": "3.12.3"
+    },
+    "variables": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "executed": true,
+  "exit_code": 0,
+  "id": "rep-defect",
+  "outcome": "success",
+  "producer": {
+    "agent_id": "nizam-local-agent",
+    "session_id": "local-session"
+  },
+  "proof_kind": "success",
+  "revision": "6076e76dacc74703d5d32fb35c06a9d56f91199c",
+  "schema_version": 1,
+  "signal": null,
+  "started_at": "2026-10-24T02:39:47Z",
+  "stderr": {
+    "path": ".agent/evidence/captures/rep-defect-check-attempt3-20261024T023947Z-fe5fe553.stderr.txt",
+    "revision": null,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "path": ".agent/evidence/captures/rep-defect-check-attempt3-20261024T023947Z-fe5fe553.stdout.txt",
+    "revision": null,
+    "sha256": "0f90dd0a089110331b7909935deb165d11946d00a1235bea46109322ff67d517"
+  },
+  "step": "check"
+}
+
+stderr=

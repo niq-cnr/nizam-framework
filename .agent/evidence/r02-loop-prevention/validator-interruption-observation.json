@@ -1,0 +1,27 @@
+{
+  "reviewer": "r02-validator",
+  "blocking": false,
+  "source": "tools/start_path.py:capture_command_evidence subprocess result/exception handling",
+  "observed_shapes": {
+    "TimeoutExpired": {
+      "executed": true,
+      "completion_state": "interrupted",
+      "outcome": "interrupted",
+      "exit_code": -1
+    },
+    "signal": {
+      "executed": true,
+      "completion_state": "interrupted",
+      "outcome": "interrupted",
+      "exit_code": "negative subprocess returncode integer",
+      "signal": "positive signal number"
+    },
+    "OSError": {
+      "executed": false,
+      "completion_state": "completed",
+      "outcome": "setup-error",
+      "exit_code": 127
+    }
+  },
+  "conclusion": "History integer-exit requirement accepts actual produced interruptions. None exit was not reproduced by current producer; no new compatibility repair justified. Interrupted captures remain failed-budget entries."
+}

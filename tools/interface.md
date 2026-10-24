@@ -153,6 +153,22 @@ the adapter's entire job.
 - **Native satisfaction:** Any generic shell or command-execution capability
   of the host environment satisfies this operation.
 
+### 4.3.1 Finite capture budgets and proof reuse
+
+`capture` reads task history across all `.agent/evidence/` output directories
+and step names. Three identical defect signatures or six failed executions stop
+the task; explicit finite task-scoped operator recovery is defined in
+`methodology/03_circuit_breaker.md`. Raw nonzero negative captures qualify as success only when their actual exit
+and exact diagnostic satisfy independently pinned assessed inventory; an
+unvalidated producer label cannot create retry credit. Safety and configured step limits remain binding.
+
+Before executing QA-bound commands, capture validates the assessed candidate,
+its actual selected input bytes/index/environment and pinned authorization.
+Identical prior successful task/candidate/argv/proof-kind/environment captures
+are refused with the reusable capture path. Source and verification policy must
+be frozen before final QA; a new acceptance failure or material change justifies
+a fresh candidate, while an unchanged passing candidate reuses its proof.
+
 ### 4.4 Repository Mutation-Authority Boundary for Evidence Publication
 
 An unrestricted interpreter (such as `python3` or `bash`) with write access to

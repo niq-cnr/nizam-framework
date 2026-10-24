@@ -1,0 +1,19 @@
+{
+  "reviewer": "r02-validator",
+  "status": "early-source-not-final-freeze",
+  "issues": [
+    {
+      "id": "EXPECTED-NEGATIVE-BUDGET",
+      "source": "tools/start_path.py:_evaluate_attempt_continuation and capture_command_evidence duplicate guard",
+      "finding": "Budget failure classification uses raw outcome; duplicate guard requires exit0. Successful independently pinned raw semantic-negative captures intentionally retain outcome failed/nonzero exit under accepted F3 semantics. They incorrectly consume finite failure budget and evade successful proof reuse.",
+      "required_fix": "Classify actual capture result against independently prevalidated expected exit/kind/exact diagnostic for QA budget/reuse, preserving raw outcome wire semantics; retain result in existing lineage and cover real negative success."
+    }
+  ],
+  "confirmed": [
+    "Task-wide evidence scan crosses step names and output dirs; matching corrupt history refuses.",
+    "Narrative/amendment/decomposition labels no longer waive finite failure or step ceilings.",
+    "Default total failed ceiling6 and repeated signature3 are independent; recovery requires exact task, finite nonboolean integer, real failed capture and authority record.",
+    "QA candidate/context and selected materials checked before dispatch; noop amendment compares actual updated content."
+  ],
+  "final_gate": "Await frozen source and concrete fix; no acceptance claimed."
+}

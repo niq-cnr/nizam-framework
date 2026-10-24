@@ -1,0 +1,21 @@
+diff --git a/tools/test_public_entry.py b/tools/test_public_entry.py
+index 371af298..3228101b 100644
+--- a/tools/test_public_entry.py
++++ b/tools/test_public_entry.py
+@@ -119,7 +119,15 @@ def verify_b3_and_b4() -> None:
+     forbid(cb_desc, "forbidden fourth attempt", "methodology/03_circuit_breaker.md description")
+     forbid(cb_body, "subordinate to this 3-attempt cap; if a blind\n  win is not achieved by attempt 3", "methodology/03_circuit_breaker.md body")
+     forbid(cb_body, "begins a fourth attempt without having\nrespected this counter has violated Section 4", "methodology/03_circuit_breaker.md body")
+-    require(cb_body, "same unresolved defect\nsignature without a viable bounded decomposition")
++    policy = " ".join(cb_body.split())
++    require(policy, "three-failure ceiling for any one signature")
++    require(policy, "six failed executions per task across every step and output directory")
++    require(policy, "Successes do not erase failures.")
++    require(policy, "Narrative repair summaries, existing amendments and decomposition labels grant no budget.")
++    require(policy, "explicit finite task-scoped operator recovery")
++    require(policy, "Only `circuit_breaker[task_id].operator_recovery` can reopen the task budget.")
++    require(policy, "Configured positive integer step limits remain finite.")
++    forbid(policy, "same unresolved defect signature without a viable bounded decomposition", "circuit-breaker continuation policy")
+ 
+     ab_body = body_after_frontmatter(ACCEPTANCE_BARS_MD.read_text(encoding="utf-8"))
+     forbid(ab_body, "rather than making a forbidden fourth autonomous attempt", "standard/acceptance_bars.md body")

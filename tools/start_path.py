@@ -622,21 +622,21 @@ def classify_task(
         "required_gates": ROUTE_GATES[route],
         "stopping_conditions": {
             "initial_strategy_ladder_attempts": 3,
-            "hard_attempt_cap": None,
-            "attempt_counter_role": "telemetry",
+            "hard_attempt_cap": 6,
+            "attempt_counter_role": "finite task-wide failed-execution budget",
             "breaker_ref": "methodology/03_circuit_breaker.md",
             "comparator_subordinate": True,
             "continuation_policy": (
-                "Continue beyond attempt 3 when goals, invariants, and authority boundaries hold and "
-                "a bounded contract amendment, verified task decomposition, or authorized circuit_breaker "
-                "step limit applies; retain all prior attempt and repair history."
+                "At most six failed executions per task across steps/output directories and at most three "
+                "with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. "
+                "Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures."
             ),
             "pass_condition": (
                 "All required_gates for route '" + route + "' exit 0 and blocking verdict arrays are empty."
             ),
             "halt_condition": (
-                "Stop and escalate on a repeated identical deterministic failure signature without a "
-                "recorded bounded amendment or decomposition, contradiction with approved contract/invariants, "
+                "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, "
+                "contradiction with approved contract/invariants, "
                 "missing operator authority, or exhausted execution budget/step limit; "
                 "comparator claims remain subordinate to stopping rules."
             ),
@@ -813,6 +813,9 @@ def amend_contract(
             "old_command": old_cmd,
             "new_command": new_cmd,
         })
+
+    if canonical_bytes(updated) == canonical_bytes(contract):
+        raise StartPathError("lightweight amendment is a no-op; no scope or verification changes", 1)
 
     amendment_class = "semantic" if semantic_reasons else "mechanical"
     re_approval_required = amendment_class == "semantic"
@@ -1212,7 +1215,7 @@ def _authoritative_consumed_attempts(root: Path, task_id: str, step: str) -> int
         if isinstance(state_doc, dict):
             cb = state_doc.get("circuit_breaker")
             if isinstance(cb, dict):
-                for key in (f"{task_id}-{step}", task_id, step):
+                for key in (f"{task_id}-{step}", task_id):
                     entry = cb.get(key)
                     if isinstance(entry, dict):
                         raw = entry.get("attempts")
@@ -1258,208 +1261,161 @@ def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
         )
 
 
-def _evaluate_attempt_continuation(
-    root: Path,
-    *,
-    task_id: str,
-    step: str,
-    attempt: int,
-    target_dir: Path,
-    continuation_basis: str | None = None,
-    parent_attempt: int | None = None,
-    decomposition_of: str | None = None,
-    repair_summary: str | None = None,
-    defect_signature: str | None = None,
-    invariant_breach: bool = False,
-) -> dict[str, Any]:
-    """Evaluate work-specific stopping and continuation rules before executing a captured attempt."""
-    if invariant_breach:
-        raise StartPathError(
-            "stopping policy halt: invariant or authority boundary breached; autonomous continuation forbidden",
-            2,
-        )
+def _task_capture_history(root: Path, task_id: str) -> list[dict[str, Any]]:
+    """Read task-wide canonical evidence without forgiving corrupt matching history."""
+    evidence = root / ".agent" / "evidence"
+    history = []
+    if not evidence.exists():
+        return history
+    if evidence.is_symlink():
+        raise StartPathError("stopping policy halt: symlink evidence history", 2)
+    for path in sorted(evidence.rglob("*.capture.json")):
+        doc = None
+        relevant_name = path.name.startswith(task_id + "-")
+        try:
+            if path.is_symlink():
+                if relevant_name:
+                    raise ValueError("symlink history")
+                continue
+            doc = json.loads(path.read_bytes())
+            if not isinstance(doc, dict):
+                raise ValueError("non-object history")
+            if doc.get("id") != task_id:
+                if relevant_name and not isinstance(doc.get("id"), str):
+                    raise ValueError("missing task identity")
+                continue
+            relative = path.relative_to(root).as_posix()
+            if resolve_project_file(root, relative) != path or doc.get("capture_path") != relative or not ID_PATTERN.fullmatch(str(doc.get("step", ""))) or type(doc.get("attempt")) is not int or doc["attempt"] < 1:
+                raise ValueError("invalid capture identity")
+            if not isinstance(doc.get("argv"), list) or not doc["argv"] or any(not isinstance(v, str) or not v for v in doc["argv"]) or type(doc.get("executed")) is not bool or not isinstance(doc.get("outcome"), str):
+                raise ValueError("invalid observed execution")
+            if doc.get("executed") and type(doc.get("exit_code")) is not int:
+                raise ValueError("invalid observed result")
+            if doc["outcome"] in ("success", "semantic-negative") and (doc.get("executed") is not True or doc.get("exit_code") != 0 or doc.get("completion_state") != "completed" or doc.get("signal") is not None):
+                raise ValueError("contradictory successful capture")
+            for stream in ("stdout", "stderr"):
+                ref = doc.get(stream)
+                if not isinstance(ref, dict) or not re.fullmatch(r"[0-9a-f]{64}", str(ref.get("sha256"))):
+                    raise ValueError("invalid history stream")
+                actual = resolve_project_file(root, ref["path"])
+                if not actual.is_file() or sha256_hex(actual.read_bytes()) != ref["sha256"]:
+                    raise ValueError("history stream changed")
+            history.append(doc)
+        except (OSError, ValueError, TypeError, KeyError, StartPathError) as exc:
+            if relevant_name or (isinstance(locals().get("doc"), dict) and doc.get("id") == task_id):
+                raise StartPathError("stopping policy halt: corrupt task capture history: " + str(path), 2) from exc
+    return history
 
+
+def _successful_task_capture(root: Path, doc: dict[str, Any], checks: list[dict[str, Any]] | None = None, candidate_sha256: str | None = None) -> bool:
+    if doc.get("executed") is not True or doc.get("completion_state") != "completed" or doc.get("signal") is not None:
+        return False
+    if doc.get("exit_code") == 0 and doc.get("outcome") in ("success", "semantic-negative"):
+        return True
+    # Only the producer's prevalidated inventory predicate qualifies a raw
+    # expected refusal. A semantic-negative label on its own grants no credit.
+    qualified = (doc.get("continuation_lineage") or {}).get("qa_expected_predicate")
+    if qualified is None and checks is not None and candidate_sha256 and doc.get("candidate_sha256") == candidate_sha256:
+        match = next((check for check in checks if check["argv"] == doc.get("argv") and check["proof_kind"] == doc.get("proof_kind")), None)
+        if match:
+            qualified = {"context": (doc.get("environment") or {}).get("variables", {}).get("NIZAM_QA_CONTEXT_SHA256"), "check": match}
+    if not isinstance(qualified, dict) or set(qualified) != {"context", "check"}:
+        return False
+    check = qualified["check"]
+    variables = (doc.get("environment") or {}).get("variables", {})
+    if not isinstance(check, dict) or qualified["context"] != variables.get("NIZAM_QA_CONTEXT_SHA256") or not qualified["context"]:
+        return False
+    if check.get("argv") != doc.get("argv") or check.get("proof_kind") != "semantic-negative" or doc.get("proof_kind") != "semantic-negative" or type(check.get("expected_exit")) is not int or check["expected_exit"] != doc.get("exit_code") or doc.get("outcome") != "failed" or not isinstance(check.get("diagnostic"), str) or not check["diagnostic"]:
+        return False
+    try:
+        return any(check["diagnostic"] in resolve_project_file(root, doc[stream]["path"]).read_text(encoding="utf-8").splitlines() for stream in ("stdout", "stderr"))
+    except (OSError, UnicodeError, KeyError, StartPathError):
+        return False
+
+
+def _failure_signature(doc: dict[str, Any]) -> str:
+    signature = doc.get("defect_signature")
+    if isinstance(signature, str) and signature and not signature.startswith("exit:"):
+        return signature
+    observed = {key: doc.get(key) for key in ("argv", "outcome", "exit_code", "signal", "completion_state")}
+    observed.update({key: (doc.get(key) or {}).get("sha256") for key in ("stdout", "stderr")})
+    return "observed:" + sha256_hex(canonical_bytes(observed))
+
+
+def _evaluate_attempt_continuation(
+    root: Path, *, task_id: str, step: str, attempt: int, target_dir: Path,
+    continuation_basis: str | None = None, parent_attempt: int | None = None,
+    decomposition_of: str | None = None, repair_summary: str | None = None,
+    defect_signature: str | None = None, invariant_breach: bool = False,
+    qa_checks: list[dict[str, Any]] | None = None, candidate_sha256: str | None = None,
+) -> dict[str, Any]:
+    """Apply finite task-wide failure budgets before accepting continuation labels."""
+    if invariant_breach:
+        raise StartPathError("stopping policy halt: invariant or authority boundary breached", 2)
     consumed = _authoritative_consumed_attempts(root, task_id, step)
     if attempt <= consumed:
-        raise StartPathError(
-            f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step} (authoritative next attempt is {consumed + 1})",
-            2,
-        )
-
-    configured_limit: int | None = None
-    has_operator_extension = False
+        raise StartPathError(f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step}", 2)
+    history = _task_capture_history(root, task_id)
+    failed = [p for p in history if not _successful_task_capture(root, p, qa_checks, candidate_sha256)]
     state_path = root / ".agent" / "run_state.json"
-    if state_path.is_file():
+    state = {}
+    if state_path.exists():
         try:
-            state_doc = json.loads(state_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            state_doc = {}
-        if isinstance(state_doc, dict):
-            cb = state_doc.get("circuit_breaker")
-            if isinstance(cb, dict):
-                cb_entry = cb.get(f"{task_id}-{step}") or cb.get(task_id) or cb.get(step)
-                if isinstance(cb_entry, dict):
-                    if cb_entry.get("invariant_breach") is True or cb_entry.get("authority_denied") is True:
-                        raise StartPathError(
-                            f"stopping policy halt: invariant or authority boundary breached in circuit_breaker for {task_id}:{step}",
-                            2,
-                        )
-                    raw_limit = cb_entry.get("limit")
-                    if isinstance(raw_limit, int) and not isinstance(raw_limit, bool) and raw_limit >= 1:
-                        configured_limit = raw_limit
-                    if (
-                        cb_entry.get("human_authorized_extension")
-                        or cb_entry.get("human_authorized_restart")
-                        or cb_entry.get("authorization")
-                        or (configured_limit is not None and configured_limit >= attempt and configured_limit > 3)
-                    ):
-                        has_operator_extension = True
-
-    has_contract_amendment = False
-    contract_path = root / ".agent" / "contracts" / f"{task_id}.json"
-    if contract_path.is_file():
+            state = json.loads(resolve_project_file(root, ".agent/run_state.json").read_bytes())
+            if not isinstance(state, dict):
+                raise ValueError("invalid state")
+        except (ValueError, OSError) as exc:
+            raise StartPathError("stopping policy halt: unreadable circuit-breaker state", 2) from exc
+    counters = state.get("circuit_breaker", {})
+    task_entry = counters.get(task_id, {}) if isinstance(counters, dict) else {}
+    step_entry = counters.get(f"{task_id}-{step}", task_entry) if isinstance(counters, dict) else {}
+    if not isinstance(task_entry, dict) or not isinstance(step_entry, dict):
+        raise StartPathError("stopping policy halt: malformed task circuit breaker", 2)
+    if any(e.get("invariant_breach") is True or e.get("authority_denied") is True for e in (task_entry, step_entry)):
+        raise StartPathError("stopping policy halt: invariant or authority boundary breached in circuit_breaker", 2)
+    limit = step_entry.get("limit", 3)
+    if type(limit) is not int or limit < 1:
+        raise StartPathError("stopping policy halt: step limit must be finite positive integer", 2)
+    recovery = task_entry.get("operator_recovery")
+    ceiling = 6
+    recovered = False
+    if recovery is not None:
+        required = {"task_id", "approved", "max_task_attempts", "after_capture", "authority_ref"}
+        if not isinstance(recovery, dict) or set(recovery) != required or recovery["task_id"] != task_id or recovery["approved"] is not True or type(recovery["max_task_attempts"]) is not int or recovery["max_task_attempts"] < 1:
+            raise StartPathError("stopping policy halt: explicit finite task operator recovery required", 2)
         try:
-            contract_doc = json.loads(contract_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            contract_doc = {}
-        if isinstance(contract_doc, dict):
-            amendments = contract_doc.get("amendments")
-            if isinstance(amendments, list) and len(amendments) > 0:
-                has_contract_amendment = True
-
-    prior_attempts: list[dict[str, Any]] = []
-    if target_dir.is_dir():
-        candidates = list(target_dir.glob(f"{task_id}-{step}-attempt*.capture.json"))
-        if decomposition_of:
-            for pat in (f"{decomposition_of}-*.capture.json", f"{task_id}-{decomposition_of}-attempt*.capture.json"):
-                for extra_p in target_dir.glob(pat):
-                    if extra_p not in candidates:
-                        candidates.append(extra_p)
-        for cap_file in sorted(candidates):
-            try:
-                p_doc = json.loads(cap_file.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                continue
-            if not isinstance(p_doc, dict):
-                continue
-            p_rel = cap_file.relative_to(root).as_posix() if cap_file.is_relative_to(root) else cap_file.as_posix()
-            p_sig = p_doc.get("defect_signature") or (p_doc.get("stderr") or {}).get("sha256")
-            p_lin = p_doc.get("continuation_lineage") if isinstance(p_doc.get("continuation_lineage"), dict) else {}
-            prior_attempts.append({
-                "id": p_doc.get("id"),
-                "step": p_doc.get("step"),
-                "attempt": p_doc.get("attempt"),
-                "started_at": p_doc.get("started_at"),
-                "capture_path": p_rel,
-                "outcome": p_doc.get("outcome"),
-                "exit_code": p_doc.get("exit_code"),
-                "cause_class": p_doc.get("cause_class"),
-                "defect_signature": p_sig,
-                "repair_summary": p_lin.get("repair_summary"),
-            })
-        prior_attempts.sort(key=lambda x: (int(x.get("attempt") or 0), str(x.get("started_at") or "")))
-
-    if configured_limit is not None and attempt > configured_limit and not (
-        continuation_basis in ("bounded-amendment", "verified-decomposition", "operator-reset")
-        or has_contract_amendment
-        or bool(decomposition_of)
-    ):
-        raise StartPathError(
-            f"stopping policy halt: attempt {attempt} exceeds configured step limit ({configured_limit}) for {task_id}:{step}",
-            2,
-        )
-
-    same_step_priors = [p for p in prior_attempts if p.get("id") == task_id and p.get("step") == step]
-    if same_step_priors:
-        last_p = same_step_priors[-1]
-        last_failed = last_p.get("outcome") not in ("success", "semantic-negative")
-        if last_failed and defect_signature and defect_signature == last_p.get("defect_signature"):
-            if not (repair_summary or has_contract_amendment or decomposition_of):
-                raise StartPathError(
-                    f"stopping policy halt: repeated identical unresolved defect signature ({defect_signature!r}) without bounded amendment, repair progress, or task decomposition",
-                    2,
-                )
-        if len(same_step_priors) >= 2:
-            p1, p2 = same_step_priors[-2], same_step_priors[-1]
-            if (
-                p1.get("outcome") not in ("success", "semantic-negative")
-                and p2.get("outcome") not in ("success", "semantic-negative")
-                and p1.get("defect_signature")
-                and p1.get("defect_signature") == p2.get("defect_signature")
-                and not (repair_summary or has_contract_amendment or decomposition_of or has_operator_extension)
-            ):
-                raise StartPathError(
-                    "stopping policy halt: repeated identical unresolved defect signature across consecutive attempts without bounded amendment, repair progress, or decomposition",
-                    2,
-                )
-
-    resolved_basis: str | None = continuation_basis
-    if attempt > 3:
-        if continuation_basis == "bounded-amendment":
-            if not has_contract_amendment:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis bounded-amendment requires a recorded contract amendment; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif continuation_basis == "verified-decomposition":
-            if not decomposition_of:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis verified-decomposition requires --decomposition-of; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif continuation_basis == "configured-step-limit":
-            if not (configured_limit is not None and configured_limit >= attempt):
-                raise StartPathError(
-                    f"stopping policy halt: --continuation-basis configured-step-limit requires circuit_breaker limit >= {attempt} in .agent/run_state.json",
-                    2,
-                )
-        elif continuation_basis == "operator-reset":
-            if not has_operator_extension:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis operator-reset requires recorded operator authorization in .agent/run_state.json; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif decomposition_of:
-            resolved_basis = "verified-decomposition"
-        elif has_contract_amendment:
-            resolved_basis = "bounded-amendment"
-        elif has_operator_extension:
-            resolved_basis = "configured-step-limit"
-        else:
-            raise StartPathError(
-                f"attempt {attempt} exceeds the initial 3-step strategy ladder (attempt must be between 1 and 3 unless a bounded contract amendment, verified decomposition, or configured circuit_breaker limit >= {attempt} permits continuation)",
-                2,
-            )
-    else:
-        if resolved_basis is None:
-            if decomposition_of:
-                resolved_basis = "verified-decomposition"
-            elif has_contract_amendment and attempt > 1:
-                resolved_basis = "bounded-amendment"
-            elif attempt == 1:
-                resolved_basis = "initial-attempt"
-            else:
-                resolved_basis = "strategy-ladder"
-
-    resolved_parent = parent_attempt
-    if resolved_parent is None:
-        if same_step_priors:
-            resolved_parent = int(same_step_priors[-1].get("attempt") or (attempt - 1))
-        elif attempt > 1:
-            resolved_parent = attempt - 1
-
-    return {
-        "initial_strategy_ladder_attempts": 3,
-        "attempt": attempt,
-        "parent_attempt": resolved_parent,
-        "decomposition_of": decomposition_of,
-        "continuation_basis": resolved_basis,
-        "repair_summary": repair_summary,
-        "configured_step_limit": configured_limit if configured_limit is not None else 3,
-        "contract_amendment_present": has_contract_amendment,
-        "operator_extension_present": has_operator_extension,
-        "prior_attempts": prior_attempts,
-    }
+            authority = json.loads(resolve_project_file(root, recovery["authority_ref"]).read_bytes())
+        except (ValueError, OSError, TypeError) as exc:
+            raise StartPathError("stopping policy halt: invalid operator recovery authority", 2) from exc
+        if authority != {"role": "operator", **recovery} or recovery["after_capture"] not in {p["capture_path"] for p in failed}:
+            raise StartPathError("stopping policy halt: operator recovery lacks exact task/failed-capture binding", 2)
+        ceiling = recovery["max_task_attempts"]
+        recovered = True
+    if len(failed) >= ceiling:
+        raise StartPathError(f"stopping policy halt: finite task failed-execution budget ({ceiling}) exhausted", 2)
+    signatures: dict[str, int] = {}
+    for doc in failed:
+        signature = _failure_signature(doc)
+        signatures[signature] = signatures.get(signature, 0) + 1
+    if max(signatures.values(), default=0) >= 3 and not recovered:
+        raise StartPathError("stopping policy halt: three failures of the same task-wide defect signature; explicit finite task operator recovery required", 2)
+    if decomposition_of:
+        if decomposition_of in (task_id, step, f"{task_id}-{step}"):
+            raise StartPathError("stopping policy halt: decomposition parent must be distinct", 2)
+        parents = [p for p in failed if decomposition_of in (p["step"], p["capture_path"], f"{task_id}-{p['step']}")]
+        if not parents:
+            raise StartPathError("stopping policy halt: decomposition requires a real distinct failed parent", 2)
+    if continuation_basis == "verified-decomposition" and not decomposition_of:
+        raise StartPathError("stopping policy halt: verified-decomposition requires --decomposition-of", 2)
+    if attempt > limit:
+        raise StartPathError(f"stopping policy halt: finite configured step limit ({limit}) exhausted; labels and amendments grant no attempts", 2)
+    if continuation_basis == "operator-reset" and not recovered:
+        raise StartPathError("stopping policy halt: operator-reset requires recorded operator authorization with a finite exact task budget", 2)
+    return {"initial_strategy_ladder_attempts": 3, "attempt": attempt, "parent_attempt": parent_attempt,
+        "decomposition_of": decomposition_of, "continuation_basis": continuation_basis or ("initial-attempt" if attempt == 1 else "strategy-ladder"),
+        "repair_summary": repair_summary, "configured_step_limit": limit, "contract_amendment_present": False,
+        "operator_extension_present": recovered, "failed_execution_count": len(failed), "task_failed_execution_ceiling": ceiling,
+        "prior_attempts": [{k: p.get(k) for k in ("id", "step", "attempt", "capture_path", "outcome", "exit_code", "defect_signature")} for p in history]}
 
 
 def capture_command_evidence(
@@ -1501,6 +1457,29 @@ def capture_command_evidence(
         if captured_vars.get("NIZAM_QA_EXECUTION_ROOT") != str(root.resolve()):
             raise StartPathError("QA capture execution root must match the actual resolved repository root", 1)
 
+    qa_check = None
+    checks = None
+    if "NIZAM_QA_CONTEXT_SHA256" in captured_vars:
+        wa = _load_workflow_assurance()
+        try:
+            candidate = candidate_sha256
+            if not isinstance(candidate, dict):
+                candidate_path = Path(str(candidate_sha256))
+                if not candidate_path.is_absolute():
+                    candidate_path = root / candidate_path
+                candidate = json.loads(candidate_path.read_bytes())
+                if isinstance(candidate.get("candidate"), dict):
+                    candidate = candidate["candidate"]
+            checks = wa.qa_bound_checks(root, task_id, candidate)
+            wa.validate_qa_context(root, task_id, candidate, checks)
+            wa._receipt_candidate(root, candidate)
+            qa_check = next((check for check in checks if check["argv"] == argv and check["proof_kind"] == proof_kind), None)
+        except (wa.AssuranceError, OSError, ValueError, TypeError, AttributeError) as exc:
+            raise StartPathError("QA candidate invalid before execution: " + str(exc), 2) from exc
+        for previous in _task_capture_history(root, task_id):
+            if _successful_task_capture(root, previous, checks, resolved_sha) and previous.get("candidate_sha256") == resolved_sha and previous.get("argv") == argv and previous.get("proof_kind") == proof_kind and previous.get("environment") == {"runtime": candidate["environment"]["runtime"], "variables": captured_vars}:
+                raise StartPathError("identical successful assessed proof already exists; reuse " + previous["capture_path"], 2)
+
     rel_dir = (
         output_dir.relative_to(root).as_posix()
         if output_dir.is_absolute() and output_dir.is_relative_to(root)
@@ -1521,6 +1500,8 @@ def capture_command_evidence(
         repair_summary=repair_summary,
         defect_signature=defect_signature,
         invariant_breach=invariant_breach,
+        qa_checks=checks,
+        candidate_sha256=resolved_sha,
     )
 
     _reserve_attempt(root, task_id, step, attempt)
@@ -1614,9 +1595,16 @@ def capture_command_evidence(
 
     stdout_sha = sha256_hex(stdout_bytes)
     stderr_sha = sha256_hex(stderr_bytes)
+    if qa_check is not None and proof_kind == "semantic-negative" and exit_code == qa_check["expected_exit"] and completion_state == "completed" and signal_num is None:
+        try:
+            matched = qa_check["diagnostic"] in [line for data in (stdout_bytes, stderr_bytes) for line in data.decode("utf-8").splitlines()]
+        except UnicodeError:
+            matched = False
+        if matched:
+            continuation_lineage["qa_expected_predicate"] = {"context": captured_vars["NIZAM_QA_CONTEXT_SHA256"], "check": qa_check}
     effective_defect_sig = defect_signature
     if effective_defect_sig is None and outcome != proof_kind:
-        effective_defect_sig = f"exit:{exit_code}:stderr:{stderr_sha}"
+        effective_defect_sig = _failure_signature({"argv": argv, "outcome": outcome, "exit_code": exit_code, "signal": signal_num, "completion_state": completion_state, "stdout": {"sha256": stdout_sha}, "stderr": {"sha256": stderr_sha}})
 
     capture_doc: dict[str, Any] = {
         "schema_version": 1,
