@@ -25,24 +25,24 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v2.0.0` is in release preparation; `v1.11.0` remains the latest official released payload. Discover the active workspace installation from `.nizam/provenance.json`; experimental source installations are separate from release publication and the pending official v2.0.0 self-adoption.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v2.0.0` is the latest official release at `603afc7b17919334a6a01df1e39e63798d9d0acd` and is now the official local `.nizam/` installation. Commit-bound integrity and installed high-risk preflight passed; full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental source installations remain separate historical records.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v2.0.0`)
 
-Release preparation: replace `<40-hex-commit-sha>` with the independently verified
-commit of the published annotated tag before running these commands. Existing
-consumers must follow the [v2.0.0 migration guide](docs/migration-v2.0.0.md).
+The published annotated `v2.0.0` tag resolves to `603afc7b17919334a6a01df1e39e63798d9d0acd`.
+Existing consumers must follow the [v2.0.0 migration guide](docs/migration-v2.0.0.md)
+and record their own upgrade authorization before adopting it.
 
 Want your AI coding agent (Claude Code, Cursor, Antigravity, Codex, Windsurf, or any CLI/IDE agent) to onboard your repository to the latest immutable Nizam release with zero manual setup? **Copy and paste this single prompt into your coding agent:**
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit <40-hex-commit-sha>):
+Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit 603afc7b17919334a6a01df1e39e63798d9d0acd):
 
 1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v2.0.0 AI Agent Entry Protocol and CLI reference.
 2. Fetch and run the official bootstrap script pinned to v2.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
    curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/ --require-content-integrity
+   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -192,7 +192,7 @@ Fetch `bootstrap.sh` pinned to the latest released tag and run it against your r
 ```sh
 curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/
+GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/
 ```
 
 `--tag v2.0.0` (equivalently `GOVERNANCE_TAG=v2.0.0`) pins the inheritance to a real
@@ -232,7 +232,7 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 
 ```sh
 # Commit-bound content-integrity verification (verifies every file, mode, and digest against the expected commit in --git-repo):
-./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/ --require-content-integrity
+./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity
 
 # Unbound directory comparison (reports content_integrity=directory_match_unbound; does not satisfy --expected-sha or --require-content-integrity):
 ./bootstrap.sh --verify-only --tag v2.0.0 --source-root /path/to/unpacked-release/
@@ -308,10 +308,12 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ## Local governance
 
-The committed public self-installation record is `v1.11.0`. Discover the active
-workspace installation from `.nizam/provenance.json`: an experimental source
-installation is a separate record and does not publish a release. Official
-`v2.0.0` self-adoption follows tag publication as a separate observed step.
+The official local installation is `v2.0.0` at `603afc7b17919334a6a01df1e39e63798d9d0acd`,
+installed at `2026-10-24T05:45:45Z` (`316` released files + `provenance.json`).
+The trusted pin verifier, commit-bound bootstrap verification and installed
+high-risk preflight passed. Earlier experimental source installations remain
+historical records; this adoption uses the published immutable tag. Discover
+workspace installation facts from `.nizam/provenance.json`.
 The public installed payload is verified byte-for-byte against its pinned tag by the
 standing `self_governance` CI job (`verify_self_governance.py` and
 `bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).
@@ -321,8 +323,8 @@ defined by that tag is the six authored root modules (`standard/`,
 `NIZAM.json` packaged by `bootstrap.sh` — never the repository's own `.nizam/`
 directory (which at tag creation time still records the prior self-installed
 release until a post-release self-adoption commit updates `.nizam/`).
-Commissioning of this release (clean installed preflight, baseline and
-independent QA) has not been performed. The earlier commissioning at assessed
+Installed integrity and preflight checks do not establish full commissioning:
+a fresh consumer baseline and independent consumer QA have not been completed. The earlier commissioning at assessed
 source candidate `bfd475f` remains recorded in `docs/planning/SELF_GOVERNANCE.md`.
 The [self-governance record](docs/planning/SELF_GOVERNANCE.md) records the exact pin,
 operator authorization and current stage. Root framework modules remain the

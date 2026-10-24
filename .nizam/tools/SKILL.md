@@ -165,14 +165,14 @@ implementation rework — is governed by `methodology/03_circuit_breaker.md`:
    attempt one, a structural/interface analysis on attempt two, an
    architectural reconsideration or bounded decomposition on attempt three)
    rather than repeating the same approach.
-3. Treat attempt counters and line-count thresholds as work-specific diagnostic
-   telemetry signals when safety, security, and isolation invariants hold and
-   each attempt applies a materially new fix or decomposition. An immediate
-   hard stop (`BLOCKED`, logged to the technical-debt register, and escalated
-   for human review) is mandatory when safety, isolation, or authority
-   invariants are violated, when a specification contradiction requires human
-   authority, or when a third attempt fails on the same unresolved defect
-   signature without a viable bounded decomposition.
+3. Enforce finite task-wide failure budgets: three failures with one signature
+   or six failed captures across changing steps/signatures require a stop and
+   explicit finite task-scoped operator recovery. Narratives, old amendments
+   and decomposition labels do not reset history; decomposition needs a real
+   distinct failed parent. Invariant and authority breaches stop immediately.
+4. Freeze source before final QA. Reuse valid same-candidate proof and reopen
+   implementation only for a concrete failing acceptance requirement or actual
+   source change; record new design as a separate bounded task.
 
 The full mechanics — the strategy table, the halt procedure, and where the
 attempt counters live — are authoritative in `methodology/03_circuit_breaker.md`.

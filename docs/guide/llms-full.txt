@@ -10,22 +10,22 @@
 
 ---
 
-## v2.0.0 migration and release preparation
+## v2.0.0 migration and released pin
 
-Existing consumers must follow [Migrating to v2.0.0](https://github.com/niq-cnr/nizam-framework/blob/v2.0.0/docs/migration-v2.0.0.md): typed inventory before `begin`, assessed structured per-check proof for completion, and finite task-wide retry budgets. Replace `<40-hex-commit-sha>` below with the independently verified published tag commit before executing onboarding. Tag publication and local self-adoption are separate steps.
+Existing consumers must follow [Migrating to v2.0.0](https://github.com/niq-cnr/nizam-framework/blob/v2.0.0/docs/migration-v2.0.0.md): typed inventory before `begin`, assessed structured per-check proof for completion, and finite task-wide retry budgets. The published annotated tag resolves to `603afc7b17919334a6a01df1e39e63798d9d0acd`. The framework's official local self-adoption is recorded separately; each consumer still records its own upgrade authorization. Installed integrity/preflight checks do not establish full consumer commissioning.
 
 ## 0. One-Prompt Consumer Onboarding (`v2.0.0`)
 
-Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v2.0.0` (`<40-hex-commit-sha>`) with minimal friction:
+Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v2.0.0` (`603afc7b17919334a6a01df1e39e63798d9d0acd`) with minimal friction:
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit <40-hex-commit-sha>):
+Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit 603afc7b17919334a6a01df1e39e63798d9d0acd):
 
 1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v2.0.0 AI Agent Entry Protocol and CLI reference.
 2. Fetch and run the official bootstrap script pinned to v2.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
    curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/ --require-content-integrity
+   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -163,7 +163,7 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/boot
 # Full cryptographic commit-bound verification (content_integrity=verified)
 ./bootstrap.sh --verify-only \
   --tag v2.0.0 \
-  --expected-sha '<40-hex-commit-sha>' \
+  --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' \
   --git-repo .nizam-ref/ \
   --require-content-integrity
 
@@ -194,7 +194,7 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/boot
 ### 5.3 Consumer Directory Anatomy
 - **`.nizam/` (Immutable Installed Framework)**:
   - `NIZAM.json` — Machine-readable capability index
-  - `provenance.json` — Release tag, commit SHA (`<40-hex-commit-sha>`), and install timestamp
+  - `provenance.json` — Release tag, commit SHA (`603afc7b17919334a6a01df1e39e63798d9d0acd`), and install timestamp
   - `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`
 - **`.agent/` (Consumer Project Governance Workspace)**:
   - `run_state.json` — Active lifecycle stage, contract pointer, and circuit-breaker counters

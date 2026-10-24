@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.5.2
+version: 0.6.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-24"
+    summary: "Specify shared structured QA validation, immutable inventories, assessed context, bounded inherited-work route assessment and explicit historical-proof migration."
   - version: "0.5.2"
     date: "2026-10-19"
     summary: "Align frontmatter description, Section 4 intro, and Section 6 intro with Section 4.4 external mutation-authority mediation (NIZAM_MUTATION_ADAPTER) and the delivered bounded runtime controller and SBCL session loop (tools/runtime_session.py, tools/sbcl_session_loop.lisp, features 126-129; full live SBCL qualification gated on Phase 020 features 130-132)."
@@ -150,6 +153,22 @@ the adapter's entire job.
 - **Native satisfaction:** Any generic shell or command-execution capability
   of the host environment satisfies this operation.
 
+### 4.3.1 Finite capture budgets and proof reuse
+
+`capture` reads task history across all `.agent/evidence/` output directories
+and step names. Three identical defect signatures or six failed executions stop
+the task; explicit finite task-scoped operator recovery is defined in
+`methodology/03_circuit_breaker.md`. Raw nonzero negative captures qualify as success only when their actual exit
+and exact diagnostic satisfy independently pinned assessed inventory; an
+unvalidated producer label cannot create retry credit. Safety and configured step limits remain binding.
+
+Before executing QA-bound commands, capture validates the assessed candidate,
+its actual selected input bytes/index/environment and pinned authorization.
+Identical prior successful task/candidate/argv/proof-kind/environment captures
+are refused with the reusable capture path. Source and verification policy must
+be frozen before final QA; a new acceptance failure or material change justifies
+a fresh candidate, while an unchanged passing candidate reuses its proof.
+
 ### 4.4 Repository Mutation-Authority Boundary for Evidence Publication
 
 An unrestricted interpreter (such as `python3` or `bash`) with write access to
@@ -189,6 +208,101 @@ mutations inside read/verify helpers:
   `status: "unknown_external_commit_outcome"` so a subsequent `prepare`,
   `publish`, or `finalize` run reconciles against actual repository commit state
   without re-running captured commands or creating duplicate commits.
+
+### 4.5 Structured QA proof for completion and receipt prerequisites
+
+New governed completions use one proof rule, `validate_qa_proof` in the active
+`workflow_assurance.py`. Direct `done`, `route-qa` receipt prerequisites and
+`fresh-qa` receipt prerequisites all validate individual captures against an
+independently authorized inventory. A receipt must also satisfy its existing
+own-command capture checks.
+
+Before `begin`, a nonfeature scope/intent supplies a nonempty `verification`
+array. A feature uses its approved contract's `verification` array. Each entry
+has `id`, exact `argv`, integer `expected_exit`, `proof_kind` (`success` or
+`semantic-negative`), and `diagnostic`. IDs and argument arrays are unique.
+Contract entries also retain their existing `command` and `acceptance_test`
+fields for readers; these strings do not replace the executable argument array.
+`begin` pins the normalized inventory in its immutable version-2 task base.
+Changing the inventory requires a fresh task ID and execution.
+
+The producer performs these steps:
+
+1. Choose the actual material inputs and commit the selected source, tests,
+   verifier, schemas and authorization records before assessment. The assessed
+   tool inputs must include both actual loaded verifier modules and the schemas
+   they consume, in one active layout: `tools/` with `schema/` for framework
+   source, or `.nizam/tools/` with `.nizam/schema/` for installed consumers.
+   A copy at an unrelated path cannot stand in for executed code. Include the
+   entire consumed scope/intent, task base and applicable approved contract in
+   assessed contract inputs; bugfix routes also include their consumed cause
+   record and schema. Other policy documents may be assessed alongside them.
+2. Normalize the independently approved inventory with `qa_required_checks`.
+   Derive the consumed authorization paths with `qa_authorization_paths` (or
+   the known approved feature contract path before constructing its manifest).
+   Compute `qa_context_sha256(root, feature_id, authorization_paths, checks)`
+   and put the result in the real environment as `NIZAM_QA_CONTEXT_SHA256`.
+   Include this reserved variable in assessment. Also set and assess
+   `NIZAM_QA_EXECUTION_ROOT` as the lexically canonical absolute producer
+   repository path. The capture producer checks it against its actual resolved
+   root before executing; QA checks bind the recorded `cwd` to this assessed
+   value. Its context digest covers the feature
+   identity, sorted whole-record path/digest references and typed inventory;
+   the consumer independently recomputes it. One task's proof cannot attest a
+   second task with the same command.
+3. Produce and save the existing assessed identity manifest. Feature assessment
+   retains `assess_repository` and its strict whole-repository drift rules.
+   A version-2 nonfeature route may instead use
+   `assess_route_candidate(root, feature_id, source_commit, inputs,
+   environment_names)` with exact current `HEAD`. This bounded producer runs
+   the completion scope/preservation checks and compares every selected input
+   across anchor, index and worktree. It permits unchanged unrelated inherited
+   tracked/untracked files and symlinks; selected dependencies cannot use that
+   exception. Receipt consumers recheck preservation, so a later mutation
+   cannot hide behind the producer's earlier observation. Neither producer
+   commits, resets, stages or writes a manifest implicitly.
+4. Execute every pinned argument array using the active `start_path.py capture`
+   with `--candidate <manifest-path>`, the matching `--id`, and the pinned
+   `--proof-kind`. Retain the actual capture and both streams. Raw captures
+   carry the requested proof kind, completion state, environment and task ID.
+   Existing published closed captures remain supported: their explicit outcome
+   declares their producer kind, and their revisioned streams retain the
+   existing artifact checks. Preserve the producer's recorded `cwd` as
+   provenance; an equivalent checkout need not have the same absolute path.
+   A replaying consumer explicitly supplies the original reserved environment
+   values and verifies the same repository, source, material bytes, index and
+   authorization context in its new root. It does not rewrite the capture or
+   resolve the old producer path against its own filesystem. A new execution
+   in that checkout requires its own execution-root assessment.
+5. Write a schema-valid evolved QA verdict with `proof_version: 2`,
+   `candidate_ref: {"path": "…", "sha256": "…"}`, and
+   `checks: [{"id": "…", "capture": {"path": "…", "sha256": "…"}}]`.
+   References may additionally carry an exact immutable `revision`.
+   `candidate_ref.sha256` identifies manifest file bytes;
+   `capture.candidate_sha256` identifies the canonical parsed identity. A bare
+   Git commit and an unchecked 64-character string cannot replace this record.
+   Keep the existing feature/review bindings, favorable verdict, empty blocking
+   arrays and exact `checks_run`/`checks_passed` counts. Every required check
+   appears exactly once; a capture cannot be counted under multiple IDs.
+
+An ordinary success requires exit zero, producer kind `success`, a consistent
+successful outcome, and `diagnostic: null`. A semantic negative requires the
+pinned exit and a nonempty diagnostic matching a complete UTF-8 line in either
+stream. A raw nonzero refusal has outcome `failed`; a successful evaluator
+wrapper may use exit zero with an explicit semantic-negative producer kind.
+The wrapper itself must assert the intended child predicate. An ordinary
+failed capture cannot be relabeled as a passing check. Zero-byte stdout or
+stderr is valid when its exact digest matches; a missing stream or failed read
+is a refusal.
+
+Historical verdicts and inventories remain schema-readable. Future transitions
+require the same complete manifest, inventory, context and structured capture
+proof, whether the record explicitly names version 2 or is normalized from an
+equivalent legacy record. Aggregate-only/plaintext records require fresh
+execution. No ownership mask is permitted on any consumed base, scope/intent,
+cause or approved contract record. Changing even a contract lifecycle status
+requires a fresh manifest and captures. Keep completion bookkeeping in separate
+owned lifecycle records when retaining replayable approved-contract proof.
 
 ## 5. Adapter Conformance Checklist
 

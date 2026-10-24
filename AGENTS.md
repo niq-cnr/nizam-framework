@@ -2,10 +2,13 @@
 id: nizam-self-governance-agents
 title: "Nizam Framework — Local Agent Instructions"
 description: "Route work on this repository through its installed immutable Nizam governance."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: AGENTS.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-24"
+    summary: "Record official v2.0.0 self-adoption at immutable commit 603afc7b17919334a6a01df1e39e63798d9d0acd, using the unchanged bootstrap and exact released payload verification."
   - version: "0.5.0"
     date: "2026-10-19"
     summary: "Record re-bootstrapping of .nizam/ to the immutable patch release v1.10.1 (2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd) after the full documentation and GitHub Pages refresh."
@@ -72,6 +75,9 @@ bind receipt-qualified stage evidence without hidden Git mutations,
 `tools/start_path.py resume` for receipt-verified transitions. The Orchestrator
 owns lifecycle state and circuit counters in `.agent/run_state.json`;
 implementation agents preserve those fields.
+
+The current installed release is `v2.0.0` at `603afc7b17919334a6a01df1e39e63798d9d0acd`.
+Its installation evidence is recorded in [SELF_GOVERNANCE.md](docs/planning/SELF_GOVERNANCE.md).
 
 Do not edit installed `.nizam/` files. A future upgrade requires operator
 authorization, a reviewed immutable pin update and re-bootstrap. Use

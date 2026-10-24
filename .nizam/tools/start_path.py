@@ -38,6 +38,7 @@ import os
 import platform
 import re
 import secrets
+import stat
 import shutil
 import subprocess
 import sys
@@ -544,22 +545,22 @@ def decide(decision: str, kind: str, path_id: str, root: Path) -> str:
     if kind == "bugfix":
         cause, scope = load_bugfix(root, path_id)
         if decision == "begin":
-            _record_task_base(root, path_id)
+            _record_task_base(root, path_id, route="bugfix", files=scope["files"], contract_id=scope.get("contract_id"))
             return f"bugfix {cause['id']}: implementation may begin"
-        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id)
+        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id, contract_id=scope.get("contract_id"))
         load_passing_qa(root, path_id)
         return f"bugfix {scope['id']}: recorded verification result exists"
     if kind == "trivial":
         intent = load_trivial_intent(root, path_id)
         if decision == "begin":
-            _record_task_base(root, path_id)
+            _record_task_base(root, path_id, route="trivial", files=intent["files"])
             return f"trivial {intent['id']}: implementation may begin"
         verify_actual_changed_scope(root, "trivial", intent["files"], path_id)
         load_passing_qa(root, path_id)
         return f"trivial {intent['id']}: recorded verification result exists"
     intent = load_intent(root, path_id)
     if decision == "begin":
-        _record_task_base(root, path_id)
+        _record_task_base(root, path_id, route="small-change", files=intent["files"])
         return f"small-change {intent['id']}: implementation may begin"
     verify_actual_changed_scope(root, "small-change", intent["files"], path_id)
     load_passing_qa(root, path_id)
@@ -621,21 +622,21 @@ def classify_task(
         "required_gates": ROUTE_GATES[route],
         "stopping_conditions": {
             "initial_strategy_ladder_attempts": 3,
-            "hard_attempt_cap": None,
-            "attempt_counter_role": "telemetry",
+            "hard_attempt_cap": 6,
+            "attempt_counter_role": "finite task-wide failed-execution budget",
             "breaker_ref": "methodology/03_circuit_breaker.md",
             "comparator_subordinate": True,
             "continuation_policy": (
-                "Continue beyond attempt 3 when goals, invariants, and authority boundaries hold and "
-                "a bounded contract amendment, verified task decomposition, or authorized circuit_breaker "
-                "step limit applies; retain all prior attempt and repair history."
+                "At most six failed executions per task across steps/output directories and at most three "
+                "with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. "
+                "Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures."
             ),
             "pass_condition": (
                 "All required_gates for route '" + route + "' exit 0 and blocking verdict arrays are empty."
             ),
             "halt_condition": (
-                "Stop and escalate on a repeated identical deterministic failure signature without a "
-                "recorded bounded amendment or decomposition, contradiction with approved contract/invariants, "
+                "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, "
+                "contradiction with approved contract/invariants, "
                 "missing operator authority, or exhausted execution budget/step limit; "
                 "comparator claims remain subordinate to stopping rules."
             ),
@@ -812,6 +813,9 @@ def amend_contract(
             "old_command": old_cmd,
             "new_command": new_cmd,
         })
+
+    if canonical_bytes(updated) == canonical_bytes(contract):
+        raise StartPathError("lightweight amendment is a no-op; no scope or verification changes", 1)
 
     amendment_class = "semantic" if semantic_reasons else "mechanical"
     re_approval_required = amendment_class == "semantic"
@@ -1211,7 +1215,7 @@ def _authoritative_consumed_attempts(root: Path, task_id: str, step: str) -> int
         if isinstance(state_doc, dict):
             cb = state_doc.get("circuit_breaker")
             if isinstance(cb, dict):
-                for key in (f"{task_id}-{step}", task_id, step):
+                for key in (f"{task_id}-{step}", task_id):
                     entry = cb.get(key)
                     if isinstance(entry, dict):
                         raw = entry.get("attempts")
@@ -1257,208 +1261,161 @@ def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
         )
 
 
-def _evaluate_attempt_continuation(
-    root: Path,
-    *,
-    task_id: str,
-    step: str,
-    attempt: int,
-    target_dir: Path,
-    continuation_basis: str | None = None,
-    parent_attempt: int | None = None,
-    decomposition_of: str | None = None,
-    repair_summary: str | None = None,
-    defect_signature: str | None = None,
-    invariant_breach: bool = False,
-) -> dict[str, Any]:
-    """Evaluate work-specific stopping and continuation rules before executing a captured attempt."""
-    if invariant_breach:
-        raise StartPathError(
-            "stopping policy halt: invariant or authority boundary breached; autonomous continuation forbidden",
-            2,
-        )
+def _task_capture_history(root: Path, task_id: str) -> list[dict[str, Any]]:
+    """Read task-wide canonical evidence without forgiving corrupt matching history."""
+    evidence = root / ".agent" / "evidence"
+    history = []
+    if not evidence.exists():
+        return history
+    if evidence.is_symlink():
+        raise StartPathError("stopping policy halt: symlink evidence history", 2)
+    for path in sorted(evidence.rglob("*.capture.json")):
+        doc = None
+        relevant_name = path.name.startswith(task_id + "-")
+        try:
+            if path.is_symlink():
+                if relevant_name:
+                    raise ValueError("symlink history")
+                continue
+            doc = json.loads(path.read_bytes())
+            if not isinstance(doc, dict):
+                raise ValueError("non-object history")
+            if doc.get("id") != task_id:
+                if relevant_name and not isinstance(doc.get("id"), str):
+                    raise ValueError("missing task identity")
+                continue
+            relative = path.relative_to(root).as_posix()
+            if resolve_project_file(root, relative) != path or doc.get("capture_path") != relative or not ID_PATTERN.fullmatch(str(doc.get("step", ""))) or type(doc.get("attempt")) is not int or doc["attempt"] < 1:
+                raise ValueError("invalid capture identity")
+            if not isinstance(doc.get("argv"), list) or not doc["argv"] or any(not isinstance(v, str) or not v for v in doc["argv"]) or type(doc.get("executed")) is not bool or not isinstance(doc.get("outcome"), str):
+                raise ValueError("invalid observed execution")
+            if doc.get("executed") and type(doc.get("exit_code")) is not int:
+                raise ValueError("invalid observed result")
+            if doc["outcome"] in ("success", "semantic-negative") and (doc.get("executed") is not True or doc.get("exit_code") != 0 or doc.get("completion_state") != "completed" or doc.get("signal") is not None):
+                raise ValueError("contradictory successful capture")
+            for stream in ("stdout", "stderr"):
+                ref = doc.get(stream)
+                if not isinstance(ref, dict) or not re.fullmatch(r"[0-9a-f]{64}", str(ref.get("sha256"))):
+                    raise ValueError("invalid history stream")
+                actual = resolve_project_file(root, ref["path"])
+                if not actual.is_file() or sha256_hex(actual.read_bytes()) != ref["sha256"]:
+                    raise ValueError("history stream changed")
+            history.append(doc)
+        except (OSError, ValueError, TypeError, KeyError, StartPathError) as exc:
+            if relevant_name or (isinstance(locals().get("doc"), dict) and doc.get("id") == task_id):
+                raise StartPathError("stopping policy halt: corrupt task capture history: " + str(path), 2) from exc
+    return history
 
+
+def _successful_task_capture(root: Path, doc: dict[str, Any], checks: list[dict[str, Any]] | None = None, candidate_sha256: str | None = None) -> bool:
+    if doc.get("executed") is not True or doc.get("completion_state") != "completed" or doc.get("signal") is not None:
+        return False
+    if doc.get("exit_code") == 0 and doc.get("outcome") in ("success", "semantic-negative"):
+        return True
+    # Only the producer's prevalidated inventory predicate qualifies a raw
+    # expected refusal. A semantic-negative label on its own grants no credit.
+    qualified = (doc.get("continuation_lineage") or {}).get("qa_expected_predicate")
+    if qualified is None and checks is not None and candidate_sha256 and doc.get("candidate_sha256") == candidate_sha256:
+        match = next((check for check in checks if check["argv"] == doc.get("argv") and check["proof_kind"] == doc.get("proof_kind")), None)
+        if match:
+            qualified = {"context": (doc.get("environment") or {}).get("variables", {}).get("NIZAM_QA_CONTEXT_SHA256"), "check": match}
+    if not isinstance(qualified, dict) or set(qualified) != {"context", "check"}:
+        return False
+    check = qualified["check"]
+    variables = (doc.get("environment") or {}).get("variables", {})
+    if not isinstance(check, dict) or qualified["context"] != variables.get("NIZAM_QA_CONTEXT_SHA256") or not qualified["context"]:
+        return False
+    if check.get("argv") != doc.get("argv") or check.get("proof_kind") != "semantic-negative" or doc.get("proof_kind") != "semantic-negative" or type(check.get("expected_exit")) is not int or check["expected_exit"] != doc.get("exit_code") or doc.get("outcome") != "failed" or not isinstance(check.get("diagnostic"), str) or not check["diagnostic"]:
+        return False
+    try:
+        return any(check["diagnostic"] in resolve_project_file(root, doc[stream]["path"]).read_text(encoding="utf-8").splitlines() for stream in ("stdout", "stderr"))
+    except (OSError, UnicodeError, KeyError, StartPathError):
+        return False
+
+
+def _failure_signature(doc: dict[str, Any]) -> str:
+    signature = doc.get("defect_signature")
+    if isinstance(signature, str) and signature and not signature.startswith("exit:"):
+        return signature
+    observed = {key: doc.get(key) for key in ("argv", "outcome", "exit_code", "signal", "completion_state")}
+    observed.update({key: (doc.get(key) or {}).get("sha256") for key in ("stdout", "stderr")})
+    return "observed:" + sha256_hex(canonical_bytes(observed))
+
+
+def _evaluate_attempt_continuation(
+    root: Path, *, task_id: str, step: str, attempt: int, target_dir: Path,
+    continuation_basis: str | None = None, parent_attempt: int | None = None,
+    decomposition_of: str | None = None, repair_summary: str | None = None,
+    defect_signature: str | None = None, invariant_breach: bool = False,
+    qa_checks: list[dict[str, Any]] | None = None, candidate_sha256: str | None = None,
+) -> dict[str, Any]:
+    """Apply finite task-wide failure budgets before accepting continuation labels."""
+    if invariant_breach:
+        raise StartPathError("stopping policy halt: invariant or authority boundary breached", 2)
     consumed = _authoritative_consumed_attempts(root, task_id, step)
     if attempt <= consumed:
-        raise StartPathError(
-            f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step} (authoritative next attempt is {consumed + 1})",
-            2,
-        )
-
-    configured_limit: int | None = None
-    has_operator_extension = False
+        raise StartPathError(f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step}", 2)
+    history = _task_capture_history(root, task_id)
+    failed = [p for p in history if not _successful_task_capture(root, p, qa_checks, candidate_sha256)]
     state_path = root / ".agent" / "run_state.json"
-    if state_path.is_file():
+    state = {}
+    if state_path.exists():
         try:
-            state_doc = json.loads(state_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            state_doc = {}
-        if isinstance(state_doc, dict):
-            cb = state_doc.get("circuit_breaker")
-            if isinstance(cb, dict):
-                cb_entry = cb.get(f"{task_id}-{step}") or cb.get(task_id) or cb.get(step)
-                if isinstance(cb_entry, dict):
-                    if cb_entry.get("invariant_breach") is True or cb_entry.get("authority_denied") is True:
-                        raise StartPathError(
-                            f"stopping policy halt: invariant or authority boundary breached in circuit_breaker for {task_id}:{step}",
-                            2,
-                        )
-                    raw_limit = cb_entry.get("limit")
-                    if isinstance(raw_limit, int) and not isinstance(raw_limit, bool) and raw_limit >= 1:
-                        configured_limit = raw_limit
-                    if (
-                        cb_entry.get("human_authorized_extension")
-                        or cb_entry.get("human_authorized_restart")
-                        or cb_entry.get("authorization")
-                        or (configured_limit is not None and configured_limit >= attempt and configured_limit > 3)
-                    ):
-                        has_operator_extension = True
-
-    has_contract_amendment = False
-    contract_path = root / ".agent" / "contracts" / f"{task_id}.json"
-    if contract_path.is_file():
+            state = json.loads(resolve_project_file(root, ".agent/run_state.json").read_bytes())
+            if not isinstance(state, dict):
+                raise ValueError("invalid state")
+        except (ValueError, OSError) as exc:
+            raise StartPathError("stopping policy halt: unreadable circuit-breaker state", 2) from exc
+    counters = state.get("circuit_breaker", {})
+    task_entry = counters.get(task_id, {}) if isinstance(counters, dict) else {}
+    step_entry = counters.get(f"{task_id}-{step}", task_entry) if isinstance(counters, dict) else {}
+    if not isinstance(task_entry, dict) or not isinstance(step_entry, dict):
+        raise StartPathError("stopping policy halt: malformed task circuit breaker", 2)
+    if any(e.get("invariant_breach") is True or e.get("authority_denied") is True for e in (task_entry, step_entry)):
+        raise StartPathError("stopping policy halt: invariant or authority boundary breached in circuit_breaker", 2)
+    limit = step_entry.get("limit", 3)
+    if type(limit) is not int or limit < 1:
+        raise StartPathError("stopping policy halt: step limit must be finite positive integer", 2)
+    recovery = task_entry.get("operator_recovery")
+    ceiling = 6
+    recovered = False
+    if recovery is not None:
+        required = {"task_id", "approved", "max_task_attempts", "after_capture", "authority_ref"}
+        if not isinstance(recovery, dict) or set(recovery) != required or recovery["task_id"] != task_id or recovery["approved"] is not True or type(recovery["max_task_attempts"]) is not int or recovery["max_task_attempts"] < 1:
+            raise StartPathError("stopping policy halt: explicit finite task operator recovery required", 2)
         try:
-            contract_doc = json.loads(contract_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            contract_doc = {}
-        if isinstance(contract_doc, dict):
-            amendments = contract_doc.get("amendments")
-            if isinstance(amendments, list) and len(amendments) > 0:
-                has_contract_amendment = True
-
-    prior_attempts: list[dict[str, Any]] = []
-    if target_dir.is_dir():
-        candidates = list(target_dir.glob(f"{task_id}-{step}-attempt*.capture.json"))
-        if decomposition_of:
-            for pat in (f"{decomposition_of}-*.capture.json", f"{task_id}-{decomposition_of}-attempt*.capture.json"):
-                for extra_p in target_dir.glob(pat):
-                    if extra_p not in candidates:
-                        candidates.append(extra_p)
-        for cap_file in sorted(candidates):
-            try:
-                p_doc = json.loads(cap_file.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
-                continue
-            if not isinstance(p_doc, dict):
-                continue
-            p_rel = cap_file.relative_to(root).as_posix() if cap_file.is_relative_to(root) else cap_file.as_posix()
-            p_sig = p_doc.get("defect_signature") or (p_doc.get("stderr") or {}).get("sha256")
-            p_lin = p_doc.get("continuation_lineage") if isinstance(p_doc.get("continuation_lineage"), dict) else {}
-            prior_attempts.append({
-                "id": p_doc.get("id"),
-                "step": p_doc.get("step"),
-                "attempt": p_doc.get("attempt"),
-                "started_at": p_doc.get("started_at"),
-                "capture_path": p_rel,
-                "outcome": p_doc.get("outcome"),
-                "exit_code": p_doc.get("exit_code"),
-                "cause_class": p_doc.get("cause_class"),
-                "defect_signature": p_sig,
-                "repair_summary": p_lin.get("repair_summary"),
-            })
-        prior_attempts.sort(key=lambda x: (int(x.get("attempt") or 0), str(x.get("started_at") or "")))
-
-    if configured_limit is not None and attempt > configured_limit and not (
-        continuation_basis in ("bounded-amendment", "verified-decomposition", "operator-reset")
-        or has_contract_amendment
-        or bool(decomposition_of)
-    ):
-        raise StartPathError(
-            f"stopping policy halt: attempt {attempt} exceeds configured step limit ({configured_limit}) for {task_id}:{step}",
-            2,
-        )
-
-    same_step_priors = [p for p in prior_attempts if p.get("id") == task_id and p.get("step") == step]
-    if same_step_priors:
-        last_p = same_step_priors[-1]
-        last_failed = last_p.get("outcome") not in ("success", "semantic-negative")
-        if last_failed and defect_signature and defect_signature == last_p.get("defect_signature"):
-            if not (repair_summary or has_contract_amendment or decomposition_of):
-                raise StartPathError(
-                    f"stopping policy halt: repeated identical unresolved defect signature ({defect_signature!r}) without bounded amendment, repair progress, or task decomposition",
-                    2,
-                )
-        if len(same_step_priors) >= 2:
-            p1, p2 = same_step_priors[-2], same_step_priors[-1]
-            if (
-                p1.get("outcome") not in ("success", "semantic-negative")
-                and p2.get("outcome") not in ("success", "semantic-negative")
-                and p1.get("defect_signature")
-                and p1.get("defect_signature") == p2.get("defect_signature")
-                and not (repair_summary or has_contract_amendment or decomposition_of or has_operator_extension)
-            ):
-                raise StartPathError(
-                    "stopping policy halt: repeated identical unresolved defect signature across consecutive attempts without bounded amendment, repair progress, or decomposition",
-                    2,
-                )
-
-    resolved_basis: str | None = continuation_basis
-    if attempt > 3:
-        if continuation_basis == "bounded-amendment":
-            if not has_contract_amendment:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis bounded-amendment requires a recorded contract amendment; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif continuation_basis == "verified-decomposition":
-            if not decomposition_of:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis verified-decomposition requires --decomposition-of; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif continuation_basis == "configured-step-limit":
-            if not (configured_limit is not None and configured_limit >= attempt):
-                raise StartPathError(
-                    f"stopping policy halt: --continuation-basis configured-step-limit requires circuit_breaker limit >= {attempt} in .agent/run_state.json",
-                    2,
-                )
-        elif continuation_basis == "operator-reset":
-            if not has_operator_extension:
-                raise StartPathError(
-                    "stopping policy halt: --continuation-basis operator-reset requires recorded operator authorization in .agent/run_state.json; --repair-summary is explanatory and grants no authority",
-                    2,
-                )
-        elif decomposition_of:
-            resolved_basis = "verified-decomposition"
-        elif has_contract_amendment:
-            resolved_basis = "bounded-amendment"
-        elif has_operator_extension:
-            resolved_basis = "configured-step-limit"
-        else:
-            raise StartPathError(
-                f"attempt {attempt} exceeds the initial 3-step strategy ladder (attempt must be between 1 and 3 unless a bounded contract amendment, verified decomposition, or configured circuit_breaker limit >= {attempt} permits continuation)",
-                2,
-            )
-    else:
-        if resolved_basis is None:
-            if decomposition_of:
-                resolved_basis = "verified-decomposition"
-            elif has_contract_amendment and attempt > 1:
-                resolved_basis = "bounded-amendment"
-            elif attempt == 1:
-                resolved_basis = "initial-attempt"
-            else:
-                resolved_basis = "strategy-ladder"
-
-    resolved_parent = parent_attempt
-    if resolved_parent is None:
-        if same_step_priors:
-            resolved_parent = int(same_step_priors[-1].get("attempt") or (attempt - 1))
-        elif attempt > 1:
-            resolved_parent = attempt - 1
-
-    return {
-        "initial_strategy_ladder_attempts": 3,
-        "attempt": attempt,
-        "parent_attempt": resolved_parent,
-        "decomposition_of": decomposition_of,
-        "continuation_basis": resolved_basis,
-        "repair_summary": repair_summary,
-        "configured_step_limit": configured_limit if configured_limit is not None else 3,
-        "contract_amendment_present": has_contract_amendment,
-        "operator_extension_present": has_operator_extension,
-        "prior_attempts": prior_attempts,
-    }
+            authority = json.loads(resolve_project_file(root, recovery["authority_ref"]).read_bytes())
+        except (ValueError, OSError, TypeError) as exc:
+            raise StartPathError("stopping policy halt: invalid operator recovery authority", 2) from exc
+        if authority != {"role": "operator", **recovery} or recovery["after_capture"] not in {p["capture_path"] for p in failed}:
+            raise StartPathError("stopping policy halt: operator recovery lacks exact task/failed-capture binding", 2)
+        ceiling = recovery["max_task_attempts"]
+        recovered = True
+    if len(failed) >= ceiling:
+        raise StartPathError(f"stopping policy halt: finite task failed-execution budget ({ceiling}) exhausted", 2)
+    signatures: dict[str, int] = {}
+    for doc in failed:
+        signature = _failure_signature(doc)
+        signatures[signature] = signatures.get(signature, 0) + 1
+    if max(signatures.values(), default=0) >= 3 and not recovered:
+        raise StartPathError("stopping policy halt: three failures of the same task-wide defect signature; explicit finite task operator recovery required", 2)
+    if decomposition_of:
+        if decomposition_of in (task_id, step, f"{task_id}-{step}"):
+            raise StartPathError("stopping policy halt: decomposition parent must be distinct", 2)
+        parents = [p for p in failed if decomposition_of in (p["step"], p["capture_path"], f"{task_id}-{p['step']}")]
+        if not parents:
+            raise StartPathError("stopping policy halt: decomposition requires a real distinct failed parent", 2)
+    if continuation_basis == "verified-decomposition" and not decomposition_of:
+        raise StartPathError("stopping policy halt: verified-decomposition requires --decomposition-of", 2)
+    if attempt > limit:
+        raise StartPathError(f"stopping policy halt: finite configured step limit ({limit}) exhausted; labels and amendments grant no attempts", 2)
+    if continuation_basis == "operator-reset" and not recovered:
+        raise StartPathError("stopping policy halt: operator-reset requires recorded operator authorization with a finite exact task budget", 2)
+    return {"initial_strategy_ladder_attempts": 3, "attempt": attempt, "parent_attempt": parent_attempt,
+        "decomposition_of": decomposition_of, "continuation_basis": continuation_basis or ("initial-attempt" if attempt == 1 else "strategy-ladder"),
+        "repair_summary": repair_summary, "configured_step_limit": limit, "contract_amendment_present": False,
+        "operator_extension_present": recovered, "failed_execution_count": len(failed), "task_failed_execution_ceiling": ceiling,
+        "prior_attempts": [{k: p.get(k) for k in ("id", "step", "attempt", "capture_path", "outcome", "exit_code", "defect_signature")} for p in history]}
 
 
 def capture_command_evidence(
@@ -1496,6 +1453,32 @@ def capture_command_evidence(
         raise StartPathError("proof_kind must be 'success' or 'semantic-negative'", 2)
 
     resolved_sha, binding_state, captured_vars = _resolve_candidate_and_env(root, candidate_sha256, env_vars)
+    if "NIZAM_QA_CONTEXT_SHA256" in captured_vars or "NIZAM_QA_EXECUTION_ROOT" in captured_vars:
+        if captured_vars.get("NIZAM_QA_EXECUTION_ROOT") != str(root.resolve()):
+            raise StartPathError("QA capture execution root must match the actual resolved repository root", 1)
+
+    qa_check = None
+    checks = None
+    if "NIZAM_QA_CONTEXT_SHA256" in captured_vars:
+        wa = _load_workflow_assurance()
+        try:
+            candidate = candidate_sha256
+            if not isinstance(candidate, dict):
+                candidate_path = Path(str(candidate_sha256))
+                if not candidate_path.is_absolute():
+                    candidate_path = root / candidate_path
+                candidate = json.loads(candidate_path.read_bytes())
+                if isinstance(candidate.get("candidate"), dict):
+                    candidate = candidate["candidate"]
+            checks = wa.qa_bound_checks(root, task_id, candidate)
+            wa.validate_qa_context(root, task_id, candidate, checks)
+            wa._receipt_candidate(root, candidate)
+            qa_check = next((check for check in checks if check["argv"] == argv and check["proof_kind"] == proof_kind), None)
+        except (wa.AssuranceError, OSError, ValueError, TypeError, AttributeError) as exc:
+            raise StartPathError("QA candidate invalid before execution: " + str(exc), 2) from exc
+        for previous in _task_capture_history(root, task_id):
+            if _successful_task_capture(root, previous, checks, resolved_sha) and previous.get("candidate_sha256") == resolved_sha and previous.get("argv") == argv and previous.get("proof_kind") == proof_kind and previous.get("environment") == {"runtime": candidate["environment"]["runtime"], "variables": captured_vars}:
+                raise StartPathError("identical successful assessed proof already exists; reuse " + previous["capture_path"], 2)
 
     rel_dir = (
         output_dir.relative_to(root).as_posix()
@@ -1517,6 +1500,8 @@ def capture_command_evidence(
         repair_summary=repair_summary,
         defect_signature=defect_signature,
         invariant_breach=invariant_breach,
+        qa_checks=checks,
+        candidate_sha256=resolved_sha,
     )
 
     _reserve_attempt(root, task_id, step, attempt)
@@ -1610,9 +1595,16 @@ def capture_command_evidence(
 
     stdout_sha = sha256_hex(stdout_bytes)
     stderr_sha = sha256_hex(stderr_bytes)
+    if qa_check is not None and proof_kind == "semantic-negative" and exit_code == qa_check["expected_exit"] and completion_state == "completed" and signal_num is None:
+        try:
+            matched = qa_check["diagnostic"] in [line for data in (stdout_bytes, stderr_bytes) for line in data.decode("utf-8").splitlines()]
+        except UnicodeError:
+            matched = False
+        if matched:
+            continuation_lineage["qa_expected_predicate"] = {"context": captured_vars["NIZAM_QA_CONTEXT_SHA256"], "check": qa_check}
     effective_defect_sig = defect_signature
     if effective_defect_sig is None and outcome != proof_kind:
-        effective_defect_sig = f"exit:{exit_code}:stderr:{stderr_sha}"
+        effective_defect_sig = _failure_signature({"argv": argv, "outcome": outcome, "exit_code": exit_code, "signal": signal_num, "completion_state": completion_state, "stdout": {"sha256": stdout_sha}, "stderr": {"sha256": stderr_sha}})
 
     capture_doc: dict[str, Any] = {
         "schema_version": 1,
@@ -3418,6 +3410,7 @@ def verify_route_scope_eligibility(
     contract_id: str | None = None,
     feature_id: str | None = None,
     candidate: dict[str, Any] | None = None,
+    _receipt_replay_context: bytes | None = None,
 ) -> list[str]:
     """Enforce a single canonical scope eligibility decision across classify, begin, done, and receipt verification."""
     if isinstance(files, dict):
@@ -3466,6 +3459,23 @@ def verify_route_scope_eligibility(
             )
     else:
         raise StartPathError(f"unsupported non-feature route: {route}", 2)
+    if candidate is not None:
+        wa = _load_workflow_assurance()
+        try:
+            if feature_id is None or not isinstance(files, dict):
+                raise wa.AssuranceError("candidate eligibility requires exact task intent and identity")
+            paths = wa.qa_authorization_paths(root, feature_id, candidate)
+            if f".agent/evidence/{feature_id}-base.json" not in paths:
+                raise wa.AssuranceError("route candidate requires immutable task base; begin/capture afresh")
+            checks = wa.qa_bound_checks(root, feature_id, candidate)
+            wa.validate_qa_context(root, feature_id, candidate, checks)
+            intent_path = next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))
+            if wa.canonical(wa.parse_json(wa.regular_file(root, intent_path).read_bytes())) != wa.canonical(files):
+                raise wa.AssuranceError("candidate scope differs from consumed task intent")
+            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id,
+                _receipt_replay_context=_receipt_replay_context, _receipt_candidate_identity=candidate)
+        except wa.AssuranceError as exc:
+            raise StartPathError("candidate route eligibility failed: " + str(exc), 1) from exc
     return scoped
 
 
@@ -3529,14 +3539,99 @@ def _task_owned_governance_path(norm: str, path_id: str) -> bool:
     return False
 
 
-def _record_task_base(root: Path, path_id: str) -> None:
-    """Record the immutable task base and pre-existing dirty snapshot before implementation.
+def _observe_inherited_endpoint(root: Path, raw_path: str) -> dict[str, Any]:
+    """Observe index and worktree independently, never traversing a symlink."""
+    path = normalize_relative_path(raw_path, forbid_nizam_payload=False)
+    if path != raw_path:
+        raise StartPathError("noncanonical inherited endpoint: " + raw_path, 1)
+    index_result = _run_git_readonly(
+        root, ["--literal-pathspecs", "ls-files", "--stage", "-z", "--", path], text=False
+    )
+    if index_result.returncode:
+        raise StartPathError("cannot observe inherited index: " + path, 1)
+    index = []
+    for row in index_result.stdout.split(b"\0"):
+        if not row:
+            continue
+        try:
+            metadata, name = row.split(b"\t", 1)
+            mode, oid, stage = metadata.decode("ascii").split()
+            if name.decode("utf-8", errors="surrogateescape") != path:
+                raise ValueError("directory or ambiguous index endpoint")
+            if not re.fullmatch(r"[0-7]{6}", mode) or not re.fullmatch(r"[0-9a-f]{40,64}", oid) or stage not in ("0", "1", "2", "3"):
+                raise ValueError("malformed index observation")
+            index.append({"mode": mode, "object": oid, "stage": int(stage)})
+        except (ValueError, UnicodeError) as exc:
+            raise StartPathError("cannot observe inherited index endpoint: " + path, 1) from exc
+    index.sort(key=lambda item: item["stage"])
+    directory = None
+    observed_presence = False
+    try:
+        directory = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        parts = path.split("/")
+        for part in parts[:-1]:
+            child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
+            os.close(directory)
+            directory = child
+        name = parts[-1]
+        before = os.stat(name, dir_fd=directory, follow_symlinks=False)
+        observed_presence = True
+        if stat.S_ISLNK(before.st_mode):
+            worktree = {"kind": "symlink", "target": os.readlink(name, dir_fd=directory)}
+        elif stat.S_ISREG(before.st_mode):
+            fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+            with os.fdopen(fd, "rb") as fh:
+                opened = os.fstat(fh.fileno())
+                if not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
+                    raise StartPathError("inherited endpoint changed during observation: " + path, 1)
+                digest = hashlib.sha256()
+                while chunk := fh.read(1024 * 1024):
+                    digest.update(chunk)
+                after = os.fstat(fh.fileno())
+            signature = lambda st: (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns, st.st_mode)
+            if signature(opened) != signature(after):
+                raise StartPathError("inherited endpoint changed during observation: " + path, 1)
+            worktree = {"kind": "file", "sha256": digest.hexdigest(), "executable": bool(after.st_mode & 0o111)}
+        else:
+            raise StartPathError("unsupported inherited endpoint kind: " + path, 1)
+        final = os.stat(name, dir_fd=directory, follow_symlinks=False)
+        if (before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns) != (final.st_dev, final.st_ino, final.st_mode, final.st_mtime_ns, final.st_ctime_ns):
+            raise StartPathError("inherited endpoint changed during observation: " + path, 1)
+    except FileNotFoundError as exc:
+        if observed_presence:
+            raise StartPathError("inherited endpoint disappeared during observation: " + path, 1) from exc
+        worktree = {"kind": "absent"}
+    except OSError as exc:
+        raise StartPathError("cannot safely observe inherited endpoint: " + path, 1) from exc
+    finally:
+        if directory is not None:
+            os.close(directory)
+    return {"index": index, "worktree": worktree}
 
-    Idempotent: an existing marker is never overwritten, so a later `begin` cannot
-    silently re-pin a task to a more favorable base.
-    """
+
+def _task_authorization(root: Path, route: str, files: list[str], contract_id: str | None) -> dict[str, Any]:
+    scoped = verify_route_scope_eligibility(root, route, files, contract_id=contract_id)
+    if contract_id is not None:
+        require_inside_contract(root, contract_id, scoped)
+    return {"route": route, "files": sorted(scoped), "contract_id": contract_id}
+
+
+def _record_task_base(
+    root: Path, path_id: str, *, route: str, files: list[str], contract_id: str | None = None,
+) -> None:
+    """Exclusively record authorization and no-follow index/worktree observations."""
     marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
-    if marker.exists():
+    authorization = _task_authorization(root, route, files, contract_id)
+    wa = _load_workflow_assurance()
+    intent_path = root / ".agent" / "evidence" / f"{path_id}-{'scope' if route == 'bugfix' else 'intent'}.json"
+    try:
+        verification = wa.qa_required_checks(_read_json_file(intent_path).get("verification"))
+    except wa.AssuranceError as exc:
+        raise StartPathError(str(exc), 1) from exc
+    if os.path.lexists(marker):
+        existing = _load_task_base(root, path_id)
+        if existing and existing.get("schema_version") == 2 and (existing["authorization"] != authorization or existing.get("verification") != verification):
+            raise StartPathError("task authorization changed; begin with a fresh task ID", 1)
         return
     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
@@ -3547,19 +3642,15 @@ def _record_task_base(root: Path, path_id: str) -> None:
     head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
     if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
         raise StartPathError("cannot record task base: HEAD is not a resolvable commit", 1)
-    status_res = _run_git_readonly(
-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
-    )
+    status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False)
     if status_res.returncode != 0:
         raise StartPathError("cannot record task base: git status failed", 1)
     baseline_entries = _parse_porcelain_z(status_res.stdout)
-    doc = {
-        "schema_version": 1,
-        "id": path_id,
-        "base_revision": head_res.stdout.strip(),
-        "recorded_at": utc_now_iso(),
-        "pre_existing_entries": baseline_entries,
-    }
+    endpoints = sorted({p for entry in baseline_entries for p in entry["paths"]})
+    doc = {"schema_version": 2, "id": path_id, "base_revision": head_res.stdout.strip(),
+           "recorded_at": utc_now_iso(), "pre_existing_entries": baseline_entries,
+           "authorization": authorization, "verification": verification,
+           "inherited_observations": {p: _observe_inherited_endpoint(root, p) for p in endpoints}}
     marker.parent.mkdir(parents=True, exist_ok=True)
     with marker.open("xb") as fh:
         fh.write(canonical_bytes(doc) + b"\n")
@@ -3567,14 +3658,39 @@ def _record_task_base(root: Path, path_id: str) -> None:
 
 def _load_task_base(root: Path, path_id: str) -> dict[str, Any] | None:
     marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
-    if not marker.is_file():
+    if not os.path.lexists(marker):
         return None
+    if marker.is_symlink() or not marker.is_file():
+        raise StartPathError("recorded task base is not a regular file", 1)
     try:
         doc = json.loads(marker.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise StartPathError(f"recorded task base is unreadable: {marker}", 1) from exc
-    if not isinstance(doc, dict) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
-        raise StartPathError(f"recorded task base is malformed: {marker}", 1)
+        if not isinstance(doc, dict) or doc.get("id") != path_id or type(doc.get("schema_version")) is not int or doc["schema_version"] not in (1, 2) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
+            raise ValueError("invalid base identity")
+        entries = doc.get("pre_existing_entries")
+        if not isinstance(entries, list) or any(not isinstance(e, dict) or not isinstance(e.get("code"), str) or not isinstance(e.get("paths"), list) or not e["paths"] or any(not isinstance(p, str) for p in e["paths"]) for e in entries):
+            raise ValueError("invalid inherited entries")
+        if doc["schema_version"] == 2:
+            auth = doc.get("authorization")
+            if not isinstance(auth, dict) or set(auth) != {"route", "files", "contract_id"} or auth["route"] not in ("bugfix", "trivial", "small-change") or not isinstance(auth["files"], list) or not auth["files"] or any(not isinstance(p, str) for p in auth["files"]) or auth["files"] != sorted(set(auth["files"])) or (auth["contract_id"] is not None and (not isinstance(auth["contract_id"], str) or not ID_PATTERN.fullmatch(auth["contract_id"]))):
+                raise ValueError("invalid authorization binding")
+            observations = doc.get("inherited_observations")
+            endpoints = {p for e in entries for p in e["paths"]}
+            if not isinstance(observations, dict) or set(observations) != endpoints:
+                raise ValueError("incomplete inherited observations")
+            for path, observed in observations.items():
+                if normalize_relative_path(path, forbid_nizam_payload=False) != path or not isinstance(observed, dict) or set(observed) != {"index", "worktree"} or not isinstance(observed["index"], list):
+                    raise ValueError("invalid endpoint observation")
+                for item in observed["index"]:
+                    if not isinstance(item, dict) or set(item) != {"mode", "object", "stage"} or not re.fullmatch(r"[0-7]{6}", str(item["mode"])) or not re.fullmatch(r"[0-9a-f]{40,64}", str(item["object"])) or type(item["stage"]) is not int or item["stage"] not in (0, 1, 2, 3):
+                        raise ValueError("invalid index observation")
+                wt = observed["worktree"]
+                if not isinstance(wt, dict) or wt.get("kind") not in ("absent", "file", "symlink"):
+                    raise ValueError("invalid worktree observation")
+                keys = {"absent": {"kind"}, "file": {"kind", "sha256", "executable"}, "symlink": {"kind", "target"}}[wt["kind"]]
+                if set(wt) != keys or (wt["kind"] == "file" and (not re.fullmatch(r"[0-9a-f]{64}", str(wt["sha256"])) or type(wt["executable"]) is not bool)) or (wt["kind"] == "symlink" and not isinstance(wt["target"], str)):
+                    raise ValueError("invalid worktree identity")
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        raise StartPathError(f"recorded task base is malformed or unreadable: {marker}; begin with a fresh task ID", 1) from exc
     return doc
 
 
@@ -3583,6 +3699,10 @@ def verify_actual_changed_scope(
     route: str,
     declared_files: list[str],
     path_id: str | None = None,
+    *,
+    contract_id: str | None = None,
+    _receipt_replay_context: bytes | None = None,
+    _receipt_candidate_identity: dict[str, Any] | None = None,
 ) -> None:
     """Bind completion to the complete committed/staged/unstaged/untracked delta.
 
@@ -3590,7 +3710,8 @@ def verify_actual_changed_scope(
     non-Git project keeps the historical local-only behavior (no Git state to
     bind); that mode is not a claim of Git-backed completion.
     """
-    scoped = verify_route_scope_eligibility(root, route, declared_files)
+    authorization = _task_authorization(root, route, declared_files, contract_id)
+    scoped = authorization["files"]
     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
         return
@@ -3625,24 +3746,41 @@ def verify_actual_changed_scope(
             1,
         )
 
-    diff_res = _run_git_readonly(
-        root, ["diff", "--name-status", "-z", base_revision, head, "--"], text=False
-    )
-    if diff_res.returncode != 0:
-        raise StartPathError(f"{route} completion failed: committed delta inspection failed", 1)
+    if base_doc["schema_version"] == 2:
+        if base_doc["authorization"] != authorization:
+            raise StartPathError("task authorization changed; begin with a fresh task ID", 1)
+    elif contract_id is not None:
+        raise StartPathError("legacy task base lacks authorization proof; begin with a fresh task ID", 1)
 
-    status_res = _run_git_readonly(
-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
-    )
-    if status_res.returncode != 0:
+    projections = []
+    for args in (["diff", "--no-renames", "--name-status", "-z", base_revision, head, "--"],
+                 ["diff", "--no-renames", "--cached", "--name-status", "-z", head, "--"],
+                 ["diff", "--no-renames", "--name-status", "-z", "--"]):
+        result = _run_git_readonly(root, args, text=False)
+        if result.returncode:
+            raise StartPathError(f"{route} completion failed: change-layer inspection failed", 1)
+        projections.append(_parse_name_status_z(result.stdout))
+    status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False)
+    if status_res.returncode:
         raise StartPathError(f"{route} completion failed: working-tree inspection failed", 1)
-
     declared_set = set(scoped)
-    pre_existing = {
-        (entry.get("code"), tuple(entry.get("paths") or []))
-        for entry in (base_doc.get("pre_existing_entries") or [])
-        if isinstance(entry, dict)
-    }
+    unchanged = set()
+    inherited = {p for e in base_doc["pre_existing_entries"] for p in e["paths"]}
+    for path in sorted(inherited):
+        if path in declared_set or _task_owned_governance_path(path, path_id):
+            continue
+        if base_doc["schema_version"] != 2:
+            raise StartPathError("legacy task base lacks inherited preservation proof; begin with a fresh task ID", 1)
+        if _observe_inherited_endpoint(root, path) == base_doc["inherited_observations"][path]:
+            unchanged.add(path)
+    receipt_state_observation = None
+    if _receipt_replay_context is not None:
+        wa = _load_workflow_assurance()
+        try:
+            receipt_state_observation = wa._receipt_replay_observation(root, _receipt_replay_context,
+                feature_id=path_id, route=route, candidate=_receipt_candidate_identity)
+        except wa.AssuranceError as exc:
+            raise StartPathError("receipt replay scope proof failed: " + str(exc), 1) from exc
     undeclared: list[str] = []
 
     def consider(raw_path: str) -> None:
@@ -3652,20 +3790,26 @@ def verify_actual_changed_scope(
             norm = raw_path.strip()
         if _task_owned_governance_path(norm, path_id):
             return
+        if norm == ".agent/run_state.json" and receipt_state_observation is not None:
+            if _observe_inherited_endpoint(root, norm) != receipt_state_observation:
+                raise StartPathError("receipt replay canonical state changed during scope verification", 1)
+            return
         if norm in declared_set or norm in undeclared:
             return
         undeclared.append(norm)
 
-    for entry in _parse_name_status_z(diff_res.stdout):
+    # Committed changes can never inherit a dirty-work exemption.
+    for entry in projections[0]:
         for raw_path in entry["paths"]:
             consider(raw_path)
-
-    for entry in _parse_porcelain_z(status_res.stdout):
-        key = (entry.get("code"), tuple(entry.get("paths") or []))
-        if key in pre_existing:
-            continue
-        for raw_path in entry["paths"]:
-            consider(raw_path)
+    for entries in projections[1:] + [_parse_porcelain_z(status_res.stdout)]:
+        for entry in entries:
+            for raw_path in entry["paths"]:
+                if raw_path not in unchanged:
+                    consider(raw_path)
+    # Restoration/deletion can remove a path from status entirely.
+    for raw_path in inherited - unchanged:
+        consider(raw_path)
 
     if undeclared:
         raise StartPathError(
@@ -3788,44 +3932,29 @@ def require_inside_contract(root: Path, contract_id: str, files: list[str]) -> N
         )
 
 
+def _load_workflow_assurance():
+    import importlib.util
+    name = "_nizam_workflow_assurance_" + hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:16]
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().with_name("workflow_assurance.py"))
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
 def load_passing_qa(root: Path, path_id: str) -> None:
-    """Require a schema-valid passing QA verdict bound to path_id with >=1 passing check and non-empty evidence."""
-    verdict = load_record(
-        root,
-        Path(".agent") / "qa" / f"{path_id}.json",
-        "qa_verdict.schema.json",
-    )
-    verdict_id = verdict.get("feature_id") or verdict.get("id")
-    if verdict_id != path_id:
-        raise StartPathError(
-            f"QA verdict feature_id ({verdict_id!r}) does not match --id ({path_id!r})",
-            1,
-        )
-    if not qa_passes(verdict):
-        raise StartPathError("recorded verification result does not pass", 1)
-    evidence = listed_evidence(verdict)
-    if not evidence:
-        raise StartPathError("recorded verification result names no evidence file", 1)
-    if "qa_pass" in verdict:
-        checks_run = verdict.get("checks_run")
-        if isinstance(checks_run, int) and not isinstance(checks_run, bool) and len(evidence) < checks_run:
-            raise StartPathError(
-                "recorded verification result claims more executed checks than it names evidence for", 1
-            )
-    current_head = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
-    head_sha = current_head.stdout.strip() if current_head.returncode == 0 else None
-    bound_candidate = verdict.get("candidate_sha256") or verdict.get("candidate")
-    if isinstance(bound_candidate, str) and head_sha and re.fullmatch(r"[0-9a-f]{40}", bound_candidate):
-        if bound_candidate != head_sha:
-            raise StartPathError(
-                "recorded verification result is stale: candidate is not the current HEAD", 1
-            )
-    for relative in evidence:
-        path = resolve_project_file(root, relative)
-        if not path.is_file():
-            raise StartPathError("evidence file does not exist: " + relative, 1)
-        if len(path.read_bytes().strip()) == 0:
-            raise StartPathError("evidence file is empty (non-empty verification output required): " + relative, 1)
+    """Validate structured capture proof against independent assessed authorization."""
+    verdict = load_record(root, Path(".agent") / "qa" / f"{path_id}.json", "qa_verdict.schema.json")
+    if (verdict.get("feature_id") or verdict.get("id")) != path_id:
+        raise StartPathError("QA verdict feature_id does not match --id", 1)
+    wa = _load_workflow_assurance()
+    try:
+        candidate = wa.parse_json(wa._qa_artifact(root, verdict.get("candidate_ref")))
+        required_checks = wa.qa_bound_checks(root, path_id, candidate)
+        wa.validate_qa_proof(root, verdict, feature_id=path_id, candidate=candidate, required_checks=required_checks)
+    except wa.AssuranceError as exc:
+        raise StartPathError("recorded verification result does not pass structured QA proof; capture afresh: " + str(exc), 1) from exc
 
 
 QA_BLOCKING_KEYS = (
@@ -3837,13 +3966,10 @@ QA_BLOCKING_KEYS = (
 
 
 def qa_passes(verdict: dict) -> bool:
-    """One strict normalized predicate for every new completion path.
+    """Read historical QA declarations for display and compatibility diagnostics.
 
-    Both historical shapes are normalized to the same requirements: at least one
-    successfully executed check, no contradictory approval field, no non-empty
-    blocking array, and an evidence binding for every claimed check. Historical
-    records remain displayable, but they cannot select a weaker new completion
-    rule.
+    This boolean does not inspect captures or establish execution proof. Authority
+    consumers must use workflow_assurance.validate_qa_proof instead.
     """
     if not isinstance(verdict, dict):
         return False
