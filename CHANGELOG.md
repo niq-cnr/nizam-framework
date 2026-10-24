@@ -7,6 +7,45 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-24
+
+**Major release** (`methodology/06_release_train.md` Sections 3.1 and 3.4):
+completion now requires a pinned typed verification inventory, assessed candidate
+and structured per-check execution proof, and retries have finite task-wide
+budgets. Previously accepted consumer records can require a fresh task and new
+evidence. Read [Migrating to v2.0.0](docs/migration-v2.0.0.md) before upgrading.
+
+### Fixed
+
+- Preserve approved contract identity and scope through completion, and compare
+  inherited index objects/modes and worktree contents, symlink targets and
+  endpoints instead of trusting unchanged Git status labels.
+- Validate capture contents, exact candidate/command/environment bindings and
+  stream bytes through one shared rule for direct completion and receipt QA
+  prerequisites. Ordinary failed proof cannot substantiate success; expected
+  semantic negatives and zero-byte streams remain supported.
+- Preserve canonical receipt replay only for the exact receipt-owned status,
+  timestamp and one appended history event, with every Git layer checked.
+  Direct completion and unrelated state edits retain their scope refusals.
+- Correct installed-consumer bootstrap and historical expected-exit fixtures
+  without weakening proof validation or reaching back to framework source.
+
+### Changed
+
+- Require typed verification before a new task begins and bind complete
+  authorization records, actual verifier/schema inputs, QA context and original
+  execution root to the assessed candidate. Legacy metadata remains readable
+  but cannot silently become stronger completion proof.
+- Enforce finite retries across task steps, sessions and output directories:
+  six failed executions per task and three failures of one signature, together
+  with finite configured step limits. Successes, narrative summaries, amended
+  scopes and decomposition labels do not reset failures. Reopening requires
+  explicit finite task-scoped operator recovery.
+- Synchronize release entry points and provide migration guidance. This release
+  does not enable semantic providers, qualify persistent SBCL operation, or
+  establish consumer commissioning or production readiness.
+
+
 ## [1.11.0] - 2026-10-23
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): adds the

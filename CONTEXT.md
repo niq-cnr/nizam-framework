@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.11.0
+version: 2.0.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "2.0.0"
+    date: "2026-10-24"
+    summary: "Prepare the v2.0.0 MAJOR release of the completion, structured-QA, canonical receipt replay and finite retry repairs. Existing consumers must migrate verification inventories, assessed proof and recovery authority; docs/migration-v2.0.0.md records the compatibility boundary. Tag publication and official local self-adoption remain separate observed steps; no commissioning or production readiness is asserted."
   - version: "1.11.0"
     date: "2026-10-23"
     summary: "Prepare the v1.11.0 MINOR release: add the provider-neutral semantic observation architecture (Choice/Noul/Score contracts, mode-isolated off-by-default policy, the versioned question/policy catalog, the seven decision families, the optional host-side Jev adapter and provider-attempt usage accounting), the independently-adjudicated evaluation corpus and four-arm harness, and the deterministic governance repairs (strict normalized QA acceptance, complete-delta scope binding, contract-identity consistency, authoritative monotonic attempts, and verified continuation authority); plus the earlier evidence-archive/bounded-preservation, sparse-bootstrap, llms.txt and README/guide refresh work. All new semantic capability is off by default; no shipped schema was narrowed. The installed .nizam/ payload remains pinned to v1.10.1 until the reviewed post-tag re-bootstrap to v1.11.0."
