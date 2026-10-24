@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 450, in validate
+    raise error
+jsonschema.exceptions.ValidationError: '0 with CONFORMANCE: FULL and an explicit selected-adapter line (docker) on the restrictive QA host; 0 with native selection on userns-capable hosts' is not of type 'integer'
+
+Failed validating 'type' in schema['properties']['verification']['items']['properties']['expected_exit']:
+    {'type': 'integer', 'minimum': 0}
+
+On instance['verification'][0]['expected_exit']:
+    ('0 with CONFORMANCE: FULL and an explicit selected-adapter line '
+     '(docker) on the restrictive QA host; 0 with native selection on '
+     'userns-capable hosts')

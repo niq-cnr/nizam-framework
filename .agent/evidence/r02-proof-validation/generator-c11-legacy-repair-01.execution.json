@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python",
+    "-c",
+    "import sys,json,jsonschema; from pathlib import Path; sys.path.insert(0,\"tools\"); import test_workflow_assurance as t; jsonschema.Draft202012Validator(json.loads(Path(\"schema/contract.schema.json\").read_text())).validate(json.loads(Path(\".agent/contracts/134.json\").read_text())); t.r02_schema_matrix(); print(\"PASS C11 historical contract134 and strict typed exit-code regressions\")"
+  ],
+  "exit_code": 0,
+  "duration_ms": 120
+}
