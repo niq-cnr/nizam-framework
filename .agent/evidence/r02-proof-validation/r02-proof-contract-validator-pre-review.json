@@ -1,0 +1,27 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "CAPTURE-CONTEXT",
+      "description": "Draft requires refusal of proof reused across feature/authorization but capture rule binds only candidate, argv and observations. Existing closed captures have no task/check/authorization context. One assessed candidate can contain multiple task records with identical commands, permitting one capture to substantiate both unless the contract specifies an enforceable context rule.",
+      "evidence": "acceptance_requirements[capture,candidate,compatibility]; closed published capture schema has only schema_version,argv,cwd,revision,candidate_sha256,environment,producer,executed,outcome,exit_code,stdout,stderr."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Specify enforceable capture-to-feature/authorization binding for raw and supported closed formats, with a same-candidate/multiple-task/same-command reuse regression; do not infer binding from untrusted QA feature_id alone.",
+    "Replace FIRST_PAIR_ACCEPTED_COMMIT with accepted first-pair pin and obtain final identical-digest reviews before approval."
+  ],
+  "reviewer": "r02-validator",
+  "mode": "A-pre-review",
+  "feature": "r02-proof-validation",
+  "contract_sha256": "f1d590df46ee71bc418027cf729f68a29be96efdd2e40ee4df8469af1920d22d",
+  "advisory_minor": [
+    "Known first-pair pin placeholder is expected at this pre-review and not yet final-gate ready.",
+    "Confirmed scope shell words equal typed argv, Python scope snippet compiles, and intended review artifact regex matches.",
+    "Material-membership, ownership mask restrictions, exact diagnostics, wrapper normalization, independent inventory and schema boundaries are now explicit."
+  ]
+}

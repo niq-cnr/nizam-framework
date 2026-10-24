@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-r02-10DF50/repo/tools/test_workflow_assurance.py", line 1138, in r02_feature_proof_matrix
+    require(api.qa_authorization_paths(f.root, 'other', f.candidate) == ['second-contract.json'], 'second exact authorization in same candidate')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/r02-feature-proof-0gloe_a6/receipt/tools/workflow_assurance.py", line 982, in qa_authorization_paths
+    require(len(matches) == 1, 'QA requires one exact approved contract authorization')
+  File "/home/cnross/.tmp/r02-feature-proof-0gloe_a6/receipt/tools/workflow_assurance.py", line 27, in require
+    raise AssuranceError(message)
+assurance_under_test.AssuranceError: QA requires one exact approved contract authorization

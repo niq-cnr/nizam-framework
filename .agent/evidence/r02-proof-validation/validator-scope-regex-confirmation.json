@@ -1,0 +1,66 @@
+{
+  "patterns": [
+    "\\.agent/(?:validator|evaluator|qa)/r02-proof-validation-[A-Za-z0-9_.-]+\\.json",
+    "\\.agent/evidence/r02-proof-validation/[A-Za-z0-9_./-]+",
+    "\\.agent/evidence/r02-(?:classify-proof-validation|preflight-proof-validation)-attempt[1-9][0-9]*\\.reservation\\.json",
+    "\\.agent/evidence/r02-proof-validation-(?:start-path|workflow-assurance|compliance|isolation|scope|adversarial)-attempt[1-9][0-9]*\\.reservation\\.json"
+  ],
+  "leading_bytes": [
+    [
+      92,
+      46,
+      97,
+      103
+    ],
+    [
+      92,
+      46,
+      97,
+      103
+    ],
+    [
+      92,
+      46,
+      97,
+      103
+    ],
+    [
+      92,
+      46,
+      97,
+      103
+    ]
+  ],
+  "matches": [
+    [
+      true,
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      true,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      true,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      true
+    ]
+  ],
+  "samples": [
+    ".agent/validator/r02-proof-validation-mode-a.json",
+    ".agent/evidence/r02-proof-validation/scope.capture.json",
+    ".agent/evidence/r02-preflight-proof-validation-attempt1.reservation.json",
+    ".agent/evidence/r02-proof-validation-scope-attempt1.reservation.json"
+  ]
+}

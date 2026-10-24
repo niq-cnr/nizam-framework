@@ -1,0 +1,27 @@
+{
+  "reviewer": "r02-validator",
+  "decision": "Preserve complete unchanged-inherited completion positives through a separate bounded route candidate producer; retain strict generic assessor.",
+  "source_findings": [
+    {
+      "source": "tools/workflow_assurance.py:193-259",
+      "finding": "assess_repository globally scans every tree/index path, requires regular blob modes, no untracked/ignored candidates, identical index/anchor/worktree bytes except owned JSON records. Therefore it cannot produce proof for valid unrelated inherited dirty or symlink cases."
+    },
+    {
+      "source": "tools/workflow_assurance.py:_receipt_candidate",
+      "finding": "Existing identity wire shape and verifier validate selected material-input membership, anchor/revision/current bytes, records and environment. They do not require every unrelated repository path to be a selected dependency; whole-tree producer restrictions need not be weakened."
+    },
+    {
+      "source": "tools/start_path.py:verify_actual_changed_scope",
+      "finding": "Accepted F1/F2 version2 immutable bases separately bind all inherited index/worktree endpoints and compare all change layers. This provides the required unrelated-dirt preservation proof independently of selected dependency identity."
+    }
+  ],
+  "required_boundary": [
+    "Keep generic assess_repository behavior and its negative tests intact; introduce route-only same-wire producer that requires version2 pinned authorization/inventory and explicit source anchor.",
+    "Use F1/F2 exact scope/preservation check for unrelated endpoints; require all selected material inputs regular, present and identical in anchor/index/live worktree with exact verifier/schema/authorization membership. Never exempt selected dependency via inherited dirt.",
+    "Recheck selected index/anchor/worktree identities and route scope on every direct/receipt proof consumption, not producer only; protected authorization/base records cannot use ownership masks.",
+    "Accept full done with real capture for unchanged unrelated tracked, untracked and symlink inherited endpoints; reject later mutation or selected inherited dependency.",
+    "Resolve actual active source or installed module layout from loaded files; require same-layout verifiers and consumed schemas in manifest. Do not accept duplicate bytes at unconsumed paths or mixed imports."
+  ],
+  "scope": "Existing nine contracted product files; no installed edits or blanket acceptance downgrade.",
+  "reviewed_proposal_sha256": "583d14de3e8568ac368d7bd0160a9fc4c4476aab24196a343df7336e8c15e50f"
+}

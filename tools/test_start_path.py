@@ -4,6 +4,11 @@
 from __future__ import annotations
 
 import json
+import os
+import importlib.util
+import hashlib
+from datetime import datetime, timezone
+import time
 import shutil
 import subprocess
 import sys
@@ -15,10 +20,88 @@ TOOL = ROOT / "tools" / "start_path.py"
 WA_TOOL = ROOT / "tools" / "workflow_assurance.py"
 
 
+CHECK = {"id": "ordinary", "argv": [sys.executable, "-c", "pass"], "expected_exit": 0, "proof_kind": "success", "diagnostic": None}
+
+
+def proof_bootstrap(root: Path) -> None:
+    """Install the actual assessed implementation into a disposable consumer."""
+    if (root / "tools/start_path.py").exists() or (root / ".nizam/tools/start_path.py").exists():
+        return
+    root.mkdir(parents=True, exist_ok=True)
+    for relative in ["tools/start_path.py", "tools/workflow_assurance.py"] + ["schema/" + n + ".schema.json" for n in ("qa_verdict", "contract", "bugfix_scope", "bugfix_cause", "small_change_intent")]:
+        target = root / relative; target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, target)
+    (root / ".r02-source.txt").write_text("selected ordinary input\n")
+    (root / ".r02-test.py").write_text("# selected fixture test input\n")
+    if not (root / ".git").exists():
+        _git(root, "init", "-q"); _git(root, "config", "user.name", "QA Fixture"); _git(root, "config", "user.email", "fixture@example.invalid")
+    if subprocess.run(["git", "-C", str(root), "remote", "get-url", "origin"], capture_output=True).returncode:
+        _git(root, "remote", "add", "origin", "https://example.invalid/qa-fixture.git")
+    paths = ["tools/start_path.py", "tools/workflow_assurance.py", "schema/qa_verdict.schema.json", "schema/contract.schema.json", "schema/bugfix_scope.schema.json", "schema/bugfix_cause.schema.json", "schema/small_change_intent.schema.json", ".r02-source.txt", ".r02-test.py"]
+    _git(root, "add", "--", *paths); _git(root, "commit", "--only", "-qm", "actual QA fixture implementation", "--", *paths)
+
+
+def record_proof(root: Path, path_id: str, extra_contract_inputs: list[str] | None = None) -> dict:
+    """Execute a real check and bind its exact output to a pinned route candidate."""
+    proof_bootstrap(root)
+    prefix = ".nizam/" if (root / ".nizam/tools/workflow_assurance.py").exists() else ""
+    spec = importlib.util.spec_from_file_location("proof_wa_" + path_id, root / (prefix + "tools/workflow_assurance.py"))
+    wa = importlib.util.module_from_spec(spec); spec.loader.exec_module(wa)
+    base = json.loads((root / f".agent/evidence/{path_id}-base.json").read_text())
+    paths = wa.qa_authorization_paths(root, path_id)
+    checks = wa.qa_required_checks(json.loads((root / next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))).read_text())["verification"])
+    selected = {"source": [".r02-source.txt"], "tests": [".r02-test.py"], "tools": ["tools/start_path.py", "tools/workflow_assurance.py", "schema/qa_verdict.schema.json", "schema/contract.schema.json", "schema/bugfix_scope.schema.json", "schema/bugfix_cause.schema.json", "schema/small_change_intent.schema.json"], "contracts": paths, "unknown_dependencies": []}
+    selected["tools"] = [prefix + p for p in selected["tools"]]
+    selected["contracts"] = sorted(set(paths + (extra_contract_inputs or [])))
+    scope_files = base["authorization"]["files"]
+    existing = [p for p in paths + scope_files if os.path.lexists(root / p)]
+    _git(root, "add", "--", *existing)
+    if subprocess.check_output(["git", "-C", str(root), "diff", "--cached", "--name-only"]):
+        _git(root, "commit", "--only", "-qm", "assessed task and immutable authorization", "--", *existing)
+    context = wa.qa_context_sha256(root, path_id, paths, checks)
+    os.environ[wa.QA_CONTEXT_VARIABLE] = context
+    os.environ[wa.QA_EXECUTION_ROOT_VARIABLE] = str(root.resolve())
+    revision = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    candidate = wa.assess_route_candidate(root, path_id, revision, selected, [wa.QA_CONTEXT_VARIABLE, wa.QA_EXECUTION_ROOT_VARIABLE])
+    folder = root / ".agent/evidence" / path_id; folder.mkdir(exist_ok=True)
+    def ref(path):
+        return {"path": path.relative_to(root).as_posix(), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    manifest = folder / "candidate.json"; manifest.write_bytes(wa.canonical(candidate))
+    proof_checks = []
+    for check in checks:
+        started = datetime.now(timezone.utc).isoformat(); tick = time.monotonic()
+        process = subprocess.run(check["argv"], cwd=root, capture_output=True, env=os.environ)
+        completed = datetime.now(timezone.utc).isoformat()
+        duration_ms = int((time.monotonic() - tick) * 1000)
+        stdout = folder / (check["id"] + ".stdout"); stdout.write_bytes(process.stdout)
+        stderr = folder / (check["id"] + ".stderr"); stderr.write_bytes(process.stderr)
+        capture = {"schema_version": 1, "id": path_id, "argv": check["argv"], "cwd": str(root), "revision": revision, "candidate_sha256": wa.sha(wa.canonical(candidate)), "environment": candidate["environment"], "producer": {"agent_id": "actual-fixture", "session_id": "fixture-session"}, "executed": True, "completion_state": "completed", "proof_kind": check["proof_kind"], "outcome": check["proof_kind"] if process.returncode == 0 else "failed", "exit_code": process.returncode, "signal": None, "stdout": ref(stdout), "stderr": ref(stderr)}
+        path = folder / (check["id"] + ".capture.json")
+        capture.update(step=check["id"], attempt=1, binding_state="candidate-bound", started_at=started, completed_at=completed,
+            duration_ms=duration_ms, cause_class=None, defect_signature=None, continuation_lineage={}, capture_path=path.relative_to(root).as_posix())
+        path.write_bytes(wa.canonical(capture)); proof_checks.append({"id": check["id"], "capture": ref(path)})
+    verdict = qa(path_id, str(folder.relative_to(root) / "ordinary.capture.json"))
+    verdict.update(proof_version=2, candidate_ref=ref(manifest), checks=proof_checks, checks_run=len(checks), checks_passed=len(checks))
+    write(root, f".agent/qa/{path_id}.json", verdict)
+    return verdict
+
+
 def run(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     """Run the shipped start-path command against one project root."""
+    proof_bootstrap(root)
+    if args and args[0] == "begin" and "--id" in args:
+        task = args[args.index("--id") + 1]
+        if "/" not in task and not (root / f".agent/evidence/{task}-base.json").exists():
+            authority = [p for p in (root / ".agent/evidence").glob(task + "-*.json") if p.is_file()] if (root / ".agent/evidence").exists() else []
+            authority += list((root / ".agent/contracts").glob("*.json")) if (root / ".agent/contracts").exists() else []
+            if authority:
+                _git(root, "add", "--", *[str(p.relative_to(root)) for p in authority])
+                if subprocess.check_output(["git", "-C", str(root), "diff", "--cached", "--name-only", "--", *[str(p.relative_to(root)) for p in authority]]): _git(root, "commit", "--only", "-qm", "task authorization before begin", "--", *[str(p.relative_to(root)) for p in authority])
+    rooted_args = list(args)
+    at = rooted_args.index("--") if "--" in rooted_args else len(rooted_args)
+    rooted_args[at:at] = ["--root", str(root)]
     return subprocess.run(
-        [sys.executable, str(TOOL), *args, "--root", str(root)],
+        [sys.executable, str(root / (".nizam/tools/start_path.py" if (root / ".nizam/tools/start_path.py").exists() else "tools/start_path.py")), *rooted_args],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -39,6 +122,8 @@ def run_raw(*args: str) -> subprocess.CompletedProcess[str]:
 
 def write(root: Path, relative: str, payload: dict) -> None:
     """Write one JSON record under the temporary project."""
+    if relative.endswith(("-scope.json", "-intent.json")) and isinstance(payload, dict) and "files" in payload and "verification" not in payload:
+        payload = {**payload, "verification": [CHECK]}
     path = root / relative
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload), encoding="utf-8")
@@ -111,7 +196,7 @@ def expect(result: subprocess.CompletedProcess[str], code: int, text: str) -> No
     if result.returncode != code or text not in combined:
         raise SystemExit(
             f"expected exit {code} and {text!r}\n"
-            f"got exit {result.returncode}\nstdout={result.stdout}\nstderr={result.stderr}"
+            f"got exit {result.returncode} for {result.args!r}\nstdout={result.stdout}\nstderr={result.stderr}"
         )
 
 
@@ -162,6 +247,7 @@ def test_r5_classification_and_amendments(root: Path) -> None:
     triv_ev = ".agent/evidence/triv-out.txt"
     (root / triv_ev).write_text("exit 0\n", encoding="utf-8")
     write(root, ".agent/qa/triv.json", qa("triv", triv_ev))
+    record_proof(root, "triv")
     expect(run(root, "done", "trivial", "--id", "triv"), 0, "trivial triv: recorded verification result exists")
 
     write(
@@ -204,8 +290,9 @@ def test_r5_classification_and_amendments(root: Path) -> None:
     expect(res_amend, 0, '"applied": true')
     expect(res_amend, 0, '"amendment_class": "mechanical"')
     # Now bugfix scope including tools/start_path.py succeeds against amended c1!
-    write(root, ".agent/evidence/bound-scope.json", scope("bound", ["README.md", "tools/start_path.py"], "c1"))
-    expect(run(root, "begin", "bugfix", "--id", "bound"), 0, "implementation may begin")
+    write(root, ".agent/evidence/bound-extended-cause.json", cause("bound-extended"))
+    write(root, ".agent/evidence/bound-extended-scope.json", scope("bound-extended", ["README.md", "tools/start_path.py"], "c1"))
+    expect(run(root, "begin", "bugfix", "--id", "bound-extended"), 0, "implementation may begin")
 
     # Negative amendment: forbidden non_goals modification or high-risk sandbox path
     amendment_bad = root / ".agent/evidence/c1-amend-bad.json"
@@ -325,7 +412,7 @@ def test_a1_f1_f5_scope_completion_and_amendments(root: Path) -> None:
         },
     )
     expect(run(root, "begin", "trivial", "--id", "triv-qa-probe"), 0, "implementation may begin")
-    empty_ev = ".agent/evidence/triv-qa-empty.txt"
+    empty_ev = ".agent/evidence/triv-qa-probe-empty.txt"
     (root / empty_ev).write_text("", encoding="utf-8")
 
     # Unrelated feature_id
@@ -343,10 +430,11 @@ def test_a1_f1_f5_scope_completion_and_amendments(root: Path) -> None:
     # Empty evidence file (0 bytes)
     bad_qa_empty = qa("triv-qa-probe", empty_ev)
     write(root, ".agent/qa/triv-qa-probe.json", bad_qa_empty)
-    expect(run(root, "done", "trivial", "--id", "triv-qa-probe"), 1, "evidence file is empty")
+    expect(run(root, "done", "trivial", "--id", "triv-qa-probe"), 1, "structured QA proof")
 
     # Non-empty evidence file and matching id with checks_run=1 passes
     (root / empty_ev).write_text("verified README.md diff\n", encoding="utf-8")
+    record_proof(root, "triv-qa-probe")
     expect(run(root, "done", "trivial", "--id", "triv-qa-probe"), 0, "recorded verification result exists")
 
     # F1.8: Working-tree scope drift between begin and done in a Git repository must fail closed
@@ -382,6 +470,7 @@ def test_a1_f1_f5_scope_completion_and_amendments(root: Path) -> None:
             "working tree contains undeclared changes outside scoped files: UNDECLARED.py",
         )
         (git_root / "UNDECLARED.py").unlink()
+        record_proof(git_root, "drift")
         expect(run(git_root, "done", "trivial", "--id", "drift"), 0, "recorded verification result exists")
 
     # F5.1: amend-contract rejects unknown fields
@@ -812,7 +901,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_chain_cap = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "capture",
                 "--id",
                 "120",
@@ -823,7 +912,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                 "--output-dir",
                 "proof/captures",
                 "--candidate",
-                cand_sha,
+                "proof/qa-candidate.json",
                 "--env-var",
                 "NIZAM_WA120_FIXTURE=observed",
                 "--agent-id",
@@ -850,7 +939,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_pub = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "publish",
                 "--mode",
                 "publish",
@@ -905,7 +994,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_build = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "build-receipt",
                 "--policy",
                 str(policy_path),
@@ -930,7 +1019,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_wa_verify = subprocess.run(
             [
                 sys.executable,
-                str(WA_TOOL),
+                str(froot / "tools/workflow_assurance.py"),
                 "verify-receipt",
                 "--root",
                 str(froot),
@@ -950,7 +1039,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_resume_1 = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "resume",
                 "--root",
                 str(froot),
@@ -974,7 +1063,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_resume_2 = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "resume",
                 "--root",
                 str(froot),
@@ -994,7 +1083,8 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         expect(res_resume_2, 0, '"action": "noop"')
         assert len(counter_file.read_text(encoding="utf-8").splitlines()) == 1
 
-        # Route-bound receipt stage ('trivial-complete') positive and negative test
+        # Historical aggregate-only route receipt is now an explicit refusal control.
+        # Full actual-capture route positives run in test_r02_structured_proof.
         triv_intent = {
             "id": "120",
             "path": "trivial",
@@ -1037,7 +1127,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_route_build = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "build-receipt",
                 "--policy",
                 str(route_policy_path),
@@ -1053,7 +1143,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
             capture_output=True,
             check=False,
         )
-        expect(res_route_build, 0, '"verified": true')
+        expect(res_route_build, 1, 'immutable task base')
 
         # Negative: route-bound receipt attempting to cover schema/contract.schema.json under trivial-complete is rejected
         bad_triv_intent = dict(triv_intent, files=["schema/contract.schema.json"])
@@ -1068,7 +1158,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         res_bad_route = subprocess.run(
             [
                 sys.executable,
-                str(TOOL),
+                str(froot / "tools/start_path.py"),
                 "build-receipt",
                 "--policy",
                 str(route_policy_path),
@@ -1106,7 +1196,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         os.utime(cap_stdout_file, (1893456000, 1893456000))
         for noop_mode_args in ([], ["--mode", "prepare"], ["--mode", "finalize"], ["--mode", "publish"]):
             res_pub_noop = subprocess.run(
-                [sys.executable, str(TOOL), "publish", *noop_mode_args, "--capture", raw_cap["capture_path"], "--root", str(froot)],
+                [sys.executable, str(froot / "tools/start_path.py"), "publish", *noop_mode_args, "--capture", raw_cap["capture_path"], "--root", str(froot)],
                 cwd=ROOT, text=True, capture_output=True, check=False,
             )
             expect(res_pub_noop, 0, '"noop": true')
@@ -1124,7 +1214,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         tampered_raw["stdout"]["sha256"] = twa.sha(tampered_stdout)
         raw_cap_file.write_bytes(twa.canonical(tampered_raw) + b"\n")
         res_pub_overwrite = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", raw_cap["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--capture", raw_cap["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_pub_overwrite, 1, "cannot overwrite")
@@ -1139,7 +1229,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         head_before_raw, idx_before_raw = _git_head_and_index_sha(froot)
         res_raw_uncommitted = subprocess.run(
             [
-                sys.executable, str(TOOL), "build-receipt",
+                sys.executable, str(froot / "tools/start_path.py"), "build-receipt",
                 "--policy", str(policy_path),
                 "--published", "proof/captures/uncommitted.receipt-capture.json",
                 "--output", str(froot / "proof" / "raw-uncommitted-receipt.json"),
@@ -1153,7 +1243,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         res_raw_committed = subprocess.run(
             [
-                sys.executable, str(TOOL), "build-receipt",
+                sys.executable, str(froot / "tools/start_path.py"), "build-receipt",
                 "--policy", str(policy_path),
                 "--published", pub_doc["receipt_capture_ref"]["path"],
                 "--output", str(froot / "proof" / "raw-committed-receipt.json"),
@@ -1168,9 +1258,9 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         #             unknown_external_commit_outcome reconciliation, and base/branch/delta binding
         res_cap_b1 = subprocess.run(
             [
-                sys.executable, str(TOOL), "capture",
+                sys.executable, str(froot / "tools/start_path.py"), "capture",
                 "--id", "120", "--step", "b1-noncommitting", "--attempt", "1",
-                "--output-dir", "proof/captures", "--candidate", cand_sha,
+                "--output-dir", "proof/captures", "--candidate", "proof/qa-candidate.json",
                 "--env-var", "NIZAM_WA120_FIXTURE=observed",
                 "--agent-id", fixture.producer["agent_id"],
                 "--session-id", fixture.producer["session_id"],
@@ -1193,7 +1283,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # Default `publish` (without --mode) is noncommitting `prepare`!
         res_prep1 = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_prep1, 0, '"stage": "outputs_pending"')
@@ -1208,7 +1298,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # C1.1: `--mode publish` without NIZAM_MUTATION_ADAPTER fails closed without local commit fallback
         env_no_adapter = {k: v for k, v in os.environ.items() if k not in ("NIZAM_MUTATION_ADAPTER", "NIZAM_MUTATION_POLICY")}
         res_no_adapter = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=env_no_adapter, text=True, capture_output=True, check=False,
         )
         expect(res_no_adapter, 1, "external commit mediation required for --mode publish")
@@ -1228,7 +1318,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         ):
             probe_env = {**env_no_adapter, "NIZAM_MUTATION_ADAPTER": f"{shlex.quote(sys.executable)} -c {shlex.quote(probe_code)}"}
             res_probe = subprocess.run(
-                [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+                [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
                 cwd=ROOT, env=probe_env, text=True, capture_output=True, check=False,
             )
             expect(res_probe, 1, expected_msg)
@@ -1237,7 +1327,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Simulated commit denial via NIZAM_MUTATION_ADAPTER=deny leaves HEAD, .git/index, and unrelated staged unchanged
         deny_env = {**os.environ, "NIZAM_MUTATION_ADAPTER": "deny"}
         res_deny = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=deny_env, text=True, capture_output=True, check=False,
         )
         expect(res_deny, 1, "denied by runtime mutation authority")
@@ -1250,7 +1340,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         pre_commit_hook.write_text("#!/usr/bin/env bash\necho 'hook denied commit' >&2\nexit 1\n", encoding="utf-8")
         pre_commit_hook.chmod(0o755)
         res_hook_deny = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
         expect(res_hook_deny, 1, "hook denied commit")
@@ -1261,7 +1351,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         subprocess.run(["git", "-C", str(froot), "add", "--", cap_b1["stdout"]["path"]], check=True)
         _, idx_with_conflict = _git_head_and_index_sha(froot)
         res_conflict = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=adapter_env, text=True, capture_output=True, check=False,
         )
         expect(res_conflict, 1, "same-path staged conflict in .git/index")
@@ -1284,7 +1374,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
             fake_git.chmod(0o755)
             bad_git_env = {**adapter_env, "PATH": f"{fake_git_dir}:{os.environ.get('PATH', '')}"}
             res_bad_diff = subprocess.run(
-                [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+                [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
                 cwd=ROOT, env=bad_git_env, text=True, capture_output=True, check=False,
             )
             expect(res_bad_diff, 1, "git diff --cached failed")
@@ -1296,7 +1386,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
             "NIZAM_MUTATION_ADAPTER": f"{sys.executable} -c 'import os, signal; os.kill(os.getpid(), signal.SIGTERM)'",
         }
         res_sig = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=sig_env, text=True, capture_output=True, check=False,
         )
         expect(res_sig, 1, "status=unknown_external_commit_outcome")
@@ -1305,7 +1395,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # Re-running prepare reconciles from unknown_external_commit_outcome when HEAD is still at intended_base
         res_reconcile_prep = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_reconcile_prep, 0, '"reconciled_from_status": "unknown_external_commit_outcome"')
@@ -1313,7 +1403,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Adapter commits Stage 1 and then exits non-zero before acknowledging -> records unknown_external_commit_outcome
         fail_after_s1_env = {**adapter_env, "NIZAM_TEST_FAIL_AFTER_S1": "1"}
         res_fail_after_s1 = subprocess.run(
-            [sys.executable, str(TOOL), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, env=fail_after_s1_env, text=True, capture_output=True, check=False,
         )
         expect(res_fail_after_s1, 1, "after HEAD advanced (status=unknown_external_commit_outcome)")
@@ -1327,7 +1417,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         bad_base_req = dict(orig_req_b1, intended_base="0" * 40)
         req_b1_path.write_text(json.dumps(bad_base_req), encoding="utf-8")
         res_bad_base = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_bad_base, 1, "does not match publish-request intended_base")
@@ -1335,7 +1425,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         bad_branch_req = dict(orig_req_b1, intended_branch="nonexistent-branch-name", detached_head=False)
         req_b1_path.write_text(json.dumps(bad_branch_req), encoding="utf-8")
         res_bad_branch = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_bad_branch, 1, "does not match publish-request intended_branch")
@@ -1343,7 +1433,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         bad_delta_req = dict(orig_req_b1, files=orig_req_b1["files"][:1])
         req_b1_path.write_text(json.dumps(bad_delta_req), encoding="utf-8")
         res_bad_delta = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_bad_delta, 1, "delta mismatch against publish-request")
@@ -1352,7 +1442,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # Re-running prepare-publish reconciles the already-committed Stage 1 outputs and advances to Stage 2 receipt_capture_pending!
         res_prep2 = subprocess.run(
-            [sys.executable, str(TOOL), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "prepare-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_prep2, 0, '"stage": "receipt_capture_pending"')
@@ -1362,7 +1452,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # Finalize before Stage 2 is committed fails closed without mutating Git
         res_fin_early = subprocess.run(
-            [sys.executable, str(TOOL), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_fin_early, 1, "is not committed in Git")
@@ -1378,7 +1468,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         head_s2, idx_s2 = _git_head_and_index_sha(froot)
 
         res_fin = subprocess.run(
-            [sys.executable, str(TOOL), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
+            [sys.executable, str(froot / "tools/start_path.py"), "finalize-publish", "--capture", cap_b1["capture_path"], "--root", str(froot)],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         expect(res_fin, 0, '"receipt_capture_ref"')
@@ -1390,9 +1480,9 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         for step_name in ("batch-check-1", "batch-check-2"):
             rc_b = subprocess.run(
                 [
-                    sys.executable, str(TOOL), "capture",
+                    sys.executable, str(froot / "tools/start_path.py"), "capture",
                     "--id", "120", "--step", step_name, "--attempt", "1",
-                    "--output-dir", "proof/captures", "--candidate", cand_sha,
+                    "--output-dir", "proof/captures", "--candidate", "proof/qa-candidate.json",
                     "--env-var", "NIZAM_WA120_FIXTURE=observed",
                     "--agent-id", fixture.producer["agent_id"],
                     "--session-id", fixture.producer["session_id"],
@@ -1408,7 +1498,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Stop after Stage 1 outputs (simulating interruption between Stage 1 and Stage 2)
         res_stop_s1 = subprocess.run(
             [
-                sys.executable, str(TOOL), "publish", "--mode", "publish",
+                sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish",
                 "--capture", batch_caps[0], "--capture", batch_caps[1],
                 "--stop-after-stage", "outputs",
                 "--root", str(froot),
@@ -1421,7 +1511,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # Resume publication across both captures: recovers from Stage 1 and commits Stage 2 in 1 commit without re-executing commands!
         res_batch_resume = subprocess.run(
             [
-                sys.executable, str(TOOL), "publish", "--mode", "publish",
+                sys.executable, str(froot / "tools/start_path.py"), "publish", "--mode", "publish",
                 "--capture", batch_caps[0], "--capture", batch_caps[1],
                 "--root", str(froot),
             ],
@@ -1539,7 +1629,7 @@ def test_jev_readiness_controls() -> None:
         (root / ".agent/evidence/gate-out.txt").write_text("captured output\n", encoding="utf-8")
 
         for payload, code, text in (
-            (legacy_ok, 0, "recorded verification result exists"),
+            (legacy_ok, 1, "does not pass"),
             (legacy_failed, 1, "does not pass"),
             (legacy_blocked, 1, "does not pass"),
             (evolved_contradiction, 1, "does not pass"),
@@ -1579,6 +1669,7 @@ def test_jev_readiness_controls() -> None:
         expect(run(git_root, "done", "small-change", "--id", "delta"), 1, "UNDECLARED.py")
         (git_root / "UNDECLARED.py").unlink()
 
+        record_proof(git_root, "delta")
         expect(
             run(git_root, "done", "small-change", "--id", "delta"),
             0,
@@ -1767,10 +1858,188 @@ def test_r02_completion() -> None:
             else: (root / 'README.md').write_text('task change\n')
             ev = '.agent/evidence/r02-output.txt'; (root / ev).write_text('verified\n')
             write(root, '.agent/qa/r02.json', qa('r02', ev))
+            positive = case in ('schema-approved', 'unchanged', 'unchanged-link', 'unchanged-rename')
+            if positive: record_proof(root, 'r02')
             done = run(root, 'done', 'bugfix', '--id', 'r02')
-            expected = 0 if case in ('schema-approved', 'unchanged', 'legacy-clean', 'unchanged-link', 'unchanged-rename') else 1
+            expected = 0 if positive else 1
             if done.returncode != expected: failures.append(case + ': expected ' + str(expected) + ', observed ' + str(done.returncode) + ': ' + done.stderr)
     assert not failures, '\n'.join(failures)
+
+
+def route_receipt(root: Path, path_id: str, verdict: dict):
+    """A complete route receipt with its own separately executed command."""
+    prefix = '.nizam/' if (root / '.nizam/tools/workflow_assurance.py').exists() else ''
+    spec = importlib.util.spec_from_file_location('route_receipt_api_' + path_id, root / (prefix + 'tools/workflow_assurance.py'))
+    wa = importlib.util.module_from_spec(spec); spec.loader.exec_module(wa)
+    candidate = json.loads((root / verdict['candidate_ref']['path']).read_text())
+    base = json.loads((root / f'.agent/evidence/{path_id}-base.json').read_text())
+    route = base['authorization']['route']
+    intent_path = f'.agent/evidence/{path_id}-' + ('scope.json' if route == 'bugfix' else 'intent.json')
+    def ref(path, revision):
+        data = subprocess.check_output(['git', '-C', str(root), 'show', revision + ':' + path])
+        return dict(path=path, sha256=hashlib.sha256(data).hexdigest(), revision=revision)
+    intent = ref(intent_path, candidate['source_commit'])
+    value = {**verdict, 'reviewed_revision': intent['revision'], 'intent_sha256': intent['sha256'], 'reviewer': 'actual-route-evaluator'}
+    write(root, f'.agent/qa/{path_id}.json', value)
+    folder = root / '.agent/evidence' / path_id; folder.mkdir(exist_ok=True)
+    argv = [sys.executable, '-c', "print('ROUTE_RECEIPT_OK')"]
+    process = subprocess.run(argv, cwd=root, capture_output=True, env=os.environ)
+    stdout = folder / 'receipt.stdout'; stdout.write_bytes(process.stdout)
+    stderr = folder / 'receipt.stderr'; stderr.write_bytes(process.stderr)
+    selected = [str(p.relative_to(root)) for p in folder.iterdir() if p.is_file()] + [f'.agent/qa/{path_id}.json']
+    _git(root, 'add', '--', *selected); _git(root, 'commit', '--only', '-qm', 'real route receipt proof', '--', *selected)
+    revision = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+    capture = dict(schema_version=1, argv=argv, cwd=str(root), revision=revision, candidate_sha256=wa.sha(wa.canonical(candidate)),
+        environment=candidate['environment'], producer={'agent_id':'receipt-fixture','session_id':'receipt-session'},
+        executed=True,outcome='success',exit_code=process.returncode,
+        stdout=ref(str(stdout.relative_to(root)),revision),stderr=ref(str(stderr.relative_to(root)),revision))
+    capture_path = f'.agent/evidence/{path_id}/receipt.capture.json'; write(root,capture_path,capture)
+    _git(root,'add','--',capture_path);_git(root,'commit','--only','-qm','route receipt command capture','--',capture_path)
+    capture_ref=ref(capture_path,subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip())
+    qa_ref=ref(f'.agent/qa/{path_id}.json',revision)
+    entries=[dict(kind=kind,artifact=reference,feature_id=path_id,assessed_revision=intent['revision'],contract_sha256=intent['sha256']) for kind,reference in [('route-intent',intent),('route-qa',qa_ref)]]
+    policy=dict(schema_version=1,repository=candidate['repository'],feature_id=path_id,stage=route+'-complete',operation_id='route-proof-'+path_id,
+        candidate=candidate,contract=intent,operator=intent,producer=capture['producer'],prerequisites=entries,
+        commands=[dict(argv=argv,expected_exit=0,proof_kind='success',diagnostic='ROUTE_RECEIPT_OK',capture=capture_ref)],from_status='in_progress',to_status='complete',at='2026-10-24T00:00:00Z',recovery=None)
+    gate=dict(final_verdict={'approved':True},issues=[],unsupported_claims=[],missing_acceptance_coverage=[])
+    receipt={k:policy[k] for k in ('schema_version','repository','feature_id','stage','operation_id','candidate','producer','prerequisites')}
+    receipt.update(status='passed',contract_ref=intent,operator_ref=intent,verdict=gate,
+        checks=[dict(argv=argv,executed=True,outcome='success',exit_code=0,stdout=capture['stdout'],stderr=capture['stderr'],capture=capture_ref)])
+    return wa, policy, receipt
+
+
+def test_r02_structured_proof() -> None:
+    """Full completion and full route receipt share real candidate-bound checks."""
+    old_env = dict(os.environ)
+    try:
+        for layout in ('source','installed'):
+            for inherited in ('tracked','untracked','symlink'):
+                for mode in ('success','negative','wrapper'):
+                    with tempfile.TemporaryDirectory(prefix='r02-proof-route-') as name:
+                        root=Path(name);proof_bootstrap(root)
+                        if layout=='installed':
+                            (root/'.nizam').mkdir();_git(root,'mv','tools','.nizam/tools');_git(root,'mv','schema','.nizam/schema');_git(root,'commit','-qm','installed consumer layout')
+                        (root/'README.md').write_text('task source\n');(root/'notes.txt').write_text('unrelated initial\n')
+                        _git(root,'add','README.md','notes.txt');_git(root,'commit','-qm','initial task and unrelated input')
+                        check=dict(CHECK)
+                        if mode!='success':check.update(argv=[sys.executable,'-c',"print('EXPECTED_REFUSAL'); raise SystemExit(%s)"%(7 if mode=='negative' else 0)],expected_exit=7 if mode=='negative' else 0,proof_kind='semantic-negative',diagnostic='EXPECTED_REFUSAL')
+                        write(root,'.agent/evidence/proof-cause.json',cause('proof'));write(root,'.agent/evidence/proof-scope.json',{**scope('proof',['README.md']),'verification':[check]})
+                        # The inherited observation must precede begin, including an untracked symlink.
+                        target=root/('notes.txt' if inherited=='tracked' else 'unrelated.txt')
+                        if inherited=='symlink':target.symlink_to('notes.txt')
+                        else:target.write_text('unchanged inherited work\n')
+                        expect(run(root,'begin','bugfix','--id','proof'),0,'implementation may begin')
+                        (root/'README.md').write_text('declared task edit\n')
+                        verdict=record_proof(root,'proof')
+                        expect(run(root,'done','bugfix','--id','proof'),0,'recorded verification result exists')
+                        equivalent=dict(verdict);equivalent.pop('proof_version');write(root,'.agent/qa/proof.json',equivalent)
+                        expect(run(root,'done','bugfix','--id','proof'),0,'recorded verification result exists')
+                        write(root,'.agent/qa/proof.json',verdict)
+                        wa,policy,receipt=route_receipt(root,'proof',verdict)
+                        wa.verify_stage_receipt(root,receipt,policy=policy)
+                        # Transfer exact proof to another filesystem root without pretending its command ran again.
+                        with tempfile.TemporaryDirectory(prefix='r02-portable-') as clone_parent:
+                            clone=Path(clone_parent)/'consumer'
+                            subprocess.run(['git','clone','-q','--local',str(root),str(clone)],check=True,capture_output=True)
+                            _git(clone,'remote','set-url','origin',policy['repository'])
+                            inherited_clone=clone/target.relative_to(root)
+                            if target.is_symlink():inherited_clone.symlink_to(os.readlink(target))
+                            else:shutil.copyfile(target,inherited_clone)
+                            expect(run(clone,'done','bugfix','--id','proof'),0,'recorded verification result exists')
+                            prefix='.nizam/' if layout=='installed' else ''
+                            spec=importlib.util.spec_from_file_location('clone_proof_api',clone/(prefix+'tools/workflow_assurance.py'))
+                            clone_api=importlib.util.module_from_spec(spec);spec.loader.exec_module(clone_api)
+                            clone_api.verify_stage_receipt(clone,receipt,policy=policy)
+                            marker=clone/'.agent/evidence/proof/should-not-execute.txt'
+                            refused=run(clone,'capture','--id','proof','--step','relocated-producer','--attempt','1','--candidate','.agent/evidence/proof/candidate.json','--output-dir','.agent/evidence/proof','--',sys.executable,'-c',f'from pathlib import Path;Path({str(marker)!r}).write_text("unexpected")')
+                            expect(refused,1,'execution root must match');assert not marker.exists()
+                            if layout=='installed':
+                                (clone/'schema').mkdir();(clone/'schema/qa_verdict.schema.json').write_text('{}')
+                                malformed=dict(verdict,checks=[])
+                                try:clone_api.validate_qa_proof(clone,malformed,feature_id='proof',candidate=policy['candidate'],required_checks=[check])
+                                except clone_api.AssuranceError as exc:assert 'schema' in str(exc),str(exc)
+                                else:raise AssertionError('unassessed shadow schema replaced installed schema')
+                        wa.verify_stage_receipt(root,receipt,policy=policy)
+                        original=(root/'.agent/qa/proof.json').read_bytes()
+                        qa_capture_path = root / verdict['checks'][0]['capture']['path']
+                        original_capture = qa_capture_path.read_bytes()
+                        def alter_capture(value, change):
+                            capture = json.loads(original_capture);change(capture)
+                            qa_capture_path.write_bytes(wa.canonical(capture))
+                            value['checks'][0]['capture']['sha256'] = hashlib.sha256(qa_capture_path.read_bytes()).hexdigest()
+                        changes=[('failed-summary',lambda v:v.update(qa_pass=False)),('missing',lambda v:v.update(checks=[])),('arbitrary-digest',lambda v:(v.pop('candidate_ref'),v.update(candidate_sha256='a'*64))),
+                            ('wrong-command',lambda v:alter_capture(v,lambda c:c.update(argv=['false']))),
+                            ('wrong-candidate',lambda v:alter_capture(v,lambda c:c.update(candidate_sha256='a'*64))),
+                            ('wrong-cwd',lambda v:alter_capture(v,lambda c:c.update(cwd='/unrelated/producer'))),
+                            ('adversarial-not-performed',lambda v:v.update(adversarial={'performed':False})),
+                            ('missing-stream',lambda v:alter_capture(v,lambda c:c['stdout'].update(path='.agent/evidence/proof/missing.stdout'))),
+                            ('tampered-stream',lambda v:alter_capture(v,lambda c:c['stderr'].update(sha256='a'*64)))]
+                        if mode=='success':changes.append(('failed-capture',lambda v:alter_capture(v,lambda c:c.update(exit_code=7,outcome='failed'))))
+                        else:changes.append(('ordinary-producer',lambda v:alter_capture(v,lambda c:c.update(proof_kind='success'))))
+                        for label,change in changes:
+                            bad=json.loads(original);change(bad);write(root,'.agent/qa/proof.json',bad)
+                            expect(run(root,'done','bugfix','--id','proof'),1,'')
+                            _git(root,'add','.agent/qa/proof.json');_git(root,'commit','--only','-qm','contradictory QA fixture '+label,'--','.agent/qa/proof.json')
+                            revision=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
+                            bad_policy=json.loads(json.dumps(policy));bad_receipt=json.loads(json.dumps(receipt))
+                            reference=dict(path='.agent/qa/proof.json',sha256=hashlib.sha256((root/'.agent/qa/proof.json').read_bytes()).hexdigest(),revision=revision)
+                            bad_policy['prerequisites'][1]['artifact']=reference;bad_receipt['prerequisites']=bad_policy['prerequisites']
+                            try:wa.verify_stage_receipt(root,bad_receipt,policy=bad_policy)
+                            except wa.AssuranceError:pass
+                            else:raise AssertionError('route accepted '+label)
+                            (root/'.agent/qa/proof.json').write_bytes(original)
+                            qa_capture_path.write_bytes(original_capture)
+                        # Consumer-time mutation after successful producer observation cannot disappear behind its manifest.
+                        if inherited=='symlink':target.unlink();target.symlink_to('README.md')
+                        else:target.write_text('mutated after capture\n')
+                        expect(run(root,'done','bugfix','--id','proof'),1,'undeclared changes')
+                        try:wa.verify_stage_receipt(root,receipt,policy=policy)
+                        except wa.AssuranceError:pass
+                        else:raise AssertionError('route receipt ignored inherited mutation')
+        print('r02 structured proof: real direct/route success, negative, wrapper, empty streams, both layouts, inherited preservation and mutation refusal')
+    finally:
+        os.environ.clear();os.environ.update(old_env)
+
+
+def test_r02_context_and_material() -> None:
+    """Identical commands in one candidate still have different task authority."""
+    old_env=dict(os.environ)
+    try:
+        with tempfile.TemporaryDirectory(prefix='r02-context-') as name:
+            root=Path(name);proof_bootstrap(root)
+            (root/'README.md').write_text('initial\n');_git(root,'add','README.md');_git(root,'commit','-qm','initial source')
+            a_outputs=['.agent/evidence/task-a/'+f for f in ('candidate.json','ordinary.stdout','ordinary.stderr','ordinary.capture.json')]+['.agent/qa/task-a.json']
+            for task,files in [('task-a',['README.md','.agent/evidence/task-b-base.json']),('task-b',['README.md','.agent/evidence/task-a-base.json']+a_outputs)]:
+                write(root,f'.agent/evidence/{task}-cause.json',cause(task));write(root,f'.agent/evidence/{task}-scope.json',scope(task,files))
+            _git(root,'add','.agent');_git(root,'commit','-qm','two independent authorized task policies')
+            expect(run(root,'begin','bugfix','--id','task-a'),0,'implementation may begin')
+            _git(root,'add','.agent/evidence/task-a-base.json');_git(root,'commit','-qm','first task observation')
+            expect(run(root,'begin','bugfix','--id','task-b'),0,'implementation may begin')
+            _git(root,'add','.agent/evidence/task-b-base.json');_git(root,'commit','-qm','second task observation')
+            (root/'README.md').write_text('permitted edit shared by both tasks\n')
+            extra=[f'.agent/evidence/task-b-{suffix}.json' for suffix in ('base','scope','cause')]
+            verdict=record_proof(root,'task-a',extra)
+            expect(run(root,'done','bugfix','--id','task-a'),0,'recorded verification result exists')
+            reused={**verdict,'feature_id':'task-b'};write(root,'.agent/qa/task-b.json',reused)
+            expect(run(root,'done','bugfix','--id','task-b'),1,'context environment mismatch')
+            wa,policy,receipt=route_receipt(root,'task-b',reused)
+            try:wa.verify_stage_receipt(root,receipt,policy=policy)
+            except wa.AssuranceError as exc:assert 'context environment mismatch' in str(exc),str(exc)
+            else:raise AssertionError('same candidate/command accepted wrong task context')
+        for material in ('current','index'):
+            with tempfile.TemporaryDirectory(prefix='r02-selected-') as name:
+                root=Path(name);proof_bootstrap(root)
+                write(root,'.agent/evidence/material-cause.json',cause('material'));write(root,'.agent/evidence/material-scope.json',scope('material',['README.md']))
+                (root/'.r02-source.txt').write_text('inherited selected dependency drift\n')
+                if material=='index':
+                    _git(root,'add','.r02-source.txt');(root/'.r02-source.txt').write_text('selected ordinary input\n')
+                expect(run(root,'begin','bugfix','--id','material'),0,'implementation may begin')
+                try:record_proof(root,'material')
+                except ValueError as exc:assert 'selected' in str(exc),str(exc)
+                else:raise AssertionError('selected inherited dependency was exempted')
+        print('r02 context/material: same-candidate cross-task capture reuse and inherited selected dependency drift refused')
+    finally:
+        os.environ.clear();os.environ.update(old_env)
 
 
 def main() -> int:
@@ -1790,6 +2059,7 @@ def main() -> int:
         write(root, evidence, {"command": "true"})
         (root / evidence).write_text("exit 0\n", encoding="utf-8")
         write(root, ".agent/qa/demo.json", qa("demo", evidence))
+        record_proof(root, "demo")
         finished = run(root, "done", "bugfix", "--id", "demo")
         expect(finished, 0, "recorded verification result exists")
 
@@ -1844,6 +2114,7 @@ def main() -> int:
         small_evidence = ".agent/evidence/tiny-out.txt"
         (root / small_evidence).write_text("exit 0\n", encoding="utf-8")
         write(root, ".agent/qa/tiny.json", qa("tiny", small_evidence))
+        record_proof(root, "tiny")
         small_done = run(root, "done", "small-change", "--id", "tiny")
         expect(small_done, 0, "recorded verification result exists")
 
@@ -1855,6 +2126,8 @@ def main() -> int:
         test_r6_r7_r8_preflight_capture_status_and_resume(root)
 
     test_r02_completion()
+    test_r02_structured_proof()
+    test_r02_context_and_material()
     test_jev_readiness_controls()
     test_jev_readiness_attempts()
     test_jev_readiness_authority()

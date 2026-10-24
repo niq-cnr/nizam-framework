@@ -5,7 +5,13 @@
   "description": "Validates .agent/evidence/<id>-intent.json, the intent that tools/start_path.py reads before a small unambiguous change may begin.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "path", "summary", "needs_new_contract", "files"],
+  "required": [
+    "id",
+    "path",
+    "summary",
+    "needs_new_contract",
+    "files"
+  ],
   "properties": {
     "id": {
       "type": "string",
@@ -13,7 +19,10 @@
       "description": "Same identifier as the <id> in the evidence file name."
     },
     "path": {
-      "enum": ["small-change", "trivial"],
+      "enum": [
+        "small-change",
+        "trivial"
+      ],
       "description": "Selects the small-change or trivial start path."
     },
     "summary": {
@@ -28,8 +37,95 @@
     "files": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "description": "Required non-empty list of repository-relative files scoped for the trivial or small change."
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "argv": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "expected_exit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "proof_kind": {
+            "enum": [
+              "success",
+              "semantic-negative"
+            ]
+          },
+          "diagnostic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "argv",
+          "expected_exit",
+          "proof_kind",
+          "diagnostic"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "proof_kind": {
+                  "const": "success"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "expected_exit": {
+                  "const": 0
+                },
+                "diagnostic": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "proof_kind": {
+                  "const": "semantic-negative"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "diagnostic": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[^\\r\\n]+$"
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }

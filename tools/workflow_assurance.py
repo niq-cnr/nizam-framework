@@ -777,7 +777,10 @@ def _receipt_artifact(root, reference, live=False):
 def _receipt_schema(root, value, name):
     import jsonschema
     rel = 'schema/' + name + '.schema.json'
-    if not os.path.lexists(Path(root) / rel) and os.path.lexists(Path(root) / ('.nizam/' + rel)):
+    installed = Path(root).resolve() / '.nizam/tools/workflow_assurance.py'
+    if Path(__file__).resolve() == installed:
+        rel = '.nizam/' + rel
+    elif not os.path.lexists(Path(root) / rel) and os.path.lexists(Path(root) / ('.nizam/' + rel)):
         rel = '.nizam/' + rel
     try:
         jsonschema.Draft202012Validator(parse_json(regular_file(root, rel).read_bytes())).validate(value)
@@ -805,13 +808,15 @@ ROUTE_RECEIPT_STAGES = {
 
 
 def _load_start_path_module():
-    try:
-        import start_path as sp
-    except ModuleNotFoundError as exc:
-        if exc.name != 'start_path':
-            raise
-        from tools import start_path as sp
-    return sp
+    import importlib.util
+    path = Path(__file__).resolve().with_name('start_path.py')
+    name = '_nizam_start_path_' + sha(str(path).encode())[:16]
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
 
 
 def _receipt_policy(root, policy):
@@ -910,6 +915,269 @@ def _receipt_contract(root, value, feature):
     require(approvals.get('validator_mode_a') is True and approvals.get('evaluator_contract_review') is True, 'receipt dual approvals')
 
 
+QA_CONTEXT_VARIABLE = 'NIZAM_QA_CONTEXT_SHA256'
+QA_EXECUTION_ROOT_VARIABLE = 'NIZAM_QA_EXECUTION_ROOT'
+
+
+def qa_required_checks(entries):
+    """Normalize independently authorized checks, never a submitted QA summary."""
+    require(type(entries) is list and bool(entries), 'structured QA requires verification inventory; begin/capture afresh')
+    result = []; ids = set(); commands = set()
+    fields = ('id', 'argv', 'expected_exit', 'proof_kind', 'diagnostic')
+    for entry in entries:
+        require(type(entry) is dict and all(k in entry for k in fields), 'structured QA requires typed verification inventory')
+        check = {k: copy.deepcopy(entry[k]) for k in fields}
+        require(type(check['id']) is str and check['id'].strip() == check['id'] and bool(check['id']), 'QA check id')
+        argv = check['argv']
+        require(type(argv) is list and bool(argv) and all(type(a) is str and a and '\0' not in a for a in argv), 'QA check argv')
+        require(type(check['expected_exit']) is int and check['expected_exit'] >= 0, 'QA expected exit')
+        require(check['proof_kind'] in ('success', 'semantic-negative'), 'QA proof kind')
+        diagnostic = check['diagnostic']
+        if check['proof_kind'] == 'success':
+            require(check['expected_exit'] == 0 and diagnostic is None, 'QA ordinary success policy')
+        else:
+            require(type(diagnostic) is str and bool(diagnostic) and '\n' not in diagnostic and '\r' not in diagnostic,
+                    'QA negative requires exact diagnostic line')
+        signature = canonical(argv)
+        require(check['id'] not in ids and signature not in commands, 'QA duplicate check id/argv')
+        ids.add(check['id']); commands.add(signature); result.append(check)
+    return result
+
+
+def _qa_artifact(root, reference):
+    require(type(reference) is dict and set(reference) in ({'path', 'sha256'}, {'path', 'sha256', 'revision'}), 'QA artifact reference')
+    relative_path(reference['path']); _bundle_hex(reference['sha256'], 64, 'QA artifact digest')
+    if reference.get('revision') is not None:
+        return _receipt_artifact(root, reference, live=True)
+    data = regular_file(root, reference['path']).read_bytes()
+    require(sha(data) == reference['sha256'], 'QA artifact digest mismatch')
+    return data
+
+
+def qa_authorization_paths(root, feature_id, candidate=None):
+    """Derive consumed authorization paths from immutable task identity."""
+    relative_path(feature_id)
+    require('/' not in feature_id and feature_id not in ('.', '..'), 'QA feature identity')
+    base_path = '.agent/evidence/' + feature_id + '-base.json'
+    if os.path.lexists(Path(root) / base_path):
+        base = parse_json(regular_file(root, base_path).read_bytes())
+        require(base.get('schema_version') == 2 and base.get('id') == feature_id, 'QA legacy task base; begin afresh')
+        auth = base.get('authorization', {}); route = auth.get('route')
+        require(route in ('bugfix', 'small-change', 'trivial'), 'QA task route')
+        intent = '.agent/evidence/' + feature_id + ('-scope.json' if route == 'bugfix' else '-intent.json')
+        paths = [base_path, intent]
+        if route == 'bugfix': paths.append('.agent/evidence/' + feature_id + '-cause.json')
+        if auth.get('contract_id') is not None:
+            cid = auth['contract_id']; relative_path(cid); require('/' not in cid, 'QA contract id')
+            paths.append('.agent/contracts/' + cid + '.json')
+        return sorted(paths)
+    require(candidate is not None, 'structured QA requires assessed task base or approved contract')
+    matches = []
+    for entry in candidate['assessed_inputs']['contracts']:
+        try:
+            value = parse_json(regular_file(root, entry['path']).read_bytes())
+        except AssuranceError:
+            continue  # Other assessed policy inputs can be non-JSON documents.
+        if type(value) is dict and value.get('contract_id') == value.get('feature_id') == feature_id:
+            matches.append(entry['path'])
+    require(len(matches) == 1, 'QA requires one exact approved contract authorization')
+    return matches
+
+
+def qa_context_sha256(root, feature_id, authorization_paths, required_checks):
+    """Producer and consumer derive the same context from whole immutable records."""
+    checks = qa_required_checks(required_checks)
+    paths = sorted(authorization_paths)
+    require(paths and len(paths) == len(set(paths)), 'QA authorization paths')
+    refs = [{'path': relative_path(path), 'sha256': sha(regular_file(root, path).read_bytes())} for path in paths]
+    return sha(canonical({'schema_version': 1, 'feature_id': feature_id, 'authorization': refs, 'required_checks': checks}))
+
+
+def qa_bound_checks(root, feature_id, candidate):
+    paths = qa_authorization_paths(root, feature_id, candidate)
+    base_path = '.agent/evidence/' + feature_id + '-base.json'
+    if base_path in paths:
+        base = parse_json(regular_file(root, base_path).read_bytes())
+        intent_path = next(p for p in paths if p.endswith(('-scope.json', '-intent.json')))
+        intent = parse_json(regular_file(root, intent_path).read_bytes())
+        checks = qa_required_checks(intent.get('verification'))
+        require(canonical(base.get('verification')) == canonical(checks), 'QA task inventory changed; begin afresh')
+    else:
+        contract = parse_json(regular_file(root, paths[0]).read_bytes())
+        require(contract.get('status') == 'approved', 'QA contract must remain approved; recapture after lifecycle changes')
+        checks = qa_required_checks(contract.get('verification'))
+    return checks
+
+
+def _qa_selected_inputs(root, candidate, revision=None):
+    """Index is an independent layer; authorization must match at execution too."""
+    for entries in candidate['assessed_inputs'].values():
+        for entry in entries:
+            path = entry['path']
+            if path in candidate['record_ownership']:
+                continue
+            current = regular_file(Path(root), path)
+            require(sha(current.read_bytes()) == entry['sha256'] and bool(current.stat().st_mode & 0o111) == entry['executable'], 'QA selected current input changed')
+            rows = git(root, '--literal-pathspecs', 'ls-files', '--stage', '-z', '--', path).split(b'\0')
+            require(len(rows) == 2 and rows[1] == b'', 'QA selected index input missing/unmerged')
+            metadata, name = rows[0].split(b'\t', 1); mode, oid, stage = metadata.decode().split()
+            require(name.decode() == path and stage == '0' and mode in ('100644', '100755') and
+                    (mode == '100755') == entry['executable'] and sha(blobs(root, [oid])[oid]) == entry['sha256'], 'QA selected index input changed')
+            if revision is not None:
+                data, executable = _entry_blob(root, revision, path)
+                require(sha(data) == entry['sha256'] and executable == entry['executable'], 'QA selected execution input changed')
+
+
+def assess_route_candidate(root, feature_id, source_commit, inputs, environment_names):
+    """Bounded route assessment; generic whole-repository assessment stays strict."""
+    root = Path(root).resolve(strict=True)
+    require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'route assessment exact repository root')
+    require(git(root, 'rev-parse', 'HEAD').decode().strip() == source_commit, 'route assessment exact HEAD anchor')
+    _bundle_hex(source_commit, 40, 'route source commit')
+    selected = manifest(inputs)
+    sp = _load_start_path_module()
+    base = sp._load_task_base(root, feature_id)
+    require(base is not None and base['schema_version'] == 2, 'route assessment requires immutable v2 task base')
+    auth = base['authorization']
+    try:
+        sp.verify_actual_changed_scope(root, auth['route'], auth['files'], feature_id, contract_id=auth['contract_id'])
+    except sp.StartPathError as exc:
+        raise AssuranceError('route assessment preservation failed: ' + str(exc)) from exc
+    require(type(environment_names) is list and len(environment_names) == len(set(environment_names)) and
+            all(type(n) is str and n and '=' not in n and '\0' not in n and n in os.environ for n in environment_names), 'route assessed environment names')
+    observed = {}
+    for paths in selected.values():
+        for path in paths:
+            data, executable = _entry_blob(root, source_commit, path)
+            observed[path] = {'path': path, 'sha256': sha(data), 'executable': executable}
+    identity = {'schema_version': 1, 'repository': git(root, 'remote', 'get-url', 'origin').decode().strip(),
+        'source_commit': source_commit, 'source_tree': git(root, 'rev-parse', source_commit + '^{tree}').decode().strip(),
+        'assessed_inputs': {c: [observed[p] for p in selected[c]] for c in CATEGORIES},
+        'environment': {'runtime': {'implementation': platform.python_implementation(), 'version': platform.python_version(),
+            'system': platform.system(), 'machine': platform.machine()}, 'variables': {n: os.environ[n] for n in sorted(environment_names)}},
+        'record_ownership': {}}
+    identity['identity_sha256'] = sha(canonical(identity))
+    checks = qa_bound_checks(root, feature_id, identity)
+    validate_qa_context(root, feature_id, identity, checks)
+    _receipt_candidate(root, identity)
+    return identity
+
+
+def validate_qa_context(root, feature_id, candidate, required_checks):
+    """Verify required input membership, not merely hashes for a supplied subset."""
+    validate_identity(candidate)
+    root = Path(root).resolve()
+    sp = _load_start_path_module()
+    active = None
+    for prefix in ('', '.nizam/'):
+        if Path(__file__).resolve() == root / (prefix + 'tools/workflow_assurance.py') and Path(sp.__file__).resolve() == root / (prefix + 'tools/start_path.py'):
+            active = prefix
+    require(active is not None, 'QA verifier must be the assessed repository implementation in one active layout')
+    tools = {e['path'] for e in candidate['assessed_inputs']['tools']}
+    needed = {active + p for p in ('tools/start_path.py', 'tools/workflow_assurance.py', 'schema/qa_verdict.schema.json', 'schema/contract.schema.json')}
+    paths = qa_authorization_paths(root, feature_id, candidate)
+    base_path = '.agent/evidence/' + feature_id + '-base.json'
+    if base_path in paths:
+        base = parse_json(regular_file(root, base_path).read_bytes())
+        route = base['authorization']['route']
+        needed.add(active + ('schema/bugfix_scope.schema.json' if route == 'bugfix' else 'schema/small_change_intent.schema.json'))
+        if route == 'bugfix': needed.add(active + 'schema/bugfix_cause.schema.json')
+    require(needed <= tools, 'QA manifest omits actual verifier/schema inputs')
+    inputs = {e['path']: e for e in candidate['assessed_inputs']['contracts']}
+    require(set(paths) <= set(inputs), 'QA manifest omits consumed authorization input')
+    for path in paths:
+        require(path not in candidate['record_ownership'], 'QA authorization/base must be wholly immutable; recapture after changes')
+        require(inputs[path]['sha256'] == sha(regular_file(root, path).read_bytes()), 'QA authorization digest changed')
+    checks = qa_required_checks(required_checks)
+    require(canonical(checks) == canonical(qa_bound_checks(root, feature_id, candidate)), 'QA required inventory differs from bound authorization')
+    execution_root = candidate['environment']['variables'].get(QA_EXECUTION_ROOT_VARIABLE)
+    require(type(execution_root) is str and os.path.isabs(execution_root) and '\0' not in execution_root and
+            os.path.normpath(execution_root) == execution_root and os.environ.get(QA_EXECUTION_ROOT_VARIABLE) == execution_root,
+            'QA execution root missing/noncanonical/mismatched; assess/capture afresh')
+    context = qa_context_sha256(root, feature_id, paths, checks)
+    require(candidate['environment']['variables'].get(QA_CONTEXT_VARIABLE) == context and
+            os.environ.get(QA_CONTEXT_VARIABLE) == context, 'QA context environment mismatch; assess/capture afresh')
+    _qa_selected_inputs(root, candidate)
+    return checks
+
+
+def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
+    """One fail-closed proof interpretation for completion and both receipt paths."""
+    try:
+        require(type(verdict) is dict and verdict.get('proof_version', 2) == 2, 'structured QA proof version')
+        _receipt_schema(root, verdict, 'qa_verdict')
+        require(verdict.get('feature_id', verdict.get('id')) == feature_id, 'QA feature binding')
+        _receipt_gate(verdict)
+        require(not verdict.get('required_fixes') and verdict.get('qa_pass') is True and
+                verdict.get('verdict', 'pass') == 'pass' and type(verdict.get('adversarial')) is dict and
+                verdict['adversarial'].get('performed') is True, 'QA declared result does not pass')
+        checks = validate_qa_context(root, feature_id, candidate, required_checks)
+        resolved = parse_json(_qa_artifact(root, verdict.get('candidate_ref')))
+        require(canonical(resolved) == canonical(candidate), 'QA assessed candidate mismatch')
+        if 'candidate_sha256' in verdict:
+            require(verdict['candidate_sha256'] == sha(canonical(candidate)), 'QA contradictory declared candidate digest')
+        if 'candidate' in verdict:
+            require(type(verdict['candidate']) is dict and canonical(verdict['candidate']) == canonical(candidate), 'QA contradictory/untyped declared candidate')
+        _receipt_candidate(root, candidate)
+        declared = verdict.get('checks')
+        require(type(declared) is list and len(declared) == len(checks) and
+                type(verdict.get('checks_run')) is int and verdict['checks_run'] == len(checks) and
+                type(verdict.get('checks_passed')) is int and verdict['checks_passed'] == len(checks), 'QA required per-check inventory/count')
+        by_id = {}; refs = set()
+        for check in declared:
+            require(type(check) is dict and set(check) == {'id', 'capture'} and check['id'] not in by_id, 'QA declared check shape/duplicate')
+            reference = canonical(check['capture']); require(reference not in refs, 'QA duplicate capture reuse')
+            refs.add(reference); by_id[check['id']] = check
+        require(set(by_id) == {c['id'] for c in checks}, 'QA required check inventory differs')
+        for policy in checks:
+            capture = parse_json(_qa_artifact(root, by_id[policy['id']]['capture']))
+            closed_fields = {'schema_version', 'argv', 'cwd', 'revision', 'candidate_sha256', 'environment', 'producer',
+                'executed', 'outcome', 'exit_code', 'stdout', 'stderr'}
+            raw = type(capture) is dict and set(capture) != closed_fields
+            if raw:
+                raw_fields = closed_fields | {'id', 'step', 'attempt', 'binding_state', 'started_at', 'completed_at',
+                    'duration_ms', 'completion_state', 'proof_kind', 'cause_class', 'defect_signature',
+                    'continuation_lineage', 'signal', 'capture_path'}
+                _bundle_object(capture, tuple(raw_fields), 'QA raw capture')
+                require(capture['id'] == feature_id and capture['completion_state'] == 'completed' and
+                        capture['signal'] is None and capture['binding_state'] == 'candidate-bound', 'QA raw capture completion/task/binding')
+                require(type(capture['attempt']) is int and capture['attempt'] >= 1 and
+                        type(capture['duration_ms']) is int and capture['duration_ms'] >= 0 and
+                        type(capture['continuation_lineage']) is dict and capture['capture_path'] == by_id[policy['id']]['capture']['path'], 'QA raw capture execution metadata')
+                for field in ('step', 'started_at', 'completed_at'): _receipt_text(capture[field], 'QA raw ' + field)
+                from datetime import datetime
+                started = datetime.fromisoformat(capture['started_at'].replace('Z', '+00:00'))
+                completed = datetime.fromisoformat(capture['completed_at'].replace('Z', '+00:00'))
+                require(started.tzinfo is not None and completed.tzinfo is not None and completed >= started, 'QA capture timestamps')
+                require(all(capture[k] is None or type(capture[k]) is str for k in ('cause_class', 'defect_signature')), 'QA raw cause metadata')
+                producer_kind = capture['proof_kind']
+            else:
+                _bundle_object(capture, tuple(closed_fields), 'QA closed capture')
+                producer_kind = capture.get('outcome')
+            require(type(capture.get('schema_version')) is int and capture['schema_version'] == 1, 'QA capture version')
+            _receipt_producer(capture.get('producer'))
+            require(capture.get('cwd') == candidate['environment']['variables'][QA_EXECUTION_ROOT_VARIABLE], 'QA capture cwd differs from assessed execution root')
+            require(capture.get('executed') is True and type(capture.get('exit_code')) is int and
+                    capture['exit_code'] == policy['expected_exit'] and canonical(capture.get('argv')) == canonical(policy['argv']), 'QA observed command/exit mismatch')
+            require(capture.get('candidate_sha256') == sha(canonical(candidate)) and
+                    canonical(capture.get('environment')) == canonical(candidate['environment']), 'QA capture candidate/environment mismatch')
+            _bundle_hex(capture.get('revision'), 40, 'QA capture revision')
+            _receipt_candidate(root, candidate, capture['revision'])
+            _qa_selected_inputs(root, candidate, capture['revision'])
+            require(producer_kind == policy['proof_kind'], 'QA producer proof kind mismatch')
+            expected_outcomes = ('success',) if policy['proof_kind'] == 'success' else (('failed',) if policy['expected_exit'] else ('success', 'semantic-negative'))
+            require(capture.get('outcome') in expected_outcomes, 'QA contradictory capture outcome')
+            outputs = [_qa_artifact(root, capture.get(stream)) for stream in ('stdout', 'stderr')]
+            if policy['diagnostic'] is not None:
+                lines = [line for data in outputs for line in data.decode('utf-8').splitlines()]
+                require(policy['diagnostic'] in lines, 'QA exact expected diagnostic missing')
+        return copy.deepcopy(verdict)
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, UnicodeError, RecursionError) as exc:
+        raise AssuranceError('structured QA proof invalid; capture afresh: ' + str(exc)) from exc
+
+
 def _receipt_prerequisites(root, policy, minimum):
     entries = policy['prerequisites']; seen = set(); current = set(); records = []
     if policy['stage'] in ROUTE_RECEIPT_STAGES:
@@ -940,8 +1208,9 @@ def _receipt_prerequisites(root, policy, minimum):
                 require((value.get('feature_id') or value.get('id')) == feature and
                     value.get('reviewed_revision') == revision and
                     (value.get('intent_sha256') or value.get('approved_contract_sha256')) == digest, 'receipt route qa binding')
-                require(value.get('qa_pass') is True and type(value.get('checks_run')) is int and value['checks_run'] > 0 and
-                    type(value.get('checks_passed')) is int and value['checks_passed'] == value['checks_run'], 'receipt route QA predicate')
+                intent = parse_json(_receipt_artifact(root, policy['contract']))
+                validate_qa_proof(root, value, feature_id=feature, candidate=policy['candidate'],
+                    required_checks=intent.get('verification'))
                 _receipt_text(value.get('reviewer', value.get('actor')), 'route qa reviewer')
             elif kind == 'evidence-capture':
                 require(value.get('role') == 'Root' and value.get('feature') == feature and value.get('revision') == revision and
@@ -989,9 +1258,11 @@ def _receipt_prerequisites(root, policy, minimum):
                 if 'reviewer' in value and 'actor' in value: require(value['reviewer'] == value['actor'], 'receipt ambiguous reviewer')
             elif kind == 'fresh-qa':
                 _receipt_schema(root, value, 'qa_verdict')
-                require(value.get('qa_pass') is True and type(value.get('checks_run')) is int and value['checks_run'] > 0 and
-                    type(value.get('checks_passed')) is int and value['checks_passed'] == value['checks_run'] and
-                    type(value.get('adversarial')) is dict and value['adversarial'].get('performed') is True, 'receipt fresh QA predicate')
+                contract = parse_json(_receipt_artifact(root, policy['contract']))
+                require(policy['contract']['path'] in qa_authorization_paths(root, feature, policy['candidate']), 'QA consumed receipt contract not assessed authorization')
+                validate_qa_proof(root, value, feature_id=feature, candidate=policy['candidate'],
+                    required_checks=contract.get('verification'))
+                require(type(value.get('adversarial')) is dict and value['adversarial'].get('performed') is True, 'receipt fresh QA adversarial predicate')
             else: _receipt_text(value.get('reviewer'), 'prerequisite reviewer')
         records.append((entry, value))
     require(set(minimum) <= current, 'receipt missing current prerequisite')

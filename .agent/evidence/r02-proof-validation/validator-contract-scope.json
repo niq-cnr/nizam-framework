@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python",
+    "-c",
+    "import subprocess,re; allowed={'schema/contract.schema.json', 'schema/bugfix_scope.schema.json', 'tools/workflow_assurance.py', 'schema/qa_verdict.schema.json', 'tools/test_start_path.py', 'tools/test_workflow_assurance.py', '.agent/run_state.json', 'tools/interface.md', '.agent/contracts/r02-proof-validation.json', 'tools/start_path.py', 'schema/small_change_intent.schema.json'}; base=\"02c54239af1e646d79f344ffd0ff2ae64f51905b\"; commands=[[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\",base,\"HEAD\"],[\"git\",\"diff\",\"--cached\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"]]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{\"\"} for c in commands)); patterns=['\\\\.agent/(?:validator|evaluator|qa)/r02-proof-validation-[A-Za-z0-9_.-]+\\\\.json', '\\\\.agent/evidence/r02-proof-validation/[A-Za-z0-9_./-]+', '\\\\.agent/evidence/r02-(?:classify-proof-validation|preflight-proof-validation)-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

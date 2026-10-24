@@ -1,0 +1,21 @@
+{
+  "review": "independent-acceptance-interpretation",
+  "feature": "r02-proof-validation",
+  "question": "Can full completion silently refuse all unchanged inherited work after F3/F4?",
+  "finding": "No. That would regress accepted F2 end-to-end behavior and fail regression/Controls acceptance. Scope-only preserved positives do not prove real completion remains usable.",
+  "evidence": [
+    ".agent/contracts/r02-completion.json acceptance Controls and F2-compare",
+    ".agent/contracts/r02-proof-validation.json acceptance regression unchanged F1/F2 behavior",
+    "tools/workflow_assurance.py assess_repository complete global drift checks and _receipt_candidate selective protected input checks",
+    ".agent/evidence/r02-proof-validation/evaluator-inherited-assessment-probe.py.attempt2.stdout.txt",
+    ".agent/evidence/r02-proof-validation/evaluator-inherited-assessment-probe.py.attempt2.execution.json"
+  ],
+  "observed_diagnostic": {
+    "tracked": "Global assessor rejects unselected inherited other.txt bytes; same complete selected identity passes _receipt_candidate.",
+    "untracked_symlink": "Global assessor rejects inherited untracked paths; same selected identity passes _receipt_candidate without following an unrelated dangling link.",
+    "limitation": "This is diagnostic API evidence only, not an observed full new-proof completion or QA pass. First capture wrapper had a metadata NameError; retained failure record and reran properly as attempt2."
+  },
+  "required_positive_fixture": "Actual bugfix/small-change begin with unrelated tracked dirty bytes, unrelated untracked bytes and/or unrelated symlink; immutable base records their separate identities. Pinned selected material contains changed scoped source plus actual loaded verifier/schema/authorization inputs. Produce actual bound captures, then real done exits0 while inherited endpoints remain identical. Mutating an inherited endpoint afterwards must refuse real done.",
+  "recommended_boundary": "Preserve historical assess_repository global fail-closed behavior and its existing rejection tests. If introducing a route-specific assessed-manifest producer, retain same identity wire shape and explicitly require trusted consumed base/scope/contract, independently derive context/inventory, verify_actual_changed_scope, every original inherited endpoint comparison, and exact current/index/anchor identities for selected material inputs. Permit unrelated inherited exclusions only through that bounded task-base rule, never arbitrary global skips or unchecked ignore lists. Selected dependencies must not intersect inherited exclusions. Expose/document this supported producer path and execute it in positive fixtures; hand-built manifest-only success is insufficient usability evidence.",
+  "implementation_assessment": "Current contract does not mandate the global assessor as the only producer. A route-specific producer within existing source files can satisfy candidate/inventory/context requirements without weakening the existing global API. If implementation changes global assessment or adds broader exclusions, return for contract review."
+}

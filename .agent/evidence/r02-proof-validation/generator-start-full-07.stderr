@@ -1,0 +1,26 @@
+expected exit 0 and '"verified": true'
+got exit 1 for ['/usr/bin/python', '/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py', 'build-receipt', '--policy', '/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/proof/route-policy.json', '--published', 'proof/captures/120-feature-complete-attempt1-20261024T020138Z-1474971d.published.json', '--output', '/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/proof/route-receipt.json', '--root', '/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt']
+stdout=
+stderr=Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py", line 4115, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py", line 299, in main
+    return _main_extended(raw_argv)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py", line 508, in _main_extended
+    result = build_stage_receipt(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py", line 3042, in build_stage_receipt
+    verified = wa.verify_stage_receipt(root, receipt, policy=policy)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/workflow_assurance.py", line 1299, in verify_stage_receipt
+    _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy); _receipt_prerequisites(root, policy, minimum)
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/workflow_assurance.py", line 1179, in _receipt_prerequisites
+    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'])
+  File "/home/cnross/.tmp/nizam-receipt-chain-bc5gik8e/receipt/tools/start_path.py", line 3478, in verify_route_scope_eligibility
+    intent_path = next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+

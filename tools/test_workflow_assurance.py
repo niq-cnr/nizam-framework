@@ -616,15 +616,20 @@ def receipt_ids(value):
 
 class ReceiptFixture:
     """Synthetic authority/gate fixtures; captures alone describe real local processes."""
-    def __init__(self, api, parent, alternate=False):
+    def __init__(self, api, parent, alternate=False, qa_check=None):
         self.api = api; self.root = Path(parent) / ('alternate' if alternate else 'receipt')
         self.root.mkdir(); git(self.root, 'init', '-q')
         git(self.root, 'config', 'user.name', 'Receipt Fixture Only')
         git(self.root, 'config', 'user.email', 'fixture@example.invalid')
         self.repository = 'portable/receipt-fixture' if alternate else 'niq-cnr/nizam-framework'
         git(self.root, 'remote', 'add', 'origin', self.repository)
-        self.inputs = dict(source=['src/code.py'], contracts=['contract.json'],
-            tests=['tests/test.py'], tools=['tools/check.py'], unknown_dependencies=[])
+        self.inputs = dict(source=['src/code.py'], contracts=['contract.json', 'second-contract.json'],
+            tests=['tests/test.py'], tools=['tools/check.py', 'tools/start_path.py', 'tools/workflow_assurance.py',
+                'schema/qa_verdict.schema.json', 'schema/contract.schema.json'], unknown_dependencies=[])
+        for name in ('start_path.py', 'workflow_assurance.py'):
+            self.write('tools/' + name, (ROOT / 'tools' / name).read_bytes())
+        self.api = api = load_api(self.root / 'tools/workflow_assurance.py')
+        self.qa_check = copy.deepcopy(qa_check) if qa_check is not None else dict(id='ordinary', argv=[sys.executable, '-c', 'pass'], expected_exit=0, proof_kind='success', diagnostic=None)
         for path in ('src/code.py', 'tests/test.py', 'tools/check.py'): self.write(path, b'# protected receipt fixture\n')
         self.state = dict(repository=self.repository, current_phase='fixture-phase', current_feature='120',
             status='awaiting-fixture', updated_at='2026-10-14T00:00:00Z',
@@ -636,6 +641,7 @@ class ReceiptFixture:
         for name in ('contract', 'contract_review', 'qa_verdict', 'run_state'):
             self.write('schema/' + name + '.schema.json', (ROOT / 'schema' / (name + '.schema.json')).read_bytes())
         proposed = json.loads((ROOT / '.agent/contracts/120.json').read_text())
+        proposed['verification'] = [dict(self.qa_check, acceptance_test='Executed prerequisite proof', command='python -c pass')]
         proposed['status'] = 'proposed'; proposed['approvals'] = {'validator_mode_a': False, 'evaluator_contract_review': False}
         self.write('contract.json', proposed); proposal_revision = self.commit('fixture proposal')
         proposal_digest = sha(canonical(proposed)); self.gate = agf_report(); del self.gate['extra_metadata']
@@ -647,7 +653,11 @@ class ReceiptFixture:
         approved = copy.deepcopy(proposed); approved['status'] = 'approved'
         approved['approvals'] = {'validator_mode_a': True, 'evaluator_contract_review': True}
         approved['approval_evidence'] = dict(mode_a='proof/mode-a.json', contract_review='proof/contract-review.json', proposal_sha256=proposal_digest)
-        self.write('contract.json', approved); approval_revision = self.commit('fixture approved authority')
+        self.write('contract.json', approved)
+        second = copy.deepcopy(approved)
+        second.update(contract_id='other', feature_id='other')
+        self.write('second-contract.json', second)
+        approval_revision = self.commit('fixture approved authority')
         self.contract = self.ref('contract.json', approval_revision); digest = self.contract['sha256']
         entries = [self.entry('mode-a', self.ref('proof/mode-a.json', approval_revision), proposal_revision, proposal_digest),
             self.entry('contract-review', self.ref('proof/contract-review.json', approval_revision), proposal_revision, proposal_digest),
@@ -665,8 +675,10 @@ class ReceiptFixture:
                 scope=dict(phase='portable-phase', features=['120', 'fixture-next'], original_estimate_lines=33, ceiling_130pct=44))
         self.authority = authority; self.write('proof/standing-authority.json', authority)
         self.candidate_revision = self.commit('fixture protected candidate and typed prerequisite fixtures')
+        os.environ[api.QA_CONTEXT_VARIABLE] = api.qa_context_sha256(self.root, '120', ['contract.json'], [self.qa_check])
+        os.environ['NIZAM_QA_EXECUTION_ROOT'] = str(self.root.resolve())
         self.candidate = api.assess_repository(self.root, self.candidate_revision, self.inputs,
-            ['NIZAM_WA120_FIXTURE'], {'contract.json': ['/status'], 'record.json': ['/status', '/updated_at', '/history']})
+            ['NIZAM_WA120_FIXTURE', api.QA_CONTEXT_VARIABLE, 'NIZAM_QA_EXECUTION_ROOT'], {'record.json': ['/status', '/updated_at', '/history']})
         self.authority_ref = self.ref('proof/standing-authority.json', self.candidate_revision)
         entries += [self.entry(kind, self.ref('proof/' + kind + '.json', self.candidate_revision), approval_revision, digest) for kind in artifacts]
         self.producer = dict(agent_id='fixture-only-capture-producer', session_id='fixture-only-session')
@@ -675,6 +687,7 @@ class ReceiptFixture:
             operation_id='fixture-operation-120', candidate=copy.deepcopy(self.candidate), contract=self.contract,
             operator=None, producer=self.producer, prerequisites=entries, commands=[],
             from_status=self.state['status'], to_status='captured-fixture', at='2026-10-14T01:00:00Z', recovery=None)
+        self.make_qa_proof()
         self.capture = self.actual_capture('success')
         self.set_capture(self.capture); self.set_stage('feature-complete')
 
@@ -718,6 +731,39 @@ class ReceiptFixture:
 
     def entry(self, kind, artifact, revision, digest):
         return dict(kind=kind, artifact=copy.deepcopy(artifact), feature_id='120', assessed_revision=revision, contract_sha256=digest)
+
+    def make_qa_proof(self):
+        """Real zero-output process, independently pinned contract inventory."""
+        api = self.api
+        self.write('proof/qa-candidate.json', self.candidate)
+        manifest_ref = self.ref('proof/qa-candidate.json', self.commit('assessed QA manifest'))
+        if self.qa_check['expected_exit'] != 0:
+            # Exercise the real raw producer, including exclusive reservation,
+            # observed timings, completion state and actual output references.
+            sp = api._load_start_path_module()
+            capture = sp.capture_command_evidence(self.root, task_id='120', step='qa-proof', attempt=1,
+                output_dir=Path('proof/raw-qa'), argv=self.qa_check['argv'], candidate_sha256=self.candidate,
+                proof_kind=self.qa_check['proof_kind'], agent_id=self.producer['agent_id'], session_id=self.producer['session_id'])
+            require(capture['exit_code'] == self.qa_check['expected_exit'], 'real raw QA fixture observed predicate')
+            capture_ref = self.ref(capture['capture_path'], self.commit('actual raw prerequisite capture'))
+        else:
+            revision = git(self.root, 'rev-parse', 'HEAD')
+            process = subprocess.run(self.qa_check['argv'], cwd=self.root, capture_output=True, env=os.environ)
+            require(process.returncode == self.qa_check['expected_exit'], 'real QA fixture observed predicate')
+            self.write('proof/qa.stdout', process.stdout); self.write('proof/qa.stderr', process.stderr)
+            output_revision = self.commit('actual prerequisite process streams')
+            capture = dict(schema_version=1, argv=self.qa_check['argv'], cwd=str(self.root), revision=revision,
+                candidate_sha256=sha(canonical(self.candidate)), environment=copy.deepcopy(self.candidate['environment']),
+                producer=self.producer, executed=True, outcome=self.qa_check['proof_kind'], exit_code=process.returncode,
+                stdout=self.ref('proof/qa.stdout', output_revision), stderr=self.ref('proof/qa.stderr', output_revision))
+            capture_ref = self.pin('proof/qa-capture.json', capture)
+        qa = dict(self.gate, proof_version=2, candidate_ref=manifest_ref, feature_id='120',
+            reviewed_revision=self.contract['revision'], approved_contract_sha256=self.contract['sha256'], reviewer='fixture-qa',
+            qa_pass=True, checks_run=1, checks_passed=1, adversarial={'performed': True},
+            evidence_files=[capture_ref['path']], required_fixes=[], checks=[dict(id=self.qa_check['id'], capture=capture_ref)])
+        reference = self.pin('proof/fresh-qa.json', qa)
+        entry = next(e for e in self.policy['prerequisites'] if e['kind'] == 'fresh-qa')
+        entry['artifact'] = reference
 
     def actual_capture(self, outcome):
         revision = git(self.root, 'rev-parse', 'HEAD')
@@ -769,6 +815,7 @@ class ReceiptFixture:
 
 
 def receipt_verify(api, f):
+    api = f.api
     before = copy.deepcopy((f.receipt, f.policy)); files = f.snapshot()
     result = api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)
     require(result == f.receipt and type(result) is dict, 'receipt exact validated copy')
@@ -778,12 +825,14 @@ def receipt_verify(api, f):
 
 
 def receipt_reject(api, f, operation=None):
+    api = f.api
     before = repr((f.receipt, f.policy, f.state)); files = f.snapshot()
     rejected(api, operation or (lambda: api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)), 'receipt invalid input rejected')
     require(before == repr((f.receipt, f.policy, f.state)) and files == f.snapshot(), 'rejected receipt preserves inputs/files')
 
 
 def receipt_plan(api, f, state=None, receipt='fixture-default'):
+    api = f.api
     state = f.state if state is None else state
     receipt = f.receipt if receipt == 'fixture-default' else receipt
     before = copy.deepcopy((state, receipt, f.policy)); files = f.snapshot()
@@ -797,6 +846,7 @@ def receipt_plan(api, f, state=None, receipt='fixture-default'):
 
 
 def receipt_operator(api, f, parent):
+    api = f.api
     receipt_verify(api, f); receipt_verify(api, ReceiptFixture(api, parent, alternate=True))
     receipt_artifact_integrity(api, f)
     original = copy.deepcopy(f.policy)
@@ -816,6 +866,7 @@ def receipt_operator(api, f, parent):
 
 
 def receipt_artifact_integrity(api, f):
+    api = f.api
     original = copy.deepcopy(f.policy)
     reference = copy.deepcopy(original['operator'])
     for key, value in (('sha256', 'f' * 64), ('revision', '0' * 40),
@@ -832,13 +883,17 @@ def receipt_artifact_integrity(api, f):
 
 
 def receipt_candidate(api, f):
+    api = f.api
     receipt_verify(api, f); original = copy.deepcopy(f.receipt)
     changed = copy.deepcopy(f.candidate); changed['source_tree'] = 'f' * 40
     changed['identity_sha256'] = sha(canonical({k: v for k, v in changed.items() if k != 'identity_sha256'}))
     f.receipt['candidate'] = changed; receipt_reject(api, f); f.receipt = original
     f.pin('proof/evidence-only.json', {'fixture': True}); receipt_verify(api, f)
-    f.write('contract.json', dict(json.loads((f.root / 'contract.json').read_text()), status='complete'))
-    f.commit('owned contract metadata completion'); receipt_verify(api, f)
+    approved_contract = (f.root / 'contract.json').read_bytes()
+    f.write('contract.json', dict(json.loads(approved_contract), status='complete'))
+    f.commit('consumed contract metadata changed'); receipt_reject(api, f)
+    f.write('contract.json', approved_contract)
+    f.commit('restore exact consumed authorization'); receipt_verify(api, f)
     for path in ('src/code.py', 'tests/test.py', 'tools/check.py'):
         target = f.root / path; data = target.read_bytes(); mode = target.stat().st_mode
         target.write_bytes(data + b'# drift\n'); receipt_reject(api, f); target.write_bytes(data)
@@ -851,6 +906,7 @@ def receipt_candidate(api, f):
 
 
 def receipt_unrun(api, f):
+    api = f.api
     receipt_verify(api, f); original = copy.deepcopy(f.receipt); policy = copy.deepcopy(f.policy)
     for field, value in (('executed', False), ('executed', 1), ('exit_code', None), ('capture', None), ('stdout', None), ('argv', ['wrong'])):
         f.receipt = copy.deepcopy(original); f.receipt['checks'][0][field] = value; receipt_reject(api, f)
@@ -871,6 +927,7 @@ def receipt_unrun(api, f):
 
 
 def receipt_setup(api, f):
+    api = f.api
     receipt_verify(api, f); original = copy.deepcopy(f.policy); good = copy.deepcopy(f.capture)
     bad_capture = f.actual_capture('setup-error'); f.capture = bad_capture; f.set_capture(bad_capture)
     receipt_reject(api, f)  # Independently pinned real exit2/PASS output defeats forged receipt exit0/success.
@@ -885,11 +942,13 @@ def receipt_setup(api, f):
 
 
 def receipt_status(api, f, status):
+    api = f.api
     receipt_verify(api, f); f.receipt['status'] = status; receipt_reject(api, f)
     f.receipt['status'] = 'passed'; receipt_verify(api, f)
 
 
 def receipt_failed(api, f):
+    api = f.api
     receipt_status(api, f, 'failed'); original = copy.deepcopy(f.policy); good = copy.deepcopy(f.capture)
     failed = f.actual_capture('failed'); f.capture = failed; f.set_capture(failed)
     receipt_reject(api, f)  # Real trusted exit7 and printed PASS cannot be replaced by receipt's forged exit0.
@@ -915,6 +974,7 @@ def receipt_failed(api, f):
 
 
 def receipt_prerequisites(api, f):
+    api = f.api
     receipt_status(api, f, 'invalidated')
     for stage, minima in RECEIPT_MINIMA.items():
         f.set_stage(stage); receipt_verify(api, f); original = copy.deepcopy(f.policy)
@@ -940,6 +1000,7 @@ def receipt_prerequisites(api, f):
 
 
 def receipt_replay(api, f):
+    api = f.api
     receipt_verify(api, f); out = receipt_plan(api, f)
     digest = sha(canonical(f.receipt)); event = dict(at=f.policy['at'], event='wa-receipt-transition',
         detail='Receipt ' + f.policy['operation_id'] + ' advanced 120:' + f.policy['stage'] + ' (' + digest + ')',
@@ -954,6 +1015,7 @@ def receipt_replay(api, f):
 
 
 def receipt_double(api, f):
+    api = f.api
     advanced = receipt_replay(api, f)
     for field, value in (('detail', 'altered'), ('candidate_sha256', 'f' * 64), ('stage', 'qa-passed'), ('receipt_sha256', 'f' * 64)):
         state = copy.deepcopy(advanced); state['history'][-1][field] = value
@@ -978,14 +1040,15 @@ def receipt_double(api, f):
     f.policy = policy; f.refresh()
     # A genuinely valid second candidate/capture cannot reuse an operation across candidates.
     revision = git(f.root, 'rev-parse', 'HEAD')
-    f.candidate = api.assess_repository(f.root, revision, f.inputs, ['NIZAM_WA120_FIXTURE'],
-        {'contract.json': ['/status'], 'record.json': ['/status', '/updated_at', '/history']})
-    f.policy['candidate'] = copy.deepcopy(f.candidate); f.capture = f.actual_capture('success')
+    f.candidate = api.assess_repository(f.root, revision, f.inputs, ['NIZAM_WA120_FIXTURE', api.QA_CONTEXT_VARIABLE, 'NIZAM_QA_EXECUTION_ROOT'],
+        {'record.json': ['/status', '/updated_at', '/history']})
+    f.policy['candidate'] = copy.deepcopy(f.candidate); f.make_qa_proof(); f.capture = f.actual_capture('success')
     f.set_capture(f.capture); f.set_stage('feature-complete'); receipt_verify(api, f)
     receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
 
 
 def receipt_recovery(api, f):
+    api = f.api
     out = receipt_plan(api, f, receipt=None)
     require(out['action'] == 'rerun-required' and out['receipt'] is None and out['state'] == f.state, 'missing receipt never advances')
     f.policy['recovery'] = dict(path='proof/missing-receipt.json', sha256=sha(canonical(f.receipt)), revision=git(f.root, 'rev-parse', 'HEAD'))
@@ -1005,6 +1068,121 @@ def receipt_recovery(api, f):
     receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, f.state, None, policy=f.policy))
     f.policy['recovery'] = recovery; state = copy.deepcopy(advanced['state']); state['history'][-1]['receipt_sha256'] = 'f' * 64
     receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, None, policy=f.policy))
+
+
+def r02_schema_matrix():
+    import jsonschema
+    schemas = {n: jsonschema.Draft202012Validator(json.loads((ROOT / 'schema' / (n + '.schema.json')).read_text())) for n in ('qa_verdict', 'contract', 'bugfix_scope', 'small_change_intent')}
+    base = dict(feature_id='fixture', qa_pass=True, checks_run=1, checks_passed=1, adversarial={'performed': True},
+        evidence_files=[], issues=[], unsupported_claims=[], missing_acceptance_coverage=[], required_fixes=[],
+        final_verdict={'approved': True, 'summary': 'historical remains readable'})
+    schemas['qa_verdict'].validate(base)
+    ref = dict(path='proof.json', sha256='a' * 64)
+    proof = dict(base, proof_version=2, candidate_ref=ref, checks=[dict(id='check', capture=ref)])
+    schemas['qa_verdict'].validate(proof)
+    def invalid(schema, value):
+        require(not schemas[schema].is_valid(value), 'schema must reject malformed structured proof: ' + schema)
+    for mutate in (lambda x:x.pop('candidate_ref'), lambda x:x.update(checks=[]), lambda x:x['checks'][0].update(extra=True),
+                   lambda x:x['candidate_ref'].update(sha256='g' * 64), lambda x:x['candidate_ref'].update(revision='a' * 64),
+                   lambda x:x.update(proof_version=True)):
+        value=copy.deepcopy(proof);mutate(value);invalid('qa_verdict',value)
+    typed=dict(id='check',argv=['python','-c','pass'],expected_exit=0,proof_kind='success',diagnostic=None)
+    intent=dict(id='fixture',path='bugfix',files=['README.md'],non_goals=[])
+    small=dict(id='fixture',path='small-change',files=['README.md'],summary='fixture change',needs_new_contract=False)
+    contract=json.loads((ROOT/'.agent/contracts/120.json').read_text())
+    for name,record in (('bugfix_scope',intent),('small_change_intent',small),('contract',contract)):
+        value=copy.deepcopy(record);value['verification']=[dict(typed,acceptance_test='proof',command='python -c pass') if name=='contract' else typed]
+        schemas[name].validate(value)
+        for field,bad in (('argv',[]),('expected_exit',True),('expected_exit',7),('diagnostic','unexpected'),('proof_kind','invented')):
+            broken=copy.deepcopy(value);broken['verification'][0][field]=bad;invalid(name,broken)
+        broken=copy.deepcopy(value);broken['verification'][0].pop('argv');invalid(name,broken)
+    print('PASS r02 proof schema historical/v2 and typed policy negative cases')
+
+
+def r02_feature_proof_matrix():
+    """All attacks reach the real feature receipt prerequisite consumer."""
+    previous = dict(os.environ)
+    try:
+        os.environ['NIZAM_WA120_FIXTURE'] = 'observed'
+        for mode in ('success', 'negative', 'wrapper'):
+            check = dict(id='observed', argv=[sys.executable, '-c', 'pass'], expected_exit=0, proof_kind='success', diagnostic=None)
+            if mode != 'success':
+                check.update(argv=[sys.executable, '-c', "print('EXPECTED_REFUSAL'); raise SystemExit(%s)" % (7 if mode == 'negative' else 0)],
+                    expected_exit=7 if mode == 'negative' else 0, proof_kind='semantic-negative', diagnostic='EXPECTED_REFUSAL')
+            with tempfile.TemporaryDirectory(prefix='r02-feature-proof-') as parent:
+                f = ReceiptFixture(load_api(), parent, qa_check=check); api = f.api
+                receipt_verify(api, f); receipt_replay(api, f)
+                original = copy.deepcopy(f.policy)
+                qa_entry = next(e for e in original['prerequisites'] if e['kind'] == 'fresh-qa')
+                qa = json.loads(api._receipt_artifact(f.root, qa_entry['artifact']))
+                capture = json.loads(api._receipt_artifact(f.root, qa['checks'][0]['capture']))
+                def refuse(label, qa_change=None, capture_change=None):
+                    f.policy = copy.deepcopy(original)
+                    value = copy.deepcopy(qa)
+                    if capture_change:
+                        bad = copy.deepcopy(capture); capture_change(bad)
+                        path = 'proof/r02-' + label + '.capture.json'
+                        if 'capture_path' in bad: bad['capture_path'] = path
+                        value['checks'][0]['capture'] = f.pin(path, bad)
+                    if qa_change: qa_change(value)
+                    next(e for e in f.policy['prerequisites'] if e['kind'] == 'fresh-qa')['artifact'] = f.pin('proof/r02-' + label + '.qa.json', value)
+                    f.refresh(); receipt_reject(api, f)
+                refuse('failed-capture', capture_change=lambda x: x.update(exit_code=7, outcome='failed')) if mode == 'success' else None
+                refuse('missing-checks', qa_change=lambda x: x.update(checks=[]))
+                refuse('wrong-command', capture_change=lambda x: x.update(argv=['false']))
+                refuse('wrong-candidate', capture_change=lambda x: x.update(candidate_sha256='a' * 64))
+                refuse('wrong-cwd', capture_change=lambda x: x.update(cwd='/definitely-wrong-producer-root'))
+                refuse('missing-execution-root', capture_change=lambda x: x['environment']['variables'].pop('NIZAM_QA_EXECUTION_ROOT'))
+                refuse('missing-stream', capture_change=lambda x: x['stdout'].update(path='proof/absent.stdout'))
+                refuse('tampered-stream', capture_change=lambda x: x['stdout'].update(sha256='a' * 64))
+                refuse('missing-capture', qa_change=lambda x: x['checks'][0]['capture'].update(path='proof/missing.json'))
+                refuse('unrun-capture', capture_change=lambda x: x.update(executed=False))
+                refuse('boolean-exit', capture_change=lambda x: x.update(exit_code=False))
+                refuse('duplicate-checks', qa_change=lambda x: x.update(checks=x['checks'] * 2))
+                refuse('aggregate-only', qa_change=lambda x: x.pop('checks'))
+                refuse('wrong-count', qa_change=lambda x: x.update(checks_run=2, checks_passed=2))
+                refuse('wrong-check-id', qa_change=lambda x: x['checks'][0].update(id='unrequired'))
+                refuse('missing-reserved-environment', capture_change=lambda x: x['environment']['variables'].pop(api.QA_CONTEXT_VARIABLE))
+                refuse('bare-candidate', qa_change=lambda x: (x.pop('candidate_ref'), x.update(candidate_sha256='a' * 64)))
+                if mode != 'success':
+                    refuse('wrong-diagnostic', capture_change=lambda x: x.update(stdout=f.pin('proof/wrong-diagnostic.stdout', b'prefix EXPECTED_REFUSAL suffix\n')))
+                    refuse('ordinary-negative', capture_change=lambda x: x.update(proof_kind='success', completion_state='completed', signal=None, id='120'))
+                    refuse('wrong-raw-task', capture_change=lambda x: x.update(proof_kind='semantic-negative', completion_state='completed', signal=None, id='other'))
+                    refuse('incomplete-raw', capture_change=lambda x: x.update(proof_kind='semantic-negative', completion_state='timed-out', signal=9, id='120'))
+                f.policy = original; f.refresh(); receipt_verify(api, f)
+                # Both authorizations deliberately have the same check argv and occur
+                # in this one assessed candidate. QA's own feature label cannot grant
+                # the first task's capture to the second task.
+                require(api.qa_authorization_paths(f.root, 'other', f.candidate) == ['second-contract.json'], 'second exact authorization in same candidate')
+                other = copy.deepcopy(qa); other['feature_id'] = 'other'
+                rejected(api, lambda: api.validate_qa_proof(f.root, other, feature_id='other', candidate=f.candidate, required_checks=[check]), 'same candidate/capture cannot cross authorization contexts')
+                variable = api.QA_CONTEXT_VARIABLE; context = os.environ.pop(variable)
+                try:
+                    receipt_reject(api, f)
+                finally:
+                    os.environ[variable] = context
+                os.environ[variable] = 'f' * 64
+                try:
+                    receipt_reject(api, f)
+                finally:
+                    os.environ[variable] = context
+                receipt_verify(api, f)
+                # Coverage attacks preserve self-consistent candidate digest, but cannot omit actual consumed files.
+                for path in ('tools/workflow_assurance.py', 'schema/qa_verdict.schema.json', 'contract.json'):
+                    candidate = copy.deepcopy(f.candidate)
+                    for category in candidate['assessed_inputs']:
+                        candidate['assessed_inputs'][category] = [e for e in candidate['assessed_inputs'][category] if e['path'] != path]
+                    candidate.pop('identity_sha256'); candidate['identity_sha256'] = sha(canonical(candidate))
+                    rejected(api, lambda: api.validate_qa_context(f.root, '120', candidate, [check]), 'omitted required material')
+                candidate = copy.deepcopy(f.candidate); candidate['environment']['variables'].pop(api.QA_CONTEXT_VARIABLE)
+                candidate.pop('identity_sha256'); candidate['identity_sha256'] = sha(canonical(candidate))
+                rejected(api, lambda: api.validate_qa_context(f.root, '120', candidate, [check]), 'candidate missing reserved context')
+                candidate = copy.deepcopy(f.candidate); candidate['record_ownership']['contract.json'] = ['/status']
+                candidate.pop('identity_sha256'); candidate['identity_sha256'] = sha(canonical(candidate))
+                rejected(api, lambda: api.validate_qa_context(f.root, '120', candidate, [check]), 'authorization masking')
+        print('PASS r02 feature proof matrix: real positive/negative/wrapper/empty/replay and contradictory prerequisites')
+    finally:
+        os.environ.clear(); os.environ.update(previous)
 
 
 def run_receipt_case(name, api):
@@ -3220,6 +3398,8 @@ def main():
     group.add_argument('--scope-controls-117', action='store_true')
     parser.add_argument('--base')
     args = parser.parse_args()
+    if not any(vars(args).values()):
+        r02_schema_matrix(); r02_feature_proof_matrix()
     if args.scope_118 or args.scope_controls_118:
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_118.py')
