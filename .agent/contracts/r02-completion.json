@@ -1,0 +1,84 @@
+{
+  "contract_id": "r02-completion",
+  "feature_id": "r02-completion",
+  "name": "F1/F2 completion authorization and inherited work identity",
+  "status": "approved",
+  "spec_ref": ".agent/r02-product-spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Preserve task authorization and compare inherited index/worktree endpoints across complete scope projections."
+      },
+      {
+        "path": "tools/test_start_path.py",
+        "purpose": "Executable disposable Git regressions proving F1/F2 defects and preservation controls."
+      }
+    ]
+  },
+  "non_goals": [
+    "F3/F4 proof-validation changes; separate reviewed contract follows.",
+    "Installed .nizam changes, lifecycle/run_state ownership, remote publication, merge, release, deployment or provider effects.",
+    "Changing source identity based solely on a final worktree hash; following inherited symlinks; silently upgrading legacy task bases."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "F1-context",
+      "requirement": "Completion passes recorded contract identity by keyword into eligibility and revalidates identity, current approved/implemented/complete status and allowed scope; begin success never replaces current approval checks."
+    },
+    {
+      "id": "F1-binding",
+      "requirement": "Version-2 bases bind route, task identity, normalized declared scope and contract identity; completion rejects missing, substituted or inapplicable authorization. Legacy records needing absent authorization proof require a fresh task ID."
+    },
+    {
+      "id": "F2-observation",
+      "requirement": "At begin record separate versioned observations for every inherited endpoint: index stage/object/mode and no-follow worktree presence/kind/content SHA256 or literal symlink target plus executable mode. Refuse unsafe/unobservable inherited exceptions."
+    },
+    {
+      "id": "F2-compare",
+      "requirement": "At done reobserve every original endpoint even absent from current porcelain. Unchanged inherited endpoints may remain exempt; any altered endpoint outside scope is refused, including staged contents, deletion/restoration, executable changes, links, untracked files and both rename/copy endpoints."
+    },
+    {
+      "id": "F2-layers",
+      "requirement": "Scope accounting unions base-to-HEAD committed, HEAD-to-index staged, index-to-worktree unstaged and untracked paths, using --no-renames for all diff projections. Cancellation in a later layer never hides earlier undeclared changes."
+    },
+    {
+      "id": "F2-legacy",
+      "requirement": "Never overwrite or synthesize initial observations for existing bases. Legacy bases may finish only when no inherited exception or missing authorization proof is required; otherwise refuse with fresh task ID guidance."
+    },
+    {
+      "id": "Controls",
+      "requirement": "Preserve unchanged inherited work, approved schema bugfix completion, existing task-owned evidence exclusions, ordinary clean non-feature routes and non-Git local behavior. No installed payload changes."
+    }
+  ],
+  "verification": [
+    {
+      "acceptance_test": "F1-context,F1-binding,F2-observation,F2-compare,F2-layers,F2-legacy,Controls",
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_start_path.py",
+      "expected_exit": 0,
+      "detail": "Add discriminating disposable repository cases: approved and rejected contract controls; revoked/substituted contract; inherited tracked/untracked/index/mode/link/rename changes; vanished original endpoint; unchanged inherited control; committed/staged/worktree cancellation; malformed/legacy bases. Before implementation, capture tests-only run with observed F1/F2 failures."
+    },
+    {
+      "acceptance_test": "Product scope",
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python -c 'import subprocess,re; allowed={'\"'\"'tools/start_path.py'\"'\"','\"'\"'tools/test_start_path.py'\"'\"','\"'\"'.agent/run_state.json'\"'\"','\"'\"'.agent/r02-product-spec.md'\"'\"','\"'\"'.agent/r02-feature-list.json'\"'\"','\"'\"'.agent/contracts/r02-completion.json'\"'\"'}; base='\"'\"'00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6'\"'\"'; commands=[['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"',base,'\"'\"'HEAD'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--cached'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'ls-files'\"'\"','\"'\"'--others'\"'\"','\"'\"'--exclude-standard'\"'\"','\"'\"'-z'\"'\"']]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{'\"'\"''\"'\"'} for c in commands)); patterns=[r'\"'\"'\\.agent/(?:validator|evaluator|qa)/r02-completion-[A-Za-z0-9_.-]+\\.json'\"'\"',r'\"'\"'\\.agent/evidence/r02-completion/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02-(?:classify-completion|preflight)-attempt[1-9][0-9]*\\.reservation\\.json'\"'\"']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad'",
+      "expected_exit": 0,
+      "detail": "Executable exact role-owned artifacts/families guard across committed/staged/worktree/untracked paths. Shared run_state is Orchestrator-only; reviewers inspect its diff to verify ownership. No generic .agent exclusion."
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/r02-completion",
+  "evidence_convention": "Exclusive execution records and raw stdout/stderr named per role/check/attempt; no overwrites.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2,
+    "approved_at": "2026-10-24T01:14:02.734876+00:00"
+  },
+  "authority_note": "Fresh local contract; no copied historical approval is claimed. User override is limited to defective completion/proof controls being repaired.",
+  "approval_evidence": {
+    "proposal_sha256": "dd248162cfe8811da2c5448e990223588bdf346b0b534928eda9d4bb2fb93ead",
+    "mode_a": ".agent/validator/r02-completion-mode-a-rev1.json",
+    "contract_review": ".agent/qa/r02-completion-contract-review.json"
+  }
+}

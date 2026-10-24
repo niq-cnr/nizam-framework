@@ -1691,6 +1691,88 @@ def test_jev_readiness_authority() -> None:
     print("jev-readiness: continuation authority cannot be granted by narrative summary")
 
 
+def test_r02_completion() -> None:
+    """Real Git cases distinguish task authorization from inherited endpoint proof."""
+    failures = []
+    cases = ['schema-approved', 'schema-proposed', 'contract-revoked', 'contract-substituted',
+             'tracked', 'untracked', 'index', 'mode', 'symlink', 'rename', 'restored',
+             'unchanged', 'committed-cancel', 'staged-cancel', 'rename-source', 'legacy', 'legacy-clean',
+             'malformed', 'repeat-begin', 'scope-substituted', 'unchanged-link', 'unchanged-rename']
+    for case in cases:
+        with tempfile.TemporaryDirectory(prefix='nizam-r02-') as name:
+            root = Path(name)
+            def git(*args):
+                return subprocess.check_output(['git', '-C', str(root), *args])
+            git('init', '-q'); git('config', 'user.name', 'Test'); git('config', 'user.email', 'test@example.invalid')
+            (root / 'README.md').write_text('base\n')
+            (root / 'notes.txt').write_text('original\n')
+            (root / 'link').symlink_to('notes.txt')
+            git('add', '.'); git('commit', '-qm', 'initial')
+            files = ['schema/demo.json'] if case.startswith('schema') else ['README.md']
+            cid = 'c1' if case.startswith('schema') or case.startswith('contract') else None
+            if cid:
+                write(root, '.agent/contracts/c1.json', contract('proposed' if case == 'schema-proposed' else 'approved', files))
+                write(root, '.agent/contracts/c2.json', {**contract('approved', files), 'contract_id': 'c2', 'feature_id': 'c2'})
+            write(root, '.agent/evidence/r02-cause.json', cause('r02'))
+            write(root, '.agent/evidence/r02-scope.json', scope('r02', files, cid))
+            git('add', '.agent'); git('commit', '-qm', 'authority')
+            if case in ('tracked', 'index', 'mode', 'restored', 'unchanged', 'legacy', 'malformed'):
+                (root / 'notes.txt').write_text('inherited\n')
+            if case == 'untracked': (root / 'new.txt').write_text('inherited\n')
+            if case == 'index':
+                git('add', 'notes.txt'); (root / 'notes.txt').write_text('original\n')
+            if case in ('symlink', 'unchanged-link'):
+                (root / 'link').unlink(); (root / 'link').symlink_to('README.md')
+            if case in ('rename', 'unchanged-rename'): git('mv', 'notes.txt', 'renamed.txt')
+            began = run(root, 'begin', 'bugfix', '--id', 'r02')
+            if case == 'schema-proposed':
+                if began.returncode == 0: failures.append(case)
+                continue
+            if began.returncode: failures.append(case + ':begin:' + began.stderr); continue
+            if case in ('tracked', 'untracked', 'index'):
+                target = root / ('new.txt' if case == 'untracked' else 'notes.txt')
+                target.write_text('mutated\n')
+                if case == 'index':
+                    git('add', 'notes.txt'); target.write_text('original\n')
+            if case == 'mode': (root / 'notes.txt').chmod(0o755)
+            if case == 'symlink':
+                (root / 'link').unlink(); (root / 'link').symlink_to('elsewhere')
+            if case == 'rename': (root / 'renamed.txt').write_text('mutated\n')
+            if case == 'restored': git('restore', 'notes.txt')
+            if case == 'committed-cancel':
+                (root / 'notes.txt').write_text('committed drift\n'); git('add', 'notes.txt'); git('commit', '-qm', 'drift')
+                (root / 'notes.txt').write_text('original\n')
+            if case == 'staged-cancel':
+                (root / 'notes.txt').write_text('staged drift\n'); git('add', 'notes.txt')
+                (root / 'notes.txt').write_text('original\n')
+            if case == 'rename-source':
+                git('mv', '-f', 'notes.txt', 'README.md')
+            if case == 'contract-revoked': write(root, '.agent/contracts/c1.json', contract('proposed', files))
+            if case == 'contract-substituted': write(root, '.agent/evidence/r02-scope.json', scope('r02', files, 'c2'))
+            if case in ('legacy', 'legacy-clean', 'malformed'):
+                base = json.loads((root / '.agent/evidence/r02-base.json').read_text())
+                if case in ('legacy', 'legacy-clean'): base['schema_version'] = 1; base.pop('inherited_observations', None)
+                else: base['inherited_observations'] = {'notes.txt': {}}
+                write(root, '.agent/evidence/r02-base.json', base)
+            if case in ('repeat-begin', 'scope-substituted'):
+                marker = root / '.agent/evidence/r02-base.json'
+                before = marker.read_bytes()
+                write(root, '.agent/evidence/r02-scope.json', scope('r02', ['README.md', 'notes.txt']))
+                if case == 'repeat-begin':
+                    repeated = run(root, 'begin', 'bugfix', '--id', 'r02')
+                    if repeated.returncode != 1 or marker.read_bytes() != before: failures.append(case)
+                    continue
+            if files[0].startswith('schema/'):
+                (root / 'schema').mkdir(exist_ok=True); (root / files[0]).write_text('{}\n')
+            else: (root / 'README.md').write_text('task change\n')
+            ev = '.agent/evidence/r02-output.txt'; (root / ev).write_text('verified\n')
+            write(root, '.agent/qa/r02.json', qa('r02', ev))
+            done = run(root, 'done', 'bugfix', '--id', 'r02')
+            expected = 0 if case in ('schema-approved', 'unchanged', 'legacy-clean', 'unchanged-link', 'unchanged-rename') else 1
+            if done.returncode != expected: failures.append(case + ': expected ' + str(expected) + ', observed ' + str(done.returncode) + ': ' + done.stderr)
+    assert not failures, '\n'.join(failures)
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="nizam-start-path-") as name:
         root = Path(name)
@@ -1772,6 +1854,7 @@ def main() -> int:
         test_a1_f1_f5_scope_completion_and_amendments(root)
         test_r6_r7_r8_preflight_capture_status_and_resume(root)
 
+    test_r02_completion()
     test_jev_readiness_controls()
     test_jev_readiness_attempts()
     test_jev_readiness_authority()

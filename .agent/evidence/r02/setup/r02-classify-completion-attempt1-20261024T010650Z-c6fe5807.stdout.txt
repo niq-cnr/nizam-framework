@@ -1,0 +1,41 @@
+{
+  "assurance_tier": "High-assurance",
+  "files": [
+    "tools/start_path.py",
+    "tools/test_start_path.py"
+  ],
+  "reasons": [
+    "touches security, isolation, or authority verification boundary"
+  ],
+  "required_gates": [
+    "loop1:contract_approval",
+    "capability_preflight",
+    "loop2:validator_mode_b",
+    "loop2:evaluator_qa",
+    "convergent_review_or_isolation_suite",
+    "loop2:evidence_capture"
+  ],
+  "review_remit": {
+    "advisory_fields": [
+      "advisory_minor"
+    ],
+    "blocking_fields": [
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "required_fixes"
+    ],
+    "evidence_required_for_blockers": true
+  },
+  "route": "high-risk",
+  "stopping_conditions": {
+    "attempt_counter_role": "telemetry",
+    "breaker_ref": "methodology/03_circuit_breaker.md",
+    "comparator_subordinate": true,
+    "continuation_policy": "Continue beyond attempt 3 when goals, invariants, and authority boundaries hold and a bounded contract amendment, verified task decomposition, or authorized circuit_breaker step limit applies; retain all prior attempt and repair history.",
+    "halt_condition": "Stop and escalate on a repeated identical deterministic failure signature without a recorded bounded amendment or decomposition, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+    "hard_attempt_cap": null,
+    "initial_strategy_ladder_attempts": 3,
+    "pass_condition": "All required_gates for route 'high-risk' exit 0 and blocking verdict arrays are empty."
+  }
+}

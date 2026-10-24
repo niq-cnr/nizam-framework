@@ -1,0 +1,31 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "SCOPE-AGENT-WILDCARD",
+      "evidence": ".agent/contracts/r02-completion.json verification[1].command removes every path beginning .agent/ from bad; verification[1].detail defers assigned-family enforcement to prose/manual review.",
+      "description": "The executable scope gate accepts arbitrary .agent authority or unrelated task record changes, contrary to the supplied finding requirement for only exact assigned review and reservation families. A manual instruction does not make the command enforce this boundary."
+    },
+    {
+      "id": "FEATURE-TRACE",
+      "evidence": ".agent/r02-feature-list.json assigns first delivery id r02-f1-f2; contract feature_id is r02-completion.",
+      "description": "The contract does not identify the eligible feature from the approved feature list, so machine-readable feature-to-contract traceability is ambiguous."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Replace the broad .agent/ exclusion with an explicit allowlist of exact assigned artifact files or narrowly assigned task/role families, including only the actual review/reservation families; make the executable command reject unrelated authority/task paths.",
+    "Set feature_id to r02-f1-f2 or update the planning artifact through its owning role to establish one unambiguous feature identity."
+  ],
+  "reviewer": "r02-validator",
+  "mode": "A",
+  "feature": "r02-f1-f2",
+  "reviewed_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6",
+  "contract_sha256": "cecf5dcb2613c6d227aeb41ab7157edf47001db34a9224749fff3c64cc3c5188",
+  "advisory_minor": [
+    "The observation/layer requirements otherwise explicitly include separate index/worktree identities, original endpoints, no-follow semantics, --no-renames projections, and fail-closed legacy behavior."
+  ]
+}

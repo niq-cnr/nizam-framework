@@ -1,0 +1,29 @@
+{
+  "review": "contract-testability",
+  "feature": "r02-completion",
+  "contract_id": "r02-completion",
+  "revision_reviewed": 2,
+  "contract_sha256": "dd248162cfe8811da2c5448e990223588bdf346b0b534928eda9d4bb2fb93ead",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "criterion": "Independent baseline confirmation",
+      "evidence": ".agent/evidence/r02/baseline/evaluator-probe.stdout.txt",
+      "result": "Diagnostic-only disposable Git fixtures reproduce approved schema completion refusal and inherited tracked mutation false acceptance. These are not product QA."
+    },
+    {
+      "criterion": "Verification soundness",
+      "result": "Suite command executes Python assertions with exact process exits; scope command unions committed, index, worktree and untracked projections with rename detection disabled and exact assigned record families. No grep, output pipeline or self-derived expected result is used."
+    },
+    {
+      "criterion": "Post-code gate",
+      "result": "Acceptance requires added suite cases to assert the enumerated F1/F2 controls. The suite command alone is not a passing implementation claim; test quality and all case assertions will be independently inspected after code is written."
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Revision 2 provides bounded source scope and testable F1/F2 authorization, endpoint identity, multi-layer scope and legacy behaviors; no blocking testability defects found."
+  }
+}
