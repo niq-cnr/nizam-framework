@@ -2,7 +2,7 @@
 
 **Proportion-scaled, cryptographically verifiable governance for AI-assisted and human software engineering.**
 
-[![Release v1.11.0](https://img.shields.io/badge/release-v1.11.0-0d9488?style=flat-square)](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.11.0)
+[![Release v2.0.0](https://img.shields.io/badge/release-v2.0.0-0d9488?style=flat-square)](https://github.com/niq-cnr/nizam-framework/releases/tag/v2.0.0)
 [![Interactive Guide](https://img.shields.io/badge/docs-Interactive_HTML_Guide-2563eb?style=flat-square)](https://niq-cnr.github.io/nizam-framework/)
 [![LLM Index: llms.txt](https://img.shields.io/badge/AI_Index-llms.txt-7c3aed?style=flat-square)](llms.txt)
 [![LLM Reference: llms-full.txt](https://img.shields.io/badge/AI_Reference-llms--full.txt-6d28d9?style=flat-square)](llms-full.txt)
@@ -25,20 +25,24 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v1.11.0` is the latest released and installed payload.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v2.0.0` is in release preparation; `v1.11.0` remains the latest official released payload. Discover the active workspace installation from `.nizam/provenance.json`; experimental source installations are separate from release publication and the pending official v2.0.0 self-adoption.
 
-### Copy & Paste Single-Prompt Agent Onboarding (`v1.11.0`)
+### Copy & Paste Single-Prompt Agent Onboarding (`v2.0.0`)
+
+Release preparation: replace `<40-hex-commit-sha>` with the independently verified
+commit of the published annotated tag before running these commands. Existing
+consumers must follow the [v2.0.0 migration guide](docs/migration-v2.0.0.md).
 
 Want your AI coding agent (Claude Code, Cursor, Antigravity, Codex, Windsurf, or any CLI/IDE agent) to onboard your repository to the latest immutable Nizam release with zero manual setup? **Copy and paste this single prompt into your coding agent:**
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v1.11.0, commit 6fc683580941adf19860d9d9d00fdc81d38d8088):
+Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit <40-hex-commit-sha>):
 
-1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v1.11.0 AI Agent Entry Protocol and CLI reference.
-2. Fetch and run the official bootstrap script pinned to v1.11.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
-   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/ --require-content-integrity
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v2.0.0 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v2.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -55,8 +59,8 @@ Unstructured AI coding agents fail in predictable ways: they flood their context
 | **One-Size-Fits-All Ceremony** | **Proportion-Scaled Routing (`tools/start_path.py classify`)**: Tasks route deterministically into `trivial`, `bugfix`, `small-change`, `standard-feature`, or `high-risk` based on file paths and semantic risk flags. |
 | **Self-Grading Agents** | **Adversarial Role Separation (`standard/AGF.md`)**: The **Generator** (`@developer`) cannot approve its own contract or final verification; an independent **Validator** and **Evaluator** (`@reviewer`) audit every feature gate. |
 | **Hidden Git Commits & Index Tampering** | **Noncommitting Default & Receipt Pipeline (`publish` / `build-receipt`)**: Read and preparation paths preserve `HEAD`, refs, and `.git/index` byte-for-byte. Actual Git publication requires an explicit `NIZAM_MUTATION_ADAPTER` and produces a two-stage cryptographic receipt (`stage-receipt-<stage>.json`). |
-| **Blind Retry Loops or Premature 3-Strike Stops** | **Work-Specific Stopping Rules & Lineage (`capture`)**: A 3-attempt initial strategy ladder transitions cleanly into Attempt 4+ when invariants hold and a new `--Diagnostic-Hypothesis` + `--Refined-Scope` is recorded, while halting (`exit 2`) immediately on invariant breaches or repeated identical defect signatures. |
-| **Supply-Chain Drift in Installed Rules** | **Commit-Bound Verification (`bootstrap.sh --verify-only`)**: Consumer installations pin an immutable release tag (`v1.11.0`) and verify every installed file, mode, and SHA-256 digest against the expected commit SHA without executing code from inside `.nizam/`. |
+| **Blind Retry Loops or Premature 3-Strike Stops** | **Work-Specific Stopping Rules & Lineage (`capture`)**: Failures are bounded across the whole task: six failed executions total and three with one signature, plus finite configured step limits. Only explicit finite operator recovery can reopen an exhausted budget; successes, hypotheses, amendments and decomposition labels do not reset it. |
+| **Supply-Chain Drift in Installed Rules** | **Commit-Bound Verification (`bootstrap.sh --verify-only`)**: Consumer installations pin an immutable release tag (`v2.0.0`) and verify every installed file, mode, and SHA-256 digest against the expected commit SHA without executing code from inside `.nizam/`. |
 
 ---
 
@@ -67,7 +71,7 @@ Unstructured AI coding agents fail in predictable ways: they flood their context
 │                        CONSUMER REPOSITORY WORKSPACE                         │
 │                                                                              │
 │  ┌────────────────────────────────────┐  ┌────────────────────────────────┐  │
-│  │ .nizam/ (Immutable Release v1.11.0)│  │ .agent/ (Live Project State)   │  │
+│  │ .nizam/ (Immutable Release v2.0.0)│  │ .agent/ (Live Project State)   │  │
 │  │ ├── NIZAM.json (Machine Index)     │  │ ├── run_state.json             │  │
 │  │ ├── provenance.json (Commit Pin)   │  │ ├── lightweight_log.jsonl      │  │
 │  │ ├── tools/ (SKILL.md, start_path)  │  │ ├── contracts/NNN.json         │  │
@@ -108,6 +112,10 @@ belongs only beside a recorded run of the preregistered study in
 study has not been executed.
 
 ### Route Selection Matrix (`tools/start_path.py classify`)
+
+Before `begin`, pin typed verification in the intent/scope or approved contract.
+Completion requires assessed per-check captures, not a passing summary alone;
+see [v2.0.0 migration](docs/migration-v2.0.0.md) and [the producer interface](tools/interface.md#45-structured-qa-proof-for-completion-and-receipt-prerequisites).
 
 | Route | Typical Scope & Trigger | Pre-Code Gate | Completion Gate | CLI Entry & Closeout |
 | :--- | :--- | :--- | :--- | :--- |
@@ -182,12 +190,12 @@ Implementation may begin once the intent is recorded. `tools/start_path.py begin
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.11.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.11.0 ./bootstrap.sh --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/
+GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/
 ```
 
-`--tag v1.11.0` (equivalently `GOVERNANCE_TAG=v1.11.0`) pins the inheritance to a real
+`--tag v2.0.0` (equivalently `GOVERNANCE_TAG=v2.0.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). The
 current bootstrap verifies `--expected-sha` before staging, fetches the tag with a
 Git **blob filter** (`blob:none`), sparse-materializes only the payload roots below,
@@ -224,13 +232,13 @@ Re-verify an installed `.nizam/` payload at any time with `bootstrap.sh --verify
 
 ```sh
 # Commit-bound content-integrity verification (verifies every file, mode, and digest against the expected commit in --git-repo):
-./bootstrap.sh --verify-only --tag v1.11.0 --expected-sha 6fc683580941adf19860d9d9d00fdc81d38d8088 --git-repo .nizam-ref/ --require-content-integrity
+./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '<40-hex-commit-sha>' --git-repo .nizam-ref/ --require-content-integrity
 
 # Unbound directory comparison (reports content_integrity=directory_match_unbound; does not satisfy --expected-sha or --require-content-integrity):
-./bootstrap.sh --verify-only --tag v1.11.0 --source-root /path/to/unpacked-release/
+./bootstrap.sh --verify-only --tag v2.0.0 --source-root /path/to/unpacked-release/
 
 # Structural and provenance-pin check only (reports structural_only; content_integrity=not_checked):
-./bootstrap.sh --verify-only --tag v1.11.0 --structural-only
+./bootstrap.sh --verify-only --tag v2.0.0 --structural-only
 ```
 
 ### Repository footprint and historical evidence
@@ -268,8 +276,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py classify \
 PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status
 ```
 
-See the [v1.11.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.11.0)
-and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
+See the [v2.0.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v2.0.0)
+and the [v1.x → v2.0.0 migration guide](docs/migration-v2.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
 `docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.
@@ -300,8 +308,11 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ## Local governance
 
-This repository has installed its public `v1.11.0` governance under `.nizam/`.
-The installed payload is verified byte-for-byte against the pinned tag by the
+The committed public self-installation record is `v1.11.0`. Discover the active
+workspace installation from `.nizam/provenance.json`: an experimental source
+installation is a separate record and does not publish a release. Official
+`v2.0.0` self-adoption follows tag publication as a separate observed step.
+The public installed payload is verified byte-for-byte against its pinned tag by the
 standing `self_governance` CI job (`verify_self_governance.py` and
 `bootstrap.sh --verify-only`, both backed by `tools/payload_integrity.py`).
 When a release tag `vX.Y.Z` is cut on this repository, the consumer payload
@@ -351,7 +362,7 @@ authored product; local agent work follows the installed governance.
 | [`tools/`](tools/SKILL.md) | Yes | The single runtime-agnostic skill payload ([`SKILL.md`](tools/SKILL.md), [`skill.json`](tools/skill.json), [`interface.md`](tools/interface.md)) plus executable governance CLIs (`start_path.py`, `payload_integrity.py`, `validate.sh`). |
 | [`ecosystem/`](ecosystem/README.md) | Yes | The reusable 9-stage **Bootstrap → Preflight → Baseline → Audit → Plan → Execute → Verify → Promote → Compare** lifecycle and 7 typed handoff contracts (`H-01`..`H-06`, `H-CONSUMER-UPGRADE`). |
 | [`registry/`](registry/README.md) | Authoring repo | The `NIZAM.json` index schema documentation and scope-definition patterns. |
-| [`docs/`](docs/guide/index.html) | Authoring repo | Architecture Decision Records (`docs/architecture/`), versioned migration guidance ([`docs/migration-v1.0.0.md`](docs/migration-v1.0.0.md)), and the self-contained [HTML user guide](docs/guide/index.html). |
+| [`docs/`](docs/guide/index.html) | Authoring repo | Architecture Decision Records (`docs/architecture/`), versioned migration guidance ([`docs/migration-v2.0.0.md`](docs/migration-v2.0.0.md), with prior versions retained), and the self-contained [HTML user guide](docs/guide/index.html). |
 
 ---
 

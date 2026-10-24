@@ -2,18 +2,19 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.33
+version: 0.65.34
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.34"
+    date: "2026-10-24"
+    summary: "Prepare v2.0.0 MAJOR for merged completion/proof/replay and finite-retry repairs, add migration guidance, and retain every prior release/installation record. Consolidate duplicate change_log headers without removing historical entries. Tag publication and official self-adoption remain pending observed steps."
   - version: "0.65.33"
     date: "2026-10-23"
     summary: "Post-release refresh: the Current position disposition line rolls from 'Release in preparation: v1.11.0' to 'Latest released tag: v1.11.0' carrying the observed facts -- annotated tag v1.11.0 (tag object 5b09fc0b179ff4f06ea4aec7878a34170654ade6) at reviewed PR #132 merge 6fc683580941adf19860d9d9d00fdc81d38d8088, release.yml run 39883294237 succeeded and the GitHub Release is published, and local .nizam/ re-bootstrapped to v1.11.0 (316 released files + provenance.json, installed_at 2026-10-23T01:21:26Z). The v1.10.1, v1.10.0, v1.9.0, v1.8.0, v1.7.0, v1.6.0 and v1.5.0 prior-release records and all historical snapshots, phase records and budgets are preserved untouched."
-change_log:
   - version: "0.65.32"
     date: "2026-10-23"
     summary: "Record v1.11.0 MINOR release preparation: the provider-neutral semantic observation architecture (off by default), the deterministic governance-close-out repairs, the factual-evidence archive/bounded preservation, the sparse bootstrap, llms.txt and the README/guide refresh are merged (PR #131 et al.); the Current position section gains the 'Release in preparation: v1.11.0' disposition line ahead of the v1.10.1 latest-released record. The annotated tag, observed tag/commit/workflow facts and the 'Latest released tag: v1.11.0' roll land in the post-tag closeout."
-change_log:
   - version: "0.65.31"
     date: "2026-10-22"
     summary: "Make the Jev readiness program the active current position: point to docs/planning/jev-readiness/PROGRAM.md, record the locally landed JR-02/JR-03/JR-04 repairs as pending independent verification, distinguish the completed 2026-10-18 remediation from the active directive, reconcile the open-debt roll to NDEBT-034, NDEBT-040 and NDEBT-056 (NDEBT-055 resolved), and preserve all dated release/phase/snapshot facts."
@@ -375,6 +376,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v2.0.0 (MAJOR) — merged completion, structured proof, exact receipt replay and finite retry repairs; existing consumers require the [migration guide](../migration-v2.0.0.md). Tag publication, immutable commit pin and official self-adoption are separate follow-up steps.
 
 Latest released tag: v1.11.0 (MINOR) — RELEASED 2026-10-23 at `6fc683580941adf19860d9d9d00fdc81d38d8088` (PR #132, annotated tag object `5b09fc0b179ff4f06ea4aec7878a34170654ade6`); `release.yml` run 39883294237 succeeded and the GitHub Release is published; local `.nizam/` re-bootstrapped to `v1.11.0` (`316` released files + `provenance.json`, `installed_at` `2026-10-23T01:21:26Z`).
 
