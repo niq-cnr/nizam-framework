@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python",
+    "-c",
+    "import sys,json,os;from pathlib import Path;root=Path.cwd();sys.path.insert(0,str(root/'tools'));import workflow_assurance as wa;out=Path('.agent/evidence/r02-proof-validation/evaluator-qa-attempt3');candidate=json.loads((out/'candidate.json').read_text());verdict=json.loads((out/'qa-final-proof.json').read_text());checks=wa.qa_required_checks(json.loads(Path('.agent/contracts/r02-proof-validation.json').read_text())['verification']);assert str(root)!=candidate['environment']['variables'][wa.QA_EXECUTION_ROOT_VARIABLE];wa.validate_qa_proof(root,verdict,feature_id='r02-proof-validation',candidate=candidate,required_checks=checks);print('PASS relocated checkout validates original assessed QA proof with explicit original context/environment')"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-r02-proof-evaluator-replay3",
+  "exit_code": 0,
+  "reviewed_revision": "b2d1ad66429aa2745e3ab900efbc13444ca43b36",
+  "stdout_sha256": "32ffbeb5b8a394a9e91cb62114edbf47fb3f021f038dc6c1d4b64007eb3f7b24",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
