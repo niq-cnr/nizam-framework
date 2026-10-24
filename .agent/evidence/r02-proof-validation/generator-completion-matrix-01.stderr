@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-r02-10DF50/repo/tools/test_start_path.py", line 1803, in test_r02_completion
+    began = run(root, 'begin', 'bugfix', '--id', 'r02')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-r02-10DF50/repo/tools/test_start_path.py", line 89, in run
+    if subprocess.check_output(["git", "-C", str(root), "diff", "--cached", "--name-only"]): _git(root, "commit", "--only", "-qm", "task authorization before begin", "--", *[str(p.relative_to(root)) for p in authority])
+                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-r02-10DF50/repo/tools/test_start_path.py", line 1575, in _git
+    subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, text=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/home/cnross/.tmp/nizam-r02-9hyhoi0n', 'commit', '--only', '-qm', 'task authorization before begin', '--', '.agent/evidence/r02-scope.json', '.agent/evidence/r02-cause.json']' returned non-zero exit status 1.

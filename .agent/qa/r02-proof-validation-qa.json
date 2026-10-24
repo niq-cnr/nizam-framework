@@ -1,0 +1,77 @@
+{
+  "feature_id": "r02-proof-validation",
+  "proof_version": 2,
+  "qa_pass": true,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "adversarial": {
+    "performed": true,
+    "capture": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-adversarial-attempt3-20261024T032350Z-1673eb9c.capture.json"
+  },
+  "checks": [
+    {
+      "id": "start-path",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-start-path-attempt3-20261024T030121Z-72481578.capture.json",
+        "sha256": "effee9fc43c3f115ea714e78d007e4a0a94c586b224f8b9344ece9059e4056f6"
+      }
+    },
+    {
+      "id": "workflow-assurance",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-workflow-assurance-attempt3-20261024T030121Z-88b33059.capture.json",
+        "sha256": "6906fb6b0598b1e5588483f925c4ead4fb69a05d660ef1ce4ae8dccfa7d9b372"
+      }
+    },
+    {
+      "id": "compliance",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-compliance-attempt3-20261024T030121Z-568aa3fb.capture.json",
+        "sha256": "5c79940f792366739607af2d6e7a86c18f61bb094beb1d2b5c7bbed194be5153"
+      }
+    },
+    {
+      "id": "isolation",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-isolation-attempt3-20261024T030121Z-5283992c.capture.json",
+        "sha256": "b9c31a3c8977226ca2447b8432f198d6db10ba02efbba9e1def2595ca0223346"
+      }
+    },
+    {
+      "id": "scope",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-scope-attempt3-20261024T030121Z-f1234352.capture.json",
+        "sha256": "23a9b48bf59d7123121350b7255bbe08ecb0d3e0a4a6929759ad5691b09239ac"
+      }
+    }
+  ],
+  "candidate_ref": {
+    "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/candidate.json",
+    "sha256": "21d9553f0601b4f09065e3c7a08c3fc4a743380d0e0e1bbce7191b04f4de56c7"
+  },
+  "evidence_files": [
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-start-path-attempt3-20261024T030121Z-72481578.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-workflow-assurance-attempt3-20261024T030121Z-88b33059.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-compliance-attempt3-20261024T030121Z-568aa3fb.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-isolation-attempt3-20261024T030121Z-5283992c.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-scope-attempt3-20261024T030121Z-f1234352.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-adversarial-attempt3-20261024T032350Z-1673eb9c.capture.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "reviewed_revision": "b2d1ad66429aa2745e3ab900efbc13444ca43b36",
+  "reviewer": "independent-evaluator",
+  "approved_contract_sha256": "9842b0f29b954bfe596cd93458164033e7f94d4e36a132ec878043350b4c0435",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent five-command candidate-bound QA and one extra stream-symlink check."
+  },
+  "adversarial_check": {
+    "description": "Exactly one evaluator-origin extra check: shared QA rejects stream symlink alias with identical bytes/digest in synthetic negative capture copy.",
+    "result": "pass",
+    "evidence": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-qa-adversarial.txt",
+    "capture": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt3/r02-proof-validation-adversarial-attempt3-20261024T032350Z-1673eb9c.capture.json"
+  }
+}

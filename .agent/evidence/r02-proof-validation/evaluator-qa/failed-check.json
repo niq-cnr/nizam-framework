@@ -1,0 +1,70 @@
+{
+  "id": "workflow-assurance",
+  "capture": {
+    "schema_version": 1,
+    "id": "r02-proof-validation",
+    "step": "workflow-assurance",
+    "attempt": 1,
+    "argv": [
+      "python",
+      "tools/test_workflow_assurance.py"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-r02-proof-evaluator-qa",
+    "revision": "8b5ba12187e0f3abc310766d6608c7b10ea93a06",
+    "binding_state": "candidate-bound",
+    "candidate_sha256": "8c44d0ea0c8e1468b56d59b498295c593c277330ae5e4712639dec8b4a1a8415",
+    "environment": {
+      "runtime": {
+        "implementation": "CPython",
+        "version": "3.12.3",
+        "system": "Linux",
+        "machine": "x86_64"
+      },
+      "variables": {
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "NIZAM_QA_CONTEXT_SHA256": "9f755c8778253f73ac583b6d5b7ee1970d47791b2262c2c47fade37aed488466",
+        "NIZAM_QA_EXECUTION_ROOT": "/home/cnross/.tmp/nizam-r02-proof-evaluator-qa",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "XDG_CACHE_HOME": "/home/cnross/.tmp/nizam-r02-proof-evaluator-cache"
+      }
+    },
+    "producer": {
+      "agent_id": "independent-evaluator",
+      "session_id": "r02-proof-qa-attempt1"
+    },
+    "started_at": "2026-10-24T02:32:05Z",
+    "completed_at": "2026-10-24T02:32:31Z",
+    "duration_ms": 26351,
+    "executed": true,
+    "completion_state": "completed",
+    "outcome": "failed",
+    "proof_kind": "success",
+    "cause_class": "implementation",
+    "defect_signature": "exit:1:stderr:3d6ddd8e43225b699230bd3cd472c33514eb357c49bce509ef46696dde7767cc",
+    "continuation_lineage": {
+      "initial_strategy_ladder_attempts": 3,
+      "attempt": 1,
+      "parent_attempt": null,
+      "decomposition_of": null,
+      "continuation_basis": "initial-attempt",
+      "repair_summary": null,
+      "configured_step_limit": 3,
+      "contract_amendment_present": false,
+      "operator_extension_present": false,
+      "prior_attempts": []
+    },
+    "exit_code": 1,
+    "signal": null,
+    "stdout": {
+      "path": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.stdout.txt",
+      "sha256": "86b6470825e32ab4f38d5acb3ea8360b0e4ed9ff7371b4a96e0a154444b88725",
+      "revision": null
+    },
+    "stderr": {
+      "path": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.stderr.txt",
+      "sha256": "3d6ddd8e43225b699230bd3cd472c33514eb357c49bce509ef46696dde7767cc",
+      "revision": null
+    },
+    "capture_path": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.capture.json"
+  }
+}

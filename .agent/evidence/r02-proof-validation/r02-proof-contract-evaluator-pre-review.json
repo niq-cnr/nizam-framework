@@ -1,0 +1,44 @@
+{
+  "review": "contract-testability-design-pre-review",
+  "feature": "r02-proof-validation",
+  "contract_id": "r02-proof-validation",
+  "revision_reviewed": 1,
+  "contract_sha256": "f1d590df46ee71bc418027cf729f68a29be96efdd2e40ee4df8469af1920d22d",
+  "issues": [
+    {
+      "verification_index": "scope",
+      "criterion": "Executable scope guard anchored to accepted F1/F2 candidate",
+      "evidence": "Scope command and argv still contain FIRST_PAIR_ACCEPTED_COMMIT; no accepted first-pair candidate pin is present.",
+      "required_fix": "Replace placeholder with exact accepted F1/F2 commit, then submit identical final proposal bytes to both reviewers.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "criterion": "Shared proof interpretation",
+      "result": "Design covers direct completion, route-qa and fresh-qa with one shared validator; independent inventory and exact checks prevent aggregate-only false passes."
+    },
+    {
+      "criterion": "Candidate completeness",
+      "result": "Required actual verifier/schema/authorization input coverage and mask restrictions address metadata-self-attestation gaps; implementation tests must exercise omitted inputs as well as wrong digest values."
+    },
+    {
+      "criterion": "Negative/empty semantics",
+      "result": "Exact expected exit and full-line diagnostic, producer proof kind, structured capture stream digests and explicit empty-byte support provide discriminatory positive and negative coverage."
+    },
+    {
+      "criterion": "Verification execution",
+      "result": "Commands invoke complete executable suites without grep or swallowed pipelines. Scope guard unions committed/staged/worktree/untracked projections and role-owned families. The listed tests remain prospective until implemented and independently executed."
+    },
+    {
+      "criterion": "Design disposition",
+      "result": "No further blocking design/testability issue identified in this pre-review. This is not final contract approval or implementation QA."
+    }
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Design is testable and bounded; final approval withheld until exact first-pair scope anchor replaces unresolved placeholder and finalized proposal is re-reviewed."
+  }
+}

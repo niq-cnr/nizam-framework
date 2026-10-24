@@ -5,7 +5,12 @@
   "description": "Validates .agent/evidence/<id>-scope.json, the scoped fix that tools/start_path.py reads before a bug-fix implementation may begin.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "path", "files", "non_goals"],
+  "required": [
+    "id",
+    "path",
+    "files",
+    "non_goals"
+  ],
   "properties": {
     "id": {
       "type": "string",
@@ -19,18 +24,107 @@
     "files": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "description": "Repository-relative files the repair may change."
     },
     "non_goals": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "What this repair does not authorize."
     },
     "contract_id": {
       "type": "string",
       "minLength": 1,
       "description": "When set, the repair stays inside this already approved contract and does not repeat the feature path's pre-code gates."
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "argv": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "expected_exit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "proof_kind": {
+            "enum": [
+              "success",
+              "semantic-negative"
+            ]
+          },
+          "diagnostic": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "argv",
+          "expected_exit",
+          "proof_kind",
+          "diagnostic"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "proof_kind": {
+                  "const": "success"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "expected_exit": {
+                  "const": 0
+                },
+                "diagnostic": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "proof_kind": {
+                  "const": "semantic-negative"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "diagnostic": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[^\\r\\n]+$"
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }

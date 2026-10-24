@@ -1497,6 +1497,9 @@ def capture_command_evidence(
         raise StartPathError("proof_kind must be 'success' or 'semantic-negative'", 2)
 
     resolved_sha, binding_state, captured_vars = _resolve_candidate_and_env(root, candidate_sha256, env_vars)
+    if "NIZAM_QA_CONTEXT_SHA256" in captured_vars or "NIZAM_QA_EXECUTION_ROOT" in captured_vars:
+        if captured_vars.get("NIZAM_QA_EXECUTION_ROOT") != str(root.resolve()):
+            raise StartPathError("QA capture execution root must match the actual resolved repository root", 1)
 
     rel_dir = (
         output_dir.relative_to(root).as_posix()
@@ -3419,6 +3422,7 @@ def verify_route_scope_eligibility(
     contract_id: str | None = None,
     feature_id: str | None = None,
     candidate: dict[str, Any] | None = None,
+    _receipt_replay_context: bytes | None = None,
 ) -> list[str]:
     """Enforce a single canonical scope eligibility decision across classify, begin, done, and receipt verification."""
     if isinstance(files, dict):
@@ -3467,6 +3471,23 @@ def verify_route_scope_eligibility(
             )
     else:
         raise StartPathError(f"unsupported non-feature route: {route}", 2)
+    if candidate is not None:
+        wa = _load_workflow_assurance()
+        try:
+            if feature_id is None or not isinstance(files, dict):
+                raise wa.AssuranceError("candidate eligibility requires exact task intent and identity")
+            paths = wa.qa_authorization_paths(root, feature_id, candidate)
+            if f".agent/evidence/{feature_id}-base.json" not in paths:
+                raise wa.AssuranceError("route candidate requires immutable task base; begin/capture afresh")
+            checks = wa.qa_bound_checks(root, feature_id, candidate)
+            wa.validate_qa_context(root, feature_id, candidate, checks)
+            intent_path = next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))
+            if wa.canonical(wa.parse_json(wa.regular_file(root, intent_path).read_bytes())) != wa.canonical(files):
+                raise wa.AssuranceError("candidate scope differs from consumed task intent")
+            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id,
+                _receipt_replay_context=_receipt_replay_context, _receipt_candidate_identity=candidate)
+        except wa.AssuranceError as exc:
+            raise StartPathError("candidate route eligibility failed: " + str(exc), 1) from exc
     return scoped
 
 
@@ -3613,9 +3634,15 @@ def _record_task_base(
     """Exclusively record authorization and no-follow index/worktree observations."""
     marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
     authorization = _task_authorization(root, route, files, contract_id)
+    wa = _load_workflow_assurance()
+    intent_path = root / ".agent" / "evidence" / f"{path_id}-{'scope' if route == 'bugfix' else 'intent'}.json"
+    try:
+        verification = wa.qa_required_checks(_read_json_file(intent_path).get("verification"))
+    except wa.AssuranceError as exc:
+        raise StartPathError(str(exc), 1) from exc
     if os.path.lexists(marker):
         existing = _load_task_base(root, path_id)
-        if existing and existing.get("schema_version") == 2 and existing["authorization"] != authorization:
+        if existing and existing.get("schema_version") == 2 and (existing["authorization"] != authorization or existing.get("verification") != verification):
             raise StartPathError("task authorization changed; begin with a fresh task ID", 1)
         return
     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
@@ -3634,7 +3661,7 @@ def _record_task_base(
     endpoints = sorted({p for entry in baseline_entries for p in entry["paths"]})
     doc = {"schema_version": 2, "id": path_id, "base_revision": head_res.stdout.strip(),
            "recorded_at": utc_now_iso(), "pre_existing_entries": baseline_entries,
-           "authorization": authorization,
+           "authorization": authorization, "verification": verification,
            "inherited_observations": {p: _observe_inherited_endpoint(root, p) for p in endpoints}}
     marker.parent.mkdir(parents=True, exist_ok=True)
     with marker.open("xb") as fh:
@@ -3686,6 +3713,8 @@ def verify_actual_changed_scope(
     path_id: str | None = None,
     *,
     contract_id: str | None = None,
+    _receipt_replay_context: bytes | None = None,
+    _receipt_candidate_identity: dict[str, Any] | None = None,
 ) -> None:
     """Bind completion to the complete committed/staged/unstaged/untracked delta.
 
@@ -3756,6 +3785,14 @@ def verify_actual_changed_scope(
             raise StartPathError("legacy task base lacks inherited preservation proof; begin with a fresh task ID", 1)
         if _observe_inherited_endpoint(root, path) == base_doc["inherited_observations"][path]:
             unchanged.add(path)
+    receipt_state_observation = None
+    if _receipt_replay_context is not None:
+        wa = _load_workflow_assurance()
+        try:
+            receipt_state_observation = wa._receipt_replay_observation(root, _receipt_replay_context,
+                feature_id=path_id, route=route, candidate=_receipt_candidate_identity)
+        except wa.AssuranceError as exc:
+            raise StartPathError("receipt replay scope proof failed: " + str(exc), 1) from exc
     undeclared: list[str] = []
 
     def consider(raw_path: str) -> None:
@@ -3764,6 +3801,10 @@ def verify_actual_changed_scope(
         except StartPathError:
             norm = raw_path.strip()
         if _task_owned_governance_path(norm, path_id):
+            return
+        if norm == ".agent/run_state.json" and receipt_state_observation is not None:
+            if _observe_inherited_endpoint(root, norm) != receipt_state_observation:
+                raise StartPathError("receipt replay canonical state changed during scope verification", 1)
             return
         if norm in declared_set or norm in undeclared:
             return
@@ -3903,44 +3944,29 @@ def require_inside_contract(root: Path, contract_id: str, files: list[str]) -> N
         )
 
 
+def _load_workflow_assurance():
+    import importlib.util
+    name = "_nizam_workflow_assurance_" + hashlib.sha256(str(Path(__file__).resolve()).encode()).hexdigest()[:16]
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().with_name("workflow_assurance.py"))
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
 def load_passing_qa(root: Path, path_id: str) -> None:
-    """Require a schema-valid passing QA verdict bound to path_id with >=1 passing check and non-empty evidence."""
-    verdict = load_record(
-        root,
-        Path(".agent") / "qa" / f"{path_id}.json",
-        "qa_verdict.schema.json",
-    )
-    verdict_id = verdict.get("feature_id") or verdict.get("id")
-    if verdict_id != path_id:
-        raise StartPathError(
-            f"QA verdict feature_id ({verdict_id!r}) does not match --id ({path_id!r})",
-            1,
-        )
-    if not qa_passes(verdict):
-        raise StartPathError("recorded verification result does not pass", 1)
-    evidence = listed_evidence(verdict)
-    if not evidence:
-        raise StartPathError("recorded verification result names no evidence file", 1)
-    if "qa_pass" in verdict:
-        checks_run = verdict.get("checks_run")
-        if isinstance(checks_run, int) and not isinstance(checks_run, bool) and len(evidence) < checks_run:
-            raise StartPathError(
-                "recorded verification result claims more executed checks than it names evidence for", 1
-            )
-    current_head = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
-    head_sha = current_head.stdout.strip() if current_head.returncode == 0 else None
-    bound_candidate = verdict.get("candidate_sha256") or verdict.get("candidate")
-    if isinstance(bound_candidate, str) and head_sha and re.fullmatch(r"[0-9a-f]{40}", bound_candidate):
-        if bound_candidate != head_sha:
-            raise StartPathError(
-                "recorded verification result is stale: candidate is not the current HEAD", 1
-            )
-    for relative in evidence:
-        path = resolve_project_file(root, relative)
-        if not path.is_file():
-            raise StartPathError("evidence file does not exist: " + relative, 1)
-        if len(path.read_bytes().strip()) == 0:
-            raise StartPathError("evidence file is empty (non-empty verification output required): " + relative, 1)
+    """Validate structured capture proof against independent assessed authorization."""
+    verdict = load_record(root, Path(".agent") / "qa" / f"{path_id}.json", "qa_verdict.schema.json")
+    if (verdict.get("feature_id") or verdict.get("id")) != path_id:
+        raise StartPathError("QA verdict feature_id does not match --id", 1)
+    wa = _load_workflow_assurance()
+    try:
+        candidate = wa.parse_json(wa._qa_artifact(root, verdict.get("candidate_ref")))
+        required_checks = wa.qa_bound_checks(root, path_id, candidate)
+        wa.validate_qa_proof(root, verdict, feature_id=path_id, candidate=candidate, required_checks=required_checks)
+    except wa.AssuranceError as exc:
+        raise StartPathError("recorded verification result does not pass structured QA proof; capture afresh: " + str(exc), 1) from exc
 
 
 QA_BLOCKING_KEYS = (
@@ -3952,13 +3978,10 @@ QA_BLOCKING_KEYS = (
 
 
 def qa_passes(verdict: dict) -> bool:
-    """One strict normalized predicate for every new completion path.
+    """Read historical QA declarations for display and compatibility diagnostics.
 
-    Both historical shapes are normalized to the same requirements: at least one
-    successfully executed check, no contradictory approval field, no non-empty
-    blocking array, and an evidence binding for every claimed check. Historical
-    records remain displayable, but they cannot select a weaker new completion
-    rule.
+    This boolean does not inspect captures or establish execution proof. Authority
+    consumers must use workflow_assurance.validate_qa_proof instead.
     """
     if not isinstance(verdict, dict):
         return False

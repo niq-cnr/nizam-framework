@@ -1,0 +1,643 @@
+diff --git a/tools/e2e_bootstrap_test.sh b/tools/e2e_bootstrap_test.sh
+index 72f0cc71..ef69aa6e 100644
+--- a/tools/e2e_bootstrap_test.sh
++++ b/tools/e2e_bootstrap_test.sh
+@@ -1104,7 +1104,6 @@ import hashlib
+ import json
+ import os
+ import pathlib
+-import platform
+ import subprocess
+ import sys
+ 
+@@ -1261,31 +1260,114 @@ bad_intent = {
+ (consumer / ".agent" / "evidence" / "trivbad-intent.json").write_text(json.dumps(bad_intent), encoding="utf-8")
+ run_sp("begin", "trivial", "--id", "trivbad", expected_rc=1)
+ 
+-good_intent = {
+-    "id": "triv1",
+-    "path": "trivial",
+-    "summary": "Fix typo in README",
+-    "needs_new_contract": False,
+-    "files": ["README.md"],
+-}
+-(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(json.dumps(good_intent), encoding="utf-8")
+-run_sp("begin", "trivial", "--id", "triv1")
+-(consumer / ".agent" / "evidence" / "triv1-ev.txt").write_text("typo fixed\n", encoding="utf-8")
+-qa_triv = {
+-    "feature_id": "triv1",
+-    "qa_pass": True,
+-    "checks_run": 1,
+-    "checks_passed": 1,
+-    "adversarial": {"performed": True},
+-    "evidence_files": [".agent/evidence/triv1-ev.txt"],
+-    "issues": [],
+-    "unsupported_claims": [],
+-    "missing_acceptance_coverage": [],
+-    "required_fixes": [],
+-    "final_verdict": {"approved": True, "summary": "Approved trivial fix."},
+-}
+-(consumer / ".agent" / "qa" / "triv1.json").write_text(json.dumps(qa_triv), encoding="utf-8")
+-run_sp("done", "trivial", "--id", "triv1")
++# Load the consumer's installed verifier directly; no framework checkout imports.
++import importlib.util
++wa_spec = importlib.util.spec_from_file_location("installed_consumer_assurance", wa)
++wa_api = importlib.util.module_from_spec(wa_spec)
++wa_spec.loader.exec_module(wa_api)
++
++
++def structured_route_proof(task_id: str) -> tuple[dict, pathlib.Path, dict]:
++    check = {
++        "id": "readme-exists",
++        "argv": [sys.executable, "-c", "from pathlib import Path; assert Path('README.md').is_file()"],
++        "expected_exit": 0,
++        "proof_kind": "success",
++        "diagnostic": None,
++    }
++    intent = {
++        "id": task_id,
++        "path": "trivial",
++        "summary": "Verify a bounded README edit using installed tools",
++        "needs_new_contract": False,
++        "files": ["README.md"],
++        "verification": [check],
++    }
++    intent_rel = f".agent/evidence/{task_id}-intent.json"
++    (consumer / intent_rel).write_bytes(wa_api.canonical(intent))
++    git("add", intent_rel)
++    git("commit", "--only", "-qm", f"pin {task_id} verification inventory", "--", intent_rel)
++    run_sp("begin", "trivial", "--id", task_id)
++    readme = consumer / "README.md"
++    readme.write_text(readme.read_text(encoding="utf-8") + f"\nConsumer proof: {task_id}.\n", encoding="utf-8")
++    base_rel = f".agent/evidence/{task_id}-base.json"
++    git("add", "README.md", base_rel)
++    git("commit", "--only", "-qm", f"assess {task_id} declared edit and immutable base", "--", "README.md", base_rel)
++    authorization_paths = wa_api.qa_authorization_paths(consumer, task_id)
++    context = wa_api.qa_context_sha256(consumer, task_id, authorization_paths, [check])
++    for name, value in {
++        wa_api.QA_CONTEXT_VARIABLE: context,
++        wa_api.QA_EXECUTION_ROOT_VARIABLE: str(consumer),
++        "NIZAM_CONSUMER_TEST": "1",
++    }.items():
++        os.environ[name] = value
++        env[name] = value
++    inputs = {
++        "source": ["README.md"],
++        "tests": ["src/PLACEHOLDER.md"],
++        "contracts": authorization_paths,
++        "tools": [
++            ".nizam/tools/start_path.py",
++            ".nizam/tools/workflow_assurance.py",
++            ".nizam/schema/qa_verdict.schema.json",
++            ".nizam/schema/contract.schema.json",
++            ".nizam/schema/small_change_intent.schema.json",
++        ],
++        "unknown_dependencies": [],
++    }
++    candidate = wa_api.assess_route_candidate(
++        consumer, task_id, git("rev-parse", "HEAD"), inputs,
++        [wa_api.QA_CONTEXT_VARIABLE, wa_api.QA_EXECUTION_ROOT_VARIABLE, "NIZAM_CONSUMER_TEST"],
++    )
++    output_dir = consumer / ".agent" / "evidence" / task_id
++    output_dir.mkdir()
++    candidate_path = output_dir / "candidate.json"
++    candidate_path.write_bytes(wa_api.canonical(candidate))
++    capture = json.loads(run_sp(
++        "capture", "--id", task_id, "--step", "qa", "--attempt", "1",
++        "--output-dir", output_dir.relative_to(consumer).as_posix(),
++        "--candidate", str(candidate_path), "--proof-kind", check["proof_kind"],
++        "--agent-id", "consumer-evaluator", "--session-id", "consumer-qa-session",
++        "--", *check["argv"],
++    ).stdout)
++    assert capture["executed"] is True and capture["exit_code"] == 0
++    assert (consumer / capture["stdout"]["path"]).read_bytes() == b""
++    assert (consumer / capture["stderr"]["path"]).read_bytes() == b""
++    capture_ref = {
++        "path": capture["capture_path"],
++        "sha256": hashlib.sha256((consumer / capture["capture_path"]).read_bytes()).hexdigest(),
++    }
++    verdict = {
++        "proof_version": 2,
++        "feature_id": task_id,
++        "candidate_ref": {
++            "path": candidate_path.relative_to(consumer).as_posix(),
++            "sha256": hashlib.sha256(candidate_path.read_bytes()).hexdigest(),
++        },
++        "qa_pass": True,
++        "checks_run": 1,
++        "checks_passed": 1,
++        "checks": [{"id": check["id"], "capture": capture_ref}],
++        "adversarial": {"performed": True},
++        "evidence_files": [capture["capture_path"]],
++        "issues": [],
++        "unsupported_claims": [],
++        "missing_acceptance_coverage": [],
++        "required_fixes": [],
++        "final_verdict": {"approved": True, "summary": "Executed installed consumer verification."},
++    }
++    qa_path = consumer / ".agent" / "qa" / f"{task_id}.json"
++    qa_path.write_bytes(wa_api.canonical(verdict))
++    # An explicitly failing declaration cannot override otherwise captured proof.
++    bad = dict(verdict, qa_pass=False)
++    qa_path.write_bytes(wa_api.canonical(bad))
++    run_sp("done", "trivial", "--id", task_id, expected_rc=1)
++    qa_path.write_bytes(wa_api.canonical(verdict))
++    run_sp("done", "trivial", "--id", task_id)
++    return candidate, candidate_path, intent
++
++
++structured_route_proof("triv1")
+ 
+ # 4. Amend contract
+ (consumer / "src" / "helper.py").write_text("print('helper')\n", encoding="utf-8")
+@@ -1312,71 +1394,19 @@ assert amend_doc["applied"] is True and amend_doc["re_approval_required"] is Fal
+ git("add", ".agent/contracts/001.json")
+ git("commit", "-qm", "commit amended contract 001")
+ 
+-# 5. Full producer-to-consumer receipt chain using only .nizam/tools/ (including V1 checks)
+-head_commit = git("rev-parse", "HEAD")
+-head_tree = git("rev-parse", "HEAD^{tree}")
+-
+-
+-def blob_entry(rel: str) -> dict:
+-    p = consumer / rel
+-    raw = p.read_bytes()
+-    return {
+-        "path": rel,
+-        "sha256": hashlib.sha256(raw).hexdigest(),
+-        "executable": bool(p.stat().st_mode & 0o111),
+-    }
+-
+-
+-cand_body = {
+-    "schema_version": 1,
+-    "repository": "https://example.invalid/org/zero-reachback.git",
+-    "source_commit": head_commit,
+-    "source_tree": head_tree,
+-    "assessed_inputs": {
+-        "source": [blob_entry("src/helper.py")],
+-        "tests": [blob_entry("src/PLACEHOLDER.md")],
+-        "contracts": [blob_entry(".agent/contracts/001.json")],
+-        "tools": [blob_entry("README.md")],
+-    },
+-    "environment": {
+-        "runtime": {
+-            "implementation": platform.python_implementation(),
+-            "version": platform.python_version(),
+-            "system": platform.system(),
+-            "machine": platform.machine(),
+-        },
+-        "variables": {"NIZAM_CONSUMER_TEST": "1"},
+-    },
+-    "record_ownership": {},
+-}
+-cand_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+-cand_body["identity_sha256"] = hashlib.sha256(cand_canon).hexdigest()
+-cand_full_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+-cand_sha = hashlib.sha256(cand_full_canon).hexdigest()
+-
++# 5. Start a fresh route after the unrelated feature amendment, then use the
++# same installed, assessed candidate for actual QA and the receipt's own command.
++run_state["current_feature"] = "trivreceipt"
++(consumer / ".agent/run_state.json").write_bytes(wa_api.canonical(run_state))
++git("add", ".agent/run_state.json")
++git("commit", "-qm", "select independent receipt route")
++cand_body, candidate_path, good_intent = structured_route_proof("trivreceipt")
+ cap_out = json.loads(
+     run_sp(
+-        "capture",
+-        "--id",
+-        "001",
+-        "--step",
+-        "verify",
+-        "--attempt",
+-        "1",
+-        "--output-dir",
+-        ".agent/evidence/001",
+-        "--candidate",
+-        cand_sha,
+-        "--env-var",
+-        "NIZAM_CONSUMER_TEST=1",
+-        "--agent-id",
+-        "consumer-generator",
+-        "--session-id",
+-        "consumer-sess-1",
+-        "--",
+-        sys.executable,
+-        "-c",
+-        "print('CONSUMER_RECEIPT_OK')",
++        "capture", "--id", "trivreceipt", "--step", "verify", "--attempt", "1",
++        "--output-dir", ".agent/evidence/trivreceipt", "--candidate", str(candidate_path),
++        "--agent-id", "consumer-generator", "--session-id", "consumer-sess-1",
++        "--", sys.executable, "-c", "print('CONSUMER_RECEIPT_OK')",
+     ).stdout
+ )
+ 
+@@ -1487,39 +1517,34 @@ assert set(pub_out["receipt_capture"].keys()) == {
+     "stderr",
+ }
+ 
+-(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(
+-    json.dumps(good_intent, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+-)
+-git("add", ".agent/evidence/triv1-intent.json")
+-git("commit", "-qm", "pin trivial intent for route receipt")
+-pin_rev = git("rev-parse", "HEAD")
++pin_rev = cand_body["source_commit"]
+ intent_ref = {
+-    "path": ".agent/evidence/triv1-intent.json",
+-    "sha256": hashlib.sha256((consumer / ".agent" / "evidence" / "triv1-intent.json").read_bytes()).hexdigest(),
++    "path": ".agent/evidence/trivreceipt-intent.json",
++    "sha256": hashlib.sha256((consumer / ".agent" / "evidence" / "trivreceipt-intent.json").read_bytes()).hexdigest(),
+     "revision": pin_rev,
+ }
+-qa_triv_doc = json.loads((consumer / ".agent" / "qa" / "triv1.json").read_text(encoding="utf-8"))
++qa_triv_doc = json.loads((consumer / ".agent" / "qa" / "trivreceipt.json").read_text(encoding="utf-8"))
+ qa_triv_doc["reviewed_revision"] = pin_rev
+ qa_triv_doc["intent_sha256"] = intent_ref["sha256"]
+ qa_triv_doc["reviewer"] = "consumer-evaluator"
+-(consumer / ".agent" / "qa" / "triv1.json").write_text(
++(consumer / ".agent" / "qa" / "trivreceipt.json").write_text(
+     json.dumps(qa_triv_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+ )
+-git("add", ".agent/qa/triv1.json")
++git("add", ".agent/qa/trivreceipt.json")
+ git("commit", "-qm", "pin trivial qa with exact intent revision")
+ qa_rev = git("rev-parse", "HEAD")
+ qa_ref = {
+-    "path": ".agent/qa/triv1.json",
+-    "sha256": hashlib.sha256((consumer / ".agent" / "qa" / "triv1.json").read_bytes()).hexdigest(),
++    "path": ".agent/qa/trivreceipt.json",
++    "sha256": hashlib.sha256((consumer / ".agent" / "qa" / "trivreceipt.json").read_bytes()).hexdigest(),
+     "revision": qa_rev,
+ }
+ 
+ policy_doc = {
+     "schema_version": 1,
+     "repository": "https://example.invalid/org/zero-reachback.git",
+-    "feature_id": "triv1",
++    "feature_id": "trivreceipt",
+     "stage": "trivial-complete",
+-    "operation_id": "consumer-op-triv1",
++    "operation_id": "consumer-op-trivreceipt",
+     "candidate": cand_body,
+     "producer": {"agent_id": "consumer-generator", "session_id": "consumer-sess-1"},
+     "contract": intent_ref,
+@@ -1528,14 +1553,14 @@ policy_doc = {
+         {
+             "kind": "route-intent",
+             "artifact": intent_ref,
+-            "feature_id": "triv1",
++            "feature_id": "trivreceipt",
+             "assessed_revision": pin_rev,
+             "contract_sha256": intent_ref["sha256"],
+         },
+         {
+             "kind": "route-qa",
+             "artifact": qa_ref,
+-            "feature_id": "triv1",
++            "feature_id": "trivreceipt",
+             "assessed_revision": pin_rev,
+             "contract_sha256": intent_ref["sha256"],
+         },
+@@ -1554,15 +1579,15 @@ policy_doc = {
+     "at": "2026-10-18T11:50:00Z",
+     "recovery": None,
+ }
+-policy_path = consumer / ".agent" / "evidence" / "001" / "policy.json"
++policy_path = consumer / ".agent" / "evidence" / "trivreceipt" / "policy.json"
+ policy_path.write_text(json.dumps(policy_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
+-git("add", ".agent/evidence/001/policy.json")
++git("add", ".agent/evidence/trivreceipt/policy.json")
+ git("commit", "-qm", "commit consumer receipt policy")
+ 
+ # V1 check (c): build-receipt without --commit rejects uncommitted 12-field closed capture without committing
+ pre_br_head = git("rev-parse", "HEAD")
+-receipt_path = consumer / ".agent" / "evidence" / "001" / "receipt.json"
+-uncommitted_closed = consumer / ".agent" / "evidence" / "001" / "uncommitted.receipt-capture.json"
++receipt_path = consumer / ".agent" / "evidence" / "trivreceipt" / "receipt.json"
++uncommitted_closed = consumer / ".agent" / "evidence" / "trivreceipt" / "uncommitted.receipt-capture.json"
+ uncommitted_closed.write_text(
+     json.dumps(pub_out["receipt_capture"], sort_keys=True, separators=(",", ":")) + "\n",
+     encoding="utf-8",
+@@ -1615,29 +1640,23 @@ wa_verify = subprocess.run(
+ )
+ assert wa_verify.returncode == 0, f"verify-receipt failed: {wa_verify.stdout}\n{wa_verify.stderr}"
+ 
+-res1 = json.loads(
+-    run_sp(
+-        "resume",
+-        "--policy",
+-        str(policy_path),
+-        "--receipt",
+-        str(receipt_path),
+-        "--apply",
+-    ).stdout
+-)
++# Canonical default state advances once and replays without any scope exemption
++# for unrelated edits. The supported explicit task-owned state is exercised too.
++canonical_before = (consumer / ".agent/run_state.json").read_bytes()
++res1 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--apply").stdout)
+ assert res1["action"] == "advance" and res1["applied"] is True
+-
+-res2 = json.loads(
+-    run_sp(
+-        "resume",
+-        "--policy",
+-        str(policy_path),
+-        "--receipt",
+-        str(receipt_path),
+-        "--apply",
+-    ).stdout
+-)
+-assert res2["action"] == "noop"
++res2 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--apply").stdout)
++assert res2["action"] == "noop" and res2["applied"] is False
++canonical_after = (consumer / ".agent/run_state.json").read_bytes()
++assert json.loads(canonical_after)["status"] == "complete"
++run_sp("done", "trivial", "--id", "trivreceipt", expected_rc=1)
++runtime_state = consumer / ".agent/evidence/trivreceipt/runtime-state.json"
++runtime_state.write_bytes(canonical_before)
++explicit1 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--state", str(runtime_state), "--apply").stdout)
++assert explicit1["action"] == "advance" and explicit1["applied"] is True
++explicit2 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--state", str(runtime_state), "--apply").stdout)
++assert explicit2["action"] == "noop"
++assert (consumer / ".agent/run_state.json").read_bytes() == canonical_after
+ 
+ # 6. Status view
+ st = json.loads(run_sp("status", "--format", "json").stdout)
+diff --git a/tools/start_path.py b/tools/start_path.py
+index 8d3e1b4e..2beb14e9 100644
+--- a/tools/start_path.py
++++ b/tools/start_path.py
+@@ -3422,6 +3422,7 @@ def verify_route_scope_eligibility(
+     contract_id: str | None = None,
+     feature_id: str | None = None,
+     candidate: dict[str, Any] | None = None,
++    _receipt_replay_context: bytes | None = None,
+ ) -> list[str]:
+     """Enforce a single canonical scope eligibility decision across classify, begin, done, and receipt verification."""
+     if isinstance(files, dict):
+@@ -3483,7 +3484,8 @@ def verify_route_scope_eligibility(
+             intent_path = next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))
+             if wa.canonical(wa.parse_json(wa.regular_file(root, intent_path).read_bytes())) != wa.canonical(files):
+                 raise wa.AssuranceError("candidate scope differs from consumed task intent")
+-            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id)
++            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id,
++                _receipt_replay_context=_receipt_replay_context, _receipt_candidate_identity=candidate)
+         except wa.AssuranceError as exc:
+             raise StartPathError("candidate route eligibility failed: " + str(exc), 1) from exc
+     return scoped
+@@ -3711,6 +3713,8 @@ def verify_actual_changed_scope(
+     path_id: str | None = None,
+     *,
+     contract_id: str | None = None,
++    _receipt_replay_context: bytes | None = None,
++    _receipt_candidate_identity: dict[str, Any] | None = None,
+ ) -> None:
+     """Bind completion to the complete committed/staged/unstaged/untracked delta.
+ 
+@@ -3781,6 +3785,14 @@ def verify_actual_changed_scope(
+             raise StartPathError("legacy task base lacks inherited preservation proof; begin with a fresh task ID", 1)
+         if _observe_inherited_endpoint(root, path) == base_doc["inherited_observations"][path]:
+             unchanged.add(path)
++    receipt_state_observation = None
++    if _receipt_replay_context is not None:
++        wa = _load_workflow_assurance()
++        try:
++            receipt_state_observation = wa._receipt_replay_observation(root, _receipt_replay_context,
++                feature_id=path_id, route=route, candidate=_receipt_candidate_identity)
++        except wa.AssuranceError as exc:
++            raise StartPathError("receipt replay scope proof failed: " + str(exc), 1) from exc
+     undeclared: list[str] = []
+ 
+     def consider(raw_path: str) -> None:
+@@ -3790,6 +3802,10 @@ def verify_actual_changed_scope(
+             norm = raw_path.strip()
+         if _task_owned_governance_path(norm, path_id):
+             return
++        if norm == ".agent/run_state.json" and receipt_state_observation is not None:
++            if _observe_inherited_endpoint(root, norm) != receipt_state_observation:
++                raise StartPathError("receipt replay canonical state changed during scope verification", 1)
++            return
+         if norm in declared_set or norm in undeclared:
+             return
+         undeclared.append(norm)
+diff --git a/tools/test_workflow_assurance.py b/tools/test_workflow_assurance.py
+index 7ed12c76..3b10f395 100644
+--- a/tools/test_workflow_assurance.py
++++ b/tools/test_workflow_assurance.py
+@@ -1082,6 +1082,75 @@ def receipt_recovery(api, f):
+     receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, None, policy=f.policy))
+ 
+ 
++def r02_canonical_route_replay():
++    """Real default resume retains exact canonical-state ownership on replay."""
++    import test_start_path as fixture
++    old_env = dict(os.environ)
++    try:
++        with tempfile.TemporaryDirectory(prefix='r02-canonical-replay-') as name:
++            root = Path(name); fixture.proof_bootstrap(root)
++            (root/'schema/run_state.schema.json').write_bytes((ROOT/'schema/run_state.schema.json').read_bytes())
++            git(root,'add','schema/run_state.schema.json');git(root,'commit','-qm','runtime state schema for receipt planner')
++            state = dict(repository='https://example.invalid/qa-fixture.git', current_phase='fixture-phase',
++                current_feature='replay', status='in_progress', updated_at='2026-10-24T00:00:00Z',
++                scope_budget=dict(original_estimate_lines=10,total_lines_changed=0,per_feature=[]),
++                circuit_breaker={},history=[dict(at='2026-10-24T00:00:00Z',event='seed',detail='unchanged prefix')])
++            fixture.write(root,'.agent/run_state.json',state)
++            (root/'README.md').write_text('initial\n')
++            git(root,'add','.agent/run_state.json','README.md');git(root,'commit','-qm','canonical route baseline')
++            fixture.write(root,'.agent/evidence/replay-cause.json',fixture.cause('replay'))
++            fixture.write(root,'.agent/evidence/replay-scope.json',fixture.scope('replay',['README.md']))
++            fixture.expect(fixture.run(root,'begin','bugfix','--id','replay'),0,'implementation may begin')
++            (root/'README.md').write_text('declared task edit\n')
++            verdict=fixture.record_proof(root,'replay')
++            api,policy,receipt=fixture.route_receipt(root,'replay',verdict)
++            policy_path=root/'.agent/evidence/replay/policy.json';receipt_path=root/'.agent/evidence/replay/receipt.json'
++            fixture.write(root,str(policy_path.relative_to(root)),policy);fixture.write(root,str(receipt_path.relative_to(root)),receipt)
++            def resume():
++                return fixture.run(root,'resume','--policy',str(policy_path),'--receipt',str(receipt_path),'--apply')
++            result=resume();fixture.expect(result,0,'"action": "advance"')
++            canonical_state=root/'.agent/run_state.json';legitimate=canonical_state.read_bytes()
++            fixture.expect(resume(),0,'"action": "noop"')
++            api.verify_stage_receipt(root,receipt,policy=policy)
++            # Direct completion has no receipt replay context and retains its refusal.
++            fixture.expect(fixture.run(root,'done','bugfix','--id','replay'),1,'.agent/run_state.json')
++            valid=json.loads(legitimate)
++            attacks=[('status',lambda x:x.update(status='in_progress')),
++                ('updated-at',lambda x:x.update(updated_at='2026-10-25T00:00:00Z')),
++                ('other-field',lambda x:x.update(current_phase='forged-phase')),
++                ('extra-history',lambda x:x['history'].append(dict(at='now',event='unowned',detail='extra'))),
++                ('prefix-history',lambda x:x['history'][0].update(detail='rewritten')),
++                ('duplicate-event',lambda x:x['history'].append(copy.deepcopy(x['history'][-1])))]
++            for label,change in attacks:
++                bad=copy.deepcopy(valid);change(bad);canonical_state.write_bytes(canonical(bad))
++                fixture.expect(resume(),1,'')
++                canonical_state.write_bytes(legitimate)
++            # A restored worktree cannot hide an unowned staged or committed state.
++            bad=copy.deepcopy(valid);bad['current_phase']='forged-index'
++            canonical_state.write_bytes(canonical(bad));git(root,'add','.agent/run_state.json');canonical_state.write_bytes(legitimate)
++            fixture.expect(resume(),1,'index/head')
++            git(root,'restore','--staged','.agent/run_state.json')
++            canonical_state.chmod(0o755);fixture.expect(resume(),1,'mode');canonical_state.chmod(0o644)
++            forged=copy.deepcopy(receipt);forged['verdict']['final_verdict']['summary']='different receipt'
++            fixture.write(root,str(receipt_path.relative_to(root)),forged);fixture.expect(resume(),1,'exact owned transition')
++            fixture.write(root,str(receipt_path.relative_to(root)),receipt)
++            # State proof never replaces fresh QA proof.
++            stdout=root/verdict['checks'][0]['capture']['path']
++            captured=stdout.read_bytes();stdout.write_bytes(b'{}')
++            fixture.expect(resume(),1,'QA artifact digest')
++            stdout.write_bytes(captured)
++            fixture.expect(resume(),0,'"action": "noop"')
++            git(root,'add','.agent/run_state.json')
++            fixture.expect(resume(),0,'"action": "noop"')
++            git(root,'commit','--only','-qm','record exact receipt transition','--','.agent/run_state.json')
++            fixture.expect(resume(),0,'"action": "noop"')
++            fixture.expect(fixture.run(root,'done','bugfix','--id','replay'),1,'.agent/run_state.json')
++            require(canonical_state.read_bytes()==legitimate,'replay does not rewrite canonical state')
++        print('PASS canonical route default advance/noop, exact state/index/mode/history ownership and full QA revalidation')
++    finally:
++        os.environ.clear();os.environ.update(old_env)
++
++
+ def r02_schema_matrix():
+     import jsonschema
+     schemas = {n: jsonschema.Draft202012Validator(json.loads((ROOT / 'schema' / (n + '.schema.json')).read_text())) for n in ('qa_verdict', 'contract', 'bugfix_scope', 'small_change_intent')}
+@@ -3419,7 +3488,7 @@ def main():
+     parser.add_argument('--base')
+     args = parser.parse_args()
+     if not any(vars(args).values()):
+-        r02_schema_matrix(); r02_feature_proof_matrix()
++        r02_schema_matrix(); r02_feature_proof_matrix(); r02_canonical_route_replay()
+     if args.scope_118 or args.scope_controls_118:
+         if not args.base: parser.error('scope commands require --base')
+         helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_118.py')
+diff --git a/tools/workflow_assurance.py b/tools/workflow_assurance.py
+index 5870a36d..e924dee0 100644
+--- a/tools/workflow_assurance.py
++++ b/tools/workflow_assurance.py
+@@ -1178,7 +1178,78 @@ def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
+         raise AssuranceError('structured QA proof invalid; capture afresh: ' + str(exc)) from exc
+ 
+ 
+-def _receipt_prerequisites(root, policy, minimum):
++def _receipt_transition_event(receipt, policy):
++    digest = sha(canonical(receipt))
++    operation = policy['operation_id']
++    return {'at': policy['at'], 'event': 'wa-receipt-transition',
++        'detail': 'Receipt ' + operation + ' advanced ' + policy['feature_id'] + ':' + policy['stage'] + ' (' + digest + ')',
++        'operation_id': operation, 'feature_id': policy['feature_id'], 'stage': policy['stage'],
++        'candidate_sha256': sha(canonical(policy['candidate'])), 'receipt_sha256': digest}
++
++
++def _receipt_replay_observation(root, encoded_context, *, feature_id, route, candidate):
++    """Prove the one exact canonical-state mutation owned by this receipt.
++
++    This is not a path exemption: callers provide immutable receipt/policy bytes,
++    and the scope checker independently rederives every permitted observation.
++    The outer receipt verifier still validates all command and prerequisite proof.
++    """
++    require(type(encoded_context) is bytes, 'receipt replay context must be immutable encoded proof')
++    context = parse_json(encoded_context)
++    _bundle_object(context, ('receipt', 'policy'), 'receipt replay context')
++    receipt, policy = context['receipt'], context['policy']
++    _receipt_policy(root, policy)
++    require(ROUTE_RECEIPT_STAGES.get(policy['stage']) == route and policy['feature_id'] == feature_id and
++            canonical(policy['candidate']) == canonical(candidate), 'receipt replay scope context binding')
++    _bundle_object(receipt, ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'status', 'candidate',
++        'producer', 'contract_ref', 'operator_ref', 'prerequisites', 'checks', 'verdict'), 'receipt replay receipt')
++    require(receipt['status'] == 'passed' and type(receipt['schema_version']) is int and receipt['schema_version'] == 1,
++            'receipt replay requires passed receipt')
++    for key in ('repository', 'feature_id', 'stage', 'operation_id', 'producer', 'prerequisites', 'candidate'):
++        require(canonical(receipt[key]) == canonical(policy[key]), 'receipt replay target mismatch')
++    require(canonical(receipt['contract_ref']) == canonical(policy['contract']) and
++            canonical(receipt['operator_ref']) == canonical(policy['operator']), 'receipt replay authority mismatch')
++    sp = _load_start_path_module()
++    base = sp._load_task_base(Path(root), feature_id)
++    require(base is not None and base['schema_version'] == 2 and base['authorization']['route'] == route,
++            'receipt replay requires immutable task base')
++    path = '.agent/run_state.json'
++    if not git(root, '--literal-pathspecs', 'ls-tree', '-z', base['base_revision'], '--', path):
++        return None  # No anchored canonical state can receive an exception.
++    before_bytes, executable = _entry_blob(root, base['base_revision'], path)
++    anchor_bytes, anchor_executable = _entry_blob(root, candidate['source_commit'], path)
++    before = parse_json(before_bytes)
++    require(canonical(before) == canonical(parse_json(anchor_bytes)) and executable == anchor_executable,
++            'receipt replay canonical state changed before candidate assessment')
++    target = regular_file(Path(root), path)
++    current = parse_json(target.read_bytes())
++    if canonical(current) == canonical(before):
++        return None  # Ordinary unchanged scope handling needs no replay observation.
++    _receipt_schema(root, before, 'run_state'); _receipt_schema(root, current, 'run_state')
++    require(before['repository'] == policy['repository'] and before['status'] == policy['from_status'],
++            'receipt replay canonical source state')
++    event = _receipt_transition_event(receipt, policy)
++    require(not any(e.get('event') == 'wa-receipt-transition' and e.get('operation_id') == policy['operation_id']
++                    for e in before['history']), 'receipt replay operation already existed in baseline')
++    expected = copy.deepcopy(before)
++    expected['status'] = policy['to_status']; expected['updated_at'] = policy['at']; expected['history'].append(event)
++    require(canonical(current) == canonical(expected), 'receipt replay canonical state is not the exact owned transition')
++    require(bool(target.stat().st_mode & 0o111) == executable, 'receipt replay canonical mode changed')
++    # Inspect every Git layer independently; a worktree restoration cannot hide a
++    # forged staged/committed state, and no prior history prefix may be rewritten.
++    head_bytes, head_executable = _entry_blob(root, git(root, 'rev-parse', 'HEAD').decode().strip(), path)
++    rows = git(root, '--literal-pathspecs', 'ls-files', '--stage', '-z', '--', path).split(b'\0')
++    require(len(rows) == 2 and rows[1] == b'', 'receipt replay canonical index missing/unmerged')
++    metadata, name = rows[0].split(b'\t', 1); mode, oid, stage = metadata.decode().split()
++    require(name.decode() == path and stage == '0' and mode in ('100644', '100755') and
++            (mode == '100755') == executable and head_executable == executable, 'receipt replay canonical index/head mode')
++    permitted = (canonical(before), canonical(expected))
++    require(canonical(parse_json(head_bytes)) in permitted and canonical(parse_json(blobs(root, [oid])[oid])) in permitted,
++            'receipt replay canonical index/head contains unowned changes')
++    return sp._observe_inherited_endpoint(Path(root), path)
++
++
++def _receipt_prerequisites(root, policy, minimum, *, replay_context=None):
+     entries = policy['prerequisites']; seen = set(); current = set(); records = []
+     if policy['stage'] in ROUTE_RECEIPT_STAGES:
+         expected_route = ROUTE_RECEIPT_STAGES[policy['stage']]
+@@ -1200,7 +1271,8 @@ def _receipt_prerequisites(root, policy, minimum):
+                 require(canonical(entry['artifact']) == canonical(policy['contract']) and
+                     entry['artifact']['sha256'] == digest and entry['artifact']['revision'] == revision, 'receipt route intent entry')
+                 try:
+-                    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'])
++                    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'],
++                        _receipt_replay_context=replay_context)
+                 except (ValueError, sp.StartPathError) as exc:
+                     raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
+             elif kind == 'route-qa':
+@@ -1220,7 +1292,8 @@ def _receipt_prerequisites(root, policy, minimum):
+         require(set(minimum) <= current, 'receipt missing current prerequisite')
+         intent = parse_json(_receipt_artifact(root, policy['contract']))
+         try:
+-            sp.verify_route_scope_eligibility(root, expected_route, intent, feature_id=policy['feature_id'], candidate=policy['candidate'])
++            sp.verify_route_scope_eligibility(root, expected_route, intent, feature_id=policy['feature_id'], candidate=policy['candidate'],
++                _receipt_replay_context=replay_context)
+         except (ValueError, sp.StartPathError) as exc:
+             raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
+         return
+@@ -1320,7 +1393,9 @@ def verify_stage_receipt(repo, receipt, *, policy):
+             canonical(receipt['operator_ref']) == canonical(policy['operator']), 'receipt authority refs')
+         require(compare_identity(receipt['candidate'], policy['candidate']), 'receipt candidate identity mismatch')
+         require(policy['candidate']['repository'] == policy['repository'], 'receipt candidate repository binding')
+-        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy); _receipt_prerequisites(root, policy, minimum)
++        replay_context = canonical({'receipt': receipt, 'policy': policy}) if policy['stage'] in ROUTE_RECEIPT_STAGES else None
++        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy)
++        _receipt_prerequisites(root, policy, minimum, replay_context=replay_context)
+         _bundle_object(receipt['verdict'], ('final_verdict', 'issues', 'missing_acceptance_coverage', 'unsupported_claims'), 'receipt verdict')
+         _receipt_gate(receipt['verdict'])
+         require(type(receipt['checks']) is list and len(receipt['checks']) == len(policy['commands']), 'receipt command coverage')
+@@ -1373,11 +1448,8 @@ def plan_receipt_transition(repo, state, receipt, *, policy):
+                 return {'action': 'rerun-required', 'state': copy.deepcopy(state), 'receipt': None, 'reason': 'Receipt proof is missing; rerun is required.'}
+             receipt = parse_json(_receipt_artifact(root, reference))
+         verified = verify_stage_receipt(root, receipt, policy=policy)
+-        digest = sha(canonical(verified)); operation = policy['operation_id']
+-        event = {'at': policy['at'], 'event': 'wa-receipt-transition',
+-            'detail': 'Receipt ' + operation + ' advanced ' + policy['feature_id'] + ':' + policy['stage'] + ' (' + digest + ')',
+-            'operation_id': operation, 'feature_id': policy['feature_id'], 'stage': policy['stage'],
+-            'candidate_sha256': sha(canonical(policy['candidate'])), 'receipt_sha256': digest}
++        event = _receipt_transition_event(verified, policy)
++        operation = policy['operation_id']
+         matches = [e for e in state['history'] if e.get('event') == 'wa-receipt-transition' and e.get('operation_id') == operation]
+         if matches:
+             require(len(matches) == 1 and canonical(matches[0]) == canonical(event) and state['status'] == policy['to_status'],

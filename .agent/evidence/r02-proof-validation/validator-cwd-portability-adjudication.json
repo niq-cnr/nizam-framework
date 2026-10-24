@@ -1,0 +1,14 @@
+{
+  "reviewer": "r02-validator",
+  "decision": "Accept explicit assessed producer-root binding instead of current-consumer-root equality.",
+  "basis": "Relative argv must be tied to actual execution root; equivalent checkout evidence portability means producer and consumer roots may differ. Existing manifest/capture environment is digest-bound and can carry explicit producer-root provenance without changing closed capture wire shape.",
+  "requirements": [
+    "Require NIZAM_QA_EXECUTION_ROOT in QA candidate environment as lexically canonical absolute producer path.",
+    "At execution capture producer verifies reserved root equals actual canonical execution root and recorded capture cwd; explicit caller environment only, no implicit mutation.",
+    "Consumer requires capture cwd exact equality to declared assessed producer root and exact candidate/capture environment binding; do not require producer path to exist on consumer filesystem.",
+    "Consumer independently validates current repository, source tree, assessed material and index/current bytes, authorization context and stream bytes.",
+    "Regression producer-root mismatch, missing key, tampered cwd and valid portable fresh-clone consumption."
+  ],
+  "limitations": "Metadata binding does not authenticate an untrusted local producer; existing non-goal remains.",
+  "related": ".agent/evidence/r02-proof-validation/validator-early-audit.json"
+}

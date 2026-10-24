@@ -1,0 +1,172 @@
+{
+  "feature_id": "r02-proof-validation",
+  "qa_pass": false,
+  "checks_run": 1,
+  "checks_passed": 1,
+  "reviewed_revision": "53c474918579158170c947d9e082be6888bb0d91",
+  "candidate_ref": {
+    "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt2/candidate.json",
+    "sha256": "9e38af8747bd732a6b650a453e19e5ffa8ebfa1176b16c7403f374f2de48b03f"
+  },
+  "checks": [
+    {
+      "id": "workflow-assurance",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt2/r02-proof-validation-workflow-assurance-attempt2-20261024T023900Z-68885780.capture.json",
+        "sha256": "3f4212973925e1b7320f9ab0356aa9426781a4c120512ac4a67da4f0eca0082a"
+      },
+      "observed_exit": 0
+    }
+  ],
+  "adversarial": {
+    "performed": false
+  },
+  "evidence_files": [
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt2/r02-proof-validation-workflow-assurance-attempt2-20261024T023900Z-68885780.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa-attempt2/known-schema-compatibility-diagnostic.json"
+  ],
+  "issues": [
+    {
+      "criterion": "Historical contract schema compatibility/compliance",
+      "evidence": ".agent/evidence/r02-proof-validation/evaluator-qa-attempt2/known-schema-compatibility-diagnostic.json",
+      "detail": [
+        {
+          "path": [
+            "verification",
+            0,
+            "expected_exit"
+          ],
+          "message": "'0 with CONFORMANCE: FULL and an explicit selected-adapter line (docker) on the restrictive QA host; 0 with native selection on userns-capable hosts' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            1,
+            "expected_exit"
+          ],
+          "message": "'0 with CONFORMANCE: FULL; zero UNSUPPORTED lines; all five sandbox-dependent tests executed under the Docker adapter' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            2,
+            "expected_exit"
+          ],
+          "message": "'0; live listener proven reachable outside and refused inside; EACCES-only generated-exec denial; omission controls 40/41/42/53 observed' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            3,
+            "expected_exit"
+          ],
+          "message": "'1 on the restrictive QA host with exactly five UNSUPPORTED lines and CONFORMANCE: NOT FULL (documented expected outcome, not a failure); 0 with CONFORMANCE: FULL on native-capable hosts' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            4,
+            "expected_exit"
+          ],
+          "message": "'0; --print-image prints the pinned digest reference exactly' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            5,
+            "expected_exit"
+          ],
+          "message": "'0 overall (inner wrapper call exits 2 with one-line reason; no docker invocation occurs)' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            6,
+            "expected_exit"
+          ],
+          "message": "'0 overall; each simulated probe failure (daemon-unreachable; image-absent) exits 3 with a one-line reason captured in evidence; the trailing test is the final authoritative command' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            7,
+            "expected_exit"
+          ],
+          "message": "\"0; the forced-Docker run (verification 2) prints the selected adapter path and its sha256, and that digest equals the wrapper's sha256; captured bytes live durably in .agent/evidence/134/02-forced-docker.txt\" is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            8,
+            "expected_exit"
+          ],
+          "message": "\"0; the adapter-flavored suite includes live in-sandbox guards (CapEff zero, no daemon socket, fresh PID namespace, ambient marker variable absent, only the wrapper's fixed minimal environment present, host-existing ambient file unreadable inside) and no nizam-review-trial- container remains after the run; the teardown leg fails closed (non-zero) if the docker CLI itself errors\" is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            9,
+            "expected_exit"
+          ],
+          "message": "'0' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            10,
+            "expected_exit"
+          ],
+          "message": "'0' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            11,
+            "expected_exit"
+          ],
+          "message": "'0' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            12,
+            "expected_exit"
+          ],
+          "message": "'0; C11 validates this contract against schema/contract.schema.json' is not of type 'integer'"
+        },
+        {
+          "path": [
+            "verification",
+            13,
+            "expected_exit"
+          ],
+          "message": "'0' is not of type 'integer'"
+        }
+      ],
+      "required_fix": "Repair historical contract verification expected_exit compatibility without weakening typed new proof policy. Verify new immutable candidate."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "start-path on this candidate",
+    "compliance",
+    "isolation",
+    "scope",
+    "one evaluator-origin adversarial check",
+    "complete v2 proof validation",
+    "relocated clone validation"
+  ],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Repair known historical contract schema compatibility defect before remaining required commands execute."
+  ],
+  "execution_context": {
+    "fresh_checkout": "/home/cnross/.tmp/nizam-r02-proof-evaluator-qa2",
+    "private_cache": "/home/cnross/.tmp/nizam-r02-proof-evaluator-cache2",
+    "actual_command_captures": 1,
+    "orchestrator_stop": "SIGTERM after completed official workflow capture; exactly one capture/reservation confirms no remaining commands executed."
+  },
+  "final_verdict": {
+    "approved": false,
+    "summary": "Full workflow-assurance passes. Remaining QA intentionally stopped after independent schema compatibility failure was known; complete product QA is not established."
+  }
+}

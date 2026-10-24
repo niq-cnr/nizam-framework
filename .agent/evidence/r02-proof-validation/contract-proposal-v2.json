@@ -1,0 +1,169 @@
+{
+  "contract_id": "r02-proof-validation",
+  "feature_id": "r02-proof-validation",
+  "name": "F3/F4 assessed structured QA proof shared by completion and receipts",
+  "status": "proposed",
+  "spec_ref": ".agent/r02-product-spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Shared structured QA validator, typed candidate binding and both receipt prerequisite consumers."
+      },
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Direct completion consumer, begin-pinned check inventory and candidate-aware route eligibility."
+      },
+      {
+        "path": "tools/test_start_path.py",
+        "purpose": "Migrate passing QA fixtures to executed captures and direct completion adversarial coverage."
+      },
+      {
+        "path": "tools/test_workflow_assurance.py",
+        "purpose": "Migrate receipt fixtures to executed captures and identical prerequisite adversarial coverage."
+      },
+      {
+        "path": "schema/qa_verdict.schema.json",
+        "purpose": "Versioned structured QA proof interface while retaining historical readable forms."
+      },
+      {
+        "path": "schema/contract.schema.json",
+        "purpose": "Optional typed verification check fields for future governed completion."
+      },
+      {
+        "path": "schema/bugfix_scope.schema.json",
+        "purpose": "Optional typed verification inventory required by runtime for future completion."
+      },
+      {
+        "path": "schema/small_change_intent.schema.json",
+        "purpose": "Optional typed verification inventory required by runtime for future completion."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Document proof producer workflow, candidate types and legacy refusal behavior."
+      }
+    ]
+  },
+  "non_goals": [
+    "Installed .nizam edits; run_state lifecycle ownership; remote publication, merge, release or deployment.",
+    "Replacing receipt own-command checks; trusting aggregate flags or synthesizing upgraded proof from legacy metadata.",
+    "CL empty-blob repair, fifth exploit claims, cryptographic authenticity of untrusted local execution producers."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "shared",
+      "requirement": "One validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks) implementation raises AssuranceError on invalid proof and returns validated proof on success; direct completion plus route-qa and fresh-qa receipt prerequisites use it. Existing receipt command proof checks remain intact."
+    },
+    {
+      "id": "interface",
+      "requirement": "New proof_version:2 QA records carry candidate_ref={path,sha256} (optional revision for committed artifact resolver) pointing to a complete existing assessed-input identity, checks=[{id,capture:{path,sha256[,revision]}}]. Required inventory entries are {id,argv,expected_exit,proof_kind,diagnostic}; argv is a nonempty string array, expected_exit integer, proof_kind success or semantic-negative, diagnostic string or null. Inventory IDs are unique. All declared checks match the inventory exactly, without omissions, duplicates or extras. Existing favorable aggregate fields cannot override failed proof."
+    },
+    {
+      "id": "inventory",
+      "requirement": "Nonfeature scope/intent gains verification as nonempty unique typed entries {id,argv,expected_exit,proof_kind,diagnostic}; begin validates and persists canonical inventory in task-base v2 and done compares it. Feature contract verification keeps historical command/acceptance_test while new transitions require typed fields. No shell-command inference and no inventory from QA. diagnostic is null for success and a nonempty exact full-line string for semantic-negative. Legacy absent inventory/base refuses new completion with fresh-begin guidance."
+    },
+    {
+      "id": "candidate",
+      "requirement": "Resolve complete existing assessed identity from candidate_ref and validate with validate_identity/_receipt_candidate: canonical identity digest, repository, actual source commit/tree, current protected input bytes, runtime/environment, record masks. Manifest file ref sha256 binds its exact bytes; capture candidate_sha256 binds sha(canonical(identity)). Receipts require canonical equality to trusted policy candidate; direct completion resolves manifest and validates current candidate. Bare commit/digest is insufficient. Require assessed_inputs.tools to include actual loaded tools/start_path.py and tools/workflow_assurance.py, and applicable root schema files (qa_verdict plus contract and route intent schemas); compare actual loaded __file__ location to canonical repo path. Require contracts category to contain exact consumed scope/intent, task base, and approved contract if used; inspect the validated bound anchor payload as well as current record. Reject ownership masks overlapping scope/files/contract_id/verification/approval/identity binding fields or ancestors thereof; status-only lifecycle ownership remains possible where existing rules permit it. Do not accept a caller supplied but incomplete material-input list. verify_route_scope_eligibility inspects supplied candidate, invokes same binding helper, and proves exact consumed intent/contract paths and digests are among assessed inputs."
+    },
+    {
+      "id": "capture",
+      "requirement": "Resolve digest-checked capture JSON with explicit raw versus closed-published normalization; unknown shape refuses. Require exact inventory argv, assessed candidate digest, candidate runtime/environment and protected revision consistency, executed true, completion_state completed, integer observed exit, no signal/timeout, and consistent outcome/proof_kind. Raw captures must carry producer-requested proof_kind and environment bindings. Published captures retain existing closed artifact and stream checks. Read both stdout/stderr via safe regular-file refs, digest-check actual bytes including zero length; revisioned refs use immutable artifact resolver and existing live identity checks. Reject conflicting duplicate declaration fields, missing streams, altered digest/command/candidate, or a successful top-level claim contradicting any required proof. Closed-published schema has no proof_kind/completion_state: its explicit outcome success or semantic-negative is producer-kind declaration and completed execution is inferred only from existing closed executed/exit/revision checks, not fabricated missing raw fields. Raw shape requires its own explicit completion_state/proof_kind. Published semantic-negative supports exit0 wrapper only; raw captures additionally support pinned nonzero refusals."
+    },
+    {
+      "id": "negative-empty",
+      "requirement": "success requires pinned expected_exit=0, diagnostic=null, observed exit0, producer kind success and outcome success. semantic-negative requires producer kind semantic-negative, exact pinned exit and nonempty diagnostic matched as a full UTF-8 line in either stdout or stderr (splitlines; no substring, regex or cross-stream concatenation). For expected nonzero exit raw outcome must be failed; for expected zero wrapper exit outcome may be success or semantic-negative only when raw producer proof_kind explicitly requested semantic-negative (or closed-published explicit outcome semantic-negative) and pinned policy agrees. Command itself must assert child predicate; observed diagnostic alone does not upgrade an ordinary producer. Empty streams remain valid exact SHA256 bytes and need not both contain diagnostics."
+    },
+    {
+      "id": "compatibility",
+      "requirement": "Historical QA schemas remain readable without proof_version. Runtime future transitions accept only complete v2 proof or legacy records containing exactly equivalent candidate_ref, typed inventory and structured capture bindings through explicit adapter; plaintext/aggregate-only/metadata-only forms refuse with fresh-execution guidance. Do not synthesize proof. Old bare Git forms are historical display only. Replaying identical proof for same candidate/check/policy is valid; reuse across feature/inventory/candidate/authorization bindings must fail."
+    },
+    {
+      "id": "regression",
+      "requirement": "Run same accept/reject matrix for direct completion and both receipt prerequisites: failed-capture contradictions; missing per-check evidence/check inventory; wrong candidate/command/material input; stream tampering; reused proof; aggregate pass with failed check. Positive cases include real success, raw semantic-negative, successful negative wrapper, empty streams, unchanged F1/F2 behavior and valid receipt replay."
+    },
+    {
+      "id": "schema",
+      "requirement": "Executable schema tests accept historical readable and valid v2 records; reject missing v2 refs/checks, unknown nested fields, malformed digest/revision, invalid argv/boolean exits, partial typed entries, invalid success/negative policy, and runtime duplicate IDs. Tests prove omitted verifier/schema/authorization inputs and ownership-mask attempts fail, not just wrong hashes."
+    }
+  ],
+  "verification": [
+    {
+      "id": "start-path",
+      "acceptance_test": "shared,interface,inventory,candidate,capture,negative-empty,compatibility,regression,schema",
+      "command": "python tools/test_start_path.py",
+      "argv": [
+        "python",
+        "tools/test_start_path.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "workflow-assurance",
+      "acceptance_test": "shared,candidate,capture,negative-empty,compatibility,regression,schema",
+      "command": "python tools/test_workflow_assurance.py",
+      "argv": [
+        "python",
+        "tools/test_workflow_assurance.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "compliance",
+      "acceptance_test": "interface,schema",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "isolation",
+      "acceptance_test": "shared,capture",
+      "command": "python tools/test_convergent_review.py",
+      "argv": [
+        "python",
+        "tools/test_convergent_review.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "scope",
+      "acceptance_test": "Product scope",
+      "command": "python -c 'import subprocess,re; allowed={'\"'\"'schema/contract.schema.json'\"'\"', '\"'\"'schema/bugfix_scope.schema.json'\"'\"', '\"'\"'tools/workflow_assurance.py'\"'\"', '\"'\"'schema/qa_verdict.schema.json'\"'\"', '\"'\"'tools/test_start_path.py'\"'\"', '\"'\"'tools/test_workflow_assurance.py'\"'\"', '\"'\"'.agent/run_state.json'\"'\"', '\"'\"'tools/interface.md'\"'\"', '\"'\"'.agent/contracts/r02-proof-validation.json'\"'\"', '\"'\"'tools/start_path.py'\"'\"', '\"'\"'schema/small_change_intent.schema.json'\"'\"'}; base=\"FIRST_PAIR_ACCEPTED_COMMIT\"; commands=[[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\",base,\"HEAD\"],[\"git\",\"diff\",\"--cached\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"]]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{\"\"} for c in commands)); patterns=['\"'\"'\\\\.agent/(?:validator|evaluator|qa)/r02-proof-validation-[A-Za-z0-9_.-]+\\\\.json'\"'\"', '\"'\"'\\\\.agent/evidence/r02-proof-validation/[A-Za-z0-9_./-]+'\"'\"', '\"'\"'\\\\.agent/evidence/r02-(?:classify-proof-validation|preflight-proof-validation)-attempt[1-9][0-9]*\\\\.reservation\\\\.json'\"'\"']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad'",
+      "argv": [
+        "python",
+        "-c",
+        "import subprocess,re; allowed={'schema/contract.schema.json', 'schema/bugfix_scope.schema.json', 'tools/workflow_assurance.py', 'schema/qa_verdict.schema.json', 'tools/test_start_path.py', 'tools/test_workflow_assurance.py', '.agent/run_state.json', 'tools/interface.md', '.agent/contracts/r02-proof-validation.json', 'tools/start_path.py', 'schema/small_change_intent.schema.json'}; base=\"FIRST_PAIR_ACCEPTED_COMMIT\"; commands=[[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\",base,\"HEAD\"],[\"git\",\"diff\",\"--cached\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"diff\",\"--name-only\",\"--no-renames\",\"-z\"],[\"git\",\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"]]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{\"\"} for c in commands)); patterns=['\\\\.agent/(?:validator|evaluator|qa)/r02-proof-validation-[A-Za-z0-9_.-]+\\\\.json', '\\\\.agent/evidence/r02-proof-validation/[A-Za-z0-9_./-]+', '\\\\.agent/evidence/r02-(?:classify-proof-validation|preflight-proof-validation)-attempt[1-9][0-9]*\\\\.reservation\\\\.json']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 1000,
+  "evidence_dir": ".agent/evidence/r02-proof-validation",
+  "evidence_convention": "Exclusive role/check/attempt captures with raw stdout/stderr; retain all failed attempts.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 1
+  },
+  "authority_note": "Fresh proposed design; no prior F1/F2 approval is imported. Requires independent pre-code reviews before implementation.",
+  "schema_policy": {
+    "qa_v2": "proof_version integer const2 activates required candidate_ref and nonempty checks. candidate_ref and capture refs closed {path,sha256,revision?}, lowercase hex lengths64/40, canonical safe repo-relative path enforced runtime; checks closed {id,capture}, nonempty ids. Existing top-level verdict/binding fields retained and validated, contradictions refuse.",
+    "verification_entries": "Inline same closed typed field definitions in bugfix_scope/small_change_intent verification; contract verification extends existing acceptance_test/command objects with id,argv,expected_exit,proof_kind,diagnostic and conditional all-or-none typed shape. Runtime new transitions require all typed fields and unique IDs. bool is never integer; argv nonempty strings without NUL. success expected0 diagnostic null; negative diagnostic nonempty.",
+    "runtime_errors": "validate_qa_proof raises AssuranceError; start_path converts to StartPathError with actionable structured-proof/fresh-capture refusal. Existing historical schema consumers continue to parse old records."
+  },
+  "implementation_gate": "FIRST_PAIR_ACCEPTED_COMMIT token must be replaced by exact accepted F1/F2 commit and scope guard then re-reviewed before approval; no implementation until both fresh independent reviews approve identical proposal digest. All verification runs set GIT_CONFIG_GLOBAL=/dev/null and PYTHONDONTWRITEBYTECODE=1 in assessed environment. Product edits wait for first-pair completion and root authorization."
+}

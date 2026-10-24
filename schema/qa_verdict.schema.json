@@ -15,7 +15,10 @@
         "verdict": {
           "type": "string",
           "description": "The overall QA outcome for this feature.",
-          "enum": ["pass", "fail"]
+          "enum": [
+            "pass",
+            "fail"
+          ]
         },
         "executed_at": {
           "type": "string",
@@ -27,14 +30,22 @@
           "items": {
             "type": "object",
             "properties": {
-              "command": { "type": "string" },
-              "exit_code": { "type": "integer" },
+              "command": {
+                "type": "string"
+              },
+              "exit_code": {
+                "type": "integer"
+              },
               "evidence": {
                 "type": "string",
                 "description": "Path to the externalised evidence file capturing this check's terminal output."
               }
             },
-            "required": ["command", "exit_code", "evidence"],
+            "required": [
+              "command",
+              "exit_code",
+              "evidence"
+            ],
             "additionalProperties": true
           },
           "minItems": 1
@@ -43,24 +54,42 @@
           "type": "object",
           "description": "The evaluator's own additional adversarial spot-check, beyond the contract's listed verification commands.",
           "properties": {
-            "description": { "type": "string" },
-            "result": { "type": "string" },
-            "evidence": { "type": "string" }
+            "description": {
+              "type": "string"
+            },
+            "result": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "string"
+            }
           },
-          "required": ["description", "result", "evidence"],
+          "required": [
+            "description",
+            "result",
+            "evidence"
+          ],
           "additionalProperties": true
         },
         "required_fixes": {
           "type": "array",
           "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "dod_ref": {
           "type": "string",
           "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
         }
       },
-      "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
+      "required": [
+        "feature_id",
+        "verdict",
+        "executed_at",
+        "checks",
+        "required_fixes"
+      ],
       "additionalProperties": true
     },
     {
@@ -92,13 +121,17 @@
               "description": "Whether the adversarial spot-check was actually performed."
             }
           },
-          "required": ["performed"],
+          "required": [
+            "performed"
+          ],
           "additionalProperties": true
         },
         "evidence_files": {
           "type": "array",
           "description": "Paths to the externalised evidence files capturing each check's terminal output.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "issues": {
           "type": "array",
@@ -129,7 +162,10 @@
               "description": "Human-readable summary of the QA round's findings and disposition."
             }
           },
-          "required": ["approved", "summary"],
+          "required": [
+            "approved",
+            "summary"
+          ],
           "additionalProperties": true
         },
         "dod_ref": {
@@ -151,6 +187,90 @@
         "final_verdict"
       ],
       "additionalProperties": true
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "proof_version"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "proof_version": {
+            "type": "integer",
+            "const": 2
+          },
+          "candidate_ref": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "revision": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "checks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "capture": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "revision": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{40}$"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "id",
+                "capture"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "candidate_ref",
+          "checks"
+        ]
+      }
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "review": "contract-testability-portable-cwd-amendment",
+  "feature": "r02-proof-validation",
+  "contract_id": "r02-proof-validation",
+  "contract_sha256": "83748cdf7e8013803813a23d6d71bcc5c8e6d0024173f41541dec0d855bbf27c",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "criterion": "Pinned original execution root",
+      "result": "Candidate environment binds canonical original producer root; producer checks actual resolved root before execution. Shared consumer requires capture.cwd exact pinned equality and environment equality, closing arbitrary nonempty cwd acceptance."
+    },
+    {
+      "criterion": "Portable replay",
+      "result": "Current consumer clone must independently satisfy source/repository/material/index/context bindings; original execution root need not exist on consumer. Explicit original environment prevents silent validator environment mutation and preserves reviewed identity semantics."
+    },
+    {
+      "criterion": "Coverage",
+      "result": "New acceptance includes producer mismatch before execution, missing root and tampered capture cwd refusals plus actual equivalent-clone positive transfer. Prior acceptance requirements, product source scope and non-goals are preserved."
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Bounded original execution-root binding closes cwd gap while retaining reproducible equivalent-checkout validation. Explicit negative cases and real clone replay provide adequate discriminatory coverage."
+  }
+}

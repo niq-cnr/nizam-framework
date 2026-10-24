@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python",
+    "-c",
+    "import json,jsonschema; from pathlib import Path; schema=json.loads(Path(\"schema/contract.schema.json\").read_text()); value=json.loads(Path(\".agent/contracts/134.json\").read_text()); jsonschema.Draft202012Validator(schema).validate(value)"
+  ],
+  "exit_code": 1,
+  "duration_ms": 104
+}

@@ -1,0 +1,31 @@
+{
+  "reviewer": "r02-validator",
+  "status": "early-read-only-audit-not-final-gate",
+  "observations": [
+    {
+      "id": "ADVERSARIAL-SPLIT",
+      "source": "tools/workflow_assurance.py:validate_qa_proof and fresh-qa branch",
+      "finding": "Shared proof checks aggregate/check proof but not adversarial.performed; fresh-qa retains separate performed true rule. Direct/route path can accept performed false, recreating differing passing-QA interpretations."
+    },
+    {
+      "id": "CONSUMED-SCHEMA-LAYOUT",
+      "source": "tools/workflow_assurance.py:_receipt_schema and validate_qa_context",
+      "finding": "Context binds same active source/installed schemas, while _receipt_schema prioritizes root schema/ even under installed active modules. Ensure manifest covers actual consumed schema, and align start_path load_record loader."
+    },
+    {
+      "id": "RAW-SHAPE",
+      "source": "tools/workflow_assurance.py:validate_qa_proof raw branch",
+      "finding": "Any object with completion_state or proof_kind is raw; branch does not validate complete known producer shape, unknown fields or contradictory binding flags. Contract requires explicit supported normalization and contradictory malformed refusal."
+    },
+    {
+      "id": "CAPTURE-CWD",
+      "source": "tools/workflow_assurance.py:validate_qa_proof recorded cwd check",
+      "finding": "Only nonempty cwd is checked although argv commonly references relative repository paths. A different cwd could execute other files. Require exact assessed root for new proof or an explicitly reviewed relocation scheme."
+    }
+  ],
+  "confirmed_present": [
+    "Selected current index/worktree/execution-anchor digests and modes are compared independently by _qa_selected_inputs.",
+    "Route receipt candidate eligibility invokes F1/F2 actual scope/preservation verification without candidate recursion.",
+    "Authorization context includes exact immutable task-base/intent/cause/contract whole byte identities and reserved environment context."
+  ]
+}

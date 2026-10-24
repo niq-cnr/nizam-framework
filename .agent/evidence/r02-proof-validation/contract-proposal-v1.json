@@ -1,0 +1,108 @@
+{
+  "contract_id": "r02-proof-validation",
+  "feature_id": "r02-proof-validation",
+  "name": "F3/F4 assessed structured QA proof shared by completion and receipts",
+  "status": "proposed",
+  "spec_ref": ".agent/r02-product-spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Shared structured QA validator, typed candidate binding and both receipt prerequisite consumers."
+      },
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Direct completion consumer, begin-pinned check inventory and candidate-aware route eligibility."
+      },
+      {
+        "path": "tools/test_start_path.py",
+        "purpose": "Migrate passing QA fixtures to executed captures and direct completion adversarial coverage."
+      },
+      {
+        "path": "tools/test_workflow_assurance.py",
+        "purpose": "Migrate receipt fixtures to executed captures and identical prerequisite adversarial coverage."
+      },
+      {
+        "path": "schema/qa_verdict.schema.json",
+        "purpose": "Versioned structured QA proof interface while retaining historical readable forms."
+      },
+      {
+        "path": "schema/contract.schema.json",
+        "purpose": "Optional typed verification check fields for future governed completion."
+      },
+      {
+        "path": "schema/bugfix_scope.schema.json",
+        "purpose": "Optional typed verification inventory required by runtime for future completion."
+      },
+      {
+        "path": "schema/small_change_intent.schema.json",
+        "purpose": "Optional typed verification inventory required by runtime for future completion."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Document proof producer workflow, candidate types and legacy refusal behavior."
+      }
+    ]
+  },
+  "non_goals": [
+    "Installed .nizam edits; run_state lifecycle ownership; remote publication, merge, release or deployment.",
+    "Replacing receipt own-command checks; trusting aggregate flags or synthesizing upgraded proof from legacy metadata.",
+    "CL empty-blob repair, fifth exploit claims, cryptographic authenticity of untrusted local execution producers."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "shared",
+      "requirement": "One validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks) implementation raises AssuranceError on invalid proof and returns validated proof on success; direct completion plus route-qa and fresh-qa receipt prerequisites use it. Existing receipt command proof checks remain intact."
+    },
+    {
+      "id": "interface",
+      "requirement": "New proof_version:2 QA records carry candidate_ref={path,sha256} (optional revision for committed artifact resolver) pointing to a complete existing assessed-input identity, checks=[{id,capture:{path,sha256[,revision]}}]. Required inventory entries are {id,argv,expected_exit,proof_kind,diagnostic}; argv is a nonempty string array, expected_exit integer, proof_kind success or semantic-negative, diagnostic string or null. Inventory IDs are unique. All declared checks match the inventory exactly, without omissions, duplicates or extras. Existing favorable aggregate fields cannot override failed proof."
+    },
+    {
+      "id": "inventory",
+      "requirement": "For nonfeature tasks verification inventory lives in scope/intent and is canonicalized and bound in begin task base; absent/altered inventory refuses new completion. Feature required checks come from approved candidate-bound contract verification, with explicit typed fields; historical shell command may normalize to argv only when unambiguous and identical. No invented inventory from QA itself. Legacy bases/inventories lacking needed proof require fresh begin/capture."
+    },
+    {
+      "id": "candidate",
+      "requirement": "Resolve and validate manifest identity using existing validate_identity/_receipt_candidate, including canonical digest, exact repository/source tree/material inputs/environment/ownership. Candidate_ref digest is a file byte digest; capture candidate_sha256 remains existing sha(canonical(candidate)) binding. Reject unresolved/bare 40-hex commit and arbitrary 64-hex digest as sufficient new completion proof. Enforce expected candidate equality in receipts; direct completion loads candidate manifest and validates current assessed inputs. Candidate includes authorization inventory and verifier material inputs. Route eligibility must inspect supplied candidate and prove intent/contract scope matches bound assessed input."
+    },
+    {
+      "id": "capture",
+      "requirement": "Resolve every structured capture by digest and parse it, normalize existing raw captures and closed published receipt captures, compare exact argv/candidate/environment/revision/executed/completion/outcome/exit against independent inventory. Validate actual stdout/stderr references and bytes. Raw live refs are checked at current path and SHA256; revisioned refs use existing committed artifact checks plus live identity where required. Missing, malformed, tampered, stale or contradictory proof refuses."
+    },
+    {
+      "id": "negative-empty",
+      "requirement": "success requires expected_exit=0 and observed successful outcome. semantic-negative may match pinned nonzero exit plus required diagnostic line with raw outcome failed, or an exit-zero semantic-negative evaluator wrapper asserting its child predicate; never reinterpret an ordinary failed capture as success. Zero-byte stdout/stderr is valid when referenced digest matches. Negative expected outcome/diagnostic must both match."
+    },
+    {
+      "id": "compatibility",
+      "requirement": "Historical QA formats remain schema-readable. They can support a future transition only if all required structured proof, independent inventory and manifest bindings validate equivalently; metadata-only/plaintext/aggregate-only forms refuse with fresh-execution guidance. Non-Git historical display/local records remain readable but cannot claim assessed governed completion."
+    },
+    {
+      "id": "regression",
+      "requirement": "Run same accept/reject matrix for direct completion and both receipt prerequisites: failed-capture contradictions; missing per-check evidence/check inventory; wrong candidate/command/material input; stream tampering; reused proof; aggregate pass with failed check. Positive cases include real success, raw semantic-negative, successful negative wrapper, empty streams, unchanged F1/F2 behavior and valid receipt replay."
+    }
+  ],
+  "verification": [
+    {
+      "acceptance_test": "shared,interface,inventory,candidate,capture,negative-empty,compatibility,regression",
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_start_path.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "shared,candidate,capture,negative-empty,compatibility,regression",
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_workflow_assurance.py",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 1000,
+  "evidence_dir": ".agent/evidence/r02-proof-validation",
+  "evidence_convention": "Exclusive role/check/attempt captures with raw stdout/stderr; retain all failed attempts.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 0
+  },
+  "authority_note": "Fresh proposed design; no prior F1/F2 approval is imported. Requires independent pre-code reviews before implementation."
+}
