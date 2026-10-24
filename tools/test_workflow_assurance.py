@@ -847,7 +847,19 @@ def receipt_plan(api, f, state=None, receipt='fixture-default'):
 
 def receipt_operator(api, f, parent):
     api = f.api
-    receipt_verify(api, f); receipt_verify(api, ReceiptFixture(api, parent, alternate=True))
+    receipt_verify(api, f)
+    reserved = (api.QA_CONTEXT_VARIABLE, api.QA_EXECUTION_ROOT_VARIABLE)
+    original_environment = {key: os.environ.get(key) for key in reserved}
+    try:
+        receipt_verify(api, ReceiptFixture(api, parent, alternate=True))
+    finally:
+        for key, value in original_environment.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+    require(all(os.environ.get(key) == value for key, value in f.candidate['environment']['variables'].items()),
+        'alternate receipt fixture restores primary assessed environment')
     receipt_artifact_integrity(api, f)
     original = copy.deepcopy(f.policy)
     for value in (None, {}, {'path': '../escape', 'sha256': '0' * 64, 'revision': f.candidate_revision}):
