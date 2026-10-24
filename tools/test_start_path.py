@@ -207,8 +207,8 @@ def test_r5_classification_and_amendments(root: Path) -> None:
     expect(res_trivial, 0, '"route": "trivial"')
     parsed_trivial = json.loads(res_trivial.stdout)
     assert parsed_trivial["stopping_conditions"]["initial_strategy_ladder_attempts"] == 3
-    assert parsed_trivial["stopping_conditions"]["hard_attempt_cap"] is None
-    assert parsed_trivial["stopping_conditions"]["attempt_counter_role"] == "telemetry"
+    assert parsed_trivial["stopping_conditions"]["hard_attempt_cap"] == 6
+    assert "finite task-wide" in parsed_trivial["stopping_conditions"]["attempt_counter_role"]
     assert parsed_trivial["stopping_conditions"]["comparator_subordinate"] is True
 
     # 2. Bugfix route classification
@@ -689,7 +689,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('forbidden')",
     )
-    expect(res_cap_4, 2, "attempt must be between 1 and 3")
+    expect(res_cap_4, 2, "finite configured step limit")
 
     # C3 positive and negative stopping/continuation checks
     res_cap_4_decomp = run_raw(
@@ -715,12 +715,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('attempt-4-decomposed-ok')",
     )
-    expect(res_cap_4_decomp, 0, '"continuation_basis": "verified-decomposition"')
-    cap_4_doc = json.loads(res_cap_4_decomp.stdout)
-    assert cap_4_doc["continuation_lineage"]["attempt"] == 4
-    assert cap_4_doc["continuation_lineage"]["parent_attempt"] == 3
-    assert cap_4_doc["continuation_lineage"]["decomposition_of"] == "verify-part-a"
-    assert len(cap_4_doc["continuation_lineage"]["prior_attempts"]) >= 3
+    expect(res_cap_4_decomp, 2, "real distinct failed parent")
 
     # C3 positive: 4th attempt permitted by recorded contract amendment (amendments list in .agent/contracts/c1.json)
     res_cap_4_amend = run_raw(
@@ -742,8 +737,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('attempt-4-amended-ok')",
     )
-    expect(res_cap_4_amend, 0, '"continuation_basis": "bounded-amendment"')
-    assert json.loads(res_cap_4_amend.stdout)["continuation_lineage"]["contract_amendment_present"] is True
+    expect(res_cap_4_amend, 2, "finite configured step limit")
 
     # C3 negative: invariant breach halts immediately
     res_cap_inv = run_raw(
@@ -767,7 +761,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
     expect(res_cap_inv, 2, "stopping policy halt: invariant or authority boundary breached")
 
     # C3 negative: repeated identical unresolved defect signature across consecutive attempts without repair/amendment/decomposition halts
-    for att_idx in (1, 2):
+    for att_idx in (1, 2, 3):
         rc_rep = run_raw(
             "capture",
             "--id",
@@ -798,7 +792,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "--step",
         "check",
         "--attempt",
-        "3",
+        "4",
         "--defect-signature",
         "sig-identical-01",
         "--output-dir",
@@ -810,7 +804,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('should-halt')",
     )
-    expect(res_rep_halt, 2, "stopping policy halt: repeated identical unresolved defect signature")
+    expect(res_rep_halt, 2, "three failures of the same task-wide defect signature")
 
     # C3 negative: exceeding configured step limit in .agent/run_state.json halts
     write(
@@ -846,7 +840,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         "-c",
         "print('exceeds-limit')",
     )
-    expect(res_lim_halt, 2, "exceeds configured step limit (2)")
+    expect(res_lim_halt, 2, "finite configured step limit (2)")
     (root / ".agent/run_state.json").unlink()
 
     # 3. Full producer-to-consumer chain on ReceiptFixture: capture -> publish -> build-receipt -> verify-receipt -> resume (F2 + A2 + C1)
@@ -1759,7 +1753,7 @@ def test_jev_readiness_authority() -> None:
             "--output-dir", out, "--root", str(root), "--",
             sys.executable, "-c", "print('op')",
         )
-        expect(res_op, 2, "requires recorded operator authorization")
+        expect(res_op, 2, "finite configured step limit")
 
         res_am = run_raw(
             "capture", "--id", "am", "--step", "verify", "--attempt", "4",
@@ -1768,7 +1762,7 @@ def test_jev_readiness_authority() -> None:
             "--output-dir", out, "--root", str(root), "--",
             sys.executable, "-c", "print('am')",
         )
-        expect(res_am, 2, "requires a recorded contract amendment")
+        expect(res_am, 2, "finite configured step limit")
 
         res_dc = run_raw(
             "capture", "--id", "dc", "--step", "verify", "--attempt", "4",
@@ -2042,6 +2036,122 @@ def test_r02_context_and_material() -> None:
         os.environ.clear();os.environ.update(old_env)
 
 
+def test_r02_loop_prevention() -> None:
+    """Bounded retries cannot reset failure history or rerun identical assessed QA."""
+    failures = []
+    with tempfile.TemporaryDirectory(prefix='r02-loop-budget-') as tmp:
+        root = Path(tmp); evidence = root / '.agent/evidence'; evidence.mkdir(parents=True)
+        cmd = [sys.executable, '-c', 'raise SystemExit(7)']
+        def capture(step, attempt=1, *extra):
+            return run_raw('capture', '--id', 'loop', '--step', step, '--attempt', str(attempt),
+                '--repair-summary', 'new narrative each time', '--output-dir', str(evidence / step),
+                '--root', str(root), *extra, '--', *cmd)
+        for step in ('one', 'two', 'three'):
+            result = capture(step, 1, '--defect-signature', 'same-defect')
+            expect(result, 1, '"outcome": "failed"')
+        write(root, '.agent/contracts/loop.json', {**contract('approved', ['README.md']), 'amendments': ['old amendment']})
+        result = capture('four', 1, '--defect-signature', 'same-defect', '--decomposition-of', 'one')
+        if result.returncode != 2: failures.append('taskwide signature bypass')
+        # Only exact task-scoped finite operator recovery can reopen the budget.
+        previous = sorted(evidence.rglob('*.capture.json'))[-1].relative_to(root).as_posix()
+        recovery = {'task_id': 'loop', 'approved': True, 'max_task_attempts': 4,
+                    'after_capture': previous, 'authority_ref': '.agent/evidence/operator.json'}
+        write(root, '.agent/evidence/operator.json', {'role': 'operator', **recovery})
+        write(root, '.agent/run_state.json', {'circuit_breaker': {'loop': {'operator_recovery': recovery}}})
+        if result.returncode == 2:
+            expect(capture('recovery', 1, '--defect-signature', 'same-defect'), 1, '"outcome": "failed"')
+            expect(capture('expired', 1, '--defect-signature', 'same-defect'), 2, 'finite')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-rotating-') as tmp:
+        root = Path(tmp)
+        for index in range(6):
+            result = run_raw('capture', '--id', 'rotating', '--step', 'step' + str(index), '--attempt', '1', '--defect-signature', 'different' + str(index), '--output-dir', str(root / '.agent/evidence' / str(index)), '--root', str(root), '--', sys.executable, '-c', 'raise SystemExit(7)')
+            expect(result, 1, '"outcome": "failed"')
+        result = run_raw('capture', '--id', 'rotating', '--step', 'seventh', '--attempt', '1', '--output-dir', str(root / '.agent/evidence/seventh'), '--root', str(root), '--', sys.executable, '-c', 'pass')
+        if result.returncode != 2 or 'budget' not in result.stderr: failures.append('rotating-signature ceiling bypass')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-cap-') as tmp:
+        root = Path(tmp)
+        write(root, '.agent/run_state.json', {'circuit_breaker': {'finite': {'limit': 1}}})
+        write(root, '.agent/contracts/finite.json', {**contract('approved', ['README.md']), 'amendments': ['old']})
+        result = run_raw('capture', '--id', 'finite', '--step', 'check', '--attempt', '2', '--continuation-basis', 'bounded-amendment', '--output-dir', str(root / '.agent/evidence'), '--root', str(root), '--', sys.executable, '-c', 'pass')
+        expect(result, 2, 'finite configured step limit')
+        write(root, '.agent/run_state.json', {'circuit_breaker': {'finite': {'operator_recovery': {'task_id': 'finite', 'approved': True, 'max_task_attempts': True, 'after_capture': 'missing', 'authority_ref': 'missing'}}}})
+        result = run_raw('capture', '--id', 'finite', '--step', 'other', '--attempt', '1', '--output-dir', str(root / '.agent/evidence'), '--root', str(root), '--', sys.executable, '-c', 'pass')
+        expect(result, 2, 'finite task operator recovery')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-corrupt-') as tmp:
+        root = Path(tmp); (root / '.agent/evidence').mkdir(parents=True)
+        (root / '.agent/evidence/corrupt-check-attempt1-bad.capture.json').write_text('{')
+        result = run_raw('capture', '--id', 'corrupt', '--step', 'other', '--attempt', '1', '--output-dir', str(root / '.agent/evidence'), '--root', str(root), '--', sys.executable, '-c', 'pass')
+        expect(result, 2, 'corrupt task capture history')
+    for parent in ('nonexistent', 'self'):
+        with tempfile.TemporaryDirectory(prefix='r02-loop-parent-') as tmp:
+            root = Path(tmp)
+            result = run_raw('capture', '--id', 'parent', '--step', 'self', '--attempt', '4',
+                '--decomposition-of', parent, '--output-dir', str(root / '.agent/evidence'), '--root', str(root), '--', sys.executable, '-c', 'pass')
+            if result.returncode != 2: failures.append(parent + ' decomposition accepted')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-amend-') as tmp:
+        root = Path(tmp); write(root, '.agent/contracts/c1.json', contract('approved', ['README.md']))
+        amendment = root / 'amendment.json'
+        write(root, 'amendment.json', {'contract_id': 'c1', 'summary': 'metadata-only retry credit', 'invariants_preserved': True})
+        result = run_raw('amend-contract', '--contract', 'c1', '--amendment', str(amendment), '--root', str(root))
+        if result.returncode != 1: failures.append('no-op amendment accepted')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-proof-') as tmp:
+        root = Path(tmp); task = 'proof'
+        write(root, '.agent/evidence/proof-intent.json', {'id': task, 'path': 'trivial', 'summary': 'bounded proof', 'needs_new_contract': False, 'files': ['README.md']})
+        (root / 'README.md').write_text('task\n')
+        expect(run(root, 'begin', 'trivial', '--id', task), 0, 'implementation may begin')
+        qa = record_proof(root, task)
+        manifest = root / qa['candidate_ref']['path']
+        args = ['capture', '--id', task, '--step', 'duplicate', '--attempt', '2', '--candidate', str(manifest),
+                '--output-dir', str(root / '.agent/evidence/proof'), '--root', str(root), '--', *CHECK['argv']]
+        result = subprocess.run([sys.executable, str(root / "tools/start_path.py"), *args], text=True, capture_output=True)
+        if result.returncode != 2 or 'reuse' not in result.stderr: failures.append('identical successful proof rerun accepted')
+        (root / '.r02-source.txt').write_text('stale material input\n')
+        args[args.index('duplicate')] = 'stale'
+        result = subprocess.run([sys.executable, str(root / "tools/start_path.py"), *args], text=True, capture_output=True)
+        if result.returncode != 2 or 'before execution' not in result.stderr: failures.append('stale assessed input dispatched')
+    with tempfile.TemporaryDirectory(prefix='r02-loop-negative-') as tmp:
+        root = Path(tmp); task = 'negative'
+        check = dict(CHECK, id='refusal', argv=[sys.executable, '-c', "print('EXPECTED_REFUSAL');raise SystemExit(7)"], expected_exit=7, proof_kind='semantic-negative', diagnostic='EXPECTED_REFUSAL')
+        write(root, '.agent/evidence/negative-intent.json', {'id': task, 'path': 'small-change', 'summary': 'pinned negative proof', 'needs_new_contract': False, 'files': ['README.md', '.r02-source.txt'], 'verification': [check]})
+        (root / 'README.md').write_text('task\n')
+        expect(run(root, 'begin', 'small-change', '--id', task), 0, 'implementation may begin')
+        qa = record_proof(root, task)
+        # Existing independently pinned negative proof is success for reuse too.
+        args = ['capture', '--id', task, '--step', 'repeat', '--attempt', '2', '--proof-kind', 'semantic-negative', '--candidate', str(root / qa['candidate_ref']['path']), '--output-dir', str(root / '.agent/evidence/negative'), '--root', str(root), '--', *check['argv']]
+        result = subprocess.run([sys.executable, str(root / 'tools/start_path.py'), *args], text=True, capture_output=True)
+        expect(result, 2, 'reuse')
+        # Dispatch a distinct diagnostic under the same assessed candidate: it is
+        # permitted, but an unpinned semantic-negative label grants no success.
+        args[args.index('repeat')] = 'diagnostic'
+        args[args.index('--') + 1:] = [sys.executable, '-c', "print('UNPINNED');raise SystemExit(7)"]
+        result = subprocess.run([sys.executable, str(root / 'tools/start_path.py'), *args], text=True, capture_output=True)
+        expect(result, 1, '"outcome": "failed"')
+        captured = json.loads(result.stdout)
+        assert 'qa_expected_predicate' not in captured['continuation_lineage']
+        (root / '.r02-source.txt').write_text('next assessed candidate\n')
+        _git(root, 'add', '.r02-source.txt'); _git(root, 'commit', '-qm', 'new bounded candidate')
+        spec = importlib.util.spec_from_file_location('loop_negative_wa', root / 'tools/workflow_assurance.py')
+        wa = importlib.util.module_from_spec(spec); spec.loader.exec_module(wa)
+        old_candidate = json.loads((root / qa['candidate_ref']['path']).read_text())
+        inputs = {key: [entry['path'] for entry in entries] for key, entries in old_candidate['assessed_inputs'].items()}
+        inputs['unknown_dependencies'] = []
+        next_candidate = wa.assess_route_candidate(root, task, subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip(), inputs, list(old_candidate['environment']['variables']))
+        manifest = root / '.agent/evidence/negative/next-candidate.json'; manifest.write_bytes(wa.canonical(next_candidate))
+        args[args.index('diagnostic')] = 'qualified'
+        args[args.index('--candidate') + 1] = str(manifest)
+        args[args.index('--attempt') + 1] = '1'
+        args[args.index('--') + 1:] = check['argv']
+        result = subprocess.run([sys.executable, str(root / 'tools/start_path.py'), *args], text=True, capture_output=True)
+        expect(result, 1, '"outcome": "failed"')
+        qualified = json.loads(result.stdout)
+        assert qualified['continuation_lineage']['qa_expected_predicate']['check'] == check
+        args[args.index('--attempt') + 1] = '2'
+        result = subprocess.run([sys.executable, str(root / 'tools/start_path.py'), *args], text=True, capture_output=True)
+        expect(result, 2, 'reuse')
+    assert not failures, '\n'.join(failures)
+    print('PASS r02 finite taskwide loop prevention, decomposition, no-op and proof reuse controls')
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="nizam-start-path-") as name:
         root = Path(name)
@@ -2128,6 +2238,7 @@ def main() -> int:
     test_r02_completion()
     test_r02_structured_proof()
     test_r02_context_and_material()
+    test_r02_loop_prevention()
     test_jev_readiness_controls()
     test_jev_readiness_attempts()
     test_jev_readiness_authority()

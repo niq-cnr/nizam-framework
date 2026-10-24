@@ -1,0 +1,11 @@
+{
+  "reviewer": "r02-validator",
+  "sufficient": true,
+  "decision": "Add default finite task-wide ceiling of six failed captures across step names and signatures, independent of three repeated identical failures.",
+  "requirements": [
+    "Successful checks do not erase failed history; changing signatures or findings do not reset finite task budget.",
+    "Explicit task recovery must contain finite numeric ceiling, not truthy narrative/amendment authority.",
+    "Distinct successful QA entries do not consume failure budget. A semantic-negative raw nonzero capture may prove a successful pinned expected refusal; avoid treating validated negative success as ordinary repair failure."
+  ],
+  "scope": "Existing brief task-wide execution budget only; no new subsystem or nested contract process."
+}

@@ -41,7 +41,7 @@ posture or bounded task decomposition when safety, security, and isolation
 invariants hold; hard stops (`BLOCKED`) apply when invariants or authority
 boundaries are violated, when a specification contradiction requires human
 resolution, or when a third attempt fails on the same unresolved defect
-signature without a viable bounded decomposition.
+signature, or when six failed captures accumulate across the task.
 
 ## 2. Scope: Every Repeatable Loop, No Exceptions
 
@@ -56,7 +56,7 @@ retried after a failure, including but not limited to:
 - Comparator critic loops (`standard/acceptance_bars.md` Section 3) — any
   comparator or taste loop is subordinate to this circuit-breaker policy; if a
   blind win is not achieved within the three-attempt strategy ladder on the same
-  unresolved defect signature and no bounded decomposition applies, the run
+  unresolved defect signature or the finite task failure budget is exhausted, the run
   halts and escalates.
 - Any subagent retry a pipeline performs after a malformed or empty subagent
   response.
@@ -75,16 +75,40 @@ attempt number below prescribes a materially different investigative posture:
 | **1** | **Direct fix.** Read the exact error output. Fix the specific line or command it identifies. Assume the defect is local and mechanical. |
 | **2** | **Type/interface analysis.** If the direct fix did not resolve the failure, step back and check for a structural mismatch — a type signature, an interface contract, a schema shape, or an assumption about another component's output that does not actually hold. |
 | **3** | **Architectural review or bounded decomposition.** If the failure persists after a structural fix attempt, question the approach itself or decompose the work into smaller independently verifiable units within the approved invariants. |
-| **4+ (same defect signature)** | **HALT AND ESCALATE.** Repeating a fourth attempt against the same unresolved defect signature without a bounded decomposition or human direction is forbidden. See Section 4. |
+| **4+ (same defect signature)** | **HALT AND ESCALATE.** After three failures with one task-wide signature, further execution requires explicit finite task-scoped operator recovery. See Section 4. |
 
 Skipping a strategy tier (for example, attempting an architectural rewrite on
 attempt 1 without first trying the direct fix) is itself a protocol violation —
 the escalating order exists so that cheap, likely fixes are exhausted before
-expensive, uncertain ones are attempted. Conversely, raw attempt counters or
-line-count growth alone are diagnostic telemetry signals — they do not force an
-artificial operator-approval pause when safety, security, and isolation
-invariants hold and the step is advancing through a bounded mechanical
-amendment (`tools/start_path.py amend-contract`) or verified decomposition.
+expensive, uncertain ones are attempted. Capture enforces a default ceiling of
+six failed executions per task across every step and output directory, plus a
+three-failure ceiling for any one signature. Successes do not erase failures.
+Narrative repair summaries, existing amendments and decomposition labels grant
+no budget. A decomposition must name a real, distinct failed parent capture or
+its recorded step. Configured positive integer step limits remain finite.
+A raw nonzero negative capture qualifies as successful QA only when its actual
+exit and exact diagnostic satisfy the independently assessed inventory. The
+producer records that check in existing continuation lineage; matching older
+proof is recognized against the currently validated candidate. Merely
+requesting `semantic-negative` never grants retry credit.
+
+#### Explicit finite operator recovery
+
+Only `circuit_breaker[task_id].operator_recovery` can reopen the task budget. It
+is a closed object with `task_id`, `approved: true`, positive integer
+`max_task_attempts` (the total failed-execution ceiling), `after_capture` (a
+recorded failed capture path for this task), and `authority_ref` (a safe relative
+JSON path). The authority file must equal that object plus `role: "operator"`.
+Boolean limits, truthy authorization flags and unrelated task records do not
+qualify. Configured step limits still apply. Recovery preserves all history;
+it cannot permit failures beyond its recorded finite ceiling. Root remains
+responsible for recording real operator authority, never fabricating consent.
+
+Capture scans all regular task captures below `.agent/evidence/`, including
+other output directories and step names, and refuses corrupt matching history.
+Explicit defect signatures span steps; automatic signatures include exact argv,
+observed outcome/exit/signal and stdout/stderr byte digests so unrelated empty
+stderr failures do not collapse into one defect.
 
 ### 3.1 Attempt isolation
 
@@ -154,8 +178,8 @@ additional cause-specific allowance.
 The circuit breaker trips — requiring an immediate hard stop and human
 escalation — when any of the following holds:
 
-- A step's third attempt (per Section 3's table) fails on the same unresolved
-  defect signature without a viable bounded decomposition;
+- Three task captures fail with one signature, or six task captures fail across
+  changing steps/signatures, without explicit finite operator recovery;
 - A safety, security, isolation, or authority invariant is violated; or
 - A specification contradiction or external authority requirement cannot be
   resolved within the approved contract boundaries.
@@ -208,7 +232,7 @@ it is about to make. It MUST increment the relevant counter idempotently after
 each attempt concludes (success or failure). If reconciliation cannot prove the
 derived entry corresponds to the canonical step, the pipeline halts and rebuilds
 it before another attempt. An agent that begins a fourth attempt on the same
-unresolved defect signature without a bounded decomposition or human direction
+unresolved defect signature without explicit finite task operator recovery
 has violated Section 4 regardless of its outcome.
 
 ## 6. Escalation Protocol
