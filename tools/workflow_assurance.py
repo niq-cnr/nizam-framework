@@ -1178,7 +1178,78 @@ def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
         raise AssuranceError('structured QA proof invalid; capture afresh: ' + str(exc)) from exc
 
 
-def _receipt_prerequisites(root, policy, minimum):
+def _receipt_transition_event(receipt, policy):
+    digest = sha(canonical(receipt))
+    operation = policy['operation_id']
+    return {'at': policy['at'], 'event': 'wa-receipt-transition',
+        'detail': 'Receipt ' + operation + ' advanced ' + policy['feature_id'] + ':' + policy['stage'] + ' (' + digest + ')',
+        'operation_id': operation, 'feature_id': policy['feature_id'], 'stage': policy['stage'],
+        'candidate_sha256': sha(canonical(policy['candidate'])), 'receipt_sha256': digest}
+
+
+def _receipt_replay_observation(root, encoded_context, *, feature_id, route, candidate):
+    """Prove the one exact canonical-state mutation owned by this receipt.
+
+    This is not a path exemption: callers provide immutable receipt/policy bytes,
+    and the scope checker independently rederives every permitted observation.
+    The outer receipt verifier still validates all command and prerequisite proof.
+    """
+    require(type(encoded_context) is bytes, 'receipt replay context must be immutable encoded proof')
+    context = parse_json(encoded_context)
+    _bundle_object(context, ('receipt', 'policy'), 'receipt replay context')
+    receipt, policy = context['receipt'], context['policy']
+    _receipt_policy(root, policy)
+    require(ROUTE_RECEIPT_STAGES.get(policy['stage']) == route and policy['feature_id'] == feature_id and
+            canonical(policy['candidate']) == canonical(candidate), 'receipt replay scope context binding')
+    _bundle_object(receipt, ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'status', 'candidate',
+        'producer', 'contract_ref', 'operator_ref', 'prerequisites', 'checks', 'verdict'), 'receipt replay receipt')
+    require(receipt['status'] == 'passed' and type(receipt['schema_version']) is int and receipt['schema_version'] == 1,
+            'receipt replay requires passed receipt')
+    for key in ('repository', 'feature_id', 'stage', 'operation_id', 'producer', 'prerequisites', 'candidate'):
+        require(canonical(receipt[key]) == canonical(policy[key]), 'receipt replay target mismatch')
+    require(canonical(receipt['contract_ref']) == canonical(policy['contract']) and
+            canonical(receipt['operator_ref']) == canonical(policy['operator']), 'receipt replay authority mismatch')
+    sp = _load_start_path_module()
+    base = sp._load_task_base(Path(root), feature_id)
+    require(base is not None and base['schema_version'] == 2 and base['authorization']['route'] == route,
+            'receipt replay requires immutable task base')
+    path = '.agent/run_state.json'
+    if not git(root, '--literal-pathspecs', 'ls-tree', '-z', base['base_revision'], '--', path):
+        return None  # No anchored canonical state can receive an exception.
+    before_bytes, executable = _entry_blob(root, base['base_revision'], path)
+    anchor_bytes, anchor_executable = _entry_blob(root, candidate['source_commit'], path)
+    before = parse_json(before_bytes)
+    require(canonical(before) == canonical(parse_json(anchor_bytes)) and executable == anchor_executable,
+            'receipt replay canonical state changed before candidate assessment')
+    target = regular_file(Path(root), path)
+    current = parse_json(target.read_bytes())
+    if canonical(current) == canonical(before):
+        return None  # Ordinary unchanged scope handling needs no replay observation.
+    _receipt_schema(root, before, 'run_state'); _receipt_schema(root, current, 'run_state')
+    require(before['repository'] == policy['repository'] and before['status'] == policy['from_status'],
+            'receipt replay canonical source state')
+    event = _receipt_transition_event(receipt, policy)
+    require(not any(e.get('event') == 'wa-receipt-transition' and e.get('operation_id') == policy['operation_id']
+                    for e in before['history']), 'receipt replay operation already existed in baseline')
+    expected = copy.deepcopy(before)
+    expected['status'] = policy['to_status']; expected['updated_at'] = policy['at']; expected['history'].append(event)
+    require(canonical(current) == canonical(expected), 'receipt replay canonical state is not the exact owned transition')
+    require(bool(target.stat().st_mode & 0o111) == executable, 'receipt replay canonical mode changed')
+    # Inspect every Git layer independently; a worktree restoration cannot hide a
+    # forged staged/committed state, and no prior history prefix may be rewritten.
+    head_bytes, head_executable = _entry_blob(root, git(root, 'rev-parse', 'HEAD').decode().strip(), path)
+    rows = git(root, '--literal-pathspecs', 'ls-files', '--stage', '-z', '--', path).split(b'\0')
+    require(len(rows) == 2 and rows[1] == b'', 'receipt replay canonical index missing/unmerged')
+    metadata, name = rows[0].split(b'\t', 1); mode, oid, stage = metadata.decode().split()
+    require(name.decode() == path and stage == '0' and mode in ('100644', '100755') and
+            (mode == '100755') == executable and head_executable == executable, 'receipt replay canonical index/head mode')
+    permitted = (canonical(before), canonical(expected))
+    require(canonical(parse_json(head_bytes)) in permitted and canonical(parse_json(blobs(root, [oid])[oid])) in permitted,
+            'receipt replay canonical index/head contains unowned changes')
+    return sp._observe_inherited_endpoint(Path(root), path)
+
+
+def _receipt_prerequisites(root, policy, minimum, *, replay_context=None):
     entries = policy['prerequisites']; seen = set(); current = set(); records = []
     if policy['stage'] in ROUTE_RECEIPT_STAGES:
         expected_route = ROUTE_RECEIPT_STAGES[policy['stage']]
@@ -1200,7 +1271,8 @@ def _receipt_prerequisites(root, policy, minimum):
                 require(canonical(entry['artifact']) == canonical(policy['contract']) and
                     entry['artifact']['sha256'] == digest and entry['artifact']['revision'] == revision, 'receipt route intent entry')
                 try:
-                    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'])
+                    sp.verify_route_scope_eligibility(root, expected_route, value, feature_id=feature, candidate=policy['candidate'],
+                        _receipt_replay_context=replay_context)
                 except (ValueError, sp.StartPathError) as exc:
                     raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
             elif kind == 'route-qa':
@@ -1220,7 +1292,8 @@ def _receipt_prerequisites(root, policy, minimum):
         require(set(minimum) <= current, 'receipt missing current prerequisite')
         intent = parse_json(_receipt_artifact(root, policy['contract']))
         try:
-            sp.verify_route_scope_eligibility(root, expected_route, intent, feature_id=policy['feature_id'], candidate=policy['candidate'])
+            sp.verify_route_scope_eligibility(root, expected_route, intent, feature_id=policy['feature_id'], candidate=policy['candidate'],
+                _receipt_replay_context=replay_context)
         except (ValueError, sp.StartPathError) as exc:
             raise AssuranceError('receipt route eligibility failed: ' + str(exc)) from exc
         return
@@ -1320,7 +1393,9 @@ def verify_stage_receipt(repo, receipt, *, policy):
             canonical(receipt['operator_ref']) == canonical(policy['operator']), 'receipt authority refs')
         require(compare_identity(receipt['candidate'], policy['candidate']), 'receipt candidate identity mismatch')
         require(policy['candidate']['repository'] == policy['repository'], 'receipt candidate repository binding')
-        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy); _receipt_prerequisites(root, policy, minimum)
+        replay_context = canonical({'receipt': receipt, 'policy': policy}) if policy['stage'] in ROUTE_RECEIPT_STAGES else None
+        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy)
+        _receipt_prerequisites(root, policy, minimum, replay_context=replay_context)
         _bundle_object(receipt['verdict'], ('final_verdict', 'issues', 'missing_acceptance_coverage', 'unsupported_claims'), 'receipt verdict')
         _receipt_gate(receipt['verdict'])
         require(type(receipt['checks']) is list and len(receipt['checks']) == len(policy['commands']), 'receipt command coverage')
@@ -1373,11 +1448,8 @@ def plan_receipt_transition(repo, state, receipt, *, policy):
                 return {'action': 'rerun-required', 'state': copy.deepcopy(state), 'receipt': None, 'reason': 'Receipt proof is missing; rerun is required.'}
             receipt = parse_json(_receipt_artifact(root, reference))
         verified = verify_stage_receipt(root, receipt, policy=policy)
-        digest = sha(canonical(verified)); operation = policy['operation_id']
-        event = {'at': policy['at'], 'event': 'wa-receipt-transition',
-            'detail': 'Receipt ' + operation + ' advanced ' + policy['feature_id'] + ':' + policy['stage'] + ' (' + digest + ')',
-            'operation_id': operation, 'feature_id': policy['feature_id'], 'stage': policy['stage'],
-            'candidate_sha256': sha(canonical(policy['candidate'])), 'receipt_sha256': digest}
+        event = _receipt_transition_event(verified, policy)
+        operation = policy['operation_id']
         matches = [e for e in state['history'] if e.get('event') == 'wa-receipt-transition' and e.get('operation_id') == operation]
         if matches:
             require(len(matches) == 1 and canonical(matches[0]) == canonical(event) and state['status'] == policy['to_status'],

@@ -3410,6 +3410,7 @@ def verify_route_scope_eligibility(
     contract_id: str | None = None,
     feature_id: str | None = None,
     candidate: dict[str, Any] | None = None,
+    _receipt_replay_context: bytes | None = None,
 ) -> list[str]:
     """Enforce a single canonical scope eligibility decision across classify, begin, done, and receipt verification."""
     if isinstance(files, dict):
@@ -3471,7 +3472,8 @@ def verify_route_scope_eligibility(
             intent_path = next(p for p in paths if p.endswith(("-scope.json", "-intent.json")))
             if wa.canonical(wa.parse_json(wa.regular_file(root, intent_path).read_bytes())) != wa.canonical(files):
                 raise wa.AssuranceError("candidate scope differs from consumed task intent")
-            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id)
+            verify_actual_changed_scope(root, route, scoped, feature_id, contract_id=contract_id,
+                _receipt_replay_context=_receipt_replay_context, _receipt_candidate_identity=candidate)
         except wa.AssuranceError as exc:
             raise StartPathError("candidate route eligibility failed: " + str(exc), 1) from exc
     return scoped
@@ -3699,6 +3701,8 @@ def verify_actual_changed_scope(
     path_id: str | None = None,
     *,
     contract_id: str | None = None,
+    _receipt_replay_context: bytes | None = None,
+    _receipt_candidate_identity: dict[str, Any] | None = None,
 ) -> None:
     """Bind completion to the complete committed/staged/unstaged/untracked delta.
 
@@ -3769,6 +3773,14 @@ def verify_actual_changed_scope(
             raise StartPathError("legacy task base lacks inherited preservation proof; begin with a fresh task ID", 1)
         if _observe_inherited_endpoint(root, path) == base_doc["inherited_observations"][path]:
             unchanged.add(path)
+    receipt_state_observation = None
+    if _receipt_replay_context is not None:
+        wa = _load_workflow_assurance()
+        try:
+            receipt_state_observation = wa._receipt_replay_observation(root, _receipt_replay_context,
+                feature_id=path_id, route=route, candidate=_receipt_candidate_identity)
+        except wa.AssuranceError as exc:
+            raise StartPathError("receipt replay scope proof failed: " + str(exc), 1) from exc
     undeclared: list[str] = []
 
     def consider(raw_path: str) -> None:
@@ -3777,6 +3789,10 @@ def verify_actual_changed_scope(
         except StartPathError:
             norm = raw_path.strip()
         if _task_owned_governance_path(norm, path_id):
+            return
+        if norm == ".agent/run_state.json" and receipt_state_observation is not None:
+            if _observe_inherited_endpoint(root, norm) != receipt_state_observation:
+                raise StartPathError("receipt replay canonical state changed during scope verification", 1)
             return
         if norm in declared_set or norm in undeclared:
             return

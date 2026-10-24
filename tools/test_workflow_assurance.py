@@ -1082,6 +1082,75 @@ def receipt_recovery(api, f):
     receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, None, policy=f.policy))
 
 
+def r02_canonical_route_replay():
+    """Real default resume retains exact canonical-state ownership on replay."""
+    import test_start_path as fixture
+    old_env = dict(os.environ)
+    try:
+        with tempfile.TemporaryDirectory(prefix='r02-canonical-replay-') as name:
+            root = Path(name); fixture.proof_bootstrap(root)
+            (root/'schema/run_state.schema.json').write_bytes((ROOT/'schema/run_state.schema.json').read_bytes())
+            git(root,'add','schema/run_state.schema.json');git(root,'commit','-qm','runtime state schema for receipt planner')
+            state = dict(repository='https://example.invalid/qa-fixture.git', current_phase='fixture-phase',
+                current_feature='replay', status='in_progress', updated_at='2026-10-24T00:00:00Z',
+                scope_budget=dict(original_estimate_lines=10,total_lines_changed=0,per_feature=[]),
+                circuit_breaker={},history=[dict(at='2026-10-24T00:00:00Z',event='seed',detail='unchanged prefix')])
+            fixture.write(root,'.agent/run_state.json',state)
+            (root/'README.md').write_text('initial\n')
+            git(root,'add','.agent/run_state.json','README.md');git(root,'commit','-qm','canonical route baseline')
+            fixture.write(root,'.agent/evidence/replay-cause.json',fixture.cause('replay'))
+            fixture.write(root,'.agent/evidence/replay-scope.json',fixture.scope('replay',['README.md']))
+            fixture.expect(fixture.run(root,'begin','bugfix','--id','replay'),0,'implementation may begin')
+            (root/'README.md').write_text('declared task edit\n')
+            verdict=fixture.record_proof(root,'replay')
+            api,policy,receipt=fixture.route_receipt(root,'replay',verdict)
+            policy_path=root/'.agent/evidence/replay/policy.json';receipt_path=root/'.agent/evidence/replay/receipt.json'
+            fixture.write(root,str(policy_path.relative_to(root)),policy);fixture.write(root,str(receipt_path.relative_to(root)),receipt)
+            def resume():
+                return fixture.run(root,'resume','--policy',str(policy_path),'--receipt',str(receipt_path),'--apply')
+            result=resume();fixture.expect(result,0,'"action": "advance"')
+            canonical_state=root/'.agent/run_state.json';legitimate=canonical_state.read_bytes()
+            fixture.expect(resume(),0,'"action": "noop"')
+            api.verify_stage_receipt(root,receipt,policy=policy)
+            # Direct completion has no receipt replay context and retains its refusal.
+            fixture.expect(fixture.run(root,'done','bugfix','--id','replay'),1,'.agent/run_state.json')
+            valid=json.loads(legitimate)
+            attacks=[('status',lambda x:x.update(status='in_progress')),
+                ('updated-at',lambda x:x.update(updated_at='2026-10-25T00:00:00Z')),
+                ('other-field',lambda x:x.update(current_phase='forged-phase')),
+                ('extra-history',lambda x:x['history'].append(dict(at='now',event='unowned',detail='extra'))),
+                ('prefix-history',lambda x:x['history'][0].update(detail='rewritten')),
+                ('duplicate-event',lambda x:x['history'].append(copy.deepcopy(x['history'][-1])))]
+            for label,change in attacks:
+                bad=copy.deepcopy(valid);change(bad);canonical_state.write_bytes(canonical(bad))
+                fixture.expect(resume(),1,'')
+                canonical_state.write_bytes(legitimate)
+            # A restored worktree cannot hide an unowned staged or committed state.
+            bad=copy.deepcopy(valid);bad['current_phase']='forged-index'
+            canonical_state.write_bytes(canonical(bad));git(root,'add','.agent/run_state.json');canonical_state.write_bytes(legitimate)
+            fixture.expect(resume(),1,'index/head')
+            git(root,'restore','--staged','.agent/run_state.json')
+            canonical_state.chmod(0o755);fixture.expect(resume(),1,'mode');canonical_state.chmod(0o644)
+            forged=copy.deepcopy(receipt);forged['verdict']['final_verdict']['summary']='different receipt'
+            fixture.write(root,str(receipt_path.relative_to(root)),forged);fixture.expect(resume(),1,'exact owned transition')
+            fixture.write(root,str(receipt_path.relative_to(root)),receipt)
+            # State proof never replaces fresh QA proof.
+            stdout=root/verdict['checks'][0]['capture']['path']
+            captured=stdout.read_bytes();stdout.write_bytes(b'{}')
+            fixture.expect(resume(),1,'QA artifact digest')
+            stdout.write_bytes(captured)
+            fixture.expect(resume(),0,'"action": "noop"')
+            git(root,'add','.agent/run_state.json')
+            fixture.expect(resume(),0,'"action": "noop"')
+            git(root,'commit','--only','-qm','record exact receipt transition','--','.agent/run_state.json')
+            fixture.expect(resume(),0,'"action": "noop"')
+            fixture.expect(fixture.run(root,'done','bugfix','--id','replay'),1,'.agent/run_state.json')
+            require(canonical_state.read_bytes()==legitimate,'replay does not rewrite canonical state')
+        print('PASS canonical route default advance/noop, exact state/index/mode/history ownership and full QA revalidation')
+    finally:
+        os.environ.clear();os.environ.update(old_env)
+
+
 def r02_schema_matrix():
     import jsonschema
     schemas = {n: jsonschema.Draft202012Validator(json.loads((ROOT / 'schema' / (n + '.schema.json')).read_text())) for n in ('qa_verdict', 'contract', 'bugfix_scope', 'small_change_intent')}
@@ -3419,7 +3488,7 @@ def main():
     parser.add_argument('--base')
     args = parser.parse_args()
     if not any(vars(args).values()):
-        r02_schema_matrix(); r02_feature_proof_matrix()
+        r02_schema_matrix(); r02_feature_proof_matrix(); r02_canonical_route_replay()
     if args.scope_118 or args.scope_controls_118:
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / 'tools/fixtures/workflow_assurance/scope_guard_118.py')
