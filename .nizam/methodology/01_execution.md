@@ -222,15 +222,17 @@ MUST parse only the JSON block to decide whether to advance.
 
 Both loops above contain steps that can fail and be retried: Loop 1's contract
 revision step and Loop 2's implementation or evidence rework steps. Every
-repeatable step is governed by `03_circuit_breaker.md`: attempt counters and
-line-count thresholds serve as work-specific diagnostic telemetry signals to
-drive escalating diagnostic posture (direct fix -> interface/type analysis ->
-architectural review or bounded decomposition) when safety, security, and
-isolation invariants hold. An immediate hard stop and human escalation
-(`BLOCKED`) is mandatory when safety, isolation, or authority invariants are
-violated, when a specification contradiction requires human authority, or when a
-third attempt fails on the same unresolved defect signature without a viable
-bounded decomposition.
+repeatable step is governed by `03_circuit_breaker.md`: task-wide evidence
+retains failures across step names and output directories. Three failures with
+one signature or six failed executions across changing signatures stop the
+task. Only explicit finite task-scoped operator recovery reopens its budget;
+narratives, amendments and decomposition labels do not. Safety, isolation and
+authority breaches remain immediate hard stops.
+
+Freeze source and verification policy before final QA. Reuse valid captures for
+the same candidate and required checks. A passing run does not trigger another
+review or QA loop without a concrete source change, failure or unresolved
+acceptance issue. New design work belongs in a separate bounded change.
 
 ## 6. Handoff Out
 

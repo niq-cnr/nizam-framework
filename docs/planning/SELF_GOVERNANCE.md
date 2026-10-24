@@ -2,14 +2,16 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.8.0
+version: 0.9.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.9.0"
+    date: "2026-10-24"
+    summary: "Record the official v2.0.0 installation at 603afc7b17919334a6a01df1e39e63798d9d0acd, verified against annotated tag object 4aa4b1be73b1131b1227528465981a15815c44d7; retain prior released installation and commissioning histories."
   - version: "0.8.0"
     date: "2026-10-23"
     summary: "Record the v1.11.0 installation from observed facts: stage installed, commissioning not performed (316 released files + provenance.json at 6fc683580941adf19860d9d9d00fdc81d38d8088, installed_at 2026-10-23T01:21:26Z), verified byte-for-byte against the v1.11.0 tag (annotated tag object 5b09fc0b179ff4f06ea4aec7878a34170654ade6). The v1.10.1, v1.10.0, v1.9.0, v1.8.0, v1.7.0, v1.6.0 and v1.5.0 installation records below are retained unchanged as history."
-change_log:
   - version: "0.7.0"
     date: "2026-10-19"
     summary: "Record the v1.10.1 installation from observed facts: stage installed, commissioning not performed (278 released files + provenance.json at 2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd, installed_at 2026-10-19T11:03:39Z). The v1.10.0, v1.9.0, v1.8.0, v1.7.0, v1.6.0, and v1.5.0 installation records below are retained unchanged as history."
@@ -40,23 +42,26 @@ change_log:
 installation:
   repository: niq-cnr/nizam-framework
   local_scope:
-    - niq-cnr/nizam-framework
-  tag: v1.11.0
-  resolved_sha: 6fc683580941adf19860d9d9d00fdc81d38d8088
+  - niq-cnr/nizam-framework
+  tag: v2.0.0
+  resolved_sha: 603afc7b17919334a6a01df1e39e63798d9d0acd
+  framework_version: 2.0.0
+  tag_object: 4aa4b1be73b1131b1227528465981a15815c44d7
   authorization_gate: H-CONSUMER-UPGRADE
-  authorization_recorded_at: "2026-10-23T00:00:00Z"
-  authorization_verbatim: "Prepare the project for the next release. - self install. - update the version references ready for tagging."
+  authorization_recorded_at: '2026-10-24T05:45:10.322666+00:00'
+  authorization_verbatim: self install the latest nizam-framework code.
   status: installed
   commissioning_performed: false
-  released_file_count: 316
-  evidence:
-    bootstrap_install: .agent/evidence/release-v1.11.0-closeout/bootstrap-install.txt
-    verify_self_governance: .agent/evidence/release-v1.11.0-closeout/verify-self-governance.txt
-    test_self_governance: .agent/evidence/release-v1.11.0-closeout/test-self-governance.txt
-    payload_validate: .agent/evidence/release-v1.11.0-closeout/payload-validate.txt
-    bootstrap_verify_only: .agent/evidence/release-v1.11.0-closeout/bootstrap-verify-only.txt
+  payload_file_count: 316
   source_url: https://github.com/niq-cnr/nizam-framework.git
-  installed_at: "2026-10-23T01:21:26Z"
+  installed_at: '2026-10-24T05:45:45Z'
+  evidence:
+    authorization: .agent/evidence/release-v2.0.0-closeout/upgrade-authorization.json
+    release: .agent/evidence/release-v2.0.0-closeout/release-facts.json
+    bootstrap_install: .agent/evidence/release-v2.0.0-closeout/bootstrap-install.stdout
+    verify_self_governance: .agent/evidence/release-v2.0.0-closeout/installed-integrity.stdout
+    bootstrap_verify_only: .agent/evidence/release-v2.0.0-closeout/bootstrap-verify.stdout
+    installed_preflight: .agent/evidence/release-v2.0.0-closeout/installed-preflight.stdout
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
@@ -78,7 +83,30 @@ commissioning:
   installed_at: "2026-10-10T18:12:44Z"
 ---
 
-# Current installation — `v1.11.0` (installed — commissioning not performed)
+# Current installation — `v2.0.0` (installed — commissioning not performed)
+
+The operator authorized release publication and requested: “self install the latest
+nizam-framework code.” The unchanged `bootstrap.sh` installed the published
+immutable `v2.0.0` tag at `603afc7b17919334a6a01df1e39e63798d9d0acd` from the canonical repository
+`https://github.com/niq-cnr/nizam-framework.git`. The annotated tag object is
+`4aa4b1be73b1131b1227528465981a15815c44d7`. Installation completed at `2026-10-24T05:45:45Z`.
+
+The installation contains **316 released files plus genuine provenance**.
+The external trusted pin verifier and commit-bound bootstrap verification passed
+with exact inventory, content and executable-mode comparisons. The installed
+high-risk preflight returned `ok:true`, `sandbox_operational:true` and no failures.
+These observations establish installation integrity; **commissioning was not
+performed**. The already tested release payload was copied without runtime edits.
+
+The release workflow succeeded and the GitHub Release was published at
+`2026-10-24T05:44:48Z`. The local source snapshot used before this official
+release remains preserved on its private historical branch; its local tag was
+never published or substituted for this release.
+
+Evidence: `.agent/evidence/release-v2.0.0-closeout/`. All prior released
+installation and commissioning records remain below as historical records.
+
+# Prior installation — `v1.11.0` (installed — commissioning not performed)
 
 This repository has installed the public immutable `v1.11.0` release under
 `.nizam/`. The stage is **installed — commissioning not performed**. Its machine

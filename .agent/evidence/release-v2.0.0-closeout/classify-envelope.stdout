@@ -1,0 +1,51 @@
+{
+  "assurance_tier": "High-assurance",
+  "files": [
+    ".github/scripts/verify_self_governance.py",
+    "AGENTS.md",
+    "docs/planning/SELF_GOVERNANCE.md",
+    "README.md",
+    "docs/guide/index.html",
+    "docs/planning/ROADMAP.md",
+    "docs/planning/operator_gates.md",
+    "llms.txt",
+    "llms-full.txt",
+    "docs/guide/llms.txt",
+    "docs/guide/llms-full.txt"
+  ],
+  "reasons": [
+    "touches security, isolation, or authority verification boundary",
+    "touches high-risk files: .github/scripts/verify_self_governance.py, docs/planning/SELF_GOVERNANCE.md, docs/planning/operator_gates.md"
+  ],
+  "required_gates": [
+    "loop1:contract_approval",
+    "capability_preflight",
+    "loop2:validator_mode_b",
+    "loop2:evaluator_qa",
+    "convergent_review_or_isolation_suite",
+    "loop2:evidence_capture"
+  ],
+  "review_remit": {
+    "advisory_fields": [
+      "advisory_minor"
+    ],
+    "blocking_fields": [
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "required_fixes"
+    ],
+    "evidence_required_for_blockers": true
+  },
+  "route": "high-risk",
+  "stopping_conditions": {
+    "attempt_counter_role": "finite task-wide failed-execution budget",
+    "breaker_ref": "methodology/03_circuit_breaker.md",
+    "comparator_subordinate": true,
+    "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+    "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+    "hard_attempt_cap": 6,
+    "initial_strategy_ladder_attempts": 3,
+    "pass_condition": "All required_gates for route 'high-risk' exit 0 and blocking verdict arrays are empty."
+  }
+}
