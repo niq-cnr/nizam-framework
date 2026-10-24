@@ -1,0 +1,68 @@
+{
+  "feature_id": "r02-proof-validation",
+  "qa_pass": false,
+  "checks_run": 2,
+  "checks_passed": 1,
+  "reviewed_revision": "8b5ba12187e0f3abc310766d6608c7b10ea93a06",
+  "candidate_ref": {
+    "path": ".agent/evidence/r02-proof-validation/evaluator-qa/candidate.json",
+    "sha256": "712824caa0dbd6e484296aca7108e85dac4594cba53d08806106dea306f7a299"
+  },
+  "checks": [
+    {
+      "id": "start-path",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-start-path-attempt1-20261024T022940Z-009bc857.capture.json",
+        "sha256": "5253f761d5d6d3b869a53968d7398bf9412778aa4923e5b121117bac7d23d5f0"
+      },
+      "observed_exit": 0
+    },
+    {
+      "id": "workflow-assurance",
+      "capture": {
+        "path": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.capture.json",
+        "sha256": "cb70e05fb777780ac984da48a3c3045e85906cee9ba674f3a5147862889c338c"
+      },
+      "observed_exit": 1
+    }
+  ],
+  "adversarial": {
+    "performed": false
+  },
+  "evidence_files": [
+    ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-start-path-attempt1-20261024T022940Z-009bc857.capture.json",
+    ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.capture.json"
+  ],
+  "issues": [
+    {
+      "criterion": "Full workflow-assurance verification command",
+      "evidence": ".agent/evidence/r02-proof-validation/evaluator-qa/r02-proof-validation-workflow-assurance-attempt1-20261024T023205Z-aff7d107.capture.json",
+      "observed_exit": 1,
+      "diagnostic": "AssuranceError: receipt observed environment changed",
+      "source_analysis": "tools/test_workflow_assurance.py: receipt_operator first validates f, then constructs/validates alternate ReceiptFixture which overwrites process NIZAM_QA_CONTEXT_SHA256 and NIZAM_QA_EXECUTION_ROOT, then receipt_artifact_integrity validates original f without restoring its assessed environment. Original candidate environment no longer matches process.",
+      "required_fix": "Isolate/restore each receipt fixture assessed environment explicitly at test boundaries; keep production consumer strict and rerun QA on a new immutable candidate. Do not weaken environment binding to make tests pass."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "compliance",
+    "isolation",
+    "scope",
+    "one evaluator-origin adversarial check",
+    "v2 complete proof shared validation",
+    "relocated clone acceptance"
+  ],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Isolate/restore each receipt fixture assessed environment explicitly at test boundaries; keep production consumer strict and rerun QA on a new immutable candidate. Do not weaken environment binding to make tests pass."
+  ],
+  "execution_context": {
+    "fresh_checkout": "/home/cnross/.tmp/nizam-r02-proof-evaluator-qa",
+    "private_cache": "/home/cnross/.tmp/nizam-r02-proof-evaluator-cache",
+    "actual_command_captures": 2,
+    "repeat_count": 0
+  },
+  "final_verdict": {
+    "approved": false,
+    "summary": "Independent QA stopped at first nonexpected command result. Start-path passed; full workflow-assurance failed on receipt fixture environment leakage. Remaining checks not executed."
+  }
+}
