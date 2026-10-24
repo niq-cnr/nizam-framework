@@ -1,0 +1,407 @@
+diff --git a/tools/start_path.py b/tools/start_path.py
+index f5611096..560f521e 100644
+--- a/tools/start_path.py
++++ b/tools/start_path.py
+@@ -38,6 +38,7 @@ import os
+ import platform
+ import re
+ import secrets
++import stat
+ import shutil
+ import subprocess
+ import sys
+@@ -544,22 +545,22 @@ def decide(decision: str, kind: str, path_id: str, root: Path) -> str:
+     if kind == "bugfix":
+         cause, scope = load_bugfix(root, path_id)
+         if decision == "begin":
+-            _record_task_base(root, path_id)
++            _record_task_base(root, path_id, route="bugfix", files=scope["files"], contract_id=scope.get("contract_id"))
+             return f"bugfix {cause['id']}: implementation may begin"
+-        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id)
++        verify_actual_changed_scope(root, "bugfix", scope["files"], path_id, contract_id=scope.get("contract_id"))
+         load_passing_qa(root, path_id)
+         return f"bugfix {scope['id']}: recorded verification result exists"
+     if kind == "trivial":
+         intent = load_trivial_intent(root, path_id)
+         if decision == "begin":
+-            _record_task_base(root, path_id)
++            _record_task_base(root, path_id, route="trivial", files=intent["files"])
+             return f"trivial {intent['id']}: implementation may begin"
+         verify_actual_changed_scope(root, "trivial", intent["files"], path_id)
+         load_passing_qa(root, path_id)
+         return f"trivial {intent['id']}: recorded verification result exists"
+     intent = load_intent(root, path_id)
+     if decision == "begin":
+-        _record_task_base(root, path_id)
++        _record_task_base(root, path_id, route="small-change", files=intent["files"])
+         return f"small-change {intent['id']}: implementation may begin"
+     verify_actual_changed_scope(root, "small-change", intent["files"], path_id)
+     load_passing_qa(root, path_id)
+@@ -3529,14 +3530,93 @@ def _task_owned_governance_path(norm: str, path_id: str) -> bool:
+     return False
+ 
+ 
+-def _record_task_base(root: Path, path_id: str) -> None:
+-    """Record the immutable task base and pre-existing dirty snapshot before implementation.
++def _observe_inherited_endpoint(root: Path, raw_path: str) -> dict[str, Any]:
++    """Observe index and worktree independently, never traversing a symlink."""
++    path = normalize_relative_path(raw_path, forbid_nizam_payload=False)
++    if path != raw_path:
++        raise StartPathError("noncanonical inherited endpoint: " + raw_path, 1)
++    index_result = _run_git_readonly(
++        root, ["--literal-pathspecs", "ls-files", "--stage", "-z", "--", path], text=False
++    )
++    if index_result.returncode:
++        raise StartPathError("cannot observe inherited index: " + path, 1)
++    index = []
++    for row in index_result.stdout.split(b"\0"):
++        if not row:
++            continue
++        try:
++            metadata, name = row.split(b"\t", 1)
++            mode, oid, stage = metadata.decode("ascii").split()
++            if name.decode("utf-8", errors="surrogateescape") != path:
++                raise ValueError("directory or ambiguous index endpoint")
++            if not re.fullmatch(r"[0-7]{6}", mode) or not re.fullmatch(r"[0-9a-f]{40,64}", oid) or stage not in ("0", "1", "2", "3"):
++                raise ValueError("malformed index observation")
++            index.append({"mode": mode, "object": oid, "stage": int(stage)})
++        except (ValueError, UnicodeError) as exc:
++            raise StartPathError("cannot observe inherited index endpoint: " + path, 1) from exc
++    index.sort(key=lambda item: item["stage"])
++    directory = None
++    observed_presence = False
++    try:
++        directory = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
++        parts = path.split("/")
++        for part in parts[:-1]:
++            child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
++            os.close(directory)
++            directory = child
++        name = parts[-1]
++        before = os.stat(name, dir_fd=directory, follow_symlinks=False)
++        observed_presence = True
++        if stat.S_ISLNK(before.st_mode):
++            worktree = {"kind": "symlink", "target": os.readlink(name, dir_fd=directory)}
++        elif stat.S_ISREG(before.st_mode):
++            fd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
++            with os.fdopen(fd, "rb") as fh:
++                opened = os.fstat(fh.fileno())
++                if not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino):
++                    raise StartPathError("inherited endpoint changed during observation: " + path, 1)
++                digest = hashlib.sha256()
++                while chunk := fh.read(1024 * 1024):
++                    digest.update(chunk)
++                after = os.fstat(fh.fileno())
++            signature = lambda st: (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns, st.st_mode)
++            if signature(opened) != signature(after):
++                raise StartPathError("inherited endpoint changed during observation: " + path, 1)
++            worktree = {"kind": "file", "sha256": digest.hexdigest(), "executable": bool(after.st_mode & 0o111)}
++        else:
++            raise StartPathError("unsupported inherited endpoint kind: " + path, 1)
++        final = os.stat(name, dir_fd=directory, follow_symlinks=False)
++        if (before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns) != (final.st_dev, final.st_ino, final.st_mode, final.st_mtime_ns, final.st_ctime_ns):
++            raise StartPathError("inherited endpoint changed during observation: " + path, 1)
++    except FileNotFoundError as exc:
++        if observed_presence:
++            raise StartPathError("inherited endpoint disappeared during observation: " + path, 1) from exc
++        worktree = {"kind": "absent"}
++    except OSError as exc:
++        raise StartPathError("cannot safely observe inherited endpoint: " + path, 1) from exc
++    finally:
++        if directory is not None:
++            os.close(directory)
++    return {"index": index, "worktree": worktree}
+ 
+-    Idempotent: an existing marker is never overwritten, so a later `begin` cannot
+-    silently re-pin a task to a more favorable base.
+-    """
++
++def _task_authorization(root: Path, route: str, files: list[str], contract_id: str | None) -> dict[str, Any]:
++    scoped = verify_route_scope_eligibility(root, route, files, contract_id=contract_id)
++    if contract_id is not None:
++        require_inside_contract(root, contract_id, scoped)
++    return {"route": route, "files": sorted(scoped), "contract_id": contract_id}
++
++
++def _record_task_base(
++    root: Path, path_id: str, *, route: str, files: list[str], contract_id: str | None = None,
++) -> None:
++    """Exclusively record authorization and no-follow index/worktree observations."""
+     marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
+-    if marker.exists():
++    authorization = _task_authorization(root, route, files, contract_id)
++    if os.path.lexists(marker):
++        existing = _load_task_base(root, path_id)
++        if existing and existing.get("schema_version") == 2 and existing["authorization"] != authorization:
++            raise StartPathError("task authorization changed; begin with a fresh task ID", 1)
+         return
+     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
+     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+@@ -3547,19 +3627,15 @@ def _record_task_base(root: Path, path_id: str) -> None:
+     head_res = _run_git_readonly(root, ["rev-parse", "--verify", "HEAD^{commit}"], text=True)
+     if head_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", head_res.stdout.strip()):
+         raise StartPathError("cannot record task base: HEAD is not a resolvable commit", 1)
+-    status_res = _run_git_readonly(
+-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
+-    )
++    status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False)
+     if status_res.returncode != 0:
+         raise StartPathError("cannot record task base: git status failed", 1)
+     baseline_entries = _parse_porcelain_z(status_res.stdout)
+-    doc = {
+-        "schema_version": 1,
+-        "id": path_id,
+-        "base_revision": head_res.stdout.strip(),
+-        "recorded_at": utc_now_iso(),
+-        "pre_existing_entries": baseline_entries,
+-    }
++    endpoints = sorted({p for entry in baseline_entries for p in entry["paths"]})
++    doc = {"schema_version": 2, "id": path_id, "base_revision": head_res.stdout.strip(),
++           "recorded_at": utc_now_iso(), "pre_existing_entries": baseline_entries,
++           "authorization": authorization,
++           "inherited_observations": {p: _observe_inherited_endpoint(root, p) for p in endpoints}}
+     marker.parent.mkdir(parents=True, exist_ok=True)
+     with marker.open("xb") as fh:
+         fh.write(canonical_bytes(doc) + b"\n")
+@@ -3567,14 +3643,39 @@ def _record_task_base(root: Path, path_id: str) -> None:
+ 
+ def _load_task_base(root: Path, path_id: str) -> dict[str, Any] | None:
+     marker = root / ".agent" / "evidence" / f"{path_id}-base.json"
+-    if not marker.is_file():
++    if not os.path.lexists(marker):
+         return None
++    if marker.is_symlink() or not marker.is_file():
++        raise StartPathError("recorded task base is not a regular file", 1)
+     try:
+         doc = json.loads(marker.read_text(encoding="utf-8"))
+-    except (OSError, json.JSONDecodeError) as exc:
+-        raise StartPathError(f"recorded task base is unreadable: {marker}", 1) from exc
+-    if not isinstance(doc, dict) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
+-        raise StartPathError(f"recorded task base is malformed: {marker}", 1)
++        if not isinstance(doc, dict) or doc.get("id") != path_id or type(doc.get("schema_version")) is not int or doc["schema_version"] not in (1, 2) or not re.fullmatch(r"[0-9a-f]{40}", str(doc.get("base_revision"))):
++            raise ValueError("invalid base identity")
++        entries = doc.get("pre_existing_entries")
++        if not isinstance(entries, list) or any(not isinstance(e, dict) or not isinstance(e.get("code"), str) or not isinstance(e.get("paths"), list) or not e["paths"] or any(not isinstance(p, str) for p in e["paths"]) for e in entries):
++            raise ValueError("invalid inherited entries")
++        if doc["schema_version"] == 2:
++            auth = doc.get("authorization")
++            if not isinstance(auth, dict) or set(auth) != {"route", "files", "contract_id"} or auth["route"] not in ("bugfix", "trivial", "small-change") or not isinstance(auth["files"], list) or not auth["files"] or any(not isinstance(p, str) for p in auth["files"]) or auth["files"] != sorted(set(auth["files"])) or (auth["contract_id"] is not None and (not isinstance(auth["contract_id"], str) or not ID_PATTERN.fullmatch(auth["contract_id"]))):
++                raise ValueError("invalid authorization binding")
++            observations = doc.get("inherited_observations")
++            endpoints = {p for e in entries for p in e["paths"]}
++            if not isinstance(observations, dict) or set(observations) != endpoints:
++                raise ValueError("incomplete inherited observations")
++            for path, observed in observations.items():
++                if normalize_relative_path(path, forbid_nizam_payload=False) != path or not isinstance(observed, dict) or set(observed) != {"index", "worktree"} or not isinstance(observed["index"], list):
++                    raise ValueError("invalid endpoint observation")
++                for item in observed["index"]:
++                    if not isinstance(item, dict) or set(item) != {"mode", "object", "stage"} or not re.fullmatch(r"[0-7]{6}", str(item["mode"])) or not re.fullmatch(r"[0-9a-f]{40,64}", str(item["object"])) or type(item["stage"]) is not int or item["stage"] not in (0, 1, 2, 3):
++                        raise ValueError("invalid index observation")
++                wt = observed["worktree"]
++                if not isinstance(wt, dict) or wt.get("kind") not in ("absent", "file", "symlink"):
++                    raise ValueError("invalid worktree observation")
++                keys = {"absent": {"kind"}, "file": {"kind", "sha256", "executable"}, "symlink": {"kind", "target"}}[wt["kind"]]
++                if set(wt) != keys or (wt["kind"] == "file" and (not re.fullmatch(r"[0-9a-f]{64}", str(wt["sha256"])) or type(wt["executable"]) is not bool)) or (wt["kind"] == "symlink" and not isinstance(wt["target"], str)):
++                    raise ValueError("invalid worktree identity")
++    except (OSError, ValueError, TypeError, KeyError) as exc:
++        raise StartPathError(f"recorded task base is malformed or unreadable: {marker}; begin with a fresh task ID", 1) from exc
+     return doc
+ 
+ 
+@@ -3583,6 +3684,8 @@ def verify_actual_changed_scope(
+     route: str,
+     declared_files: list[str],
+     path_id: str | None = None,
++    *,
++    contract_id: str | None = None,
+ ) -> None:
+     """Bind completion to the complete committed/staged/unstaged/untracked delta.
+ 
+@@ -3590,7 +3693,8 @@ def verify_actual_changed_scope(
+     non-Git project keeps the historical local-only behavior (no Git state to
+     bind); that mode is not a claim of Git-backed completion.
+     """
+-    scoped = verify_route_scope_eligibility(root, route, declared_files)
++    authorization = _task_authorization(root, route, declared_files, contract_id)
++    scoped = authorization["files"]
+     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
+     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+         return
+@@ -3625,24 +3729,33 @@ def verify_actual_changed_scope(
+             1,
+         )
+ 
+-    diff_res = _run_git_readonly(
+-        root, ["diff", "--name-status", "-z", base_revision, head, "--"], text=False
+-    )
+-    if diff_res.returncode != 0:
+-        raise StartPathError(f"{route} completion failed: committed delta inspection failed", 1)
+-
+-    status_res = _run_git_readonly(
+-        root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False
+-    )
+-    if status_res.returncode != 0:
++    if base_doc["schema_version"] == 2:
++        if base_doc["authorization"] != authorization:
++            raise StartPathError("task authorization changed; begin with a fresh task ID", 1)
++    elif contract_id is not None:
++        raise StartPathError("legacy task base lacks authorization proof; begin with a fresh task ID", 1)
++
++    projections = []
++    for args in (["diff", "--no-renames", "--name-status", "-z", base_revision, head, "--"],
++                 ["diff", "--no-renames", "--cached", "--name-status", "-z", head, "--"],
++                 ["diff", "--no-renames", "--name-status", "-z", "--"]):
++        result = _run_git_readonly(root, args, text=False)
++        if result.returncode:
++            raise StartPathError(f"{route} completion failed: change-layer inspection failed", 1)
++        projections.append(_parse_name_status_z(result.stdout))
++    status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--untracked-files=all"], text=False)
++    if status_res.returncode:
+         raise StartPathError(f"{route} completion failed: working-tree inspection failed", 1)
+-
+     declared_set = set(scoped)
+-    pre_existing = {
+-        (entry.get("code"), tuple(entry.get("paths") or []))
+-        for entry in (base_doc.get("pre_existing_entries") or [])
+-        if isinstance(entry, dict)
+-    }
++    unchanged = set()
++    inherited = {p for e in base_doc["pre_existing_entries"] for p in e["paths"]}
++    for path in sorted(inherited):
++        if path in declared_set or _task_owned_governance_path(path, path_id):
++            continue
++        if base_doc["schema_version"] != 2:
++            raise StartPathError("legacy task base lacks inherited preservation proof; begin with a fresh task ID", 1)
++        if _observe_inherited_endpoint(root, path) == base_doc["inherited_observations"][path]:
++            unchanged.add(path)
+     undeclared: list[str] = []
+ 
+     def consider(raw_path: str) -> None:
+@@ -3656,16 +3769,18 @@ def verify_actual_changed_scope(
+             return
+         undeclared.append(norm)
+ 
+-    for entry in _parse_name_status_z(diff_res.stdout):
+-        for raw_path in entry["paths"]:
+-            consider(raw_path)
+-
+-    for entry in _parse_porcelain_z(status_res.stdout):
+-        key = (entry.get("code"), tuple(entry.get("paths") or []))
+-        if key in pre_existing:
+-            continue
++    # Committed changes can never inherit a dirty-work exemption.
++    for entry in projections[0]:
+         for raw_path in entry["paths"]:
+             consider(raw_path)
++    for entries in projections[1:] + [_parse_porcelain_z(status_res.stdout)]:
++        for entry in entries:
++            for raw_path in entry["paths"]:
++                if raw_path not in unchanged:
++                    consider(raw_path)
++    # Restoration/deletion can remove a path from status entirely.
++    for raw_path in inherited - unchanged:
++        consider(raw_path)
+ 
+     if undeclared:
+         raise StartPathError(
+diff --git a/tools/test_start_path.py b/tools/test_start_path.py
+index eabdb769..0453f41e 100644
+--- a/tools/test_start_path.py
++++ b/tools/test_start_path.py
+@@ -1691,6 +1691,88 @@ def test_jev_readiness_authority() -> None:
+     print("jev-readiness: continuation authority cannot be granted by narrative summary")
+ 
+ 
++def test_r02_completion() -> None:
++    """Real Git cases distinguish task authorization from inherited endpoint proof."""
++    failures = []
++    cases = ['schema-approved', 'schema-proposed', 'contract-revoked', 'contract-substituted',
++             'tracked', 'untracked', 'index', 'mode', 'symlink', 'rename', 'restored',
++             'unchanged', 'committed-cancel', 'staged-cancel', 'rename-source', 'legacy', 'legacy-clean',
++             'malformed', 'repeat-begin', 'scope-substituted', 'unchanged-link', 'unchanged-rename']
++    for case in cases:
++        with tempfile.TemporaryDirectory(prefix='nizam-r02-') as name:
++            root = Path(name)
++            def git(*args):
++                return subprocess.check_output(['git', '-C', str(root), *args])
++            git('init', '-q'); git('config', 'user.name', 'Test'); git('config', 'user.email', 'test@example.invalid')
++            (root / 'README.md').write_text('base\n')
++            (root / 'notes.txt').write_text('original\n')
++            (root / 'link').symlink_to('notes.txt')
++            git('add', '.'); git('commit', '-qm', 'initial')
++            files = ['schema/demo.json'] if case.startswith('schema') else ['README.md']
++            cid = 'c1' if case.startswith('schema') or case.startswith('contract') else None
++            if cid:
++                write(root, '.agent/contracts/c1.json', contract('proposed' if case == 'schema-proposed' else 'approved', files))
++                write(root, '.agent/contracts/c2.json', {**contract('approved', files), 'contract_id': 'c2', 'feature_id': 'c2'})
++            write(root, '.agent/evidence/r02-cause.json', cause('r02'))
++            write(root, '.agent/evidence/r02-scope.json', scope('r02', files, cid))
++            git('add', '.agent'); git('commit', '-qm', 'authority')
++            if case in ('tracked', 'index', 'mode', 'restored', 'unchanged', 'legacy', 'malformed'):
++                (root / 'notes.txt').write_text('inherited\n')
++            if case == 'untracked': (root / 'new.txt').write_text('inherited\n')
++            if case == 'index':
++                git('add', 'notes.txt'); (root / 'notes.txt').write_text('original\n')
++            if case in ('symlink', 'unchanged-link'):
++                (root / 'link').unlink(); (root / 'link').symlink_to('README.md')
++            if case in ('rename', 'unchanged-rename'): git('mv', 'notes.txt', 'renamed.txt')
++            began = run(root, 'begin', 'bugfix', '--id', 'r02')
++            if case == 'schema-proposed':
++                if began.returncode == 0: failures.append(case)
++                continue
++            if began.returncode: failures.append(case + ':begin:' + began.stderr); continue
++            if case in ('tracked', 'untracked', 'index'):
++                target = root / ('new.txt' if case == 'untracked' else 'notes.txt')
++                target.write_text('mutated\n')
++                if case == 'index':
++                    git('add', 'notes.txt'); target.write_text('original\n')
++            if case == 'mode': (root / 'notes.txt').chmod(0o755)
++            if case == 'symlink':
++                (root / 'link').unlink(); (root / 'link').symlink_to('elsewhere')
++            if case == 'rename': (root / 'renamed.txt').write_text('mutated\n')
++            if case == 'restored': git('restore', 'notes.txt')
++            if case == 'committed-cancel':
++                (root / 'notes.txt').write_text('committed drift\n'); git('add', 'notes.txt'); git('commit', '-qm', 'drift')
++                (root / 'notes.txt').write_text('original\n')
++            if case == 'staged-cancel':
++                (root / 'notes.txt').write_text('staged drift\n'); git('add', 'notes.txt')
++                (root / 'notes.txt').write_text('original\n')
++            if case == 'rename-source':
++                git('mv', '-f', 'notes.txt', 'README.md')
++            if case == 'contract-revoked': write(root, '.agent/contracts/c1.json', contract('proposed', files))
++            if case == 'contract-substituted': write(root, '.agent/evidence/r02-scope.json', scope('r02', files, 'c2'))
++            if case in ('legacy', 'legacy-clean', 'malformed'):
++                base = json.loads((root / '.agent/evidence/r02-base.json').read_text())
++                if case in ('legacy', 'legacy-clean'): base['schema_version'] = 1; base.pop('inherited_observations', None)
++                else: base['inherited_observations'] = {'notes.txt': {}}
++                write(root, '.agent/evidence/r02-base.json', base)
++            if case in ('repeat-begin', 'scope-substituted'):
++                marker = root / '.agent/evidence/r02-base.json'
++                before = marker.read_bytes()
++                write(root, '.agent/evidence/r02-scope.json', scope('r02', ['README.md', 'notes.txt']))
++                if case == 'repeat-begin':
++                    repeated = run(root, 'begin', 'bugfix', '--id', 'r02')
++                    if repeated.returncode != 1 or marker.read_bytes() != before: failures.append(case)
++                    continue
++            if files[0].startswith('schema/'):
++                (root / 'schema').mkdir(exist_ok=True); (root / files[0]).write_text('{}\n')
++            else: (root / 'README.md').write_text('task change\n')
++            ev = '.agent/evidence/r02-output.txt'; (root / ev).write_text('verified\n')
++            write(root, '.agent/qa/r02.json', qa('r02', ev))
++            done = run(root, 'done', 'bugfix', '--id', 'r02')
++            expected = 0 if case in ('schema-approved', 'unchanged', 'legacy-clean', 'unchanged-link', 'unchanged-rename') else 1
++            if done.returncode != expected: failures.append(case + ': expected ' + str(expected) + ', observed ' + str(done.returncode) + ': ' + done.stderr)
++    assert not failures, '\n'.join(failures)
++
++
+ def main() -> int:
+     with tempfile.TemporaryDirectory(prefix="nizam-start-path-") as name:
+         root = Path(name)
+@@ -1772,6 +1854,7 @@ def main() -> int:
+         test_a1_f1_f5_scope_completion_and_amendments(root)
+         test_r6_r7_r8_preflight_capture_status_and_resume(root)
+ 
++    test_r02_completion()
+     test_jev_readiness_controls()
+     test_jev_readiness_attempts()
+     test_jev_readiness_authority()

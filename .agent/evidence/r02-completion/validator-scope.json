@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "sh",
+    "-c",
+    "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python -c 'import subprocess,re; allowed={'\"'\"'tools/start_path.py'\"'\"','\"'\"'tools/test_start_path.py'\"'\"','\"'\"'.agent/run_state.json'\"'\"','\"'\"'.agent/r02-product-spec.md'\"'\"','\"'\"'.agent/r02-feature-list.json'\"'\"','\"'\"'.agent/contracts/r02-completion.json'\"'\"'}; base='\"'\"'00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6'\"'\"'; commands=[['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"',base,'\"'\"'HEAD'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--cached'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'ls-files'\"'\"','\"'\"'--others'\"'\"','\"'\"'--exclude-standard'\"'\"','\"'\"'-z'\"'\"']]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{'\"'\"''\"'\"'} for c in commands)); patterns=[r'\"'\"'\\.agent/(?:validator|evaluator|qa)/r02-completion-[A-Za-z0-9_.-]+\\.json'\"'\"',r'\"'\"'\\.agent/evidence/r02-completion/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02-(?:classify-completion|preflight)-attempt[1-9][0-9]*\\.reservation\\.json'\"'\"']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad'"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

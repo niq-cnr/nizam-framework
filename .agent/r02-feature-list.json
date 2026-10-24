@@ -1,0 +1,34 @@
+{
+  "phase": "r02-framework-repairs",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 1600,
+  "features": [
+    {
+      "id": "r02-completion",
+      "name": "Completion authorization and inherited endpoint preservation",
+      "description": "Preserve contract binding, compare versioned index/worktree identities and all scope layers; refuse insufficient legacy preservation proof.",
+      "status": "complete",
+      "dependencies": [],
+      "estimated_lines": 600,
+      "acceptance_tests": [
+        "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_start_path.py"
+      ],
+      "passes": true
+    },
+    {
+      "id": "r02-proof-validation",
+      "name": "Shared assessed-candidate structured QA proof validation",
+      "description": "Validate the pinned check inventory and actual capture proof identically for direct completion and both receipt prerequisite paths, with manifest identity and explicit legacy behavior.",
+      "status": "pending",
+      "dependencies": [
+        "r02-completion"
+      ],
+      "estimated_lines": 1000,
+      "acceptance_tests": [
+        "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_start_path.py",
+        "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_workflow_assurance.py"
+      ]
+    }
+  ],
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
