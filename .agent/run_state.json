@@ -4004,15 +4004,22 @@
     "r02-completion-implementation": {
       "attempts": 1,
       "limit": 3,
-      "status": "mode-b-approved",
+      "status": "complete",
       "workspace": "/home/cnross/.tmp/nizam-r02-10DF50/repo",
       "base_commit": "00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6"
     },
     "r02-completion-qa": {
       "attempts": 1,
       "limit": 3,
-      "status": "authorized",
+      "status": "approved",
       "workspace": "/home/cnross/.tmp/nizam-r02-10DF50/repo"
+    },
+    "r02-isolation": {
+      "attempts": 2,
+      "limit": 3,
+      "status": "passed",
+      "prior_failure_ref": ".agent/evidence/r02-completion/root-isolation-attempt1.execution.json",
+      "passed_ref": ".agent/evidence/r02-completion/root-isolation-attempt2.execution.json"
     }
   },
   "history": [
@@ -10436,6 +10443,11 @@
       "at": "2026-10-24T01:05:45.491201+00:00",
       "event": "operator_gate_decision",
       "detail": "Operator authorized F1-F4 repairs, bounded override of the controls being repaired, fresh local checkout and manifest-only future proof. See .agent/evidence/r02/authority.json. Existing phase, feature and counters preserved."
+    },
+    {
+      "at": "2026-10-24T01:33:16.706193+00:00",
+      "event": "r02-repair-completed",
+      "detail": "F1/F2 completed at source f56f254f: independent Mode B, fresh QA, full 54-test isolation conformance and compliance 16/0. R02 delivery gate: .agent/evidence/r02-completion/root-completion-gate.json. Existing phase/current feature unchanged."
     }
   ],
   "phase_001_scope_budget_final": {

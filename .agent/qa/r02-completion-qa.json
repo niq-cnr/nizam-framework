@@ -1,0 +1,76 @@
+{
+  "feature_id": "r02-completion",
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "reviewed_revision": "f56f254ff6b4e1f2d0d15cd095efde01d034a00d",
+  "executed_at": "2026-10-24T01:27:41.242782+00:00",
+  "execution_context": {
+    "checkout": "/home/cnross/.tmp/nizam-r02-evaluator-qa",
+    "cache": "/home/cnross/.tmp/nizam-r02-evaluator-cache",
+    "origin": "https://github.com/niq-cnr/nizam-framework.git",
+    "fresh_processes": true
+  },
+  "checks": [
+    {
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python tools/test_start_path.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/r02-completion/evaluator-qa-check1-attempt1.execution.json",
+      "stdout": {
+        "path": ".agent/evidence/r02-completion/evaluator-qa-check1-attempt1.stdout.txt",
+        "sha256": "707cecbd0d8eb63134f7940014062a4ce474b9b8d3a586145fc6ab6f349f2a9e"
+      },
+      "stderr": {
+        "path": ".agent/evidence/r02-completion/evaluator-qa-check1-attempt1.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": "GIT_CONFIG_GLOBAL=/dev/null PYTHONDONTWRITEBYTECODE=1 python -c 'import subprocess,re; allowed={'\"'\"'tools/start_path.py'\"'\"','\"'\"'tools/test_start_path.py'\"'\"','\"'\"'.agent/run_state.json'\"'\"','\"'\"'.agent/r02-product-spec.md'\"'\"','\"'\"'.agent/r02-feature-list.json'\"'\"','\"'\"'.agent/contracts/r02-completion.json'\"'\"'}; base='\"'\"'00e0bcb1bd16ba2ddaf5774153bbf2c1e05244a6'\"'\"'; commands=[['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"',base,'\"'\"'HEAD'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--cached'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'diff'\"'\"','\"'\"'--name-only'\"'\"','\"'\"'--no-renames'\"'\"','\"'\"'-z'\"'\"'],['\"'\"'git'\"'\"','\"'\"'ls-files'\"'\"','\"'\"'--others'\"'\"','\"'\"'--exclude-standard'\"'\"','\"'\"'-z'\"'\"']]; paths=set().union(*(set(subprocess.check_output(c).decode().split(chr(0)))-{'\"'\"''\"'\"'} for c in commands)); patterns=[r'\"'\"'\\.agent/(?:validator|evaluator|qa)/r02-completion-[A-Za-z0-9_.-]+\\.json'\"'\"',r'\"'\"'\\.agent/evidence/r02-completion/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02/[A-Za-z0-9_./-]+'\"'\"',r'\"'\"'\\.agent/evidence/r02-(?:classify-completion|preflight)-attempt[1-9][0-9]*\\.reservation\\.json'\"'\"']; bad=sorted(p for p in paths-allowed if not any(re.fullmatch(q,p) for q in patterns)); print(bad); assert not bad'",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/r02-completion/evaluator-qa-check2-attempt1.execution.json",
+      "stdout": {
+        "path": ".agent/evidence/r02-completion/evaluator-qa-check2-attempt1.stdout.txt",
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "stderr": {
+        "path": ".agent/evidence/r02-completion/evaluator-qa-check2-attempt1.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": "python evaluator-repaired-baseline-probe.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/r02-completion/evaluator-repaired-baseline-probe.execution.json"
+    }
+  ],
+  "adversarial": {
+    "performed": true
+  },
+  "adversarial_check": {
+    "description": "Exactly one extra evaluator-origin check: inherited dangling symlink targeting nonexistent absolute external path stays exempt unchanged, records literal link without target reads, and refuses changed literal target.",
+    "result": "pass",
+    "evidence": ".agent/evidence/r02-completion/r02-completion-qa-adversarial.txt",
+    "execution": ".agent/evidence/r02-completion/evaluator-dangling-link-adversarial.execution.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/r02-completion/evaluator-qa-check1-attempt1.execution.json",
+    ".agent/evidence/r02-completion/evaluator-qa-check2-attempt1.execution.json",
+    ".agent/evidence/r02-completion/evaluator-repaired-baseline-probe.execution.json",
+    ".agent/evidence/r02-completion/r02-completion-qa-adversarial.txt",
+    ".agent/evidence/r02-completion/evaluator-dangling-link-adversarial.execution.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "observations": [
+    "Executed both approved contract commands independently in fresh detached committed checkout; 22 disposable Git regression cases inspected for real mutations and outside-source expected outcomes.",
+    "Independent original diagnostic scenarios now meet expected exits: approved schema completion 0; inherited tracked mutation refusal 1.",
+    "This verdict covers first-pair approved contract verification only. Root separately owns compliance/isolation gates; no claim those gates have passed is made here."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent F1/F2 contract QA and original reproductions pass on immutable f56f254f candidate; one additional no-follow dangling-link adversarial check passes."
+  }
+}
