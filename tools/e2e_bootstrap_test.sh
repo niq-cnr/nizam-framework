@@ -1104,7 +1104,6 @@ import hashlib
 import json
 import os
 import pathlib
-import platform
 import subprocess
 import sys
 
@@ -1261,31 +1260,114 @@ bad_intent = {
 (consumer / ".agent" / "evidence" / "trivbad-intent.json").write_text(json.dumps(bad_intent), encoding="utf-8")
 run_sp("begin", "trivial", "--id", "trivbad", expected_rc=1)
 
-good_intent = {
-    "id": "triv1",
-    "path": "trivial",
-    "summary": "Fix typo in README",
-    "needs_new_contract": False,
-    "files": ["README.md"],
-}
-(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(json.dumps(good_intent), encoding="utf-8")
-run_sp("begin", "trivial", "--id", "triv1")
-(consumer / ".agent" / "evidence" / "triv1-ev.txt").write_text("typo fixed\n", encoding="utf-8")
-qa_triv = {
-    "feature_id": "triv1",
-    "qa_pass": True,
-    "checks_run": 1,
-    "checks_passed": 1,
-    "adversarial": {"performed": True},
-    "evidence_files": [".agent/evidence/triv1-ev.txt"],
-    "issues": [],
-    "unsupported_claims": [],
-    "missing_acceptance_coverage": [],
-    "required_fixes": [],
-    "final_verdict": {"approved": True, "summary": "Approved trivial fix."},
-}
-(consumer / ".agent" / "qa" / "triv1.json").write_text(json.dumps(qa_triv), encoding="utf-8")
-run_sp("done", "trivial", "--id", "triv1")
+# Load the consumer's installed verifier directly; no framework checkout imports.
+import importlib.util
+wa_spec = importlib.util.spec_from_file_location("installed_consumer_assurance", wa)
+wa_api = importlib.util.module_from_spec(wa_spec)
+wa_spec.loader.exec_module(wa_api)
+
+
+def structured_route_proof(task_id: str) -> tuple[dict, pathlib.Path, dict]:
+    check = {
+        "id": "readme-exists",
+        "argv": [sys.executable, "-c", "from pathlib import Path; assert Path('README.md').is_file()"],
+        "expected_exit": 0,
+        "proof_kind": "success",
+        "diagnostic": None,
+    }
+    intent = {
+        "id": task_id,
+        "path": "trivial",
+        "summary": "Verify a bounded README edit using installed tools",
+        "needs_new_contract": False,
+        "files": ["README.md"],
+        "verification": [check],
+    }
+    intent_rel = f".agent/evidence/{task_id}-intent.json"
+    (consumer / intent_rel).write_bytes(wa_api.canonical(intent))
+    git("add", intent_rel)
+    git("commit", "--only", "-qm", f"pin {task_id} verification inventory", "--", intent_rel)
+    run_sp("begin", "trivial", "--id", task_id)
+    readme = consumer / "README.md"
+    readme.write_text(readme.read_text(encoding="utf-8") + f"\nConsumer proof: {task_id}.\n", encoding="utf-8")
+    base_rel = f".agent/evidence/{task_id}-base.json"
+    git("add", "README.md", base_rel)
+    git("commit", "--only", "-qm", f"assess {task_id} declared edit and immutable base", "--", "README.md", base_rel)
+    authorization_paths = wa_api.qa_authorization_paths(consumer, task_id)
+    context = wa_api.qa_context_sha256(consumer, task_id, authorization_paths, [check])
+    for name, value in {
+        wa_api.QA_CONTEXT_VARIABLE: context,
+        wa_api.QA_EXECUTION_ROOT_VARIABLE: str(consumer),
+        "NIZAM_CONSUMER_TEST": "1",
+    }.items():
+        os.environ[name] = value
+        env[name] = value
+    inputs = {
+        "source": ["README.md"],
+        "tests": ["src/PLACEHOLDER.md"],
+        "contracts": authorization_paths,
+        "tools": [
+            ".nizam/tools/start_path.py",
+            ".nizam/tools/workflow_assurance.py",
+            ".nizam/schema/qa_verdict.schema.json",
+            ".nizam/schema/contract.schema.json",
+            ".nizam/schema/small_change_intent.schema.json",
+        ],
+        "unknown_dependencies": [],
+    }
+    candidate = wa_api.assess_route_candidate(
+        consumer, task_id, git("rev-parse", "HEAD"), inputs,
+        [wa_api.QA_CONTEXT_VARIABLE, wa_api.QA_EXECUTION_ROOT_VARIABLE, "NIZAM_CONSUMER_TEST"],
+    )
+    output_dir = consumer / ".agent" / "evidence" / task_id
+    output_dir.mkdir()
+    candidate_path = output_dir / "candidate.json"
+    candidate_path.write_bytes(wa_api.canonical(candidate))
+    capture = json.loads(run_sp(
+        "capture", "--id", task_id, "--step", "qa", "--attempt", "1",
+        "--output-dir", output_dir.relative_to(consumer).as_posix(),
+        "--candidate", str(candidate_path), "--proof-kind", check["proof_kind"],
+        "--agent-id", "consumer-evaluator", "--session-id", "consumer-qa-session",
+        "--", *check["argv"],
+    ).stdout)
+    assert capture["executed"] is True and capture["exit_code"] == 0
+    assert (consumer / capture["stdout"]["path"]).read_bytes() == b""
+    assert (consumer / capture["stderr"]["path"]).read_bytes() == b""
+    capture_ref = {
+        "path": capture["capture_path"],
+        "sha256": hashlib.sha256((consumer / capture["capture_path"]).read_bytes()).hexdigest(),
+    }
+    verdict = {
+        "proof_version": 2,
+        "feature_id": task_id,
+        "candidate_ref": {
+            "path": candidate_path.relative_to(consumer).as_posix(),
+            "sha256": hashlib.sha256(candidate_path.read_bytes()).hexdigest(),
+        },
+        "qa_pass": True,
+        "checks_run": 1,
+        "checks_passed": 1,
+        "checks": [{"id": check["id"], "capture": capture_ref}],
+        "adversarial": {"performed": True},
+        "evidence_files": [capture["capture_path"]],
+        "issues": [],
+        "unsupported_claims": [],
+        "missing_acceptance_coverage": [],
+        "required_fixes": [],
+        "final_verdict": {"approved": True, "summary": "Executed installed consumer verification."},
+    }
+    qa_path = consumer / ".agent" / "qa" / f"{task_id}.json"
+    qa_path.write_bytes(wa_api.canonical(verdict))
+    # An explicitly failing declaration cannot override otherwise captured proof.
+    bad = dict(verdict, qa_pass=False)
+    qa_path.write_bytes(wa_api.canonical(bad))
+    run_sp("done", "trivial", "--id", task_id, expected_rc=1)
+    qa_path.write_bytes(wa_api.canonical(verdict))
+    run_sp("done", "trivial", "--id", task_id)
+    return candidate, candidate_path, intent
+
+
+structured_route_proof("triv1")
 
 # 4. Amend contract
 (consumer / "src" / "helper.py").write_text("print('helper')\n", encoding="utf-8")
@@ -1312,71 +1394,19 @@ assert amend_doc["applied"] is True and amend_doc["re_approval_required"] is Fal
 git("add", ".agent/contracts/001.json")
 git("commit", "-qm", "commit amended contract 001")
 
-# 5. Full producer-to-consumer receipt chain using only .nizam/tools/ (including V1 checks)
-head_commit = git("rev-parse", "HEAD")
-head_tree = git("rev-parse", "HEAD^{tree}")
-
-
-def blob_entry(rel: str) -> dict:
-    p = consumer / rel
-    raw = p.read_bytes()
-    return {
-        "path": rel,
-        "sha256": hashlib.sha256(raw).hexdigest(),
-        "executable": bool(p.stat().st_mode & 0o111),
-    }
-
-
-cand_body = {
-    "schema_version": 1,
-    "repository": "https://example.invalid/org/zero-reachback.git",
-    "source_commit": head_commit,
-    "source_tree": head_tree,
-    "assessed_inputs": {
-        "source": [blob_entry("src/helper.py")],
-        "tests": [blob_entry("src/PLACEHOLDER.md")],
-        "contracts": [blob_entry(".agent/contracts/001.json")],
-        "tools": [blob_entry("README.md")],
-    },
-    "environment": {
-        "runtime": {
-            "implementation": platform.python_implementation(),
-            "version": platform.python_version(),
-            "system": platform.system(),
-            "machine": platform.machine(),
-        },
-        "variables": {"NIZAM_CONSUMER_TEST": "1"},
-    },
-    "record_ownership": {},
-}
-cand_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
-cand_body["identity_sha256"] = hashlib.sha256(cand_canon).hexdigest()
-cand_full_canon = json.dumps(cand_body, sort_keys=True, separators=(",", ":")).encode("utf-8")
-cand_sha = hashlib.sha256(cand_full_canon).hexdigest()
-
+# 5. Start a fresh route after the unrelated feature amendment, then use the
+# same installed, assessed candidate for actual QA and the receipt's own command.
+run_state["current_feature"] = "trivreceipt"
+(consumer / ".agent/run_state.json").write_bytes(wa_api.canonical(run_state))
+git("add", ".agent/run_state.json")
+git("commit", "-qm", "select independent receipt route")
+cand_body, candidate_path, good_intent = structured_route_proof("trivreceipt")
 cap_out = json.loads(
     run_sp(
-        "capture",
-        "--id",
-        "001",
-        "--step",
-        "verify",
-        "--attempt",
-        "1",
-        "--output-dir",
-        ".agent/evidence/001",
-        "--candidate",
-        cand_sha,
-        "--env-var",
-        "NIZAM_CONSUMER_TEST=1",
-        "--agent-id",
-        "consumer-generator",
-        "--session-id",
-        "consumer-sess-1",
-        "--",
-        sys.executable,
-        "-c",
-        "print('CONSUMER_RECEIPT_OK')",
+        "capture", "--id", "trivreceipt", "--step", "verify", "--attempt", "1",
+        "--output-dir", ".agent/evidence/trivreceipt", "--candidate", str(candidate_path),
+        "--agent-id", "consumer-generator", "--session-id", "consumer-sess-1",
+        "--", sys.executable, "-c", "print('CONSUMER_RECEIPT_OK')",
     ).stdout
 )
 
@@ -1487,39 +1517,34 @@ assert set(pub_out["receipt_capture"].keys()) == {
     "stderr",
 }
 
-(consumer / ".agent" / "evidence" / "triv1-intent.json").write_text(
-    json.dumps(good_intent, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
-)
-git("add", ".agent/evidence/triv1-intent.json")
-git("commit", "-qm", "pin trivial intent for route receipt")
-pin_rev = git("rev-parse", "HEAD")
+pin_rev = cand_body["source_commit"]
 intent_ref = {
-    "path": ".agent/evidence/triv1-intent.json",
-    "sha256": hashlib.sha256((consumer / ".agent" / "evidence" / "triv1-intent.json").read_bytes()).hexdigest(),
+    "path": ".agent/evidence/trivreceipt-intent.json",
+    "sha256": hashlib.sha256((consumer / ".agent" / "evidence" / "trivreceipt-intent.json").read_bytes()).hexdigest(),
     "revision": pin_rev,
 }
-qa_triv_doc = json.loads((consumer / ".agent" / "qa" / "triv1.json").read_text(encoding="utf-8"))
+qa_triv_doc = json.loads((consumer / ".agent" / "qa" / "trivreceipt.json").read_text(encoding="utf-8"))
 qa_triv_doc["reviewed_revision"] = pin_rev
 qa_triv_doc["intent_sha256"] = intent_ref["sha256"]
 qa_triv_doc["reviewer"] = "consumer-evaluator"
-(consumer / ".agent" / "qa" / "triv1.json").write_text(
+(consumer / ".agent" / "qa" / "trivreceipt.json").write_text(
     json.dumps(qa_triv_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
 )
-git("add", ".agent/qa/triv1.json")
+git("add", ".agent/qa/trivreceipt.json")
 git("commit", "-qm", "pin trivial qa with exact intent revision")
 qa_rev = git("rev-parse", "HEAD")
 qa_ref = {
-    "path": ".agent/qa/triv1.json",
-    "sha256": hashlib.sha256((consumer / ".agent" / "qa" / "triv1.json").read_bytes()).hexdigest(),
+    "path": ".agent/qa/trivreceipt.json",
+    "sha256": hashlib.sha256((consumer / ".agent" / "qa" / "trivreceipt.json").read_bytes()).hexdigest(),
     "revision": qa_rev,
 }
 
 policy_doc = {
     "schema_version": 1,
     "repository": "https://example.invalid/org/zero-reachback.git",
-    "feature_id": "triv1",
+    "feature_id": "trivreceipt",
     "stage": "trivial-complete",
-    "operation_id": "consumer-op-triv1",
+    "operation_id": "consumer-op-trivreceipt",
     "candidate": cand_body,
     "producer": {"agent_id": "consumer-generator", "session_id": "consumer-sess-1"},
     "contract": intent_ref,
@@ -1528,14 +1553,14 @@ policy_doc = {
         {
             "kind": "route-intent",
             "artifact": intent_ref,
-            "feature_id": "triv1",
+            "feature_id": "trivreceipt",
             "assessed_revision": pin_rev,
             "contract_sha256": intent_ref["sha256"],
         },
         {
             "kind": "route-qa",
             "artifact": qa_ref,
-            "feature_id": "triv1",
+            "feature_id": "trivreceipt",
             "assessed_revision": pin_rev,
             "contract_sha256": intent_ref["sha256"],
         },
@@ -1554,15 +1579,15 @@ policy_doc = {
     "at": "2026-10-18T11:50:00Z",
     "recovery": None,
 }
-policy_path = consumer / ".agent" / "evidence" / "001" / "policy.json"
+policy_path = consumer / ".agent" / "evidence" / "trivreceipt" / "policy.json"
 policy_path.write_text(json.dumps(policy_doc, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8")
-git("add", ".agent/evidence/001/policy.json")
+git("add", ".agent/evidence/trivreceipt/policy.json")
 git("commit", "-qm", "commit consumer receipt policy")
 
 # V1 check (c): build-receipt without --commit rejects uncommitted 12-field closed capture without committing
 pre_br_head = git("rev-parse", "HEAD")
-receipt_path = consumer / ".agent" / "evidence" / "001" / "receipt.json"
-uncommitted_closed = consumer / ".agent" / "evidence" / "001" / "uncommitted.receipt-capture.json"
+receipt_path = consumer / ".agent" / "evidence" / "trivreceipt" / "receipt.json"
+uncommitted_closed = consumer / ".agent" / "evidence" / "trivreceipt" / "uncommitted.receipt-capture.json"
 uncommitted_closed.write_text(
     json.dumps(pub_out["receipt_capture"], sort_keys=True, separators=(",", ":")) + "\n",
     encoding="utf-8",
@@ -1615,29 +1640,23 @@ wa_verify = subprocess.run(
 )
 assert wa_verify.returncode == 0, f"verify-receipt failed: {wa_verify.stdout}\n{wa_verify.stderr}"
 
-res1 = json.loads(
-    run_sp(
-        "resume",
-        "--policy",
-        str(policy_path),
-        "--receipt",
-        str(receipt_path),
-        "--apply",
-    ).stdout
-)
+# Canonical default state advances once and replays without any scope exemption
+# for unrelated edits. The supported explicit task-owned state is exercised too.
+canonical_before = (consumer / ".agent/run_state.json").read_bytes()
+res1 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--apply").stdout)
 assert res1["action"] == "advance" and res1["applied"] is True
-
-res2 = json.loads(
-    run_sp(
-        "resume",
-        "--policy",
-        str(policy_path),
-        "--receipt",
-        str(receipt_path),
-        "--apply",
-    ).stdout
-)
-assert res2["action"] == "noop"
+res2 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--apply").stdout)
+assert res2["action"] == "noop" and res2["applied"] is False
+canonical_after = (consumer / ".agent/run_state.json").read_bytes()
+assert json.loads(canonical_after)["status"] == "complete"
+run_sp("done", "trivial", "--id", "trivreceipt", expected_rc=1)
+runtime_state = consumer / ".agent/evidence/trivreceipt/runtime-state.json"
+runtime_state.write_bytes(canonical_before)
+explicit1 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--state", str(runtime_state), "--apply").stdout)
+assert explicit1["action"] == "advance" and explicit1["applied"] is True
+explicit2 = json.loads(run_sp("resume", "--policy", str(policy_path), "--receipt", str(receipt_path), "--state", str(runtime_state), "--apply").stdout)
+assert explicit2["action"] == "noop"
+assert (consumer / ".agent/run_state.json").read_bytes() == canonical_after
 
 # 6. Status view
 st = json.loads(run_sp("status", "--format", "json").stdout)
