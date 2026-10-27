@@ -119,11 +119,11 @@ see [v2.0.0 migration](docs/migration-v2.0.0.md) and [the producer interface](to
 
 | Route | Typical Scope & Trigger | Pre-Code Gate | Completion Gate | CLI Entry & Closeout |
 | :--- | :--- | :--- | :--- | :--- |
-| **`trivial`** | `<= 2` low-risk files (docs, comments, formatting), zero risk flags | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin trivial --id <id>` / `done trivial --id <id>` |
+| **`trivial`** | Editorial or documentation-only scope eligible for `--editorial`, with no contract, schema or tooling impact | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin trivial --id <id>` / `done trivial --id <id>` |
 | **`bugfix`** | Scoped defect repair (`--bugfix`) within existing behavior boundaries | Assessed cause + scoped fix (`<id>-cause.json`, `<id>-scope.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin bugfix --id <id>` / `done bugfix --id <id>` |
-| **`small-change`** | `<= 3` files of unambiguous non-feature maintenance, zero risk flags | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin small-change --id <id>` / `done small-change --id <id>` |
-| **`standard-feature`** | New capability (`--new-feature`) or `> 3` files across components | Approved `.agent/contracts/NNN.json` (`validator` + `qa` pre-code verdicts) | Independent post-implementation check + recorded verification result + stage receipts | `tools/start_path.py preflight` → `capture` → `publish` → `resume` |
-| **`high-risk`** | Protected paths (`schema/`, `standard/`, `.github/workflows/`, `bootstrap.sh`, `NIZAM.json`) or `--breaking-change` / `--security-sensitive` / `--authority-change` | Approved contract + explicit Human Operator gate (`E1`) | Full feature verification stack + receipt-qualified transitions | `tools/start_path.py classify` → Operator gate → full contract loop |
+| **`small-change`** | Bounded unambiguous maintenance requiring no new feature contract | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin small-change --id <id>` / `done small-change --id <id>` |
+| **`standard-feature`** | New contract obligations (`--needs-new-contract`), schema/interface changes (`--touches-schema`), or normative governance paths | Approved `.agent/contracts/NNN.json` (`validator` + `qa` pre-code verdicts) | Independent post-implementation check + recorded verification result + stage receipts | `tools/start_path.py preflight` → `capture` → `publish` → `resume` |
+| **`high-risk`** | Security/isolation/authority boundaries (`--touches-security`), persistent runtime boundaries (`--touches-runtime`), or classifier-designated high-risk paths | Approved contract, capability preflight, full role separation and applicable operator authority gates | Full feature verification stack + receipt-qualified transitions | `tools/start_path.py classify` → applicable authority gates → full contract loop |
 
 ### New feature
 
@@ -399,6 +399,20 @@ core compliance. Reader-facing README content does not require NDS frontmatter;
 its local paths are checked independently.
 
 ---
+
+### Unreleased v3.0.0 candidate
+
+The corrective candidate is **not yet published**. The latest usable release remains
+v2.0.0 above. After v3.0.0 is published and its exact commit independently verified,
+consumers may substitute that approved commit for `NIZAM_RELEASE_SHA`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh -o bootstrap.sh
+GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
+```
+
+The [v3.0.0 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.0.0)
+will exist only after publication. See [migration guidance](docs/migration-v3.0.0.md).
 
 ## Versioning
 

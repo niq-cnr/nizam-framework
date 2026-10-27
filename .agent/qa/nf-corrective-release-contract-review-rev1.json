@@ -1,0 +1,30 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "NF22-verification-recipe",
+      "description": "verification[2].command is prose beginning \"Isolated consumer rehearsal\", not an executable verification command. The exact committed-candidate install, inventory, validation and rollback proof cannot be independently rerun from this contract.",
+      "source": ".agent/contracts/nf-corrective-release.json verification[2]"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Replace verification[2].command with an executable local rehearsal helper invocation and include that helper in scope (or provide explicit executable argv/shell commands). Require --candidate SHA and prior pin; fail on mismatched source, payload bytes, install validation or rollback.",
+    "Clarify non_goals tag creation prohibition applies to published/shared release tags; isolated disposable-repository rehearsal tags are fixtures, never release sign-off."
+  ],
+  "advisory_minor": [
+    "Use an explicit approved NIZAM_RELEASE_SHA variable for future v3 acquisition examples, or label prior stable onboarding separately; never pair v3.0.0 with the v2.0.0 SHA.",
+    "The core-only candidate must be committed before optional integration commits; final QA evidence and candidate SHA remain outside the frozen payload."
+  ],
+  "reviewer": "first_contact independent Evaluator for root release-preparation Generator",
+  "stage": "Loop 1 testability review",
+  "proposal_sha256": "804602ce0f3d9d98108796d6f5b4a378d8cc5c7c0e8c3ad657e1ec1af3a596ad",
+  "checks": [
+    "MAJOR classification follows release policy for C13 narrowing.",
+    "Bounded anchors/changelog/migration scope excludes DS, adoption and published release actions.",
+    "Release protocol mainline review and human sign-off remain outstanding; no inherited prior release authorization is accepted."
+  ]
+}

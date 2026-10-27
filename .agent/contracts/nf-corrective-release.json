@@ -1,0 +1,102 @@
+{
+  "contract_id": "nf-corrective-release",
+  "feature_id": "NF-22",
+  "name": "Independent v3.0.0 corrective release preparation",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/nf-corrective-release/readiness.json",
+        "purpose": "Candidate gate and decision packet without fabricated final SHA or sign-off"
+      },
+      {
+        "path": "tools/test_corrective_release.py",
+        "purpose": "Executable core-only exact-candidate bootstrap/integrity/payload/immutable rollback rehearsal in disposable local repositories."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "README.md",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "llms.txt",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "llms-full.txt",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "docs/guide/llms.txt",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      },
+      {
+        "path": "docs/guide/llms-full.txt",
+        "purpose": "Unreleased MAJOR corrective anchors, changelog, migration and truthful pinned acquisition guidance"
+      }
+    ]
+  },
+  "non_goals": [
+    "No optional skill files or activation in this corrective candidate; no DS inputs required.",
+    "No installed governance edits, merging, shared/published tags, release publication, self-adoption or fabricated human sign-off. Disposable private fixture tags used by rehearsal are test artifacts only.",
+    "No changed workflow/lifecycle/execution semantics outside already frozen core corrective commit."
+  ],
+  "acceptance_requirements": [
+    "Release anchor closeout passes with v3.0.0 MAJOR and migration; candidate explicitly unreleased.",
+    "Keep final tested SHA/payload identities in external evidence, not a self-referential tracked file.",
+    "Core-only installed consumer rehearses exact pinned local candidate with no documentation-skills access, validates and verifies inventory; prior released payload retained for immutable rollback.",
+    "Public onboarding never pairs future version tag with prior release SHA; examples require explicit approved immutable source identity.",
+    "Independent corrective exit is prepared before any optional source commit, human sign-off/merge/tag remain actual gates."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Version anchors and release metadata",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Public entry and installed contract coherence",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Core-only pinned install/integrity/validation and rollback",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_corrective_release.py --candidate HEAD --prior v2.0.0 --prior-sha 603afc7b17919334a6a01df1e39e63798d9d0acd",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 250,
+  "evidence_dir": ".agent/evidence/nf-corrective-release",
+  "evidence_convention": "Exclusive capture records; final commit and payload hash outside frozen source; local rehearsal tags not pushed and removed after consumer inventory verification.",
+  "role_allocation": "Standard root combines Planner/Generator/Validator/Orchestrator; first_contact independent Evaluator for this release-preparation feature.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2
+  },
+  "approval_evidence": {
+    "contract_review": ".agent/qa/nf-corrective-release-contract-review.json"
+  }
+}

@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 2.0.0
+version: 3.0.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "3.0.0"
+    date: "2026-10-27"
+    summary: "Prepare the NF-22 MAJOR corrective candidate: C13 manifest enforcement, consumer routing and first-contact link coverage. Publication and self-adoption remain pending review and release sign-off."
   - version: "2.0.0"
     date: "2026-10-24"
     summary: "Prepare the v2.0.0 MAJOR release of the completion, structured-QA, canonical receipt replay and finite retry repairs. Existing consumers must migrate verification inventories, assessed proof and recovery authority; docs/migration-v2.0.0.md records the compatibility boundary. Tag publication and official local self-adoption remain separate observed steps; no commissioning or production readiness is asserted."
