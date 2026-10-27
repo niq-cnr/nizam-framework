@@ -1,0 +1,33 @@
+{
+  "id": "pr139-merge",
+  "path": "trivial",
+  "summary": "Resolve CHANGELOG and ROADMAP merge conflicts while retaining both parent changes.",
+  "needs_new_contract": false,
+  "files": [
+    "CHANGELOG.md",
+    "docs/planning/ROADMAP.md"
+  ],
+  "verification": [
+    {
+      "id": "merge-content",
+      "argv": [
+        "python3",
+        ".agent/evidence/pr139-merge/check_merge.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ]
+}

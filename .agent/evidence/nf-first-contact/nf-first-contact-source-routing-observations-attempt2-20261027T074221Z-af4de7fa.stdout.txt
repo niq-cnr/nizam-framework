@@ -1,0 +1,238 @@
+[
+  {
+    "argv": [
+      "--files",
+      "schema/example.schema.json"
+    ],
+    "classification": {
+      "assurance_tier": "Standard",
+      "files": [
+        "schema/example.schema.json"
+      ],
+      "reasons": [
+        "touches normative governance, entry, or schema files: schema/example.schema.json"
+      ],
+      "required_gates": [
+        "loop1:contract_approval",
+        "loop2:validator_mode_b",
+        "loop2:evaluator_qa",
+        "loop2:evidence_capture"
+      ],
+      "review_remit": {
+        "advisory_fields": [
+          "advisory_minor"
+        ],
+        "blocking_fields": [
+          "issues",
+          "missing_acceptance_coverage",
+          "unsupported_claims",
+          "required_fixes"
+        ],
+        "evidence_required_for_blockers": true
+      },
+      "route": "standard-feature",
+      "stopping_conditions": {
+        "attempt_counter_role": "finite task-wide failed-execution budget",
+        "breaker_ref": "methodology/03_circuit_breaker.md",
+        "comparator_subordinate": true,
+        "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+        "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+        "hard_attempt_cap": 6,
+        "initial_strategy_ladder_attempts": 3,
+        "pass_condition": "All required_gates for route 'standard-feature' exit 0 and blocking verdict arrays are empty."
+      }
+    }
+  },
+  {
+    "argv": [
+      "--files",
+      "app.py",
+      "--touches-security"
+    ],
+    "classification": {
+      "assurance_tier": "High-assurance",
+      "files": [
+        "app.py"
+      ],
+      "reasons": [
+        "touches security, isolation, or authority verification boundary"
+      ],
+      "required_gates": [
+        "loop1:contract_approval",
+        "capability_preflight",
+        "loop2:validator_mode_b",
+        "loop2:evaluator_qa",
+        "convergent_review_or_isolation_suite",
+        "loop2:evidence_capture"
+      ],
+      "review_remit": {
+        "advisory_fields": [
+          "advisory_minor"
+        ],
+        "blocking_fields": [
+          "issues",
+          "missing_acceptance_coverage",
+          "unsupported_claims",
+          "required_fixes"
+        ],
+        "evidence_required_for_blockers": true
+      },
+      "route": "high-risk",
+      "stopping_conditions": {
+        "attempt_counter_role": "finite task-wide failed-execution budget",
+        "breaker_ref": "methodology/03_circuit_breaker.md",
+        "comparator_subordinate": true,
+        "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+        "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+        "hard_attempt_cap": 6,
+        "initial_strategy_ladder_attempts": 3,
+        "pass_condition": "All required_gates for route 'high-risk' exit 0 and blocking verdict arrays are empty."
+      }
+    }
+  },
+  {
+    "argv": [
+      "--files",
+      "app.py",
+      "--touches-runtime"
+    ],
+    "classification": {
+      "assurance_tier": "High-assurance",
+      "files": [
+        "app.py"
+      ],
+      "reasons": [
+        "touches persistent-runtime session boundary"
+      ],
+      "required_gates": [
+        "loop1:contract_approval",
+        "capability_preflight",
+        "loop2:validator_mode_b",
+        "loop2:evaluator_qa",
+        "convergent_review_or_isolation_suite",
+        "loop2:evidence_capture"
+      ],
+      "review_remit": {
+        "advisory_fields": [
+          "advisory_minor"
+        ],
+        "blocking_fields": [
+          "issues",
+          "missing_acceptance_coverage",
+          "unsupported_claims",
+          "required_fixes"
+        ],
+        "evidence_required_for_blockers": true
+      },
+      "route": "high-risk",
+      "stopping_conditions": {
+        "attempt_counter_role": "finite task-wide failed-execution budget",
+        "breaker_ref": "methodology/03_circuit_breaker.md",
+        "comparator_subordinate": true,
+        "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+        "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+        "hard_attempt_cap": 6,
+        "initial_strategy_ladder_attempts": 3,
+        "pass_condition": "All required_gates for route 'high-risk' exit 0 and blocking verdict arrays are empty."
+      }
+    }
+  },
+  {
+    "argv": [
+      "--files",
+      "app.py",
+      "--needs-new-contract"
+    ],
+    "classification": {
+      "assurance_tier": "Standard",
+      "files": [
+        "app.py"
+      ],
+      "reasons": [
+        "introduces new contract obligations"
+      ],
+      "required_gates": [
+        "loop1:contract_approval",
+        "loop2:validator_mode_b",
+        "loop2:evaluator_qa",
+        "loop2:evidence_capture"
+      ],
+      "review_remit": {
+        "advisory_fields": [
+          "advisory_minor"
+        ],
+        "blocking_fields": [
+          "issues",
+          "missing_acceptance_coverage",
+          "unsupported_claims",
+          "required_fixes"
+        ],
+        "evidence_required_for_blockers": true
+      },
+      "route": "standard-feature",
+      "stopping_conditions": {
+        "attempt_counter_role": "finite task-wide failed-execution budget",
+        "breaker_ref": "methodology/03_circuit_breaker.md",
+        "comparator_subordinate": true,
+        "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+        "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+        "hard_attempt_cap": 6,
+        "initial_strategy_ladder_attempts": 3,
+        "pass_condition": "All required_gates for route 'standard-feature' exit 0 and blocking verdict arrays are empty."
+      }
+    }
+  },
+  {
+    "argv": [
+      "--files",
+      "a.md",
+      "b.md",
+      "c.md",
+      "d.md",
+      "--editorial"
+    ],
+    "classification": {
+      "assurance_tier": "Routine",
+      "files": [
+        "a.md",
+        "b.md",
+        "c.md",
+        "d.md"
+      ],
+      "reasons": [
+        "editorial flag ignored because scope includes code, tooling, or non-prose path(s)",
+        "bounded unambiguous change requiring no new feature contract"
+      ],
+      "required_gates": [
+        "start_path:begin:small-change",
+        "targeted_verification",
+        "validate.sh",
+        "independent_acceptance_verdict",
+        "start_path:done:small-change"
+      ],
+      "review_remit": {
+        "advisory_fields": [
+          "advisory_minor"
+        ],
+        "blocking_fields": [
+          "issues",
+          "missing_acceptance_coverage",
+          "unsupported_claims",
+          "required_fixes"
+        ],
+        "evidence_required_for_blockers": true
+      },
+      "route": "small-change",
+      "stopping_conditions": {
+        "attempt_counter_role": "finite task-wide failed-execution budget",
+        "breaker_ref": "methodology/03_circuit_breaker.md",
+        "comparator_subordinate": true,
+        "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+        "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+        "hard_attempt_cap": 6,
+        "initial_strategy_ladder_attempts": 3,
+        "pass_condition": "All required_gates for route 'small-change' exit 0 and blocking verdict arrays are empty."
+      }
+    }
+  }
+]

@@ -1,0 +1,108 @@
+{
+  "feature_id": "pr139-merge",
+  "qa_pass": true,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "adversarial": {
+    "performed": true,
+    "description": "Independent byte-preservation of both parent document contributions; staged-only scoped whitespace; local-link/frontmatter validation and inherited scope check.",
+    "evidence": ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-source-links-attempt1-20261027T094535Z-fb1144bd.capture.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-source-links-attempt1-20261027T094535Z-fb1144bd.stdout.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-source-links-attempt1-20261027T094535Z-fb1144bd.capture.json",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-parent-script-attempt1-20261027T094512Z-9fce4037.stdout.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-scoped-staged-whitespace-attempt1-20261027T094535Z-966bb9bb.capture.json",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-scoped-staged-whitespace-attempt1-20261027T094535Z-966bb9bb.stdout.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-declared-whitespace-attempt1-20261027T094535Z-eddd6a69.stdout.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-declared-whitespace-attempt1-20261027T094535Z-eddd6a69.capture.json",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-parent-script-attempt1-20261027T094512Z-9fce4037.capture.json",
+    ".agent/evidence/pr139-merge/evaluator/source_review.py",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-source-links-attempt1-20261027T094535Z-fb1144bd.stderr.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-parent-script-attempt1-20261027T094512Z-9fce4037.stderr.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-scoped-staged-whitespace-attempt1-20261027T094535Z-966bb9bb.stderr.txt",
+    ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-declared-whitespace-attempt1-20261027T094535Z-eddd6a69.stderr.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent staged two-document conflict review passes; committed candidate-bound QA and done are deliberately not claimed."
+  },
+  "source_state": {
+    "assessed_files": {
+      "CHANGELOG.md": "24e1a8e923d7eed6ed6e682c2dd9c1905d2101025e5f679c0aca7517ec5c9c21",
+      "docs/planning/ROADMAP.md": "77eb9fc4c67be0ded4cbdf5779c182edd4d3837e169d8338b07b8ecfb464ff62"
+    },
+    "frontmatter": "schema-valid v0.65.38",
+    "local_links": [
+      "docs/planning/API_REFERENCE_PILOT.md"
+    ],
+    "parents": {
+      "main": "52a91abbee308282e24a5296d3597e9494e9a849",
+      "pr": "db3e8431146ad40584cd577b26cbf542e25b12d5"
+    },
+    "qualification": "staged review only; no done-qualified committed-source proof",
+    "release_tail": "v3 and prior bytes preserved",
+    "roadmap": "main body and historical metadata retained; API block preserved",
+    "scope": "only declared conflict files; inherited staged changes preserved",
+    "unreleased": "PR API entry preserved byte-for-byte"
+  },
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/pr139-merge/evaluator/source_review.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-source-links-attempt1-20261027T094535Z-fb1144bd.capture.json"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-scoped-staged-whitespace-attempt1-20261027T094535Z-966bb9bb.capture.json"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-declared-whitespace-attempt1-20261027T094535Z-eddd6a69.capture.json"
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/pr139-merge/check_merge.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/pr139-merge/evaluator/pr139-merge-evaluator-parent-script-attempt1-20261027T094512Z-9fce4037.capture.json"
+    }
+  ],
+  "inherited_whitespace": [
+    {
+      "path": ".agent/evidence/nf-c13-fixture-anchor/nf-c13-fixture-anchor-repaired-attempt1-20261027T080807Z-d1fe5759.stdout.txt",
+      "lines": [
+        1
+      ],
+      "preserved_from_main": true
+    }
+  ],
+  "limitations": [
+    "Original declared git diff --check inspects unstaged changes and is supplementary/vacuous after staging. Actual staged two-document whitespace is separately checked and passed.",
+    "Historical whitespace outside the two declared documents remains byte-preserved; no unrelated cleanup performed.",
+    "Current captures assess staged dirty source and are not candidate-bound completion proof. Orchestrator must first commit the reviewed candidate and immutable authorization/evidence, then obtain fresh structured QA before done.",
+    "No product edits, commit, merge, release or lifecycle state changes by this Evaluator."
+  ]
+}
