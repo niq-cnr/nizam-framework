@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json,jsonschema; s=json.load(open("schema/recommended_skills.schema.json")); e={"skill":"readme-docs","task_applicability":["readme"],"status":"withdrawn","distribution":"approved-public-metadata","withdrawal_reason":"revoked"}; d={"catalogue_version":"1.0.0","mapping_version":"1.0.0","entries":[e]}; errors=list(jsonschema.Draft202012Validator(s).iter_errors(d)); print("withdrawn record with no identity or qualification rejected:",bool(errors)); assert errors
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^^^^^^
+AssertionError

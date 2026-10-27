@@ -1,0 +1,32 @@
+{
+  "review": "contract-testability",
+  "feature": "NF-10",
+  "contract_id": "nf-resolver",
+  "revision_reviewed": 3,
+  "reviewer": "/root/first_contact independent High-assurance Evaluator",
+  "proposal_sha256": "d2064d36f79d8b0ad52861da39168926bcb2a7dfa100e42b5968c31e8b05f37a",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "Prior directory-only fan-out blocker is closed: finite operation-wide entries16384/directories4096 limits count selected root, empty directories and repeated walks.",
+    "Incremental enumeration checks budgets before materialization/sorting; overflow rejects complete-scope observation rather than truncating or returning compatible.",
+    "Existing dedicated boundary suite explicitly maps empty-directory overflow, repeated-walk entry exhaustion and a small valid-tree positive; unsafe read/walk mutants must fail.",
+    "Trust verifier, exact released catalogue/package/framework binding, no-verifier CLI, verified/unreleased nonactivation and neutral DS boundary remain intact from the independently reviewed revision2.",
+    "Integrity hashing may read only the selected package bytes; skill bodies are not parsed, disclosed or added to instruction context. Only host-deliberately selected relevant entrypoints are loaded for use."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Revision3 closes the bounded-traversal testability gap. Contract may proceed after all high-assurance role, prerequisite and capability gates are actually satisfied."
+  },
+  "prior_review": ".agent/qa/nf-resolver-contract-review.json",
+  "implementation_preconditions": [
+    "Record distinct Orchestrator, Planner, Generator, Validator and Evaluator identities.",
+    "Accept NF05/NF09 source/prerequisite identity and record honest capability preflight, including unsupported capabilities.",
+    "Execute meaningful isolation boundary and unsafe-mutant controls; mocked success cannot establish actual containment."
+  ],
+  "limitations": [
+    "No implementation QA, real DS contract/package acceptance, behavioral/exact-pair qualification, recommendation activation, release or adoption is asserted."
+  ]
+}

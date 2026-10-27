@@ -1,0 +1,28 @@
+{
+  "feature_id": "NF-06",
+  "contract_id": "nf-compliance-reference",
+  "verdict": "fail",
+  "executed_at": "2026-10-27T08:21:38.757254+00:00",
+  "checks": [
+    {
+      "command": "python3 -c import json,shutil,tempfile; from pathlib import Path; import sys; sys.path.insert(0,\"tools\"); from generate_compliance_reference import load_and_validate; t=tempfile.TemporaryDirectory(); r=Path(t.name); (r/\"tools\").mkdir(); shutil.copy2(\"tools/validate.sh\",r/\"tools/validate.sh\"); d=json.load(open(\"tools/compliance_checks.json\")); d[\"reserved\"]=[]; (r/\"tools/compliance_checks.json\").write_text(json.dumps(d)); rejected=False\ntry: load_and_validate(r)\nexcept ValueError: rejected=True\nprint(\"missing C17 reservation rejected:\",rejected); assert rejected",
+      "exit_code": 1,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator/nf-compliance-reference-evaluator-reserved-negative-attempt1-20261027T081708Z-88e751d0.capture.json"
+    }
+  ],
+  "issues": [
+    {
+      "id": "reservation-erased",
+      "description": "Removing C17 from the registry did not fail the consistency check."
+    }
+  ],
+  "required_fixes": [
+    "Validate reservation against its source and reject missing reserved IDs."
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false
+  },
+  "assessed_commit": "56e99dcc28e4506247e1696ccb0e9c0bd6308b0d"
+}

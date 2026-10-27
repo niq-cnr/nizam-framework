@@ -34,7 +34,7 @@
       "name": "Optional domain authority",
       "description": "Absent/declined/incompatible states preserve core use and required checks; no automatic install or NDS scope expansion.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -43,14 +43,16 @@
         "Absent/declined/incompatible states preserve core use and required checks; no automatic install or NDS scope expansion."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "dcedc21f + b9806310",
+      "deterministic_verification": "independently passed at b9806310; withdrawal negative failed before repair",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-optional-policy-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -58,7 +60,7 @@
       "name": "Governance manifest schema",
       "description": "Typed required identity, description, version, entry, capabilities, runtime and state; explicit extension and migration policy.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -67,14 +69,17 @@
         "Typed required identity, description, version, entry, capabilities, runtime and state; explicit extension and migration policy."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "d4c39fcb + 46b2aeb6",
+      "deterministic_verification": "independent mutation and symlink controls; Linux CI 176/176 fixture success on merge tree identical to 46b",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-c13-ci-followup-qa.json",
+        ".agent/qa/nf-c13-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -82,7 +87,7 @@
       "name": "Enforce C13 manifest",
       "description": "All names obey version parity; missing required fields and duplicate capability names fail; subset/containment/payload controls preserved.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-03"
       ],
@@ -91,14 +96,17 @@
         "All names obey version parity; missing required fields and duplicate capability names fail; subset/containment/payload controls preserved."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "d4c39fcb + 46b2aeb6",
+      "deterministic_verification": "independent mutation and symlink controls; Linux CI 176/176 fixture success on merge tree identical to 46b",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-c13-ci-followup-qa.json",
+        ".agent/qa/nf-c13-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -106,7 +114,7 @@
       "name": "Canonical consumer agent template",
       "description": "Installed-relative routing supports all five task classes, conditional ecosystem scope and canonical stopping policy.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -115,14 +123,16 @@
         "Installed-relative routing supports all five task classes, conditional ecosystem scope and canonical stopping policy."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-first-contact-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -130,7 +140,7 @@
       "name": "Control inventory",
       "description": "Every current emitted control has unique registry/documentation mapping; duplicates and drift fail.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-01",
         "NF-07"
@@ -140,14 +150,16 @@
         "Every current emitted control has unique registry/documentation mapping; duplicates and drift fail."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "56e99dcc + 37c9df45",
+      "deterministic_verification": "independent 13-test, parity, full 16/16, payload 10 and C17 negative controls passed at 37c9df45",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-compliance-reference-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -155,7 +167,7 @@
       "name": "First-contact repairs",
       "description": "Correct current module/template/schema/control descriptions and links without requiring README frontmatter.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -164,14 +176,16 @@
         "Correct current module/template/schema/control descriptions and links without requiring README frontmatter."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-first-contact-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -179,7 +193,7 @@
       "name": "First-contact link coverage",
       "description": "Broken README path fails C9; correct README without frontmatter and declared examples pass; full/payload regressions pass.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-07"
       ],
@@ -188,14 +202,16 @@
         "Broken README path fails C9; correct README without frontmatter and declared examples pass; full/payload regressions pass."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-first-contact-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -203,7 +219,7 @@
       "name": "Recommendation catalogue",
       "description": "Empty catalogue valid; recommended entries require exact identities and qualification, separate from availability and authority.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-02"
       ],
@@ -212,14 +228,16 @@
         "Empty catalogue valid; recommended entries require exact identities and qualification, separate from availability and authority."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "dcedc21f + b9806310",
+      "deterministic_verification": "independently passed at b9806310; withdrawal negative failed before repair",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-optional-policy-qa.json"
+      ],
       "blocker": null
     },
     {
@@ -227,7 +245,7 @@
       "name": "Offline bounded resolver",
       "description": "Explicit roots/inventory only; disabled has no package reads; tampering, unsupported identities and symlink escapes cannot resolve compatible.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-09"
       ],
@@ -236,14 +254,18 @@
         "Explicit roots/inventory only; disabled has no package reads; tampering, unsupported identities and symlink escapes cannot resolve compatible."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "708c9abc + 39054c29 + 0f756459",
+      "deterministic_verification": "independent recovery round passed at 86d20589 with same frozen product bytes; synthetic host inputs only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
-      "recommendation": "inactive",
+      "recommendation": "inactive; empty catalogue",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-resolver-qa-recovery7.json",
+        ".agent/qa/nf-resolver-qa-attempt1.json",
+        ".agent/qa/nf-resolver-qa-rework2-blocked.json"
+      ],
       "blocker": null
     },
     {
@@ -251,7 +273,7 @@
       "name": "Specialist routing",
       "description": "Route README/tutorial/reference work to matching optional specialist; selection preserves task/permission requirements.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "NF-05",
         "NF-10"
@@ -261,14 +283,18 @@
         "Route README/tutorial/reference work to matching optional specialist; selection preserves task/permission requirements."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "708c9abc + 39054c29 + 0f756459",
+      "deterministic_verification": "independent recovery round passed at 86d20589 with same frozen product bytes; synthetic host inputs only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
-      "recommendation": "inactive",
+      "recommendation": "inactive; empty catalogue",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
+      "evidence": [
+        ".agent/qa/nf-resolver-qa-recovery7.json",
+        ".agent/qa/nf-resolver-qa-attempt1.json",
+        ".agent/qa/nf-resolver-qa-rework2-blocked.json"
+      ],
       "blocker": null
     },
     {
@@ -276,7 +302,7 @@
       "name": "Evidence admission specification",
       "description": "Accepted DS bytes/versions map scoped observations, freshness, methods and states without becoming host acceptance.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-02",
         "NF-21"
@@ -299,14 +325,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "accepted DS-09/10/11/13 neutral contracts and NF-21",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-13",
       "name": "Report importer",
       "description": "Accepted DS conformance bundle; local parsing rejects invalid/stale/empty scope and unsupported contracts; commands stay data; sanitized errors.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-12"
       ],
@@ -325,14 +355,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-12 and accepted DS-26 distributable fixture bundle",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-14",
       "name": "Existing assurance binding",
       "description": "Capture actual admission through existing route, evaluator and receipts; stale or unassessed execution cannot complete task; no state mutation.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-05",
         "NF-13"
@@ -350,14 +384,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-13 and selected assurance integration",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-15",
       "name": "Independence matrix",
       "description": "Core-only/offline, selected/declined/alternative/corrupt/unavailable matrix preserves required checks and binding failures.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-11",
         "NF-14"
@@ -375,14 +413,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-11 and NF-14",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-16",
       "name": "Exact-pair compatibility CI",
       "description": "Separate explicit exact-pair CI with approved inputs and private raw outputs; mandatory core CI independent.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-04",
         "NF-08",
@@ -403,14 +445,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-15, authorized DS-27 immutable packages and private execution boundary",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-17",
       "name": "Real documentation pilot",
       "description": "Predeclared real README/tutorial/small-edit pilot versus baseline with authorized runtime/budget and independent assessment.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-16"
       ],
@@ -430,14 +476,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-16, DS-23 criteria, DS-27 final packages, authorized runtime and budget",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-18",
       "name": "Version-specific qualification",
       "description": "Exact same DS package bytes and DS-30 evidence bind bounded qualification and revalidation triggers.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-16",
         "NF-17"
@@ -457,14 +507,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-16/17 and DS-30 evidence for same DS-27 bytes",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-19",
       "name": "Recommendation guidance",
       "description": "Prequalified immutable pins and matching guidance remain unreleased until final exact-candidate qualification.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-07",
         "NF-18",
@@ -484,14 +538,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-06/18/21 and qualified package pins",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-20",
       "name": "Final recommendation release",
       "description": "Freeze final candidate, rerun exact-pair and pilot, verify payload/rollback, human sign-off then exact tag; adoption separate.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-04",
         "NF-05",
@@ -511,14 +569,18 @@
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [],
-      "blocker": null
+      "blocker": {
+        "owner": "documentation-skills owner / Nizam operator as applicable",
+        "need": "NF-19, exact final candidate qualification and separate release sign-off",
+        "resume": "supply accepted immutable input or finish listed NF prerequisites; see .agent/evidence/nf-handoffs.json"
+      }
     },
     {
       "id": "NF-21",
       "name": "Publication boundary",
       "description": "Owner-approved per-item provenance/destination, access route, environment/log retention and trusted attestation boundary.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-02"
       ],
@@ -529,22 +591,29 @@
         "Owner-approved per-item provenance/destination, access route, environment/log retention and trusted attestation boundary."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "dcedc21f narrow approved inventory and receipt",
+      "deterministic_verification": "publication categories approved; execution host and trusted attestation not established",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
-      "blocker": null
+      "evidence": [
+        "docs/skills/distribution-policy.md",
+        ".agent/evidence/nf-handoffs.json"
+      ],
+      "blocker": {
+        "owner": "documentation-skills owner and repository operator",
+        "need": "accepted DS-01 decision, selected private execution/retention and trusted attestation binding",
+        "resume": "supply accepted immutable decision and select actual host/trust record"
+      }
     },
     {
       "id": "NF-22",
       "name": "Independent corrective release",
       "description": "Independent major corrective candidate/release with before/after regressions, core-only install and existing release gates.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "blocked",
       "dependencies": [
         "NF-04",
         "NF-05",
@@ -556,15 +625,22 @@
         "Independent major corrective candidate/release with before/after regressions, core-only install and existing release gates."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "core candidate 46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
+      "deterministic_verification": "exact 46b core install, byte inventory, rollback passed; PR CI all green on identical synthetic-merge tree",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
-      "release": "unreleased",
+      "release": "unreleased candidate; draft PR #140",
       "adoption": "not_requested",
-      "evidence": [],
-      "blocker": null
+      "evidence": [
+        ".agent/qa/nf-corrective-release-qa.json",
+        ".agent/qa/nf-c13-qa.json"
+      ],
+      "blocker": {
+        "owner": "repository human reviewer and operator",
+        "need": "review and merge PR #140 without self-merge; independently requalify actual merged candidate, then H-FRAMEWORK-RELEASE sign-off and tag",
+        "resume": "review PR #140, merge through independent human, requalify actual merge identity, sign off and tag"
+      }
     }
   ],
   "finding_ownership": {

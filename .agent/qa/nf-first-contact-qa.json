@@ -1,0 +1,61 @@
+{
+  "feature_id": "NF-05",
+  "contract_id": "nf-first-contact",
+  "verdict": "pass",
+  "executed_at": "2026-10-27T08:09:17.925762+00:00",
+  "checks": [
+    {
+      "command": "python3 -c import sys; sys.path.insert(0,\"tools\"); from test_first_contact import run_c9; r=run_c9(\"# Welcome\\n[Missing](standard/nonexistent.md)\\n\"); print(\"exit\",r.returncode); print(r.stdout); assert r.returncode != 0 and \"[C9] FAIL\" in r.stdout and \"standard/nonexistent.md\" in r.stdout",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final/nf-first-contact-evaluator-adversarial-attempt1-20261027T080907Z-2050e34f.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    },
+    {
+      "command": "python3 tools/test_public_entry.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final/nf-first-contact-evaluator-final-public-entry-attempt1-20261027T080153Z-a88906a1.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    },
+    {
+      "command": "python3 tools/test_first_contact.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final/nf-first-contact-evaluator-final-readme-attempt1-20261027T080152Z-68ea5eb6.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    },
+    {
+      "command": "python3 tools/test_consumer_agent_template.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final/nf-first-contact-evaluator-final-template-attempt1-20261027T080151Z-76d2c0bf.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final2/nf-first-contact-evaluator-final-full-attempt1-20261027T080336Z-aab7bade.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-first-contact/evaluator-final2/nf-first-contact-evaluator-final-payload-attempt1-20261027T080318Z-1a7d27df.capture.json",
+      "revision": "40b759300bc6521fcd1fb3e0883909026c4a3b41"
+    }
+  ],
+  "required_fixes": [],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": true
+  },
+  "assessed_commit": "40b759300bc6521fcd1fb3e0883909026c4a3b41",
+  "reviewer": "root independent Evaluator",
+  "adversarial_check": {
+    "description": "Broken README path fails C9 in default mode",
+    "result": "pass",
+    "evidence": ".agent/evidence/nf-first-contact/evaluator-final/nf-first-contact-evaluator-adversarial-attempt1-20261027T080907Z-2050e34f.capture.json"
+  },
+  "limitations": [
+    "Applies to exact candidate 40b; subsequent changes require relevant verification."
+  ]
+}

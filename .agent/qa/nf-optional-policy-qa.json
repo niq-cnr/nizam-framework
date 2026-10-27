@@ -1,0 +1,51 @@
+{
+  "feature_id": "NF-09",
+  "contract_id": "nf-optional-policy",
+  "verdict": "pass",
+  "executed_at": "2026-10-27T08:05:01.428694+00:00",
+  "checks": [
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-optional-policy/evaluator2/nf-optional-policy-evaluator-full-repaired-attempt1-20261027T075954Z-a21b58f7.capture.json",
+      "assessed_revision": "b9806310b9c9ae490e345ed04385cb20c75efef5"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-optional-policy/evaluator2/nf-optional-policy-evaluator-payload-repaired-attempt1-20261027T075936Z-704f32a6.capture.json",
+      "assessed_revision": "b9806310b9c9ae490e345ed04385cb20c75efef5"
+    },
+    {
+      "command": "python3 tools/test_skill_recommendations.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-optional-policy/evaluator2/nf-optional-policy-evaluator-schema-repaired-attempt1-20261027T075936Z-eb74343c.capture.json",
+      "assessed_revision": "b9806310b9c9ae490e345ed04385cb20c75efef5"
+    },
+    {
+      "command": "python3 -c import json,jsonschema; s=json.load(open(\"schema/recommended_skills.schema.json\")); e={\"skill\":\"readme-docs\",\"task_applicability\":[\"readme\"],\"status\":\"withdrawn\",\"distribution\":\"approved-public-metadata\",\"withdrawal_reason\":\"revoked\"}; d={\"catalogue_version\":\"1.0.0\",\"mapping_version\":\"1.0.0\",\"entries\":[e]}; errors=list(jsonschema.Draft202012Validator(s).iter_errors(d)); print(\"withdrawn record with no identity or qualification rejected:\",bool(errors)); assert errors",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-optional-policy/evaluator2/nf-optional-policy-evaluator-withdrawal-recheck-attempt1-20261027T080450Z-7f6d72a5.capture.json",
+      "assessed_revision": "56e99dcc28e4506247e1696ccb0e9c0bd6308b0d"
+    }
+  ],
+  "required_fixes": [],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": true
+  },
+  "assessed_commit": "b9806310b9c9ae490e345ed04385cb20c75efef5",
+  "reviewer": "root independent Evaluator",
+  "adversarial_check": {
+    "description": "Reject withdrawn record that omits exact historical identity and qualification",
+    "result": "pass after prior failure",
+    "evidence": ".agent/evidence/nf-optional-policy/evaluator2/nf-optional-policy-evaluator-withdrawal-recheck-attempt1-20261027T080450Z-7f6d72a5.capture.json"
+  },
+  "static_review": ".agent/evidence/nf-optional-policy/evaluator2/source-review.json",
+  "limitations": [
+    "NF21 remains pending DS01, approved host/retention details and trusted attestation; no DS handoffs accepted.",
+    "Only catalogue metadata shape and policy assessed; no package qualified, recommended, released or adopted."
+  ]
+}

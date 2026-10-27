@@ -1,0 +1,30 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "validator_mode_a_revision3",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T08:10:19.266924+00:00",
+  "proposal_sha256": "d2064d36f79d8b0ad52861da39168926bcb2a7dfa100e42b5968c31e8b05f37a",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_checks": [
+    "Revision 3 adds finite operation-wide directory and entry budgets; root and empty directories and repeated scans consume budgets.",
+    "Enumeration must consume budget before materialization and reject rather than truncate; overflow and bounded positive cases are required in containment suite.",
+    "The revision 2 trusted exact-pair/released-catalogue interface and local-only inventory canonicalization remain unchanged.",
+    "Contract validates against the current contract schema."
+  ],
+  "advisory_minor": [
+    "Actual tests must exercise traversal and incremental allocation; a prose claim or output-only length check is insufficient.",
+    "High-risk role assignments, preflight and independent Evaluator Loop1 approval remain gates; this verdict approves no product code.",
+    "DS formats and real compatibility remain unaccepted and fail closed."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/validator/nf-resolver-validator-contract-schema-rev3-attempt1-20261027T081008Z-a2e8a599.capture.json"
+  ],
+  "limitations": [
+    "Mode A scope/testability review only; no implementation, host security capability or qualification has been proven."
+  ]
+}

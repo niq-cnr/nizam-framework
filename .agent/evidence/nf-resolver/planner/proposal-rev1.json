@@ -1,0 +1,208 @@
+{
+  "contract_id": "nf-resolver",
+  "feature_id": "NF-10",
+  "name": "NF-10/NF-11 bounded offline optional recommendation resolver and canonical routing",
+  "status": "proposed",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/skill_recommendations.py",
+        "purpose": "Nizam-owned pure recommendation/routing and thin no-follow local I/O boundary; read-only CLI; no DS format replacement."
+      },
+      {
+        "path": "tools/test_skill_recommendation_boundaries.py",
+        "purpose": "Dedicated executable high-risk filesystem/read/execution isolation controls and concurrent-change negative tests using private temporary synthetic roots."
+      },
+      {
+        "path": "tools/test_skill_routing.py",
+        "purpose": "Synthetic contextual route and selected-only host entrypoint access fixtures; direct/equivalent authoring preserves governing requirements."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/test_skill_recommendations.py",
+        "purpose": "Extend existing catalogue suite with local resolver observations and independently authored synthetic host inventory tests."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "Single concise canonical optional specialist route and matching version update; no body duplication."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "Match SKILL.md version and only add capability if indexed by parent-approved NIZAM change."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Document explicit host input/API, no reads when disabled, advisory output and selected required-check preservation."
+      },
+      {
+        "path": "standard/domain_skill_compatibility.md",
+        "purpose": "Reference resolver and one concise task routing mapping under existing optional authority contract."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Index resolver or routing source only if required by intentional-subset governance index semantics."
+      }
+    ]
+  },
+  "non_goals": [
+    "No consumer package execution or body loading by resolver, process invocation, network/acquisition, install/update/uninstall, arbitrary schema retrieval, source repair or filesystem writes.",
+    "No actual DS package schema/inventory contract implemented from guesses; no DS26 fixture closure, DS27 package acceptance, NF16 exact pair, NF17 live pilot or qualification claim.",
+    "No active recommended catalogue entries, lifecycle/run_state/circuit-counter changes, host acceptance/approval, release/self-adoption or permission elevation.",
+    "No unrelated governance rewrites, fourth routing skill, hosted registry, broad ambient discovery or mandatory cross-repo CI dependency."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "NF10-enabled",
+      "requirement": "Disabled integration returns an advisory disabled result before reading package roots, inventories or entrypoint bodies; only explicit configuration/catalogue metadata may be read. No network, process execution or mutation in any mode."
+    },
+    {
+      "id": "NF10-roots",
+      "requirement": "Resolve a single explicitly selected relevant skill only under explicit configured roots or caller-supplied host inventory. Never scan ambient directories or enumerate unrelated packages. Reject absolute/traversal/NUL paths and escaping or switched symlinks. Root/ancestor/file no-follow containment and concurrent replacement detection must prevent reading or hashing outside selected roots."
+    },
+    {
+      "id": "NF10-identity",
+      "requirement": "Compatible is available only for a recommended or verified exact catalogue entry with actual matching selected package name/version, immutable source identity, complete scoped inventory and supported contract versions under host-owned mapping. Missing, wrong, modified, unsupported, unverified and withdrawn results never become compatible. A candidate or schema-valid record alone is insufficient."
+    },
+    {
+      "id": "NF10-bytes",
+      "requirement": "Digest bytes actually read from a stable no-follow file descriptor and verify unchanged file identity before/after. Reject incomplete, additional/untracked relevant bytes, duplicate or normalized-colliding inventory paths, missing targets, directory/special-file inventory entries, replaced ancestors, empty or unbounded inventory and unreadable bytes without leaking source. No validate-then-reread/hash race."
+    },
+    {
+      "id": "NF10-host-input",
+      "requirement": "A caller-supplied inventory is Nizam host configuration/evidence, not a substitute DS package contract. It must specify selected bounded local path/inventory and expected identities derived from accepted qualification, with unsupported format versions rejected explicitly. Untrusted input may constrain observation but cannot grant authority or supply its own omitted required checks."
+    },
+    {
+      "id": "NF10-states",
+      "requirement": "Keep catalogue lifecycle candidate/verified/recommended/withdrawn separate from local observations compatible/missing/unverified/incompatible/withdrawn. Declined, disabled and inaccessible results are advisory for generic Nizam; an explicitly required task assurance condition remains required or blocked until policy-authorized equivalent evidence exists."
+    },
+    {
+      "id": "NF11-routing",
+      "requirement": "Offer at most one contextual route: README -> readme-docs, learner tutorial -> tutorial-docs, documentation architecture/reference/operations -> software-docs. Unrelated code work gets none; ambiguous task context requires explicit host selection rather than loading all skills."
+    },
+    {
+      "id": "NF11-entrypoint",
+      "requirement": "Resolver returns only selected relevant entrypoint identity/path after integrity checks and never executes package code or loads skill-body text. Host reads only a deliberately selected relevant entrypoint under existing permission policy. Test a host selection simulation that unrelated entrypoints are never opened."
+    },
+    {
+      "id": "NF11-authority",
+      "requirement": "Same canonical task classification, authorization and selected assurance requirements apply to recommended, alternate or direct authoring. Presence of catalogue/package never adopts governance, enables execution, installs/updates/removes packages, changes .nizam or grants a verdict."
+    },
+    {
+      "id": "NF10-provisional",
+      "requirement": "DS27 immutable packages are unavailable. Deterministic local tests use independently authored synthetic host inventory only; they are not DS contract fixtures, a DS26 handoff, exact-pair compatibility or behavioral qualification. No active recommendations are introduced."
+    },
+    {
+      "id": "Rollback",
+      "requirement": "A withdrawn entry preserves identity/reason/history while resolver returns withdrawn and performs no uninstall, upgrade, state/counter mutation or selected requirement erasure. Existing valid released recommendation pins are unchanged."
+    }
+  ],
+  "verification": [
+    {
+      "id": "all-resolver-boundaries",
+      "acceptance_test": "NF10-enabled,NF10-roots,NF10-identity,NF10-bytes,NF10-host-input,NF10-states,Rollback",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_recommendations.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendations.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Offline synthetic matrix with filesystem/process/network mutation sentinels; disabled missing-root/poison-path control; competing file/ancestor replacements; all lifecycle/local availability combinations; no private input."
+    },
+    {
+      "id": "isolated-containment-suite",
+      "acceptance_test": "NF10-enabled,NF10-roots,NF10-bytes,NF11-entrypoint",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_recommendation_boundaries.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendation_boundaries.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Dedicated subprocess/temp-root suite proving no-read sentinels outside roots, escaping/broken/link swaps, descriptor race identity, special files, irrelevant skill body poison and zero package execution/network/mutations. This is the high-risk isolation-boundary suite; it must fail on unsafe mutant implementations."
+    },
+    {
+      "id": "routing",
+      "acceptance_test": "NF11-routing,NF11-entrypoint,NF11-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_routing.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_routing.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "README/tutorial/reference/operations/code/ambiguous fixtures, decline/alternate method and selected required-check persistence; only selected entrypoint opened by synthetic host harness."
+    },
+    {
+      "id": "skill-index",
+      "acceptance_test": "NF11-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_governance_skill.py",
+      "argv": [
+        "python3",
+        "tools/test_governance_skill.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "C13 index/manifest parity and containment remain intact after canonical route version bump."
+    },
+    {
+      "id": "full-core",
+      "acceptance_test": "NF10-states,NF11-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Full current control suite; no cross-repo package dependency."
+    },
+    {
+      "id": "payload-core",
+      "acceptance_test": "NF10-enabled,NF10-provisional",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "argv": [
+        "bash",
+        "tools/validate.sh",
+        "--payload"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Payload validates with no DS package installed or accessible; no recommendation activation."
+    }
+  ],
+  "estimated_lines": 650,
+  "evidence_dir": ".agent/evidence/nf-resolver",
+  "evidence_convention": "Exclusive start_path capture with actual argv/exit/environment/input identity; tests-only preimplementation observation retained as semantic-negative; source frozen and manifest digested before independent QA; no overwrite or private-source diagnostics.",
+  "role_allocation": {
+    "assurance_tier": "High-assurance",
+    "route": "high-risk",
+    "orchestrator": "/root",
+    "planner": "/root/optional_scaffold",
+    "generator": "not_assigned",
+    "validator": "not_assigned",
+    "evaluator": "not_assigned",
+    "separation": "Planner prepares this draft only. Root must assign distinct Generator/Validator/Evaluator sessions and obtain ModeA plus independent contract testability approval before any product code."
+  },
+  "prerequisites": {
+    "NF-09": "Nizam-owned empty catalogue/schema implementation exists; final accepted implementation/commit must be recorded before execution.",
+    "NF-05": "Canonical consumer route corrective implementation must be accepted before NF11.",
+    "DS-27": "Unavailable; limits this work to Nizam-owned API and synthetic host-inventory observations. No actual DS package compatibility closed."
+  },
+  "preconditions": [
+    "Freeze independent NF22 corrective source before optional product edits.",
+    "High-risk capability preflight and named full role separation recorded.",
+    "Validator reviews approved contract and explicit no-follow/race strategy, including portability limits; unsupported host protection fails closed rather than pretending containment.",
+    "Operator mandate authorizes implementation and normal PR delivery only; actual release/qualification/publication gates remain unchanged."
+  ],
+  "baseline_plan": "After contract approval, add discriminating tests first and capture current missing-resolver/routing behavior before implementation. Treat this as missing optional capability, not a defect already affecting core compliance. Preserve before/after boundary proof and mutant unsafe-root/read negative controls.",
+  "qa_plan": "Evaluator independently executes every declared check in fresh process/private temp roots from committed frozen source, adds an adversarial boundary control, records exact source/surface digest and all unassessed conditions. Dedicated isolation suite must meaningfully exercise no-read boundaries; mocked sentinels alone do not establish real containment."
+}

@@ -1,0 +1,31 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "role": "optional_scaffold Standard Generator/Validator only; separate Resolver Planner role has no source implementation",
+  "stage": "Mode B concrete NF09 withdrawal-history repair",
+  "contract": ".agent/contracts/nf-optional-policy.json",
+  "source_manifest": {
+    "standard/domain_skill_compatibility.md": "2a4d9e57760ea71a57bbdaf0931705aa51a6a5e9479927a3761586743d4b58f7",
+    "schema/recommended_skills.schema.json": "7ee8dd417ca7d9c58e24702630561a2f841ce1791e95f08ed2d05e0627281769",
+    "tools/recommended_skills.json": "ed8f4c60c32bea43fd7fc22dcb74213e4ccb799d5b49767aace16adfd6034c44",
+    "tools/test_skill_recommendations.py": "13a3432969c5a30727d835ca5ac97b643be6e5e5c2fb1d88303bf33c62a9f3de",
+    "docs/skills/distribution-policy.md": "1944cc17e8fe27a82d7d86425ba4409f5dbe50a05d27c8b0acc6e64d2cbf7378",
+    ".agent/evidence/nf-handoffs.json": "f864f6900631830c1f6af001cba048001392d203fe3c20856d0f9d98e5788b5a",
+    "NIZAM.json": "4ef1b1d1a74f0591c6ed416bc1ad4eb23d51015b1a7dd2f503a38da8f9e73ddd",
+    "tools/interface.md": "27198a187d75126f55ad457b4a5cf042b78ae1a04b5f9014de6585b5a725fa8a"
+  },
+  "evidence": [
+    ".agent/qa/nf-optional-policy-qa-attempt1.json",
+    ".agent/evidence/nf-optional-policy/nf-optional-policy-generator-withdrawal-baseline-attempt1-20261027T075749Z-a18e599f.capture.json"
+  ],
+  "repair": "Withdrawn entries now retain full exact package identity, supported contracts, tested framework and qualification in addition to reason. Nine schema tests include omission of every history field and bare withdrawn skeleton. Original candidate stays empty.",
+  "limitations": [
+    "Prior dcedc21f independent failure retained unchanged.",
+    "Repaired schema/test source frozen now; parent independent candidate QA required.",
+    "No real package qualification, recommendation activation or DS handoff acceptance."
+  ]
+}

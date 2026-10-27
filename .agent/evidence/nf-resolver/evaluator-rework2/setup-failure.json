@@ -1,0 +1,86 @@
+{
+  "task": "NF-10/NF-11",
+  "candidate_sha": "0f7564595aff062364ccb097b17bf2f2eaac49c2",
+  "record_type": "actual uncaptured setup-verifier execution; not a start_path capture",
+  "argv": [
+    "python3",
+    "-"
+  ],
+  "shell_command": "PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'\nfrom pathlib import Path\nimport sys,json,subprocess,tempfile,hashlib,shutil\nroot=Path.cwd();sys.path.insert(0,str(root/'tools'));import start_path as sp\nhistory=sp._task_capture_history(root,'nf-resolver');failed=[d for d in history if not sp._successful_task_capture(root,d)];assert len(failed)==5,len(failed)\nsha='0f7564595aff062364ccb097b17bf2f2eaac49c2';area=Path(tempfile.mkdtemp(prefix='nf-resolver-independent-r2-'));clone=area/'repo'\nsubprocess.run(['git','clone','--quiet','--no-hardlinks','--no-checkout',str(root),str(clone)],check=True);subprocess.run(['git','checkout','--quiet','--detach',sha],cwd=clone,check=True);assert not subprocess.check_output(['git','status','--porcelain'],cwd=clone)\nfp=clone/'.agent/evidence/nf-resolver/generator/source-freeze-rework2.json';freeze=json.loads(fp.read_text());mode=json.loads((root/'.agent/validator/nf-resolver-mode-b-rework2.json').read_text());assert mode['assessed_commit']==sha and hashlib.sha256(fp.read_bytes()).hexdigest()==mode['source_freeze_sha256'];assert hashlib.sha256((clone/'.agent/contracts/nf-resolver.json').read_bytes()).hexdigest()==freeze['contract_sha256']\nfor path,digest in freeze['source_sha256'].items():assert hashlib.sha256((clone/path).read_bytes()).hexdigest()==digest,path\nfor p in (root/'.agent/evidence/nf-resolver').rglob('*'):\n if not p.is_file():continue\n target=clone/p.relative_to(root);target.parent.mkdir(parents=True,exist_ok=True)\n if target.exists():assert target.read_bytes()==p.read_bytes(),p\n else:shutil.copyfile(p,target)\ncloned_history=sp._task_capture_history(clone,'nf-resolver');cloned_failed=[d for d in cloned_history if not sp._successful_task_capture(clone,d)];assert len(cloned_failed)==5\nout=root/'.agent/evidence/nf-resolver/evaluator-rework2';out.mkdir(parents=True,exist_ok=True);(out/'clone-identity.json').write_text(json.dumps({'candidate_sha':sha,'initial_status':'clean before prior evidence copy','source_manifest_sha256':freeze['source_manifest_sha256'],'mode_b':'.agent/validator/nf-resolver-mode-b-rework2.json','source_hashes':'all12 product paths and contract matched','clone':str(clone),'failed_execution_count_before_qa':len(failed),'failed_capture_paths':[d['capture_path'] for d in failed],'failure_ceiling':6,'no_reset':True,'environment':'Darwin arm64 CPython3.14.6','sandbox':'unavailable; dedicated filesystem/effects tests only'},indent=2)+'\\n')\nprior=root/'.agent/qa/nf-resolver-qa-attempt1.json';data=(root/'.agent/qa/nf-resolver-qa.json').read_bytes()\nif prior.exists():assert prior.read_bytes()==data\nelse:prior.write_bytes(data)\nPath('/tmp/nf-resolver-evaluator-location-r2.txt').write_text(str(clone));print(json.dumps({'clone':str(clone),'actual_task_failures':len(failed),'remaining_failures_before_required_stop':1,'source_sha':sha}))\nPY",
+  "stdin_path": ".agent/evidence/nf-resolver/evaluator-rework2/setup-history-check.stdin.py",
+  "cwd": "/Users/cnross/.codex/worktrees/acd4/nizam-framework",
+  "exit_code": 1,
+  "stdout": ".agent/evidence/nf-resolver/evaluator-rework2/setup-failure.stdout.txt",
+  "stderr": ".agent/evidence/nf-resolver/evaluator-rework2/setup-failure.stderr.txt",
+  "environment": {
+    "python": "3.14.6",
+    "system": "Darwin",
+    "machine": "arm64",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "path_discrepancy": {
+    "passed_root": "/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nf-resolver-independent-r2-toleib5c/repo",
+    "canonical_root": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nf-resolver-independent-r2-toleib5c/repo",
+    "cause": "setup passed noncanonical temp alias to history validator; resolved path comparison differs although copied capture bytes match"
+  },
+  "prior_failed_captures": [
+    {
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-prevalidation-probe-attempt1-20261027T084750Z-e77a6c4a.capture.json",
+      "step": "evaluator-prevalidation-probe",
+      "attempt": 1,
+      "exit_code": 1,
+      "defect_signature": "observed:cd7585e8fc791cd879a798626970595b08474c28db78da18cb095792a9de1c98"
+    },
+    {
+      "capture": ".agent/evidence/nf-resolver/validator-rework2/nf-resolver-validator-rework2-selectors-attempt1-20261027T090024Z-9662171d.capture.json",
+      "step": "validator-rework2-selectors",
+      "attempt": 1,
+      "exit_code": 1,
+      "defect_signature": "observed:9b15bde39a5e424e2677632431215ca977ef7b75c2a1a29467a654b7d318d679"
+    },
+    {
+      "capture": ".agent/evidence/nf-resolver/generator/nf-resolver-allocation-baseline-attempt1-20261027T083905Z-534ed505.capture.json",
+      "step": "allocation-baseline",
+      "attempt": 1,
+      "exit_code": 1,
+      "defect_signature": "observed:9cd80a6f7a64385ff9e9f3bb243182216f3b437229ebc26b639dae9ae4b2aa18"
+    },
+    {
+      "capture": ".agent/evidence/nf-resolver/generator/nf-resolver-selector-callback-baseline-attempt1-20261027T085355Z-563068da.capture.json",
+      "step": "selector-callback-baseline",
+      "attempt": 1,
+      "exit_code": 1,
+      "defect_signature": "observed:cad3aed047d6bf2ffcbe8305c4ab7a60242e574f54891e0e127ccadff3b16471"
+    },
+    {
+      "capture": ".agent/evidence/nf-resolver/generator/nf-resolver-tests-only-baseline-attempt1-20261027T082036Z-06f951db.capture.json",
+      "step": "tests-only-baseline",
+      "attempt": 1,
+      "exit_code": 1,
+      "defect_signature": "observed:46dc62b1c8e9d250aafcc43545a270d82b0e61214a63648f916d12b5285a563a"
+    }
+  ],
+  "counting": {
+    "retained_failed_captures": 5,
+    "additional_failed_setup_execution": 1,
+    "actual_failed_executions_total": 6,
+    "finite_ceiling": 6,
+    "disposition": "halt; no rerun or reset"
+  },
+  "completed_before_failure": [
+    "Main canonical history validated with five prior failed captures.",
+    "Fresh private clone exact candidate checkout was clean.",
+    "All12 frozen product-file hashes and approved contract hash matched external ModeB.",
+    "Prior task evidence copied without byte changes."
+  ],
+  "not_run": [
+    "All six contract verification commands on new candidate",
+    "Prior callback and new adversarial product probes on new candidate"
+  ],
+  "source_freeze_sha256": "18a0976a47ce901d24f83fe4640f1d0508639fac6495c4378cbdd018e1be2d4c",
+  "source_manifest_sha256": "2dc4e3c09389a4ff9a516e8d897091a6507157cd6e97eb3c9e70e2be4f2fea26",
+  "contract_sha256": "fb63838bf639b2d054b926fb8fea0b338de20415db3c1abcddfd32c9b055bdeb",
+  "product_defect_inferred": false,
+  "recovery_owner": "operator authorization and Orchestrator continuity record",
+  "proposed_recovery": "Authorize task-scoped NF-10/NF-11 recovery at exact0f7564595aff062364ccb097b17bf2f2eaac49c2 with at most two additional failed executions (overall ceiling8), preserving all six failures; correct only evaluator path canonicalization, rerun declared QA and callback/race controls in a fresh private clone, retaining unchanged safety and same-signature stopping rules. No source, lifecycle, DS, recommendation or release waiver."
+}

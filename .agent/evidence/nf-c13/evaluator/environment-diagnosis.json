@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "python3",
+    "tools/start_path.py",
+    "preflight",
+    "--require-sandbox"
+  ],
+  "cwd": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source",
+  "environment": {
+    "TMPDIR": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit_code": 1,
+  "stdout": {
+    "capabilities": {
+      "available": false,
+      "dont_write_bytecode": true,
+      "git_available": true,
+      "git_toplevel": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source",
+      "installed": true,
+      "operational": false,
+      "origin_url": "https://github.com/niq-cnr/nizam-framework.git",
+      "python_version": "3.14.6",
+      "qualified": true,
+      "repository_binding_aligned": true,
+      "run_state_valid": true,
+      "sandbox_available": false,
+      "sandbox_operational": false,
+      "schemas_present": true,
+      "status": "degraded"
+    },
+    "failures": [
+      "sandbox adapter probe failed (exit 1): Traceback (most recent call last):\n  File \"/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source/tools/isolated_trial_adapter.py\", line 173, in <module>\n    raise SystemExit(main())\n                     ~~~~^^\n  File \"/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source/tools/isolated_trial_adapter.py\", line 166, in main\n    restrict_filesystem(root, runner, interpreters)\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source/tools/isolated_trial_adapter.py\", line 75, in restrict_filesystem\n    abi = syscall(SYS_LANDLOCK_CREATE_RULESET, 0, 0, LANDLOCK_CREATE_RULESET_VERSION)\n  File \"/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-nf-c13-qa-uuq0_zpc/source/tools/isolated_trial_adapter.py\", line 59, in syscall\n    raise OSError(error, os.strerror(error))\nOSError: [Errno 14] Bad address"
+    ],
+    "ok": false,
+    "status": "degraded"
+  },
+  "stderr": "",
+  "conclusion": "After correcting clone-only origin metadata and canonicalizing TMPDIR, sandbox remains unavailable. Required start_path fixture acceptance is not satisfied on this host."
+}

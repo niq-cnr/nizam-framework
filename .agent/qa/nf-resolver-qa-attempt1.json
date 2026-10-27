@@ -1,0 +1,179 @@
+{
+  "feature_id": "NF-10",
+  "qa_pass": false,
+  "checks_run": 6,
+  "checks_passed": 6,
+  "adversarial": {
+    "performed": true,
+    "result": "fail: malformed programmatic data invokes comparison callbacks before validation; raising callback escapes advisory failure boundary. Separate untracked-race and malicious-path controls pass.",
+    "evidence": ".agent/evidence/nf-resolver/evaluator/selector-callback-observations.py"
+  },
+  "evidence_files": [
+    ".agent/evidence/nf-resolver/evaluator/prevalidation-probe.py",
+    ".agent/evidence/nf-resolver/evaluator/clone-identity.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-prevalidation-probe-attempt1-20261027T084750Z-e77a6c4a.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-full-core-attempt1-20261027T084506Z-b5957e3d.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-routing-attempt1-20261027T084506Z-b7f772ba.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-prevalidation-probe-attempt1-20261027T084750Z-e77a6c4a.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/independent-race.py",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-focused-attempt1-20261027T084506Z-6c08b23d.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-c13-attempt1-20261027T084506Z-3123985e.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-c13-attempt1-20261027T084506Z-3123985e.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-payload-core-attempt1-20261027T084506Z-a34f26af.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-isolation-attempt1-20261027T084506Z-df46db56.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-independent-adversarial-attempt1-20261027T084558Z-bfd9a69a.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-selector-callback-observations-attempt1-20261027T084949Z-958a8286.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-isolation-attempt1-20261027T084506Z-df46db56.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-routing-attempt1-20261027T084506Z-b7f772ba.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-routing-attempt1-20261027T084506Z-b7f772ba.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-payload-core-attempt1-20261027T084506Z-a34f26af.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-full-core-attempt1-20261027T084506Z-b5957e3d.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-prevalidation-probe-attempt1-20261027T084750Z-e77a6c4a.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-focused-attempt1-20261027T084506Z-6c08b23d.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-focused-attempt1-20261027T084506Z-6c08b23d.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-selector-callback-observations-attempt1-20261027T084949Z-958a8286.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/selector-callback-observations.py",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-independent-adversarial-attempt1-20261027T084558Z-bfd9a69a.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-full-core-attempt1-20261027T084506Z-b5957e3d.capture.json",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-independent-adversarial-attempt1-20261027T084558Z-bfd9a69a.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-isolation-attempt1-20261027T084506Z-df46db56.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-selector-callback-observations-attempt1-20261027T084949Z-958a8286.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-payload-core-attempt1-20261027T084506Z-a34f26af.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-c13-attempt1-20261027T084506Z-3123985e.stdout.txt"
+  ],
+  "issues": [
+    {
+      "id": "NF10-prevalidation-callback",
+      "description": "Before bounded_snapshot, resolve uses dictionary .get on unvalidated keys and authoring_method tuple-membership outside try. A colliding nonstring key invokes __eq__, authoring_method invalid/string-subclass values invoke __eq__, and a raising comparison escapes the optional resolver advisory boundary. bounded_snapshot also compares type objects with tuple membership, allowing an invalid nested object custom metaclass __eq__ to execute before type rejection.",
+      "assessed_source": "tools/skill_recommendations.py resolve early selectors and bounded_snapshot kind-not-in check",
+      "evidence": [
+        ".agent/evidence/nf-resolver/evaluator/prevalidation-probe.py",
+        ".agent/evidence/nf-resolver/evaluator/selector-callback-observations.py"
+      ]
+    }
+  ],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [
+    "Validate top-level plain string key types without user-defined equality/hashing callbacks before early dictionary lookups; preserve disabled/declined no nested inventory/package access.",
+    "Require exact plain string selector values before membership comparisons; use callback-safe identity checks for type classification. Invalid programmatic data and selector exceptions must return safe advisory results rather than invoke user-defined methods or escape.",
+    "Add discriminating colliding-key, string-subclass, raising-selector and custom-metaclass regressions, retain prior observations, freeze repaired source and obtain distinct ModeB and fresh independent QA."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "All six declared verification commands pass on exact39054c29, but independent malformed-host-data probes expose prevalidation callback execution and uncaught optional-advisory exceptions; implementation rejected."
+  },
+  "candidate_sha": "39054c29be49c50a8f7b7010242266084d69dc17",
+  "source_manifest_sha256": "ed975ea6409546a783e22821caefaa2e66e156696baac109ce10147468df4cba",
+  "source_unchanged_after_checks": true,
+  "independent_evaluator": "/root/first_contact",
+  "environment": "Darwin arm64 CPython3.14.6",
+  "checks": [
+    {
+      "step": "evaluator-prevalidation-probe",
+      "argv": [
+        "python3",
+        ".agent/evidence/nf-resolver/evaluator/prevalidation-probe.py"
+      ],
+      "exit_code": 1,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-prevalidation-probe-attempt1-20261027T084750Z-e77a6c4a.capture.json",
+      "interpretation": "independent safety assertion failed"
+    },
+    {
+      "step": "evaluator-c13",
+      "argv": [
+        "python3",
+        "tools/test_governance_skill.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-c13-attempt1-20261027T084506Z-3123985e.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-isolation",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendation_boundaries.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-isolation-attempt1-20261027T084506Z-df46db56.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-routing",
+      "argv": [
+        "python3",
+        "tools/test_skill_routing.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-routing-attempt1-20261027T084506Z-b7f772ba.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-payload-core",
+      "argv": [
+        "bash",
+        "tools/validate.sh",
+        "--payload"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-payload-core-attempt1-20261027T084506Z-a34f26af.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-focused",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendations.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-focused-attempt1-20261027T084506Z-6c08b23d.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-selector-callback-observations",
+      "argv": [
+        "python3",
+        ".agent/evidence/nf-resolver/evaluator/selector-callback-observations.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-selector-callback-observations-attempt1-20261027T084949Z-958a8286.capture.json",
+      "interpretation": "observed unsafe callbacks; successful observation wrapper does not mean implementation pass"
+    },
+    {
+      "step": "evaluator-independent-adversarial",
+      "argv": [
+        "python3",
+        ".agent/evidence/nf-resolver/evaluator/independent-race.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-independent-adversarial-attempt1-20261027T084558Z-bfd9a69a.capture.json",
+      "interpretation": "passed scoped check"
+    },
+    {
+      "step": "evaluator-full-core",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-resolver/evaluator/nf-resolver-evaluator-full-core-attempt1-20261027T084506Z-b5957e3d.capture.json",
+      "interpretation": "passed scoped check"
+    }
+  ],
+  "results": {
+    "focused": "18 tests passed",
+    "filesystem_and_effects_boundaries": "11 tests passed including unsafe observation mutant negative",
+    "routing": "2 tests passed",
+    "C13": "8 tests passed",
+    "full_core": "16 passed,0 failed",
+    "payload_core": "10 exercised passed,0 failed; integrity not checked, operational acceptance not assessed",
+    "independent_race": "untracked file added between assessed-byte and verification walks rejected",
+    "independent_command_path": "malicious data rejected before opening filesystem root; no commands executed"
+  },
+  "limitations": [
+    "All package/trust fixtures are synthetic Nizam-owned host-interface tests, not DS contracts, trusted real verifier qualification, exact-pair package compatibility or live behavior.",
+    "OS sandbox unavailable on this Mac; real temporary filesystem/descriptor and subprocess audit-hook boundary tests passed in their stated scope, with no OS sandbox conformance claim.",
+    "No paid model runs, source mutations, workflow state updates, release, adoption or recommendation activation performed."
+  ]
+}

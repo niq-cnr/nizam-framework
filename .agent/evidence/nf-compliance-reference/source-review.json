@@ -1,0 +1,28 @@
+{
+  "role": "Generator source review; independent Validator and QA remain pending",
+  "contract": ".agent/contracts/nf-compliance-reference.json",
+  "source_sha256": {
+    "tools/compliance_checks.json": "afaf9208ae0c27e96a8741cda03c852b70dc595acdd3ba00999c9e9c762ac765",
+    "tools/generate_compliance_reference.py": "2a5e43571d8474a6cda8e42b6a878aefe1cc12a85d78d14bb70560d7fc0777a2",
+    "tools/test_compliance_reference.py": "78cc7a24a767f952178ac5baf4fc5098a2dd1553c7e8f87c2b1528c2ae7fc7c7",
+    "README.md": "a7027c3d6b51fc59b20089b5612407381c72b89d5450fd0aea78483ac10abf5b",
+    "tools/README.md": "ffa07c1e9418613810fe15ebba7425c2876c9d388f93038035619e350c1c1784",
+    "tools/validate.sh": "e961b4d79e1f6d8a69a298dc46089aeee5d3fc5bb5d0fea812eba36c58e936ba",
+    ".github/workflows/compliance.yml": "a89aa7b98701b78e0564a4767967223b6033f29d8b10d53de354f74fd3ef190c"
+  },
+  "observations": [
+    "Registry covers exactly current emitted and defined C1-C16; C17 reserved, not emitted.",
+    "Generator validates emitted IDs, named source functions, default/target/payload dispatch and generated references.",
+    "Target dispatch conditions are described, not treated as universal checks; payload skip, not-applicable and out-of-scope remain distinct.",
+    "C9 default scope includes README; C10 default excludes it; payload semantics remain unchanged.",
+    "CI adds local Python commands in existing job and introduces no external source, credential, tool installation or live model dependency.",
+    "Reviewed .github/workflows/compliance.yml PR/main triggers and .github/workflows/release.yml tag trigger and closeout: README now describes their distinct checks.",
+    "NIP-0003 reservation is derived from its source text when authoring docs/nips exists; missing reservations and changed source-reservation identities fail; payloads without docs/nips are not required to provide it.",
+    "The source-reservation guard also applies when an authoring Git checkout omits the entire docs/nips directory, while an isolated payload fixture without a Git root or NIP remains usable."
+  ],
+  "limitations": [
+    "Generator tests do not replace independent QA or Linux CI.",
+    "Full and payload validator captures preceded this single editorial trigger-description repair; reference parity and source/link review were rerun after it.",
+    "Independent adversarial review discovered missing-reservation false-pass; fixed after full and payload captures, which exercised the unchanged validator and documentation rather than the generator."
+  ]
+}

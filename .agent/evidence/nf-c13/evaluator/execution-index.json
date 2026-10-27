@@ -1,0 +1,48 @@
+[
+  {
+    "step": "evaluator-mutations",
+    "argv": [
+      "python3",
+      "tools/test_governance_skill.py"
+    ],
+    "exit_code": 0,
+    "capture": ".agent/evidence/nf-c13/evaluator/nf-c13-evaluator-mutations-attempt1-20261027T073824Z-fc65f6d7.capture.json"
+  },
+  {
+    "step": "evaluator-fixtures",
+    "argv": [
+      "bash",
+      "tools/fixtures_self_test.sh"
+    ],
+    "exit_code": 1,
+    "capture": ".agent/evidence/nf-c13/evaluator/nf-c13-evaluator-fixtures-attempt1-20261027T073829Z-4e2a95bd.capture.json"
+  },
+  {
+    "step": "evaluator-full",
+    "argv": [
+      "bash",
+      "tools/validate.sh"
+    ],
+    "exit_code": 0,
+    "capture": ".agent/evidence/nf-c13/evaluator/nf-c13-evaluator-full-attempt1-20261027T074910Z-b096430b.capture.json"
+  },
+  {
+    "step": "evaluator-payload",
+    "argv": [
+      "bash",
+      "tools/validate.sh",
+      "--payload"
+    ],
+    "exit_code": 0,
+    "capture": ".agent/evidence/nf-c13/evaluator/nf-c13-evaluator-payload-attempt1-20261027T075308Z-465fba01.capture.json"
+  },
+  {
+    "step": "evaluator-adversarial",
+    "argv": [
+      "python3",
+      "/Users/cnross/.codex/worktrees/acd4/nizam-framework/.agent/evidence/nf-c13/evaluator/adversarial.py"
+    ],
+    "exit_code": 0,
+    "capture": ".agent/evidence/nf-c13/evaluator/nf-c13-evaluator-adversarial-attempt1-20261027T075326Z-479914d9.capture.json"
+  }
+]

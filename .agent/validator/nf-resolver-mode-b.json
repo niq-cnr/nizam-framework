@@ -1,0 +1,44 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "high_assurance_validator_mode_b",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T08:34:57.376978+00:00",
+  "source_freeze_sha256": "d4a829c71795a3ef2231aa934ca66e1a65c0aa70b88eda0cbb4989df9b9688a1",
+  "source_manifest_sha256": "797a1bb076009a4a656b46d5a93cf3ceb03ddbca6cfe055f6a8c5f26a95ef677",
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "NF10-unbounded-host-config-serialization",
+      "description": "Enabled programmatic resolve receives untrusted configuration/catalogue data but checks its 1 MiB configuration_bytes bound only after canonical() fully serializes each arbitrary object into a newly allocated string and bytes (tools/skill_recommendations.py lines 27-28, 328). An 8 MiB input caused 18,875,935 bytes of new traced allocation before rejection, despite a 1,048,576-byte limit. A much larger or deeply nested host-supplied value can exhaust the process before the prescribed bounded refusal. CLI file reads are bounded, but the documented programmatic host interface is not. Add a bounded preflight/streaming serialization approach for untrusted in-memory objects, including large strings, nesting and cycles; preserve disabled/declined no-read behavior and add a discriminating negative control.",
+      "sources": [
+        "tools/skill_recommendations.py:27",
+        "tools/skill_recommendations.py:328",
+        ".agent/contracts/nf-resolver.json host_input_contract.bounds.configuration_bytes and limits_policy",
+        ".agent/evidence/nf-resolver/validator-mode-b/nf-resolver-validator-config-bound-probe-attempt1-20261027T083417Z-5e6be9ad.stdout.txt"
+      ]
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Bound work and intermediate allocation before or during serialization of untrusted programmatic config/catalogue inputs; reject oversized/nested/cyclic structures predictably, add adversarial tests and rerun affected evidence."
+  ],
+  "review_checks": [
+    "All 12 scoped product files match the source-freeze SHA256 map and approved contract scope.",
+    "Focused resolver and filesystem boundary suites exited 0 in separate validator captures.",
+    "Code inspection found no input-selected executable, network, installation, or host acceptance path; disabled/declined return before package observation.",
+    "Programmatic trusted verifier must match exact binding, release flag and supported mapping; default CLI has no verifier.",
+    "Descriptor walks apply no-follow, identity and operation-wide entry/directory controls; host docs require revalidation before later entrypoint load.",
+    "Fixture version and derived anchor changes are scoped by approved mechanical amendment."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/validator-mode-b/nf-resolver-validator-boundaries-attempt1-20261027T083356Z-01bc9f2a.capture.json",
+    ".agent/evidence/nf-resolver/validator-mode-b/nf-resolver-validator-focused-attempt1-20261027T083404Z-fc333a48.capture.json",
+    ".agent/evidence/nf-resolver/validator-mode-b/nf-resolver-validator-config-bound-probe-attempt1-20261027T083417Z-5e6be9ad.capture.json"
+  ],
+  "limitations": [
+    "No independent Evaluator QA, DS qualification, release, compatibility or publication claim."
+  ]
+}

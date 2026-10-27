@@ -23,7 +23,8 @@
         "standard/README.md",
         "standard/definition_of_done.md",
         "standard/convergent_code_review.md",
-        "standard/acceptance_bars.md"
+        "standard/acceptance_bars.md",
+        "standard/domain_skill_compatibility.md"
       ]
     },
     {
@@ -109,7 +110,8 @@
         "schema/semantic_catalog.schema.json",
         "schema/provider_attempt_event.schema.json",
         "schema/semantic_request.schema.json",
-        "schema/governance_skill.schema.json"
+        "schema/governance_skill.schema.json",
+        "schema/recommended_skills.schema.json"
       ]
     },
     {
@@ -132,7 +134,11 @@
         "tools/test_convergent_review.py",
         "tools/fixtures/convergent_review/manifest.json",
         "tools/workflow_assurance.py",
-        "tools/test_workflow_assurance.py"
+        "tools/test_workflow_assurance.py",
+        "tools/recommended_skills.json",
+        "tools/skill_recommendations.py",
+        "tools/test_skill_recommendation_boundaries.py",
+        "tools/test_skill_routing.py"
       ]
     },
     {
@@ -359,6 +365,16 @@
       "id": "nizam-live-runtime-adapter",
       "summary": "Optional runtime-session adapter surface with seven calls and conditional S1-S9; adapters without the capability remain conformant.",
       "authoritative_source": "tools/interface.md"
+    },
+    {
+      "id": "nizam-optional-domain-skill-compatibility",
+      "summary": "Optional domain-skill selection and evidence authority boundary; the separate empty recommendation catalogue grants no installation, execution or governance acceptance permission.",
+      "authoritative_source": "standard/domain_skill_compatibility.md"
+    },
+    {
+      "id": "nizam-offline-skill-recommendations",
+      "summary": "Bounded no-follow local Nizam host observations and contextual routing; compatible offers require a programmatically trusted released exact-pair verifier, which is unavailable by default. No package body loading, execution or installation.",
+      "authoritative_source": "tools/skill_recommendations.py"
     }
   ],
   "schemas": [
@@ -394,7 +410,8 @@
     "schema/runtime_session.schema.json",
     "schema/runtime_operation.schema.json",
     "schema/evidence_archive.schema.json",
-    "schema/governance_skill.schema.json"
+    "schema/governance_skill.schema.json",
+    "schema/recommended_skills.schema.json"
   ],
   "templates": [
     "templates/CONTEXT.md",

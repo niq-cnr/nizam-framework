@@ -384,26 +384,28 @@ authored product; local agent work follows the installed governance.
 
 ## Automated Compliance Suite (`tools/validate.sh`)
 
-Every pull request and release tag is gated by 16 deterministic checks (`C1`–`C16`) executed by `PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh`:
+For pull requests and pushes to `main`, CI runs 16 deterministic checks (`C1`–`C16`) with `PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh`. Release-tag publication runs the separate release close-out gate:
 
-| Check | Invariant Verified |
-| :--- | :--- |
-| **C1** | Governed-document frontmatter validates against its schema. |
-| **C2** | Required document fields have valid formats. |
-| **C3** | Shipped Markdown code fences carry language tags. |
-| **C4** | `NIZAM.json` validates and its indexed paths resolve. |
-| **C5** | Shipped content contains no prohibited branding or internal endpoints. |
-| **C6** | `bootstrap.sh` passes syntax and declared installation sanity checks. |
-| **C7** | Required module READMEs exist. |
-| **C8** | Frontmatter version increases have matching change records. |
-| **C9** | Concrete paths resolve in shipped documents, root README and the guide; declared examples/placeholders retain their exemptions. |
-| **C10** | Shipped payload, discovery and version statements remain consistent. |
-| **C11** | Present local contracts, QA verdicts and run state validate against their schemas. |
-| **C12** | Ecosystem and runtime schema-family fixtures retain expected outcomes. |
-| **C13** | The governance skill manifest, version parity, unique capability names, indexed module subset and contained paths validate. |
-| **C14** | External GitHub Actions references use immutable commit SHAs. |
-| **C15** | Capability profiles cover and correctly map the five AGF roles. |
-| **C16** | Feature-list lifecycle records satisfy the applicable contract, QA and evidence invariants. |
+<!-- BEGIN GENERATED COMPLIANCE CONTROLS -->
+| Check | Purpose | Default | Target | Payload |
+| :--- | :--- | :--- | :--- | :--- |
+| C1 | Governed-document frontmatter validates against its schema. | exercised | markdown | exercised |
+| C2 | Required document fields have valid formats. | exercised | markdown | exercised |
+| C3 | Shipped Markdown code fences carry language tags. | exercised | markdown | exercised |
+| C4 | NIZAM.json validates and its indexed paths resolve. | exercised | json fallback | exercised |
+| C5 | Shipped content contains no prohibited branding or internal endpoints. | exercised | none | exercised |
+| C6 | bootstrap.sh passes syntax and declared installation sanity checks. | exercised | none | skipped |
+| C7 | Required module READMEs exist. | exercised | none | exercised |
+| C8 | Frontmatter version changes have matching change records. | exercised | none | exercised |
+| C9 | Concrete paths resolve in shipped documents, root README and the guide; declared examples and HTTP URLs retain their handling. | exercised | markdown | exercised |
+| C10 | Shipped payload, discovery and version statements remain consistent; default scope excludes root README. | exercised | markdown and html | exercised |
+| C11 | Present local contracts, QA verdicts and run state validate against their schemas. | exercised | routed json | not-applicable |
+| C12 | Ecosystem and runtime schema-family fixtures retain expected outcomes. | exercised | routed json | out-of-scope |
+| C13 | The governance skill manifest, version parity, unique capability names, indexed module subset and contained paths validate. | exercised | none | exercised |
+| C14 | External GitHub Actions references use immutable commit SHAs. | exercised | none | out-of-scope |
+| C15 | Capability profiles cover and correctly map the five AGF roles. | exercised | none | out-of-scope |
+| C16 | Feature-list records satisfy applicable contract, QA and evidence invariants. | exercised | feature-list json schema only | not-applicable |
+<!-- END GENERATED COMPLIANCE CONTROLS -->
 
 These checks have mode-specific scopes; see [the tools reference](tools/README.md).
 The planning manifest (`schema/manifest.schema.json`), governance skill manifest
