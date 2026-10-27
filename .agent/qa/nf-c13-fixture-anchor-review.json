@@ -1,0 +1,50 @@
+{
+  "contract_id": "nf-c13",
+  "review_type": "independent_mechanical_fixture_anchor_repair",
+  "reviewer": "/root/core_evaluator",
+  "reviewed_at": "2026-10-27T08:09:59.164562+00:00",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "advisory_minor": [],
+  "assessed_base": "40b759300bc6521fcd1fb3e0883909026c4a3b41",
+  "assessed_worktree_sha256": {
+    "tools/test_runtime_session.py": "5c649f6f74ef5e64040894609e1aded33c63ea8a50d7ed894dc4af4cb9a6c37c",
+    ".agent/contracts/nf-c13.json": "b8760831a27b861e4c1b78d9f2bcf4902fb350e3704b2df7532d7f34b1b4f0ff"
+  },
+  "checks": [
+    "Contract validates; mechanical amendment adds only the test path and retains all existing acceptance, non-goals, verification and prior scope; prior contract digest matches HEAD blob.",
+    "Whole baseline/current fixture path sets and modes are equal; only the two intended C13 fixture bytes changed. Runtime-session fixture bytes also preserved.",
+    "Independent reconstruction from actual Git baseline blob bytes matches original anchor, while current actual fixture bytes match updated anchor.",
+    "Entire test source differs from HEAD by exactly the one expected digest replacement; no exclusion, traversal, assertion or control changes.",
+    "Meaningful independent regression: current anchor exits 0, restoring old anchor exits 1 on foundation preservation, and corrupting another unchanged foundation fixture still exits 1 on the same invariant."
+  ],
+  "result": {
+    "all_fixture_paths": 176,
+    "changed_files": [
+      "skill_index_neg_dangling_module.json",
+      "skill_index_neg_unindexed_capability.json"
+    ],
+    "all_other_fixture_bytes_equal": true,
+    "all_fixture_modes_preserved": true,
+    "baseline_digest": "886374b8b18c9433a56a265dafa98dce43e9c9fa2a9008d4d4cc74af7c31f396",
+    "updated_digest": "341fb00a82de3d09f80631c4ae4ea266f823a18115c4535fc4b7fd7d36642724",
+    "repair_source_diff": "one digest only",
+    "current_exit": 0,
+    "stale_anchor_exit": 1,
+    "unrelated_corruption_exit": 1,
+    "whole_fixture_suite": "not_run; CI still required"
+  },
+  "evidence": [
+    ".agent/evidence/nf-c13-fixture-anchor/nf-c13-fixture-anchor-evaluator-check-attempt1-20261027T080928Z-9a536c2c.capture.json",
+    ".agent/evidence/nf-c13-fixture-anchor/inventory.json"
+  ],
+  "limitations": [
+    "This approves only the bounded derived fixture-anchor repair and its focused controls.",
+    "Whole fixture-suite Linux CI on the new candidate remains required. Prior failed Mac fixture observations remain failed and are not reclassified.",
+    "No release, recommendation, behavioral qualification or adoption acceptance is issued."
+  ]
+}
