@@ -10,6 +10,7 @@ from dataclasses import dataclass
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -107,6 +108,84 @@ def qualification_binding(catalogue, entry, framework, observation_sha256, entry
 
 class ObservationError(Exception):
     """Fixed diagnostic codes only; no submitted paths or package text in logs."""
+
+
+def bounded_snapshot(value, byte_limit):
+    """Copy plain JSON incrementally before encoding any untrusted large value.
+
+    Count exact ensure_ascii JSON bytes without allocating escaped strings.
+    Copy containers under a shared node/byte/depth budget so later serialization
+    cannot race a mutation of the caller's containers. Strings are immutable.
+    """
+    remaining, nodes, active = byte_limit, 0, set()
+
+    def consume(amount):
+        nonlocal remaining
+        remaining -= amount
+        if remaining < 0:
+            raise ObservationError('configuration-too-large')
+
+    def copy_json(item, depth):
+        nonlocal nodes
+        nodes += 1
+        if nodes > 65536:
+            raise ObservationError('configuration-too-many-items')
+        if depth > 32:
+            raise ObservationError('configuration-too-deep')
+        kind = type(item)
+        if kind is str:
+            if len(item) > remaining:
+                raise ObservationError('configuration-too-large')
+            consume(2)
+            for char in item:
+                code = ord(char)
+                consume(2 if char in '"\\\b\f\n\r\t' else
+                        1 if 32 <= code <= 126 else 6 if code <= 65535 else 12)
+            return item
+        if item is None:
+            consume(4)
+            return None
+        if kind is bool:
+            consume(4 if item else 5)
+            return item
+        if kind is int:
+            if item.bit_length() > 4096:
+                raise ObservationError('invalid-configuration-number')
+            consume(len(str(item)))
+            return item
+        if kind is float:
+            if not math.isfinite(item):
+                raise ObservationError('invalid-configuration-number')
+            consume(len(repr(item)))
+            return item
+        if kind not in (dict, list):
+            raise ObservationError('invalid-configuration-type')
+        if len(item) > 65536:
+            raise ObservationError('configuration-too-many-items')
+        if id(item) in active:
+            raise ObservationError('cyclic-configuration')
+        active.add(id(item))
+        try:
+            consume(2)
+            result = {} if kind is dict else []
+            iterator = item.items() if kind is dict else item
+            for index, child in enumerate(iterator):
+                if index:
+                    consume(1)
+                if kind is dict:
+                    key, child = child
+                    if type(key) is not str:
+                        raise ObservationError('invalid-configuration-type')
+                    key = copy_json(key, depth + 1)
+                    consume(1)
+                    result[key] = copy_json(child, depth + 1)
+                else:
+                    result.append(copy_json(child, depth + 1))
+            return result
+        finally:
+            active.remove(id(item))
+
+    return copy_json(value, 0)
 
 
 class MissingPackage(ObservationError):
@@ -302,7 +381,9 @@ def validate_catalogue(catalogue):
     # Canonical Nizam schema only; it has no remote refs. No DS lookup occurs.
     from jsonschema import Draft202012Validator
     schema = json.loads((Path(__file__).resolve().parent.parent / 'schema/recommended_skills.schema.json').read_bytes())
-    if list(Draft202012Validator(schema).iter_errors(catalogue)):
+    if (type(catalogue) is not dict or type(catalogue.get('entries')) is not list or
+            len(catalogue['entries']) > 3 or
+            next(Draft202012Validator(schema).iter_errors(catalogue), None) is not None):
         raise ObservationError('invalid-catalogue')
     names = [e['skill'] for e in catalogue['entries']]
     if len(names) != len(set(names)):
@@ -319,14 +400,14 @@ def resolve(config, catalogue, *, framework=None, verifier=None, required_checks
     result = dict(local_state='unverified', reason='disabled', offer=None,
                   required_checks=list(required_checks), assurance='unassessed',
                   execution_authorized=False, governance_adopted=False)
-    if not isinstance(config, dict) or config.get('enabled') is not True:
+    if type(config) is not dict or config.get('enabled') is not True:
         return result
     if config.get('declined') is True or config.get('authoring_method') in ('direct', 'alternate'):
         return result | {'reason': 'declined'}
     limits = limits or Limits()
     try:
-        if len(canonical(config)) > limits.configuration_bytes or len(canonical(catalogue)) > limits.configuration_bytes:
-            raise ObservationError('configuration-too-large')
+        config = bounded_snapshot(config, limits.configuration_bytes)
+        catalogue = bounded_snapshot(catalogue, limits.configuration_bytes)
         validate_catalogue(catalogue)
         skill = route(config.get('task_kind'))
         if skill is None or config.get('selected_skill') != skill:

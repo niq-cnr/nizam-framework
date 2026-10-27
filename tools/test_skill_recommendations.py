@@ -194,8 +194,9 @@ class SyntheticFixture:
         return FixedSyntheticVerifier()
 
     def run(self, **kwargs):
+        verifier=kwargs.pop('verifier') if 'verifier' in kwargs else self.verifier()
         return self.api.resolve(self.config, self.catalogue, framework=self.framework,
-                                verifier=kwargs.pop('verifier', self.verifier()), **kwargs)
+                                verifier=verifier, **kwargs)
 
 
 class ResolverTests(unittest.TestCase):

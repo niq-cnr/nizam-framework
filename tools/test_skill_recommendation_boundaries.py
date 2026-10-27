@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tracemalloc
 import unittest
 from unittest import mock
 from test_skill_recommendations import SyntheticFixture
@@ -21,6 +22,42 @@ class BoundaryTests(unittest.TestCase):
 
     def assertClosed(self):
         result=self.f.run();self.assertIsNone(result['offer']);self.assertNotEqual(result['local_state'],'compatible')
+
+    def test_programmatic_configuration_allocation_bound(self):
+        for label,target in [('configuration',self.f.config),('catalogue',self.f.catalogue)]:
+            target['note']='x'*(8*1024*1024)
+            tracemalloc.start()
+            try:
+                result=self.f.run(verifier=None)
+                _,peak=tracemalloc.get_traced_memory()
+            finally:tracemalloc.stop()
+            self.assertIsNone(result['offer'])
+            self.assertLess(peak,512*1024, f'oversized scalar allocated {peak} bytes before refusal')
+            print(f'{label}: 8MiB input, additional traced allocation={peak}, rejected before encoding')
+            target.pop('note')
+
+    def test_bounded_json_depth_cycles_cardinality_and_snapshot(self):
+        api=self.f.api
+        cycle=[];cycle.append(cycle)
+        deep=0
+        for _ in range(40):deep=[deep]
+        for value,reason in [(cycle,'cyclic-configuration'),(deep,'configuration-too-deep'),
+                  ([0]*65537,'configuration-too-many-items'),(b'x'*(2*1024*1024),'invalid-configuration-type'),
+                  (1<<8192,'invalid-configuration-number')]:
+            self.f.config['note']=value
+            result=self.f.run(verifier=None)
+            self.assertIsNone(result['offer']);self.assertEqual(result['reason'],reason)
+        original={'name':['safe',{'size':3}]}
+        snapshot=api.bounded_snapshot(original,1024)
+        original['name'].append('x'*(2*1024*1024))
+        self.assertEqual(snapshot,{'name':['safe',{'size':3}]})
+        for value in ['a','quote"slash\\',chr(0),chr(0x1f600),{'x':[True,None,2,1.5]}]:
+            size=len(api.canonical(value))
+            self.assertEqual(api.bounded_snapshot(value,size),value)
+            with self.assertRaises(api.ObservationError):api.bounded_snapshot(value,size-1)
+        self.f.config['enabled']=False
+        with mock.patch.object(api,'bounded_snapshot',side_effect=AssertionError('disabled snapshot')) as called:
+            self.assertIsNone(self.f.run(verifier=None)['offer']);called.assert_not_called()
 
     def test_real_links_special_files_and_escaping_roots(self):
         outer=Path(tempfile.mkdtemp(prefix='nf-outside-')).resolve();self.addCleanup(shutil.rmtree,outer)
