@@ -1,0 +1,38 @@
+{
+  "feature_id": "NF-10",
+  "qa_pass": false,
+  "checks_run": 0,
+  "checks_passed": 0,
+  "adversarial": {
+    "performed": false,
+    "reason": "Execution budget exhausted during setup before product verification."
+  },
+  "evidence_files": [
+    ".agent/evidence/nf-resolver/evaluator-rework2/setup-failure.stderr.txt",
+    ".agent/evidence/nf-resolver/evaluator-rework2/setup-failure.stdout.txt",
+    ".agent/evidence/nf-resolver/evaluator-rework2/setup-failure.json",
+    ".agent/evidence/nf-resolver/evaluator-rework2/setup-history-check.stdin.py"
+  ],
+  "issues": [
+    "Finite task-wide failure ceiling6 reached by five retained failed captures plus this failed uncaptured setup verifier.",
+    "This is evaluator path canonicalization failure; no new product defect or failure of repaired source is inferred."
+  ],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [
+    "All six approved contract verification commands and fresh adversarial controls remain unrun on exact0f756459."
+  ],
+  "required_fixes": [
+    "Obtain explicit finite task-scoped operator recovery and preserve continuity of all six failures before any rerun.",
+    "After recovery only, canonicalize metadata-check roots with Path.resolve and perform fresh exact-candidate QA without changing product source."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "BLOCKED: finite task failure budget exhausted before new-candidate QA; no implementation approval or product failure inferred."
+  },
+  "candidate_sha": "0f7564595aff062364ccb097b17bf2f2eaac49c2",
+  "source_manifest_sha256": "2dc4e3c09389a4ff9a516e8d897091a6507157cd6e97eb3c9e70e2be4f2fea26",
+  "source_freeze_sha256": "18a0976a47ce901d24f83fe4640f1d0508639fac6495c4378cbdd018e1be2d4c",
+  "recovery_request": "Authorize task-scoped NF-10/NF-11 recovery at exact0f7564595aff062364ccb097b17bf2f2eaac49c2 with at most two additional failed executions (overall ceiling8), preserving all six failures; correct only evaluator path canonicalization, rerun declared QA and callback/race controls in a fresh private clone, retaining unchanged safety and same-signature stopping rules. No source, lifecycle, DS, recommendation or release waiver.",
+  "evaluator": "/root/first_contact",
+  "prior_rejection": ".agent/qa/nf-resolver-qa.json"
+}

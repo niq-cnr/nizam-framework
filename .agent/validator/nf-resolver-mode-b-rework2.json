@@ -1,0 +1,35 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "high_assurance_validator_mode_b_rework2",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T09:01:14.301975+00:00",
+  "assessed_commit": "0f7564595aff062364ccb097b17bf2f2eaac49c2",
+  "source_freeze_sha256": "18a0976a47ce901d24f83fe4640f1d0508639fac6495c4378cbdd018e1be2d4c",
+  "source_manifest_sha256": "2dc4e3c09389a4ff9a516e8d897091a6507157cd6e97eb3c9e70e2be4f2fea26",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_checks": [
+    "All 12 product paths and the amended contract match their frozen SHA256 values.",
+    "The prior independent prevalidation safety probe passes in a fresh committed checkout; a separate corrected eight-case probe rejects colliding opaque keys, string and dict subclasses, hostile metaclass and raising selectors without invoking callbacks or package reads.",
+    "Disabled and declined paths inspect only bounded plain top-level flags and keep required checks unchanged; nested inventory is not traversed.",
+    "Enabled data is copied through one shared node/depth/byte budget after early type-safe scanning. Fresh-checkout boundary and focused suites pass, including oversized input, cycle, cardinality and snapshot controls.",
+    "The 8 MiB config and catalogue tests now allocate only 3656 and 5360 additional traced bytes respectively before rejecting; prior trusted-verifier and filesystem code remains unchanged."
+  ],
+  "verification_caveat": "The captured validator-rework2-selectors command exited 1 because this reviewer mistakenly ran the earlier observational script, which asserts the defective callbacks must occur; its first assertion failed because callbacks were correctly absent. This is retained as a failed verifier execution for task-wide breaker accounting, not represented as product failure or passing QA. The corrected independent probe ran once and exited 0.",
+  "advisory_minor": [
+    "The host, not untrusted metadata, owns required-check policy and trusted verifier execution.",
+    "Independent Evaluator QA, exact-pair compatibility and external DS gates remain pending."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/validator-rework2/nf-resolver-validator-rework2-prior-callback-attempt1-20261027T090024Z-45c01a3b.capture.json",
+    ".agent/evidence/nf-resolver/validator-rework2/nf-resolver-validator-rework2-boundaries-attempt1-20261027T090024Z-fa1f1ad7.capture.json",
+    ".agent/evidence/nf-resolver/validator-rework2/nf-resolver-validator-rework2-callback-safety-attempt1-20261027T090050Z-ecb5355e.capture.json"
+  ],
+  "limitations": [
+    "Mode B is scope and source validation, not final QA, actual DS qualification or release/adoption."
+  ]
+}
