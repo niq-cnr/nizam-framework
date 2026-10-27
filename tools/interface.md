@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.8.1
+version: 0.8.2
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.8.2"
+    date: "2026-10-27"
+    summary: "Reject opaque keys, selectors and metaclass comparisons before dispatch; bound the early flag scan under the operation-wide JSON node budget."
   - version: "0.8.1"
     date: "2026-10-27"
     summary: "Clarify bounded incremental snapshots for untrusted programmatic host input before canonical encoding, including nesting, cardinality and cycles."
@@ -462,8 +465,12 @@ from data and has no real trusted verifier, so it cannot emit a compatible offer
 All outcomes are advisory to core compliance. Programmatic input is copied to a
 private plain-JSON snapshot under the same 1 MiB encoded-byte bound before full
 encoding. Exact escaped size is counted incrementally; an oversized string is
-rejected without creating its encoded copy. At most 65536 nodes/items and depth
-32 are allowed; cycles, non-JSON types, non-finite floats and integers above
+rejected without creating its encoded copy. One operation-wide budget allows
+65536 visited nodes/keys across the early flag scan and both input snapshots;
+depth is at most 32. The early scan checks exact built-in key and selector types
+without original-mapping lookups or overloaded comparisons, and its cardinality
+is checked before iteration. Unknown values are not inspected on disabled or
+declined paths. Cycles, opaque/non-JSON types, non-finite floats and integers above
 4096 bits are rejected. Caller container mutation cannot enlarge the private
 snapshot after validation. Disabled/declined requests return before snapshotting
 or inspecting package roots, inventories or bodies. The resolver never

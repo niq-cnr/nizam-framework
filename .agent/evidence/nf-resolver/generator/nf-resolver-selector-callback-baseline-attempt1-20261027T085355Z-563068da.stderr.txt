@@ -1,0 +1,21 @@
+F
+======================================================================
+FAIL: test_opaque_selector_values_keys_and_types_never_run_callbacks (__main__.BoundaryTests.test_opaque_selector_values_keys_and_types_never_run_callbacks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cnross/.codex/worktrees/acd4/nizam-framework/tools/test_skill_recommendation_boundaries.py", line 56, in test_opaque_selector_values_keys_and_types_never_run_callbacks
+    self.assertIsNone(result['offer']);self.assertEqual(calls,[],'untrusted data invoked Python callbacks')
+                                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['opaque-equality', 'opaque-equality'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'opaque-equality'
+
+- ['opaque-equality', 'opaque-equality']
++ [] : untrusted data invoked Python callbacks
+
+----------------------------------------------------------------------
+Ran 1 test in 0.008s
+
+FAILED (failures=1)

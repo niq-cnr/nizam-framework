@@ -23,6 +23,52 @@ class BoundaryTests(unittest.TestCase):
     def assertClosed(self):
         result=self.f.run();self.assertIsNone(result['offer']);self.assertNotEqual(result['local_state'],'compatible')
 
+    def test_opaque_selector_values_keys_and_types_never_run_callbacks(self):
+        api=self.f.api;calls=[]
+        class Opaque:
+            def __eq__(self,other):calls.append('opaque-equality');return False
+        class Raising:
+            def __eq__(self,other):calls.append('raising-equality');raise RuntimeError('forbidden comparison')
+            def __hash__(self):return hash('enabled')
+        class StringSubclass(str):
+            __hash__=str.__hash__
+            def __eq__(self,other):calls.append('string-subclass-equality');raise RuntimeError('forbidden selector')
+        class HostileMeta(type):
+            def __eq__(cls,other):calls.append('metaclass-equality');raise RuntimeError('forbidden type comparison')
+        class Nested(metaclass=HostileMeta):pass
+        class DictSubclass(dict):
+            def get(self,*args):calls.append('dict-get');raise RuntimeError('forbidden lookup')
+            def items(self):calls.append('dict-items');raise RuntimeError('forbidden iteration')
+        cases=[{'enabled':True,'authoring_method':Opaque()},
+               {'enabled':True,'authoring_method':Raising()},
+               {'enabled':True,'authoring_method':StringSubclass('direct')},
+               {Raising():'opaque-key'}, {StringSubclass('enabled'):True},
+               {'enabled':True,'nested':Nested()},DictSubclass(enabled=True),
+               {'enabled':False,'inventory':Nested()},
+               {'enabled':True,'declined':True,'inventory':Nested()}]
+        for config in cases:
+            calls.clear()
+            try:
+                with mock.patch('os.open',side_effect=AssertionError('unexpected package read')) as opening:
+                    result=api.resolve(config,self.f.catalogue,framework=self.f.framework)
+                    opening.assert_not_called()
+            except Exception as exc:self.fail('untrusted selector escaped advisory boundary: '+type(exc).__name__)
+            self.assertIsNone(result['offer']);self.assertEqual(calls,[],'untrusted data invoked Python callbacks')
+        calls.clear();self.assertIsNone(api.route(StringSubclass('readme')));self.assertEqual(calls,[])
+
+    def test_disabled_header_cardinality_is_bounded_before_snapshot(self):
+        api=self.f.api;config={str(n):object() for n in range(65536)}
+        config['enabled']=False
+        with mock.patch.object(api,'bounded_snapshot',side_effect=AssertionError('overflow snapshot')) as snapshot, mock.patch('os.open',side_effect=AssertionError('package open')) as opening:
+            tracemalloc.start()
+            try:
+                result=api.resolve(config,self.f.catalogue)
+                _,peak=tracemalloc.get_traced_memory()
+            finally:tracemalloc.stop()
+            self.assertEqual(result['reason'],'configuration-too-many-items')
+            self.assertIsNone(result['offer']);snapshot.assert_not_called();opening.assert_not_called()
+            self.assertLess(peak,64*1024)
+
     def test_programmatic_configuration_allocation_bound(self):
         for label,target in [('configuration',self.f.config),('catalogue',self.f.catalogue)]:
             target['note']='x'*(8*1024*1024)

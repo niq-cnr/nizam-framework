@@ -38,7 +38,7 @@ def host_digest(records):
 
 
 def route(task_kind):
-    return ROUTES.get(task_kind) if isinstance(task_kind, str) else None
+    return ROUTES.get(task_kind) if type(task_kind) is str else None
 
 
 @dataclass(frozen=True)
@@ -110,14 +110,26 @@ class ObservationError(Exception):
     """Fixed diagnostic codes only; no submitted paths or package text in logs."""
 
 
-def bounded_snapshot(value, byte_limit):
+class InputNodes:
+    """One operation-wide input budget, including the early header scan."""
+    def __init__(self):
+        self.remaining = 65536
+
+    def visit(self):
+        self.remaining -= 1
+        if self.remaining < 0:
+            raise ObservationError('configuration-too-many-items')
+
+
+def bounded_snapshot(value, byte_limit, *, _nodes=None):
     """Copy plain JSON incrementally before encoding any untrusted large value.
 
     Count exact ensure_ascii JSON bytes without allocating escaped strings.
     Copy containers under a shared node/byte/depth budget so later serialization
     cannot race a mutation of the caller's containers. Strings are immutable.
     """
-    remaining, nodes, active = byte_limit, 0, set()
+    remaining, active = byte_limit, set()
+    nodes = InputNodes() if _nodes is None else _nodes
 
     def consume(amount):
         nonlocal remaining
@@ -126,10 +138,7 @@ def bounded_snapshot(value, byte_limit):
             raise ObservationError('configuration-too-large')
 
     def copy_json(item, depth):
-        nonlocal nodes
-        nodes += 1
-        if nodes > 65536:
-            raise ObservationError('configuration-too-many-items')
+        nodes.visit()
         if depth > 32:
             raise ObservationError('configuration-too-deep')
         kind = type(item)
@@ -158,9 +167,10 @@ def bounded_snapshot(value, byte_limit):
                 raise ObservationError('invalid-configuration-number')
             consume(len(repr(item)))
             return item
-        if kind not in (dict, list):
+        # Never compare user-defined classes: metaclass __eq__ is executable.
+        if kind is not dict and kind is not list:
             raise ObservationError('invalid-configuration-type')
-        if len(item) > 65536:
+        if len(item) * (2 if kind is dict else 1) > nodes.remaining:
             raise ObservationError('configuration-too-many-items')
         if id(item) in active:
             raise ObservationError('cyclic-configuration')
@@ -400,14 +410,45 @@ def resolve(config, catalogue, *, framework=None, verifier=None, required_checks
     result = dict(local_state='unverified', reason='disabled', offer=None,
                   required_checks=list(required_checks), assurance='unassessed',
                   execution_authorized=False, governance_adopted=False)
-    if type(config) is not dict or config.get('enabled') is not True:
-        return result
-    if config.get('declined') is True or config.get('authoring_method') in ('direct', 'alternate'):
-        return result | {'reason': 'declined'}
-    limits = limits or Limits()
     try:
-        config = bounded_snapshot(config, limits.configuration_bytes)
-        catalogue = bounded_snapshot(catalogue, limits.configuration_bytes)
+        if type(config) is not dict:
+            return result
+        nodes = InputNodes()
+        if len(config) + 1 > nodes.remaining:
+            raise ObservationError('configuration-too-many-items')
+        nodes.visit()
+        enabled = declined = authoring = None
+        # Do not perform lookups on the original dictionary. A colliding opaque
+        # key can execute __eq__ during .get(), even when config is an exact dict.
+        # Only references to the three flags are retained; unknown values are
+        # neither inspected nor snapshotted on disabled/declined paths.
+        for key, value in config.items():
+            nodes.visit()
+            if type(key) is not str:
+                raise ObservationError('invalid-configuration-type')
+            if key == 'enabled':
+                nodes.visit()
+                enabled = value
+            elif key == 'declined':
+                nodes.visit()
+                declined = value
+            elif key == 'authoring_method':
+                nodes.visit()
+                authoring = value
+        if enabled is not True:
+            return result
+        if declined is True:
+            return result | {'reason': 'declined'}
+        if authoring is not None and type(authoring) is not str:
+            raise ObservationError('invalid-configuration-type')
+        if type(authoring) is str and authoring in ('direct', 'alternate'):
+            return result | {'reason': 'declined'}
+        if limits is None:
+            limits = Limits()
+        elif type(limits) is not Limits:
+            raise ObservationError('invalid-observation-bound')
+        config = bounded_snapshot(config, limits.configuration_bytes, _nodes=nodes)
+        catalogue = bounded_snapshot(catalogue, limits.configuration_bytes, _nodes=nodes)
         validate_catalogue(catalogue)
         skill = route(config.get('task_kind'))
         if skill is None or config.get('selected_skill') != skill:
