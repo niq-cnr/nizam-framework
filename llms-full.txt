@@ -1,10 +1,10 @@
 # Nizam Framework — Complete LLM & AI Agent Reference (llms-full.txt)
 
-> Development note: at preparation on 2026-10-27, v3.0.0 was an untagged MAJOR corrective candidate; v2.0.0 below was the latest published pin.
+> Development note: at preparation on 2026-10-27, v3.1.0 is an untagged MINOR candidate in preparation; v3.0.0 below is the latest published pin.
 
-> Nizam (`v2.0.0`) is a declarative, proportion-scaled governance and execution framework for AI-assisted and human software delivery. It installs into a consumer repository at `.nizam/` from an immutable release tag (`vX.Y.Z`) and governs change routing, role separation, exclusive execution evidence capture, and receipt-verified state transitions via `.agent/`.
+> Nizam (`v3.0.0`) is a declarative, proportion-scaled governance and execution framework for AI-assisted and human software delivery. It installs into a consumer repository at `.nizam/` from an immutable release tag (`vX.Y.Z`) and governs change routing, role separation, exclusive execution evidence capture, and receipt-verified state transitions via `.agent/`.
 
-- **Version**: `2.0.0`
+- **Version**: `3.0.0`
 - **Repository**: `https://github.com/niq-cnr/nizam-framework`
 - **Interactive Guide**: `https://niq-cnr.github.io/nizam-framework/`
 - **Concise LLM Index**: `https://niq-cnr.github.io/nizam-framework/llms.txt`
@@ -12,22 +12,22 @@
 
 ---
 
-## v2.0.0 migration and released pin
+## v3.0.0 migration and released pin
 
-Existing consumers must follow [Migrating to v2.0.0](https://github.com/niq-cnr/nizam-framework/blob/v2.0.0/docs/migration-v2.0.0.md): typed inventory before `begin`, assessed structured per-check proof for completion, and finite task-wide retry budgets. The published annotated tag resolves to `603afc7b17919334a6a01df1e39e63798d9d0acd`. The framework's official local self-adoption is recorded separately; each consumer still records its own upgrade authorization. Installed integrity/preflight checks do not establish full consumer commissioning.
+Existing consumers must follow [Migrating to v3.0.0](https://github.com/niq-cnr/nizam-framework/blob/v3.0.0/docs/migration-v3.0.0.md): typed inventory before `begin`, assessed structured per-check proof for completion, and finite task-wide retry budgets. The published annotated tag resolves to `2b8298ae1d5a41534e00b6710a738b4b181b87fa`. The framework's official local self-adoption is recorded separately; each consumer still records its own upgrade authorization. Installed integrity/preflight checks do not establish full consumer commissioning.
 
-## 0. One-Prompt Consumer Onboarding (`v2.0.0`)
+## 0. One-Prompt Consumer Onboarding (`v3.0.0`)
 
-Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v2.0.0` (`603afc7b17919334a6a01df1e39e63798d9d0acd`) with minimal friction:
+Developers can copy and paste this single prompt into any coding agent to onboard a repository to `v3.0.0` (`2b8298ae1d5a41534e00b6710a738b4b181b87fa`) with minimal friction:
 
 ```text
-Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit 603afc7b17919334a6a01df1e39e63798d9d0acd):
+Onboard this repository to the Nizam governance framework (immutable release v3.0.0, commit 2b8298ae1d5a41534e00b6710a738b4b181b87fa):
 
-1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v2.0.0 AI Agent Entry Protocol and CLI reference.
-2. Fetch and run the official bootstrap script pinned to v2.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
-   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v3.0.0 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v3.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh -o bootstrap.sh && chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.
 ```
@@ -43,7 +43,7 @@ When operating inside a repository that uses Nizam (or within the `nizam-framewo
 2. **Framework-checkout fallback** (authoring repo only): Consult root `NIZAM.json` and `tools/SKILL.md` when authoring the framework itself.
 
 ### 1.2 Invariant Rules for AI Agents
-- **Immutable Payload**: Never edit files inside `.nizam/`. It is a verified snapshot of an immutable release tag (`v2.0.0`).
+- **Immutable Payload**: Never edit files inside `.nizam/`. It is a verified snapshot of an immutable release tag (`v3.0.0`).
 - **No Bytecode Contamination**: Always prefix Python tool calls with `PYTHONDONTWRITEBYTECODE=1` so `__pycache__` does not pollute `.nizam/` or the repository tree.
 - **Proportion-Scaled Routing**: Always run `classify` before planning or editing. Do not invent ad-hoc workflows.
 - **Role & State Ownership**: The Orchestrator (`orchestrator-state`) owns `.agent/run_state.json` lifecycle fields (`lifecycle_stage`, `circuit_breakers`). Implementation agents (`generator-deterministic`) must preserve those fields intact.
@@ -110,7 +110,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/start_path.py amend-contract \
 ```
 
 ### 3.5 `capture`
-Executes the exact approved argument array and writes exclusive capture/stdout/stderr evidence. New completion proof requires a resolvable assessed manifest, pinned inventory and original QA context/execution-root environment. See the v2.0.0 migration guide and `tools/interface.md` Section 4.5.
+Executes the exact approved argument array and writes exclusive capture/stdout/stderr evidence. New completion proof requires a resolvable assessed manifest, pinned inventory and original QA context/execution-root environment. See the v3.0.0 migration guide and `tools/interface.md` Section 4.5.
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py capture \
@@ -153,9 +153,9 @@ Nizam installs into consumer repositories from an immutable release tag (`vX.Y.Z
 
 ### 4.1 Consumer Installation
 ```bash
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/bootstrap.sh | bash -s -- \
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh | bash -s -- \
   --repo https://github.com/niq-cnr/nizam-framework.git \
-  --tag v2.0.0
+  --tag v3.0.0
 ```
 
 ### 4.2 Commit-Bound Verification (`--verify-only`)
@@ -164,8 +164,8 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/boot
 ```bash
 # Full cryptographic commit-bound verification (content_integrity=verified)
 ./bootstrap.sh --verify-only \
-  --tag v2.0.0 \
-  --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' \
+  --tag v3.0.0 \
+  --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' \
   --git-repo .nizam-ref/ \
   --require-content-integrity
 
@@ -196,7 +196,7 @@ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v2.0.0/boot
 ### 5.3 Consumer Directory Anatomy
 - **`.nizam/` (Immutable Installed Framework)**:
   - `NIZAM.json` — Machine-readable capability index
-  - `provenance.json` — Release tag, commit SHA (`603afc7b17919334a6a01df1e39e63798d9d0acd`), and install timestamp
+  - `provenance.json` — Release tag, commit SHA (`2b8298ae1d5a41534e00b6710a738b4b181b87fa`), and install timestamp
   - `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`
 - **`.agent/` (Consumer Project Governance Workspace)**:
   - `run_state.json` — Active lifecycle stage, contract pointer, and circuit-breaker counters

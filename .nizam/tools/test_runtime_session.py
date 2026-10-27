@@ -738,7 +738,7 @@ def fixture_claim(home):
     foundation = {str(p.relative_to(fixtures)): hashlib.sha256(p.read_bytes()).hexdigest()
                   for p in fixtures.rglob('*') if p.is_file() and p.relative_to(fixtures).parts[0] != 'runtime_session'}
     digest = hashlib.sha256(json.dumps(foundation, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
-    require(digest == '886374b8b18c9433a56a265dafa98dce43e9c9fa2a9008d4d4cc74af7c31f396',
+    require(digest == '95dda70e6fa5d45f2a41b4717429b8c28f493af2d4aea8dfc54ff0c31bff934b',
             'foundation fixture bytes and paths preserved')
     claim_controls(home, text)
     scheduled = extract_function(text, 'runtime_session_checks')

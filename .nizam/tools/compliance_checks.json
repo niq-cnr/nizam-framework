@@ -1,0 +1,204 @@
+{
+  "version": "1.0.0",
+  "description": "Declarative inventory of controls actually emitted by tools/validate.sh. Control semantics remain in their source checks.",
+  "reserved": [
+    {
+      "id": "C17",
+      "reason": "Evidence shape reserved by docs/nips/NIP-0003-live-runtime-sessions.md; not allocated."
+    }
+  ],
+  "controls": [
+    {
+      "id": "C1",
+      "status": "active",
+      "name": "Frontmatter schema",
+      "purpose": "Governed-document frontmatter validates against its schema.",
+      "source_check": "check_c1_frontmatter_schema",
+      "modes": {
+        "default": "exercised",
+        "target": "markdown",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C2",
+      "status": "active",
+      "name": "Document format",
+      "purpose": "Required document fields have valid formats.",
+      "source_check": "check_c2_format",
+      "modes": {
+        "default": "exercised",
+        "target": "markdown",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C3",
+      "status": "active",
+      "name": "Fence language",
+      "purpose": "Shipped Markdown code fences carry language tags.",
+      "source_check": "check_c3_fences",
+      "modes": {
+        "default": "exercised",
+        "target": "markdown",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C4",
+      "status": "active",
+      "name": "Index integrity",
+      "purpose": "NIZAM.json validates and its indexed paths resolve.",
+      "source_check": "check_c4_index",
+      "modes": {
+        "default": "exercised",
+        "target": "json fallback",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C5",
+      "status": "active",
+      "name": "Branding and endpoint leakage",
+      "purpose": "Shipped content contains no prohibited branding or internal endpoints.",
+      "source_check": "check_c5_branding",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C6",
+      "status": "active",
+      "name": "Bootstrap sanity",
+      "purpose": "bootstrap.sh passes syntax and declared installation sanity checks.",
+      "source_check": "check_c6_bootstrap",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "skipped"
+      }
+    },
+    {
+      "id": "C7",
+      "status": "active",
+      "name": "Module README presence",
+      "purpose": "Required module READMEs exist.",
+      "source_check": "check_c7_module_readmes",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C8",
+      "status": "active",
+      "name": "Version and changelog",
+      "purpose": "Frontmatter version changes have matching change records.",
+      "source_check": "check_c8_version_changelog",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C9",
+      "status": "active",
+      "name": "Path resolution",
+      "purpose": "Concrete paths resolve in shipped documents, root README and the guide; declared examples and HTTP URLs retain their handling.",
+      "source_check": "check_c9_path_resolution",
+      "modes": {
+        "default": "exercised",
+        "target": "markdown",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C10",
+      "status": "active",
+      "name": "Consistency",
+      "purpose": "Shipped payload, discovery and version statements remain consistent; default scope excludes root README.",
+      "source_check": "check_c10_consistency",
+      "modes": {
+        "default": "exercised",
+        "target": "markdown and html",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C11",
+      "status": "active",
+      "name": "Dogfood schema validation",
+      "purpose": "Present local contracts, QA verdicts and run state validate against their schemas.",
+      "source_check": "check_c11_dogfood_sweep",
+      "modes": {
+        "default": "exercised",
+        "target": "routed json",
+        "payload": "not-applicable"
+      }
+    },
+    {
+      "id": "C12",
+      "status": "active",
+      "name": "Schema-family fixtures",
+      "purpose": "Ecosystem and runtime schema-family fixtures retain expected outcomes.",
+      "source_check": "check_c12_ecosystem_fixtures",
+      "modes": {
+        "default": "exercised",
+        "target": "routed json",
+        "payload": "out-of-scope"
+      }
+    },
+    {
+      "id": "C13",
+      "status": "active",
+      "name": "Governance skill manifest",
+      "purpose": "The governance skill manifest, version parity, unique capability names, indexed module subset and contained paths validate.",
+      "source_check": "check_c13_skill_index",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "exercised"
+      }
+    },
+    {
+      "id": "C14",
+      "status": "active",
+      "name": "Workflow pinning",
+      "purpose": "External GitHub Actions references use immutable commit SHAs.",
+      "source_check": "check_c14_workflow_pins",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "out-of-scope"
+      }
+    },
+    {
+      "id": "C15",
+      "status": "active",
+      "name": "Capability roles",
+      "purpose": "Capability profiles cover and correctly map the five AGF roles.",
+      "source_check": "check_c15_capability_profile_roles",
+      "modes": {
+        "default": "exercised",
+        "target": "none",
+        "payload": "out-of-scope"
+      }
+    },
+    {
+      "id": "C16",
+      "status": "active",
+      "name": "Feature-list lifecycle",
+      "purpose": "Feature-list records satisfy applicable contract, QA and evidence invariants.",
+      "source_check": "check_c16_feature_list_lifecycle",
+      "modes": {
+        "default": "exercised",
+        "target": "feature-list json schema only",
+        "payload": "not-applicable"
+      }
+    }
+  ]
+}

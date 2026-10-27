@@ -1202,6 +1202,14 @@ else
   fail=1
 fi
 
+# NF-04 mutation controls run against isolated copies, without live substitution.
+if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_governance_skill.py; then
+  echo "OK   governance-manifest complete shape, uniqueness and unconditional parity"
+else
+  echo "FAIL governance-manifest mutation controls"
+  fail=1
+fi
+
 total=${#ondisk[@]}
 accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
 echo "---"

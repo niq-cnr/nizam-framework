@@ -7,11 +7,48 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-10-27
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): adds the
+hardened read-only Git identity seam (`NF-R01`), installation and recovery policy
+reconciliation (`NF-R02`), versioned `1.1.0` typed binary review packet coverage
+(`NF-R03`), optional generic external evidence admission (`NF-R04`), standalone
+consumer e2e qualification (`NF-R05`), and the approved `API-REF-PILOT` backlog
+plan. No shipped schema was narrowed and no required key was added to existing
+consumer records, so a `v3.0.0`-compliant consumer that upgrades by re-bootstrap
+remains compliant without remediation.
+
 ### Added
 
-- Record the approved `API-REF-PILOT` backlog plan for a focused, generated Python
-  API reference, with a three-module pilot and measured adoption criteria before
-  integration or expansion.
+- **Hardened read-only Git identity seam (`NF-R01`, `NF-AC01`, `F02`)**:
+  Added `tools/git_seam.py` enforcing `--no-replace-objects`,
+  `GIT_NO_REPLACE_OBJECTS=1`, `-c core.useReplaceRefs=false`, sanitized `GIT_*`
+  environment variables, verified worktree/gitdir boundaries, literal pathspecs,
+  and batch blob reads across `tools/workflow_assurance.py`, `tools/start_path.py`,
+  `tools/convergent_review.py`, and `tools/payload_integrity.py`.
+- **Versioned `1.1.0` binary review packet coverage (`NF-R03`, `NF-AC03`, `F09`)**:
+  Extended `schema/review_packet.schema.json` and `tools/convergent_review.py`
+  with backward-compatible `1.0.0` support and opt-in `1.1.0` typed binary entries
+  (`text`, `opaque_binary`, `absent`), magic-byte media sniffing,
+  `integrity_only` vs `trusted_processor_derived` scope enforcement, and binary
+  approval invalidation.
+- **Generic optional external evidence admission (`NF-R04`, `NF-AC04`)**:
+  Added `schema/external_evidence_admission.schema.json`, neutral conformance
+  corpus `tools/fixtures/external_evidence/conformance_corpus.json`, and
+  `tools/external_evidence.py` (`validate-admission`, `run-corpus`, `bind-summary`)
+  with zero Agentic SDLC coupling.
+- **Standalone consumer e2e qualification and API reference pilot plan (`NF-R05`, `NF-AC05`)**:
+  Added `tools/test_nf_ac05_standalone_e2e.py`, `tools/test_nf_owner_dag_and_backlog.py`,
+  `docs/planning/nf-owner-2026-10-27/`, and the approved `API-REF-PILOT` backlog
+  plan for a focused three-module Python API reference pilot.
+
+### Fixed
+
+- **Installation and recovery policy reconciliation (`NF-R02`, `NF-AC02`, `F10`, `F11`)**:
+  Reconciled atomic 6-module+index `.nizam/` installation vs proportionate external
+  consumer workflow activation in `standard/GIP.md` (`v0.7.2`), and routed all
+  post-halt continuation through finite task-scoped `operator_recovery` preserving
+  attempt history in `methodology/03_circuit_breaker.md` (`v0.6.1`).
 
 ## [3.0.0] - 2026-10-27
 

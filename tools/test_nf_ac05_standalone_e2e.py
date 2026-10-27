@@ -86,7 +86,8 @@ def _create_candidate_fixture_repo(temp_dir: Path) -> tuple[Path, str, str]:
     if status:
         _run(["git", "commit", "-m", "Candidate snapshot for NF-AC05 e2e qualification"], cwd=cand_repo)
     cand_sha = _run(["git", "rev-parse", "HEAD"], cwd=cand_repo).stdout.strip()
-    cand_tag = "e2e-3.0.0-rc1"
+    fw_ver = json.loads((ROOT / "NIZAM.json").read_text(encoding="utf-8"))["framework"]["version"]
+    cand_tag = f"e2e-{fw_ver}-rc1"
     _run(["git", "tag", "-a", cand_tag, cand_sha, "-m", "Disposable candidate fixture tag"], cwd=cand_repo)
     return cand_repo, cand_tag, cand_sha
 
@@ -833,7 +834,7 @@ class StandaloneQualificationTests(unittest.TestCase):
         policy_id = "nizam-standalone-default"
         policy_ver = "1.0.0"
         policy_dig = "11" * 32
-        fw_ver = "3.0.0"
+        fw_ver = json.loads((ROOT / "NIZAM.json").read_text(encoding="utf-8"))["framework"]["version"]
         fw_commit = self.cand_sha
         fw_tree = _run(["git", "rev-parse", f"{self.cand_sha}^{{tree}}"], cwd=self.cand_repo).stdout.strip()
         acc_dig = "55" * 32
