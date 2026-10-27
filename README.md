@@ -306,6 +306,20 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ---
 
+### Unreleased v3.0.0 candidate
+
+The corrective candidate is **not yet published**. The latest usable release remains
+v2.0.0 above. After v3.0.0 is published and its exact commit independently verified,
+consumers may substitute that approved commit for `NIZAM_RELEASE_SHA`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh -o bootstrap.sh
+GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
+```
+
+The [v3.0.0 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.0.0)
+will exist only after publication. See [migration guidance](docs/migration-v3.0.0.md).
+
 ## Local governance
 
 The official local installation is `v2.0.0` at `603afc7b17919334a6a01df1e39e63798d9d0acd`,
@@ -399,20 +413,6 @@ core compliance. Reader-facing README content does not require NDS frontmatter;
 its local paths are checked independently.
 
 ---
-
-### Unreleased v3.0.0 candidate
-
-The corrective candidate is **not yet published**. The latest usable release remains
-v2.0.0 above. After v3.0.0 is published and its exact commit independently verified,
-consumers may substitute that approved commit for `NIZAM_RELEASE_SHA`:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh -o bootstrap.sh
-GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
-```
-
-The [v3.0.0 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.0.0)
-will exist only after publication. See [migration guidance](docs/migration-v3.0.0.md).
 
 ## Versioning
 

@@ -1,0 +1,11 @@
+{"argv": ["git", "rev-parse", "--verify", "HEAD^{commit}"], "exit_code": 0}
+08f3f01fc092109c8baf3aba5816af0ef203a089
+{"argv": ["git", "rev-parse", "--verify", "v2.0.0^{commit}"], "exit_code": 0}
+603afc7b17919334a6a01df1e39e63798d9d0acd
+{"argv": ["git", "clone", "--quiet", "--no-hardlinks", "--no-checkout", "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nf22-independent-7pweu_9q/repo", "/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/source"], "exit_code": 0}
+{"argv": ["git", "checkout", "--quiet", "--detach", "08f3f01fc092109c8baf3aba5816af0ef203a089"], "exit_code": 0}
+{"argv": ["git", "tag", "e2e-nf-corrective-candidate", "08f3f01fc092109c8baf3aba5816af0ef203a089"], "exit_code": 0}
+{"argv": ["bash", "/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/source/bootstrap.sh", "--tag", "e2e-nf-corrective-candidate", "--allow-fixture-tag", "--expected-sha", "08f3f01fc092109c8baf3aba5816af0ef203a089", "--repo-url", "/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/source", "--git-repo", "/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/consumer/.nizam-ref"], "exit_code": 1}
+bootstrap.sh: fetching /var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/source at explicit tag ref refs/tags/e2e-nf-corrective-candidate (--depth 1, blob-filtered, sparse payload)...
+transport did not honor the blob filter: the fetch appears to have downloaded the full tree. Refusing to report a filtered installation.
+bootstrap.sh: error: filtered retrieval could not be confirmed for '/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/nizam-core-rehearsal-c0v6fz7n/source'; refusing to report success for an unfiltered download.

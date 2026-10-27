@@ -52,12 +52,13 @@ def main():
         consumer.mkdir()
         run(['git', 'clone', '--quiet', '--no-hardlinks', '--no-checkout', str(ROOT), str(source)], area)
         run(['git', 'checkout', '--quiet', '--detach', sha], source)
+        run(['git', 'config', 'uploadpack.allowFilter', 'true'], source)
         # Only this disposable repository receives a fixture tag. No remote write.
         fixture_tag = 'e2e-nf-corrective-candidate'
         run(['git', 'tag', fixture_tag, sha], source)
         bootstrap = str(source / 'bootstrap.sh')
         ref = str(consumer / '.nizam-ref')
-        common = ['--repo-url', str(source), '--git-repo', ref]
+        common = ['--repo-url', source.as_uri(), '--git-repo', ref]
         run(['bash', bootstrap, '--tag', fixture_tag, '--allow-fixture-tag', '--expected-sha', sha, *common], consumer)
         run(['bash', bootstrap, '--verify-only', '--tag', fixture_tag, '--allow-fixture-tag', '--expected-sha', sha,
              '--git-repo', ref, '--require-content-integrity'], consumer)
