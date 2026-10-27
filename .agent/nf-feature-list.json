@@ -120,7 +120,7 @@
       "name": "Canonical consumer agent template",
       "description": "Installed-relative routing supports all five task classes, conditional ecosystem scope and canonical stopping policy.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -130,20 +130,16 @@
       ],
       "estimated_lines": 100,
       "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
-      "deterministic_verification": "focused independent candidate tests passed; final full validation capture pending",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
-        ".agent/evidence/nf-first-contact/evaluator-final"
+        ".agent/qa/nf-first-contact-qa.json"
       ],
-      "blocker": {
-        "owner": "Nizam evaluator",
-        "need": "final full/payload independent capture",
-        "resume": "finish pending evaluator execution for 40b75930"
-      }
+      "blocker": null
     },
     {
       "id": "NF-06",
@@ -181,7 +177,7 @@
       "name": "First-contact repairs",
       "description": "Correct current module/template/schema/control descriptions and links without requiring README frontmatter.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -191,27 +187,23 @@
       ],
       "estimated_lines": 100,
       "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
-      "deterministic_verification": "focused independent candidate tests passed; final full validation capture pending",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
-        ".agent/evidence/nf-first-contact/evaluator-final"
+        ".agent/qa/nf-first-contact-qa.json"
       ],
-      "blocker": {
-        "owner": "Nizam evaluator",
-        "need": "final full/payload independent capture",
-        "resume": "finish pending evaluator execution for 40b75930"
-      }
+      "blocker": null
     },
     {
       "id": "NF-08",
       "name": "First-contact link coverage",
       "description": "Broken README path fails C9; correct README without frontmatter and declared examples pass; full/payload regressions pass.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-07"
       ],
@@ -221,20 +213,16 @@
       ],
       "estimated_lines": 100,
       "implementation": "d4c39fcb + 08f3f01f + 044f2056 + 40b75930",
-      "deterministic_verification": "focused independent candidate tests passed; final full validation capture pending",
+      "deterministic_verification": "independent candidate 40b tests, full and payload passed; 46b changes runtime fixture anchor only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
-        ".agent/evidence/nf-first-contact/evaluator-final"
+        ".agent/qa/nf-first-contact-qa.json"
       ],
-      "blocker": {
-        "owner": "Nizam evaluator",
-        "need": "final full/payload independent capture",
-        "resume": "finish pending evaluator execution for 40b75930"
-      }
+      "blocker": null
     },
     {
       "id": "NF-09",
@@ -267,7 +255,7 @@
       "name": "Offline bounded resolver",
       "description": "Explicit roots/inventory only; disabled has no package reads; tampering, unsupported identities and symlink escapes cannot resolve compatible.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         "NF-09"
       ],
@@ -285,9 +273,9 @@
       "adoption": "not_requested",
       "evidence": [],
       "blocker": {
-        "owner": "Nizam Planner/Validator/Evaluator",
-        "need": "approved high-assurance resolver contract and completed NF05/09 prerequisites",
-        "resume": "resolve finite traversal review finding, approve independent gates, execute boundary suite"
+        "owner": "Nizam High-assurance implementation roles",
+        "need": "implement approved contract and pass independent isolation and QA",
+        "resume": "run Generator against .agent/contracts/nf-resolver.json and independent gates"
       }
     },
     {
@@ -295,7 +283,7 @@
       "name": "Specialist routing",
       "description": "Route README/tutorial/reference work to matching optional specialist; selection preserves task/permission requirements.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         "NF-05",
         "NF-10"
@@ -314,9 +302,9 @@
       "adoption": "not_requested",
       "evidence": [],
       "blocker": {
-        "owner": "Nizam Planner/Validator/Evaluator",
-        "need": "approved high-assurance resolver contract and completed NF05/09 prerequisites",
-        "resume": "resolve finite traversal review finding, approve independent gates, execute boundary suite"
+        "owner": "Nizam High-assurance implementation roles",
+        "need": "implement approved contract and pass independent isolation and QA",
+        "resume": "run Generator against .agent/contracts/nf-resolver.json and independent gates"
       }
     },
     {
@@ -647,8 +635,8 @@
         "Independent major corrective candidate/release with before/after regressions, core-only install and existing release gates."
       ],
       "estimated_lines": 100,
-      "implementation": "core candidate 40b759300bc6521fcd1fb3e0883909026c4a3b41",
-      "deterministic_verification": "independent exact-candidate core install/verify/rollback passed; Linux fixture CI pending",
+      "implementation": "core candidate 46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
+      "deterministic_verification": "exact-candidate install, inventory and rollback passed; Linux CI pending fixture-anchor repair",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",

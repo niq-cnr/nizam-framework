@@ -5,22 +5,24 @@
   "checks_passed": 3,
   "adversarial": {
     "performed": true,
-    "description": "Exact installed candidate inventory recomputed independently from Git blobs, excluding provenance; ModeB source mismatch explicitly reconciled against supplemental record and prior core bytes.",
-    "evidence": ".agent/evidence/nf-corrective-release/evaluator/exact-payload-attempt3.json"
+    "description": "Fresh clean candidate clone; independently hash exact Git blob bytes and executable modes for all installed payload files and compare observed installed inventory. Verify 46b NIZAM blob equals prior supplement-bound 40b source.",
+    "evidence": ".agent/evidence/nf-corrective-release/evaluator/exact-payload-46b.json"
   },
   "evidence_files": [
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt3-20261027T075322Z-42de3a38.stderr.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt3-20261027T075322Z-86fdd7e0.stderr.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt3-20261027T075322Z-42de3a38.capture.json",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt3-20261027T075322Z-b63a12f7.stdout.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt3-20261027T075322Z-42de3a38.stdout.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt3-20261027T075322Z-b63a12f7.capture.json",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt3-20261027T075322Z-86fdd7e0.stdout.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt3-20261027T075322Z-86fdd7e0.capture.json",
-    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt3-20261027T075322Z-b63a12f7.stderr.txt",
-    ".agent/evidence/nf-corrective-release/evaluator/exact-payload-attempt3.json",
-    ".agent/evidence/nf-corrective-release/evaluator/clone-identity-attempt3.json",
-    ".agent/validator/nf-corrective-release-mode-b-supplement.json"
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-public-entry-attempt1-20261027T081141Z-3d14e125.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-public-entry-attempt1-20261027T081141Z-3d14e125.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-anchors-attempt1-20261027T081141Z-9e375595.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-core-install-rollback-attempt1-20261027T081141Z-ebd810ed.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-anchors-attempt1-20261027T081141Z-9e375595.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-core-install-rollback-attempt1-20261027T081141Z-ebd810ed.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-public-entry-attempt1-20261027T081141Z-3d14e125.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-core-install-rollback-attempt1-20261027T081141Z-ebd810ed.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-anchors-attempt1-20261027T081141Z-9e375595.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/exact-payload-46b.json",
+    ".agent/evidence/nf-corrective-release/evaluator/source-inventory-46b.json",
+    ".agent/evidence/nf-corrective-release/evaluator/clone-identity-46b.json",
+    ".agent/validator/nf-corrective-release-mode-b-supplement.json",
+    ".agent/qa/nf-c13-fixture-anchor-review.json"
   ],
   "issues": [],
   "unsupported_claims": [],
@@ -28,9 +30,9 @@
   "required_fixes": [],
   "final_verdict": {
     "approved": true,
-    "summary": "All three contract commands independently passed on exact final corrective candidate 40b75930 with core-only pinned install, inventory parity and immutable rollback."
+    "summary": "All three release contract commands independently passed at exact corrective candidate 46b2aeb6; core-only immutable installation, actual payload bytes and supported rollback verified."
   },
-  "candidate_sha": "40b759300bc6521fcd1fb3e0883909026c4a3b41",
+  "candidate_sha": "46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
   "independent_evaluator": "first_contact",
   "environment": "Darwin arm64 CPython 3.14.6",
   "checks": [
@@ -40,7 +42,7 @@
         "tools/test_public_entry.py"
       ],
       "exit_code": 0,
-      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt3-20261027T075322Z-42de3a38.capture.json"
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-public-entry-attempt1-20261027T081141Z-3d14e125.capture.json"
     },
     {
       "command": [
@@ -50,7 +52,7 @@
         "pr"
       ],
       "exit_code": 0,
-      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt3-20261027T075322Z-b63a12f7.capture.json"
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-anchors-attempt1-20261027T081141Z-9e375595.capture.json"
     },
     {
       "command": [
@@ -64,22 +66,22 @@
         "603afc7b17919334a6a01df1e39e63798d9d0acd"
       ],
       "exit_code": 0,
-      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt3-20261027T075322Z-86fdd7e0.capture.json"
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-final46b-core-install-rollback-attempt1-20261027T081141Z-ebd810ed.capture.json"
     }
   ],
   "payload": {
-    "candidate_sha": "40b759300bc6521fcd1fb3e0883909026c4a3b41",
-    "installed_payload_inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b",
-    "source_git_blob_inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b",
+    "candidate_sha": "46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
+    "installed_payload_inventory_sha256": "53b8428774a6226a67add1458816a3588d077f026aca64271cb21e532f944f72",
+    "source_git_blob_inventory_sha256": "53b8428774a6226a67add1458816a3588d077f026aca64271cb21e532f944f72",
     "files": 321,
     "source_vs_installed": "exact match",
     "report": {
       "candidate_payload": {
         "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
         "files": 321,
-        "inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b"
+        "inventory_sha256": "53b8428774a6226a67add1458816a3588d077f026aca64271cb21e532f944f72"
       },
-      "candidate_sha": "40b759300bc6521fcd1fb3e0883909026c4a3b41",
+      "candidate_sha": "46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
       "commissioning": "not_performed",
       "core_install": "passed",
       "documentation_origin": "not_configured_or_contacted",
@@ -93,13 +95,14 @@
       "release_publication": "not_performed",
       "rollback": "passed"
     },
+    "mode_b": "Release source matches prior ModeB+external NIZAM correction; changed runtime test covered by nf-c13-fixture-anchor-review",
     "publication": "not_performed",
     "commissioning": "not_performed"
   },
+  "supersedes": ".agent/qa/nf-corrective-release-qa-40b.json",
   "limitations": [
-    "Human release sign-off, reviewed-mainline merge/tag publication and adoption remain separate; none performed by this evaluator.",
-    "No DS package, runtime or optional integration qualified. Core packages absent; documentation origin not configured/contacted.",
-    "Payload validation proves scoped structural checks and byte identity, not commissioning."
-  ],
-  "supersedes": ".agent/qa/nf-corrective-release-qa-attempt2.json"
+    "No human release sign-off, mainline merge/tag publication, self-adoption or commissioning performed by evaluator.",
+    "DS packages absent and origin not configured or contacted. No actual DS contracts, package compatibility, live model pilot or recommendations qualified.",
+    "Only the stated exact candidate and runtime/environment scope are assessed; changed source/payload identity requires appropriate requalification."
+  ]
 }
