@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.37
+version: 0.65.38
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.38"
+    date: "2026-10-27"
+    summary: "Register API-REF-PILOT as operator-approved backlog work, link its bounded extraction plan and measured adoption criteria, and preserve active program ordering and lifecycle records."
   - version: "0.65.37"
     date: "2026-10-27"
     summary: "Prepare an independent v3.0.0 MAJOR corrective candidate; release and self-adoption remain pending their separate gates."
@@ -317,6 +320,20 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Approved backlog additions — 2026-10-27
+
+| ID | Work | Status | Next step |
+| --- | --- | --- | --- |
+| API-REF-PILOT | [Focused Python API-reference extraction pilot](API_REFERENCE_PILOT.md) | Approved; not started | Inventory documentation gaps and preregister the 12-task baseline before implementation planning. |
+
+The operator approved this work on 2026-10-27: "add this plan to the project
+backlog", followed by "it is approved work". The linked plan records the
+three-module scope, ordered stages and adoption criteria. Integration depends
+on the pilot demonstrating significant improvement over existing documentation.
+This backlog addition does not reorder the active Jev readiness program below;
+phase allocation, estimates and implementation contracts are established when
+the work is scheduled through the installed planning protocol.
 
 ## Current position — Jev readiness program, 2026-10-22
 
