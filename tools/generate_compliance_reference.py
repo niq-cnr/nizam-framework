@@ -28,6 +28,17 @@ def load_and_validate(root: Path):
     reserved = [r['id'] for r in data['reserved']]
     if len(set(reserved)) != len(reserved) or set(ids) & set(reserved):
         raise ValueError('reserved control allocated or repeated')
+    # In a framework checkout the NIP is the source of this reservation.
+    # Consumer payloads omit docs/nips entirely; do not require it there.
+    nip_dir = root / 'docs/nips'
+    if nip_dir.exists() or (root / '.git').exists():
+        nip = nip_dir / 'NIP-0003-live-runtime-sessions.md'
+        source_reservations = {'C' + n for n in re.findall(
+            r'\bC([1-9][0-9]*)\s+stays\s+free\b', nip.read_text(encoding='utf-8'))}
+        if not source_reservations:
+            raise ValueError('no control reservation found in NIP-0003')
+        if not source_reservations.issubset(set(reserved)):
+            raise ValueError('NIP-0003 reserved controls missing from inventory')
     emitted = {'C' + n for n in re.findall(r'\[C([1-9][0-9]*)\]', validator)}
     defined = {'C' + n for n in re.findall(r'^check_c([1-9][0-9]*)_\w+\(\)', validator, re.M)}
     if set(ids) != emitted or set(ids) != defined:

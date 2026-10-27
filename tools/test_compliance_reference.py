@@ -10,7 +10,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ('tools/compliance_checks.json', 'tools/generate_compliance_reference.py',
-         'tools/validate.sh', 'tools/README.md', 'README.md')
+         'tools/validate.sh', 'tools/README.md', 'README.md',
+         'docs/nips/NIP-0003-live-runtime-sessions.md')
 
 
 class ComplianceReferenceTests(unittest.TestCase):
@@ -61,6 +62,32 @@ class ComplianceReferenceTests(unittest.TestCase):
             with self.subTest(addition=addition):
                 validator.write_text(original + addition)
                 self.run_generator(1, '--check')
+
+    def test_source_reservation_cannot_disappear_from_registry(self):
+        self.assertIn('C17', [r['id'] for r in self.data['reserved']])
+        self.data['reserved'] = [r for r in self.data['reserved'] if r['id'] != 'C17']
+        self.put()
+        self.run_generator(1, '--check')
+
+    def test_changed_source_reservation_is_derived(self):
+        nip = self.root / 'docs/nips/NIP-0003-live-runtime-sessions.md'
+        text = nip.read_text()
+        self.assertIn('C17 stays free', text)
+        nip.write_text(text.replace('C17 stays free', 'C18 stays free'))
+        self.run_generator(1, '--check')
+
+    def test_consumer_payload_does_not_require_nip(self):
+        nip = self.root / 'docs/nips/NIP-0003-live-runtime-sessions.md'
+        nip.unlink()
+        nip.parent.rmdir()
+        self.run_generator(0, '--check')
+
+    def test_authoring_checkout_cannot_omit_nip(self):
+        nip = self.root / 'docs/nips/NIP-0003-live-runtime-sessions.md'
+        nip.unlink()
+        nip.parent.rmdir()
+        (self.root / '.git').write_text('gitdir: fixture')
+        self.run_generator(1, '--check')
 
     def test_removing_default_dispatch_is_detected(self):
         p = self.root / 'tools/validate.sh'
