@@ -25,7 +25,7 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v2.0.0` is the latest official release at `603afc7b17919334a6a01df1e39e63798d9d0acd` and is now the official local `.nizam/` installation. Commit-bound integrity and installed high-risk preflight passed; full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental source installations remain separate historical records.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. As recorded on 2026-10-27, `v2.0.0` was the latest official release at `603afc7b17919334a6a01df1e39e63798d9d0acd` and is now the official local `.nizam/` installation. Commit-bound integrity and installed high-risk preflight passed; full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental source installations remain separate historical records.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v2.0.0`)
 
@@ -306,10 +306,10 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ---
 
-### Unreleased v3.0.0 candidate
+### v3.0.0 corrective release
 
-The corrective candidate is **not yet published**. The latest usable release remains
-v2.0.0 above. After v3.0.0 is published and its exact commit independently verified,
+At preparation on 2026-10-27, the corrective candidate had not yet been published;
+v2.0.0 above was the latest release. After v3.0.0 is published and its exact commit independently verified,
 consumers may substitute that approved commit for `NIZAM_RELEASE_SHA`:
 
 ```sh
