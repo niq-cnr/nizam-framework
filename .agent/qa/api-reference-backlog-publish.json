@@ -1,0 +1,61 @@
+{
+  "feature_id": "api-reference-backlog-publish",
+  "proof_version": 2,
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "candidate_ref": {
+    "path": ".agent/evidence/api-reference-backlog-publish/candidate.json",
+    "sha256": "7f6c4353093808c82ddd70e45b3d67c1069cf7506c5dd07e6e1f7a691f6f6cc8"
+  },
+  "checks": [
+    {
+      "id": "plan",
+      "capture": {
+        "path": ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-plan-attempt1-20261027T072418Z-dcf90bf7.capture.json",
+        "sha256": "8d398c895f07233911200170f44836f2209507ff23614b6e79e0531ce0a2f565"
+      }
+    },
+    {
+      "id": "scope",
+      "capture": {
+        "path": ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-scope-attempt1-20261027T072419Z-9f55ce40.capture.json",
+        "sha256": "dae1f550205fdb6fe1a4ba641483761fd17302f32d85f09e77a5056d0774ede7"
+      }
+    },
+    {
+      "id": "whitespace",
+      "capture": {
+        "path": ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-whitespace-attempt1-20261027T072422Z-2179a1fb.capture.json",
+        "sha256": "769eef5d05b0bdf7cac9eaf63ff13e62f7d5a7559c310725530c24949cbba8a2"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Preserved full current-program/release body; compared inherited roadmap and changelog target-validation failures against immutable original review base; verified new Markdown links and adoption targets."
+  },
+  "evidence_files": [
+    ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-plan-attempt1-20261027T072418Z-dcf90bf7.capture.json",
+    ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-scope-attempt1-20261027T072419Z-9f55ce40.capture.json",
+    ".agent/evidence/api-reference-backlog-publish/captures/api-reference-backlog-publish-whitespace-attempt1-20261027T072422Z-2179a1fb.capture.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent QA approves registration of the operator-approved bounded pilot; three preregistered checks passed against the frozen candidate."
+  },
+  "advisory_minor": [
+    {
+      "summary": "Inherited roadmap and CHANGELOG target-mode diagnostics persist without new failures; raw baseline/current outputs are retained in the scope capture."
+    },
+    {
+      "summary": "Prior verification-inventory defect produced one failed standalone CHANGELOG capture. It is retained and linked in immutable lineage; cumulative failure count is not reset."
+    }
+  ],
+  "role_disclosure": "Parent combines Generator and Orchestrator for Routine documentation registration. This Evaluator session independently executed final verification.",
+  "executed_at": "2026-10-27T07:24:39.777920+00:00"
+}
