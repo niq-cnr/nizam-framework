@@ -1,0 +1,72 @@
+{
+  "source_commit": "1263ca8408061128991c2f2a5d335b90ffe7a892",
+  "PR_commit": "65036ef8eea1eef4dcf9a3a772570736a0baf499",
+  "clone": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/pr139-verify-bound-bcg1vawe/repo",
+  "initial_status": "clean",
+  "qa_context": "2680f8e3af51626a4bb551584127d111244f88a073f89d69e2ab5786a1ffdc5b",
+  "candidate_sha256": "a2c40c5b4f6275a893b89c9bc6514ffae7f89be94dfe56d850d8dd3d039ed1fa",
+  "verification": [
+    {
+      "id": "source-identity",
+      "argv": [
+        "python3",
+        ".agent/evidence/pr139-verify/check.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "scoped-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "52a91abbee308282e24a5296d3597e9494e9a849",
+        "HEAD",
+        "--",
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/API_REFERENCE_PILOT.md"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "inputs": {
+    "source": [
+      "CHANGELOG.md",
+      "docs/planning/ROADMAP.md",
+      "docs/planning/API_REFERENCE_PILOT.md"
+    ],
+    "contracts": [
+      ".agent/evidence/pr139-verify-base.json",
+      ".agent/evidence/pr139-verify-intent.json"
+    ],
+    "tests": [
+      ".agent/evidence/pr139-verify/check.py"
+    ],
+    "tools": [
+      "tools/start_path.py",
+      "tools/workflow_assurance.py",
+      "schema/qa_verdict.schema.json",
+      "schema/contract.schema.json",
+      "schema/small_change_intent.schema.json"
+    ],
+    "unknown_dependencies": []
+  },
+  "environment": {
+    "runtime": {
+      "implementation": "CPython",
+      "version": "3.14.6",
+      "system": "Darwin",
+      "machine": "arm64"
+    },
+    "variables": {
+      "NIZAM_QA_CONTEXT_SHA256": "2680f8e3af51626a4bb551584127d111244f88a073f89d69e2ab5786a1ffdc5b",
+      "NIZAM_QA_EXECUTION_ROOT": "/private/var/folders/7b/qnf9wwbj1bdct87f4fpn5p2m0000gn/T/pr139-verify-bound-bcg1vawe/repo",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  }
+}

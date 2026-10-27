@@ -1,0 +1,64 @@
+{
+  "proof_version": 2,
+  "feature_id": "pr139-verify",
+  "qa_pass": true,
+  "checks_run": 2,
+  "checks_passed": 2,
+  "candidate_ref": {
+    "path": ".agent/evidence/pr139-verify/evaluator/candidate.json",
+    "sha256": "1716df212a1d45e148fe1e89d0da344700a3a504298eaafedbdb40434221110a"
+  },
+  "candidate_sha256": "a2c40c5b4f6275a893b89c9bc6514ffae7f89be94dfe56d850d8dd3d039ed1fa",
+  "checks": [
+    {
+      "id": "source-identity",
+      "capture": {
+        "path": ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-source-identity-attempt1-20261027T095411Z-294f2e71.capture.json",
+        "sha256": "487bf3a24d3efb3b277976076fd573464ec07a7ad7bc1505df6526e81ebcdc3b"
+      }
+    },
+    {
+      "id": "scoped-whitespace",
+      "capture": {
+        "path": ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-scoped-whitespace-attempt1-20261027T095412Z-5768a243.capture.json",
+        "sha256": "cdafcc76e6c7be7bf7c546b253ea99138324f8f7159fcc806caaf568864733e7"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Independent exact parent/body/release and metadata preservation; local links valid; applicable target document passes C1/C2/C3/C9/C10.",
+    "evidence": ".agent/evidence/pr139-verify/evaluator/pr139-verify-independent-source-links-attempt1-20261027T095449Z-4d312783.capture.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-scoped-whitespace-attempt1-20261027T095412Z-5768a243.stderr.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-source-identity-attempt1-20261027T095411Z-294f2e71.capture.json",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-applicable-target-document-attempt1-20261027T095450Z-bd238d7f.capture.json",
+    ".agent/evidence/pr139-verify/evaluator/candidate.json",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-independent-source-links-attempt1-20261027T095449Z-4d312783.stdout.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-applicable-target-document-attempt1-20261027T095450Z-bd238d7f.stderr.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-source-identity-attempt1-20261027T095411Z-294f2e71.stdout.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-scoped-whitespace-attempt1-20261027T095412Z-5768a243.stdout.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-scoped-whitespace-attempt1-20261027T095412Z-5768a243.capture.json",
+    ".agent/evidence/pr139-verify/evaluator/independent_review.py",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-applicable-target-document-attempt1-20261027T095450Z-bd238d7f.stdout.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-independent-source-links-attempt1-20261027T095449Z-4d312783.stderr.txt",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-independent-source-links-attempt1-20261027T095449Z-4d312783.capture.json",
+    ".agent/evidence/pr139-verify/evaluator/pr139-verify-bound-source-identity-attempt1-20261027T095411Z-294f2e71.stderr.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Fresh verification task candidate1263ca84 passes exact typed checks and independent content/link controls; source bytes match PR65036 without widening or rewriting original merge task scope."
+  },
+  "assessed_commit": "1263ca8408061128991c2f2a5d335b90ffe7a892",
+  "PR_source_commit": "65036ef8eea1eef4dcf9a3a772570736a0baf499",
+  "independent_evaluator": "first_contact",
+  "limitations": [
+    "This approves pr139-verify only. Original pr139-merge remains uncompleted under its separate immutable-base limitation.",
+    "No product edits, commits, merges, release sign-off or adoption by Evaluator."
+  ]
+}
