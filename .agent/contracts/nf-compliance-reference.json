@@ -1,0 +1,99 @@
+{
+  "contract_id": "nf-compliance-reference",
+  "feature_id": "NF-06",
+  "name": "NF-06 authoritative compliance inventory and generated references",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/compliance_checks.json",
+        "purpose": "Canonical active C1-C16 identity, purpose, source check, applicability and consumer summary inventory; no allocation of reserved IDs."
+      },
+      {
+        "path": "tools/generate_compliance_reference.py",
+        "purpose": "Stdlib-only deterministic generation/checking of bounded README/tools README tables and validator help control summaries from registry."
+      },
+      {
+        "path": "tools/test_compliance_reference.py",
+        "purpose": "Registry/implementation/emitted-ID/generated-document parity with removal, duplicate, retired, mislabelled and drift negative mutations."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "README.md",
+        "purpose": "Generated canonical control-purpose summary table only; preserve unrelated release/version edits."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Generated canonical control reference table and registry regeneration instructions; preserve other module prose."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Generated/help-reference changes only, including correcting C9 root README versus C10 prior-scope distinction; no control behavior changes."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Run registry parity and its negative controls in existing validate job with existing prerequisites; no external source/token/runtime additions."
+      }
+    ]
+  },
+  "non_goals": [
+    "No semantic validator checks, new/renumbered control IDs, changed task routes, installed .nizam edits, DS artifacts or runtime/network dependencies.",
+    "No changes to release anchors, immutable corrective candidate or adoption; implementation follows independent NF22 corrective freeze.",
+    "No fourth routing skill or replacement governance state machine."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "NF06-inventory",
+      "requirement": "Every actual emitted C1-C16 ID has exactly one active registry entry with purpose, applicable default/target/payload modes and exact implementation check function. Existing IDs remain stable; C17 stays reserved for evidence shape under docs/nips/NIP-0003-live-runtime-sessions.md and is not allocated by this work."
+    },
+    {
+      "id": "NF06-parity",
+      "requirement": "Deterministically generate or verify consumer README and tools README summaries and validator help against the registry. Missing/duplicate/retired/mislabelled entries, emitted unregistered IDs, missing source functions and changed generated content fail consistency."
+    },
+    {
+      "id": "NF06-scope",
+      "requirement": "Reference/help state that default C9 includes root README independently of NDS; C10 retains shipped docs plus guide. Payload classifications retain exercised/not-applicable/skipped/out-of-scope meanings. HTTP URLs and declared illustrative examples retain current handling."
+    },
+    {
+      "id": "NF06-independence",
+      "requirement": "Core CI runs local parity and regression commands using shipped source and existing dependencies, with no documentation-skills checkout, credential, package or network lookup."
+    }
+  ],
+  "verification": [
+    {
+      "acceptance_test": "NF06-inventory,NF06-parity,NF06-scope",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_compliance_reference.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF06-parity",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_compliance_reference.py --check",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF06-independence,NF06-scope",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF06-scope",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/nf-compliance-reference",
+  "evidence_convention": "Exclusive capture records per check/attempt; retain mutation expected failures within passing discrimination tests; focused workflow/source review separately records unchanged core dependency boundary.",
+  "role_allocation": "Standard first_contact combines Planner/Generator/Validator; root independently reviews testability and QA.",
+  "execution_gate": "Do not implement before this contract is independently approved and root confirms independent NF22 corrective candidate frozen.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1
+  },
+  "approval_evidence": {
+    "contract_review": ".agent/qa/nf-compliance-reference-contract-review.json"
+  }
+}

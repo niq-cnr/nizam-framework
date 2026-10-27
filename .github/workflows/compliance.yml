@@ -34,6 +34,8 @@ jobs:
 
       - run: pip install -r .github/requirements-ci.txt
 
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_compliance_reference.py --check
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_compliance_reference.py
       - run: bash tools/validate.sh
 
   e2e_bootstrap:
