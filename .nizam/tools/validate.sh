@@ -148,6 +148,26 @@ Modes:
 
   --help, -h          Prints this usage and exits 0.
 
+  # BEGIN GENERATED COMPLIANCE CONTROLS
+  Control inventory (default / target / payload):
+  C1: Frontmatter schema — exercised / markdown / exercised
+  C2: Document format — exercised / markdown / exercised
+  C3: Fence language — exercised / markdown / exercised
+  C4: Index integrity — exercised / json fallback / exercised
+  C5: Branding and endpoint leakage — exercised / none / exercised
+  C6: Bootstrap sanity — exercised / none / skipped
+  C7: Module README presence — exercised / none / exercised
+  C8: Version and changelog — exercised / none / exercised
+  C9: Path resolution — exercised / markdown / exercised
+  C10: Consistency — exercised / markdown and html / exercised
+  C11: Dogfood schema validation — exercised / routed json / not-applicable
+  C12: Schema-family fixtures — exercised / routed json / out-of-scope
+  C13: Governance skill manifest — exercised / none / exercised
+  C14: Workflow pinning — exercised / none / out-of-scope
+  C15: Capability roles — exercised / none / out-of-scope
+  C16: Feature-list lifecycle — exercised / feature-list json schema only / not-applicable
+  # END GENERATED COMPLIANCE CONTROLS
+
 Checks (each check function emits exactly one line matching
 `[C<N>] PASS <name>` or `[C<N>] FAIL <name>`, with any offending
 file(s)/detail(s) printed on the following indented line(s)):
@@ -225,8 +245,9 @@ file(s)/detail(s) printed on the following indented line(s)):
       path. Repo-wide only; does not run under --target.
 
   C9  Repo-wide path resolution (narrative-truth: does every named path
-      actually exist?). For the shipped-doc set UNION {docs/guide/index.html}
-      (default mode), the payload-doc set (--payload mode, no guide), or a
+      actually exist?). For the shipped-doc set plus root README.md and
+      docs/guide/index.html (default mode), the payload-doc set (--payload
+      mode, no guide or root README), or a
       single --target `.md` file: strips a leading YAML frontmatter block
       if present and scans only the remaining BODY text -- frontmatter
       content is C1/C2's concern, not C9's -- with the extended regex
@@ -253,9 +274,9 @@ file(s)/detail(s) printed on the following indented line(s)):
       mode-gated carve-out (NDEBT-004, the C9 analog of C4's payload
       carve-out) additionally skips any directory-qualified token whose
       first segment is NOT an injected-payload dir (standard/, templates/,
-      schema/, tools/): a consumer .nizam/ subset legitimately carries
-      cross-references into non-injected framework-envelope paths
-      (methodology/, ecosystem/, registry/, docs/, .agent/, .github/, ...)
+      schema/, tools/, methodology/, ecosystem/): a consumer .nizam/ subset
+      legitimately carries cross-references into non-injected framework-envelope
+      paths (registry/, docs/, .agent/, .github/, ...)
       it reaches via the pinned framework checkout, not via the injected
       subset. The default full sweep applies NO such carve-out, so a stale
       non-injected reference is still caught there. Any remaining token that
@@ -264,8 +285,8 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C10 Single-source-of-truth consistency (narrative-truth: do the docs
       agree with each other and with the framework's own recorded state?).
-      Sweeps the SAME set C9 sweeps in each mode (shipped-doc set UNION
-      {docs/guide/index.html} by default; the payload-doc set in --payload
+      Sweeps the shipped-doc set plus docs/guide/index.html by default (the
+      root README is covered by C9, not C10); the payload-doc set in --payload
       mode; a single --target `.md` or `.html` file). Strips a leading YAML
       frontmatter block first, exactly as C9 does, then runs three
       independent sub-checks against the remaining BODY:
@@ -383,9 +404,10 @@ file(s)/detail(s) printed on the following indented line(s)):
       every negative fixture against its targeted check (closing NDEBT-009's
       dormancy for the non-ecosystem fixtures too) is `tools/fixtures_self_test.sh`.
 
-  C13 Skill-index integrity (does every capability pointer in
-      tools/skill.json resolve?). JSON-parses `tools/skill.json` and
-      requires the `entry_point` and every `capabilities[].module` path to
+  C13 Skill-index integrity. Validates tools/skill.json against the local
+      governance manifest schema, rejects duplicate capability names and
+      requires unconditional entrypoint version parity. It also requires the
+      `entry_point` and every `capabilities[].module` path to
       resolve to an existing file; a missing/empty `entry_point` or an
       empty `capabilities` array is itself a FAIL, so the check cannot go
       vacuous. Closes NDEBT-007: the release_train capability shipped a
@@ -439,7 +461,7 @@ file(s)/detail(s) printed on the following indented line(s)):
       a passing QA verdict, and evidence on disk; the era-safe rule does
       not flag a pre-contract-first complete feature with no contract
       file. Enforced via the vetted vlib_feature_list_lifecycle primitive.
-      Default-mode only: --payload passes trivially by design (.agent/
+      Default-mode only: --payload reports NOT_APPLICABLE (.agent/
       governance state is never part of the bootstrap.sh payload), and a
       --target feature-list-shaped file gets schema-only validation.
       (Feature 092.)
@@ -451,7 +473,10 @@ tools/ EXCLUDING tools/fixtures/ (which is never part of the default sweep
 and is reachable only via --target); and schema/README.md (the only .md
 under schema/). Root README.md and docs/planning/* carry no frontmatter
 contract and are NOT part of this set (root README.md and bootstrap.sh are
-still covered by C5's separately-listed extra targets).
+still covered by C5's separately-listed extra targets). C9 additionally
+checks README.md as first-contact documentation, separately from the NDS set,
+and scans the guide when present. HTTP(S) URLs are not local path targets;
+existing declared placeholder/illustrative exemptions still apply.
 
 Payload-doc set (the --payload mode file set, used by C1, C2, C3, C5, and
 C8): every .md under standard/, templates/, methodology/, and ecosystem/,
@@ -1169,7 +1194,10 @@ check_c9_path_resolution() {
       if ! vlib_path_resolves "${token}" >/dev/null 2>&1; then
         errors+=("${f}: unresolved path reference '${token}'")
       fi
+    # Remote URL paths are data, not repository-relative references (including
+    # URLs in code examples). Never fetch them during local link validation.
     done < <(printf '%s\n' "${body}" \
+      | sed -E 's@https?://[^[:space:]<>"`]+@@g' \
       | grep -oE '[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]*\.(md|json|sh|html|yml)' \
       | LC_ALL=C sort -u)
   done
@@ -2091,14 +2119,22 @@ except (OSError, json.JSONDecodeError) as exc:
     print(f"tools/skill.json unreadable or not valid JSON: {exc}")
     sys.exit(1)
 
-# Shape/type hardening (PR #28 review): valid JSON that is not the expected
-# object -- null, a list, a scalar -- or a truthy non-string entry_point/
-# module would otherwise reach .get()/os.path APIs and raise an
-# AttributeError/TypeError traceback. Report those as actionable C13
-# failures instead (the check still FAILs either way; this makes the
-# failure legible rather than a stack trace).
-if not isinstance(skill, dict):
-    print(f"tools/skill.json must be a JSON object, got {type(skill).__name__}")
+# NF-03/NF-04: validate the complete governance manifest before relational
+# checks. This local schema is distinct from planning and Agent Skills metadata.
+try:
+    import jsonschema
+    with open("schema/governance_skill.schema.json", encoding="utf-8") as fh:
+        manifest_schema = json.load(fh)
+    validator = jsonschema.Draft202012Validator(manifest_schema)
+    shape_errors = sorted(validator.iter_errors(skill), key=lambda e: str(list(e.path)))
+except (OSError, ValueError, jsonschema.exceptions.SchemaError) as exc:
+    print(f"governance manifest schema unavailable or invalid: {type(exc).__name__}")
+    sys.exit(1)
+if shape_errors:
+    # Report schema paths, not submitted values, so extensions cannot leak data.
+    for error in shape_errors:
+        location = ".".join(str(p) for p in error.schema_path)
+        print(f"governance manifest violates schema rule {location}")
     sys.exit(1)
 
 problems = []
@@ -2122,6 +2158,10 @@ for index, capability in enumerate(capabilities):
         problems.append(f"{label} has no non-empty string module pointer")
         continue
     paths.append((label, module))
+
+names = [capability["name"] for capability in capabilities]
+if len(names) != len(set(names)):
+    problems.append("capability names must be unique")
 
 root = os.path.realpath(os.getcwd())
 for label, path in paths:
@@ -2181,39 +2221,34 @@ for index, capability in enumerate(capabilities):
         label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
         problems.append(f"{label} -> {module} is not the authoritative_source of any NIZAM.json capability")
 
-# Enforce version parity between tools/skill.json and entry_point (tools/SKILL.md)
-# frontmatter version (B4 / V5). Dedicated negative C13 fixtures testing only
-# dangling/unindexed module pointers carry name "nizam-skill-index-negative-fixture*"
-# so their targeted error stays isolated.
-skill_name = skill.get("name")
+# Version parity is unconditional, including test-fixture names.
 skill_version = skill.get("version")
-if not (isinstance(skill_name, str) and skill_name.startswith("nizam-skill-index-negative-fixture")):
-    if not isinstance(skill_version, str) or not skill_version:
-        problems.append("tools/skill.json version missing, empty, or not a string")
-    elif isinstance(entry_point, str) and entry_point and os.path.isfile(os.path.normpath(entry_point)):
-        try:
-            import yaml
-            with open(os.path.normpath(entry_point), encoding="utf-8") as ep_fh:
-                ep_lines = ep_fh.read().splitlines()
-            fm_ver = None
-            if ep_lines and ep_lines[0].strip() == "---":
-                end_idx = None
-                for i in range(1, len(ep_lines)):
-                    if ep_lines[i].strip() == "---":
-                        end_idx = i
-                        break
-                if end_idx is not None:
-                    fm_doc = yaml.safe_load("\n".join(ep_lines[1:end_idx]))
-                    if isinstance(fm_doc, dict) and isinstance(fm_doc.get("version"), str):
-                        fm_ver = fm_doc["version"]
-            if fm_ver is None:
-                problems.append(f"entry_point {entry_point} has no readable frontmatter version")
-            elif skill_version != fm_ver:
-                problems.append(
-                    f"tools/skill.json version ({skill_version!r}) does not match entry_point {entry_point} frontmatter version ({fm_ver!r})"
-                )
-        except Exception as exc:
-            problems.append(f"failed to parse frontmatter of entry_point {entry_point}: {exc}")
+if not isinstance(skill_version, str) or not skill_version:
+    problems.append("tools/skill.json version missing, empty, or not a string")
+elif isinstance(entry_point, str) and entry_point and os.path.isfile(os.path.normpath(entry_point)):
+    try:
+        import yaml
+        with open(os.path.normpath(entry_point), encoding="utf-8") as ep_fh:
+            ep_lines = ep_fh.read().splitlines()
+        fm_ver = None
+        if ep_lines and ep_lines[0].strip() == "---":
+            end_idx = None
+            for i in range(1, len(ep_lines)):
+                if ep_lines[i].strip() == "---":
+                    end_idx = i
+                    break
+            if end_idx is not None:
+                fm_doc = yaml.safe_load("\n".join(ep_lines[1:end_idx]))
+                if isinstance(fm_doc, dict) and isinstance(fm_doc.get("version"), str):
+                    fm_ver = fm_doc["version"]
+        if fm_ver is None:
+            problems.append(f"entry_point {entry_point} has no readable frontmatter version")
+        elif skill_version != fm_ver:
+            problems.append(
+                f"tools/skill.json version ({skill_version!r}) does not match entry_point {entry_point} frontmatter version ({fm_ver!r})"
+            )
+    except Exception as exc:
+        problems.append(f"failed to parse frontmatter of entry_point {entry_point}: {exc}")
 
 for problem in problems:
     print(problem)
@@ -2652,7 +2687,10 @@ main() {
     if [ -f docs/guide/index.html ]; then
       c9_default_files+=("docs/guide/index.html")
     fi
-    check_c9_path_resolution "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    # First-contact link coverage is independent of the governed frontmatter
+    # set. README.md is reader-facing; C1/C2 do not acquire it implicitly.
+    local first_contact_files=("README.md")
+    check_c9_path_resolution "${c9_default_files[@]}" "${first_contact_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c10_consistency "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))

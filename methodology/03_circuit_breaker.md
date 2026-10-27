@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, escalating investigative strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions."
-version: 0.6.0
+version: 0.6.1
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.6.1"
+    date: "2026-10-27"
+    summary: "NF-R02 (Finding F11): reconcile Section 6 (Escalation Protocol) with Section 3 (Explicit finite operator recovery) and Section 3.2 (non-resetting attempt identity) by replacing the stale '(resetting the attempt counter to 0)' wording with finite task-scoped operator recovery (circuit_breaker[task_id].operator_recovery raising max_task_attempts to a finite ceiling while retaining all prior attempt counters and capture history)."
   - version: "0.6.0"
     date: "2026-10-18"
     summary: "Remove remaining universal 3-attempt hard-cap contradictions in frontmatter, comparator scope, attempt counting, cause routing, and state reconciliation so all active sections consistently reflect work-specific diagnostic stopping and hard-stop conditions (V5)."
@@ -243,8 +246,11 @@ while marking the blocked one aside for "later." A `BLOCKED` feature remains
 blocked until a human either:
 
 - Provides a corrected approach or additional context that resolves the
-  underlying defect, after which the step may be attempted fresh (resetting the
-  attempt counter to 0), or
+  underlying defect and records explicit finite task-scoped operator recovery
+  (`circuit_breaker[task_id].operator_recovery` per Section 3, raising
+  `max_task_attempts` to an explicit finite ceiling while retaining all prior
+  attempt counters and capture history — never resetting attempt counters to 0),
+  or
 - Explicitly authorizes cancelling or descoping the feature, after which its
   status moves to `cancelled` (which, per the Dependency Enforcement Rule in
   `00_planning.md` Section 5, satisfies any downstream feature that depended on

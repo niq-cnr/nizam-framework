@@ -1,6 +1,6 @@
 {
   "name": "nizam-skill-index-negative-fixture-unindexed",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "Negative fixture for validator check C13 (phase-014 feature 106, NDEBT-044 a). Every capabilities[].module resolves to an existing file. The planning entry is the authoritative_source of a NIZAM.json capability, so it is not the failure. The unindexed-capability entry points at ecosystem/README.md, which is absent from the NIZAM.json capability index. Substituting this file for tools/skill.json must make the full sweep print [C13] FAIL because that module is unindexed, not because a pointer dangles. The filename carries the canonical _neg_ token and no C12 family prefix, so C12 ignores it.",
   "entry_point": "tools/SKILL.md",
   "capabilities": [
@@ -14,5 +14,36 @@
       "description": "Resolves on disk, but ecosystem/README.md is not a NIZAM.json capability authoritative_source.",
       "module": "ecosystem/README.md"
     }
-  ]
+  ],
+  "runtime_requirements": {
+    "file_read_write": {
+      "required": true,
+      "description": "The host environment must be able to read and write files in the consumer repository, including a durable-state directory (conventionally .agent/)."
+    },
+    "shell_execution": {
+      "required": true,
+      "description": "The host environment must be able to run verification commands (tests, checks, schema validation) and capture their exit codes and output."
+    },
+    "structured_data_parsing": {
+      "required": true,
+      "description": "The host environment must be able to parse and emit JSON, and parse YAML frontmatter blocks and YAML phase/template documents."
+    },
+    "live_runtime_session": {
+      "required": false,
+      "description": "Optional live-runtime-session adapter capability. Only claiming adapters implement the seven calls and conditional S1-S9 checks; existing adapters remain conformant."
+    }
+  },
+  "state_interface": {
+    "root_index": {
+      "path": "NIZAM.json",
+      "description": "The compact root capability index and context router an agent queries first (DD-1) to locate the minimal set of governance files a task requires."
+    },
+    "artifact_families": {
+      "run_state": ".agent/run_state.json",
+      "feature_list": ".agent/feature_list.json",
+      "contracts": ".agent/contracts/NNN.json",
+      "qa_verdicts": ".agent/qa/NNN.json",
+      "evidence": ".agent/evidence/*.txt"
+    }
+  }
 }

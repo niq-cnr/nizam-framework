@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.38
+version: 0.65.39
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.39"
+    date: "2026-10-27"
+    summary: "Record published v3.0.0 MAJOR release at PR142 merge 2b8298ae1d5a41534e00b6710a738b4b181b87fa (annotated tag object 10f7cd3e103d143eef7d151228b1bf3b3344a362) and official local .nizam/ installation (331 released files + provenance.json at 2026-10-27T15:56:45Z), and prepare the v3.1.0 MINOR release candidate (NF-OWNER-2026-10-27: NF-R01–NF-R05 plus API-REF-PILOT)."
   - version: "0.65.38"
     date: "2026-10-27"
     summary: "Register API-REF-PILOT as operator-approved backlog work, link its bounded extraction plan and measured adoption criteria, and preserve active program ordering and lifecycle records."
@@ -403,11 +406,11 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v3.0.0 — NF-22 independent MAJOR corrective candidate; at 2026-10-27 preparation, human sign-off, merge and tag remained pending.
+Release in preparation: v3.1.0 — NF-OWNER-2026-10-27 MINOR release candidate (`NF-R01`–`NF-R05` assurance/standalone qualification and `API-REF-PILOT`); human sign-off, merge and tag remain pending.
 
-Latest released tag: v2.0.0 (MAJOR) — RELEASED 2026-10-24 at `603afc7b17919334a6a01df1e39e63798d9d0acd` (PR #137, merged by `niq-cnr` at `2026-10-24T05:36:42Z`; annotated tag object `4aa4b1be73b1131b1227528465981a15815c44d7`). All six release-preparation CI checks passed (compliance run `40065497758`, closeout run `40065497781`); `release.yml` run `40067442085` succeeded and published the GitHub Release at `2026-10-24T05:44:48Z`, marked Latest. Official local `.nizam/` adoption installed `316` released files + `provenance.json` at `2026-10-24T05:45:45Z`; the trusted pin verifier, commit-bound bootstrap verification and installed high-risk preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [migration guide](../migration-v2.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v2.0.0-closeout/).
+Latest released tag: v3.0.0 (MAJOR) — RELEASED 2026-10-27 at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (PR #142, merged by `niq-cnr` at `2026-10-27T10:33:08Z`; annotated tag object `10f7cd3e103d143eef7d151228b1bf3b3344a362`). Official local `.nizam/` adoption installed `331` released files + `provenance.json` at `2026-10-27T15:56:45Z`; the trusted pin verifier, 10-case drift negative suite, commit-bound bootstrap verification and installed preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [v3.0.0 migration guide](../migration-v3.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v3.0.0-closeout/).
 
-Prior released tag: v1.11.0 (MINOR) — RELEASED 2026-10-23 at `6fc683580941adf19860d9d9d00fdc81d38d8088` (PR #132, annotated tag object `5b09fc0b179ff4f06ea4aec7878a34170654ade6`); `release.yml` run 39883294237 succeeded and the GitHub Release is published; local `.nizam/` re-bootstrapped to `v1.11.0` (`316` released files + `provenance.json`, `installed_at` `2026-10-23T01:21:26Z`).
+Prior released tag: v2.0.0 (MAJOR) — RELEASED 2026-10-24 at `603afc7b17919334a6a01df1e39e63798d9d0acd` (PR #137, merged by `niq-cnr` at `2026-10-24T05:36:42Z`; annotated tag object `4aa4b1be73b1131b1227528465981a15815c44d7`). All six release-preparation CI checks passed (compliance run `40065497758`, closeout run `40065497781`); `release.yml` run `40067442085` succeeded and published the GitHub Release at `2026-10-24T05:44:48Z`. Official local `.nizam/` adoption installed `316` released files + `provenance.json` at `2026-10-24T05:45:45Z` ([release closeout](../../.agent/evidence/release-v2.0.0-closeout/)).
 
 Prior released tag: v1.10.1 (PATCH) — RELEASED 2026-10-19 at `2b6a4af4d1667aad89cfaab4b1799cb8c9beb9fd` (PR #125, annotated tag object `5b6fdb64a5bc3bf1def755b8269696d9e95b3a41`); `release.yml` run 39241606087 and `pages.yml` run 39241597482 succeeded and the GitHub Release published at `2026-10-19T11:01:33Z` is marked Latest; local `.nizam/` re-bootstrapped to `v1.10.1` (`278` released files + `provenance.json`, `installed_at` `2026-10-19T11:03:39Z`).
 

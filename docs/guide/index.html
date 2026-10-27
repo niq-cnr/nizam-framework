@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="framework-version" content="3.0.0">
+<meta name="framework-version" content="3.1.0">
 <meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
 <meta name="color-scheme" content="light dark">
-<title>Nizam Framework — Interactive Developer &amp; AI Agent Guide (v2.0.0)</title>
+<title>Nizam Framework — Interactive Developer &amp; AI Agent Guide (v3.0.0)</title>
 <link rel="alternate" type="text/plain" title="LLM Concise Index (llms.txt)" href="llms.txt">
 <link rel="alternate" type="text/plain" title="LLM Full Reference (llms-full.txt)" href="llms-full.txt">
 <style>
@@ -651,7 +651,7 @@
 
 <header class="hero" id="hero">
   <div class="hero-badges">
-    <span class="badge badge-accent">Published release v2.0.0; v3.0.0 candidate</span>
+    <span class="badge badge-accent">Published release v3.0.0; v3.1.0 candidate</span>
     <span class="badge">Zero Dependencies (POSIX sh + Python 3.10+)</span>
     <span class="badge">16/16 Compliance Gates (C1&ndash;C16)</span>
     <a class="badge badge-secondary" href="llms.txt">AI Index: llms.txt</a>
@@ -663,7 +663,7 @@
   loops, durable agent state, and governance inheritance that any AI agent or engineering team can
   consume, in any runtime, for any project. Nizam ships no application code, infrastructure, or
   runtime services.</p>
-  <p style="font-size:0.95rem;color:var(--fg-muted);margin-top:0.85rem;">General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v2.0.0&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
+  <p style="font-size:0.95rem;color:var(--fg-muted);margin-top:0.85rem;">General Availability declared by the operator on 2026-10-10. See the <a href="https://github.com/niq-cnr/nizam-framework/blob/v3.0.0&#47;docs/planning/operator_gates.md">GA decision</a> for the operator record and explicit evidence exceptions.</p>
 
   <div class="cta-group">
     <a class="cta cta-human" href="#onboard-prompt-card">Copy 1-Prompt Agent Onboarding</a>
@@ -678,15 +678,15 @@
       <h2><span>Zero-Friction Onboarding: Copy &amp; Paste Into Your Coding Agent</span> <span class="badge badge-accent">1-Prompt Setup</span></h2>
       <button type="button" class="btn-copy-prompt" id="copy-onboard-btn">Copy Onboarding Prompt</button>
     </div>
-    <p style="margin:0 0 0.65rem;font-size:0.92rem;color:var(--fg-muted);">Paste this single prompt into Claude Code, Cursor, Antigravity, Codex, Windsurf, or any AI coding agent to bootstrap and verify <code>v2.0.0</code> automatically:</p>
-    <p>At preparation on 2026-10-27 the v3.0.0 corrective candidate had not been published. After publication, use the approved exact commit with <code>--tag v3.0.0</code>; the v2.0.0 instructions below retain the previously published pin.</p>
-    <pre id="agent-onboard-prompt"><code>Onboard this repository to the Nizam governance framework (immutable release v2.0.0, commit 603afc7b17919334a6a01df1e39e63798d9d0acd):
+    <p style="margin:0 0 0.65rem;font-size:0.92rem;color:var(--fg-muted);">Paste this single prompt into Claude Code, Cursor, Antigravity, Codex, Windsurf, or any AI coding agent to bootstrap and verify <code>v3.0.0</code> automatically:</p>
+    <p>At preparation on 2026-10-27 the v3.1.0 minor candidate had not been published. After publication, use the approved exact commit with <code>--tag v3.1.0</code>; the v3.0.0 instructions below retain the published pin.</p>
+    <pre id="agent-onboard-prompt"><code>Onboard this repository to the Nizam governance framework (immutable release v3.0.0, commit 2b8298ae1d5a41534e00b6710a738b4b181b87fa):
 
-1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v2.0.0 AI Agent Entry Protocol and CLI reference.
-2. Fetch and run the official bootstrap script pinned to v2.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
-   curl -fsSL https:&#47;&#47;raw.githubusercontent.com&#47;niq-cnr&#47;nizam-framework&#47;v2.0.0&#47;bootstrap.sh -o bootstrap.sh &amp;&amp; chmod +x bootstrap.sh
-   GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/
-   ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity
+1. Read https://niq-cnr.github.io/nizam-framework/llms.txt for the Nizam v3.0.0 AI Agent Entry Protocol and CLI reference.
+2. Fetch and run the official bootstrap script pinned to v3.0.0 with commit-bound content verification (never overwrite existing AGENTS.md, CONTEXT.md, or CI files):
+   curl -fsSL https:&#47;&#47;raw.githubusercontent.com&#47;niq-cnr&#47;nizam-framework&#47;v3.0.0&#47;bootstrap.sh -o bootstrap.sh &amp;&amp; chmod +x bootstrap.sh
+   GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/
+   ./bootstrap.sh --verify-only --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/ --require-content-integrity
 3. Query .nizam/NIZAM.json and load .nizam/tools/SKILL.md (resolve paths relative to .nizam/; never edit files inside .nizam/; always set PYTHONDONTWRITEBYTECODE=1).
 4. Run `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py preflight` and `PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/start_path.py status`, then summarize the verified installation and ask what task we should classify first.</code></pre>
   </div>
@@ -695,7 +695,7 @@
     <div class="persona-card">
       <h2><span>For Developers &amp; Engineering Leads</span> <span class="badge badge-accent">Human Track</span></h2>
       <p>Install an immutable <code>.nizam/</code> release in 60 seconds, scale ceremony from 2-line bug fixes to multi-repo architecture changes, and verify every agent action with cryptographic stage receipts.</p>
-      <p><a href="#quickstart">1. Bootstrap <code>v2.0.0</code></a> &middot; <a href="#start-paths">2. Route Work</a> &middot; <a href="#execution-loop">3. Contract Loop</a> &middot; <a href="#modules">4. Module Catalog</a></p>
+      <p><a href="#quickstart">1. Bootstrap <code>v3.0.0</code></a> &middot; <a href="#start-paths">2. Route Work</a> &middot; <a href="#execution-loop">3. Contract Loop</a> &middot; <a href="#modules">4. Module Catalog</a></p>
     </div>
     <div class="persona-card">
       <h2><span>For AI Agents &amp; LLM Crawlers</span> <span class="badge badge-secondary">Agent Track</span></h2>
@@ -777,7 +777,7 @@
     header comment) into a single, reusable, runtime-agnostic script. From a checkout (or vendored
     copy) of
     the framework at a pinned tag, run:</p>
-    <pre><code>GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/</code></pre>
+    <pre><code>GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/</code></pre>
     <p><code>GOVERNANCE_TAG</code> (or the equivalent <code>--tag</code> flag) is required and never
     defaulted: an empty tag, <code>main</code>, <code>master</code>, <code>HEAD</code>, or any
     <code>refs/heads/*</code> branch reference is refused, because a floating branch is never an
@@ -796,7 +796,7 @@
 &#9500;&#9472;&#9472; NIZAM.json
 &#9492;&#9472;&#9472; provenance.json</code></pre>
     <p>To check an already-bootstrapped target for drift, with no network access and no write, run:</p>
-    <pre><code>GOVERNANCE_TAG=v2.0.0 ./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity</code></pre>
+    <pre><code>GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --verify-only --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/ --require-content-integrity</code></pre>
     <p><code>--verify-only</code> performs no network clone, no write, and never executes code from inside
     <code>.nizam/</code>: with <code>--git-repo .nizam-ref/</code> and <code>--expected-sha</code>, it
     verifies the complete file inventory, exact byte digests, and executable modes against the pinned
@@ -832,14 +832,12 @@
       human or agent can diff it against the framework's <code>templates/</code> version and reconcile
       by hand. Existing CI is reconciled &mdash; the recommended compliance checks are added to it, not
       substituted for it.</li>
-      <li><strong>Tier 1 &mdash; <code>docs-standard-only</code>.</strong> Inherit
-      <code>standard/</code> alone. Agents read and are bound by the governance documents; no
-      Generator/Validator/Evaluator cycle runs yet.</li>
-      <li><strong>Tier 2 &mdash; <code>templates</code>.</strong> Additionally inherit
-      <code>templates/</code>, so the repository can author its own governed <code>CONTEXT.md</code>,
+      <li><strong>Tier 1 &mdash; <code>docs-standard-only</code> activation.</strong> After installing the complete 6-module+index <code>.nizam/</code> payload, activate <code>standard/</code> alone in external consumer configuration; no Generator/Validator/Evaluator cycle runs yet.</li>
+      <li><strong>Tier 2 &mdash; <code>templates</code> activation.</strong> Additionally activate
+      <code>templates/</code> from the installed <code>.nizam/</code> payload, so the repository can author its own governed <code>CONTEXT.md</code>,
       <code>AGENTS.md</code>, ADRs, and other project documents, still without running the contract
       loop.</li>
-      <li><strong>Tier 3 &mdash; full loop.</strong> Inherit the complete governance payload and run
+      <li><strong>Tier 3 &mdash; full loop activation.</strong> Activate the complete governance workflow over the installed <code>.nizam/</code> payload and run
       the complete contract-first Generator/Validator/Evaluator cycle described in
       <code>methodology/01_execution.md</code>, end to end.</li>
     </ul>
@@ -847,7 +845,7 @@
 
   <section id="start-paths" aria-labelledby="start-paths-heading">
     <h2 id="start-paths-heading">Start paths</h2>
-    <p><strong>v2.0.0 migration:</strong> pin typed verification before <code>begin</code> and provide assessed structured per-check proof for completion. Read the <a href="https://github.com/niq-cnr/nizam-framework/blob/v2.0.0&#47;docs/migration-v2.0.0.md">consumer migration guide</a>. The onboarding examples pin the published tag's exact commit; record consumer upgrade authorization before installation.</p>
+    <p><strong>v3.0.0 migration:</strong> validate typed governance skill identity and pin typed verification before <code>begin</code>. Read the <a href="https://github.com/niq-cnr/nizam-framework/blob/v3.0.0&#47;docs/migration-v3.0.0.md">consumer migration guide</a>. The onboarding examples pin the published tag's exact commit; record consumer upgrade authorization before installation.</p>
     <p>Three ways to begin work, using the same Planner, Generator, Validator, and
     Evaluator roles as the execution loop below. The feature path is that full
     loop. The bug-fix path and the small-change path are shorter routes over those
@@ -1204,13 +1202,13 @@
       templates &mdash; it does not ship application code, infrastructure, or runtime services.</dd>
 
       <dt>How is a version pinned?</dt>
-      <dd>Consumers clone a specific semantic-version git tag (for example <code>v2.0.0</code>) and
+      <dd>Consumers clone a specific semantic-version git tag (for example <code>v3.0.0</code>) and
       verify its expected commit digest (<code>--expected-sha</code>), never <code>main</code> or any
       other floating branch reference (<code>standard/GIP.md</code> Section 2, point 1).</dd>
 
       <dt>How is drift detected, and how is it fixed?</dt>
       <dd>A consumer periodically re-verifies its injected governance content against its retained
-      pinned tag repository (<code>./bootstrap.sh --verify-only --tag v2.0.0 --expected-sha '603afc7b17919334a6a01df1e39e63798d9d0acd' --git-repo .nizam-ref/ --require-content-integrity</code>),
+      pinned tag repository (<code>./bootstrap.sh --verify-only --tag v3.0.0 --expected-sha '2b8298ae1d5a41534e00b6710a738b4b181b87fa' --git-repo .nizam-ref/ --require-content-integrity</code>),
       checking for local hand-mutation and staleness against newer releases
       (<code>standard/GIP.md</code> Section 4). The correct remediation is always to re-run
       <code>bootstrap.sh</code> against the appropriate tag &mdash; hand-patching an individual
@@ -1225,7 +1223,7 @@
 </main>
 
 <footer>
-  <p>Nizam framework version <strong><span id="footer-version">3.0.0</span></strong> &middot; <a href="llms.txt">llms.txt</a> &middot; <a href="llms-full.txt">llms-full.txt</a></p>
+  <p>Nizam framework version <strong><span id="footer-version">3.1.0</span></strong> &middot; <a href="llms.txt">llms.txt</a> &middot; <a href="llms-full.txt">llms-full.txt</a></p>
   <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
 </footer>
 

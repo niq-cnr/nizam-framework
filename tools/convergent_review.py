@@ -26,10 +26,13 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 SCHEMA_VERSION = "1.0.0"
+BINARY_SCHEMA_VERSION = "1.1.0"
+SUPPORTED_PACKET_VERSIONS = (SCHEMA_VERSION, BINARY_SCHEMA_VERSION)
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 DIGEST_RE = re.compile(r"^[0-9a-f]{64}$")
 REVIEW_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 TOKEN_RE = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
+MEDIA_TYPE_RE = re.compile(r"^[a-z0-9][a-z0-9.+_-]*/[a-z0-9][a-z0-9.+_;= -]*$")
 DATETIME_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$")
 MARKER_RE = re.compile(r"<!-- nizam-review-ledger:([A-Za-z0-9+/=]+) -->")
 SEVERITIES = ("blocker", "important", "minor")
@@ -49,8 +52,22 @@ MAX_FINDINGS = 10000
 MAX_TEXT = 20000
 MAX_LINE = 1000000000
 MAX_SOURCE_BYTES = 10000000
+MAX_BINARY_BYTES = 10000000
 EMPTY_DIGEST = hashlib.sha256(b"").hexdigest()
 RENAME_NOREPLACE = 1
+
+_EXTENSION_MEDIA_TYPES: dict[str, str] = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+    ".wasm": "application/wasm",
+    ".zip": "application/zip",
+    ".ico": "image/x-icon",
+    ".bin": "application/octet-stream",
+}
 
 
 class ReviewError(ValueError):
@@ -342,6 +359,284 @@ def _git_tree_id(entries: Sequence[Mapping[str, Any]]) -> str:
     return emit(root)
 
 
+def sniff_media_type(raw: bytes) -> str:
+    """Deterministically classify bytes by magic signature without executing or unpacking."""
+    if raw.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if raw.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if raw.startswith((b"GIF87a", b"GIF89a")):
+        return "image/gif"
+    if len(raw) >= 12 and raw[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        return "image/webp"
+    if raw.startswith(b"%PDF-"):
+        return "application/pdf"
+    if raw.startswith(b"\x00asm"):
+        return "application/wasm"
+    if raw.startswith((b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08")):
+        return "application/zip"
+    if raw.startswith((b"\x7fELF", b"\xcf\xfa\xed\xfe", b"\xfe\xed\xfa\xcf", b"\xca\xfe\xba\xbe")):
+        return "application/x-executable"
+    if raw.startswith(b"\x00\x00\x01\x00"):
+        return "image/x-icon"
+    if b"\x00" not in raw:
+        try:
+            raw.decode("utf-8")
+            return "text/plain; charset=utf-8"
+        except UnicodeDecodeError:
+            pass
+    return "application/octet-stream"
+
+
+def declared_media_type_for_path(path: str, *, is_text: bool) -> str:
+    """Infer default declared media type from path extension and record kind."""
+    suffix = Path(path).suffix.lower()
+    if suffix in _EXTENSION_MEDIA_TYPES:
+        return _EXTENSION_MEDIA_TYPES[suffix]
+    if is_text:
+        return "text/plain; charset=utf-8"
+    return "application/octet-stream"
+
+
+def validate_media_type_agreement(
+    declared: str | None,
+    validated: str | None,
+    record_kind: str,
+    ctx: str,
+) -> None:
+    """Verify declared and validated media types agree with record_kind and magic bytes."""
+    if record_kind == "absent":
+        if declared is not None or validated is not None:
+            raise ReviewError(f"{ctx}: absent record must have null declared_media_type and validated_media_type")
+        return
+    if declared is None or validated is None:
+        raise ReviewError(f"{ctx}: present {record_kind} record requires declared_media_type and validated_media_type")
+    _string(declared, f"{ctx}.declared_media_type", minimum=3, maximum=128, pattern=MEDIA_TYPE_RE)
+    _string(validated, f"{ctx}.validated_media_type", minimum=3, maximum=128, pattern=MEDIA_TYPE_RE)
+    if record_kind == "text":
+        if not validated.startswith("text/"):
+            raise ReviewError(f"{ctx}: text record requires text/* validated_media_type, got {validated}")
+        if declared in _EXTENSION_MEDIA_TYPES.values() and declared != "application/octet-stream":
+            raise ReviewError(f"{ctx}: declared binary media type {declared} conflicts with validated {validated}")
+        return
+    if record_kind == "opaque_binary":
+        if validated.startswith("text/"):
+            raise ReviewError(f"{ctx}: opaque_binary record cannot have text validated_media_type {validated}")
+        if declared.startswith("text/"):
+            raise ReviewError(f"{ctx}: opaque_binary record cannot declare text media type {declared}")
+        if declared != "application/octet-stream" and declared != validated:
+            raise ReviewError(
+                f"{ctx}: conflicting media type declaration: declared {declared} but validated {validated}"
+            )
+
+
+def _validate_symlink_target_text(text: str, ctx: str) -> None:
+    """Ensure a Git symlink target (mode 120000) is a safe relative path without traversal."""
+    if not text or "\x00" in text or "\n" in text or "\r" in text:
+        raise ReviewError(f"{ctx}: symlink target must be a single non-empty path without NUL or newlines")
+    validate_path(text, f"{ctx} symlink target")
+
+
+def _validate_review_file_v1_1(item: Any, index: int) -> Mapping[str, Any]:
+    ctx = f"packet.review_files[{index}]"
+    entry = _closed(
+        item,
+        (
+            "path", "record_kind", "mode", "object_id", "byte_length", "content_digest",
+            "content", "declared_media_type", "validated_media_type", "inspection_scope",
+            "provenance", "limits", "processor_identity",
+        ),
+        (),
+        ctx,
+    )
+    validate_path(entry["path"], f"{ctx}.path")
+    record_kind = _enum(entry["record_kind"], ("text", "opaque_binary", "absent"), f"{ctx}.record_kind")
+    mode = entry["mode"]
+    object_id = _nullable_sha(entry["object_id"], f"{ctx}.object_id")
+    byte_length = _integer(entry["byte_length"], f"{ctx}.byte_length", 0, MAX_BINARY_BYTES)
+    content_digest = _digest(entry["content_digest"], f"{ctx}.content_digest")
+    inspection_scope = _enum(
+        entry["inspection_scope"],
+        ("text_semantic", "integrity_only", "trusted_processor_derived", "absent"),
+        f"{ctx}.inspection_scope",
+    )
+    validate_media_type_agreement(entry["declared_media_type"], entry["validated_media_type"], record_kind, ctx)
+
+    limits = _closed(
+        entry["limits"],
+        ("max_bytes", "truncated", "semantic_inspection_performed"),
+        (),
+        f"{ctx}.limits",
+    )
+    max_bytes = _integer(limits["max_bytes"], f"{ctx}.limits.max_bytes", 1, MAX_BINARY_BYTES)
+    if limits["truncated"] is not False:
+        raise ReviewError(f"{ctx}.limits.truncated: must be false (truncated blobs are never admitted)")
+    if not isinstance(limits["semantic_inspection_performed"], bool):
+        raise ReviewError(f"{ctx}.limits.semantic_inspection_performed: expected boolean")
+    if byte_length > max_bytes:
+        raise ReviewError(f"{ctx}.byte_length: {byte_length} exceeds limits.max_bytes {max_bytes}")
+
+    provenance = entry["provenance"]
+    processor = entry["processor_identity"]
+    if processor is not None:
+        proc_obj = _closed(
+            processor,
+            ("processor_id", "version", "config_digest", "output_digest"),
+            (),
+            f"{ctx}.processor_identity",
+        )
+        _string(proc_obj["processor_id"], f"{ctx}.processor_identity.processor_id", maximum=128)
+        _string(proc_obj["version"], f"{ctx}.processor_identity.version", maximum=64)
+        _digest(proc_obj["config_digest"], f"{ctx}.processor_identity.config_digest")
+        _digest(proc_obj["output_digest"], f"{ctx}.processor_identity.output_digest")
+
+    if record_kind == "absent":
+        if mode is not None or object_id is not None or provenance is not None or entry["content"] is not None:
+            raise ReviewError(f"{ctx}: absent record requires null mode, object_id, provenance, and content")
+        if byte_length != 0 or content_digest != EMPTY_DIGEST or inspection_scope != "absent":
+            raise ReviewError(f"{ctx}: absent record requires byte_length=0, EMPTY_DIGEST, and inspection_scope=absent")
+        if limits["semantic_inspection_performed"] is not False or processor is not None:
+            raise ReviewError(f"{ctx}: absent record cannot claim semantic inspection or processor_identity")
+        return entry
+
+    if mode is None:
+        raise ReviewError(f"{ctx}.mode: required for present {record_kind} record")
+    _enum(mode, ("100644", "100755", "120000"), f"{ctx}.mode")
+    if object_id is None:
+        raise ReviewError(f"{ctx}.object_id: required for present {record_kind} record")
+    if provenance is None:
+        raise ReviewError(f"{ctx}.provenance: required for present {record_kind} record")
+    prov_obj = _closed(provenance, ("source", "commit_sha", "blob_oid"), (), f"{ctx}.provenance")
+    if prov_obj["source"] != "git_blob":
+        raise ReviewError(f"{ctx}.provenance.source: expected git_blob")
+    _string(prov_obj["commit_sha"], f"{ctx}.provenance.commit_sha", minimum=40, maximum=40, pattern=SHA_RE)
+    _string(prov_obj["blob_oid"], f"{ctx}.provenance.blob_oid", minimum=40, maximum=40, pattern=SHA_RE)
+    if prov_obj["blob_oid"] != object_id:
+        raise ReviewError(f"{ctx}.provenance.blob_oid: must equal {ctx}.object_id")
+
+    if record_kind == "text":
+        if entry["content"] is None:
+            raise ReviewError(f"{ctx}.content: required for text record")
+        content = _string(entry["content"], f"{ctx}.content", minimum=0, maximum=MAX_SOURCE_BYTES)
+        content_raw = content.encode("utf-8")
+        if len(content_raw) > max_bytes:
+            raise ReviewError(f"{ctx}.content: exceeds {max_bytes} UTF-8 bytes")
+        if len(content_raw) != byte_length:
+            raise ReviewError(f"{ctx}.byte_length: does not match UTF-8 content byte length")
+        if _git_object_id("blob", content_raw) != object_id:
+            raise ReviewError(f"{ctx}.object_id: does not match UTF-8 content Git blob oid")
+        if mode == "120000":
+            _validate_symlink_target_text(content, ctx)
+        if inspection_scope != "text_semantic" or limits["semantic_inspection_performed"] is not True or processor is not None:
+            raise ReviewError(f"{ctx}: text record requires inspection_scope=text_semantic, semantic_inspection_performed=true, processor_identity=null")
+    else:
+        if mode == "120000":
+            raise ReviewError(f"{ctx}: symlink mode 120000 cannot be classified as opaque_binary")
+        if entry["content"] is not None:
+            raise ReviewError(f"{ctx}.content: must be null for opaque_binary record")
+        if inspection_scope == "integrity_only":
+            if limits["semantic_inspection_performed"] is not False or processor is not None:
+                raise ReviewError(
+                    f"{ctx}: integrity_only opaque_binary record cannot claim semantic_inspection_performed or processor_identity"
+                )
+        elif inspection_scope == "trusted_processor_derived":
+            if limits["semantic_inspection_performed"] is not True or processor is None:
+                raise ReviewError(
+                    f"{ctx}: trusted_processor_derived opaque_binary record requires semantic_inspection_performed=true and processor_identity"
+                )
+        else:
+            raise ReviewError(f"{ctx}.inspection_scope: invalid scope {inspection_scope} for opaque_binary")
+    return entry
+
+
+def _validate_delta_entry_v1_1(item: Any, index: int) -> Mapping[str, Any]:
+    ctx = f"packet.delta[{index}]"
+    entry = _closed(
+        item,
+        (
+            "path", "change_kind", "renamed_from", "old_record_kind", "new_record_kind",
+            "old_object_id", "new_object_id", "old_byte_length", "new_byte_length",
+            "old_digest", "old_content", "old_mode", "new_digest", "new_mode",
+            "old_declared_media_type", "old_validated_media_type",
+            "new_declared_media_type", "new_validated_media_type",
+        ),
+        (),
+        ctx,
+    )
+    validate_path(entry["path"], f"{ctx}.path")
+    change_kind = _enum(
+        entry["change_kind"],
+        ("added", "deleted", "modified", "mode_changed", "renamed"),
+        f"{ctx}.change_kind",
+    )
+    if entry["renamed_from"] is not None:
+        validate_path(entry["renamed_from"], f"{ctx}.renamed_from")
+        if entry["renamed_from"] == entry["path"]:
+            raise ReviewError(f"{ctx}.renamed_from: cannot equal path")
+        if change_kind != "renamed":
+            raise ReviewError(f"{ctx}.change_kind: must be renamed when renamed_from is present")
+    elif change_kind == "renamed":
+        raise ReviewError(f"{ctx}.renamed_from: required when change_kind is renamed")
+
+    old_digest = _nullable_digest(entry["old_digest"], f"{ctx}.old_digest")
+    new_digest = _nullable_digest(entry["new_digest"], f"{ctx}.new_digest")
+    old_mode = entry["old_mode"]
+    new_mode = entry["new_mode"]
+    old_oid = _nullable_sha(entry["old_object_id"], f"{ctx}.old_object_id")
+    new_oid = _nullable_sha(entry["new_object_id"], f"{ctx}.new_object_id")
+    old_kind = entry["old_record_kind"]
+    new_kind = entry["new_record_kind"]
+    old_len = entry["old_byte_length"]
+    new_len = entry["new_byte_length"]
+
+    if old_digest is None:
+        if any(x is not None for x in (old_mode, old_oid, old_kind, old_len, entry["old_content"], entry["old_declared_media_type"], entry["old_validated_media_type"])):
+            raise ReviewError(f"{ctx}: absent old side requires all old_* metadata fields to be null")
+    else:
+        if old_mode is None or old_oid is None or old_kind is None or old_len is None:
+            raise ReviewError(f"{ctx}: present old side requires old_mode, old_object_id, old_record_kind, and old_byte_length")
+        _enum(old_mode, ("100644", "100755", "120000"), f"{ctx}.old_mode")
+        _enum(old_kind, ("text", "opaque_binary"), f"{ctx}.old_record_kind")
+        _integer(old_len, f"{ctx}.old_byte_length", 0, MAX_BINARY_BYTES)
+        validate_media_type_agreement(entry["old_declared_media_type"], entry["old_validated_media_type"], old_kind, f"{ctx}.old")
+        if old_kind == "text":
+            if entry["old_content"] is None:
+                raise ReviewError(f"{ctx}.old_content: required when old_record_kind is text")
+            old_raw = _string(entry["old_content"], f"{ctx}.old_content", minimum=0, maximum=MAX_SOURCE_BYTES).encode("utf-8")
+            if len(old_raw) != old_len or sha256(old_raw) != old_digest or _git_object_id("blob", old_raw) != old_oid:
+                raise ReviewError(f"{ctx}: old text content does not match old_byte_length/old_digest/old_object_id")
+            if old_mode == "120000":
+                _validate_symlink_target_text(entry["old_content"], f"{ctx}.old")
+        else:
+            if old_mode == "120000":
+                raise ReviewError(f"{ctx}.old_mode: symlink 120000 cannot be opaque_binary")
+            if entry["old_content"] is not None:
+                raise ReviewError(f"{ctx}.old_content: must be null when old_record_kind is opaque_binary")
+
+    if new_digest is None:
+        if any(x is not None for x in (new_mode, new_oid, new_kind, new_len, entry["new_declared_media_type"], entry["new_validated_media_type"])):
+            raise ReviewError(f"{ctx}: absent new side requires all new_* metadata fields to be null")
+    else:
+        if new_mode is None or new_oid is None or new_kind is None or new_len is None:
+            raise ReviewError(f"{ctx}: present new side requires new_mode, new_object_id, new_record_kind, and new_byte_length")
+        _enum(new_mode, ("100644", "100755", "120000"), f"{ctx}.new_mode")
+        _enum(new_kind, ("text", "opaque_binary"), f"{ctx}.new_record_kind")
+        _integer(new_len, f"{ctx}.new_byte_length", 0, MAX_BINARY_BYTES)
+        validate_media_type_agreement(entry["new_declared_media_type"], entry["new_validated_media_type"], new_kind, f"{ctx}.new")
+        if new_kind == "opaque_binary" and new_mode == "120000":
+            raise ReviewError(f"{ctx}.new_mode: symlink 120000 cannot be opaque_binary")
+
+    if change_kind == "added" and (old_digest is not None or new_digest is None):
+        raise ReviewError(f"{ctx}.change_kind: added requires old_digest=null and new_digest!=null")
+    if change_kind == "deleted" and (old_digest is None or new_digest is not None):
+        raise ReviewError(f"{ctx}.change_kind: deleted requires old_digest!=null and new_digest=null")
+    if change_kind == "mode_changed" and (old_digest is None or new_digest is None or old_digest != new_digest or old_mode == new_mode):
+        raise ReviewError(f"{ctx}.change_kind: mode_changed requires identical digests and distinct modes")
+    if change_kind == "modified" and (old_digest is None or new_digest is None or old_digest == new_digest):
+        raise ReviewError(f"{ctx}.change_kind: modified requires both digests present and distinct")
+    return entry
+
+
 def validate_packet_schema_stage(packet: Any) -> Mapping[str, Any]:
     """Implement the closed JSON-Schema stage; cross-item relations are separate."""
     obj = _closed(
@@ -353,8 +648,9 @@ def validate_packet_schema_stage(packet: Any) -> Mapping[str, Any]:
         (),
         "packet",
     )
-    if obj["schema_version"] != SCHEMA_VERSION:
-        raise ReviewError(f"packet.schema_version: expected {SCHEMA_VERSION}")
+    version = obj["schema_version"]
+    if version not in SUPPORTED_PACKET_VERSIONS:
+        raise ReviewError(f"packet.schema_version: unsupported version {version!r}; expected one of {', '.join(SUPPORTED_PACKET_VERSIONS)}")
     _string(obj["review_id"], "packet.review_id", pattern=REVIEW_ID_RE, maximum=128)
     validate_repository(obj["repository"], "packet.repository")
     _enum(obj["mode"], ("ordinary", "full_audit"), "packet.mode")
@@ -384,59 +680,72 @@ def validate_packet_schema_stage(packet: Any) -> Mapping[str, Any]:
     review_files = obj["review_files"]
     if not isinstance(review_files, list) or len(review_files) > 100000:
         raise ReviewError("packet.review_files: expected array with at most 100000 entries")
-    for index, item in enumerate(review_files):
-        entry = _closed(item, ("path", "content_digest", "content"), (), f"packet.review_files[{index}]")
-        validate_path(entry["path"], f"packet.review_files[{index}].path")
-        _digest(entry["content_digest"], f"packet.review_files[{index}].content_digest")
-        if entry["content"] is not None:
-            content = _string(entry["content"], f"packet.review_files[{index}].content", minimum=0, maximum=MAX_SOURCE_BYTES)
-            try:
-                content_raw = content.encode("utf-8")
-            except UnicodeEncodeError as exc:
-                raise ReviewError(f"packet.review_files[{index}].content: not valid UTF-8 text: {exc}") from exc
-            if len(content_raw) > MAX_SOURCE_BYTES:
-                raise ReviewError(f"packet.review_files[{index}].content: exceeds {MAX_SOURCE_BYTES} UTF-8 bytes")
     if not isinstance(obj["delta"], list) or len(obj["delta"]) > 100000:
         raise ReviewError("packet.delta: expected array with at most 100000 entries")
-    for index, item in enumerate(obj["delta"]):
-        entry = _closed(
-            item, ("path", "old_digest", "old_content", "old_mode", "new_digest", "new_mode"), (),
-            f"packet.delta[{index}]",
-        )
-        validate_path(entry["path"], f"packet.delta[{index}].path")
-        old_digest = _nullable_digest(entry["old_digest"], f"packet.delta[{index}].old_digest")
-        old_mode = entry["old_mode"]
-        new_digest = _nullable_digest(entry["new_digest"], f"packet.delta[{index}].new_digest")
-        new_mode = entry["new_mode"]
-        if (old_digest is None) != (entry["old_content"] is None) or (old_digest is None) != (old_mode is None):
-            raise ReviewError(f"packet.delta[{index}]: old content/mode presence must match old digest")
-        if (new_digest is None) != (new_mode is None):
-            raise ReviewError(f"packet.delta[{index}]: new mode presence must match new digest")
-        if old_mode is not None:
-            _enum(old_mode, ("100644", "100755", "120000"), f"packet.delta[{index}].old_mode")
-        if new_mode is not None:
-            _enum(new_mode, ("100644", "100755", "120000"), f"packet.delta[{index}].new_mode")
-        if entry["old_content"] is not None:
-            old_content = _string(entry["old_content"], f"packet.delta[{index}].old_content", minimum=0, maximum=MAX_SOURCE_BYTES)
-            try:
-                old_raw = old_content.encode("utf-8")
-            except UnicodeEncodeError as exc:
-                raise ReviewError(f"packet.delta[{index}].old_content: not valid UTF-8 text: {exc}") from exc
-            if len(old_raw) > MAX_SOURCE_BYTES:
-                raise ReviewError(f"packet.delta[{index}].old_content: exceeds {MAX_SOURCE_BYTES} UTF-8 bytes")
+
+    if version == SCHEMA_VERSION:
+        for index, item in enumerate(review_files):
+            entry = _closed(item, ("path", "content_digest", "content"), (), f"packet.review_files[{index}]")
+            validate_path(entry["path"], f"packet.review_files[{index}].path")
+            _digest(entry["content_digest"], f"packet.review_files[{index}].content_digest")
+            if entry["content"] is not None:
+                content = _string(entry["content"], f"packet.review_files[{index}].content", minimum=0, maximum=MAX_SOURCE_BYTES)
+                try:
+                    content_raw = content.encode("utf-8")
+                except UnicodeEncodeError as exc:
+                    raise ReviewError(f"packet.review_files[{index}].content: not valid UTF-8 text: {exc}") from exc
+                if len(content_raw) > MAX_SOURCE_BYTES:
+                    raise ReviewError(f"packet.review_files[{index}].content: exceeds {MAX_SOURCE_BYTES} UTF-8 bytes")
+        for index, item in enumerate(obj["delta"]):
+            entry = _closed(
+                item, ("path", "old_digest", "old_content", "old_mode", "new_digest", "new_mode"), (),
+                f"packet.delta[{index}]",
+            )
+            validate_path(entry["path"], f"packet.delta[{index}].path")
+            old_digest = _nullable_digest(entry["old_digest"], f"packet.delta[{index}].old_digest")
+            old_mode = entry["old_mode"]
+            new_digest = _nullable_digest(entry["new_digest"], f"packet.delta[{index}].new_digest")
+            new_mode = entry["new_mode"]
+            if (old_digest is None) != (entry["old_content"] is None) or (old_digest is None) != (old_mode is None):
+                raise ReviewError(f"packet.delta[{index}]: old content/mode presence must match old digest")
+            if (new_digest is None) != (new_mode is None):
+                raise ReviewError(f"packet.delta[{index}]: new mode presence must match new digest")
+            if old_mode is not None:
+                _enum(old_mode, ("100644", "100755", "120000"), f"packet.delta[{index}].old_mode")
+            if new_mode is not None:
+                _enum(new_mode, ("100644", "100755", "120000"), f"packet.delta[{index}].new_mode")
+            if entry["old_content"] is not None:
+                old_content = _string(entry["old_content"], f"packet.delta[{index}].old_content", minimum=0, maximum=MAX_SOURCE_BYTES)
+                try:
+                    old_raw = old_content.encode("utf-8")
+                except UnicodeEncodeError as exc:
+                    raise ReviewError(f"packet.delta[{index}].old_content: not valid UTF-8 text: {exc}") from exc
+                if len(old_raw) > MAX_SOURCE_BYTES:
+                    raise ReviewError(f"packet.delta[{index}].old_content: exceeds {MAX_SOURCE_BYTES} UTF-8 bytes")
+    else:
+        for index, item in enumerate(review_files):
+            _validate_review_file_v1_1(item, index)
+        for index, item in enumerate(obj["delta"]):
+            _validate_delta_entry_v1_1(item, index)
     return obj
 
 
 def validate_packet_relations(packet: Mapping[str, Any]) -> None:
     """Mandatory relational stage beyond pure Draft 2020-12 JSON Schema."""
+    version = packet["schema_version"]
     source_by_path: dict[str, Mapping[str, Any]] = {}
     for index, entry in enumerate(packet["review_files"]):
         path = entry["path"]
         if path in source_by_path:
             raise ReviewError(f"packet.review_files[{index}].path: duplicate path {path}")
-        content_raw = b"" if entry["content"] is None else entry["content"].encode("utf-8")
-        if sha256(content_raw) != entry["content_digest"]:
-            raise ReviewError(f"packet.review_files[{index}].content_digest: does not match content bytes")
+        if version == SCHEMA_VERSION or entry.get("record_kind") in (None, "text", "absent"):
+            if entry.get("record_kind") != "opaque_binary":
+                content_raw = b"" if entry["content"] is None else entry["content"].encode("utf-8")
+                if sha256(content_raw) != entry["content_digest"]:
+                    raise ReviewError(f"packet.review_files[{index}].content_digest: does not match content bytes")
+        if version == BINARY_SCHEMA_VERSION and entry["record_kind"] != "absent":
+            if entry["provenance"]["commit_sha"] != packet["head_sha"]:
+                raise ReviewError(f"packet.review_files[{index}].provenance.commit_sha: must equal packet.head_sha")
         source_by_path[path] = entry
 
     seen: set[str] = set()
@@ -448,25 +757,59 @@ def validate_packet_relations(packet: Mapping[str, Any]) -> None:
         new_mode = entry["new_mode"]
         if old is None and new is None:
             raise ReviewError(f"packet.delta[{index}]: old_digest and new_digest cannot both be null")
-        if old == new and old_mode == new_mode:
+        if old == new and old_mode == new_mode and entry.get("change_kind") != "renamed":
             raise ReviewError(f"packet.delta[{index}]: digests and modes must describe an actual delta")
         if path in seen:
             raise ReviewError(f"packet.delta[{index}].path: duplicate path {path}")
         seen.add(path)
         old_content = entry["old_content"]
-        if (old is None) != (old_content is None):
-            raise ReviewError(f"packet.delta[{index}]: old_content presence must match old_digest")
-        if old_content is not None and sha256(old_content.encode("utf-8")) != old:
-            raise ReviewError(f"packet.delta[{index}].old_digest: does not match authenticated old_content bytes")
+        if version == SCHEMA_VERSION:
+            if (old is None) != (old_content is None):
+                raise ReviewError(f"packet.delta[{index}]: old_content presence must match old_digest")
+            if old_content is not None and sha256(old_content.encode("utf-8")) != old:
+                raise ReviewError(f"packet.delta[{index}].old_digest: does not match authenticated old_content bytes")
+            if old_mode == "120000" and old_content is not None:
+                _validate_symlink_target_text(old_content, f"packet.delta[{index}].old")
         source = source_by_path.get(path)
         if new is None:
             if source is None or source["content"] is not None or source["content_digest"] != EMPTY_DIGEST:
                 raise ReviewError(f"packet.delta[{index}]: deleted path requires an authenticated absence tombstone")
+            if version == BINARY_SCHEMA_VERSION and source["record_kind"] != "absent":
+                raise ReviewError(f"packet.delta[{index}]: deleted path requires record_kind=absent in review_files")
         else:
-            if source is None or source["content"] is None:
+            if source is None:
                 raise ReviewError(f"packet.delta[{index}]: current content is missing from packet.review_files")
+            if version == SCHEMA_VERSION and source["content"] is None:
+                raise ReviewError(f"packet.delta[{index}]: current content is missing from packet.review_files")
+            if version == SCHEMA_VERSION and new_mode == "120000":
+                _validate_symlink_target_text(source["content"], f"packet.review_files[{path}]")
+            if version == BINARY_SCHEMA_VERSION:
+                if source["record_kind"] == "absent":
+                    raise ReviewError(f"packet.delta[{index}]: present path cannot be absent in packet.review_files")
+                if (
+                    source["record_kind"] != entry["new_record_kind"]
+                    or source["mode"] != new_mode
+                    or source["object_id"] != entry["new_object_id"]
+                    or source["byte_length"] != entry["new_byte_length"]
+                    or source["declared_media_type"] != entry["new_declared_media_type"]
+                    or source["validated_media_type"] != entry["new_validated_media_type"]
+                ):
+                    raise ReviewError(
+                        f"packet.delta[{index}]: new_* metadata does not match packet.review_files[{path}]"
+                    )
             if source["content_digest"] != new:
                 raise ReviewError(f"packet.delta[{index}].new_digest: does not match current review-file content")
+
+    if version == BINARY_SCHEMA_VERSION:
+        delta_by_path = {entry["path"]: entry for entry in packet["delta"]}
+        for index, entry in enumerate(packet["delta"]):
+            if entry["change_kind"] == "renamed":
+                origin = entry["renamed_from"]
+                origin_delta = delta_by_path.get(origin)
+                if origin_delta is None or origin_delta["new_digest"] is not None or origin_delta["old_digest"] is None:
+                    raise ReviewError(
+                        f"packet.delta[{index}]: renamed path {entry['path']} requires deleted origin {origin} in packet.delta"
+                    )
 
     commitment = packet["scope_commitment"]
     if packet["mode"] == "ordinary":
@@ -491,13 +834,22 @@ def validate_packet_relations(packet: Mapping[str, Any]) -> None:
     if tree_lines != [f"tree {commitment['root_tree']}"]:
         raise ReviewError("packet.scope_commitment.commit_content: header must bind exactly one valid root tree")
     manifest_by_path = {entry["path"]: entry for entry in entries}
-    present_paths = {path for path, source in source_by_path.items() if source["content"] is not None}
+    if version == SCHEMA_VERSION:
+        present_paths = {path for path, source in source_by_path.items() if source["content"] is not None}
+    else:
+        present_paths = {path for path, source in source_by_path.items() if source["record_kind"] != "absent"}
     if set(manifest_by_path) != present_paths:
         raise ReviewError("packet.scope_commitment.entries: must equal the complete present review_files universe")
     for path, entry in manifest_by_path.items():
         source = source_by_path[path]
-        if _git_object_id("blob", source["content"].encode("utf-8")) != entry["object_id"]:
-            raise ReviewError(f"packet.scope_commitment.entries: Git blob does not match authenticated bytes for {path}")
+        if version == SCHEMA_VERSION or source.get("record_kind") == "text":
+            if _git_object_id("blob", source["content"].encode("utf-8")) != entry["object_id"]:
+                raise ReviewError(f"packet.scope_commitment.entries: Git blob does not match authenticated bytes for {path}")
+            if entry["mode"] == "120000":
+                _validate_symlink_target_text(source["content"], f"packet.scope_commitment[{path}]")
+        else:
+            if source["object_id"] != entry["object_id"] or source["mode"] != entry["mode"]:
+                raise ReviewError(f"packet.scope_commitment.entries: binary entry mode/object_id mismatch for {path}")
     for index, delta_entry in enumerate(packet["delta"]):
         if delta_entry["new_digest"] is not None:
             committed = manifest_by_path[delta_entry["path"]]
@@ -550,6 +902,16 @@ def validate_current_evidence(evidence: Mapping[str, Any], packet: Mapping[str, 
         raise ReviewError(f"{ctx}.path: is not in the authenticated current-head review universe")
     if evidence["content_digest"] != source["content_digest"]:
         raise ReviewError(f"{ctx}.content_digest: does not match authenticated current-head bytes")
+    if source.get("record_kind") == "opaque_binary":
+        if source.get("inspection_scope") == "integrity_only":
+            if evidence["start_line"] != 0 or evidence["end_line"] != 0 or evidence["excerpt"] != "":
+                raise ReviewError(
+                    f"{ctx}: opaque_binary record with integrity_only scope cannot support line-excerpt semantic evidence"
+                )
+            return
+        if evidence["start_line"] != 0 or evidence["end_line"] != 0 or evidence["excerpt"] != "":
+            raise ReviewError(f"{ctx}: opaque_binary evidence requires line range 0-0 and an empty excerpt")
+        return
     if source["content"] is None:
         if evidence["start_line"] != 0 or evidence["end_line"] != 0 or evidence["excerpt"] != "":
             raise ReviewError(f"{ctx}: absence evidence requires line range 0-0 and an empty excerpt")
@@ -562,6 +924,80 @@ def validate_current_evidence(evidence: Mapping[str, Any], packet: Mapping[str, 
     expected = "\n".join(lines[evidence["start_line"] - 1:evidence["end_line"]])
     if evidence["excerpt"] != expected:
         raise ReviewError(f"{ctx}.excerpt: does not match the authenticated line range")
+
+
+def validate_binary_approval(
+    approval: Any,
+    packet: Mapping[str, Any],
+    ctx: str = "binary_approval",
+) -> Mapping[str, Any]:
+    """Validate consumer/operator semantic or UI approval bound to exact binary artifacts in packet.
+
+    Any change to a binary/UI artifact's bytes (content_digest or object_id), Git mode,
+    path, validated_media_type, or head_sha invalidates the approval.
+    """
+    validate_packet(packet)
+    obj = _closed(
+        approval,
+        (
+            "schema_version", "repository", "review_id", "head_sha",
+            "approved_by", "approved_at", "scope", "artifacts",
+        ),
+        (),
+        ctx,
+    )
+    if obj["schema_version"] not in SUPPORTED_PACKET_VERSIONS:
+        raise ReviewError(f"{ctx}.schema_version: unsupported version {obj['schema_version']!r}")
+    if obj["repository"] != packet["repository"]:
+        raise ReviewError(f"{ctx}.repository: does not match packet.repository")
+    if obj["review_id"] != packet["review_id"]:
+        raise ReviewError(f"{ctx}.review_id: does not match packet.review_id")
+    if obj["head_sha"] != packet["head_sha"]:
+        raise ReviewError(f"{ctx}.head_sha: stale approval bound to {obj['head_sha']}, packet is at {packet['head_sha']}")
+    _string(obj["approved_by"], f"{ctx}.approved_by", maximum=256)
+    _string(obj["approved_at"], f"{ctx}.approved_at", maximum=64, pattern=DATETIME_RE)
+    _enum(obj["scope"], ("binary_semantic_review", "ui_visual_baseline"), f"{ctx}.scope")
+
+    artifacts = obj["artifacts"]
+    if not isinstance(artifacts, list) or not artifacts:
+        raise ReviewError(f"{ctx}.artifacts: expected non-empty array of approved binary bindings")
+
+    binary_sources = {
+        entry["path"]: entry
+        for entry in packet["review_files"]
+        if entry.get("record_kind") == "opaque_binary"
+    }
+    seen_paths: set[str] = set()
+    for index, item in enumerate(artifacts):
+        actx = f"{ctx}.artifacts[{index}]"
+        art = _closed(
+            item,
+            ("path", "mode", "object_id", "byte_length", "content_digest", "validated_media_type"),
+            (),
+            actx,
+        )
+        path = validate_path(art["path"], f"{actx}.path")
+        if path in seen_paths:
+            raise ReviewError(f"{actx}.path: duplicate approved artifact {path}")
+        seen_paths.add(path)
+        current = binary_sources.get(path)
+        if current is None:
+            raise ReviewError(f"{actx}.path: approved binary artifact {path} is absent or changed path in packet")
+        if (
+            art["content_digest"] != current["content_digest"]
+            or art["object_id"] != current["object_id"]
+            or art["byte_length"] != current["byte_length"]
+        ):
+            raise ReviewError(f"{actx}: binary bytes changed for {path}; prior approval is invalidated")
+        if art["mode"] != current["mode"]:
+            raise ReviewError(f"{actx}: binary Git mode changed for {path}; prior approval is invalidated")
+        if art["validated_media_type"] != current["validated_media_type"]:
+            raise ReviewError(f"{actx}: binary validated_media_type changed for {path}; prior approval is invalidated")
+
+    unapproved = sorted(set(binary_sources) - seen_paths)
+    if unapproved:
+        raise ReviewError(f"{ctx}: unapproved opaque_binary artifacts in packet: {', '.join(unapproved)}")
+    return obj
 
 
 def semantic_fingerprint(repository: str, finding: Mapping[str, Any]) -> str:
@@ -873,11 +1309,14 @@ def converge_documents(
     delta_paths = {item["path"] for item in packet["delta"]}
     added_by_digest = {
         item["new_digest"] for item in packet["delta"]
-        if item["old_digest"] is None and item["new_digest"] is not None
+        if (item["old_digest"] is None or item.get("change_kind") == "renamed") and item["new_digest"] is not None
     }
     rename_only_paths = {
         item["path"] for item in packet["delta"]
-        if item["new_digest"] is None and item["old_digest"] in added_by_digest
+        if (
+            (item["new_digest"] is None and item["old_digest"] in added_by_digest)
+            or (item.get("change_kind") == "renamed" and item["old_digest"] == item["new_digest"])
+        )
     }
     for trial in ordered_trials:
         trial_number = trial["trial_number"]
@@ -1192,13 +1631,19 @@ def _rename_noreplace(source: Path, destination: Path) -> PublicationResult:
     """Atomically publish and explicitly report post-visibility durability state."""
     libc = ctypes.CDLL(None, use_errno=True)
     renameat2 = getattr(libc, "renameat2", None)
-    if renameat2 is None:
-        raise ReviewError("atomic no-replace publication requires renameat2 support")
-    renameat2.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
-    renameat2.restype = ctypes.c_int
-    result = renameat2(
-        -100, os.fsencode(source), -100, os.fsencode(destination), RENAME_NOREPLACE,
-    )
+    renamex_np = getattr(libc, "renamex_np", None)
+    if renameat2 is not None:
+        renameat2.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+        renameat2.restype = ctypes.c_int
+        result = renameat2(
+            -100, os.fsencode(source), -100, os.fsencode(destination), RENAME_NOREPLACE,
+        )
+    elif renamex_np is not None:
+        renamex_np.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
+        renamex_np.restype = ctypes.c_int
+        result = renamex_np(os.fsencode(source), os.fsencode(destination), 4)
+    else:
+        raise ReviewError("atomic no-replace publication requires renameat2 or renamex_np support")
     if result != 0:
         error = ctypes.get_errno()
         if error in (errno.EEXIST, errno.ENOTEMPTY):
@@ -1351,25 +1796,60 @@ def _load_convergence_inputs(args: argparse.Namespace) -> tuple[
     return packet, packet_digest, trials, trial_digests, prior, prior_digest, suppressions, retained
 
 
+def _load_git_seam() -> Any:
+    try:
+        import importlib.util as _ilu
+        seam_path = Path(__file__).resolve().parent / "git_seam.py"
+        if seam_path.is_file():
+            spec = _ilu.spec_from_file_location("git_seam", seam_path)
+            if spec and spec.loader:
+                mod = _ilu.module_from_spec(spec)
+                sys.modules.setdefault("git_seam", mod)
+                spec.loader.exec_module(mod)
+                return mod
+    except Exception:
+        pass
+    return None
+
+
+_GIT_SEAM = _load_git_seam()
+
+
 def _git_environment() -> dict[str, str]:
     """Minimal deterministic Git environment with replacement/redirect inputs disabled."""
+    if _GIT_SEAM is not None:
+        return dict(_GIT_SEAM.sanitized_git_env())
     return {
         "HOME": os.devnull,
         "LANG": "C.UTF-8",
         "LC_ALL": "C.UTF-8",
-        "PATH": "/usr/bin:/bin",
+        "PATH": "/usr/bin:/bin:/opt/homebrew/bin:/usr/local/bin",
         "GIT_CONFIG_NOSYSTEM": "1",
         "GIT_CONFIG_GLOBAL": os.devnull,
-        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_COUNT": "4",
         "GIT_CONFIG_KEY_0": "core.useReplaceRefs",
         "GIT_CONFIG_VALUE_0": "false",
+        "GIT_CONFIG_KEY_1": "core.quotePath",
+        "GIT_CONFIG_VALUE_1": "false",
+        "GIT_CONFIG_KEY_2": "core.fsmonitor",
+        "GIT_CONFIG_VALUE_2": "false",
+        "GIT_CONFIG_KEY_3": "protocol.allow",
+        "GIT_CONFIG_VALUE_3": "never",
         "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_ATTR_NOSYSTEM": "1",
     }
 
 
 def _git(repo: Path, *arguments: str, text: bool = False) -> bytes | str:
+    if _GIT_SEAM is not None:
+        try:
+            raw = _GIT_SEAM.run_git_readonly(repo, *arguments)
+            return raw.decode("utf-8").strip() if text else raw
+        except _GIT_SEAM.GitSeamError as exc:
+            raise ReviewError(str(exc)) from exc
     completed = subprocess.run(
-        ["git", "-C", str(repo), "--no-replace-objects", *arguments],
+        ["git", "-C", str(repo), "--no-replace-objects", "--literal-pathspecs", *arguments],
         capture_output=True, check=False, env=_git_environment(),
     )
     if completed.returncode != 0:
@@ -1381,6 +1861,11 @@ def _git(repo: Path, *arguments: str, text: bool = False) -> bytes | str:
 
 def _git_path_entry(repo: Path, commit: str, path: str) -> tuple[str, str] | None:
     """Resolve one path to an immutable blob, distinguishing absence from Git failure."""
+    if _GIT_SEAM is not None:
+        try:
+            return _GIT_SEAM.resolve_git_path_entry(repo, commit, path)
+        except _GIT_SEAM.GitSeamError as exc:
+            raise ReviewError(str(exc)) from exc
     raw = bytes(_git(repo, "ls-tree", "-z", commit, "--", path))
     records = [record for record in raw.split(b"\0") if record]
     if not records:
@@ -1400,8 +1885,13 @@ def _git_path_entry(repo: Path, commit: str, path: str) -> tuple[str, str] | Non
 
 
 def _git_blob(repo: Path, object_id: str, ctx: str) -> bytes:
+    if _GIT_SEAM is not None:
+        try:
+            return bytes(_GIT_SEAM.read_git_blob(repo, object_id, context=ctx))
+        except _GIT_SEAM.GitSeamError as exc:
+            raise ReviewError(str(exc)) from exc
     completed = subprocess.run(
-        ["git", "-C", str(repo), "--no-replace-objects", "cat-file", "blob", object_id],
+        ["git", "-C", str(repo), "--no-replace-objects", "--literal-pathspecs", "cat-file", "blob", object_id],
         capture_output=True, check=False, env=_git_environment(),
     )
     if completed.returncode != 0:
@@ -1413,21 +1903,140 @@ def _git_blob(repo: Path, object_id: str, ctx: str) -> bytes:
 def _decode_git_text(raw: bytes, ctx: str) -> str:
     if len(raw) > MAX_SOURCE_BYTES:
         raise ReviewError(f"{ctx}: exceeds {MAX_SOURCE_BYTES} bytes")
+    if b"\x00" in raw:
+        raise ReviewError(f"{ctx}: full packet construction in 1.0.0 mode refuses NUL-containing binary blobs")
     try:
         return raw.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise ReviewError(f"{ctx}: full packet construction refuses non-UTF-8 blobs: {exc}") from exc
 
 
+def _classify_git_blob(
+    raw: bytes,
+    path: str,
+    git_mode: str,
+    ctx: str,
+    *,
+    max_binary_bytes: int,
+    declared_media_types: Mapping[str, str] | None,
+) -> tuple[str, str | None, str, str]:
+    if len(raw) > max_binary_bytes:
+        raise ReviewError(f"{ctx}: blob size {len(raw)} exceeds max_bytes {max_binary_bytes}")
+    validated_media = sniff_media_type(raw)
+    is_text = validated_media.startswith("text/")
+    if is_text:
+        if len(raw) > MAX_SOURCE_BYTES:
+            raise ReviewError(f"{ctx}: exceeds {MAX_SOURCE_BYTES} bytes")
+        content = raw.decode("utf-8")
+        record_kind = "text"
+        if git_mode == "120000":
+            _validate_symlink_target_text(content, ctx)
+    else:
+        if git_mode == "120000":
+            raise ReviewError(f"{ctx}: symlink mode 120000 cannot be opaque_binary")
+        content = None
+        record_kind = "opaque_binary"
+    if declared_media_types is not None and path in declared_media_types:
+        declared_media = declared_media_types[path]
+    else:
+        declared_media = declared_media_type_for_path(path, is_text=is_text)
+    validate_media_type_agreement(declared_media, validated_media, record_kind, ctx)
+    return record_kind, content, declared_media, validated_media
+
+
+def _build_v1_1_review_file(
+    path: str,
+    record_kind: str,
+    mode: str | None,
+    object_id: str | None,
+    raw: bytes | None,
+    content: str | None,
+    declared_media: str | None,
+    validated_media: str | None,
+    *,
+    head_sha: str,
+    max_binary_bytes: int,
+    processor_identities: Mapping[str, Mapping[str, Any]] | None,
+) -> dict[str, Any]:
+    if record_kind == "absent":
+        return {
+            "path": path,
+            "record_kind": "absent",
+            "mode": None,
+            "object_id": None,
+            "byte_length": 0,
+            "content_digest": EMPTY_DIGEST,
+            "content": None,
+            "declared_media_type": None,
+            "validated_media_type": None,
+            "inspection_scope": "absent",
+            "provenance": None,
+            "limits": {
+                "max_bytes": max_binary_bytes,
+                "truncated": False,
+                "semantic_inspection_performed": False,
+            },
+            "processor_identity": None,
+        }
+    assert raw is not None and mode is not None and object_id is not None
+    processor = dict(processor_identities[path]) if processor_identities and path in processor_identities else None
+    if record_kind == "text":
+        inspection_scope = "text_semantic"
+        semantic_performed = True
+        processor = None
+    else:
+        if processor is not None:
+            inspection_scope = "trusted_processor_derived"
+            semantic_performed = True
+        else:
+            inspection_scope = "integrity_only"
+            semantic_performed = False
+    return {
+        "path": path,
+        "record_kind": record_kind,
+        "mode": mode,
+        "object_id": object_id,
+        "byte_length": len(raw),
+        "content_digest": sha256(raw),
+        "content": content,
+        "declared_media_type": declared_media,
+        "validated_media_type": validated_media,
+        "inspection_scope": inspection_scope,
+        "provenance": {
+            "source": "git_blob",
+            "commit_sha": head_sha,
+            "blob_oid": object_id,
+        },
+        "limits": {
+            "max_bytes": max_binary_bytes,
+            "truncated": False,
+            "semantic_inspection_performed": semantic_performed,
+        },
+        "processor_identity": processor,
+    }
+
+
 def build_packet_from_git(
-    repo: Path, repository: str, review_id: str, mode: str, base_ref: str, head_ref: str,
+    repo: Path,
+    repository: str,
+    review_id: str,
+    mode: str,
+    base_ref: str,
+    head_ref: str,
+    *,
+    packet_version: str = "auto",
+    max_binary_bytes: int = MAX_BINARY_BYTES,
+    declared_media_types: Mapping[str, str] | None = None,
+    processor_identities: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Trusted packet builder: read immutable Git objects, never the ambient worktree."""
     validate_repository(repository, "repository")
     _string(review_id, "review_id", pattern=REVIEW_ID_RE, maximum=128)
     _enum(mode, ("ordinary", "full_audit"), "mode")
-    base_sha = str(_git(repo, "rev-parse", f"{base_ref}^{{commit}}", text=True))
-    head_sha = str(_git(repo, "rev-parse", f"{head_ref}^{{commit}}", text=True))
+    _enum(packet_version, ("auto", SCHEMA_VERSION, BINARY_SCHEMA_VERSION), "packet_version")
+    max_binary_bytes = _integer(max_binary_bytes, "max_binary_bytes", 1, MAX_BINARY_BYTES)
+    base_sha = str(_git(repo, "rev-parse", "--verify", f"{base_ref}^{{commit}}", text=True))
+    head_sha = str(_git(repo, "rev-parse", "--verify", f"{head_ref}^{{commit}}", text=True))
     _string(base_sha, "base_sha", minimum=40, maximum=40, pattern=SHA_RE)
     _string(head_sha, "head_sha", minimum=40, maximum=40, pattern=SHA_RE)
     changed_raw = bytes(_git(repo, "diff", "--no-renames", "--name-only", "-z", base_sha, head_sha))
@@ -1435,8 +2044,8 @@ def build_packet_from_git(
     for path in changed_paths:
         validate_path(path, "git changed path")
 
-    delta: list[dict[str, Any]] = []
-    sources: dict[str, dict[str, Any]] = {}
+    raw_delta_items: list[dict[str, Any]] = []
+    any_binary = bool(declared_media_types) or bool(processor_identities)
     for changed_path in changed_paths:
         old_entry = _git_path_entry(repo, base_sha, changed_path)
         new_entry = _git_path_entry(repo, head_sha, changed_path)
@@ -1444,24 +2053,52 @@ def build_packet_from_git(
         new_mode, new_object_id = new_entry if new_entry is not None else (None, None)
         old_raw = _git_blob(repo, old_object_id, f"old blob {changed_path}") if old_object_id else None
         new_raw = _git_blob(repo, new_object_id, f"new blob {changed_path}") if new_object_id else None
-        old_content = _decode_git_text(old_raw, f"old blob {changed_path}") if old_raw is not None else None
-        new_content = _decode_git_text(new_raw, f"new blob {changed_path}") if new_raw is not None else None
+
+        if old_raw is not None and old_mode is not None:
+            old_kind, old_content, old_decl, old_val = _classify_git_blob(
+                old_raw, changed_path, old_mode, f"old blob {changed_path}",
+                max_binary_bytes=max_binary_bytes, declared_media_types=declared_media_types,
+            )
+            if old_kind == "opaque_binary":
+                any_binary = True
+        else:
+            old_kind, old_content, old_decl, old_val = None, None, None, None
+
+        if new_raw is not None and new_mode is not None:
+            new_kind, new_content, new_decl, new_val = _classify_git_blob(
+                new_raw, changed_path, new_mode, f"new blob {changed_path}",
+                max_binary_bytes=max_binary_bytes, declared_media_types=declared_media_types,
+            )
+            if new_kind == "opaque_binary":
+                any_binary = True
+        else:
+            new_kind, new_content, new_decl, new_val = None, None, None, None
+
         old_digest = sha256(old_raw) if old_raw is not None else None
         new_digest = sha256(new_raw) if new_raw is not None else None
-        delta.append({
-            "path": changed_path, "old_digest": old_digest, "old_content": old_content,
-            "old_mode": old_mode, "new_digest": new_digest, "new_mode": new_mode,
-        })
-        sources[changed_path] = {
+        raw_delta_items.append({
             "path": changed_path,
-            "content_digest": new_digest if new_digest is not None else EMPTY_DIGEST,
-            "content": new_content,
-        }
+            "old_raw": old_raw,
+            "new_raw": new_raw,
+            "old_mode": old_mode,
+            "new_mode": new_mode,
+            "old_object_id": old_object_id,
+            "new_object_id": new_object_id,
+            "old_digest": old_digest,
+            "new_digest": new_digest,
+            "old_kind": old_kind,
+            "new_kind": new_kind,
+            "old_content": old_content,
+            "new_content": new_content,
+            "old_decl": old_decl,
+            "old_val": old_val,
+            "new_decl": new_decl,
+            "new_val": new_val,
+        })
 
-    commitment: dict[str, Any] | None = None
+    tree_items: list[dict[str, Any]] = []
     if mode == "full_audit":
         tree_raw = bytes(_git(repo, "ls-tree", "-r", "-z", head_sha))
-        entries: list[dict[str, str]] = []
         for record in tree_raw.split(b"\0"):
             if not record:
                 continue
@@ -1475,13 +2112,143 @@ def build_packet_from_git(
             if kind != "blob" or git_mode not in ("100644", "100755", "120000"):
                 raise ReviewError(f"full_audit refuses unsupported tree entry {git_mode} {kind} {tree_path}")
             blob_raw = _git_blob(repo, object_id, f"head blob {tree_path}")
-            content = _decode_git_text(blob_raw, f"head blob {tree_path}")
-            entries.append({"path": tree_path, "mode": git_mode, "object_id": object_id})
-            sources[tree_path] = {
-                "path": tree_path, "content_digest": sha256(blob_raw), "content": content,
+            rec_kind, content, decl_media, val_media = _classify_git_blob(
+                blob_raw, tree_path, git_mode, f"head blob {tree_path}",
+                max_binary_bytes=max_binary_bytes, declared_media_types=declared_media_types,
+            )
+            if rec_kind == "opaque_binary":
+                any_binary = True
+            tree_items.append({
+                "path": tree_path,
+                "mode": git_mode,
+                "object_id": object_id,
+                "raw": blob_raw,
+                "record_kind": rec_kind,
+                "content": content,
+                "declared_media": decl_media,
+                "validated_media": val_media,
+            })
+
+    if packet_version == SCHEMA_VERSION:
+        if any_binary:
+            raise ReviewError(
+                "full packet construction refuses non-UTF-8/binary blobs in 1.0.0 mode; use --packet-version 1.1.0 or auto"
+            )
+        effective_version = SCHEMA_VERSION
+    elif packet_version == BINARY_SCHEMA_VERSION:
+        effective_version = BINARY_SCHEMA_VERSION
+    else:
+        effective_version = BINARY_SCHEMA_VERSION if any_binary else SCHEMA_VERSION
+
+    delta: list[dict[str, Any]] = []
+    sources: dict[str, dict[str, Any]] = {}
+
+    if effective_version == SCHEMA_VERSION:
+        for item in raw_delta_items:
+            changed_path = item["path"]
+            delta.append({
+                "path": changed_path,
+                "old_digest": item["old_digest"],
+                "old_content": item["old_content"],
+                "old_mode": item["old_mode"],
+                "new_digest": item["new_digest"],
+                "new_mode": item["new_mode"],
+            })
+            sources[changed_path] = {
+                "path": changed_path,
+                "content_digest": item["new_digest"] if item["new_digest"] is not None else EMPTY_DIGEST,
+                "content": item["new_content"],
             }
+    else:
+        deleted_by_digest: dict[str, list[dict[str, Any]]] = {}
+        for item in raw_delta_items:
+            if item["old_digest"] is not None and item["new_digest"] is None:
+                deleted_by_digest.setdefault(item["old_digest"], []).append(item)
+
+        for item in raw_delta_items:
+            changed_path = item["path"]
+            old_digest = item["old_digest"]
+            new_digest = item["new_digest"]
+            renamed_from: str | None = None
+            eff_old = item
+            if old_digest is None and new_digest is not None:
+                candidates = deleted_by_digest.get(new_digest, [])
+                if len(candidates) == 1:
+                    origin_item = candidates[0]
+                    renamed_from = origin_item["path"]
+                    eff_old = origin_item
+                    change_kind = "renamed"
+                else:
+                    change_kind = "added"
+            elif old_digest is not None and new_digest is None:
+                change_kind = "deleted"
+            elif old_digest == new_digest:
+                change_kind = "mode_changed"
+            else:
+                change_kind = "modified"
+
+            delta.append({
+                "path": changed_path,
+                "change_kind": change_kind,
+                "renamed_from": renamed_from,
+                "old_record_kind": eff_old["old_kind"],
+                "new_record_kind": item["new_kind"],
+                "old_object_id": eff_old["old_object_id"],
+                "new_object_id": item["new_object_id"],
+                "old_byte_length": len(eff_old["old_raw"]) if eff_old["old_raw"] is not None else None,
+                "new_byte_length": len(item["new_raw"]) if item["new_raw"] is not None else None,
+                "old_digest": eff_old["old_digest"],
+                "old_content": eff_old["old_content"],
+                "old_mode": eff_old["old_mode"],
+                "new_digest": new_digest,
+                "new_mode": item["new_mode"],
+                "old_declared_media_type": eff_old["old_decl"],
+                "old_validated_media_type": eff_old["old_val"],
+                "new_declared_media_type": item["new_decl"],
+                "new_validated_media_type": item["new_val"],
+            })
+            sources[changed_path] = _build_v1_1_review_file(
+                changed_path,
+                item["new_kind"] if item["new_kind"] is not None else "absent",
+                item["new_mode"],
+                item["new_object_id"],
+                item["new_raw"],
+                item["new_content"],
+                item["new_decl"],
+                item["new_val"],
+                head_sha=head_sha,
+                max_binary_bytes=max_binary_bytes,
+                processor_identities=processor_identities,
+            )
+
+    commitment: dict[str, Any] | None = None
+    if mode == "full_audit":
+        entries: list[dict[str, str]] = []
+        for t_item in tree_items:
+            tree_path = t_item["path"]
+            entries.append({"path": tree_path, "mode": t_item["mode"], "object_id": t_item["object_id"]})
+            if effective_version == SCHEMA_VERSION:
+                sources[tree_path] = {
+                    "path": tree_path,
+                    "content_digest": sha256(t_item["raw"]),
+                    "content": t_item["content"],
+                }
+            else:
+                sources[tree_path] = _build_v1_1_review_file(
+                    tree_path,
+                    t_item["record_kind"],
+                    t_item["mode"],
+                    t_item["object_id"],
+                    t_item["raw"],
+                    t_item["content"],
+                    t_item["declared_media"],
+                    t_item["validated_media"],
+                    head_sha=head_sha,
+                    max_binary_bytes=max_binary_bytes,
+                    processor_identities=processor_identities,
+                )
         entries.sort(key=lambda item: item["path"])
-        root_tree = str(_git(repo, "rev-parse", f"{head_sha}^{{tree}}", text=True))
+        root_tree = str(_git(repo, "rev-parse", "--verify", f"{head_sha}^{{tree}}", text=True))
         if _git_tree_id(entries) != root_tree:
             raise ReviewError("trusted builder tree reconstruction does not match Git head tree")
         commit_raw = bytes(_git(repo, "cat-file", "commit", head_sha))
@@ -1495,7 +2262,7 @@ def build_packet_from_git(
         }
 
     packet = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": effective_version,
         "review_id": review_id,
         "repository": repository,
         "mode": mode,
@@ -1513,6 +2280,8 @@ def cmd_build_packet(args: argparse.Namespace) -> int:
     packet = build_packet_from_git(
         Path(args.repo).resolve(strict=True), args.repository, args.review_id,
         args.mode, args.base, args.head,
+        packet_version=getattr(args, "packet_version", "auto"),
+        max_binary_bytes=getattr(args, "max_binary_bytes", MAX_BINARY_BYTES),
     )
     raw = canonical_json_bytes(packet)
     if args.output == "-":
@@ -1673,6 +2442,8 @@ def build_parser() -> argparse.ArgumentParser:
     builder.add_argument("--mode", choices=("ordinary", "full_audit"), required=True)
     builder.add_argument("--base", required=True)
     builder.add_argument("--head", required=True)
+    builder.add_argument("--packet-version", choices=("auto", SCHEMA_VERSION, BINARY_SCHEMA_VERSION), default="auto")
+    builder.add_argument("--max-binary-bytes", type=int, default=MAX_BINARY_BYTES)
     builder.add_argument("--output", default="-")
     builder.set_defaults(func=cmd_build_packet)
     fingerprint = subparsers.add_parser("fingerprint", help="calculate one stable semantic fingerprint")

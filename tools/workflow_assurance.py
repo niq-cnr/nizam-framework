@@ -135,9 +135,84 @@ def regular_file(root, path):
     return target
 
 
-def git(root, *args):
+def _load_git_seam_module():
+    import importlib.util
+    path = Path(__file__).resolve().with_name('git_seam.py')
+    if not path.is_file():
+        return None
+    name = '_nizam_git_seam_' + sha(str(path).encode())[:16]
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
+def _sanitized_git_env():
+    seam = _load_git_seam_module()
+    if seam is not None:
+        return seam.sanitized_git_env()
+    return {
+        'HOME': os.devnull,
+        'XDG_CONFIG_HOME': os.devnull,
+        'LANG': 'C',
+        'LC_ALL': 'C',
+        'PATH': '/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin',
+        'GIT_TERMINAL_PROMPT': '0',
+        'GIT_OPTIONAL_LOCKS': '0',
+        'GIT_NO_REPLACE_OBJECTS': '1',
+        'GIT_CONFIG_NOSYSTEM': '1',
+        'GIT_ATTR_NOSYSTEM': '1',
+        'GIT_CONFIG_GLOBAL': os.devnull,
+        'GIT_CONFIG_COUNT': '5',
+        'GIT_CONFIG_KEY_0': 'core.useReplaceRefs',
+        'GIT_CONFIG_VALUE_0': 'false',
+        'GIT_CONFIG_KEY_1': 'core.quotePath',
+        'GIT_CONFIG_VALUE_1': 'false',
+        'GIT_CONFIG_KEY_2': 'core.fsmonitor',
+        'GIT_CONFIG_VALUE_2': 'false',
+        'GIT_CONFIG_KEY_3': 'core.hooksPath',
+        'GIT_CONFIG_VALUE_3': os.devnull,
+        'GIT_CONFIG_KEY_4': 'protocol.allow',
+        'GIT_CONFIG_VALUE_4': 'never',
+    }
+
+
+def _validate_git_root(root):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            seam.validate_repo_root(root, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError('Git observation failed: ' + str(exc)) from exc
+        return
+    p = Path(root)
+    require(not p.is_symlink(), 'Git observation failed: repository root is symlink')
     try:
-        result = subprocess.run(['git', '-C', str(root), *args], capture_output=True, check=True)
+        resolved = p.resolve(strict=True)
+    except OSError as exc:
+        raise AssuranceError('Git observation failed: ' + str(exc)) from exc
+    dotgit = resolved / '.git'
+    require(os.path.lexists(dotgit) and not dotgit.is_symlink(), 'Git observation failed: repository must be Git toplevel')
+
+
+def git(root, *args):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.run_git_readonly(root, *args, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
+    clean_args = [a for idx, a in enumerate(args) if not (idx == 0 and a in ('--literal-pathspecs', '--no-replace-objects'))]
+    try:
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', '--literal-pathspecs', *clean_args],
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
         return result.stdout
     except (OSError, subprocess.CalledProcessError) as exc:
         diagnostic = getattr(exc, 'stderr', b'').decode('utf-8', errors='replace').strip()
@@ -145,10 +220,24 @@ def git(root, *args):
 
 
 def blobs(root, object_ids):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.read_git_blobs(root, object_ids, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
     ids = sorted(set(object_ids))
+    for oid in ids:
+        require(type(oid) is str and re.fullmatch('[0-9a-f]{40}', oid), 'missing/nonblob Git input')
     try:
-        result = subprocess.run(['git', '-C', str(root), 'cat-file', '--batch'],
-                                input=('\n'.join(ids) + '\n').encode(), capture_output=True, check=True)
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', 'cat-file', '--batch'],
+            input=('\n'.join(ids) + '\n').encode(),
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
     except (OSError, subprocess.CalledProcessError) as exc:
         raise AssuranceError('Git blob observation failed') from exc
     output = result.stdout; offset = 0; values = {}
@@ -161,6 +250,27 @@ def blobs(root, object_ids):
         values[oid] = output[offset:offset + size]; offset += size + 1
     require(offset == len(output), 'unexpected Git blob output')
     return values
+
+
+def _git_mutate_worktree_remove(root, attempt_root):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.mutate_remove_worktree(root, attempt_root)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
+    try:
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', 'worktree', 'remove', '--force', attempt_root],
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
+        return result.stdout
+    except (OSError, subprocess.CalledProcessError) as exc:
+        diagnostic = getattr(exc, 'stderr', b'').decode('utf-8', errors='replace').strip()
+        raise AssuranceError('Git worktree rollback failed: ' + (diagnostic or str(exc))) from exc
 
 
 CATEGORIES = ('source', 'contracts', 'tests', 'tools')
@@ -1637,7 +1747,7 @@ def rollback_owned_attempt(repo, request, *, policy):
         require(policy['rollback_ref'] is not None, 'lane captured failure required')
         _lane_record(root, policy['rollback_ref'], request, failure=True)
         require(first == verify_isolated_attempt(repo, request, policy=policy), 'lane attempt changed before rollback')
-        git(root, 'worktree', 'remove', '--force', request['attempt_root'])
+        _git_mutate_worktree_remove(root, request['attempt_root'])
         require(not Path(request['attempt_root']).exists() and not any(r.get('worktree') == request['attempt_root'] for r in _lane_worktrees(root)),
                 'lane rollback removal incomplete')
         return {'operation_id': request['operation_id'], 'attempt_root': request['attempt_root'], 'removed': True}

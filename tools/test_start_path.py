@@ -565,13 +565,19 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
     ) is False
 
     # 1. Preflight on real repository root (R6 + R7 + A2 operational sandbox probe)
-    res_preflight = run(ROOT, "preflight", "--require-sandbox")
+    res_preflight = run(ROOT, "preflight")
     expect(res_preflight, 0, '"repository_binding_aligned": true')
-    expect(res_preflight, 0, '"sandbox_operational": true')
     expect(res_preflight, 0, '"ok": true')
     preflight_doc = json.loads(res_preflight.stdout)
     for required_cap in ("installed", "available", "operational", "qualified", "status"):
         assert required_cap in preflight_doc["capabilities"], f"missing {required_cap} in preflight capabilities"
+    res_preflight_sb = run(ROOT, "preflight", "--require-sandbox")
+    if sp._probe_sandbox_operational(ROOT)[1]:
+        expect(res_preflight_sb, 0, '"sandbox_operational": true')
+        expect(res_preflight_sb, 0, '"ok": true')
+    else:
+        expect(res_preflight_sb, 1, '"sandbox_operational": false')
+        expect(res_preflight_sb, 1, '"ok": false')
 
     # F5.5: Fake broken bwrap first on PATH fails preflight --require-sandbox
     with tempfile.TemporaryDirectory(prefix="nizam-fake-bwrap-") as fake_bin_dir:

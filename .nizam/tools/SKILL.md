@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.8.2
+version: 0.9.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.9.0"
+    date: "2026-10-27"
+    summary: "Route deliberately selected documentation tasks to the bounded offline optional recommendation interface without activating or installing a package."
   - version: "0.8.2"
     date: "2026-10-19"
     summary: "Include schema/ and ecosystem/ in Section 2's directory enumeration, reference Section 4.4 external mutation mediation in Section 11's tools/interface.md entry, and maintain C13 version parity with tools/skill.json (v0.8.2)."
@@ -92,6 +95,19 @@ The full statement of this discipline lives in
 summarizes it for the runtime's first action.
 
 **Cross-Repo Intelligence (NMF Hybrid)**: When operating across repositories in an ecosystem deployment, the runtime reads the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md` — a consumer-aspirational protocol this framework ships as reference and does not itself enforce (the framework is deliberately outside any ecosystem scope; Track 3 decision, feature 058).
+
+## 2.1 Optional documentation specialists
+
+For explicitly enabled, relevant documentation work, use the local advisory
+resolver in tools/skill_recommendations.py under
+standard/domain_skill_compatibility.md and tools/interface.md Section 8.
+README work maps to readme-docs, learner tutorials to tutorial-docs, and
+architecture/reference/operations to software-docs. Offer at most one matching
+specialist after trusted exact released-pair checks; the host may deliberately
+load only that selected entrypoint. Disabled, declined, missing or unqualified
+recommendations leave direct/equivalent authoring available under the same
+canonical task route, permissions and required checks. The shipped catalogue
+is empty; this route neither installs nor executes a package.
 
 ## 3. The Execution Loop Summary
 

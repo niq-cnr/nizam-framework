@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 3.0.0
+version: 3.1.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "3.1.0"
+    date: "2026-10-27"
+    summary: "Prepare the v3.1.0 MINOR release (NF-OWNER-2026-10-27): hardened read-only Git identity seam (tools/git_seam.py, NF-R01/F02), reconciled atomic .nizam/ payload installation vs external proportionate activation in standard/GIP.md and finite task-scoped operator_recovery in methodology/03_circuit_breaker.md (NF-R02/F10/F11), versioned 1.1.0 typed binary review packet coverage and magic-byte sniffing in schema/review_packet.schema.json and tools/convergent_review.py (NF-R03/F09), optional generic external evidence admission contract and CLI in schema/external_evidence_admission.schema.json and tools/external_evidence.py (NF-R04), standalone consumer e2e qualification suite (tools/test_nf_ac05_standalone_e2e.py, NF-R05), and the approved API-REF-PILOT backlog plan. All changes are additive and hardening; no shipped schema was narrowed. The local .nizam/ payload is self-installed to the published v3.0.0 release (2b8298ae1d5a41534e00b6710a738b4b181b87fa)."
   - version: "3.0.0"
     date: "2026-10-27"
     summary: "Prepare the NF-22 MAJOR corrective candidate: C13 manifest enforcement, consumer routing and first-contact link coverage. Publication and self-adoption remain pending review and release sign-off."

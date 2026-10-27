@@ -2,10 +2,16 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.38.0
+version: 0.39.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.39.0"
+    date: "2026-10-27"
+    summary: "Generate compliance summaries from a control inventory and verify source and mode parity without allocating a new control."
+  - version: "0.38.1"
+    date: "2026-10-27"
+    summary: "NF-07/08: distinguish the governance skill schema from planning and portable metadata, and document independent root README link coverage."
   - version: "0.38.0"
     date: "2026-10-22"
     summary: "Document evidence_archive.py (deterministic historical index, offline object verification, eligibility-gated C16 resolution, external restore, bounded growth guard) and evidence_preservation.py (content-addressed input inventories with distinct per-run receipts), with fixtures promoted to tools/fixtures/workflow_assurance/."
@@ -446,10 +452,14 @@ and no per-runtime skill fork directory exists under `tools/`
 Every `.md` in this module carries the same six-key frontmatter
 (`standard/NDS.md` Section 2) and validates against
 `schema/frontmatter.schema.json`, identically to every other module's governed
-documents. `skill.json` is validated as plain JSON (`python3 -c
-"import json; json.load(open('tools/skill.json'))"`); it carries no schema of
-its own within this module — it is pure data consumed by `SKILL.md` and
-`interface.md`, not a document requiring frontmatter.
+documents. C13 validates the governance manifest `tools/skill.json` against
+`schema/governance_skill.schema.json`, then applies version, unique capability
+name, indexed-subset and path-containment rules. This is distinct from the
+planning manifest (`schema/manifest.schema.json`) and portable Agent Skills
+metadata. The manifest is JSON data, not an NDS-frontmatter document. An optional
+recommendation catalogue is a separate artifact and is not required for core
+compliance. The C13 tightening requires a MAJOR upgrade; see
+`docs/migration-v3.0.0.md` for manifest migration and validation.
 
 The required convergent review gate runs with `python3 tools/test_convergent_review.py`.
 Its fixtures are the 12 directories indexed by
@@ -475,24 +485,31 @@ full default sweep reports `SUMMARY: 16 passed, 0 failed`, while `--payload` mod
 separates exercised checks from non-applicable, skipped, and out-of-scope checks
 (`SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed`):
 
-| Check | Name | What it enforces |
-|---|---|---|
-| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. The default sweep also checks every markdown file under `docs/nips/`; those files are not in the shipped-doc set, so C9 and C10 do not scan them, and `--payload` does not check them. |
-| C2 | Format | Frontmatter fields (`version`, `status`, etc.) match their required format. |
-| C3 | Untagged-fence sweep | No fenced code block in a shipped `.md` is missing a language tag. |
-| C4 | `NIZAM.json` index integrity | Every path `NIZAM.json` indexes resolves on disk. |
-| C5 | Branding/endpoint leakage | No vendor-specific branding or internal endpoint strings ship in the framework payload. |
-| C6 | `bootstrap.sh` sanity | The inject/verify script passes its own internal sanity checks (`SKIP` in `--payload` mode because `bootstrap.sh` is not copied into `.nizam/`). |
-| C7 | Module README presence | Every module directory carries a governed `README.md`. |
-| C8 | Version-bump-vs-changelog | Any file whose frontmatter `version` increased vs `HEAD` is matched by a `change_log` entry for the new version, or a `CHANGELOG.md` line naming the file. |
-| C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
-| C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
-| C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present in repo mode, and reported as `NOT_APPLICABLE` (not counted as an exercised pass) in `--payload` mode because `.agent/` is not part of a consumer payload. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest,runtime_session,runtime_operation}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all ten routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). Runtime records use shared `vlib_runtime_record_relations` for owner, generation, lease and continuity comparisons in both targeted validation and the sweep. Records prove no live runtime behavior; consumer sessions are not auto-swept (`OUT_OF_SCOPE` in `--payload` mode). |
-| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, its `version` matches `tools/SKILL.md` frontmatter `version` (V5), and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |
-| C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only (`OUT_OF_SCOPE` in `--payload` mode). |
-| C15 | Capability-profile ↔ AGF-role mapping | C15 calls both `vlib_profiles_cover_roles` (5↔5 coverage: every profile identifier in `standard/capability_profiles.md` is present and each one's corresponding role is defined in `standard/AGF.md`) and `vlib_profiles_map_roles` (phase-014 feature 109, NDEBT-026), a primitive that parses the table's explicit `Role` column and fails unless each of the five profile rows names its own role — so a swapped profile-to-role mapping now fails C15. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; 109 adds the Role column and the mapping primitive; default sweep only (`OUT_OF_SCOPE` in `--payload` mode). |
-| C16 | Feature-list lifecycle invariant | Every `.agent/feature_list*.json` (when present) validates against `schema/feature_list.schema.json`; and for every feature with `status: "complete"`, IF `.agent/contracts/<id>.json` exists THEN `.agent/qa/<id>.json` MUST also exist, and if that QA verdict carries a top-level `evidence_files` array, every path it lists MUST exist on disk. Era-safe: a complete feature with no contract file at all (the framework's own pre-contract-first history) is not flagged. Feature 092 — mechanizes "complete implies approved contract and passing QA verdict and evidence on disk"; enforce-if-present in repo mode, and reported as `NOT_APPLICABLE` (not counted as an exercised pass) in `--payload` mode (`.agent/` is never part of the bootstrap.sh payload). A `--target` invocation against a feature-list-shaped file routes to schema-only validation (the era-safe referential rule is a whole-repo-tree relational property, not evaluable on one isolated file). |
+The following summary is generated from `tools/compliance_checks.json`. Run
+`python3 tools/generate_compliance_reference.py --check` to verify parity with
+validator dispatch, and omit `--check` to regenerate both summaries and help.
+Detailed checks and their specific exclusions remain in `tools/validate.sh --help`.
+
+<!-- BEGIN GENERATED COMPLIANCE CONTROLS -->
+| Check | Purpose | Default | Target | Payload |
+| :--- | :--- | :--- | :--- | :--- |
+| C1 | Governed-document frontmatter validates against its schema. | exercised | markdown | exercised |
+| C2 | Required document fields have valid formats. | exercised | markdown | exercised |
+| C3 | Shipped Markdown code fences carry language tags. | exercised | markdown | exercised |
+| C4 | NIZAM.json validates and its indexed paths resolve. | exercised | json fallback | exercised |
+| C5 | Shipped content contains no prohibited branding or internal endpoints. | exercised | none | exercised |
+| C6 | bootstrap.sh passes syntax and declared installation sanity checks. | exercised | none | skipped |
+| C7 | Required module READMEs exist. | exercised | none | exercised |
+| C8 | Frontmatter version changes have matching change records. | exercised | none | exercised |
+| C9 | Concrete paths resolve in shipped documents, root README and the guide; declared examples and HTTP URLs retain their handling. | exercised | markdown | exercised |
+| C10 | Shipped payload, discovery and version statements remain consistent; default scope excludes root README. | exercised | markdown and html | exercised |
+| C11 | Present local contracts, QA verdicts and run state validate against their schemas. | exercised | routed json | not-applicable |
+| C12 | Ecosystem and runtime schema-family fixtures retain expected outcomes. | exercised | routed json | out-of-scope |
+| C13 | The governance skill manifest, version parity, unique capability names, indexed module subset and contained paths validate. | exercised | none | exercised |
+| C14 | External GitHub Actions references use immutable commit SHAs. | exercised | none | out-of-scope |
+| C15 | Capability profiles cover and correctly map the five AGF roles. | exercised | none | out-of-scope |
+| C16 | Feature-list records satisfy applicable contract, QA and evidence invariants. | exercised | feature-list json schema only | not-applicable |
+<!-- END GENERATED COMPLIANCE CONTROLS -->
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
 their shared, fixture-tested primitives); C12 was added by phase 005

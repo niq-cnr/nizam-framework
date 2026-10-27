@@ -2,10 +2,13 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.9.0
+version: 0.10.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.10.0"
+    date: "2026-10-27"
+    summary: "Record the official v3.0.0 installation at 2b8298ae1d5a41534e00b6710a738b4b181b87fa (331 released files + provenance.json, installed_at 2026-10-27T15:56:45Z), verified against annotated tag object 10f7cd3e103d143eef7d151228b1bf3b3344a362; retain prior released installation and commissioning histories."
   - version: "0.9.0"
     date: "2026-10-24"
     summary: "Record the official v2.0.0 installation at 603afc7b17919334a6a01df1e39e63798d9d0acd, verified against annotated tag object 4aa4b1be73b1131b1227528465981a15815c44d7; retain prior released installation and commissioning histories."
@@ -43,25 +46,25 @@ installation:
   repository: niq-cnr/nizam-framework
   local_scope:
   - niq-cnr/nizam-framework
-  tag: v2.0.0
-  resolved_sha: 603afc7b17919334a6a01df1e39e63798d9d0acd
-  framework_version: 2.0.0
-  tag_object: 4aa4b1be73b1131b1227528465981a15815c44d7
+  tag: v3.0.0
+  resolved_sha: 2b8298ae1d5a41534e00b6710a738b4b181b87fa
+  framework_version: 3.0.0
+  tag_object: 10f7cd3e103d143eef7d151228b1bf3b3344a362
   authorization_gate: H-CONSUMER-UPGRADE
-  authorization_recorded_at: '2026-10-24T05:45:10.322666+00:00'
-  authorization_verbatim: self install the latest nizam-framework code.
+  authorization_recorded_at: '2026-10-27T15:56:00Z'
+  authorization_verbatim: self install and ready for he next minor release.
   status: installed
   commissioning_performed: false
-  payload_file_count: 316
+  payload_file_count: 331
   source_url: https://github.com/niq-cnr/nizam-framework.git
-  installed_at: '2026-10-24T05:45:45Z'
+  installed_at: '2026-10-27T15:56:45Z'
   evidence:
-    authorization: .agent/evidence/release-v2.0.0-closeout/upgrade-authorization.json
-    release: .agent/evidence/release-v2.0.0-closeout/release-facts.json
-    bootstrap_install: .agent/evidence/release-v2.0.0-closeout/bootstrap-install.stdout
-    verify_self_governance: .agent/evidence/release-v2.0.0-closeout/installed-integrity.stdout
-    bootstrap_verify_only: .agent/evidence/release-v2.0.0-closeout/bootstrap-verify.stdout
-    installed_preflight: .agent/evidence/release-v2.0.0-closeout/installed-preflight.stdout
+    authorization: .agent/evidence/release-v3.0.0-closeout/upgrade-authorization.json
+    release: .agent/evidence/release-v3.0.0-closeout/release-facts.json
+    bootstrap_install: .agent/evidence/release-v3.0.0-closeout/bootstrap-install.stdout
+    verify_self_governance: .agent/evidence/release-v3.0.0-closeout/installed-integrity.stdout
+    bootstrap_verify_only: .agent/evidence/release-v3.0.0-closeout/bootstrap-verify.stdout
+    installed_preflight: .agent/evidence/release-v3.0.0-closeout/installed-preflight.stdout
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
@@ -83,7 +86,26 @@ commissioning:
   installed_at: "2026-10-10T18:12:44Z"
 ---
 
-# Current installation — `v2.0.0` (installed — commissioning not performed)
+# Current installation — `v3.0.0` (installed — commissioning not performed)
+
+The operator requested: “self install and ready for he next minor release.”
+The unchanged `bootstrap.sh` installed the published immutable `v3.0.0` tag at
+`2b8298ae1d5a41534e00b6710a738b4b181b87fa` from the canonical repository
+`https://github.com/niq-cnr/nizam-framework.git`. The annotated tag object is
+`10f7cd3e103d143eef7d151228b1bf3b3344a362`. Installation completed at
+`2026-10-27T15:56:45Z`.
+
+The installation contains **331 released files plus genuine provenance**.
+The external trusted pin verifier and commit-bound bootstrap verification passed
+with exact inventory, content and executable-mode comparisons. The installed
+preflight returned `ok:true` and no failures. These observations establish
+installation integrity; **commissioning was not performed**. The already tested
+release payload was copied without runtime edits.
+
+Evidence: `.agent/evidence/release-v3.0.0-closeout/`. All prior released
+installation and commissioning records remain below as historical records.
+
+# Prior installation — `v2.0.0` (installed — commissioning not performed)
 
 The operator authorized release publication and requested: “self install the latest
 nizam-framework code.” The unchanged `bootstrap.sh` installed the published

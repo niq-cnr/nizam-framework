@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.21.0
+version: 0.22.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.22.0"
+    date: "2026-10-27"
+    summary: "Define the governance skill manifest shape enforced by C13, distinct from planning and portable Agent Skills; document MAJOR enforcement migration."
   - version: "0.21.0"
     date: "2026-10-22"
     summary: "Add evidence_archive.schema.json: validates the versioned .agent/evidence-archive/index.json that binds completed historical evidence tranches to Git blobs retained by ordinary history, with content-addressed object deduplication and per-entry mode/path validation. Structural validity is necessary but not sufficient; tools/evidence_archive.py verifies object type, length, raw-byte SHA-256, path uniqueness, and feature/contract/QA eligibility."
@@ -172,3 +175,16 @@ This closes the gap that caused the YAML brittleness this framework's predecesso
 checked for the *presence* of an evidence field, without also forbidding inline-output
 fields, would still validate a document that carried both a legitimate evidence path and
 a giant pasted console dump sitting right next to it.
+
+## Governance skill manifest
+
+`schema/governance_skill.schema.json` describes `tools/skill.json`. It is
+separate from the planning `schema/manifest.schema.json` and portable Agent Skills
+frontmatter. C13 applies this local Draft 2020-12 schema before pointer checks.
+Required identity, capability descriptions, runtime requirement descriptors and
+state interface are typed. Producer extensions remain allowed; additional runtime
+requirements use the same descriptor shape. Capability names must be unique;
+containment, intentional-subset index membership and entrypoint version parity
+are relational C13 checks. No manifest format-version field is introduced.
+This first enforced shape restricts previously accepted input and requires a
+MAJOR framework release; see `docs/migration-v3.0.0.md`.

@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Neutral conformance fixtures for Nizam generic optional external evidence admission (NF-R04 / NF-AC04). Zero Agentic SDLC dependency.",
+  "positive_templates": {
+    "valid_passed_admission": {
+      "schema_version": "1.0.0",
+      "protocol_version": "1.0.0",
+      "profile_id": "generic-external-evidence-v1",
+      "profile_version": "1.0.0",
+      "policy_binding": {
+        "policy_id": "nizam-standalone-default",
+        "policy_version": "1.0.0",
+        "policy_digest": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "framework_identity": {
+        "name": "nizam-framework",
+        "version": "3.0.0",
+        "commit_sha": "2b8298ae1d5a41534e00b6710a738b4b181b87fa",
+        "tree_sha": "cf9bf9ffd066c4c2724837baaf652323af230f52"
+      },
+      "consumer_binding": {
+        "repository": "https://example.invalid/neutral-consumer.git",
+        "base_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "candidate_tree": "cccccccccccccccccccccccccccccccccccccccc",
+        "candidate_sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "attempt_lineage": {
+        "task_id": "F-201",
+        "step_id": "verify-unit",
+        "run_id": "run-20261027-01",
+        "attempt_number": 1,
+        "permit_id": "permit-F-201-verify-unit-a1",
+        "permit_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "parent_attempt": null,
+        "continuation_basis": "initial_attempt",
+        "defect_signature": null,
+        "operator_recovery_ref": null
+      },
+      "contract_binding": {
+        "contract_id": "F-201",
+        "contract_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+        "requirement_ids": ["REQ-201-A"],
+        "acceptance_criteria_ids": ["AC-201-01", "AC-201-02"]
+      },
+      "collection_binding": {
+        "acceptance_collection_id": "acc-suite-v1",
+        "acceptance_collection_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "regression_collection_id": "reg-suite-v1",
+        "regression_collection_digest": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "execution_identity": {
+        "tool_id": "neutral-pytest-runner",
+        "tool_version": "8.3.0",
+        "adapter_id": "neutral-local-adapter",
+        "adapter_version": "1.0.0",
+        "config_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "isolation_mode": "container",
+        "isolation_digest": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      "producer_proof": {
+        "producer_id": "neutral-verifier-worker",
+        "session_id": "sess-20261027-0001",
+        "permit_binding_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "issued_at": "2026-10-27T12:00:00Z"
+      },
+      "status_separation": {
+        "test_outcome": "passed",
+        "execution_status": "completed",
+        "admission_decision": "admitted"
+      },
+      "artifacts": [
+        {
+          "role": "stdout",
+          "path": ".agent/evidence/external/F-201-a1.stdout.txt",
+          "media_type": "text/plain; charset=utf-8",
+          "byte_length": 12,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        {
+          "role": "stderr",
+          "path": ".agent/evidence/external/F-201-a1.stderr.txt",
+          "media_type": "text/plain; charset=utf-8",
+          "byte_length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "role": "verdict_report",
+          "path": ".agent/evidence/external/F-201-a1.verdict.json",
+          "media_type": "application/json",
+          "byte_length": 27,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ]
+    }
+  },
+  "negative_cases": [
+    {
+      "id": "NEG-01-commissioning-feature117",
+      "description": "Copied feature117 commissioning evidence is rejected as runtime proof.",
+      "mutation": {"attempt_lineage.task_id": "feature117"},
+      "expected_code": "commissioning_evidence_rejected"
+    },
+    {
+      "id": "NEG-02-commissioning-wa123",
+      "description": "Copied WA123 commissioning evidence is rejected as runtime proof.",
+      "mutation": {"contract_binding.contract_id": "WA123"},
+      "expected_code": "commissioning_evidence_rejected"
+    },
+    {
+      "id": "NEG-03-forged-producer-proof",
+      "description": "Self-declared producer label with forged HMAC digest is rejected.",
+      "mutation": {"producer_proof.permit_binding_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+      "expected_code": "forged_producer_proof"
+    },
+    {
+      "id": "NEG-04-wrong-policy-digest",
+      "description": "Mismatched policy digest is rejected.",
+      "mutation": {"policy_binding.policy_digest": "0000000000000000000000000000000000000000000000000000000000000001"},
+      "expected_code": "policy_mismatch"
+    },
+    {
+      "id": "NEG-05-unsupported-version",
+      "description": "Unsupported protocol version is rejected.",
+      "mutation": {"protocol_version": "2.0.0"},
+      "expected_code": "unsupported_version"
+    },
+    {
+      "id": "NEG-06-unsupported-profile",
+      "description": "Unsupported profile identifier is rejected.",
+      "mutation": {"profile_id": "agentic-sdlc-coupled-profile"},
+      "expected_code": "unsupported_profile"
+    },
+    {
+      "id": "NEG-07-status-separation-failed-admitted",
+      "description": "Failed test outcome claiming admission_decision=admitted is rejected.",
+      "mutation": {
+        "status_separation.test_outcome": "failed",
+        "status_separation.admission_decision": "admitted"
+      },
+      "expected_code": "status_separation_violation"
+    },
+    {
+      "id": "NEG-08-status-separation-timeout-admitted",
+      "description": "Timed-out execution claiming admission_decision=admitted is rejected.",
+      "mutation": {
+        "status_separation.execution_status": "timed_out",
+        "status_separation.admission_decision": "admitted"
+      },
+      "expected_code": "status_separation_violation"
+    }
+  ]
+}

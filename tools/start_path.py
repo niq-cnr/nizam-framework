@@ -1180,16 +1180,62 @@ def _resolve_candidate_and_env(
     return resolved_sha, binding_state, captured_vars
 
 
+def _load_git_seam():
+    import importlib.util
+    seam_path = Path(__file__).resolve().with_name("git_seam.py")
+    if not seam_path.is_file():
+        return None
+    mod_name = "_nizam_git_seam_" + sha256_hex(str(seam_path).encode("utf-8"))[:16]
+    if mod_name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(mod_name, seam_path)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[mod_name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[mod_name]
+
+
 def _run_git_readonly(
     root: Path,
     args: list[str],
     *,
     text: bool = False,
 ) -> subprocess.CompletedProcess:
-    """Run a read-only Git query with GIT_OPTIONAL_LOCKS=0 and --no-optional-locks so .git/index is never refreshed."""
-    git_env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0"}
+    """Run a read-only Git query via the hardened git_seam with replacement and redirection disabled."""
+    seam = _load_git_seam()
+    if seam is not None:
+        return seam.run_git_completed(root, args, text=text)
+    if Path(root).is_symlink():
+        empty = "" if text else b""
+        err = "repository root is symlink\n" if text else b"repository root is symlink\n"
+        return subprocess.CompletedProcess(["git", "-C", str(root), *args], 128, stdout=empty, stderr=err)
+    clean_args = [a for idx, a in enumerate(args) if not (idx == 0 and a in ("--literal-pathspecs", "--no-replace-objects", "--no-optional-locks"))]
+    git_env = {
+        "HOME": os.devnull,
+        "XDG_CONFIG_HOME": os.devnull,
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PATH": os.environ.get("PATH") or "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_ATTR_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_CONFIG_COUNT": "5",
+        "GIT_CONFIG_KEY_0": "core.useReplaceRefs",
+        "GIT_CONFIG_VALUE_0": "false",
+        "GIT_CONFIG_KEY_1": "core.quotePath",
+        "GIT_CONFIG_VALUE_1": "false",
+        "GIT_CONFIG_KEY_2": "core.fsmonitor",
+        "GIT_CONFIG_VALUE_2": "false",
+        "GIT_CONFIG_KEY_3": "core.hooksPath",
+        "GIT_CONFIG_VALUE_3": os.devnull,
+        "GIT_CONFIG_KEY_4": "protocol.allow",
+        "GIT_CONFIG_VALUE_4": "never",
+    }
     return subprocess.run(
-        ["git", "--no-optional-locks", "-C", str(root), *args],
+        ["git", "-C", str(root), "--no-optional-locks", "--no-replace-objects", "--literal-pathspecs", *clean_args],
         env=git_env,
         capture_output=True,
         text=text,
@@ -1717,7 +1763,7 @@ def _verify_git_status_and_no_staged_conflicts(
     """Verify git status and git diff --cached exit 0 without refreshing .git/index, and reject same-path staged entries."""
     if not norm_paths:
         return
-    lit_specs = [f":(literal){p}" for p in norm_paths]
+    lit_specs = list(norm_paths)
     status_res = _run_git_readonly(root, ["status", "--porcelain", "-z", "--", *lit_specs], text=False)
     if status_res.returncode != 0:
         err_msg = status_res.stderr.decode("utf-8", errors="replace").strip()
@@ -1745,18 +1791,21 @@ def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[
     """Return (mode, sha256_hex) of rel_path at revision, or None if not present in the revision's tree."""
     if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
         raise StartPathError(f"invalid 40-hex Git revision: {revision!r}", 1)
-    commit_check = _run_git_readonly(root, ["cat-file", "-e", f"{revision}^{{commit}}"], text=True)
-    if commit_check.returncode != 0:
+    commit_check = _run_git_readonly(root, ["rev-parse", "--verify", f"{revision}^{{commit}}"], text=True)
+    if commit_check.returncode != 0 or commit_check.stdout.strip() != revision:
         raise StartPathError(f"Git commit does not exist: {revision}", 1)
 
-    ls_res = _run_git_readonly(root, ["ls-tree", revision, "--", f":(literal){rel_path}"], text=True)
+    ls_res = _run_git_readonly(root, ["ls-tree", "-z", revision, "--", rel_path], text=False)
     if ls_res.returncode != 0:
-        raise StartPathError(f"git ls-tree failed for {revision}:{rel_path}: {ls_res.stderr.strip()}", 1)
-    line = ls_res.stdout.strip()
-    if not line:
+        err = ls_res.stderr.decode("utf-8", errors="replace").strip()
+        raise StartPathError(f"git ls-tree failed for {revision}:{rel_path}: {err}", 1)
+    rows = [r for r in ls_res.stdout.split(b"\x00") if r]
+    if not rows:
         return None
-    header, _, _ = line.partition("\t")
-    parts = header.split()
+    if len(rows) != 1:
+        raise StartPathError(f"unexpected git ls-tree output for {revision}:{rel_path}", 1)
+    header_bytes, _, _ = rows[0].partition(b"\t")
+    parts = header_bytes.decode("ascii", errors="replace").split()
     if len(parts) != 3:
         raise StartPathError(f"unexpected git ls-tree output for {revision}:{rel_path}", 1)
     mode, obj_type, obj_hash = parts
@@ -1770,7 +1819,7 @@ def _get_committed_blob_info(root: Path, revision: str, rel_path: str) -> tuple[
 
 def _find_last_commit_for_paths(root: Path, revision: str, norm_paths: list[str]) -> str:
     """Return the most recent 40-hex commit in revision's history that touched norm_paths."""
-    lit_specs = [f":(literal){p}" for p in norm_paths]
+    lit_specs = list(norm_paths)
     log_res = _run_git_readonly(root, ["log", "-n", "1", "--format=%H", revision, "--", *lit_specs], text=True)
     sha = log_res.stdout.strip()
     if log_res.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40}", sha):
@@ -3635,6 +3684,8 @@ def _record_task_base(
         return
     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+        if os.path.lexists(root / ".git"):
+            raise StartPathError("cannot record task base: Git repository inspection failed", 1)
         return
     top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
     if top_res.returncode != 0 or Path(top_res.stdout.strip()).resolve() != root.resolve():
@@ -3714,6 +3765,8 @@ def verify_actual_changed_scope(
     scoped = authorization["files"]
     git_check = _run_git_readonly(root, ["rev-parse", "--is-inside-work-tree"], text=True)
     if git_check.returncode != 0 or git_check.stdout.strip() != "true":
+        if os.path.lexists(root / ".git"):
+            raise StartPathError(f"{route} completion failed: Git repository inspection failed", 1)
         return
 
     top_res = _run_git_readonly(root, ["rev-parse", "--show-toplevel"], text=True)
