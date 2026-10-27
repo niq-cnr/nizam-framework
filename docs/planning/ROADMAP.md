@@ -2,10 +2,16 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.35
+version: 0.65.37
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.37"
+    date: "2026-10-27"
+    summary: "Prepare an independent v3.0.0 MAJOR corrective candidate; release and self-adoption remain pending their separate gates."
+  - version: "0.65.36"
+    date: "2026-10-27"
+    summary: "Attach NF-01–NF-22 documentation alignment as a bounded workstream; preserve active Jev program, phase 020 and historical predecessors."
   - version: "0.65.35"
     date: "2026-10-24"
     summary: "Record published Latest v2.0.0 at PR137 merge 603afc7b17919334a6a01df1e39e63798d9d0acd, annotated tag object 4aa4b1be73b1131b1227528465981a15815c44d7, successful release workflow 40067442085, and official local installation at 2026-10-24T05:45:45Z (316 released files plus provenance). Trusted integrity, commit-bound verification and installed high-risk preflight passed; full consumer commissioning remains incomplete. Preserve all prior release and installation facts."
@@ -379,6 +385,8 @@ remains unproven; the 100 USD smoke ceiling is frozen at `54c6a5f3`; the EX-P1 a
 checklist is proposed (commit `1471bd41`); start-path gating has landed (`05825106`).
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
+
+Release in preparation: v3.0.0 — NF-22 independent MAJOR corrective candidate; at 2026-10-27 preparation, human sign-off, merge and tag remained pending.
 
 Latest released tag: v2.0.0 (MAJOR) — RELEASED 2026-10-24 at `603afc7b17919334a6a01df1e39e63798d9d0acd` (PR #137, merged by `niq-cnr` at `2026-10-24T05:36:42Z`; annotated tag object `4aa4b1be73b1131b1227528465981a15815c44d7`). All six release-preparation CI checks passed (compliance run `40065497758`, closeout run `40065497781`); `release.yml` run `40067442085` succeeded and published the GitHub Release at `2026-10-24T05:44:48Z`, marked Latest. Official local `.nizam/` adoption installed `316` released files + `provenance.json` at `2026-10-24T05:45:45Z`; the trusted pin verifier, commit-bound bootstrap verification and installed high-risk preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [migration guide](../migration-v2.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v2.0.0-closeout/).
 
@@ -1527,3 +1535,16 @@ Audit `audit-2026-07-17-cba6422` compares baseline `dogfood-2026-07-17-28c8253` 
 - stale: 1 (F-audit044-ndebt-016)
 
 NDEBT-015 remains the highest-value next self-compliance candidate, corroborating Track 2 item 1's existing NDEBT-007 pairing.
+
+## Documentation alignment owner execution (2026-10-27)
+
+DOCS-NIZAM-OWNER-EXECUTION-2026-10-27-NF is a bounded concurrent
+workstream, tracked in [.agent/nf-feature-list.json](../../.agent/nf-feature-list.json)
+and [.agent/nf-product-spec.md](../../.agent/nf-product-spec.md).
+It preserves phase 020, pending 130–132 and NIZAM-JEV-OWNER-2026-10-22.
+106/108 remain completed; 134 already ships the Docker sandbox adapter.
+Issue 107 remains a metadata/live-qualification reconciliation candidate.
+NF-05 reuses JR-11, NF-07/20 reuse JR-19, NF-12–14 reuse JR-08/18/22,
+and NF-17 reuses JR-09/36/41/46 and NDEBT-056. No whole-Jev dependency.
+The independent NF-22 corrective release precedes optional recommendations;
+DS handoffs block only their named dependants.

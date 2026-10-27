@@ -25,7 +25,7 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. `v2.0.0` is the latest official release at `603afc7b17919334a6a01df1e39e63798d9d0acd` and is now the official local `.nizam/` installation. Commit-bound integrity and installed high-risk preflight passed; full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental source installations remain separate historical records.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation (deterministic governance repairs and the provider-neutral semantic architecture) is merged and off-by-default, with live qualification still gated. As recorded on 2026-10-27, `v2.0.0` was the latest official release at `603afc7b17919334a6a01df1e39e63798d9d0acd` and is now the official local `.nizam/` installation. Commit-bound integrity and installed high-risk preflight passed; full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental source installations remain separate historical records.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v2.0.0`)
 
@@ -119,11 +119,11 @@ see [v2.0.0 migration](docs/migration-v2.0.0.md) and [the producer interface](to
 
 | Route | Typical Scope & Trigger | Pre-Code Gate | Completion Gate | CLI Entry & Closeout |
 | :--- | :--- | :--- | :--- | :--- |
-| **`trivial`** | `<= 2` low-risk files (docs, comments, formatting), zero risk flags | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin trivial --id <id>` / `done trivial --id <id>` |
+| **`trivial`** | Editorial or documentation-only scope eligible for `--editorial`, with no contract, schema or tooling impact | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin trivial --id <id>` / `done trivial --id <id>` |
 | **`bugfix`** | Scoped defect repair (`--bugfix`) within existing behavior boundaries | Assessed cause + scoped fix (`<id>-cause.json`, `<id>-scope.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin bugfix --id <id>` / `done bugfix --id <id>` |
-| **`small-change`** | `<= 3` files of unambiguous non-feature maintenance, zero risk flags | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin small-change --id <id>` / `done small-change --id <id>` |
-| **`standard-feature`** | New capability (`--new-feature`) or `> 3` files across components | Approved `.agent/contracts/NNN.json` (`validator` + `qa` pre-code verdicts) | Independent post-implementation check + recorded verification result + stage receipts | `tools/start_path.py preflight` → `capture` → `publish` → `resume` |
-| **`high-risk`** | Protected paths (`schema/`, `standard/`, `.github/workflows/`, `bootstrap.sh`, `NIZAM.json`) or `--breaking-change` / `--security-sensitive` / `--authority-change` | Approved contract + explicit Human Operator gate (`E1`) | Full feature verification stack + receipt-qualified transitions | `tools/start_path.py classify` → Operator gate → full contract loop |
+| **`small-change`** | Bounded unambiguous maintenance requiring no new feature contract | Recorded intent (`.agent/evidence/<id>-intent.json`) | Recorded verification result (`.agent/qa/<id>.json`) | `tools/start_path.py begin small-change --id <id>` / `done small-change --id <id>` |
+| **`standard-feature`** | New contract obligations (`--needs-new-contract`), schema/interface changes (`--touches-schema`), or normative governance paths | Approved `.agent/contracts/NNN.json` (`validator` + `qa` pre-code verdicts) | Independent post-implementation check + recorded verification result + stage receipts | `tools/start_path.py preflight` → `capture` → `publish` → `resume` |
+| **`high-risk`** | Security/isolation/authority boundaries (`--touches-security`), persistent runtime boundaries (`--touches-runtime`), or classifier-designated high-risk paths | Approved contract, capability preflight, full role separation and applicable operator authority gates | Full feature verification stack + receipt-qualified transitions | `tools/start_path.py classify` → applicable authority gates → full contract loop |
 
 ### New feature
 
@@ -306,6 +306,20 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ---
 
+### v3.0.0 corrective release
+
+At preparation on 2026-10-27, the corrective candidate had not yet been published;
+v2.0.0 above was the latest release. After v3.0.0 is published and its exact commit independently verified,
+consumers may substitute that approved commit for `NIZAM_RELEASE_SHA`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.0.0/bootstrap.sh -o bootstrap.sh
+GOVERNANCE_TAG=v3.0.0 ./bootstrap.sh --tag v3.0.0 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
+```
+
+The [v3.0.0 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.0.0)
+will exist only after publication. See [migration guidance](docs/migration-v3.0.0.md).
+
 ## Local governance
 
 The official local installation is `v2.0.0` at `603afc7b17919334a6a01df1e39e63798d9d0acd`,
@@ -336,8 +350,8 @@ authored product; local agent work follows the installed governance.
 
 - **DD-1 — Tool-Driven State Management.** Agents query the root `NIZAM.json` index to
   find the minimal governance files a task needs, instead of bulk-reading directories.
-  See [ADR-001](docs/architecture/ADR-001-hybrid-monorepo-topology.md) and
-  [ADR-002](docs/architecture/ADR-002-declarative-capability-index.md).
+  See [tool-driven state](methodology/04_tool_driven_state.md) and the
+  [root capability index](NIZAM.json).
 - **DD-2 — Universal Circuit Breaker.** Every execution loop embeds a work-specific
   diagnostic stopping and circuit-breaker policy: attempt counters drive escalating
   investigative posture or bounded decomposition when invariants hold, while invariant
@@ -349,7 +363,7 @@ authored product; local agent work follows the installed governance.
   any runtime through a single adapter interface — no per-runtime forks.
 - **DD-5 — Zero-Dependency POSIX Bootstrap.** Consumer installation and verification
   require only POSIX `sh`, `git`, and Python 3.10+ standard library — see
-  [ADR-003](docs/architecture/ADR-003-zero-dependency-posix-bootstrap.md).
+  [bootstrap.sh](bootstrap.sh) and the [inheritance protocol](standard/GIP.md).
 
 ---
 
@@ -357,12 +371,12 @@ authored product; local agent work follows the installed governance.
 
 | Module | Installed In `.nizam/`? | Purpose |
 | :--- | :---: | :--- |
-| [`schema/`](schema/nizam_index.schema.json) | Yes | JSON Schemas (Draft 2020-12) for every machine-readable framework artifact (`NIZAM.json`, `run_state.json`, `provenance.json`, `skill.json`, contracts, QA/validator verdicts, receipts). |
-| [`standard/`](standard/AGF.md) | Yes | The Nizam Documentation Standard ([NDS](standard/NDS.md)), the Agent Governance Framework ([AGF](standard/AGF.md)), the Governance Inheritance Protocol ([GIP](standard/GIP.md)), [anti-hallucination constraints](standard/anti_hallucination.md), and the constitutional policy set ([capability profiles](standard/capability_profiles.md), [CI gates](standard/ci_gates.md), [MCP policy](standard/mcp_policy.md), [failure modes](standard/failure_modes.md), [provenance](standard/provenance.md), [permission classes](standard/permission_classes.md), [cross-repo governance](standard/cross_repo_governance.md)). |
-| [`methodology/`](methodology/00_planning.md) | Yes | End-to-end delivery lifecycle: [00 Planning](methodology/00_planning.md), [01 Execution](methodology/01_execution.md), [02 Quality & Circuit Breaker](methodology/02_quality.md), and [03 Release Train](methodology/03_release.md). |
-| [`templates/`](templates/AGENTS.md.tpl) | Yes | Consumer-repo document and manifest templates (`AGENTS.md.tpl`, `contract.json.tpl`, `product_spec.md.tpl`, `run_state.json.tpl`, `qa_verdict.json.tpl`, `validator_verdict.json.tpl`). |
+| [`schema/`](schema/README.md) | Yes | JSON Schemas (Draft 2020-12) for the declared artifact families, including the planning manifest, feature lists, contracts, QA verdicts and run state. The governance skill manifest has its own schema; the root capability index schema lives in `registry/`. See each schema's documented validation surface. |
+| [`standard/`](standard/AGF.md) | Yes | The Nizam Documentation Standard ([NDS](standard/NDS.md)), the Agent Governance Framework ([AGF](standard/AGF.md)), the Governance Inheritance Protocol ([GIP](standard/GIP.md)), [anti-hallucination constraints](standard/anti_hallucination.md), and the constitutional policy set ([capability profiles](standard/capability_profiles.md), [CI gates](standard/ci_gates.md), [MCP policy](standard/mcp_policy.md), [failure modes](standard/failure_modes.md), [provenance](standard/provenance_policy.md), [permission classes](standard/permission_classes.md), [cross-repo governance](standard/cross_repo_governance.md)). |
+| [`methodology/`](methodology/00_planning.md) | Yes | End-to-end delivery lifecycle: [00 Planning](methodology/00_planning.md), [01 Execution](methodology/01_execution.md), [02 Adversarial TDD](methodology/02_adversarial_tdd.md), [03 Circuit Breaker](methodology/03_circuit_breaker.md), and [06 Release Train](methodology/06_release_train.md). |
+| [`templates/`](templates/README.md) | Yes | Consumer templates: `AGENTS.md`, `CONTEXT.md`, `DEBT.md`, `ADR_TEMPLATE.md`, `work-packet.template.json`, `phase_template.yaml`, `manifest.template.json`, `DoD.md`, and `convergent-review-prompt.md`. |
 | [`tools/`](tools/SKILL.md) | Yes | The single runtime-agnostic skill payload ([`SKILL.md`](tools/SKILL.md), [`skill.json`](tools/skill.json), [`interface.md`](tools/interface.md)) plus executable governance CLIs (`start_path.py`, `payload_integrity.py`, `validate.sh`). |
-| [`ecosystem/`](ecosystem/README.md) | Yes | The reusable 9-stage **Bootstrap → Preflight → Baseline → Audit → Plan → Execute → Verify → Promote → Compare** lifecycle and 7 typed handoff contracts (`H-01`..`H-06`, `H-CONSUMER-UPGRADE`). |
+| [`ecosystem/`](ecosystem/README.md) | Yes | The reusable ten-stage **Bootstrap → Preflight → Baseline → Audit → Plan → Execute → Verify → Promote → Compare → Repeat** lifecycle and its operator-gated coordination protocols. |
 | [`registry/`](registry/README.md) | Authoring repo | The `NIZAM.json` index schema documentation and scope-definition patterns. |
 | [`docs/`](docs/guide/index.html) | Authoring repo | Architecture Decision Records (`docs/architecture/`), versioned migration guidance ([`docs/migration-v2.0.0.md`](docs/migration-v2.0.0.md), with prior versions retained), and the self-contained [HTML user guide](docs/guide/index.html). |
 
@@ -374,10 +388,29 @@ Every pull request and release tag is gated by 16 deterministic checks (`C1`–`
 
 | Check | Invariant Verified |
 | :--- | :--- |
-| **`C1`–`C4`** | Root structure, YAML frontmatter across all `.md` files, `NIZAM.json` path resolution, and JSON Schema syntax. |
-| **`C5`–`C8`** | Zero internal branding/cluster leakage, Markdown link resolution, template index coverage, and `ecosystem/` handoff catalog integrity. |
-| **`C9`–`C11`** | `docs/guide/index.html` path resolution, module/discovery/version consistency with `NIZAM.json`, and `tools/skill.json` ↔ `tools/SKILL.md` synchronization. |
-| **`C12`–`C16`** | `.agent/run_state.json` schema compliance, self-governance lockstep (`AGENTS.md` ↔ `.nizam/`), `payload_integrity.py` self-check, `test_start_path.py` unit suite, and `test_public_entry.py` public entry contract. |
+| **C1** | Governed-document frontmatter validates against its schema. |
+| **C2** | Required document fields have valid formats. |
+| **C3** | Shipped Markdown code fences carry language tags. |
+| **C4** | `NIZAM.json` validates and its indexed paths resolve. |
+| **C5** | Shipped content contains no prohibited branding or internal endpoints. |
+| **C6** | `bootstrap.sh` passes syntax and declared installation sanity checks. |
+| **C7** | Required module READMEs exist. |
+| **C8** | Frontmatter version increases have matching change records. |
+| **C9** | Concrete paths resolve in shipped documents, root README and the guide; declared examples/placeholders retain their exemptions. |
+| **C10** | Shipped payload, discovery and version statements remain consistent. |
+| **C11** | Present local contracts, QA verdicts and run state validate against their schemas. |
+| **C12** | Ecosystem and runtime schema-family fixtures retain expected outcomes. |
+| **C13** | The governance skill manifest, version parity, unique capability names, indexed module subset and contained paths validate. |
+| **C14** | External GitHub Actions references use immutable commit SHAs. |
+| **C15** | Capability profiles cover and correctly map the five AGF roles. |
+| **C16** | Feature-list lifecycle records satisfy the applicable contract, QA and evidence invariants. |
+
+These checks have mode-specific scopes; see [the tools reference](tools/README.md).
+The planning manifest (`schema/manifest.schema.json`), governance skill manifest
+(`tools/skill.json`) and optional recommendation catalogue are distinct artifacts.
+No recommendation catalogue or external documentation package is required for
+core compliance. Reader-facing README content does not require NDS frontmatter;
+its local paths are checked independently.
 
 ---
 

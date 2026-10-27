@@ -1,0 +1,117 @@
+{
+  "contract_id": "nf-first-contact",
+  "feature_id": "NF-05",
+  "name": "NF-05/NF-07/NF-08 canonical consumer routing and first-contact corrections",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_consumer_agent_template.py",
+        "purpose": "Render consumer template in isolated standalone/ecosystem fixtures and verify installed pointers, canonical role/stopping references and all task routes."
+      },
+      {
+        "path": "tools/test_first_contact.py",
+        "purpose": "Offline C9 root-README inclusion, broken-path, no-frontmatter and example/template-placeholder regressions in disposable trees."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "templates/AGENTS.md",
+        "purpose": "Replace duplicated outdated policy with installation-relative canonical routing and conditional ecosystem membership."
+      },
+      {
+        "path": "README.md",
+        "purpose": "Repair current module paths, template names, schema and control claims."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Correct verified schema/first-contact coverage claims."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Correct only the same verified path/control defects if present."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Serialize with C13 owner: explicit first-contact C9 file set separate from NDS and preserve payload behavior."
+      }
+    ]
+  },
+  "non_goals": [
+    "No installed .nizam edits, task-route semantics, lifecycle/circuit-counter changes, external packages or neutral DS contracts.",
+    "No new compliance control ID or broad link parser rewrite; preserve existing deliberate illustrative-token exemptions.",
+    "No release/version anchors, merge/tag/publication/self-adoption acts.",
+    "NF-06 registry and NF-03/04 C13 schema/enforcement are separate owning work."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "NF-05-root",
+      "requirement": "Consumer AGENTS template queries .nizam/NIZAM.json and loads .nizam/tools/SKILL.md; index paths resolve relative to that installation. Rendered standalone and configured-ecosystem cases resolve actual shipped entrypoints."
+    },
+    {
+      "id": "NF-05-route",
+      "requirement": "Template routes trivial, bugfix, small-change and feature work through current canonical classification without feature-only constraints; ecosystem scope checks are conditional on actual configured membership; stopping and role policy are references rather than duplicate rules."
+    },
+    {
+      "id": "NF-07-paths",
+      "requirement": "README module links/template names and any same verified guide defects are corrected against current files; schema coverage distinguishes planning manifest, governance skill manifest and optional future recommendation catalogue without overstating current enforcement."
+    },
+    {
+      "id": "NF-07-controls",
+      "requirement": "README lists correct purposes for current C1-C16 against validate.sh; tools README claims are corrected only where a defect is present. Root README remains reader-facing without mandatory NDS frontmatter."
+    },
+    {
+      "id": "NF-08-coverage",
+      "requirement": "Default C9 coverage explicitly includes root README independently of the NDS document set. Payload mode continues to handle only shipped payload docs. Broken root module targets fail C9 while correct README without NDS frontmatter passes."
+    },
+    {
+      "id": "NF-08-examples",
+      "requirement": "Valid code examples and existing explicitly declared template placeholders keep current handling; no external documentation package, network call or execution dependency is introduced."
+    },
+    {
+      "id": "Regression",
+      "requirement": "Named template and README/C9 defect cases demonstrably fail before changes and pass afterward, with discriminating positive/negative controls and full/payload validation."
+    }
+  ],
+  "verification": [
+    {
+      "acceptance_test": "NF-05-root,NF-05-route",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_consumer_agent_template.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF-07-paths,NF-07-controls,NF-08-coverage,NF-08-examples,Regression",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_first_contact.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Regression",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Regression",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Regression",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/nf-first-contact",
+  "evidence_convention": "Exclusive start_path capture stdout/stderr/envelope per named step and attempt; baseline expected failures are retained as semantic-negative proof. Source-linked documentation review is recorded in source-review.json.",
+  "role_allocation": "Standard: this session combines Planner/Generator/Validator; parent provides independent Evaluator contract review and QA.",
+  "coordination": "tools/validate.sh edits occur only after parent confirms C13 edit completion; no concurrent shared-validator writes.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1
+  },
+  "approval_evidence": {
+    "contract_review": ".agent/qa/nf-first-contact-contract-review.json"
+  }
+}

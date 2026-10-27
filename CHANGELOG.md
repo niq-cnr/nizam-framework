@@ -7,6 +7,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-27
+
+**Major release** (`methodology/06_release_train.md` Sections 3.1 and 3.4).
+At preparation on 2026-10-27 this corrective candidate had not yet been tagged.
+The new C13 governance manifest shape narrows previously accepted manifests.
+See [v3.0.0 migration](docs/migration-v3.0.0.md) before upgrading.
+
+### Fixed
+
+- Validate typed governance skill identity, capabilities, runtime requirements and
+  state interface; reject duplicate capability names and version mismatch for all names.
+- Route consumer instructions through the installed index and canonical task classifier.
+- Repair first-contact paths and control descriptions; include root README paths in C9.
+
+These corrections have no documentation-skills prerequisite or active recommendation.
+Immutable adoption and release sign-off remain separate.
+
 ## [2.0.0] - 2026-10-24
 
 **Major release** (`methodology/06_release_train.md` Sections 3.1 and 3.4):
