@@ -1,0 +1,55 @@
+{
+  "contract_id": "v3-final-preparation",
+  "feature_id": "NF-22",
+  "name": "Reconcile v3 release preparation with merged main",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Describe all merged v3 payload changes and the unreleased status accurately."
+      },
+      {
+        "path": "docs/migration-v3.0.0.md",
+        "purpose": "Describe the optional merged capability and preserve the major migration boundary."
+      }
+    ]
+  },
+  "non_goals": [
+    "No package recommendation, neutral-contract acceptance, qualification, publication or adoption is implied.",
+    "No changes to runtime, schema, installed governance, external repositories, prior release records or user-owned data.",
+    "No release sign-off, shared tag or publication is performed by this feature."
+  ],
+  "acceptance_requirements": [
+    "The v3 changelog describes C13 breaking enforcement and the merged optional offline policy, empty catalogue, resolver and compliance inventory without claiming any package is qualified.",
+    "Migration retains major-version compatibility guidance, explains optional capabilities and states that required assurance is not waived by missing tooling.",
+    "Release anchor and public-entry checks pass; clean pinned core-only install, integrity, validation and prior-release rollback pass for the assessed committed candidate.",
+    "Release and self-adoption remain pending reviewed final candidate, human sign-off and immutable published tag."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Release anchors",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Public entry",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Pinned install and rollback",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_corrective_release.py --candidate HEAD --prior v2.0.0 --prior-sha 603afc7b17919334a6a01df1e39e63798d9d0acd",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 45,
+  "evidence_dir": ".agent/evidence/v3-final-preparation",
+  "evidence_convention": "Exclusive captured outputs, with final merge SHA and payload inventory recorded externally after merge.",
+  "approval_evidence": {
+    "contract_review": ".agent/qa/v3-final-preparation-contract-review.json",
+    "validator": ".agent/validator/v3-final-preparation-mode-a.json"
+  }
+}
