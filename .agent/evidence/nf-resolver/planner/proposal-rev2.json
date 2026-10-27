@@ -1,0 +1,263 @@
+{
+  "contract_id": "nf-resolver",
+  "feature_id": "NF-10",
+  "name": "NF-10/NF-11 bounded offline optional recommendation resolver and canonical routing",
+  "status": "proposed",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/skill_recommendations.py",
+        "purpose": "Nizam-owned pure recommendation/routing and thin no-follow local I/O boundary; read-only CLI; no DS format replacement."
+      },
+      {
+        "path": "tools/test_skill_recommendation_boundaries.py",
+        "purpose": "Dedicated executable high-risk filesystem/read/execution isolation controls and concurrent-change negative tests using private temporary synthetic roots."
+      },
+      {
+        "path": "tools/test_skill_routing.py",
+        "purpose": "Synthetic contextual route and selected-only host entrypoint access fixtures; direct/equivalent authoring preserves governing requirements."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/test_skill_recommendations.py",
+        "purpose": "Extend existing catalogue suite with local resolver observations and independently authored synthetic host inventory tests."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "Single concise canonical optional specialist route and matching version update; no body duplication."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "Match SKILL.md version and only add capability if indexed by parent-approved NIZAM change."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Document explicit host input/API, no reads when disabled, advisory output and selected required-check preservation."
+      },
+      {
+        "path": "standard/domain_skill_compatibility.md",
+        "purpose": "Reference resolver and one concise task routing mapping under existing optional authority contract."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Index resolver or routing source only if required by intentional-subset governance index semantics."
+      }
+    ]
+  },
+  "non_goals": [
+    "No consumer package execution or body loading by resolver, process invocation, network/acquisition, install/update/uninstall, arbitrary schema retrieval, source repair or filesystem writes.",
+    "No actual DS package schema/inventory contract implemented from guesses; no DS26 fixture closure, DS27 package acceptance, NF16 exact pair, NF17 live pilot or qualification claim.",
+    "No active recommended catalogue entries, lifecycle/run_state/circuit-counter changes, host acceptance/approval, release/self-adoption or permission elevation.",
+    "No unrelated governance rewrites, fourth routing skill, hosted registry, broad ambient discovery or mandatory cross-repo CI dependency."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "NF10-enabled",
+      "requirement": "Disabled integration returns an advisory disabled result before reading package roots, inventories or entrypoint bodies; only explicit configuration/catalogue metadata may be read. No network, process execution or mutation in any mode."
+    },
+    {
+      "id": "NF10-roots",
+      "requirement": "Explicit configured roots may be absolute host paths; inventory/package-relative paths must never be absolute, traversing, NUL-bearing or ambiguous. Anchor one canonical explicitly configured root by no-follow directory descriptors and verify its identity. Resolve only the selected package under that anchored root; no ambient scan or unrelated package enumeration. Reject symlinked roots/ancestors/files, hardlinked or special files, concurrent ancestor replacement and switched links without reading escaping targets. Unsupported no-follow/dir_fd capabilities yield unverified without unsafe fallback."
+    },
+    {
+      "id": "NF10-identity",
+      "requirement": "An ordinary compatible offer requires lifecycle recommended AND host-verified released-catalogue activation AND a separately trusted accepted qualification binding the exact selected package bytes, source commit, DS inventory identity, neutral contracts and current framework source/payload/compatibility-surface digests. Candidate, verified, unreleased recommended and withdrawn never offer or return compatible. Missing, forged, self-asserted, wrong-pair or stale-surface trust proof yields unverified/incompatible. A schema-valid catalogue, matching strings or report producer assertions never establish trust."
+    },
+    {
+      "id": "NF10-bytes",
+      "requirement": "For supported Nizam host observation v1, read/hash each regular file once from stable no-follow descriptors, bind size/inode/device and before/after timestamps, verify directory/root identities and exact complete file set before/after, and derive the canonical host digest from those same assessed bytes. Reject added/untracked files, duplicates/path collisions, missing files, links, directories in file records, concurrent changes or resource-bound overflow. No exclusions in v1. DS inventory digests and self-exclusion rules are distinct, never assumed equal to host observation digest."
+    },
+    {
+      "id": "NF10-host-input",
+      "requirement": "Use the versioned Nizam-owned host observation and trusted qualification interfaces defined in host_input_contract below. Untrusted configuration/inventory/catalogue data cannot select a verifier, module, command, credential or trust store, set accepted=true or shrink required scope. A programmatically installed host verifier must have pre-established trust/provenance and verify accepted exact-pair evidence under the existing release mechanism; absent real supported adapter/DS27 mapping means no real-package compatible result. Synthetic fixture verifiers demonstrate only Nizam control flow, never real qualification."
+    },
+    {
+      "id": "NF10-states",
+      "requirement": "Catalogue lifecycle candidate/verified/recommended/withdrawn is distinct from local observations compatible/missing/unverified/incompatible/withdrawn. Verified is preactivation only and never offers a recommendation. Declined/disabled/inaccessible remain advisory to generic Nizam; selected required assurance persists or remains blocked pending policy-authorized equivalent evidence."
+    },
+    {
+      "id": "NF11-routing",
+      "requirement": "Compute at most one contextual route (README -> readme-docs; learner tutorial -> tutorial-docs; architecture/reference/operations -> software-docs), but offer it only after recommended+released activation and trusted exact-pair qualification pass. Verified/candidate/unreleased metadata may identify a provisional route for diagnostics but never activate an offer. Unrelated code work gets none; ambiguous context requires explicit selection."
+    },
+    {
+      "id": "NF11-entrypoint",
+      "requirement": "Resolver returns only selected relevant entrypoint identity/path after integrity checks and never executes package code or loads skill-body text. Host reads only a deliberately selected relevant entrypoint under existing permission policy. Test a host selection simulation that unrelated entrypoints are never opened."
+    },
+    {
+      "id": "NF11-authority",
+      "requirement": "Same canonical task classification, authorization and selected assurance requirements apply to recommended, alternate or direct authoring. Presence of catalogue/package never adopts governance, enables execution, installs/updates/removes packages, changes .nizam or grants a verdict."
+    },
+    {
+      "id": "NF10-provisional",
+      "requirement": "DS27 immutable packages are unavailable. Deterministic local tests use independently authored synthetic host inventory only; they are not DS contract fixtures, a DS26 handoff, exact-pair compatibility or behavioral qualification. No active recommendations are introduced."
+    },
+    {
+      "id": "Rollback",
+      "requirement": "A withdrawn entry preserves identity/reason/history while resolver returns withdrawn and performs no uninstall, upgrade, state/counter mutation or selected requirement erasure. Existing valid released recommendation pins are unchanged."
+    },
+    {
+      "id": "NF10-trust-controls",
+      "requirement": "Positive synthetic trusted-host fixture plus negative missing trust, forged signature/provenance, arbitrary accepted=true JSON, different producer/store, mismatched framework SHA, payload/surface digest, DS inventory/package identity, changed required contracts, and altered released catalogue digest must discriminate exact trusted binding. No real DS compatibility claim is possible until an accepted verifier mapping exists."
+    },
+    {
+      "id": "NF11-preactivation-controls",
+      "requirement": "Verified exact local bytes and trusted qualification still yield unactivated/unverified with no offer. Recommended without released-catalogue acceptance similarly yields no offer. Only an exact accepted released recommendation may offer, with no execution/install permission."
+    }
+  ],
+  "verification": [
+    {
+      "id": "all-resolver-boundaries",
+      "acceptance_test": "NF10-enabled,NF10-roots,NF10-identity,NF10-bytes,NF10-host-input,NF10-states,Rollback,NF10-trust-controls,NF11-preactivation-controls",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_recommendations.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendations.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Offline synthetic matrix with filesystem/process/network mutation sentinels; disabled missing-root/poison-path control; competing file/ancestor replacements; all lifecycle/local availability combinations; no private input. Explicit arbitrary accepted=true/forged/missing proof, wrong pair/source/surface/contracts/host digest, verified and unreleased-recommended nonactivation controls; canonical host digest known-answer and unsupported DS mapping controls."
+    },
+    {
+      "id": "isolated-containment-suite",
+      "acceptance_test": "NF10-enabled,NF10-roots,NF10-bytes,NF11-entrypoint",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_recommendation_boundaries.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_recommendation_boundaries.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Dedicated subprocess/temp-root suite proving no-read sentinels outside roots, escaping/broken/link swaps, descriptor race identity, special files, irrelevant skill body poison and zero package execution/network/mutations. This is the high-risk isolation-boundary suite; it must fail on unsafe mutant implementations. Real no-follow/dir_fd capability detection, canonical absolute-root control, complete no-exclusion scoped inventory, bound-overflow, file/ancestor race and unsupported-host fail-closed cases."
+    },
+    {
+      "id": "routing",
+      "acceptance_test": "NF11-routing,NF11-entrypoint,NF11-authority,NF11-preactivation-controls",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_routing.py",
+      "argv": [
+        "python3",
+        "tools/test_skill_routing.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "README/tutorial/reference/operations/code/ambiguous fixtures, decline/alternate method and selected required-check persistence; only selected entrypoint opened by synthetic host harness."
+    },
+    {
+      "id": "skill-index",
+      "acceptance_test": "NF11-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_governance_skill.py",
+      "argv": [
+        "python3",
+        "tools/test_governance_skill.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "C13 index/manifest parity and containment remain intact after canonical route version bump."
+    },
+    {
+      "id": "full-core",
+      "acceptance_test": "NF10-states,NF11-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Full current control suite; no cross-repo package dependency."
+    },
+    {
+      "id": "payload-core",
+      "acceptance_test": "NF10-enabled,NF10-provisional",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "argv": [
+        "bash",
+        "tools/validate.sh",
+        "--payload"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "detail": "Payload validates with no DS package installed or accessible; no recommendation activation."
+    }
+  ],
+  "estimated_lines": 850,
+  "evidence_dir": ".agent/evidence/nf-resolver",
+  "evidence_convention": "Exclusive start_path capture with actual argv/exit/environment/input identity; tests-only preimplementation observation retained as semantic-negative; source frozen and manifest digested before independent QA; no overwrite or private-source diagnostics.",
+  "role_allocation": {
+    "assurance_tier": "High-assurance",
+    "route": "high-risk",
+    "orchestrator": "/root",
+    "planner": "/root/optional_scaffold",
+    "generator": "not_assigned",
+    "validator": "not_assigned",
+    "evaluator": "not_assigned",
+    "separation": "Resolver revision2 is authored by optional_scaffold in Planner-only role. Root Orchestrator arranges distinct Generator, Validator and Evaluator sessions; neither product implementation nor evaluation by this Planner. Both independent Loop1 gates must approve before implementation."
+  },
+  "prerequisites": {
+    "NF-09": "Nizam-owned empty catalogue/schema implementation exists; final accepted implementation/commit must be recorded before execution.",
+    "NF-05": "Canonical consumer route corrective implementation must be accepted before NF11.",
+    "DS-27": "Unavailable; limits this work to Nizam-owned API and synthetic host-inventory observations. No actual DS package compatibility closed."
+  },
+  "preconditions": [
+    "Freeze independent NF22 corrective source before optional product edits.",
+    "High-risk capability preflight and named full role separation recorded.",
+    "Validator reviews approved contract and explicit no-follow/race strategy, including portability limits; unsupported host protection fails closed rather than pretending containment.",
+    "Operator mandate authorizes implementation and normal PR delivery only; actual release/qualification/publication gates remain unchanged."
+  ],
+  "baseline_plan": "After contract approval, add discriminating tests first and capture current missing-resolver/routing behavior before implementation. Treat this as missing optional capability, not a defect already affecting core compliance. Preserve before/after boundary proof and mutant unsafe-root/read negative controls.",
+  "qa_plan": "Evaluator independently executes every declared check in fresh process/private temp roots from committed frozen source, adds an adversarial boundary control, records exact source/surface digest and all unassessed conditions. Dedicated isolation suite must meaningfully exercise no-read boundaries; mocked sentinels alone do not establish real containment.",
+  "host_input_contract": {
+    "ownership": "Nizam host observation API only; not a DS package manifest, archive format, self-exclusion rule, neutral contract or release attestation schema.",
+    "format_version": "nizam-local-observation/1",
+    "configuration": "Enabled flag, explicit selected task/skill, explicit absolute canonical root and one package-relative path. Root/inventory/trust fields are not read when disabled. No untrusted plugin path, import hook, executable command, remote URL retrieval or trust-authority switch.",
+    "file_records": "Complete selected-root regular file records {path, size, sha256}; include hidden/untracked files and selected entrypoint, no exclusions. path is exact case-sensitive ASCII POSIX relative path with [A-Za-z0-9._/-] characters, no empty/dot/dotdot components, leading slash, backslash or NUL. Unique paths sorted lexicographically; no canonical rewriting. sha256 is 64 lower hex; size is nonnegative integer.",
+    "canonicalization": "ASCII bytes of json.dumps({\"version\":\"nizam-local-observation/1\",\"files\":sorted_records},sort_keys=True,separators=(\",\",\":\"),ensure_ascii=True), with no trailing newline; sorted_records contain only path,size,sha256 fields derived from the same assessed bytes. host_observation_sha256 is SHA256 of those canonical bytes. It is NEVER compared as though it were the DS inventory digest.",
+    "bounds": {
+      "configuration_bytes": 1048576,
+      "inventory_files": 4096,
+      "individual_file_bytes": 16777216,
+      "aggregate_file_bytes": 67108864,
+      "relative_path_bytes": 1024,
+      "path_component_bytes": 255,
+      "directory_depth": 16,
+      "entrypoint_bytes": 1048576
+    },
+    "limits_policy": "Exceeding any bound, unsafe path/host capability, unsupported observation format or unknown DS mapping fails closed (unverified/incompatible as appropriate); never silently truncate scope or ignore a file.",
+    "package_identity_binding": "Trusted host verifier must bind independently accepted package source/DS inventory/archive identity and supported contract versions to the actual host_observation_sha256 and declared entrypoint, using accepted DS27 format/self-exclusion rules. No such real adapter is supplied by this work; unknown or unassessable DS identity remains unverified. Nizam v1 makes no assumptions about DS manifest self-exclusion or reproducible archive metadata.",
+    "qualification_trust_interface": {
+      "injection": "Only trusted host application code may programmatically install a bounded local qualification verifier/context before invoking resolver. The CLI defaults to no trusted verifier; JSON/catalogue/report fields cannot create or select one. No dynamic imports or execution from input.",
+      "provenance": "Host owns an out-of-band pinned producer/trust mechanism and immutable accepted qualification proof under existing release policy. Its verifier checks producer/signature/integrity and acceptance without network or source mutation, and reports the exact binding. A submitted accepted=true or producer string alone is never an authenticated context.",
+      "required_binding": [
+        "qualification proof digest and trusted producer identity",
+        "released catalogue source and digest plus selected recommended entry identity",
+        "exact package name/version/source revision/DS inventory digest and archive checksum where accepted profile requires it",
+        "host observation v1 digest and selected entrypoint",
+        "framework source commit, payload digest and compatibility-surface digest",
+        "accepted neutral contract versions and qualification scope/limitations"
+      ],
+      "failure": "Absent/unsupported verifier, untrusted or invalid proof, mismatched binding, unverifiable release activation, expired/withdrawn evidence or incomplete profile produces no compatible offer. Resolver never synthesizes host acceptance, qualification, release sign-off or package execution permission.",
+      "synthetic_test_boundary": "A fixed in-test trusted verifier with fictional metadata is installed by test harness code only. Test results are labeled synthetic Nizam host-interface tests and never DS conformance, exact-pair qualification or evidence that public recommendation may activate."
+    }
+  },
+  "revision": 2,
+  "revision_history": [
+    {
+      "revision": 1,
+      "proposal_sha256": "ae290c087ce1592a9beafe44ead2f5fe02aa6aad70b760b432ec282dbee845a0",
+      "disposition": "rejected",
+      "validator": ".agent/validator/nf-resolver-mode-a.json",
+      "preserved_proposal": ".agent/evidence/nf-resolver/planner/proposal-rev1.json"
+    },
+    {
+      "revision": 2,
+      "change": "Define trusted accepted/released exact-pair proof boundary, prohibit verified/unreleased offers, specify bounded Nizam host canonical inventory separate from unsupported DS rules."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "review": "contract-testability",
+  "feature": "NF-10",
+  "contract_id": "nf-resolver",
+  "revision_reviewed": 2,
+  "reviewer": "/root/first_contact independent High-assurance Evaluator",
+  "proposal_sha256": "ea340ececa2019eeb460124995cd23d8ea1b4d0415015d27cccee024ad487901",
+  "issues": [
+    {
+      "verification_index": "isolated-containment-suite",
+      "criterion": "NF10-roots,NF10-bytes bounded traversal and resource overflow",
+      "evidence": "host_input_contract.bounds limits file count, file bytes and depth, but has no total traversal-entry/directory count. A selected package containing arbitrarily many empty directories at permitted depth can require unbounded enumeration while remaining within every declared file and byte bound. File-count limit alone does not bound this case.",
+      "required_fix": "Declare a finite total visited-entry or directory-count bound including empty directories and reject overflow without truncating assessed scope. Add a discriminating empty-directory/entry fan-out negative to isolated-containment-suite and a bounded valid directory-tree control.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Bound total traversal entries/directories, including empty directories, and map the overflow control to the existing boundary suite."
+  ],
+  "observations": [
+    "The trusted programmatic verifier and default no-verifier CLI now establish the right boundary: untrusted JSON cannot select code/trust or assert accepted=true; exact trusted released-catalogue/package/framework binding is testable.",
+    "Verified and unreleased recommended entries cannot activate offers, even when local bytes and synthetic trusted qualification match.",
+    "Canonical Nizam host digest over actual assessed bytes is distinct from DS inventory identity; unknown DS mapping remains unverified. No neutral DS format or package qualification is invented.",
+    "Descriptor no-follow walks, before/after identity and exact-set checks, symlink/race/hardlink/special-file negatives and unsafe mutants are explicitly mapped to meaningful dedicated isolation tests.",
+    "Same-byte hashing necessarily reads selected-package entrypoint bytes for integrity; the no-body-loading rule should mean no parsing, disclosure or agent-context loading of those bodies, while only deliberately selected host entrypoints may be loaded for use.",
+    "Before implementation, Orchestrator must record actual distinct role identities, accepted NF05/NF09 prerequisites and capability preflight; unsupported host capabilities must remain honest and fail closed."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Revision 2 closes trust, activation and host-identity ambiguity. One bounded-traversal gap remains: arbitrarily many empty directories escape all declared resource limits."
+  },
+  "reviewed_sources": [
+    ".agent/contracts/nf-resolver.json",
+    ".agent/validator/nf-resolver-mode-a.json",
+    ".agent/validator/nf-resolver-mode-a-rev2.json",
+    "standard/domain_skill_compatibility.md",
+    "schema/recommended_skills.schema.json",
+    "tools/test_skill_recommendations.py"
+  ],
+  "limitations": [
+    "Contract testability review only; no source implementation, actual DS artifacts, compatibility qualification, behavioral evaluation or release approval."
+  ]
+}

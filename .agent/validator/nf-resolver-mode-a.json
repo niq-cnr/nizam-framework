@@ -1,0 +1,56 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "validator_mode_a",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T07:50:43.195807+00:00",
+  "proposal_sha256": "ae290c087ce1592a9beafe44ead2f5fe02aa6aad70b760b432ec282dbee845a0",
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "NF10-trust-binding",
+      "description": "NF10-identity allows compatible for a verified or recommended catalogue entry, but does not specify how the resolver establishes that qualification is accepted and bound to the exact package and framework pair. The current catalogue schema validates only the shape of an arbitrary reference, SHA, producer and signature reference; it explicitly states schema validity does not prove qualification. A caller could supply internally matching synthetic metadata without a trusted accepted qualification. The contract needs a named host-owned trust input/interface (or fail-closed unverified until one exists), explicit tested framework/package/surface matching, and forged/missing/wrong-pair/changed-surface controls. No remote fetch or granting authority is implied.",
+      "sources": [
+        ".agent/contracts/nf-resolver.json acceptance_requirements NF10-identity and NF10-host-input",
+        "schema/recommended_skills.schema.json description and qualification properties",
+        "standard/domain_skill_compatibility.md selection and availability decision table"
+      ]
+    },
+    {
+      "id": "NF11-preactivation",
+      "description": "The contract allows compatible for verified entries and asks the route to offer one specialist but does not require the offer itself to use only a released recommended entry. NF-18 treats verified as pre-activation qualification, NF-19 prepares an unreleased candidate and NF-20 gates activation. Specify verified as non-activating unless the host explicitly adopts an otherwise authorized unreleased test profile; an ordinary recommendation must require recommended lifecycle plus applicable release/qualification policy. Add verified-versus-recommended and unreleased-candidate negative controls.",
+      "sources": [
+        ".agent/contracts/nf-resolver.json acceptance_requirements NF10-identity and NF11-routing",
+        "standard/domain_skill_compatibility.md selection and availability decision table",
+        "user NF-18, NF-19 and NF-20 cards"
+      ]
+    },
+    {
+      "id": "NF10-inventory-contract",
+      "description": "The resolver must compare actual bytes and exact inventory digest against catalogue identity, but the proposal does not identify a host inventory version, digest canonicalization, expected path scope/self-exclusions, bounded sizes or deterministic handling of unsupported platforms. Those details cannot be invented as documentation-skills package rules; without a defined Nizam host input or fail-closed adapter boundary, the promise is ambiguous and independently untestable. Specify a Nizam-owned bounded host observation interface, canonicalization or host-supplied accepted digest strategy, supported capability detection and fail-closed behavior; specify that no result claims actual DS conformance until the accepted DS-27 inventory rules exist.",
+      "sources": [
+        ".agent/contracts/nf-resolver.json NF10-bytes, NF10-host-input and preconditions",
+        "schema/recommended_skills.schema.json identity.inventory_sha256",
+        "user NF-10 and DS-27 handoff requirements"
+      ]
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Define and test the local accepted qualification trust binding and exact pair freshness; schema-valid or self-asserted metadata must never suffice.",
+    "Separate verified local observation from released recommendation activation and test the non-activation of verified/unreleased entries.",
+    "Define the host-supplied inventory interface and canonicalization or explicitly fail closed pending actual DS rules, including resource bounds and unsupported-host behavior."
+  ],
+  "advisory_minor": [
+    "Explicitly distinguish absolute configured root paths from package-relative manifest paths in NF10-roots; rejection of every absolute path would conflict with explicit absolute roots.",
+    "Record generator, validator and evaluator identities plus preflight before contract approval; no implementation may begin until both independent Loop 1 gates pass."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/validator/nf-resolver-validator-contract-schema-attempt1-20261027T075020Z-abf7fae1.capture.json"
+  ],
+  "limitations": [
+    "This is a review of the proposal and current catalogue/policy, not implementation QA, a real package qualification, or a release decision."
+  ]
+}
