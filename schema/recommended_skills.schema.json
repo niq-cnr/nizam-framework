@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:recommended_skills.schema.json",
+  "title": "Optional Nizam Recommendation Catalogue",
+  "description": "Nizam-owned metadata only; schema validity never proves qualification, availability, evidence admission or authority. No DS contract bytes are embedded. Additional fields require an explicit mapping-version change. Duplicate skill names and matching evidence identities are relational checks.",
+  "type": "object",
+  "properties": {
+    "catalogue_version": {
+      "const": "1.0.0"
+    },
+    "mapping_version": {
+      "const": "1.0.0"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill": {
+            "enum": [
+              "readme-docs",
+              "tutorial-docs",
+              "software-docs"
+            ]
+          },
+          "package_version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          },
+          "task_applicability": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "readme",
+                "tutorial",
+                "documentation-architecture",
+                "reference",
+                "operations"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "origin": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity": {
+            "type": "object",
+            "properties": {
+              "source_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "inventory_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "archive_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "source_commit",
+              "inventory_sha256"
+            ],
+            "additionalProperties": false
+          },
+          "supported_contracts": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            }
+          },
+          "tested_framework": {
+            "type": "object",
+            "properties": {
+              "source_commit": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "compatibility_surface_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "payload_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "source_commit",
+              "compatibility_surface_sha256",
+              "payload_sha256"
+            ],
+            "additionalProperties": false
+          },
+          "qualification": {
+            "type": "object",
+            "properties": {
+              "reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "producer": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signature_reference": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "reference",
+              "sha256",
+              "producer",
+              "signature_reference"
+            ],
+            "additionalProperties": false
+          },
+          "status": {
+            "enum": [
+              "candidate",
+              "verified",
+              "recommended",
+              "withdrawn"
+            ]
+          },
+          "distribution": {
+            "const": "approved-public-metadata"
+          },
+          "withdrawal_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "acquisition_reference": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "skill",
+          "task_applicability",
+          "status",
+          "distribution"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "verified",
+                    "recommended"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "package_version",
+                "origin",
+                "identity",
+                "supported_contracts",
+                "tested_framework",
+                "qualification"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "withdrawn"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "withdrawal_reason"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "catalogue_version",
+    "mapping_version",
+    "entries"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,107 @@
+{
+  "contract_id": "nf-optional-policy",
+  "feature_id": "NF-09",
+  "name": "NF-02/NF-09 optional policy and empty recommendation catalogue; NF-21 boundary preparation",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "standard/domain_skill_compatibility.md",
+        "purpose": "Canonical optionality, authority, artifact-class and missing-tool decision table; no duplicated workflow policy."
+      },
+      {
+        "path": "schema/recommended_skills.schema.json",
+        "purpose": "Nizam-owned catalogue v1.0 schema with exact recommended pins and evidence; local-only references."
+      },
+      {
+        "path": "tools/recommended_skills.json",
+        "purpose": "Versioned empty catalogue with no active recommendation or external lookup."
+      },
+      {
+        "path": "tools/test_skill_recommendations.py",
+        "purpose": "Offline schema positive and negative controls only; no resolver execution or copied DS contracts."
+      },
+      {
+        "path": "docs/skills/distribution-policy.md",
+        "purpose": "Approved narrow public metadata inventory, private execution/log rules, attestation requirements and missing DS-01 gate."
+      },
+      {
+        "path": ".agent/evidence/nf-handoffs.json",
+        "purpose": "Minimal external-artifact receipt index with unavailable identities represented honestly, no private source content."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "NIZAM.json",
+        "purpose": "Index the optional policy, catalogue schema and empty catalogue under their distinct authorities."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Route to optional policy without granting authorization or weakening selected checks."
+      }
+    ]
+  },
+  "non_goals": [
+    "No resolver, execution, installation, remote discovery, workflow mutation, permission change, recommendation activation or release.",
+    "No installed .nizam edits, portable DS contract invention, private schema/fixture/source/transcript publication or counterpart edits.",
+    "No claim that publication approval supplies DS-01 ownership acceptance, trusted attestation, exact artifacts or behavioral qualification."
+  ],
+  "acceptance_requirements": [
+    {
+      "id": "NF-02",
+      "requirement": "Absent, declined, incompatible, unsupported, compatible and broken explicitly adopted policy states preserve generic use and distinguish selected required checks; no automatic installation/adoption or broad NDS frontmatter imposition."
+    },
+    {
+      "id": "NF-09-shape",
+      "requirement": "Empty catalogue validates; lifecycle is candidate/verified/recommended/withdrawn, separate from local availability; exact source commit and inventory digest, supported neutral contract versions, framework scope and qualification evidence required to recommend."
+    },
+    {
+      "id": "NF-09-authority",
+      "requirement": "Catalogue metadata grants no permission; validation is local and has no external package/network prerequisite; public entries include only approved metadata/acquisition instruction references."
+    },
+    {
+      "id": "NF-21-preparation",
+      "requirement": "Inventory records owner approval received for exact metadata categories, authorized private acquisition/execution and raw artifact retention; no private sources copied; DS-01 remains unaccepted until supplied actual bytes/identity."
+    },
+    {
+      "id": "NF-02-discovery",
+      "requirement": "Index exposes policy, schema and empty catalogue distinctly; interface refers to policy, no capability grants authorization and no remote lookup introduced."
+    }
+  ],
+  "verification": [
+    {
+      "acceptance_test": "NF-09-shape,NF-09-authority",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_skill_recommendations.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF-02,NF-21-preparation",
+      "command": "Focused source review of decision table and item-by-item publication inventory against supplied NF-02/NF-21 acceptance and user approval; write .agent/evidence/nf-optional-policy/source-review.json",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Existing full/payload behavior unchanged",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "NF-02-discovery",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 420,
+  "evidence_dir": ".agent/evidence/nf-optional-policy",
+  "evidence_convention": "Exclusive start_path captures for commands; source-review.json records checked requirements and limitations without private content.",
+  "role_allocation": "Standard: child combines Planner/Generator/Validator, parent independently reviews contract and implementation. This contract describes authority boundaries but changes no authority verification mechanism.",
+  "prerequisite_disposition": "NF-01 intake recorded by parent; NF-21 cannot be complete without accepted DS-01. NF-09 begins with empty catalogue only.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2
+  },
+  "approval_evidence": {
+    "contract_review": ".agent/qa/nf-optional-policy-contract-review-rev2.json"
+  }
+}

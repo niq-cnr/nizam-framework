@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-10-27"
+    summary: "Reference the optional domain-skill boundary without adding an adapter requirement, permission or external dependency."
   - version: "0.6.0"
     date: "2026-10-24"
     summary: "Specify shared structured QA validation, immutable inventories, assessed context, bounded inherited-work route assessment and explicit historical-proof migration."
@@ -96,6 +99,19 @@ Once discovered, the runtime loads the payload as follows:
    short pointer file in a runtime-specific configuration location), that
    wrapper MUST reference or include `tools/SKILL.md` verbatim rather than
    restate or fork its content.
+
+### 3.1 Optional domain skills
+
+For optional domain-skill selection and evidence authority, use
+`standard/domain_skill_compatibility.md`. Its recommendation catalogue
+`tools/recommended_skills.json` is distinct from the governance manifest above;
+metadata grants no installation, execution or acceptance permission. The catalogue
+begins empty. Disabled or absent recommendations preserve ordinary core operation
+without a package scan, external lookup or skill-body load. A deliberately selected
+required check persists: use a policy-authorized equivalent or leave that condition
+blocked. The existing classification, authorization and independent assurance routes
+apply equally to specialist, alternative and direct authoring. This reference adds
+no mandatory adapter capability or documentation-package dependency.
 
 ## 4. The Three Abstract Operations
 

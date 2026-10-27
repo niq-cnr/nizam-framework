@@ -1,0 +1,51 @@
+{
+  "method": "STATIC",
+  "reviewer": "optional_scaffold Generator/Validator combined",
+  "input_sha256": {
+    "standard/domain_skill_compatibility.md": "2a4d9e57760ea71a57bbdaf0931705aa51a6a5e9479927a3761586743d4b58f7",
+    "schema/recommended_skills.schema.json": "ad4c9f92792538e71f0a7a5e48b7b823fa835bfa0859b4e213cf48df11303abd",
+    "tools/recommended_skills.json": "ed8f4c60c32bea43fd7fc22dcb74213e4ccb799d5b49767aace16adfd6034c44",
+    "tools/test_skill_recommendations.py": "3f6823c6098c4c7b729af9c3d70934432fd54d2321e8cce5978c3cedf2416de8",
+    "docs/skills/distribution-policy.md": "1944cc17e8fe27a82d7d86425ba4409f5dbe50a05d27c8b0acc6e64d2cbf7378",
+    ".agent/evidence/nf-handoffs.json": "f864f6900631830c1f6af001cba048001392d203fe3c20856d0f9d98e5788b5a"
+  },
+  "requirements": [
+    {
+      "id": "NF-02",
+      "outcome": "covered",
+      "anchors": [
+        "standard/domain_skill_compatibility.md: Selection and availability decision table",
+        "standard/domain_skill_compatibility.md: Separate artifact classes",
+        "standard/domain_skill_compatibility.md: Evidence and ownership"
+      ],
+      "observations": [
+        "Explicit absent/declined/unsupported/invalid adopted binding behavior; no installation/adoption; direct/equivalent authoring retains adopted checks.",
+        "Portable metadata and reader documents distinguished from NDS-governed ADR status."
+      ]
+    },
+    {
+      "id": "NF-09",
+      "outcome": "implemented_empty_only",
+      "observations": [
+        "Catalogue v1.0.0 and mapping v1.0.0 entries empty.",
+        "Closed schema requires exact package and tested framework identities plus signed qualification reference for verified/recommended states.",
+        "Lifecycle states exclude availability/acceptance; schema validation is not qualification.",
+        "Eight offline schema controls executed; no schema retrieval references or external package imports."
+      ]
+    },
+    {
+      "id": "NF-21",
+      "outcome": "partial",
+      "observations": [
+        "Owner-approved categories enumerated separately from unapproved schema/fixture/source/transcript bodies.",
+        "Private authorized execution/log default and selected retention/environment required before runs.",
+        "Trust binding and signed attestation not supplied; DS01 not accepted."
+      ]
+    }
+  ],
+  "limitations": [
+    "Source review is static, not behavioral qualification, a release verdict or evidence that any real package is compatible.",
+    "No NF10 resolver, NF12 importer mapping or NF16 compatibility job implemented under this bounded contract.",
+    "Parent independently evaluates; this record is not independent QA."
+  ]
+}
