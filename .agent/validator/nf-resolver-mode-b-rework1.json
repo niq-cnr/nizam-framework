@@ -1,0 +1,36 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "high_assurance_validator_mode_b_rework1",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T08:42:57.018487+00:00",
+  "assessed_commit": "39054c29be49c50a8f7b7010242266084d69dc17",
+  "source_freeze_sha256": "6d3e411c0aab0f1800ba996c3e016d0003c93d4d0483769c2ccb7a354fc49e66",
+  "source_manifest_sha256": "ed975ea6409546a783e22821caefaa2e66e156696baac109ce10147468df4cba",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_checks": [
+    "All 12 product paths and the amended approved contract match the frozen SHA256 manifest.",
+    "The former 8 MiB programmatic-input probe now rejects with 3,360 traced bytes of additional allocation, versus 18,875,935 before the fix; separate catalogue probe also passes.",
+    "A fresh private checkout ran focused and boundary suites successfully, including large scalar, depth, cycle, cardinality, number/type and private nested snapshot controls.",
+    "Incremental snapshot enforces node/depth/byte budgets before canonical JSON encoding; schema error collection now stops after the first error.",
+    "Disabled/declined early return and trusted-verifier/descriptor containment code remain unchanged by the repair.",
+    "The no-follow, entry/directory traversal budget, fixture parity and scope observations in the prior review remain applicable to unchanged source hashes."
+  ],
+  "advisory_minor": [
+    "The configured byte limit bounds untrusted values; trusted host-provided verifier and required-check inputs remain the host's responsibility.",
+    "No real documentation package or verifier is qualified; synthetic host fixtures prove only the declared boundary.",
+    "Fresh independent Evaluator QA, release checks and all external artifact gates remain required."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/validator-rework/nf-resolver-validator-rework-memory-attempt1-20261027T084238Z-b190cc98.capture.json",
+    ".agent/evidence/nf-resolver/validator-rework/nf-resolver-validator-rework-boundaries-attempt1-20261027T084239Z-a0194995.capture.json",
+    ".agent/evidence/nf-resolver/validator-rework/nf-resolver-validator-rework-focused-attempt1-20261027T084240Z-cfac3cf7.capture.json"
+  ],
+  "limitations": [
+    "Mode B is source/scope validation, not independent Evaluator QA, trusted DS attestation, exact-pair qualification, release or adoption."
+  ]
+}
