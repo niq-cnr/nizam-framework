@@ -1,0 +1,50 @@
+{
+  "feature_id": "NF-06",
+  "contract_id": "nf-compliance-reference",
+  "verdict": "pass",
+  "executed_at": "2026-10-27T08:24:17.810021+00:00",
+  "checks": [
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-full-repaired-attempt1-20261027T082001Z-3c943b24.capture.json"
+    },
+    {
+      "command": "python3 tools/generate_compliance_reference.py --check",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-parity-repaired-attempt1-20261027T081943Z-415c40e8.capture.json"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-payload-repaired-attempt1-20261027T081943Z-1a086502.capture.json"
+    },
+    {
+      "command": "python3 tools/test_compliance_reference.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-registry-repaired-attempt1-20261027T081940Z-89fa7455.capture.json"
+    },
+    {
+      "command": "python3 -c import json,shutil,tempfile; from pathlib import Path; import sys; sys.path.insert(0,\"tools\"); from generate_compliance_reference import load_and_validate; t=tempfile.TemporaryDirectory(); r=Path(t.name); (r/\"tools\").mkdir(); (r/\"docs/nips\").mkdir(parents=True); shutil.copy2(\"tools/validate.sh\",r/\"tools/validate.sh\"); shutil.copy2(\"docs/nips/NIP-0003-live-runtime-sessions.md\",r/\"docs/nips/NIP-0003-live-runtime-sessions.md\"); d=json.load(open(\"tools/compliance_checks.json\")); d[\"reserved\"]=[]; (r/\"tools/compliance_checks.json\").write_text(json.dumps(d)); rejected=False\ntry: load_and_validate(r)\nexcept ValueError: rejected=True\nprint(\"missing C17 reservation rejected:\",rejected); assert rejected",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-reserved-recheck-attempt1-20261027T082045Z-412566c8.capture.json"
+    }
+  ],
+  "required_fixes": [],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": true
+  },
+  "assessed_commit": "37c9df45db21817f1966f6412233a60889bf1c8e",
+  "reviewer": "root independent Evaluator",
+  "adversarial_check": {
+    "description": "Removing C17 reservation fails in authoring checkout",
+    "result": "pass after previous failure",
+    "evidence": ".agent/evidence/nf-compliance-reference/evaluator2/nf-compliance-reference-evaluator-reserved-recheck-attempt1-20261027T082045Z-412566c8.capture.json"
+  },
+  "limitations": [
+    "Payload without authoring NIP remains supported; no DS integration or compatibility claim."
+  ]
+}

@@ -146,7 +146,7 @@
       "name": "Control inventory",
       "description": "Every current emitted control has unique registry/documentation mapping; duplicates and drift fail.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-01",
         "NF-07"
@@ -156,21 +156,17 @@
         "Every current emitted control has unique registry/documentation mapping; duplicates and drift fail."
       ],
       "estimated_lines": 100,
-      "implementation": "56e99dcc",
-      "deterministic_verification": "generator focused/full/payload passed; independent candidate QA running",
+      "implementation": "56e99dcc + 37c9df45",
+      "deterministic_verification": "independent 13-test, parity, full 16/16, payload 10 and C17 negative controls passed at 37c9df45",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
-        ".agent/evidence/nf-compliance-reference/source-review.json"
+        ".agent/qa/nf-compliance-reference-qa.json"
       ],
-      "blocker": {
-        "owner": "Nizam evaluator",
-        "need": "independent candidate QA",
-        "resume": "finish evaluator capture on 56e99dcc"
-      }
+      "blocker": null
     },
     {
       "id": "NF-07",
