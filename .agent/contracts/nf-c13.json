@@ -43,6 +43,10 @@
       {
         "path": "NIZAM.json",
         "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "tools/test_runtime_session.py",
+        "purpose": "Refresh derived foundation fixture digest after C13 negative fixtures were corrected."
       }
     ]
   },
@@ -89,5 +93,28 @@
   },
   "approval_evidence": {
     "contract_review": ".agent/qa/nf-c13-contract-review.json"
-  }
+  },
+  "amendments": [
+    {
+      "at": "2026-10-27T08:07:53Z",
+      "by": "start_path:amend-contract",
+      "type": "lightweight-scope-or-verification-update",
+      "amendment_class": "mechanical",
+      "re_approval_required": false,
+      "summary": "Update derived fixture-tree digest for the two intentionally repaired C13 fixtures; preserve all runtime-session behavior and other fixture bytes.",
+      "prior_contract_sha256": "8e4ef3d9a3b2808f55172c5a1ca6ca4a18d34d46181bae4b4c1992cba61129d8",
+      "added_files": [
+        "tools/test_runtime_session.py"
+      ],
+      "updated_verification": [],
+      "scope_diff": {
+        "files_create_added": [],
+        "files_modify_added": [
+          "tools/test_runtime_session.py"
+        ]
+      },
+      "verification_diff": [],
+      "invariants_preserved": true
+    }
+  ]
 }
