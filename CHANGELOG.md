@@ -7,6 +7,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Record the approved `API-REF-PILOT` backlog plan for a focused, generated Python
+  API reference, with a three-module pilot and measured adoption criteria before
+  integration or expansion.
+
 ## [2.0.0] - 2026-10-24
 
 **Major release** (`methodology/06_release_train.md` Sections 3.1 and 3.4):

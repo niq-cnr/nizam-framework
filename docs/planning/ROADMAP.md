@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.35
+version: 0.65.36
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.36"
+    date: "2026-10-27"
+    summary: "Register API-REF-PILOT as operator-approved backlog work, link its bounded extraction plan and measured adoption criteria, and preserve active program ordering and lifecycle records."
   - version: "0.65.35"
     date: "2026-10-24"
     summary: "Record published Latest v2.0.0 at PR137 merge 603afc7b17919334a6a01df1e39e63798d9d0acd, annotated tag object 4aa4b1be73b1131b1227528465981a15815c44d7, successful release workflow 40067442085, and official local installation at 2026-10-24T05:45:45Z (316 released files plus provenance). Trusted integrity, commit-bound verification and installed high-risk preflight passed; full consumer commissioning remains incomplete. Preserve all prior release and installation facts."
@@ -311,6 +314,20 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Approved backlog additions — 2026-10-27
+
+| ID | Work | Status | Next step |
+| --- | --- | --- | --- |
+| API-REF-PILOT | [Focused Python API-reference extraction pilot](API_REFERENCE_PILOT.md) | Approved; not started | Inventory documentation gaps and preregister the 12-task baseline before implementation planning. |
+
+The operator approved this work on 2026-10-27: "add this plan to the project
+backlog", followed by "it is approved work". The linked plan records the
+three-module scope, ordered stages and adoption criteria. Integration depends
+on the pilot demonstrating significant improvement over existing documentation.
+This backlog addition does not reorder the active Jev readiness program below;
+phase allocation, estimates and implementation contracts are established when
+the work is scheduled through the installed planning protocol.
 
 ## Current position — Jev readiness program, 2026-10-22
 

@@ -1,0 +1,58 @@
+{
+  "id": "api-reference-backlog-pr-final",
+  "path": "trivial",
+  "summary": "Publish approved API reference backlog plan and changelog on current main, preserving upstream releases and program ordering.",
+  "needs_new_contract": false,
+  "files": [
+    "docs/planning/ROADMAP.md",
+    "docs/planning/API_REFERENCE_PILOT.md",
+    "CHANGELOG.md"
+  ],
+  "verification": [
+    {
+      "id": "plan",
+      "argv": [
+        "bash",
+        "tools/validate.sh",
+        "--target",
+        "docs/planning/API_REFERENCE_PILOT.md"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "changelog",
+      "argv": [
+        "bash",
+        "tools/validate.sh",
+        "--target",
+        "CHANGELOG.md"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "scope",
+      "argv": [
+        "python3",
+        ".agent/evidence/api-reference-backlog-pr-final/check_scope.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ]
+}
