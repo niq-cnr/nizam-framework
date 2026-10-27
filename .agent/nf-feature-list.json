@@ -245,7 +245,7 @@
       "name": "Offline bounded resolver",
       "description": "Explicit roots/inventory only; disabled has no package reads; tampering, unsupported identities and symlink escapes cannot resolve compatible.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-09"
       ],
@@ -254,26 +254,26 @@
         "Explicit roots/inventory only; disabled has no package reads; tampering, unsupported identities and symlink escapes cannot resolve compatible."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "708c9abc + 39054c29 + 0f756459",
+      "deterministic_verification": "independent recovery round passed at 86d20589 with same frozen product bytes; synthetic host inputs only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
-      "recommendation": "inactive",
+      "recommendation": "inactive; empty catalogue",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
-      "blocker": {
-        "owner": "Nizam High-assurance implementation roles",
-        "need": "implement approved contract and pass independent isolation and QA",
-        "resume": "run Generator against .agent/contracts/nf-resolver.json and independent gates"
-      }
+      "evidence": [
+        ".agent/qa/nf-resolver-qa-recovery7.json",
+        ".agent/qa/nf-resolver-qa-attempt1.json",
+        ".agent/qa/nf-resolver-qa-rework2-blocked.json"
+      ],
+      "blocker": null
     },
     {
       "id": "NF-11",
       "name": "Specialist routing",
       "description": "Route README/tutorial/reference work to matching optional specialist; selection preserves task/permission requirements.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-05",
         "NF-10"
@@ -283,19 +283,19 @@
         "Route README/tutorial/reference work to matching optional specialist; selection preserves task/permission requirements."
       ],
       "estimated_lines": 100,
-      "implementation": null,
-      "deterministic_verification": "unrun",
+      "implementation": "708c9abc + 39054c29 + 0f756459",
+      "deterministic_verification": "independent recovery round passed at 86d20589 with same frozen product bytes; synthetic host inputs only",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
-      "recommendation": "inactive",
+      "recommendation": "inactive; empty catalogue",
       "release": "unreleased",
       "adoption": "not_requested",
-      "evidence": [],
-      "blocker": {
-        "owner": "Nizam High-assurance implementation roles",
-        "need": "implement approved contract and pass independent isolation and QA",
-        "resume": "run Generator against .agent/contracts/nf-resolver.json and independent gates"
-      }
+      "evidence": [
+        ".agent/qa/nf-resolver-qa-recovery7.json",
+        ".agent/qa/nf-resolver-qa-attempt1.json",
+        ".agent/qa/nf-resolver-qa-rework2-blocked.json"
+      ],
+      "blocker": null
     },
     {
       "id": "NF-12",
