@@ -29,6 +29,12 @@ Custom negative fixtures must copy current valid runtime/state/version fields an
 change only their tested invariant. Existing path and symlink containment,
 intentional-subset indexing and payload carve-outs remain unchanged.
 
+The release candidate also contains optional domain-skill guidance, an empty
+recommendation catalogue and an offline resolver. No documentation package is
+qualified or recommended by that catalogue. Consumers need not install a skill;
+a missing optional tool does not waive an explicitly required assurance check.
+The generated compliance-control reference does not change control semantics.
+
 Upgrade only through the pinned bootstrap process once a reviewed immutable
 release exists. Preserve consumer-owned extensions and pre-migration fixtures.
 Rollback uses the prior verified immutable release, never hand-edits `.nizam/`.

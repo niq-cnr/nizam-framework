@@ -20,6 +20,14 @@ At preparation on 2026-10-27 this corrective candidate had not yet been tagged.
 The new C13 governance manifest shape narrows previously accepted manifests.
 See [v3.0.0 migration](docs/migration-v3.0.0.md) before upgrading.
 
+### Added
+
+- Define optional domain-skill authority and an empty recommendation catalogue.
+  The offline resolver uses explicit local inputs; it does not install packages,
+  authorize execution or make a recommendation without qualification.
+- Publish a generated compliance-control reference and its consistency checks.
+  The catalogue contains no qualified or recommended documentation packages.
+
 ### Fixed
 
 - Validate typed governance skill identity, capabilities, runtime requirements and
