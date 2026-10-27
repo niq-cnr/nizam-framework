@@ -60,7 +60,7 @@
       "name": "Governance manifest schema",
       "description": "Typed required identity, description, version, entry, capabilities, runtime and state; explicit extension and migration policy.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-01"
       ],
@@ -69,28 +69,25 @@
         "Typed required identity, description, version, entry, capabilities, runtime and state; explicit extension and migration policy."
       ],
       "estimated_lines": 100,
-      "implementation": "d4c39fcb",
-      "deterministic_verification": "mutation, full, payload and symlink controls passed; complete fixture suite failed on macOS sandbox; Linux CI pending",
+      "implementation": "d4c39fcb + 46b2aeb6",
+      "deterministic_verification": "independent mutation and symlink controls; Linux CI 176/176 fixture success on merge tree identical to 46b",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
+        ".agent/qa/nf-c13-ci-followup-qa.json",
         ".agent/qa/nf-c13-qa.json"
       ],
-      "blocker": {
-        "owner": "CI",
-        "need": "passing supported Linux fixture self-test",
-        "resume": "inspect PR #140 compliance run 40469383636; retain macOS failure"
-      }
+      "blocker": null
     },
     {
       "id": "NF-04",
       "name": "Enforce C13 manifest",
       "description": "All names obey version parity; missing required fields and duplicate capability names fail; subset/containment/payload controls preserved.",
       "owner": "niq-cnr/nizam-framework",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": [
         "NF-03"
       ],
@@ -99,21 +96,18 @@
         "All names obey version parity; missing required fields and duplicate capability names fail; subset/containment/payload controls preserved."
       ],
       "estimated_lines": 100,
-      "implementation": "d4c39fcb",
-      "deterministic_verification": "mutation, full, payload and symlink controls passed; complete fixture suite failed on macOS sandbox; Linux CI pending",
+      "implementation": "d4c39fcb + 46b2aeb6",
+      "deterministic_verification": "independent mutation and symlink controls; Linux CI 176/176 fixture success on merge tree identical to 46b",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
       "release": "unreleased",
       "adoption": "not_requested",
       "evidence": [
+        ".agent/qa/nf-c13-ci-followup-qa.json",
         ".agent/qa/nf-c13-qa.json"
       ],
-      "blocker": {
-        "owner": "CI",
-        "need": "passing supported Linux fixture self-test",
-        "resume": "inspect PR #140 compliance run 40469383636; retain macOS failure"
-      }
+      "blocker": null
     },
     {
       "id": "NF-05",
@@ -632,7 +626,7 @@
       ],
       "estimated_lines": 100,
       "implementation": "core candidate 46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
-      "deterministic_verification": "exact-candidate install, inventory and rollback passed; Linux CI pending fixture-anchor repair",
+      "deterministic_verification": "exact 46b core install, byte inventory, rollback passed; PR CI all green on identical synthetic-merge tree",
       "behavioral_qualification": "unrun",
       "compatibility_qualification": "unrun",
       "recommendation": "inactive",
@@ -643,9 +637,9 @@
         ".agent/qa/nf-c13-qa.json"
       ],
       "blocker": {
-        "owner": "repository reviewer/operator",
-        "need": "passing CI and independently reviewed PR merge, then separate H-FRAMEWORK-RELEASE human sign-off for final mainline candidate",
-        "resume": "review PR #140, merge through authorized reviewer, requalify actual merge identity, sign off and tag"
+        "owner": "repository human reviewer and operator",
+        "need": "review and merge PR #140 without self-merge; independently requalify actual merged candidate, then H-FRAMEWORK-RELEASE sign-off and tag",
+        "resume": "review PR #140, merge through independent human, requalify actual merge identity, sign off and tag"
       }
     }
   ],

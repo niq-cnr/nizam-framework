@@ -1,0 +1,77 @@
+{
+  "feature_id": "NF-04",
+  "contract_id": "nf-c13",
+  "reviewer": "/root/control_registry independent evaluator",
+  "verdict": "pass",
+  "qa_pass": true,
+  "executed_at": "2026-10-27T08:47:37.301336+00:00",
+  "assessed_commit": "46b2aeb691b9692c371b4e6bc51e8dddd125a17e",
+  "ci_checkout_commit": "980f5530ac5bf5813e6d1f51ac6f9a073f0cded3",
+  "ci_tree": "e4c454f17db6a523a6d6319ef43b2539f215727d",
+  "checks_run": 4,
+  "checks_passed": 4,
+  "checks": [
+    {
+      "command": "python3 tools/test_governance_skill.py (inside CI fixture suite)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-job-log-attempt1-20261027T084540Z-84532efd.capture.json",
+      "note": "8 methods in Linux CI fixture suite on merge checkout; no claim of independent execution on literal head."
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh (Linux CI)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-job-log-attempt1-20261027T084540Z-84532efd.capture.json",
+      "note": "176/176 fixtures accounted, zero failed; metadata: .agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-job-final-attempt1-20261027T084544Z-9bcc295c.capture.json"
+    },
+    {
+      "command": "bash tools/validate.sh (Linux CI)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-validate-log-attempt1-20261027T084644Z-f69f0f68.capture.json",
+      "note": "16 passed, zero failed on same PR merge checkout."
+    },
+    {
+      "command": "bash tools/validate.sh --payload (Linux CI e2e bootstrap)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-bootstrap-log-attempt1-20261027T084644Z-13217787.capture.json",
+      "note": "CI e2e reports payload validation both invocation forms; source tree identical to candidate."
+    }
+  ],
+  "adversarial_check": {
+    "description": "Previous independent payload carve-out control verifies indexed absent docs module is allowed while escaping symlink fails before carve-out. C13 bytes and consumed index capabilities are unchanged.",
+    "result": "pass",
+    "evidence": ".agent/evidence/nf-c13/evaluator/nf-c13-qa-adversarial.txt"
+  },
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "identity_evidence": [
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-identity-attempt1-20261027T082407Z-312df7e1.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-merge-tree-identity-attempt1-20261027T083451Z-a31844ab.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-verify-ci-attempt1-20261027T084709Z-baf5a606.capture.json"
+  ],
+  "fixture_anchor_review": ".agent/qa/nf-c13-fixture-anchor-review.json",
+  "earlier_mac_verdict_retained": ".agent/qa/nf-c13-qa.json",
+  "ci_run": "https://github.com/niq-cnr/nizam-framework/actions/runs/40471681548",
+  "ci_job": "https://github.com/niq-cnr/nizam-framework/actions/runs/40471681548/job/122080018271",
+  "limitations": [
+    "CI head 46b was not the checked-out commit: checkout was synthetic merge 980f. They have identical Git tree; commit/history-sensitive operations were exercised on merge, not literal head.",
+    "C13 source, test and fixture blobs match earlier d4 independent evaluation; index changed only framework version, with exact capability list identical.",
+    "The earlier macOS fixture run remains failed due its observed environment limitations; Linux CI supplies a separate passing execution and does not relabel that run.",
+    "This is bounded NF-03/NF-04 deterministic acceptance only, not release decision, exact-pair qualification, behavioral qualification, commissioning or adoption."
+  ],
+  "evidence_files": [
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-job-log-attempt1-20261027T084540Z-84532efd.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-job-final-attempt1-20261027T084544Z-9bcc295c.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-validate-log-attempt1-20261027T084644Z-f69f0f68.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-ci-bootstrap-log-attempt1-20261027T084644Z-13217787.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-identity-attempt1-20261027T082407Z-312df7e1.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-merge-tree-identity-attempt1-20261027T083451Z-a31844ab.capture.json",
+    ".agent/evidence/nf-c13-ci-followup/nf-c13-ci-followup-verify-ci-attempt1-20261027T084709Z-baf5a606.capture.json",
+    ".agent/qa/nf-c13-fixture-anchor-review.json",
+    ".agent/evidence/nf-c13/evaluator/nf-c13-qa-adversarial.txt"
+  ]
+}
