@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-10-27"
+    summary: "Define optional read-only bounded local host observation and trusted exact-pair resolver interfaces; no mandatory adapter or DS runtime dependency."
   - version: "0.7.0"
     date: "2026-10-27"
     summary: "Reference the optional domain-skill boundary without adding an adapter requirement, permission or external dependency."
@@ -442,3 +445,71 @@ runtime-session controller/verifier capabilities.
 - [Session schema](..&#47;schema/runtime_session.schema.json) and
   [operation schema](..&#47;schema/runtime_operation.schema.json) — existing records,
   not live runtime proof.
+
+## 8. Optional local skill recommendations
+
+This optional interface adds no mandatory adapter item. The canonical context
+route lives in tools/SKILL.md Section 2.1 and the authority boundary in
+standard/domain_skill_compatibility.md. tools/recommended_skills.json remains
+empty: implementation and synthetic tests do not qualify any external package.
+
+The read-only CLI accepts `--config` and optional `--catalogue` local JSON files.
+It bounds each at 1 MiB and rejects duplicate keys. It never selects a verifier
+from data and has no real trusted verifier, so it cannot emit a compatible offer.
+All outcomes are advisory to core compliance. Disabled/declined requests return
+before package roots, inventories or bodies are inspected. The resolver never
+executes commands, accesses the network, acquires credentials or mutates files.
+
+Host application code may call `resolve(config, catalogue, framework=identity,
+verifier=trusted_adapter, required_checks=host_requirements)`. `framework` is a
+measured `FrameworkIdentity` with source commit, payload SHA256 and compatibility
+surface SHA256, supplied independently of submitted reports. Required checks
+come separately from adopted host policy, remain unchanged in every result and
+stay unassessed. Direct/alternate authoring and decline confer no waiver.
+
+The configuration explicitly selects enabled state, task_kind, selected_skill,
+absolute canonical root, package-relative directory, entrypoint, format_version
+and inventory. Package-relative paths are case-sensitive ASCII POSIX paths using
+letters/digits/dot/underscore/hyphen/slash; no absolute, empty, dot, dotdot,
+backslash or NUL components are accepted. Symlinked root ancestors are rejected;
+hosts must supply the actual canonical root, not an alias. No ambient discovery
+or unrelated-package enumeration occurs. Unsupported no-follow/dir_fd hosts
+return unverified rather than using an unsafe fallback.
+
+`nizam-local-observation/1` is a Nizam host API, not a DS package manifest. Each
+complete file record has only path, nonnegative integer size and lowercase
+SHA256. Hidden/untracked files count; there are no exclusions. The canonical
+host digest is SHA256 over ASCII JSON of `{"version":
+"nizam-local-observation/1","files":sorted_records}` using sorted keys, comma
+and colon separators, ensure_ascii=true and no trailing newline. Records are
+sorted by exact path. It is distinct from a DS inventory/self-exclusion digest.
+Each file is read and hashed from the same stable descriptor; complete file
+sets, metadata and anchored root identities are checked before/after.
+
+Bounds are 4096 files, 16 MiB per file, 64 MiB aggregate bytes, 1024-byte relative
+paths, 255-byte components, depth 16 and a 1 MiB entrypoint. One operation-wide
+budget counts at most 16384 visited entries and 4096 visited directories, including
+ancestors, the selected root, empty directories and repeated verification walks.
+Enumeration is incremental and rejects overflow before storing an over-budget
+entry; a truncated inventory is never called complete. The result contains
+only selected entrypoint identity/path and observation digest, never body text.
+The host must revalidate bytes/containment before deliberately loading the path;
+a returned path does not authorize or guarantee a future filesystem read.
+
+Only trusted application code can install a `HostVerifier` subclass. No actual
+DS mapping or release verifier is supplied. Its pre-established producer/key/store
+trust must verify the accepted immutable proof, release activation, expiry and
+limitations locally. `qualification_binding` binds the canonical catalogue digest
+and its framework source commit, exact entry digest, package name/version/origin,
+DS identity, accepted contracts, measured framework source/payload/surface, actual
+host observation digest, entrypoint and qualification metadata. The v1 catalogue
+belongs to the measured framework source. A `VerifiedQualification` must match
+that complete binding, proof digest and producer and attest both released state
+and supported mapping. Missing, forged, stale, unsupported or unreleased proof
+returns no offer; arbitrary accepted=true JSON grants nothing. Synthetic test
+verifiers are fictional control-flow fixtures, never accepted DS evidence.
+
+Catalogue lifecycle, local observation, evidence admission and host acceptance
+remain separate. Candidate/verified never offer; recommended also needs trusted
+released activation. Withdrawal returns withdrawn without reading package bytes,
+erasing history, uninstalling packages or changing governance/task state.

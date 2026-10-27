@@ -2,10 +2,13 @@
 id: nizam-domain-skill-compatibility
 title: "Optional Domain Skill Compatibility"
 description: "Authority and evidence boundaries for optional domain skills used with Nizam."
-version: 1.0.0
+version: 1.1.0
 status: active
 authoritative_source: standard/domain_skill_compatibility.md
 change_log:
+  - version: "1.1.0"
+    date: "2026-10-27"
+    summary: "Reference bounded offline selected-package observation and host-programmatic trust without activating catalogue entries."
   - version: "1.0.0"
     date: "2026-10-27"
     summary: "Define optional selection, distinct artifact and recommendation states, and host-owned assurance."
@@ -84,3 +87,16 @@ Nizam until their exact bytes and the actual framework candidate pass the requir
 independent and exact-pair qualification. Independent documentation releases do not
 wait for Nizam. Preserve a prior qualified pin when evaluating a successor; if that
 prior pin is invalid, disable its recommendation instead of restoring a false claim.
+
+## Local observation and contextual routing
+
+The optional tools/skill_recommendations.py resolver uses explicit host roots
+and a Nizam-owned local observation inventory. Its API and bounds are defined
+in tools/interface.md Section 8. It hashes selected-package bytes for integrity
+without interpreting skill bodies. Only a trusted host verifier can establish
+released-catalogue activation and accepted exact-pair qualification; data fields
+cannot install that verifier. No real DS package mapping ships with this API,
+so real package compatibility remains unverified and the catalogue stays empty.
+Candidate, verified and unreleased entries never activate an offer. The host
+loads a deliberately selected relevant entrypoint only under existing authority
+and after verifying the observation still matches its actual bytes.

@@ -1,0 +1,29 @@
+{
+  "task": "NF-10/NF-11",
+  "assurance_tier": "High-assurance",
+  "contract_status": "approved",
+  "contract_sha256": "fb63838bf639b2d054b926fb8fea0b338de20415db3c1abcddfd32c9b055bdeb",
+  "role_assignments": {
+    "orchestrator": "/root",
+    "planner": "/root/optional_scaffold",
+    "generator": "/root/core_evaluator",
+    "validator": "/root/resolver_validator",
+    "evaluator": "/root/first_contact"
+  },
+  "role_separation": "Distinct sessions assigned for this task; prior different-task roles do not grant a gate.",
+  "prerequisites": {
+    "NF-05": ".agent/qa/nf-first-contact-qa.json",
+    "NF-09": ".agent/qa/nf-optional-policy-qa.json",
+    "NF-01": ".agent/qa/nf-intake-review.json"
+  },
+  "preflight": ".agent/evidence/nf-resolver/nf-resolver-high-risk-preflight-attempt1-20261027T081609Z-f458b456.capture.json",
+  "sandbox": "unavailable on this host; dedicated filesystem isolation boundary suite required, no sandbox conformance claim.",
+  "note": "Only Orchestrator coordinates; lifecycle counters unchanged.",
+  "prior_contract_sha256": "b9ef956358cc860071975894097ff0504b95b30a7f7594c4bb0815174ebe65c7",
+  "amendment": {
+    "classification": "mechanical",
+    "path": ".agent/evidence/nf-resolver/amendment-fixture-version.json",
+    "validator": ".agent/validator/nf-resolver-fixture-amendment.json",
+    "preserved_roles_and_invariants": true
+  }
+}

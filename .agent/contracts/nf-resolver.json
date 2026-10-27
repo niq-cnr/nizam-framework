@@ -43,6 +43,18 @@
       {
         "path": "NIZAM.json",
         "purpose": "Index resolver or routing source only if required by intentional-subset governance index semantics."
+      },
+      {
+        "path": "tools/fixtures/skill_index_neg_dangling_module.json",
+        "purpose": "Maintain unconditional C13 version parity for fixture."
+      },
+      {
+        "path": "tools/fixtures/skill_index_neg_unindexed_capability.json",
+        "purpose": "Maintain unconditional C13 version parity for fixture."
+      },
+      {
+        "path": "tools/test_runtime_session.py",
+        "purpose": "Refresh the derived fixture-tree digest and retain preservation guard."
       }
     ]
   },
@@ -280,5 +292,32 @@
   "approval_evidence": {
     "mode_a": ".agent/validator/nf-resolver-mode-a-rev3.json",
     "contract_review": ".agent/qa/nf-resolver-contract-review-rev3.json"
-  }
+  },
+  "amendments": [
+    {
+      "at": "2026-10-27T08:31:12Z",
+      "by": "start_path:amend-contract",
+      "type": "lightweight-scope-or-verification-update",
+      "amendment_class": "mechanical",
+      "re_approval_required": false,
+      "summary": "Mechanically align both C13 fixture manifest versions to the approved canonical SKILL and skill.json bump; regenerate the fixture-tree anchor while preserving all other fixture bytes and tests.",
+      "prior_contract_sha256": "b9ef956358cc860071975894097ff0504b95b30a7f7594c4bb0815174ebe65c7",
+      "added_files": [
+        "tools/fixtures/skill_index_neg_dangling_module.json",
+        "tools/fixtures/skill_index_neg_unindexed_capability.json",
+        "tools/test_runtime_session.py"
+      ],
+      "updated_verification": [],
+      "scope_diff": {
+        "files_create_added": [],
+        "files_modify_added": [
+          "tools/fixtures/skill_index_neg_dangling_module.json",
+          "tools/fixtures/skill_index_neg_unindexed_capability.json",
+          "tools/test_runtime_session.py"
+        ]
+      },
+      "verification_diff": [],
+      "invariants_preserved": true
+    }
+  ]
 }

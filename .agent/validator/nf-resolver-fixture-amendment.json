@@ -1,0 +1,31 @@
+{
+  "contract_id": "nf-resolver",
+  "review_type": "validator_mechanical_fixture_amendment",
+  "reviewer": "/root/resolver_validator",
+  "reviewed_at": "2026-10-27T08:30:39.740494+00:00",
+  "amendment_sha256": "24fd47116d5784f1e5a64e817bb54a0eca986753eb845db2bd3ca1d7c70b8689",
+  "prior_contract_sha256": "b9ef956358cc860071975894097ff0504b95b30a7f7594c4bb0815174ebe65c7",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_checks": [
+    "Dry-run classifier reports mechanical, three added paths, no verification or goals changes, and no reapproval.",
+    "Both C13 negatives still use 0.8.2 while approved skill.json and SKILL.md now use 0.9.0; unconditional parity requires fixture version alignment.",
+    "The runtime suite fixture-tree anchor currently matches the actual 175-file SHA256 inventory, so changing those two fixture bytes necessarily changes its digest.",
+    "Amendment does not alter resolver security, recommendation, contract goals, external dependencies or installed governance."
+  ],
+  "conditions": [
+    "Change only version values in the two named fixture manifests. Preserve all remaining fixture bytes and paths, compare inventory before/after and independently recompute the anchor.",
+    "Change only the derived digest literal in tools/test_runtime_session.py; retain fixture-preservation assertions and run fixture-claim plus targeted C13 negatives.",
+    "The amendment is a scope authorization, not Mode B or independent QA of resulting changes."
+  ],
+  "evidence": [
+    ".agent/evidence/nf-resolver/amendment-fixture-version.json"
+  ],
+  "limitations": [
+    "No product file modified by this review."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "contract_id": "nf-resolver",
+  "summary": "Mechanically align both C13 fixture manifest versions to the approved canonical SKILL and skill.json bump; regenerate the fixture-tree anchor while preserving all other fixture bytes and tests.",
+  "invariants_preserved": true,
+  "files_modify_add": [
+    {
+      "path": "tools/fixtures/skill_index_neg_dangling_module.json",
+      "purpose": "Maintain unconditional C13 version parity for fixture."
+    },
+    {
+      "path": "tools/fixtures/skill_index_neg_unindexed_capability.json",
+      "purpose": "Maintain unconditional C13 version parity for fixture."
+    },
+    {
+      "path": "tools/test_runtime_session.py",
+      "purpose": "Refresh the derived fixture-tree digest and retain preservation guard."
+    }
+  ]
+}
