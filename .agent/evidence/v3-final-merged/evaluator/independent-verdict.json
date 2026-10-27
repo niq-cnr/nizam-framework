@@ -1,0 +1,54 @@
+{
+  "stage": "Independent exact-merged release candidate QA",
+  "assessed_commit": "2b8298ae1d5a41534e00b6710a738b4b181b87fa",
+  "candidate_sha256": "3a5625dbe680bd359396ec37a6aa2363c779adbbeaab7e617de55064c59b4388",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "checks": [
+    {
+      "step": "install-rollback",
+      "path": ".agent/evidence/v3-final-merged/evaluator/v3-final-merged-install-rollback-attempt1-20261027T103358Z-93c62369.capture.json",
+      "sha256": "fd2f444fff090154f116bd802faf07f9b1c0bb1e45a5b8a04790a50b79a9c410",
+      "exit_code": 0
+    },
+    {
+      "step": "public-entry",
+      "path": ".agent/evidence/v3-final-merged/evaluator/v3-final-merged-public-entry-attempt1-20261027T103353Z-e9d8fb17.capture.json",
+      "sha256": "071c36d2823be7d3b663f74e40b27cccadfa341d85e7333e5a9bbb4ef35aca42",
+      "exit_code": 0
+    },
+    {
+      "step": "release-anchors",
+      "path": ".agent/evidence/v3-final-merged/evaluator/v3-final-merged-release-anchors-attempt1-20261027T103349Z-ff7d52aa.capture.json",
+      "sha256": "f938fc854df1469fc3c8502f8841fb39f37ad55f2d40f7d46937cd2a89a5a387",
+      "exit_code": 0
+    }
+  ],
+  "rehearsal": {
+    "candidate_payload": {
+      "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+      "files": 331,
+      "inventory_sha256": "7570a7234d171970add07176b1d411dfe957e0b07fd649413a78d5d4a10ffd6c"
+    },
+    "candidate_sha": "2b8298ae1d5a41534e00b6710a738b4b181b87fa",
+    "commissioning": "not_performed",
+    "core_install": "passed",
+    "documentation_origin": "not_configured_or_contacted",
+    "documentation_packages": "absent",
+    "prior_payload": {
+      "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+      "files": 316,
+      "inventory_sha256": "db3ee37a1f490e8f7c0755a3ddeb2516281dbbf91b774cd351731b70b548b15e"
+    },
+    "prior_sha": "603afc7b17919334a6a01df1e39e63798d9d0acd",
+    "release_publication": "not_performed",
+    "rollback": "passed"
+  },
+  "limitations": [
+    "CI, release sign-off, publication, self-adoption and commissioning are separate."
+  ]
+}
