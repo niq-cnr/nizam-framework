@@ -112,6 +112,21 @@ class CatalogueSchemaTests(unittest.TestCase):
         self.assertIn('qualification', entry)
         self.assertIn('identity', entry)
 
+    def test_withdrawal_cannot_erase_exact_history(self):
+        entry = self.qualified_shape()
+        entry.update(status='withdrawn', withdrawal_reason='Synthetic qualification revoked.')
+        self.validator.validate(self.catalogue(entry))
+        required_history = ['package_version', 'origin', 'identity', 'supported_contracts',
+                            'tested_framework', 'qualification']
+        for key in required_history:
+            with self.subTest(missing=key):
+                erased = copy.deepcopy(entry)
+                del erased[key]
+                self.assertInvalid(self.catalogue(erased))
+        skeleton = self.candidate()
+        skeleton.update(status='withdrawn', withdrawal_reason='Synthetic qualification revoked.')
+        self.assertInvalid(self.catalogue(skeleton))
+
     def test_closed_format_and_local_schema_refs(self):
         self.assertInvalid({'catalogue_version': '2.0.0', 'mapping_version': '1.0.0',
                             'entries': []})
