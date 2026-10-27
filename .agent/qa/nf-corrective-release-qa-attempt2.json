@@ -1,0 +1,116 @@
+{
+  "feature_id": "NF-22",
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "adversarial": {
+    "performed": true,
+    "description": "Incorrect immutable prior SHA is rejected before cloning or bootstrap; installed inventory independently recomputed from exact candidate Git blobs matches.",
+    "evidence": ".agent/evidence/nf-corrective-release/evaluator/exact-payload-attempt2.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt2-20261027T074731Z-83b4c9f4.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-prior-pin-negative-attempt1-20261027T074808Z-bc434032.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt2-20261027T074731Z-01305c2f.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt2-20261027T074731Z-3ea35723.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-prior-pin-negative-attempt1-20261027T074808Z-bc434032.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt2-20261027T074731Z-3ea35723.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt2-20261027T074731Z-83b4c9f4.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-prior-pin-negative-attempt1-20261027T074808Z-bc434032.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt2-20261027T074731Z-83b4c9f4.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt2-20261027T074731Z-01305c2f.capture.json",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt2-20261027T074731Z-01305c2f.stderr.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt2-20261027T074731Z-3ea35723.stdout.txt",
+    ".agent/evidence/nf-corrective-release/evaluator/exact-payload-attempt2.json",
+    ".agent/evidence/nf-corrective-release/evaluator/clone-identity-attempt2.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All three contract commands passed independently on exact 044f2056; prior-pin negative and Git-blob/payload parity passed. Bounded implementation verification, not release sign-off."
+  },
+  "candidate_sha": "044f20567558421c6b327829d43baedfe790c740",
+  "independent_evaluator": "first_contact",
+  "environment": "Darwin arm64 CPython 3.14.6",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,sys; command=[sys.executable,\"tools/test_corrective_release.py\",\"--candidate\",\"HEAD\",\"--prior\",\"v2.0.0\",\"--prior-sha\",\"0\"*40]; r=subprocess.run(command,capture_output=True,text=True); events=[json.loads(line) for line in r.stdout.splitlines() if line.startswith(\"{\")]; assert r.returncode != 0; assert len(events)==2; assert all(event[\"argv\"][:3]==[\"git\",\"rev-parse\",\"--verify\"] for event in events); print(json.dumps({\"argv\":command,\"observed_exit\":r.returncode,\"executed_events\":events,\"result\":\"incorrect immutable prior pin rejected before clone/bootstrap/install\"},sort_keys=True))"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-prior-pin-negative-attempt1-20261027T074808Z-bc434032.capture.json"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v2.0.0",
+        "--prior-sha",
+        "603afc7b17919334a6a01df1e39e63798d9d0acd"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-core-install-rollback-attempt2-20261027T074731Z-3ea35723.capture.json"
+    },
+    {
+      "command": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-release-anchors-attempt2-20261027T074731Z-83b4c9f4.capture.json"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "exit_code": 0,
+      "capture": ".agent/evidence/nf-corrective-release/evaluator/nf-corrective-release-independent-public-entry-attempt2-20261027T074731Z-01305c2f.capture.json"
+    }
+  ],
+  "payload": {
+    "candidate_sha": "044f20567558421c6b327829d43baedfe790c740",
+    "installed_payload_inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b",
+    "source_git_blob_inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b",
+    "files": 321,
+    "source_vs_installed": "exact match",
+    "report": {
+      "candidate_payload": {
+        "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+        "files": 321,
+        "inventory_sha256": "e01f6c2158d70f1e9df7d1beea367dce14d6d7b92f7b0937b5d933ece60aa74b"
+      },
+      "candidate_sha": "044f20567558421c6b327829d43baedfe790c740",
+      "commissioning": "not_performed",
+      "core_install": "passed",
+      "documentation_origin": "not_configured_or_contacted",
+      "documentation_packages": "absent",
+      "prior_payload": {
+        "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+        "files": 316,
+        "inventory_sha256": "db3ee37a1f490e8f7c0755a3ddeb2516281dbbf91b774cd351731b70b548b15e"
+      },
+      "prior_sha": "603afc7b17919334a6a01df1e39e63798d9d0acd",
+      "release_publication": "not_performed",
+      "rollback": "passed"
+    },
+    "candidate_publication": "not_performed",
+    "prior_failed_candidate": "08f3f01fc092109c8baf3aba5816af0ef203a089"
+  },
+  "limitations": [
+    "No release, merge, self-adoption or commissioning performed; human release sign-off remains required.",
+    "No DS inputs or documentation packages selected or qualified.",
+    "Root identified preparation prose that should become dated facts before publication; any resulting new candidate identity requires affected final QA. This verdict describes only 044f2056."
+  ],
+  "supersedes": ".agent/qa/nf-corrective-release-qa-attempt1.json"
+}
