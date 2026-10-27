@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.7.1
+version: 0.7.2
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.7.2"
+    date: "2026-10-27"
+    summary: "NF-R02 (Finding F10): reconcile Section 5.2 (Incremental Adoption Tiers) with Section 1 and Section 2 point 2 so every installation retains the complete, atomic, verified six-module-plus-index .nizam/ payload (standard/, templates/, schema/, tools/, methodology/, ecosystem/, and NIZAM.json), while Tiers 1-3 express proportionate workflow activation in external consumer configuration (reconciled with JR-20/JR-45)."
   - version: "0.7.1"
     date: "2026-10-19"
     summary: "v1.9.0 audit follow-up C2 (F2): require explicit --git-repo DIR and --expected-sha SHA (outside the target payload) for commit-bound content-integrity verification in bootstrap.sh --verify-only and tools/payload_integrity.py, never execute verifier code from inside the target payload, label unbound --source-root equality as directory_match_unbound, and forbid downgrading helper exit 2 or reference errors to structural pass."
@@ -195,21 +198,30 @@ not mutate the consumer's root documents or CI configuration.
   those are exactly the categories a consumer repository must reconcile by hand against
   the templates this framework ships.
 
-### 5.2 Incremental Adoption Tiers
+### 5.2 Incremental Adoption Tiers (External Consumer Activation)
 
-A consumer repository does not have to adopt the full contract-first loop on day one.
-Three incremental tiers are supported:
+A consumer repository does not have to activate the full contract-first execution loop on
+day one. However, **the installed `.nizam/` directory is always the complete, atomic,
+verified six-module-plus-index payload** (`standard/`, `templates/`, `schema/`, `tools/`,
+`methodology/`, `ecosystem/`, and `NIZAM.json` — Section 2, point 2). Partial or
+missing-module `.nizam/` directories are never valid installations and are rejected by
+`bootstrap.sh --verify-only` and `tools/validate.sh --payload`.
 
-1. **Tier 1 — `docs-standard-only`.** The consumer inherits `standard/` alone (the
-   governance documents themselves), with no `templates/` and no contract loop. This is
-   the minimum viable adoption: the consumer's agents read and are bound by the
-   governance documents, but no Generator/Validator/Evaluator cycle runs yet.
-2. **Tier 2 — `templates`.** The consumer additionally inherits `templates/`, adding the
-   `CONTEXT.md`, `AGENTS.md`, ADR, and other consumer-authored templates so it can author
-   its own governed project documents, still without running the contract loop.
-3. **Tier 3 — `full loop`.** The consumer inherits the complete governance payload and
-   runs the complete contract-first Generator/Validator/Evaluator cycle described in
-   `methodology/01_execution.md`, end to end.
+Proportionate incremental adoption is expressed in external consumer configuration and
+workflow activation across three tiers:
+
+1. **Tier 1 — `docs-standard-only` (workflow activation).** The consumer installs and
+   verifies the complete `.nizam/` payload, and activates `standard/` governance
+   obligations in its root `CONTEXT.md` / `AGENTS.md` and CI compliance checks without
+   yet activating template-driven document authoring or the contract-first execution loop.
+2. **Tier 2 — `templates` (workflow activation).** With the complete verified `.nizam/`
+   payload installed, the consumer additionally activates `.nizam/templates/` (`CONTEXT.md`,
+   `AGENTS.md`, ADR, and project document templates) to author governed project documents,
+   still without running the contract-first execution loop.
+3. **Tier 3 — `full loop` (workflow activation).** With the complete verified `.nizam/`
+   payload installed, the consumer activates the complete contract-first
+   Generator/Validator/Evaluator cycle described in `methodology/01_execution.md`, end to
+   end.
 
 ## 6. Enforcement
 

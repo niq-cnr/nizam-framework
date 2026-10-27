@@ -1,0 +1,235 @@
+{
+  "schema_version": "1.0.0",
+  "mandate_id": "NF-OWNER-2026-10-27",
+  "mandate_revision": "1.0",
+  "repository": "https://github.com/niq-cnr/nizam-framework.git",
+  "baseline": {
+    "remote_ref": "origin/main",
+    "commit_sha": "2b8298ae1d5a41534e00b6710a738b4b181b87fa",
+    "tree_sha": "cf9bf9ffd066c4c2724837baaf652323af230f52",
+    "authored_framework_version": "3.0.0",
+    "installed_nizam_pin": {
+      "version": "v2.0.0",
+      "commit_sha": "603afc7b17919334a6a01df1e39e63798d9d0acd"
+    },
+    "worktree_branch": "feat/nf-owner-20261027"
+  },
+  "preserved_programs": {
+    "jev_readiness": {
+      "authority_path": "docs/planning/jev-readiness/execution-dag.json",
+      "requirements_range": "JR-00..JR-46",
+      "requirement_count": 36,
+      "acceptance_criteria_count": 239,
+      "disposition": "retain",
+      "standalone_boundary": "Nizam offline foundation and generic optional external evidence admission (NF-R04) execute without importing or depending on Agentic SDLC; live provider, multi-repo, and consumer rollout nodes remain externally gated."
+    },
+    "phase_020_sbcl_fresh_acceptance": {
+      "phase_id": "020-sbcl-fresh-acceptance",
+      "feature_sequence": ["130", "131", "132"],
+      "active_feature": "130",
+      "run_state_status": "in_progress",
+      "disposition": "retain",
+      "rationale": "Preserves active Phase 020 sequence (130 hermetic committed-source acceptance -> 131 CI/integration -> 132 captured close) and .agent/run_state.json lifecycle/circuit counters untouched."
+    },
+    "docker_trial_adapter_and_debts": {
+      "issue": "#107",
+      "feature_id": "134",
+      "open_debts": ["NDEBT-034", "NDEBT-040", "NDEBT-056"],
+      "disposition": "retain",
+      "rationale": "Feature 134 delivered tools/docker_trial_sandbox.sh; NDEBT-056 retains digest re-pinning and live-model/capable-host closure criteria; NDEBT-034 and NDEBT-040 retain their exact closure gates."
+    },
+    "api_ref_pilot": {
+      "program_id": "API-REF-PILOT",
+      "status": "approved_not_started",
+      "disposition": "defer",
+      "rationale": "Retains gap-first three-module scope, 12-task benchmark, 30% lower median task time, >=11/12 correctness, <10s deterministic generation, and conditional integration without reordering active Jev or remediation work."
+    },
+    "documentation_alignment": {
+      "requirements_range": "NF-01..NF-22",
+      "disposition": "already_satisfied",
+      "rationale": "Delivered in commits up to 2b8298ae1d5a41534e00b6710a738b4b181b87fa; Mandate NF-OWNER-2026-10-27 allocates NF-R01..NF-R05 and NF-AC01..NF-AC05 to avoid ID collision."
+    }
+  },
+  "nodes": [
+    {
+      "id": "N00",
+      "title": "Repository Intake, Authority Separation & Environment Audit",
+      "status": "completed",
+      "depends_on": [],
+      "requirements": ["NF-R01", "NF-R02", "NF-R05"],
+      "acceptance_criteria": ["NF-AC02", "NF-AC05"],
+      "scope_paths": [
+        "docs/planning/nf-owner-2026-10-27/INTAKE_AND_BACKLOG_CROSSWALK.md"
+      ],
+      "verification_commands": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_owner_dag_and_backlog.py"
+      ],
+      "rollback_boundary": "Read-only inspection and isolated worktree creation on branch feat/nf-owner-20261027; .nizam/ (v2.0.0) and .agent/run_state.json preserved byte-for-byte."
+    },
+    {
+      "id": "N01",
+      "title": "Full Backlog Reconciliation, Crosswalk & Integrated Execution DAG",
+      "status": "completed",
+      "depends_on": ["N00"],
+      "requirements": ["NF-R01", "NF-R02", "NF-R03", "NF-R04", "NF-R05"],
+      "acceptance_criteria": ["NF-AC01", "NF-AC02", "NF-AC03", "NF-AC04", "NF-AC05"],
+      "scope_paths": [
+        "docs/planning/nf-owner-2026-10-27/execution-dag.json",
+        "docs/planning/nf-owner-2026-10-27/INTAKE_AND_BACKLOG_CROSSWALK.md",
+        "tools/test_nf_owner_dag_and_backlog.py"
+      ],
+      "verification_commands": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_owner_dag_and_backlog.py"
+      ],
+      "rollback_boundary": "Planning and test additions under docs/planning/nf-owner-2026-10-27/ and tools/test_nf_owner_dag_and_backlog.py; does not replace JR execution-dag.json or DEBT.md."
+    },
+    {
+      "id": "N02",
+      "title": "Hardened Immutable Git Seam Across Assurance, Entry, Review & Payload Integrity (Finding F02)",
+      "status": "completed",
+      "depends_on": ["N01"],
+      "requirements": ["NF-R01"],
+      "acceptance_criteria": ["NF-AC01"],
+      "scope_paths": [
+        "tools/git_seam.py",
+        "tools/workflow_assurance.py",
+        "tools/start_path.py",
+        "tools/convergent_review.py",
+        "tools/payload_integrity.py",
+        "tools/test_nf_ac01_git_identity.py"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac01_git_identity.py -v",
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py"
+      ],
+      "rollback_boundary": "Revert tools/git_seam.py and seam wiring in workflow_assurance.py, start_path.py, convergent_review.py, and payload_integrity.py."
+    },
+    {
+      "id": "N03",
+      "title": "Installation/Activation Policy & Finite Circuit-Breaker Recovery Reconciliation (Findings F10, F11)",
+      "status": "completed",
+      "depends_on": ["N01"],
+      "requirements": ["NF-R02"],
+      "acceptance_criteria": ["NF-AC02"],
+      "scope_paths": [
+        "standard/GIP.md",
+        "methodology/03_circuit_breaker.md",
+        "tools/test_nf_ac02_policy_reconciliation.py"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac02_policy_reconciliation.py -v"
+      ],
+      "rollback_boundary": "Revert standard/GIP.md, methodology/03_circuit_breaker.md, and tools/test_nf_ac02_policy_reconciliation.py."
+    },
+    {
+      "id": "N04",
+      "title": "Core Standalone Consumer Qualification & v2.0.0 Upgrade Compatibility",
+      "status": "completed",
+      "depends_on": ["N02", "N03"],
+      "requirements": ["NF-R05"],
+      "acceptance_criteria": ["NF-AC05"],
+      "scope_paths": [
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py -v -k test_n04"
+      ],
+      "rollback_boundary": "Disposable temporary repositories created in TMPDIR; zero mutations to consumer or host state."
+    },
+    {
+      "id": "N05",
+      "title": "Versioned 1.1.0 Typed Binary Coverage in Convergent Review (Finding F09)",
+      "status": "completed",
+      "depends_on": ["N02"],
+      "requirements": ["NF-R03"],
+      "acceptance_criteria": ["NF-AC03"],
+      "scope_paths": [
+        "schema/review_packet.schema.json",
+        "schema/README.md",
+        "tools/convergent_review.py",
+        "tools/test_nf_ac03_binary_review.py"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac03_binary_review.py -v",
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py --allow-unsupported-isolation"
+      ],
+      "rollback_boundary": "Revert schema/review_packet.schema.json 1.1.0 branch and binary record builders in tools/convergent_review.py; 1.0.0 packets remain unchanged."
+    },
+    {
+      "id": "N06",
+      "title": "Generic Optional External Evidence Contract, Schema & Neutral Conformance Corpus",
+      "status": "completed",
+      "depends_on": ["N01"],
+      "requirements": ["NF-R04"],
+      "acceptance_criteria": ["NF-AC04"],
+      "scope_paths": [
+        "schema/external_evidence_admission.schema.json",
+        "schema/README.md",
+        "NIZAM.json",
+        "docs/planning/nf-owner-2026-10-27/fixtures/external_evidence/conformance_corpus.json"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac04_generic_admission.py -v"
+      ],
+      "rollback_boundary": "Revert schema/external_evidence_admission.schema.json, corpus fixture, and index entries."
+    },
+    {
+      "id": "N07",
+      "title": "Nizam-Side Generic External Evidence Admission & Reconciliation Interface",
+      "status": "completed",
+      "depends_on": ["N02", "N06"],
+      "requirements": ["NF-R04"],
+      "acceptance_criteria": ["NF-AC04"],
+      "scope_paths": [
+        "tools/external_evidence.py",
+        "tools/README.md",
+        "NIZAM.json",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac04_generic_admission.py -v"
+      ],
+      "rollback_boundary": "Revert tools/external_evidence.py and tools/test_nf_ac04_generic_admission.py; standalone governance continues with zero external admission dependencies."
+    },
+    {
+      "id": "N08",
+      "title": "Extended Standalone Qualification: Binary Review, Generic Evidence Admission & G1-G6 Gate Closure",
+      "status": "completed",
+      "depends_on": ["N04", "N05", "N07"],
+      "requirements": ["NF-R03", "NF-R04", "NF-R05"],
+      "acceptance_criteria": ["NF-AC03", "NF-AC04", "NF-AC05"],
+      "scope_paths": [
+        "tools/test_nf_ac05_standalone_e2e.py",
+        "docs/planning/nf-owner-2026-10-27/ARCHITECTURE_AND_MIGRATION.md",
+        "docs/planning/nf-owner-2026-10-27/GAUNTLET_AND_GATES.md"
+      ],
+      "verification_commands": [
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py -v",
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+        "TMPDIR=/private/tmp PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload"
+      ],
+      "rollback_boundary": "Disposable consumer test environments and documentation artifacts under docs/planning/nf-owner-2026-10-27/."
+    },
+    {
+      "id": "J01",
+      "title": "External Consumer Rollout, Live Provider Trials & Downstream Adapter Verification",
+      "status": "externally_gated",
+      "depends_on": ["N08"],
+      "requirements": ["NF-R04", "NF-R05"],
+      "acceptance_criteria": ["NF-AC04", "NF-AC05"],
+      "external_gates": [
+        "H-RELEASE-CUT",
+        "H-CONSUMER-UPGRADE",
+        "LIVE-PROVIDER-BUDGET",
+        "LINUX-USERNS-OR-DOCKER-HOST"
+      ],
+      "scope_paths": [
+        "docs/planning/nf-owner-2026-10-27/GAUNTLET_AND_GATES.md"
+      ],
+      "verification_commands": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_owner_dag_and_backlog.py"
+      ],
+      "rollback_boundary": "Externally gated on operator release tag publication, consumer re-bootstrap authorization, and capable Linux/Docker host execution; never simulated or marked complete locally."
+    }
+  ]
+}
