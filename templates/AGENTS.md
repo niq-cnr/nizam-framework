@@ -2,10 +2,13 @@
 id: nizam-template-agents
 title: "AGENTS.md Template"
 description: "Consumer-repo AGENTS.md template: the session-objective skeleton a bootstrapped repository copies and completes with its active phase, current objective, and delegation-matrix reference."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: templates/AGENTS.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-27"
+    summary: "NF-05: route consumers through the installed index, canonical task classifier and stopping policy, with conditional ecosystem membership."
   - version: "0.2.0"
     date: "2026-10-11"
     summary: "Route Evaluator delegation to both independent contract review and implementation QA (A04a)."
@@ -28,26 +31,30 @@ fill-in-the-blanks.
 
 **Session Started:** {{YYYY-MM-DDTHH:MMZ}}
 
-## Mandatory Scope Check
+## Installed Governance
 
-Before performing any work in any session, confirm that {{REPO_NAME}} is listed as
-in-scope in the ecosystem's canonical scope document before starting or continuing any
-phase work. Treat an unlisted repository as out of scope by default and halt.
+Before planning, editing or reviewing, query `.nizam/NIZAM.json`, then load
+`.nizam/tools/SKILL.md`. Resolve indexed paths relative to `.nizam/` and read
+only the protocols the task needs. The consumer's own documents and extensions
+remain outside that immutable installation.
 
-## Delegation Matrix
+If this repository has configured ecosystem membership, verify the applicable
+scope using that membership's canonical scope document and adopted policy.
+Standalone adoption does not require ecosystem membership.
 
-This repository follows the multi-agent delegation matrix defined in
-`methodology/01_execution.md` and `standard/AGF.md`: `@planner` for architecture and
-spec, `@generator` for contracts and implementation, `@validator` for pre-code (Mode A)
-and post-code (Mode B) contract gates, `@evaluator` for independent Loop 1 contract testability review and Loop 2 implementation QA verdicts. Never skip either
-validator step.
+## Task Routing
 
-## Constraints
+Use `.nizam/tools/start_path.py classify` before starting a change. Follow the
+selected canonical route: `trivial`, `bugfix`, `small-change`,
+`standard-feature`, or `high-risk`. The installed skill routes to the applicable
+begin/done gates or approved feature contract and required independent review.
+Record scoped evidence through the installed tools before claiming completion.
 
-- Only implement the current `active_contract_id` from `.agent/run_state.json`.
-- Never mark a step COMPLETED without evidence captured under `.agent/evidence/`.
-- Halt and log to `docs/planning/DEBT.md` on the third consecutive failed attempt on any
-  step (the universal circuit breaker, `methodology/03_circuit_breaker.md`).
+Role allocation and contract gates are defined in
+`.nizam/standard/AGF.md` and `.nizam/methodology/01_execution.md`.
+The stopping policy is defined only in
+`.nizam/methodology/03_circuit_breaker.md`; follow that installed policy rather
+than a copied attempt threshold. Do not edit installed governance files.
 
 ## Handoff Notes
 

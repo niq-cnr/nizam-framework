@@ -1,0 +1,93 @@
+{
+  "contract_id": "nf-c13",
+  "feature_id": "NF-04",
+  "name": "NF-03/NF-04 complete C13 manifest enforcement",
+  "status": "approved",
+  "spec_ref": ".agent/nf-product-spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "schema/governance_skill.schema.json",
+        "purpose": "C13 schema, discriminating mutation suite or breaking migration"
+      },
+      {
+        "path": "tools/test_governance_skill.py",
+        "purpose": "C13 schema, discriminating mutation suite or breaking migration"
+      },
+      {
+        "path": "docs/migration-v3.0.0.md",
+        "purpose": "C13 schema, discriminating mutation suite or breaking migration"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/validate.sh",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "tools/fixtures/skill_index_neg_dangling_module.json",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "tools/fixtures/skill_index_neg_unindexed_capability.json",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "C13 enforcement, valid unrelated fixture fields and indexed schema reference"
+      }
+    ]
+  },
+  "non_goals": [
+    "No installed payload edits, new control IDs, DS contracts/packages, release tagging or adoption.",
+    "Preserve intentional subset, normalized path and symlink containment, payload non-injected module carve-outs.",
+    "No portable Agent Skills metadata or planning manifest schema changes."
+  ],
+  "acceptance_requirements": [
+    "Current skill passes complete typed identity/description/semver/entry/capability/runtime/state shape.",
+    "Missing and wrong typed required fields, malformed/duplicate capability names and fixture-prefixed version mismatch fail.",
+    "Schema extension policy explicit and new restrictions classified MAJOR with migration.",
+    "Existing subset/path/symlink/payload checks remain effective; dedicated old fixtures valid in unrelated fields."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All typed manifest/relational/containment mutation regressions; tests-only baseline demonstrates named defects",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_governance_skill.py",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Existing standing fixture suite and full/payload regression",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/fixtures_self_test.sh",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Full framework validation",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Consumer payload validation",
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh --payload",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 400,
+  "evidence_dir": ".agent/evidence/nf-c13",
+  "evidence_convention": "Exclusive start_path capture records with commands, input revision, exit, stdout/stderr; tests-first baseline retained.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1
+  },
+  "approval_evidence": {
+    "contract_review": ".agent/qa/nf-c13-contract-review.json"
+  }
+}

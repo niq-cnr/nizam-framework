@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:governance_skill.schema.json",
+  "title": "Nizam Governance Skill Manifest v1",
+  "description": "Governance manifest only: not the planning manifest or portable Agent Skills metadata. Producer extensions are allowed; recognized fields remain typed. Unique capability names and pointer containment/index/version parity are C13 relational rules.",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "version",
+    "entry_point",
+    "capabilities",
+    "runtime_requirements",
+    "state_interface"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "entry_point": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "module"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "module": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "runtime_requirements": {
+      "type": "object",
+      "required": [
+        "file_read_write",
+        "shell_execution",
+        "structured_data_parsing"
+      ],
+      "properties": {
+        "file_read_write": {
+          "type": "object",
+          "required": [
+            "required",
+            "description"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "shell_execution": {
+          "type": "object",
+          "required": [
+            "required",
+            "description"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "structured_data_parsing": {
+          "type": "object",
+          "required": [
+            "required",
+            "description"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "required",
+          "description"
+        ],
+        "properties": {
+          "required": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "state_interface": {
+      "type": "object",
+      "required": [
+        "root_index",
+        "artifact_families"
+      ],
+      "properties": {
+        "root_index": {
+          "type": "object",
+          "required": [
+            "path",
+            "description"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "artifact_families": {
+          "type": "object",
+          "required": [
+            "run_state",
+            "feature_list",
+            "contracts",
+            "qa_verdicts",
+            "evidence"
+          ],
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
