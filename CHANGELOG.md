@@ -10,8 +10,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Assessment and QA/receipt consumption accept unchanged, unselected inherited
-  symlink identities without following their targets. Selected inputs, record
-  paths, symlink ancestors and link/type/index/revision drift still fail closed.
+  symlink identities without following their targets. Existing non-feature routes
+  retain their immutable pre-begin link snapshots; later drift still fails.
+  Selected inputs, record paths, symlink ancestors and generic candidate
+  link/type/index/revision drift remain closed.
 
 ## [3.1.1] - 2026-10-28
 

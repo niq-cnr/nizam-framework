@@ -121,7 +121,8 @@ class Fixture:
 class Trace:
     """Observe actual Popen launches; never synthesize a Git result."""
     def __init__(self, fixture, label):
-        self.fixture = fixture; self.label = label; self.processes = []; self.entries = {}; self.objects = {}
+        self.fixture = fixture; self.label = label; self.processes = []
+        self.entries = {}; self.link_discovery_entries = {}; self.objects = {}
 
     def __enter__(self):
         original_popen, original_git, original_blobs = subprocess.Popen, api.git, api.blobs
@@ -136,7 +137,10 @@ class Trace:
                 for row in raw.split(b'\0'):
                     if not row: continue
                     metadata, name = row.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
-                    self.entries[(next(iter(commits)), name.decode())] = (mode, kind, oid)
+                    # Full-tree metadata discovers inherited links; path-limited
+                    # observations still prove the original selected read set.
+                    observed = self.entries if '--' in args else self.link_discovery_entries
+                    observed[(next(iter(commits)), name.decode())] = (mode, kind, oid)
             return raw
         def observe_blobs(root, ids):
             values = original_blobs(root, ids); self.objects.update(values); return values
@@ -149,14 +153,20 @@ class Trace:
         rows = [dict(argv=argv, pid=p.pid, actual_exit=p.returncode) for argv, p in self.processes]
         print('REAL_GIT_TRACE ' + json.dumps(dict(label=self.label, launches=rows), sort_keys=True))
 
-    def validate(self):
+    def validate(self, *, link_discovery=False):
         require(self.processes and all(argv[0] == 'git' and p.returncode == 0 for argv, p in self.processes), 'all counted launches must be successful real Git')
         require(set(self.entries) == set(self.fixture.readset()), 'exact per-revision/path observation set')
-        for (revision, path), (mode, kind, oid) in self.entries.items():
-            raw, executable = self.fixture.expected[path]
-            expected_oid = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
-            require((mode, kind, oid) == ('100755' if executable else '100644', 'blob', expected_oid), 'Git path/mode/type observation differs: ' + path)
-            require(self.objects.get(oid) == raw, 'actual observed blob bytes differ: ' + path)
+        expected_discovery = {(revision, path) for revision in (self.fixture.anchor, self.fixture.executed)
+                              for path in self.fixture.expected} if link_discovery else set()
+        require(set(self.link_discovery_entries) == expected_discovery,
+                'exact independently attributed inherited-link discovery metadata')
+        for observations in (self.entries, self.link_discovery_entries):
+            for (revision, path), (mode, kind, oid) in observations.items():
+                raw, executable = self.fixture.expected[path]
+                expected_oid = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+                require((mode, kind, oid) == ('100755' if executable else '100644', 'blob', expected_oid), 'Git path/mode/type observation differs: ' + path)
+                if observations is self.entries:
+                    require(self.objects.get(oid) == raw, 'actual observed blob bytes differ: ' + path)
 
 
 def count_reduction():
@@ -168,12 +178,12 @@ def count_reduction():
         oracle.validate()
         with Trace(f, 'full-candidate-including-fixed-identity') as optimized:
             f.call(revision=f.executed)
-        optimized.validate()
+        optimized.validate(link_discovery=True)
         counts = {}
         for label, trace in [('oracle', oracle), ('optimized', optimized)]:
             verbs = {}
             for argv, process in trace.processes:
-                verb = next((word for word in argv[3:] if word in ('rev-parse', 'ls-tree', 'cat-file', 'merge-base', 'remote')), 'other')
+                verb = next((word for word in argv[3:] if word in ('rev-parse', 'ls-tree', 'ls-files', 'cat-file', 'merge-base', 'remote')), 'other')
                 verbs[verb] = verbs.get(verb, 0) + 1
             counts[label] = dict(total=len(trace.processes), by_verb=verbs)
         print('REAL_GIT_COUNTS ' + json.dumps(dict(counts=counts, readset_pairs=len(f.readset()), full_candidate_denominator=True, identity_classification='merge-base/remote/tree rev-parse are fixed; commit-resolution rev-parse includes fixed identity and immutable reads; nothing excluded'), sort_keys=True), flush=True)
@@ -240,14 +250,14 @@ def mutations():
                 altered = raw + b' '; diagnostic = ('receipt protected current input changed',) if path.startswith('src/') else ('receipt unowned contract changed',)
             f.write(path, altered, mode); f.call(rejection=diagnostic); f.write(path, raw, mode); f.call()
             target.unlink(); target.symlink_to(f.root / 'tests/input0.txt')
-            f.call(rejection=('symlink path component:',)); target.unlink(); f.write(path, raw, mode); f.call()
+            f.call(rejection=('symlink path component:', 'new current symlink:')); target.unlink(); f.write(path, raw, mode); f.call()
             target.unlink(); target.mkdir()
             f.call(rejection=('missing/nonregular file:',)); target.rmdir(); f.write(path, raw, mode); f.call()
         for path in ('src/input00.txt', 'contracts/owned.json', 'state/progress.json'):
             raw, mode = f.expected[path]; f.write(path, raw, not mode)
             f.call(rejection=('receipt protected current input changed', 'receipt record mode changed')); f.write(path, raw, mode); f.call()
         directory = f.root / 'src'; saved = f.root / 'saved-src'; directory.rename(saved); directory.symlink_to(saved)
-        try: f.call(rejection=('symlink path component:',))
+        try: f.call(rejection=('symlink path component:', 'symlink/non-directory path ancestor:'))
         finally: directory.unlink(); saved.rename(directory)
         f.call()
         os.environ[ENV] = 'mutated'; f.call(rejection=('receipt observed environment changed',)); os.environ[ENV] = 'baseline'; f.call()
@@ -285,7 +295,7 @@ def literal_paths():
         for mode, object_id in [('100755', oid), ('120000', oid), ('160000', f.anchor)]:
             git(f.root, 'update-index', '--cacheinfo', mode, object_id, path)
             git(f.root, 'commit', '--quiet', '-m', 'isolated executed mode/type mutation')
-            try: f.call(revision=git(f.root, 'rev-parse', 'HEAD'), rejection=('receipt protected Git input changed', 'unsafe entry Git input', 'missing/nonblob Git input'))
+            try: f.call(revision=git(f.root, 'rev-parse', 'HEAD'), rejection=('receipt protected Git input changed', 'unsafe entry Git input', 'missing/nonblob Git input', 'inherited symlink added/removed/retargeted or mode changed', 'unsafe anchored/index file mode or stage:'))
             finally: git(f.root, 'checkout', '--quiet', '--force', '--detach', f.executed)
             f.call()
         git(f.root, 'update-index', '--force-remove', '--', path); git(f.root, 'commit', '--quiet', '-m', 'isolated missing executed path')

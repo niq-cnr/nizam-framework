@@ -1518,7 +1518,7 @@ def capture_command_evidence(
                     candidate = candidate["candidate"]
             checks = wa.qa_bound_checks(root, task_id, candidate)
             wa.validate_qa_context(root, task_id, candidate, checks)
-            wa._receipt_candidate(root, candidate)
+            wa._receipt_candidate(root, candidate, route_id=task_id)
             qa_check = next((check for check in checks if check["argv"] == argv and check["proof_kind"] == proof_kind), None)
         except (wa.AssuranceError, OSError, ValueError, TypeError, AttributeError) as exc:
             raise StartPathError("QA candidate invalid before execution: " + str(exc), 2) from exc
