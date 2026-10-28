@@ -56,6 +56,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Optional, Tuple
+from urllib.parse import urlsplit
 
 TAG_SHAPE_RE = re.compile(r"^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 
@@ -360,9 +361,11 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
         read = lambda ref: _proof_ref(root, ref, revision)
         authority = assurance.parse_json(read(proof["authorization"]))
         origin = integrity._run_git(root, "remote", "get-url", "origin").decode().strip()
+        repository_name = (urlsplit(origin).path if "://" in origin else origin.split(":", 1)[-1]).strip("/").removesuffix(".git")
         check(authority["commit"] == candidate and authority["destination"] == destination and
               authority["source_url"] == origin and authority["gate"] == "H-CONSUMER-UPGRADE" and
-              bool(authority.get("repository")) and bool(authority.get("self_install_request")),
+              authority.get("repository") in (origin, origin.removesuffix(".git"), repository_name) and
+              bool(authority.get("self_install_request")),
               "self-install actual authorization binding")
         qa = assurance.parse_json(read(proof["qa_verdict"]))
         assurance._receipt_gate(qa)
