@@ -1,0 +1,155 @@
+{
+  "feature_id": "release-v3.1.1",
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "reviewer": "/root/independent_acceptance",
+  "executed_at": "2026-10-28T15:51:26.476436+00:00",
+  "base_commit": "625e16cf99b045c83239ae0da54f524435d6581c",
+  "source_commit": "db003839f0e5d38160dfa85514835a6b692e19cf",
+  "executed_candidate_commit": "ec48fca54faa3166b792e52121b6ed7fc4a6faae",
+  "source_hashes": {
+    "NIZAM.json": "44b05d518bb958250d0ce214e90cd63751fc216c39f7eb34da92e888c1eed944",
+    "CONTEXT.md": "5b4ac79634b657a252e81b58456cf64bc660743c33998ef712a4a6706f5a67e9",
+    "CHANGELOG.md": "f0eb8ef65a79d97c43c605e9075ebd8e3df2623b73060bc74ef5838d77b14137",
+    "README.md": "22e883a1d6a5e7404765d1716d2b930759f5e181aa9060ff1f69d7a9118f63d6",
+    "docs/guide/index.html": "d4fa5895e930af331d8da4caf83c13224f486df8e4da5c6c3dc8db4a9622d76a",
+    "docs/planning/ROADMAP.md": "fd3f8b0a44602cf2f5e4760407d5bd0393d25e40b03a11ca8ee0a5ab2820ce3a",
+    ".agent/evidence/release-v3.1.1/readiness.json": "e3252a04d40f51792d07a1bf9712ff456baa6744337090904a168e0edae36885"
+  },
+  "candidate_manifest": ".agent/evidence/release-v3.1.1/independent-final/candidate.json",
+  "candidate_manifest_canonical_sha256": "d717b20c95b85a0a2391e4e54fc2d037064fe4bc5044b4afe1864ef2be5ad433",
+  "checks": [
+    {
+      "id": "release-anchors",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-release-anchors-attempt1-20261028T154929Z-c60511ec.capture.json",
+      "stdout": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-release-anchors-attempt1-20261028T154929Z-c60511ec.stdout.txt",
+        "revision": null,
+        "sha256": "4d4aeb01b01d3ffb00d9da486cee0af60623fa548e4eecabc360c2ba26e8b3aa"
+      },
+      "stderr": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-release-anchors-attempt1-20261028T154929Z-c60511ec.stderr.txt",
+        "revision": null,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "duration_ms": 29,
+      "revision": "ec48fca54faa3166b792e52121b6ed7fc4a6faae",
+      "binding_state": "candidate-bound"
+    },
+    {
+      "id": "public-entry",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-public-entry-attempt1-20261028T154934Z-7335bd60.capture.json",
+      "stdout": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-public-entry-attempt1-20261028T154934Z-7335bd60.stdout.txt",
+        "revision": null,
+        "sha256": "5793b0ebe77d6bcd3e85149c08a48cf717327781fbc54db458f8059661485f93"
+      },
+      "stderr": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-public-entry-attempt1-20261028T154934Z-7335bd60.stderr.txt",
+        "revision": null,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "duration_ms": 22037,
+      "revision": "ec48fca54faa3166b792e52121b6ed7fc4a6faae",
+      "binding_state": "candidate-bound"
+    },
+    {
+      "id": "install-rollback",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_corrective_release.py --candidate HEAD --prior v3.1.0 --prior-sha e68d4eeda080d566ac893b583e1087569ec8883e",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-install-rollback-attempt1-20261028T155008Z-80ac5c0f.capture.json",
+      "stdout": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-install-rollback-attempt1-20261028T155008Z-80ac5c0f.stdout.txt",
+        "revision": null,
+        "sha256": "480afe18c858a0d3ed0ed96c88fcc828f4000a536b50cf4a94ed3d9d7eb5cba8"
+      },
+      "stderr": {
+        "path": ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-install-rollback-attempt1-20261028T155008Z-80ac5c0f.stderr.txt",
+        "revision": null,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "duration_ms": 21632,
+      "revision": "ec48fca54faa3166b792e52121b6ed7fc4a6faae",
+      "binding_state": "candidate-bound"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "kind": "Independent bounded source/ref/authority inspection, distinct from executed contract checks",
+    "description": "Confirmed NIZAM object changes only framework.version, protected runtime/policy/schema/CI/bootstrap/installed payload unchanged, actual prior annotated tag preserved with correct peeled SHA, no source candidate/fixture tag, and readiness retains every reserved release act. Reviewed isolated temporary-clone rehearsal implementation and minimum sufficient scope.",
+    "evidence": ".agent/evidence/release-v3.1.1/independent-final/adversarial-source-inspection.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-release-anchors-attempt1-20261028T154929Z-c60511ec.capture.json",
+    ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-public-entry-attempt1-20261028T154934Z-7335bd60.capture.json",
+    ".agent/evidence/release-v3.1.1/independent-final/release-v3.1.1-independent-install-rollback-attempt1-20261028T155008Z-80ac5c0f.capture.json",
+    ".agent/evidence/release-v3.1.1/independent-final/verification-summary.json",
+    ".agent/evidence/release-v3.1.1/independent-final/adversarial-source-inspection.json",
+    ".agent/evidence/release-v3.1.1/independent-final/preparation-observation.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "reused_evidence": [
+    ".agent/qa/nf-promotion-accounting-20261028.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/"
+  ],
+  "reuse_basis": "All methodology, tool, schema, CI and installed-governance bytes equal accepted merged PR145 base; new executions cover changed release surfaces and exact versioned consumer candidate.",
+  "observed_rehearsal": {
+    "candidate_payload": {
+      "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+      "files": 340,
+      "inventory_sha256": "82cf418c5af20880387668c9be2611e758675106839233a503aac4019375bdcf"
+    },
+    "candidate_sha": "ec48fca54faa3166b792e52121b6ed7fc4a6faae",
+    "commissioning": "not_performed",
+    "core_install": "passed",
+    "documentation_origin": "not_configured_or_contacted",
+    "documentation_packages": "absent",
+    "prior_payload": {
+      "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+      "files": 340,
+      "inventory_sha256": "7da34a456b3ccd678dccbb86c3b53c9ae6af997d5b50a5d555b10d27f92008b9"
+    },
+    "prior_sha": "e68d4eeda080d566ac893b583e1087569ec8883e",
+    "release_publication": "not_performed",
+    "rollback": "passed"
+  },
+  "environment": {
+    "runtime": {
+      "implementation": "CPython",
+      "machine": "x86_64",
+      "system": "Linux",
+      "version": "3.12.3"
+    },
+    "variables": {
+      "GIT_CONFIG_GLOBAL": "/dev/null",
+      "PATH": "/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg00Q0Xj3:/home/cnross/.codex/tmp/arg0-linux/codex-arg0LhGEOq:/home/cnross/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg04YGnAW:/home/cnross/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0/codex-arg0nHC925:/home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/codex-path:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.cargo/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.nvm/versions/node/v24.21.0/bin:/home/cnross/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "failure_accounting": {
+    "conservative_total": 1,
+    "native_typed_failures": 0,
+    "limit": 6,
+    "preparation_failure_ref": ".agent/evidence/release-v3.1.1/independent-final/preparation-observation.json",
+    "qualification": "Read-only missing schema filename; no candidate test failures, no retries, no reset."
+  },
+  "sufficiency": "Six enforced release anchors and existing readiness record meet preparation requirements. The bounded duplicate YAML mapping-key repair preserves history and makes the version change effective. No additional implementation, platform or test suite is needed.",
+  "limitations": [
+    "Acceptance covers release preparation and offline disposable core-only compatibility/rollback; live consumer commissioning and model behavior are unassessed.",
+    "Human merge, release sign-off, annotated tag, publication, separately authorized self-adoption/activation and hosted PR checks remain external/pending.",
+    "Candidate-bound raw captures are independently verified evidence, not an assessed-v2 receipt or proof of lifecycle/promotion completion.",
+    "Published v3.1.0/e68d4e and installed v3.0.0/2b8298 are distinct; no v3.1.1 release SHA is assigned."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Source accepted for normal ready-PR release preparation. All three contracted commands passed once against exact committed ec48fca54f; core-only content-integrity install and rollback to immutable v3.1.0 passed. Release/activation remains pending reserved authority."
+  }
+}

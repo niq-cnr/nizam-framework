@@ -1,0 +1,79 @@
+{"argv": ["git", "rev-parse", "--verify", "HEAD^{commit}"], "exit_code": 0}
+ec48fca54faa3166b792e52121b6ed7fc4a6faae
+{"argv": ["git", "rev-parse", "--verify", "v3.1.0^{commit}"], "exit_code": 0}
+e68d4eeda080d566ac893b583e1087569ec8883e
+{"argv": ["git", "clone", "--quiet", "--no-hardlinks", "--no-checkout", "/home/cnross/code/audit-remediation/nizam-framework-v311", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source"], "exit_code": 0}
+{"argv": ["git", "checkout", "--quiet", "--detach", "ec48fca54faa3166b792e52121b6ed7fc4a6faae"], "exit_code": 0}
+{"argv": ["git", "config", "uploadpack.allowFilter", "true"], "exit_code": 0}
+{"argv": ["git", "tag", "e2e-nf-corrective-candidate", "ec48fca54faa3166b792e52121b6ed7fc4a6faae"], "exit_code": 0}
+{"argv": ["bash", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source/bootstrap.sh", "--tag", "e2e-nf-corrective-candidate", "--allow-fixture-tag", "--expected-sha", "ec48fca54faa3166b792e52121b6ed7fc4a6faae", "--repo-url", "file:///home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source", "--git-repo", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref"], "exit_code": 0}
+bootstrap.sh: fetching file:///home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source at explicit tag ref refs/tags/e2e-nf-corrective-candidate (--depth 1, blob-filtered, sparse payload)...
+blob filter applied: 2875 excluded object(s) absent locally
+reference payload objects present: 337 file(s)
+bootstrap.sh: staging governance payload in ./.nizam-stage.HK9Tx4...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 112 indexed path(s) resolve under ./.nizam-stage.HK9Tx4.
+bootstrap.sh: recording provenance (framework_version=3.1.1, tag=e2e-nf-corrective-candidate, resolved_sha=ec48fca54faa3166b792e52121b6ed7fc4a6faae)...
+reference payload objects present: 337 file(s)
+bootstrap.sh: retained verified sparse reference repository at '/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref' (commit ec48fca54faa3166b792e52121b6ed7fc4a6faae).
+bootstrap.sh: install complete. Governance payload version 3.1.1 (tag e2e-nf-corrective-candidate) is now at '.nizam'.
+{"argv": ["bash", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source/bootstrap.sh", "--verify-only", "--tag", "e2e-nf-corrective-candidate", "--allow-fixture-tag", "--expected-sha", "ec48fca54faa3166b792e52121b6ed7fc4a6faae", "--git-repo", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref", "--require-content-integrity"], "exit_code": 0}
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'e2e-nf-corrective-candidate' (no clone, no network)...
+NIZAM.json parses; 112 indexed path(s) resolve under .nizam.
+reference payload objects present: 337 file(s)
+bootstrap.sh: verify-only: PASS (content_integrity=verified) -- '.nizam' matches pinned tag 'e2e-nf-corrective-candidate' at 'ec48fca54faa3166b792e52121b6ed7fc4a6faae' (PAYLOAD-INTEGRITY PASS (content_integrity=verified): 340 released files + genuine provenance; e2e-nf-corrective-candidate at ec48fca54faa3166b792e52121b6ed7fc4a6faae (git:/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref@ec48fca54faa3166b792e52121b6ed7fc4a6faae)).
+{"argv": ["bash", "tools/validate.sh", "--payload"], "exit_code": 0}
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] NOT_APPLICABLE dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload)
+[C12] OUT_OF_SCOPE ecosystem-fixtures (payload mode)
+[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+[C14] OUT_OF_SCOPE workflow-sha-pins (payload mode)
+[C15] OUT_OF_SCOPE capability-profile-roles (payload mode)
+[C16] NOT_APPLICABLE feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload)
+SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed
+{"argv": ["bash", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source/bootstrap.sh", "--tag", "v3.1.0", "--expected-sha", "e68d4eeda080d566ac893b583e1087569ec8883e", "--repo-url", "file:///home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source", "--git-repo", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref"], "exit_code": 0}
+bootstrap.sh: fetching file:///home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source at explicit tag ref refs/tags/v3.1.0 (--depth 1, blob-filtered, sparse payload)...
+blob filter applied: 2813 excluded object(s) absent locally
+reference payload objects present: 337 file(s)
+bootstrap.sh: staging governance payload in ./.nizam-stage.mrVC46...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 112 indexed path(s) resolve under ./.nizam-stage.mrVC46.
+bootstrap.sh: recording provenance (framework_version=3.1.0, tag=v3.1.0, resolved_sha=e68d4eeda080d566ac893b583e1087569ec8883e)...
+reference payload objects present: 337 file(s)
+bootstrap.sh: retained verified sparse reference repository at '/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref' (commit e68d4eeda080d566ac893b583e1087569ec8883e).
+bootstrap.sh: install complete. Governance payload version 3.1.0 (tag v3.1.0) is now at '.nizam'.
+{"argv": ["bash", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/source/bootstrap.sh", "--verify-only", "--tag", "v3.1.0", "--expected-sha", "e68d4eeda080d566ac893b583e1087569ec8883e", "--git-repo", "/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref", "--require-content-integrity"], "exit_code": 0}
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v3.1.0' (no clone, no network)...
+NIZAM.json parses; 112 indexed path(s) resolve under .nizam.
+reference payload objects present: 337 file(s)
+bootstrap.sh: verify-only: PASS (content_integrity=verified) -- '.nizam' matches pinned tag 'v3.1.0' at 'e68d4eeda080d566ac893b583e1087569ec8883e' (PAYLOAD-INTEGRITY PASS (content_integrity=verified): 340 released files + genuine provenance; v3.1.0 at e68d4eeda080d566ac893b583e1087569ec8883e (git:/home/cnross/.tmp/nizam-core-rehearsal-ehtc1zjv/consumer/.nizam-ref@e68d4eeda080d566ac893b583e1087569ec8883e)).
+{"argv": ["bash", "tools/validate.sh", "--payload"], "exit_code": 0}
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] NOT_APPLICABLE dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload)
+[C12] OUT_OF_SCOPE ecosystem-fixtures (payload mode)
+[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+[C14] OUT_OF_SCOPE workflow-sha-pins (payload mode)
+[C15] OUT_OF_SCOPE capability-profile-roles (payload mode)
+[C16] NOT_APPLICABLE feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload)
+SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed
+{"candidate_payload": {"canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance", "files": 340, "inventory_sha256": "82cf418c5af20880387668c9be2611e758675106839233a503aac4019375bdcf"}, "candidate_sha": "ec48fca54faa3166b792e52121b6ed7fc4a6faae", "commissioning": "not_performed", "core_install": "passed", "documentation_origin": "not_configured_or_contacted", "documentation_packages": "absent", "prior_payload": {"canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance", "files": 340, "inventory_sha256": "7da34a456b3ccd678dccbb86c3b53c9ae6af997d5b50a5d555b10d27f92008b9"}, "prior_sha": "e68d4eeda080d566ac893b583e1087569ec8883e", "release_publication": "not_performed", "rollback": "passed"}

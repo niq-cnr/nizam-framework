@@ -1,0 +1,138 @@
+{
+  "contract_id": "release-v3.1.1",
+  "feature_id": "release-v3.1.1",
+  "name": "Prepare the v3.1.1 PATCH release candidate",
+  "status": "proposed",
+  "spec_ref": ".agent/contracts/release-v3.1.1.json#/authorized_outcome",
+  "authorized_outcome": "Prepare a minimal reversible PATCH release candidate from merged PR145, through ordinary precode/validator/evaluator review and a ready PR. Stop awaiting human merge/signoff; no tag, publication, self-adoption or activation.",
+  "base_commit": "625e16cf99b045c83239ae0da54f524435d6581c",
+  "prior_release": {
+    "tag": "v3.1.0",
+    "sha": "e68d4eeda080d566ac893b583e1087569ec8883e",
+    "published_at": "2026-10-27T16:51:05Z"
+  },
+  "installed_governance": {
+    "tag": "v3.0.0",
+    "sha": "2b8298ae1d5a41534e00b6710a738b4b181b87fa"
+  },
+  "scope": {
+    "files_modify": [
+      {
+        "path": "NIZAM.json",
+        "purpose": "Bump framework.version only to3.1.1"
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Set framework frontmatter/new first changelog entry to3.1.1; describe PATCH preparation without claiming release/adoption"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Roll existing Unreleased PR145 correction into dated2026-10-28 3.1.1 PATCH section; preserve history and empty Unreleased heading"
+      },
+      {
+        "path": "README.md",
+        "purpose": "Update bounded release-candidate block to3.1.1 PATCH with unassigned future SHA; distinguish actual publishedv3.1.0 pin and installedv3.0.0; retain valid older onboarding examples"
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Update required framework-version meta/footer and visible candidate/version label only; no guide rewrite"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Update canonical release-in-preparation disposition to3.1.1 PATCH and current latestpublishedv3.1.0 verifiedSHA; preserve older snapshots and installedv3.0 status"
+      }
+    ],
+    "files_create": [
+      {
+        "path": ".agent/evidence/release-v3.1.1/readiness.json",
+        "purpose": "Existing readiness-record family: classification, validated gates and pending human merge/signoff/tag/activation, no self-referential final SHA"
+      }
+    ]
+  },
+  "non_goals": [
+    "No installed .nizam, policy/code/schema changes or self-adoption",
+    "No shared/source-repo tag, merge, GitHub Release publication or live activation",
+    "No new migration guide, test framework, full-programme audit, historical snapshot rewrite or unneeded llms-copy regeneration",
+    "Disposable private fixture tags created by existing compatibility tests are isolated test artifacts only; never pushed or mistaken for release"
+  ],
+  "release_classification": "PATCH under installed methodology/06_release_train.md3.3: payload delta since v3.1.0 consists only of two already-accepted methodology wording corrections; no schema/key/path/code changes. Other accepted posttag changes are internal CI runner selection and historical measurement qualification, without changed consumer contract shape.",
+  "acceptance_requirements": [
+    "Six existing closeout anchors consistently identify unreleased3.1.1 PATCH dated2026-10-28 with complete correction summary and release-train citation Cover all accepted post-v3.1.0 changes:99ef862d internal CI runner switch,97f275f0 historical cost qualification andPR145 promotion/accounting correction; do not reopen those implementations.",
+    "Published tagv3.1.0/e68d4e... and localself-installv3.0/2b8298... remain distinct from candidate; no invented future tag/SHA or human signoff",
+    "PR145 behavioral evidence remains valid where inputs unchanged; methodology/tools/schema/runtime content remains byte-identical to mergedbase except framework.version metadata",
+    "Exact committed candidate supports existing offline core-only install, complete payload integrity/validation and rollback to actual prior v3.1.0, without source/shared refs or live installs",
+    "Source and acceptance evidence are reviewable; stop at ready PR awaiting human merge/signoff/tag act"
+  ],
+  "verification": [
+    {
+      "id": "release-anchors",
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr"
+      ],
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "acceptance_test": "Required release anchors agree",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "public-entry",
+      "argv": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py",
+      "acceptance_test": "Existing public acquisition, source/pin/installation distinctions and payload-entry controls remain valid",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "install-rollback",
+      "argv": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v3.1.0",
+        "--prior-sha",
+        "e68d4eeda080d566ac893b583e1087569ec8883e"
+      ],
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_corrective_release.py --candidate HEAD --prior v3.1.0 --prior-sha e68d4eeda080d566ac893b583e1087569ec8883e",
+      "acceptance_test": "Exact candidate core-only pin/bootstrap/integrity/payload validation and immutable rollback in disposable local repos",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 75,
+  "evidence_dir": ".agent/evidence/release-v3.1.1",
+  "evidence_convention": "Real installed capture records from outset; substantive inputs frozen separately from reviewer outputs; final candidate identity in evidence after source freeze, not self-referential readiness source. Reuse PR145 proof for unchanged behavior and run only required release surfaces/compatibility.",
+  "reuse_refs": [
+    ".agent/qa/nf-promotion-accounting-20261028.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/"
+  ],
+  "failure_history": {
+    "known_failures": 0,
+    "limit": 6,
+    "basis": "New distinct release preparation after merged correction; no prior task history reset or parked-product recovery."
+  },
+  "included_changes": [
+    {
+      "commit": "99ef862d",
+      "summary": "Internal CI workflows use operator-directed Ubicloud runner; no consumer runtime/interface change"
+    },
+    {
+      "commit": "97f275f0",
+      "summary": "Historical cost-unit comparisons explicitly qualified; no measured financial savings or new measurements"
+    },
+    {
+      "commit": "625e16cf99b045c83239ae0da54f524435d6581c",
+      "summary": "Merged PR145 promotion stopping references and truthful native/external accounting coverage"
+    }
+  ]
+}
