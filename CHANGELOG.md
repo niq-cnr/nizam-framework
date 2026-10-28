@@ -7,7 +7,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.2] - 2026-10-28
+
+**Patch release** (`methodology/06_release_train.md` Section 3.3).
+At preparation on 2026-10-28, source acceptance, actual prepublication Framework
+self-install, human merge/sign-off, annotated tag and publication remain pending.
+No consumer schema or required-key migration is introduced.
+
 ### Fixed
+
+- Framework release preparation now requires actual self-installation of the
+  reviewed payload before each release. Existing release gates verify accepted
+  controller evidence, real destination readback and final payload equality;
+  portable source pins and human release authority remain explicit.
 
 - Assessment and QA/receipt consumption accept unchanged, unselected inherited
   symlink identities without following their targets. Existing non-feature routes

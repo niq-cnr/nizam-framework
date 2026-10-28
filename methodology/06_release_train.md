@@ -2,10 +2,13 @@
 id: nizam-release-train
 title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: methodology/06_release_train.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-28"
+    summary: "Require actual prepublication Framework self-install before each future release, with accepted controller evidence, portable final-payload equality checks and honest candidate/final-pin separation."
   - version: "0.4.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 correction: changelog roll-up, release date, version anchors, and migration links are durable release preparation and must pass the ordinary contract/validator/evaluator loops. Only creating and pushing the already-approved annotated tag remains an Orchestrator release mechanic outside those file-changing loops."
@@ -44,9 +47,12 @@ Cutting a release means, at minimum:
 
 1. All intended changes for the release are merged to the mainline branch.
 2. `CHANGELOG.md` (Section 4) carries an entry for the new version.
-3. A human sign-off gate is satisfied — a release is a deliberate, reviewed
+3. The Framework has actually self-installed the reviewed authored payload
+   before release, with the evidence described in Section 6.1. An external
+   installation rehearsal alone does not establish this.
+4. A human sign-off gate is satisfied — a release is a deliberate, reviewed
    act, never an automatic consequence of a merge.
-4. The tag is created and pushed only after 1-3 are satisfied.
+5. The tag is created and pushed only after 1-4 are satisfied.
 
 ## 3. Classifying a Change: Breaking vs Minor vs Patch
 
@@ -151,8 +157,9 @@ repository changes: they MUST be implemented on a release-preparation feature,
 pass Loop 1 and Loop 2 in `01_execution.md`, and merge through a reviewed pull
 request before Section 2's human sign-off.
 
-Once that reviewed preparation is merged and the Section 2 human sign-off gate
-is satisfied, one release-time mechanic belongs to the **Orchestrator** — the coordination role
+Once that reviewed preparation is merged, actual self-install proof passes
+Section 6.1 and the Section 2 human sign-off gate is satisfied, one release-time
+mechanic belongs to the **Orchestrator** — the coordination role
 `standard/AGF.md` Section 2 defines, which already owns `run_state.json`'s
 run-position and coordination fields. The framework defines no separate
 release-manager role; this mechanic sits with the Orchestrator that owns the
@@ -168,6 +175,58 @@ tag time, the Orchestrator stops and routes it back through the normal
 release-preparation feature and reviewed pull request; it never patches mainline
 during tagging. The pipeline records the requested tag but never self-executes
 the human sign-off.
+
+### 6.1 Actual self-install before each Framework release
+
+This requirement concerns the Framework's own releases; it does not add a
+mandatory Framework-host workflow to consumer projects. Preserve all existing
+review, human merge and release-signoff authority.
+
+Freeze the complete versioned authored payload at immutable candidate **C**.
+The owner declares the actual long-lived Framework checkout as the destination,
+checks its current revision, owned changes and relevant active lanes, preserves
+rollback and records an explicit safe-boundary continuation. Do not change
+installed governing instructions underneath another active task.
+
+Use the unchanged official bootstrap with an exact expected commit and pinned
+SemVer reference to install C into that actual checkout's `.nizam/`. A private,
+local prerelease reference may identify the reviewed prepublication candidate;
+it is not a published RC or the final stable tag. Retain genuine provenance,
+including the actual transport source. On the safe host, verify the installed
+inventory and bytes against trusted C, read the resolved installed index and
+skill, and execute the actual installed entrypoint. The existing native QA gate
+accepts source-controller evidence for these real destination operations. Do
+not claim native typed acceptance of the destination worktree or commissioning
+when only controller QA and installed smoke checks were performed.
+
+Record the authorization, resolved destination, immutable C, successful actual
+command captures, installed readback and independent accepted QA by existing
+hashed references in the version's release-readiness record. Keep local runtime
+installation distinct from the clean source tree's portable prior-stable
+`.nizam/` pin. Never commit private-reference provenance as if it were a
+canonical published stable installation, weaken existing pin verifiers or put a
+future final commit hash into its own source.
+
+A later metadata/evidence commit **D** may package that proof. The shipped
+payload selected by the existing integrity verifier must be identical at C and
+D. Changing that payload invalidates the proof and requires an affected recheck.
+After publication, the actual and tracked installation can bind to the official
+final tag through the normal immutable re-bootstrap route; that later binding
+does not replace the required prepublication self-install.
+
+The existing release close-out checker enforces accepted proof and payload
+identity for release-version bump PRs (`--base-commit <trusted-base-sha>`) and
+future tag publication. Before creating the human-approved tag, the owner also
+runs `python3 .github/scripts/release_closeout.py --mode pr
+--require-self-install`. Ordinary same-version source PRs do not reinstall the
+Framework. Immutable release history predating this requirement retains its
+earlier checks, without a retrospective self-install claim.
+
+CI checks portable accepted source proof, capture/artifact integrity and final
+payload equality. It cannot observe the original host's current processes,
+prove an LLM loaded instructions, or prevent an authorized human from pushing a
+tag before checking it. Human pre-tag compliance and actual safe-host acceptance
+remain explicit; the publication workflow rejects missing or invalid proof.
 
 ## 7. References
 

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    ".nizam/tools/start_path.py",
+    "classify",
+    "--files",
+    "methodology/06_release_train.md",
+    ".github/scripts/release_closeout.py",
+    ".github/workflows/release_closeout.yml",
+    ".github/scripts/test_release_closeout.py",
+    "CHANGELOG.md",
+    "--touches-security"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"assurance_tier\": \"High-assurance\",\n  \"files\": [\n    \"methodology/06_release_train.md\",\n    \".github/scripts/release_closeout.py\",\n    \".github/workflows/release_closeout.yml\",\n    \".github/scripts/test_release_closeout.py\",\n    \"CHANGELOG.md\"\n  ],\n  \"reasons\": [\n    \"touches security, isolation, or authority verification boundary\"\n  ],\n  \"required_gates\": [\n    \"loop1:contract_approval\",\n    \"capability_preflight\",\n    \"loop2:validator_mode_b\",\n    \"loop2:evaluator_qa\",\n    \"convergent_review_or_isolation_suite\",\n    \"loop2:evidence_capture\"\n  ],\n  \"review_remit\": {\n    \"advisory_fields\": [\n      \"advisory_minor\"\n    ],\n    \"blocking_fields\": [\n      \"issues\",\n      \"missing_acceptance_coverage\",\n      \"unsupported_claims\",\n      \"required_fixes\"\n    ],\n    \"evidence_required_for_blockers\": true\n  },\n  \"route\": \"high-risk\",\n  \"stopping_conditions\": {\n    \"attempt_counter_role\": \"finite task-wide failed-execution budget\",\n    \"breaker_ref\": \"methodology/03_circuit_breaker.md\",\n    \"comparator_subordinate\": true,\n    \"continuation_policy\": \"At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.\",\n    \"halt_condition\": \"Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.\",\n    \"hard_attempt_cap\": 6,\n    \"initial_strategy_ladder_attempts\": 3,\n    \"pass_condition\": \"All required_gates for route 'high-risk' exit 0 and blocking verdict arrays are empty.\"\n  }\n}\n",
+  "stderr": ""
+}

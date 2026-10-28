@@ -4,10 +4,10 @@ name: release-closeout
 # invariant as a pull-request gate: every place the framework's version is
 # spelled out (NIZAM.json, CONTEXT.md, docs/guide/index.html, README.md,
 # CHANGELOG.md, docs/planning/ROADMAP.md) must agree with NIZAM.json's own
-# framework.version. Paths-filtered to exactly those six files so it only
-# runs on PRs that could plausibly disturb one of these anchors (and, by
-# construction, on every phase-013+ PR, since every feature's contract
-# touches CHANGELOG.md).
+# framework.version. Paths-filtered to anchors and their existing gate surfaces; it
+# runs on PRs affecting anchors or the release/self-install gate. A version
+# bump requires genuine accepted prepublication installation proof; ordinary
+# same-version changes retain the proportionate anchor check.
 #
 # --mode pr only: this workflow asserts the CURRENT WORKING TREE's anchors
 # against each other. The tag-vs-CHANGELOG and tag-shape checks
@@ -28,6 +28,11 @@ on:
       - "README.md"
       - "docs/guide/**"
       - "docs/planning/ROADMAP.md"
+      - "methodology/06_release_train.md"
+      - ".github/scripts/release_closeout.py"
+      - ".github/scripts/test_release_closeout.py"
+      - ".github/workflows/release_closeout.yml"
+      - ".agent/evidence/release-*/readiness.json"
 
 permissions:
   contents: read
@@ -39,9 +44,19 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          fetch-depth: 0 # Candidate ancestry and immutable pre-policy history.
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: "3.14"
 
-      - run: python3 .github/scripts/release_closeout.py --mode pr
+      # Reuse the repository's existing validator dependencies for the actual
+      # bootstrap/installed-entrypoint fixtures; no separate dependency set.
+      - run: pip install -r .github/requirements-ci.txt
+
+      - run: python3 .github/scripts/test_release_closeout.py
+
+      - name: Verify anchors and release-version bump self-install proof
+        env:
+          BASE_COMMIT: ${{ github.event.pull_request.base.sha }}
+        run: python3 .github/scripts/release_closeout.py --mode pr --base-commit "$BASE_COMMIT"

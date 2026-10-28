@@ -1,0 +1,36 @@
+{
+  "observed_at": "2026-10-28T22:51:06.670957+00:00",
+  "logical_task": "F05-current-state-qualification",
+  "event": "Actualsourceownerread/preparationfailure; hardstop32/32",
+  "argv": [
+    "rg",
+    "-n",
+    "pip|requirements|jsonschema|PyYAML|pyyaml",
+    ".github/workflows/compliance.yml",
+    ".github/workflows/fixtures.yml",
+    "tools/validate.sh"
+  ],
+  "cwd": "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall",
+  "exit_code": 2,
+  "stderr_exact": "rg: .github/workflows/fixtures.yml: No such file or directory (os error 2)\n",
+  "cause": "Guessedworkflowfilename insteadofenumeratingexistingpaths. Successfulmatchesfromother2files do noterase nonzeroexit.",
+  "known_fact": "Actualexistingcompliance.yml uses pip install -r .github/requirements-ci.txt; no newdependency needed.",
+  "provenance": "Retainedactualtoolresponse, not rerun andnotnative typedcapture; sharedrootledger ownsmanualmixedhistory accounting.",
+  "checkpoint": {
+    "contract": ".agent/contracts/prerelease-self-install.json",
+    "contract_sha256": "8a37aa22b80fa4becae88d8434db8f5d18e92ed58ae573cd1f39100123a137a5",
+    "source_status": "Only partialexistingrelease_closeout.py extensionwritten; methodology/workflow/changelog notyetedited, independentnewtestnotyetwritten. Unfrozen/unaccepted.",
+    "source_sha256": "bf7ef544fbba42a85a44f5f29770b64c87adb013e6f6ce7925d8fcedf85ec341",
+    "no_newfeature_tests": true,
+    "no_model_calls": true,
+    "no_live_changes": true,
+    "source_status_porcelain": [
+      " M .github/scripts/release_closeout.py",
+      "?? .agent/contracts/prerelease-self-install.json",
+      "?? .agent/evidence/prerelease-self-install/",
+      "?? .agent/qa/prerelease-self-install-contract.json"
+    ]
+  },
+  "stopping": "Root/evaluator notifiedimmediately; no furtherimplementation or newcheck untilspecificoperatorrecovery. Existingactivecheck ownerreconcileseffects, no automaticretry.",
+  "next_after_authority": "FinishboundedactualsourceAPI/fieldhandoff anddocs/workflow, obtainindependentfrozenreview beforedeclaredchecks; preserveallfailures/oldproof. Do notclaim partialcheckeraccepted."
+}
