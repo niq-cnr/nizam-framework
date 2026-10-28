@@ -312,6 +312,7 @@ def _payload_identity(root: Path, revision: str) -> bytes:
 
 def _proof_ref(root: Path, reference: dict, revision: Optional[str]) -> bytes:
     _, assurance = _proof_helpers()
+    assurance.require(type(reference) is dict, "self-install artifact reference must be an object")
     if revision is None:
         return assurance._qa_artifact(root, reference)
     # Tag/dispatch verification reads the tag's immutable evidence, never the
@@ -360,12 +361,12 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
               not destination.startswith("//"), "self-install declared resolved destination")
         read = lambda ref: _proof_ref(root, ref, revision)
         authority = assurance.parse_json(read(proof["authorization"]))
+        assurance._receipt_text(authority.get("self_install_request"), "self-install operator instruction")
         origin = integrity._run_git(root, "remote", "get-url", "origin").decode().strip()
         repository_name = (urlsplit(origin).path if "://" in origin else origin.split(":", 1)[-1]).strip("/").removesuffix(".git")
         check(authority["commit"] == candidate and authority["destination"] == destination and
               authority["source_url"] == origin and authority["gate"] == "H-CONSUMER-UPGRADE" and
-              authority.get("repository") in (origin, origin.removesuffix(".git"), repository_name) and
-              bool(authority.get("self_install_request")),
+              authority.get("repository") in (origin, origin.removesuffix(".git"), repository_name),
               "self-install actual authorization binding")
         qa = assurance.parse_json(read(proof["qa_verdict"]))
         assurance._receipt_gate(qa)
@@ -432,8 +433,10 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
               "self-install install versus trusted integrity operations")
         entrypoint = captures["entrypoint_capture"]["argv"]
         installed_tool = str(Path(target) / "tools/start_path.py")
-        check(installed_tool in entrypoint and "preflight" in entrypoint and
-              entrypoint.count("--root") == 1 and entrypoint[entrypoint.index("--root") + 1] == destination,
+        command = [installed_tool, "preflight", "--root", destination]
+        check(type(entrypoint) is list and len(entrypoint) >= 5 and
+              re.fullmatch(r"python(?:3(?:\.\d+)?)?", Path(entrypoint[0]).name) is not None and
+              entrypoint[1:] in (command, command + ["--route", "high-risk"]),
               "self-install actual installed entrypoint")
         readback = assurance.parse_json(read(captures["readback_capture"]["stdout"]))
         provenance = readback["provenance"]

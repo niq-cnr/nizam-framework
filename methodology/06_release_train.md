@@ -217,8 +217,8 @@ does not replace the required prepublication self-install.
 The existing release close-out checker enforces accepted proof and payload
 identity for release-version bump PRs (`--base-commit <trusted-base-sha>`) and
 future tag publication. Before creating the human-approved tag, the owner also
-runs `python3 .github/scripts/release_closeout.py --mode pr
---require-self-install`. Ordinary same-version source PRs do not reinstall the
+runs `PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py
+--mode pr --require-self-install`. Ordinary same-version source PRs do not reinstall the
 Framework. Immutable release history predating this requirement retains its
 earlier checks, without a retrospective self-install claim.
 
