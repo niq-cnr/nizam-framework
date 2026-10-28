@@ -1,0 +1,41 @@
+{
+  "review": "contract-testability",
+  "feature": "nf-promotion-accounting-20261028",
+  "contract_id": "nf-promotion-accounting-20261028",
+  "revision_reviewed": 1,
+  "reviewer": "/root/independent_acceptance",
+  "recorded_at": "2026-10-28T14:31:25.038234+00:00",
+  "contract_sha256": "4ead25f9f9973ee1d2104809f1075864263339272611ea9932320cddca6c8c78",
+  "source_revision": "97f275f02faa967624f92f4c0eaa1bd026d096b5",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Latest scope adds only required Unreleased CHANGELOG entry. Prior corrected target-command proposal is preserved as revision0; expanded required repository checks replace targeted document runs rather than repeat them.",
+    "Full tools/validate.sh validates current tree and ordinary governed-doc/reference/version rules. Existing test_start_path.test_r02_loop_prevention is directly callable and its predeclared nested adverse cases fail the outer invocation on an incorrect predicate; no newtest required solely for the doc clarification.",
+    "Important execution identity: tools/e2e_bootstrap_test.sh695 creates an ephemeral local test tag at HEAD and clones that commit. It must execute after candidate documentation is committed in an isolated reviewer checkout; testing uncommitted docs would qualify the oldHEAD payload only. Its temporary test tag is not release authority.",
+    "PRtemplate additionally requires tools/fixtures_self_test.sh, owned by existing hosted CI. This contract does not prove that result. Keep the fixture-suite merge gate pending until actual matching CI result is available, or run it once if local verification is chosen; no duplicate local/hosted invocation demanded by this review.",
+    "Independent final source review must confirm unchanged code/schema/installed payload bytes, existing independent eval/fallback gates and native/external recovery binding. Structural document validators cannot establish policy semantics.",
+    "Canonical Pi adapter/runtime accounting remains separately unresolved. This Framework source-only documentation task cannot claim runtime enforcement, release, consumer adoption or activation.",
+    "Recce and NX stay parked; this independent precode approval creates no continuation/spending/merge/release/promotion authority for either."
+  ],
+  "coverage": [
+    {
+      "requirement": "Promotion follows the sole existing stopping authority, including immediate invariant/authority stops, task-wide budgets and finite operator recovery; independent eval and gated fallback stay intact.",
+      "verification": "Independent exact source review plus existing finite recovery/signature controls, with required repository compliance/e2e."
+    },
+    {
+      "requirement": "Native capture enforces valid typed history; external admission has separate ledger. Raw logs/reviewer outputs do not substitute real failed capture bindings. Consumer coordination must preserve known failures across routes and cannot claim native enforcement for unrecorded history.",
+      "verification": "Independent exact source review against existing typed/native and optional external admission code; existing recovery tests retain binding negatives."
+    },
+    {
+      "requirement": "Historical changelogs/evidence retained; only scoped source documentation and task-owned evidence changed; installed payload and runtime/schema bytes unchanged.",
+      "verification": "Independent baseline-to-candidate scope/hash comparison, fullvalidate, whitespace and committed-candidate e2e; hosted fixture gate remains separately required for merge."
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Updated four-document source clarification contract is bounded and testable, with required compliance/e2e checks and preserved independent source assessment. Merge/release and consumer runtime accounting remain separately gated."
+  },
+  "prior_review": ".agent/qa/nf-promotion-accounting-20261028-contract-review-revision0.json"
+}

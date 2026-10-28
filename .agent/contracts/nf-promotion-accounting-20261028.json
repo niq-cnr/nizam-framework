@@ -1,0 +1,69 @@
+{
+  "contract_id": "nf-promotion-accounting-20261028",
+  "feature_id": "nf-promotion-accounting-20261028",
+  "name": "Align promotion stopping and describe failure-accounting coverage",
+  "status": "implemented",
+  "spec_ref": "docs/planning/REMEDIATION_2026_10_18.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "methodology/07_eval_gated_promotion.md",
+        "purpose": "Replace obsolete third-attempt-only rule with existing authoritative stopping policy."
+      },
+      {
+        "path": "methodology/03_circuit_breaker.md",
+        "purpose": "Clarify native typed-capture enforcement versus separate external/legacy evidence; preserve existing recovery binding."
+      },
+      {
+        "path": "docs/planning/REMEDIATION_2026_10_18.md",
+        "purpose": "Record bounded follow-up disposition and source-versus-release status without reopening historical work."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Required Unreleased correction entry; no release version change."
+      }
+    ]
+  },
+  "non_goals": [
+    "No code, schema, installed payload, role eval, promotion/fallback authority, or retry-policy change.",
+    "No synthetic historical captures, legacy import, counter resets, new evidence schema, paid experiments, merge, release or activation.",
+    "Recce and NX-OS remain parked. Consumer adapter integration is separately owned."
+  ],
+  "acceptance_requirements": [
+    "Promotion follows the sole existing stopping authority, including immediate invariant/authority stops, task-wide budgets and finite operator recovery; independent eval and gated fallback stay intact.",
+    "Native capture enforces valid typed history; external admission has separate ledger. Raw logs/reviewer outputs do not substitute real failed capture bindings. Consumer coordination must preserve known failures across routes and cannot claim native enforcement for unrecorded history.",
+    "Historical changelogs/evidence retained; only scoped source documentation and task-owned evidence changed; installed payload and runtime/schema bytes unchanged."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Required repository compliance including governed document versions and references",
+      "command": "bash tools/validate.sh",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Existing finite-budget, signature, exact recovery and corrupt-history controls (predeclared nested adverse cases)",
+      "command": "python -c \"import sys; sys.path.insert(0, 'tools'); import test_start_path as t; t.test_r02_loop_prevention()\"",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Patch whitespace",
+      "command": "git diff --check",
+      "expected_exit": 0
+    },
+    {
+      "acceptance_test": "Required standalone consumer payload bootstrap (existing positive and adverse cases)",
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "expected_exit": 0
+    }
+  ],
+  "estimated_lines": 65,
+  "evidence_dir": ".agent/evidence/nf-promotion-accounting-20261028",
+  "evidence_convention": "Exclusive typed captures plus independent source review bound to source hashes. Reviewer outputs separate from input inventory. Historical/source-only limitations explicit.",
+  "authority_note": "User commission and continue remaining fixes authorize reversible source remediation. Current installed classifier selects standard-feature because normative methodology paths; scope changes no existing authority.",
+  "approval_evidence": {
+    "proposal_sha256": "4ead25f9f9973ee1d2104809f1075864263339272611ea9932320cddca6c8c78",
+    "mode_a": ".agent/validator/nf-promotion-accounting-20261028-mode-a.json",
+    "contract_review": ".agent/qa/nf-promotion-accounting-20261028-contract-review.json"
+  }
+}

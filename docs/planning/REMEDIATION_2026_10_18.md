@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.18.1
+version: 0.18.2
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.18.2"
+    date: "2026-10-28"
+    summary: "Record bounded October 28 promotion and failure-accounting clarification, preserving historical completion and consumer ownership."
   - version: "0.18.1"
     date: "2026-10-28"
     summary: "Qualify historical A7 cost-unit reductions as uncalibrated proxies; preserve completion records and source captures."
@@ -297,3 +300,26 @@ stated scope; this qualification does not revoke those results or infer the
 same command limitation for every other paired case. A productivity or monetary
 saving claim needs a separately calibrated study of completed comparable tasks,
 observed role execution and actual usage/charge records.
+
+## 9. Promotion and failure-accounting follow-up (2026-10-28)
+
+The ecosystem audit commission's remaining Framework check at
+`97f275f02faa967624f92f4c0eaa1bd026d096b5` found an active third-attempt-only
+promotion rule conflicting with the existing task-wide stopping policy.
+`methodology/07_eval_gated_promotion.md` now delegates stopping to
+`methodology/03_circuit_breaker.md`, retaining independent evaluation and gated
+fallback repinning. The latter document clarifies what existing native and
+external evidence mechanisms actually count; recovery bindings stay unchanged.
+
+The earlier mixed raw-log/reviewer/capture history is a consumer coordination
+obligation, not authority to loosen native recovery or invent historical
+captures. Canonical Pi's separately maintained QA counters require consumer
+follow-up; this Framework documentation correction does not resolve them.
+Historical duplicate-suite and consumer-rehearsal corrections remain closed.
+
+The bounded contract is
+`.agent/contracts/nf-promotion-accounting-20261028.json`; source inspection and
+verification evidence live under
+`.agent/evidence/nf-promotion-accounting-20261028/`. Required review, merge,
+release and adoption remain distinct. The installed v3.0.0 payload is unchanged;
+no live activation or LLM behavioural acceptance is claimed here.

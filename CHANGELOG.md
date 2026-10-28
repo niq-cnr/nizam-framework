@@ -7,6 +7,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Promotion retries now refer to the authoritative task-wide stopping policy,
+  including immediate hard stops and finite operator recovery. Clarified native
+  typed-capture versus external/legacy failure-accounting coverage without
+  changing runtime recovery bindings or claiming consumer integration.
+
 ## [3.1.0] - 2026-10-27
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): adds the
