@@ -1,0 +1,36 @@
+{
+  "baseline_commit": "99ef862d6be14c539b36e10acd140e880f78b035",
+  "historical_commit": "606d11ee84deff0d3b7934cbfd715223d64ac79d",
+  "captures": {
+    "base": {
+      "content": "{\"argv\":[\"/usr/bin/python3\",\"tools/start_path.py\",\"classify\",\"--editorial\",\"--files\",\"README.md\"],\"candidate_sha256\":\"ecd23711803beb524d73a52e7ab7751be52ed282546bcbe1f699b9209d093e77\",\"command_count\":6,\"cost_units\":45,\"duration_ms\":87,\"executed\":true,\"executed_roles\":[\"Orchestrator\",\"Planner\",\"Generator\",\"Validator\",\"Evaluator\"],\"exit_code\":0,\"outcome\":\"success\",\"profile_tier\":\"Baseline\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"run_id\":\"comp-01-routine-trivial-readme-base\",\"schema_version\":1,\"stderr\":{\"path\":\".agent/evidence/125/logs/comp-01-routine-trivial-readme-base.stderr.txt\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},\"stdout\":{\"path\":\".agent/evidence/125/logs/comp-01-routine-trivial-readme-base.stdout.txt\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"sha256\":\"28a77eff1b63e9b81f3a415758242bf56d925279074f9d8f76f520219ccd4d8f\"},\"task_id\":\"comp-01-routine-trivial-readme\"}\n",
+      "encoding": "utf-8",
+      "sha": "527c6a1b67453b330ea94e2127d1bdb3e670c406",
+      "display_url": "https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/captures/comp-01-routine-trivial-readme-base.json",
+      "display_title": "comp-01-routine-trivial-readme-base.json"
+    },
+    "shad": {
+      "content": "{\"argv\":[\"/usr/bin/python3\",\"tools/start_path.py\",\"classify\",\"--editorial\",\"--files\",\"README.md\",\"--root\",\".\"],\"candidate_sha256\":\"ecd23711803beb524d73a52e7ab7751be52ed282546bcbe1f699b9209d093e77\",\"command_count\":3,\"cost_units\":18,\"duration_ms\":80,\"executed\":true,\"executed_roles\":[\"Generator\",\"Evaluator\"],\"exit_code\":0,\"outcome\":\"success\",\"profile_tier\":\"Routine\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"run_id\":\"comp-01-routine-trivial-readme-shad\",\"schema_version\":1,\"stderr\":{\"path\":\".agent/evidence/125/logs/comp-01-routine-trivial-readme-shad.stderr.txt\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"},\"stdout\":{\"path\":\".agent/evidence/125/logs/comp-01-routine-trivial-readme-shad.stdout.txt\",\"revision\":\"7cccfb770076bff298c39695de9d576eb9fc1cb9\",\"sha256\":\"dddc76792493feb8160206f182df5de2bf20bf93dfd761b4eae948a1b5e57f61\"},\"task_id\":\"comp-01-routine-trivial-readme\"}\n",
+      "encoding": "utf-8",
+      "sha": "5345a225f628ce255978bd817eb5282154987600",
+      "display_url": "https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/captures/comp-01-routine-trivial-readme-shad.json",
+      "display_title": "comp-01-routine-trivial-readme-shad.json"
+    }
+  },
+  "stdout": {
+    "base": {
+      "content": "[comp-01-routine-trivial-readme:base:Baseline]\n{\n  \"assurance_tier\": \"Routine\",\n  \"files\": [\n    \"README.md\"\n  ],\n  \"reasons\": [\n    \"editorial or documentation-only adjustment with no contract/schema/tool impact\"\n  ],\n  \"required_gates\": [\n    \"start_path:begin:trivial\",\n    \"validate.sh\",\n    \"start_path:done:trivial\"\n  ],\n  \"review_remit\": {\n    \"advisory_fields\": [\n      \"advisory_minor\"\n    ],\n    \"blocking_fields\": [\n      \"issues\",\n      \"missing_acceptance_coverage\",\n      \"unsupported_claims\",\n      \"required_fixes\"\n    ],\n    \"evidence_required_for_blockers\": true\n  },\n  \"route\": \"trivial\",\n  \"stopping_conditions\": {\n    \"attempt_counter_role\": \"telemetry\",\n    \"breaker_ref\": \"methodology/03_circuit_breaker.md\",\n    \"comparator_subordinate\": true,\n    \"halt_condition\": \"Stop and diagnose on repeated identical deterministic failure, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget; comparator claims remain subordinate to stopping rules.\",\n    \"max_attempts\": 3,\n    \"pass_condition\": \"All required_gates for route 'trivial' exit 0 and blocking verdict arrays are empty.\"\n  }\n}\n",
+      "encoding": "utf-8",
+      "sha": "8be16bf41da46e3a5ff9fcd241f03e307eb54c12",
+      "display_url": "https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/logs/comp-01-routine-trivial-readme-base.stdout.txt",
+      "display_title": "comp-01-routine-trivial-readme-base.stdout.txt"
+    },
+    "shad": {
+      "content": "[comp-01-routine-trivial-readme:shad:Routine]\n{\n  \"assurance_tier\": \"Routine\",\n  \"files\": [\n    \"README.md\"\n  ],\n  \"reasons\": [\n    \"editorial or documentation-only adjustment with no contract/schema/tool impact\"\n  ],\n  \"required_gates\": [\n    \"start_path:begin:trivial\",\n    \"validate.sh\",\n    \"start_path:done:trivial\"\n  ],\n  \"review_remit\": {\n    \"advisory_fields\": [\n      \"advisory_minor\"\n    ],\n    \"blocking_fields\": [\n      \"issues\",\n      \"missing_acceptance_coverage\",\n      \"unsupported_claims\",\n      \"required_fixes\"\n    ],\n    \"evidence_required_for_blockers\": true\n  },\n  \"route\": \"trivial\",\n  \"stopping_conditions\": {\n    \"attempt_counter_role\": \"telemetry\",\n    \"breaker_ref\": \"methodology/03_circuit_breaker.md\",\n    \"comparator_subordinate\": true,\n    \"halt_condition\": \"Stop and diagnose on repeated identical deterministic failure, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget; comparator claims remain subordinate to stopping rules.\",\n    \"max_attempts\": 3,\n    \"pass_condition\": \"All required_gates for route 'trivial' exit 0 and blocking verdict arrays are empty.\"\n  }\n}\n",
+      "encoding": "utf-8",
+      "sha": "6041fc45cb9f1d8a0913822a38ca3e4cd9f5f244",
+      "display_url": "https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/logs/comp-01-routine-trivial-readme-shad.stdout.txt",
+      "display_title": "comp-01-routine-trivial-readme-shad.stdout.txt"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+COMMAND: /workspace/scratch/2665e36eb575/recce-venv/bin/python .nizam/tools/start_path.py classify --root . --editorial --files docs/planning/REMEDIATION_2026_10_18.md
+{
+  "assurance_tier": "Routine",
+  "files": [
+    "docs/planning/REMEDIATION_2026_10_18.md"
+  ],
+  "reasons": [
+    "editorial or documentation-only adjustment with no contract/schema/tool impact"
+  ],
+  "required_gates": [
+    "start_path:begin:trivial",
+    "validate.sh",
+    "start_path:done:trivial"
+  ],
+  "review_remit": {
+    "advisory_fields": [
+      "advisory_minor"
+    ],
+    "blocking_fields": [
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "required_fixes"
+    ],
+    "evidence_required_for_blockers": true
+  },
+  "route": "trivial",
+  "stopping_conditions": {
+    "attempt_counter_role": "finite task-wide failed-execution budget",
+    "breaker_ref": "methodology/03_circuit_breaker.md",
+    "comparator_subordinate": true,
+    "continuation_policy": "At most six failed executions per task across steps/output directories and at most three with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures.",
+    "halt_condition": "Stop and escalate on exhausted task/step failure budgets, three identical task-wide failures, contradiction with approved contract/invariants, missing operator authority, or exhausted execution budget/step limit; comparator claims remain subordinate to stopping rules.",
+    "hard_attempt_cap": 6,
+    "initial_strategy_ladder_attempts": 3,
+    "pass_condition": "All required_gates for route 'trivial' exit 0 and blocking verdict arrays are empty."
+  }
+}
+
+EXIT: 0

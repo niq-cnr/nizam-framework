@@ -1,0 +1,33 @@
+{
+  "id": "nf-cost-proxy-20261028",
+  "path": "trivial",
+  "summary": "Append source-only qualification of historical cost-unit study to existing remediation brief, with patch version/changelog; preserve historical status, captures and report.",
+  "needs_new_contract": false,
+  "files": [
+    "docs/planning/REMEDIATION_2026_10_18.md"
+  ],
+  "verification": [
+    {
+      "id": "doc-whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "doc-independent-review",
+      "argv": [
+        "python",
+        "-c",
+        "from pathlib import Path; p=Path('docs/planning/REMEDIATION_2026_10_18.md').read_text(); assert 'Cost-unit study qualification (2026-10-28)' in p; assert 'uncalibrated proxies' in p; assert 'measured ecosystem productivity savings' in p"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ]
+}
