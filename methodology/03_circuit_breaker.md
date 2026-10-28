@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, escalating investigative strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions."
-version: 0.6.1
+version: 0.6.2
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.6.2"
+    date: "2026-10-28"
+    summary: "Clarify typed capture enforcement coverage and separate external admission history without changing recovery authority or permitting fabricated legacy captures."
   - version: "0.6.1"
     date: "2026-10-27"
     summary: "NF-R02 (Finding F11): reconcile Section 6 (Escalation Protocol) with Section 3 (Explicit finite operator recovery) and Section 3.2 (non-resetting attempt identity) by replacing the stale '(resetting the attempt counter to 0)' wording with finite task-scoped operator recovery (circuit_breaker[task_id].operator_recovery raising max_task_attempts to a finite ceiling while retaining all prior attempt counters and capture history)."
@@ -112,6 +115,24 @@ other output directories and step names, and refuses corrupt matching history.
 Explicit defect signatures span steps; automatic signatures include exact argv,
 observed outcome/exit/signal and stdout/stderr byte digests so unrelated empty
 stderr failures do not collapse into one defect.
+
+This native enforcement covers validated typed capture records, not arbitrary
+shell logs or standalone reviewer verdicts. A successful command that merely
+writes a rejecting verdict does not make the governed review successful; the
+consumer must preserve that rejection and its failure accounting. The optional
+external admission mechanism in `tools/external_evidence.py` uses its own
+permit-bound ledger and recovery binding; it does not merge that history into
+native capture counters. Neither channel imports legacy logs as failed native
+captures. Do not fabricate capture records or replace `after_capture` with an
+unbound log or verdict.
+
+The consumer's trusted coordination boundary remains responsible for complete
+task-wide accounting, including known failures outside the selected capture
+channel. Changing channels grants no fresh budget. Preserve legacy evidence
+and actual operator decisions; if their remaining allowance cannot be enforced
+at that boundary, keep the affected task held until the owner resolves it.
+Do not claim native enforcement over unrecorded history. These coverage limits
+do not relax the stopping policy or create another recovery authority.
 
 ### 3.1 Attempt isolation
 

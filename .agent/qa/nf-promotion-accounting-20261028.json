@@ -1,0 +1,191 @@
+{
+  "feature_id": "nf-promotion-accounting-20261028",
+  "qa_pass": true,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "executed_at": "2026-10-28T14:41:54.195116+00:00",
+  "reviewer": "/root/independent_acceptance",
+  "source_commit": "48496466dceda4d6bcc2df07ea22a1269cd169e8",
+  "base_commit": "97f275f02faa967624f92f4c0eaa1bd026d096b5",
+  "source_hashes": {
+    "CHANGELOG.md": "8167f394611a9c2f66bced05cf1e2c519b35b67ff08aa12ea8f67445ccbd5fe5",
+    "docs/planning/REMEDIATION_2026_10_18.md": "240038577d1a88fc10112e5d261cb1d5553db66a442eb78cf69c0a43fb6cfb5b",
+    "methodology/03_circuit_breaker.md": "d3402019b88bc43c9118140ae740e22f58b65732385582c6cb8f31659b1a5ac1",
+    "methodology/07_eval_gated_promotion.md": "cd74478b980ec74df99bf69dfc89f0d25642335c845d2f7c1812cee82cbadee1"
+  },
+  "candidate_ref": {
+    "path": ".agent/evidence/nf-promotion-accounting-20261028/independent-candidate.json",
+    "sha256": "4359dead55e86d42870bad96656647990261d76fc64f90e5f81d4af564df0a95"
+  },
+  "binding_qualification": "Raw native captures are candidate-bound to canonical parsed manifest, source files independently verified. No fullassessed-v2 receipt, lifecycle advancement or installed-operational qualification claimed.",
+  "checks": [
+    {
+      "id": "check-1",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-compliance-attempt1-20261028T143637Z-7bea994a.capture.json",
+      "duration_ms": 183290,
+      "candidate_sha256": "3338936db38f764702e207bec5636ca863dd1ed650288223530d5d23a4c798ef",
+      "revision": "48496466dceda4d6bcc2df07ea22a1269cd169e8",
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "machine": "x86_64",
+          "system": "Linux",
+          "version": "3.12.3"
+        },
+        "variables": {
+          "GIT_CONFIG_GLOBAL": "/dev/null",
+          "PATH": "/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg00Q0Xj3:/home/cnross/.codex/tmp/arg0-linux/codex-arg0LhGEOq:/home/cnross/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg04YGnAW:/home/cnross/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0/codex-arg0nHC925:/home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/codex-path:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.cargo/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.nvm/versions/node/v24.21.0/bin:/home/cnross/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      }
+    },
+    {
+      "id": "check-2",
+      "command": "python -c \"import sys; sys.path.insert(0, 'tools'); import test_start_path as t; t.test_r02_loop_prevention()\"",
+      "argv": [
+        "python",
+        "-c",
+        "import sys; sys.path.insert(0, 'tools'); import test_start_path as t; t.test_r02_loop_prevention()"
+      ],
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-loop-controls-attempt1-20261028T143940Z-d74f74ed.capture.json",
+      "duration_ms": 3985,
+      "candidate_sha256": "3338936db38f764702e207bec5636ca863dd1ed650288223530d5d23a4c798ef",
+      "revision": "48496466dceda4d6bcc2df07ea22a1269cd169e8",
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "machine": "x86_64",
+          "system": "Linux",
+          "version": "3.12.3"
+        },
+        "variables": {
+          "GIT_CONFIG_GLOBAL": "/dev/null",
+          "PATH": "/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg00Q0Xj3:/home/cnross/.codex/tmp/arg0-linux/codex-arg0LhGEOq:/home/cnross/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg04YGnAW:/home/cnross/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0/codex-arg0nHC925:/home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/codex-path:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.cargo/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.nvm/versions/node/v24.21.0/bin:/home/cnross/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      }
+    },
+    {
+      "id": "check-3",
+      "command": "git diff --check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-whitespace-attempt1-20261028T143945Z-1bbc6eb0.capture.json",
+      "duration_ms": 3,
+      "candidate_sha256": "3338936db38f764702e207bec5636ca863dd1ed650288223530d5d23a4c798ef",
+      "revision": "48496466dceda4d6bcc2df07ea22a1269cd169e8",
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "machine": "x86_64",
+          "system": "Linux",
+          "version": "3.12.3"
+        },
+        "variables": {
+          "GIT_CONFIG_GLOBAL": "/dev/null",
+          "PATH": "/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg00Q0Xj3:/home/cnross/.codex/tmp/arg0-linux/codex-arg0LhGEOq:/home/cnross/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg04YGnAW:/home/cnross/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0/codex-arg0nHC925:/home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/codex-path:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.cargo/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.nvm/versions/node/v24.21.0/bin:/home/cnross/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      }
+    },
+    {
+      "id": "check-4",
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "exit_code": 0,
+      "evidence": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-bootstrap-attempt1-20261028T143945Z-5e862293.capture.json",
+      "duration_ms": 50064,
+      "candidate_sha256": "3338936db38f764702e207bec5636ca863dd1ed650288223530d5d23a4c798ef",
+      "revision": "48496466dceda4d6bcc2df07ea22a1269cd169e8",
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "machine": "x86_64",
+          "system": "Linux",
+          "version": "3.12.3"
+        },
+        "variables": {
+          "GIT_CONFIG_GLOBAL": "/dev/null",
+          "PATH": "/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg00Q0Xj3:/home/cnross/.codex/tmp/arg0-linux/codex-arg0LhGEOq:/home/cnross/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0-linux/codex-arg04YGnAW:/home/cnross/.codex/packages/app-server-daemon/releases/0.163.0-x86_64-unknown-linux-musl/codex-path:/home/cnross/.codex/tmp/arg0/codex-arg0nHC925:/home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/codex-path:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.minimax/bin:/home/cnross/.minimax-code/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/cnross/bin:/home/cnross/.grok/bin:/home/cnross/.local/bin:/home/cnross/.kimi-code/bin:/home/cnross/.abacusai/bin:/home/cnross/.local/bin:/home/cnross/.opencode/bin:/home/cnross/.cargo/bin:/home/cnross/.jbang/bin:/home/cnross/.jbang/currentjdk/bin:/home/cnross/.npm-global/bin:/home/cnross/.npm-global/bin:/home/cnross/.nvm/versions/node/v24.21.0/bin:/home/cnross/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Inspect actual base-to-candidate patch rather than treating empty postcommitgitdiff as source assurance. Recheck sourcehashes and no protectedcode/schema/installed payload change.",
+    "result": "pass",
+    "evidence": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/adversarial-check.json",
+    "capture": ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-source-diff-attempt1-20261028T144047Z-4e21fe11.capture.json"
+  },
+  "evidence_files": [
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-compliance-attempt1-20261028T143637Z-7bea994a.stdout.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-compliance-attempt1-20261028T143637Z-7bea994a.stderr.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-compliance-attempt1-20261028T143637Z-7bea994a.capture.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-loop-controls-attempt1-20261028T143940Z-d74f74ed.stdout.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-loop-controls-attempt1-20261028T143940Z-d74f74ed.stderr.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-loop-controls-attempt1-20261028T143940Z-d74f74ed.capture.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-whitespace-attempt1-20261028T143945Z-1bbc6eb0.stdout.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-whitespace-attempt1-20261028T143945Z-1bbc6eb0.stderr.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-whitespace-attempt1-20261028T143945Z-1bbc6eb0.capture.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-bootstrap-attempt1-20261028T143945Z-5e862293.stdout.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-bootstrap-attempt1-20261028T143945Z-5e862293.stderr.txt",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-bootstrap-attempt1-20261028T143945Z-5e862293.capture.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/execution-index.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/adversarial-check.json",
+    ".agent/evidence/nf-promotion-accounting-20261028/independent-final/nf-promotion-accounting-20261028-independent-source-diff-attempt1-20261028T144047Z-4e21fe11.capture.json",
+    ".agent/validator/nf-promotion-accounting-20261028-mode-b.json"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Committed four-document source candidate passes allfourcontracted checks and independent exactsource/diff assessment; recovery bindings and independenteval/fallback remain unchanged."
+  },
+  "results": {
+    "repository_compliance": "SUMMARY:16passed,0failed",
+    "finite_loop_controls": "PASS r02 finite taskwide loop prevention, decomposition, no-op and proof reuse controls; nested adverse predicates predeclared and asserted by successful wrapper",
+    "patch_whitespace": "Contractual clean-tree check and meaningful base-to-candidate patchcheck both pass",
+    "consumer_bootstrap": "Hermetic inject-then-verify positive/adverse consumer-only lifecycle passes on committed48496466 payload; no network/liveprovider required"
+  },
+  "failure_accounting": {
+    "known_raw_staging_failures": 1,
+    "native_failed_captures_observed_for_task": 0,
+    "total_known_failures": 1,
+    "total_ceiling": 6,
+    "remaining_without_other_failures": 5,
+    "reset_performed": false,
+    "raw_observation": ".agent/evidence/nf-promotion-accounting-20261028/publication-observation.json",
+    "qualification": "Nativecounts do not include preservedrawstagingfailure; roottrustedcoordination accountsforit separately. No fabricatedcapture or recoveryanchor."
+  },
+  "remaining_merge_gates": [
+    "Required hostedfixtures_self_test.sh matching publishedcandidate",
+    "Other required hostedCI and humanreview/merge under normalprotection"
+  ],
+  "status": "Source implemented and independently accepted; not merged/released/adopted/activated",
+  "limitations": [
+    "Promotion document remains consumer-aspirational; no LLMrolebehavior result produced.",
+    "Pi runtimecounter integration remains separately owned unresolved consumerwork.",
+    "Installedselfpayload v3.0.0 unchanged; sourceaccepted docs do not establish releaseorconsumeradoption.",
+    "RecceandNX remain parked; this QA gives no restartauthority.",
+    "No paidcall, release tag, selfmerge or productionactivation performed. Hermetic e2e testtag is temporarytestartifact, not release."
+  ],
+  "implementation_sufficiency": "Fourexistingdocuments only: replace stale stoppingparagraph, clarify actual accountingcoverage, append owningrecord and requiredchangelog. Nonewcode/schema/service/testplatform needed."
+}

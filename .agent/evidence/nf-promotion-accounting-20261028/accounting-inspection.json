@@ -1,0 +1,83 @@
+{
+  "reviewer": "/root/independent_acceptance",
+  "recorded_at": "2026-10-28T14:26:23.170221+00:00",
+  "mode": "read-only source and existing-test inspection; no governed commands or tests executed, no repository mutations",
+  "framework_revision": "97f275f02faa967624f92f4c0eaa1bd026d096b5",
+  "installed_self_governance": {
+    "tag": "v3.0.0",
+    "revision": "2b8298ae1d5a41534e00b6710a738b4b181b87fa",
+    "note": "Authored current source and installed self-governance remain distinct; no payload edited."
+  },
+  "conclusion": "Existing mechanisms do not import raw logs or standalone reviewer verdicts into native failed-capture recovery. Native rejection of an unbound after_capture is correct. The observed mixed-history accounting mismatch belongs primarily to the consumer adapter/coordination boundary. A generic cross-channel or legacy-history migration facility is absent; do not claim current runtime enforces unrecorded history.",
+  "findings": [
+    {
+      "id": "native-binding-preserved",
+      "disposition": "correct intentional control",
+      "evidence": [
+        "tools/start_path.py:1310-1353",
+        "tools/start_path.py:1356-1379",
+        "tools/start_path.py:1404-1447",
+        "methodology/03_circuit_breaker.md:98-114"
+      ],
+      "observation": "Native capture discovers only valid matching *.capture.json with exact task/capture/argv/result and actual hash-checked streams. Recovery is a closed task object with after_capture among those actual failed records; code uses len(failed), not an arbitrary legacy attempts/manual_failure_count field. Truthy flags, extra objects or raw-log references cannot substitute."
+    },
+    {
+      "id": "external-admission-separate",
+      "disposition": "supported prospective evidence path; no retroactive native-history bridge",
+      "evidence": [
+        "tools/external_evidence.py:225-259",
+        "tools/external_evidence.py:296-347",
+        "tools/external_evidence.py:550-604",
+        "tools/external_evidence.py:679-699",
+        "tools/external_evidence.py:743-785"
+      ],
+      "observation": "Optional external path allocates monotonic host permits, requires matching permit/producer proof/candidate binding, records failed admission outcomes in its own ledger, and requires recovery.after_capture in that ledger failed_admissions. It does not update native capture history or native run_state recovery; raw bytes alone provide neither allocated lineage nor producer proof. Do not mint a fresh permit/proof and misrepresent historical execution as a new genuine attempt."
+    },
+    {
+      "id": "failure-router-not-importer",
+      "disposition": "existing cause-routing helper does not solve accounting",
+      "evidence": [
+        "tools/workflow_assurance.py:1785-1862"
+      ],
+      "observation": "route_failed_attempt accepts a semantic rejection only alongside an actual bound failed capture and independently selected authority/evidence. It returns a proposal, never executes retry or writes counters. A legacy verdict being schema-readable is not native recovery qualification."
+    },
+    {
+      "id": "adapter-owned-gap",
+      "disposition": "demonstrated current consumer runtime/prose mismatch",
+      "consumer_revision": "niq-cnr/pi-config@7dd75bd371e6d29434a2a991d9d5761a58a163d8",
+      "evidence": [
+        "pi-config/skills/harness/NIZAM_ADAPTER.md:72-76",
+        "pi-config/skills/harness/NIZAM_ADAPTER.md:125-141",
+        "pi-config/extensions/harness/index.ts:1432",
+        "pi-config/extensions/harness/index.ts:1461-1530"
+      ],
+      "observation": "Pi prose binds run-verification to installed capture when producing v2 QA, but native pi_record_qa still owns a separate per-contract failed_attempts count, resets it to0 on pass, marks blocked at3 and advertises repair otherwise. That state transition is observed statically; no actual invocation or global runtime retry prohibition was demonstrated. A warning label does not wire it to installed task-wide capture/authority accounting."
+    }
+  ],
+  "tests_inspected_not_executed": [
+    {
+      "path": "tools/test_start_path.py:2045-2089",
+      "coverage": "Real typed failure signatures stop at3; finite exact recovery permits one bounded continuation; rotating6failures stop; invalid boolean recovery and corrupt matching capture fail closed."
+    },
+    {
+      "path": "tools/test_nf_ac04_generic_admission.py:410-475",
+      "coverage": "External admitted rejection increments its own task/signature budget; recovery must bind its last failed admission; permits remain monotonic."
+    },
+    {
+      "path": "tools/test_nf_ac04_generic_admission.py:284-408",
+      "coverage": "Host permits, forged proof/binding/status/partial evidence negatives and duplicate replay are covered; no legacy raw-history\u2192native import scenario exists in inspected entrypoints."
+    }
+  ],
+  "minimal_recommendation": [
+    "Keep native after_capture exact failed-task-capture binding and external failed-admission binding unchanged. Do not fabricate capture objects, replay a known refusal solely to manufacture an anchor, reset IDs/counters or relabel earlier failed repairs as diagnostics.",
+    "Correct consumer adapters so every governed contracted attempt is assigned stable task/step/classification before execution and produces honest capture/admission output; ensure wrapper status reflects required command or reviewer rejection rather than only successful subprocess transport. Predeclare genuine diagnostics/negative acceptance predicates.",
+    "Select one accounting route per task. Existing native/external ledgers do not merge; route switching cannot supply extra budget. Where legacy raw failures remain, preserve them and the real owner decision and enforce their remaining allowance at the trusted consumer coordination boundary, or keep the task held. Do not call this native recovery support or an enforced guarantee unless the adapter actually checks it.",
+    "A minimal shared documentation clarification can state native budget coverage is recorded typed capture history; optional external history is separately enforced; generic shell/DD3 evidence is not equivalent to complete typed failure lineage. Broad recovery-object changes or another evidence schema are not needed for this correction.",
+    "If the owner explicitly commissions native machine enforcement over historical raw failures or mixed native/external channels, treat that as a separately scoped migration/integration requirement with provenance and anti-double-counting acceptance, not permission to weaken current binding."
+  ],
+  "limitations": [
+    "No new executable acceptance or runtime behavior result claimed.",
+    "Consumer source inspection is bounded to canonical Pi adapter/QA writer plus current Hermes/OpenCode instruction references; no complete host integration audit repeated.",
+    "Native/external accounting separation is a source observation; no deliberate bypass experiment was executed."
+  ]
+}

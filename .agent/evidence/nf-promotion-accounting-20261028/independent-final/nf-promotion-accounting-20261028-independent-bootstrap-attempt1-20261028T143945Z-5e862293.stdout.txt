@@ -1,0 +1,24 @@
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1793198385-2569134' from 'file:///home/cnross/code/audit-remediation/nizam-framework' into '/home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: fetching file:///home/cnross/.tmp/tmp.osyztXjNKH/source-repo at explicit tag ref refs/tags/e2e-1793198385-2569134 (--depth 1, blob-filtered, sparse payload)...
+blob filter applied: 2837 excluded object(s) absent locally
+reference payload objects present: 337 file(s)
+bootstrap.sh: staging governance payload in /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam-stage.9TV3CY...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 112 indexed path(s) resolve under /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam-stage.9TV3CY.
+bootstrap.sh: recording provenance (framework_version=3.1.0, tag=e2e-1793198385-2569134, resolved_sha=48496466dceda4d6bcc2df07ea22a1269cd169e8)...
+bootstrap.sh: install complete. Governance payload version 3.1.0 (tag e2e-1793198385-2569134) is now at '/home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 111 indexed path(s) resolve under /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam.
+assert_discovery_path: OK -- /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam' against pinned tag 'e2e-1793198385-2569134' (no clone, no network)...
+NIZAM.json parses; 112 indexed path(s) resolve under /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam.
+bootstrap.sh: verify-only: PASS (structural_only; content_integrity=not_checked) -- '/home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam' required files, index paths, and recorded provenance tag 'e2e-1793198385-2569134' verified; file bytes and complete inventory were not compared against a reference tree.
+assert_provenance_sha_pin: OK -- resolved_sha recorded (48496466dceda4d6bcc2df07ea22a1269cd169e8) == tag's true commit; --verify-only enforces --git-repo + --expected-sha match, content bytes, file inventory, executable modes, and C2 guards.
+assert_install_tag_and_sha_pin_and_worktree_reproducibility: OK -- public SemVer tag gate, install-time --expected-sha match/mismatch, annotated+lightweight tags, and 3-form linked-worktree reproducibility verified.
+assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent and reports non-conflated summary (both invocation forms green with identical [C*] verdicts under /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam)
+assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit 2: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/).
+assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=48496466dceda4d6bcc2df07ea22a1269cd169e8); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.
+assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2).
+assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL).
+assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish(prepare+deny+publish)/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1793198385-2569134, target /home/cnross/.tmp/tmp.FWpB1nEMYU/.nizam).
