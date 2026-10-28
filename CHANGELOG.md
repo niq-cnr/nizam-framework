@@ -10,7 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [3.1.1] - 2026-10-28
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).
-Release preparation only: human merge/sign-off, annotated tag and publication
+At preparation on 2026-10-28, human merge/sign-off, annotated tag and publication
 remain pending. No schema, required-key or consumer runtime changes.
 
 ### Fixed
