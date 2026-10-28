@@ -257,7 +257,7 @@ def mutations():
             raw, mode = f.expected[path]; f.write(path, raw, not mode)
             f.call(rejection=('receipt protected current input changed', 'receipt record mode changed')); f.write(path, raw, mode); f.call()
         directory = f.root / 'src'; saved = f.root / 'saved-src'; directory.rename(saved); directory.symlink_to(saved)
-        try: f.call(rejection=('symlink path component:', 'symlink/non-directory path ancestor:'))
+        try: f.call(rejection=('symlink path component:', 'symlink/non-directory path ancestor:', 'new current symlink: src'))
         finally: directory.unlink(); saved.rename(directory)
         f.call()
         os.environ[ENV] = 'mutated'; f.call(rejection=('receipt observed environment changed',)); os.environ[ENV] = 'baseline'; f.call()
