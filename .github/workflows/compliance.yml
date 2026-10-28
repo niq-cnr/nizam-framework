@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-8
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -39,7 +39,7 @@ jobs:
       - run: bash tools/validate.sh
 
   e2e_bootstrap:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-8
     steps:
       # No fetch-depth override here (unlike the validate job): the harness's
       # ephemeral tag is created locally on this checkout's own HEAD (a
@@ -68,7 +68,7 @@ jobs:
       - run: bash tools/e2e_bootstrap_test.sh
 
   fixtures_self_test:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-8
     steps:
       # Workflow-assurance cases read pinned historical Git blobs and release
       # tags, so this job requires full history alongside working-tree fixtures.
@@ -112,7 +112,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 tools/evidence_archive.py check-growth --base "${BASE}"
 
   convergent_review:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-8
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -199,7 +199,7 @@ jobs:
           archive: true
 
   self_governance:
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-8
     env:
       PYTHONDONTWRITEBYTECODE: "1"
     steps:
