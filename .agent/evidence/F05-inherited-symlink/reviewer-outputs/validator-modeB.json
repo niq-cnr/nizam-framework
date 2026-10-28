@@ -2,7 +2,11 @@
   "reviewer": "/root/recce_r01",
   "role": "Validator Mode B",
   "reviewed_at": "2026-10-28T18:46:14.087404+00:00",
-  "final_verdict": "approved",
+  "final_verdict": {
+    "approved": true,
+    "feature": "F05-inherited-symlink",
+    "summary": "Exact frozen source scope, no-follow producer and actual consumer boundaries independently inspected; required execution remains Evaluator-owned."
+  },
   "source_commit": "60f54ec1463c5652c1d356214190f7b56849656b",
   "base_commit": "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
   "contract_sha256": "fc77ef59f8d7922052810b31103e1444e7d2b2242ceff0e8bb84bed264facd58",
@@ -18,7 +22,6 @@
     "tools/workflow_assurance.py"
   ],
   "scope_exact": true,
-  "blocking_findings": [],
   "inspection_findings": [
     "Literal Git entries retain blob+stage/mode checks and reject gitlinks. Only inherited120000 leaves are eligible; anchor/index/executed link dictionaries must agree exactly.",
     "Shared helper checks every path ancestor using lstat and link text via os.readlink bytes against Git blob; no linked-target read/resolve/stat-follow. Relative/absolute/dangling text can pass unchanged while external target contents remain explicitly unqualified.",
@@ -36,5 +39,18 @@
     "logical_task": "F05-current-state-qualification",
     "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
     "latest_parent_observation": "23/24; root sole writer, no reset or extra allowance from this review."
+  },
+  "review": "post-code-structure-and-scope",
+  "feature": "F05-inherited-symlink",
+  "contract_id": "F05-inherited-symlink",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "format_correction": {
+    "at": "2026-10-28T18:47:49.819779+00:00",
+    "prior_ref": "validator-modeB-initial-format.json",
+    "prior_sha256": "e2ebd5064ea5b612dc3c67b9d29ef828c86715237b3e6cfa2df91573ce621b81",
+    "reason": "Project actual unchanged structural approval into installed AGF final_verdict object and explicit blocking arrays. No new substantive review/source edits/tests/approval or backdated claim."
   }
 }
