@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.39
+version: 0.65.40
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.40"
+    date: "2026-10-28"
+    summary: "Prepare the v3.1.1 PATCH release anchors/readiness from accepted post-v3.1.0 corrections; record actual v3.1.0 publication separately from unchanged v3.0.0 self-installation. Merge, human release sign-off, tag and adoption remain pending."
   - version: "0.65.39"
     date: "2026-10-27"
     summary: "Record published v3.0.0 MAJOR release at PR142 merge 2b8298ae1d5a41534e00b6710a738b4b181b87fa (annotated tag object 10f7cd3e103d143eef7d151228b1bf3b3344a362) and official local .nizam/ installation (331 released files + provenance.json at 2026-10-27T15:56:45Z), and prepare the v3.1.0 MINOR release candidate (NF-OWNER-2026-10-27: NF-R01–NF-R05 plus API-REF-PILOT)."
@@ -406,9 +409,11 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v3.1.0 — NF-OWNER-2026-10-27 MINOR release candidate (`NF-R01`–`NF-R05` assurance/standalone qualification and `API-REF-PILOT`); human sign-off, merge and tag remain pending.
+Release in preparation: v3.1.1 — PATCH candidate for accepted promotion/accounting wording corrections, historical cost qualification and internal CI runner update. Required source review/acceptance precedes human merge/sign-off, annotated tag, publication and adoption; none of those release acts is claimed here.
 
-Latest released tag: v3.0.0 (MAJOR) — RELEASED 2026-10-27 at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (PR #142, merged by `niq-cnr` at `2026-10-27T10:33:08Z`; annotated tag object `10f7cd3e103d143eef7d151228b1bf3b3344a362`). Official local `.nizam/` adoption installed `331` released files + `provenance.json` at `2026-10-27T15:56:45Z`; the trusted pin verifier, 10-case drift negative suite, commit-bound bootstrap verification and installed preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [v3.0.0 migration guide](../migration-v3.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v3.0.0-closeout/).
+Latest released tag: v3.1.0 (MINOR) — RELEASED 2026-10-27 at `e68d4eeda080d566ac893b583e1087569ec8883e` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.0)). This release fact does not upgrade the official local v3.0.0 installation.
+
+Prior released tag: v3.0.0 (MAJOR) — RELEASED 2026-10-27 at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (PR #142, merged by `niq-cnr` at `2026-10-27T10:33:08Z`; annotated tag object `10f7cd3e103d143eef7d151228b1bf3b3344a362`). Official local `.nizam/` adoption installed `331` released files + `provenance.json` at `2026-10-27T15:56:45Z`; the trusted pin verifier, 10-case drift negative suite, commit-bound bootstrap verification and installed preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [v3.0.0 migration guide](../migration-v3.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v3.0.0-closeout/).
 
 Prior released tag: v2.0.0 (MAJOR) — RELEASED 2026-10-24 at `603afc7b17919334a6a01df1e39e63798d9d0acd` (PR #137, merged by `niq-cnr` at `2026-10-24T05:36:42Z`; annotated tag object `4aa4b1be73b1131b1227528465981a15815c44d7`). All six release-preparation CI checks passed (compliance run `40065497758`, closeout run `40065497781`); `release.yml` run `40067442085` succeeded and published the GitHub Release at `2026-10-24T05:44:48Z`. Official local `.nizam/` adoption installed `316` released files + `provenance.json` at `2026-10-24T05:45:45Z` ([release closeout](../../.agent/evidence/release-v2.0.0-closeout/)).
 

@@ -1,0 +1,49 @@
+{
+  "review": "independent-contract-testability",
+  "feature": "release-v3.1.1",
+  "contract_id": "release-v3.1.1",
+  "revision_reviewed": 0,
+  "reviewer": "/root/independent_acceptance",
+  "recorded_at": "2026-10-28T15:36:28.896150+00:00",
+  "contract_sha256": "15c490413dd8ca8de72a90940a531a3bf697ae8dd974109d0bd531cb08462181",
+  "base_commit": "625e16cf99b045c83239ae0da54f524435d6581c",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "PATCH classification is supported by inspected post-v3.1.0 payload delta: only two already-accepted methodology wording corrections; no code/schema/key/path changes. Internal CI runner and cost-proxy qualification also need accurate changelog coverage but not new consumer migration.",
+    "All three named CLI interfaces exist with exact supplied options. release_closeout.py --mode pr checks six working-tree version anchors and creates no refs. test_public_entry.py validates existing public-entry/pin/provenance boundaries with disposable fixture copies/tags; no shared/source refs or live installation required.",
+    "Existing test_corrective_release.py resolves candidate and prior to exact commits, requires actual priorSHA, clones into a TemporaryDirectory and creates only a private fixture tag, installs core into disposable consumer, verifies commit-bound integrity/payload, and rolls back through immutable bootstrap. It prints per-command JSON and a final JSON result with core_install/rollback and inventory digests; do not invent fixed file/test counts.",
+    "HEAD-bound rehearsal must run after committed frozen source, with actual source commit and environment recorded. Its own run() propagates nonzero child commands as failure; nested expected refusals in existing public-entry tests are asserted, not laundered.",
+    "README candidate block is inside Quickstart before Local governance, so new v3.1.1 candidate pins satisfy existing public-entry checks while valid older onboarding pins remain separately labelled. Release-closeout requires current-version curl/GOVERNANCE_TAG/--tag/releasepage tokens and one roadmap candidate disposition; preserve genuine publishedv3.1.0 and installedv3.0.0 facts.",
+    "Readiness source must distinguish source preparation/acceptance from human signoff, merge, finaltag/SHA, publication and activation. Do not assert a future release SHA or make readiness self-hash into source identity.",
+    "PR145 unchanged behavioral controls may be reused after exact relevant inputs are checked. Changed anchor/readiness inputs invalidate their affected claims: normal required hosted compliance/release/fixture checks still need the new candidate; this precode approval does not satisfy merge or release gates.",
+    "No new test framework, schema, migration guide, llms regeneration or broad audit is justified. Existing release/public/rollback checks plus independent exact source review and ordinary CI provide proportionate assurance. Recce/NX and installed payload remain unchanged."
+  ],
+  "coverage": [
+    {
+      "requirement": "Consistent six anchors and complete PATCH notes",
+      "verification": "release-anchors plus independent source diff/readiness review"
+    },
+    {
+      "requirement": "Published/installed/candidate identities remain distinct",
+      "verification": "public-entry and independent exact pin/snapshot review"
+    },
+    {
+      "requirement": "Unchanged implementation behavior evidence reused only while valid",
+      "verification": "Independent base-to-source protected-path hashes and scoped diff; normal new-candidate CI remains pending"
+    },
+    {
+      "requirement": "Exact core install/rollback without shared refs or live install",
+      "verification": "install-rollback on committedcandidate using actualv3.1.0SHA"
+    },
+    {
+      "requirement": "Reviewable source/evidence and human release stop",
+      "verification": "Independent QA evidence binding and readiness review; no tag/publish/activation operation authorized"
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Minimal PATCH release-preparation contract is testable with existing exact CLI checks, immutable candidate/prior identities and isolated install/rollback. Human merge/signoff/tag and activation remain separate gates."
+  }
+}

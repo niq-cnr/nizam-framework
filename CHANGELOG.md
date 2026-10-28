@@ -7,12 +7,26 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-10-28
+
+**Patch release** (`methodology/06_release_train.md` Section 3.3).
+Release preparation only: human merge/sign-off, annotated tag and publication
+remain pending. No schema, required-key or consumer runtime changes.
+
 ### Fixed
 
 - Promotion retries now refer to the authoritative task-wide stopping policy,
   including immediate hard stops and finite operator recovery. Clarified native
   typed-capture versus external/legacy failure-accounting coverage without
   changing runtime recovery bindings or claiming consumer integration.
+
+- Historical cost-unit comparisons are explicitly qualified; incomplete timing,
+  token or billing inputs do not establish measured financial savings.
+
+### Changed
+
+- Internal CI workflows use the operator-directed `ubicloud-standard-8` runner;
+  consumer payload execution and contracts are unchanged.
 
 ## [3.1.0] - 2026-10-27
 

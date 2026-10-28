@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 3.1.0
+version: 3.1.1
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "3.1.1"
+    date: "2026-10-28"
+    summary: "Prepare the unreleased v3.1.1 PATCH: accepted promotion stopping/accounting clarifications, historical cost qualification and internal CI runner update. No consumer schema, required key or runtime change; local governance remains installed v3.0.0. Human merge/sign-off, tag, publication and adoption remain separate."
   - version: "3.1.0"
     date: "2026-10-27"
     summary: "Prepare the v3.1.0 MINOR release (NF-OWNER-2026-10-27): hardened read-only Git identity seam (tools/git_seam.py, NF-R01/F02), reconciled atomic .nizam/ payload installation vs external proportionate activation in standard/GIP.md and finite task-scoped operator_recovery in methodology/03_circuit_breaker.md (NF-R02/F10/F11), versioned 1.1.0 typed binary review packet coverage and magic-byte sniffing in schema/review_packet.schema.json and tools/convergent_review.py (NF-R03/F09), optional generic external evidence admission contract and CLI in schema/external_evidence_admission.schema.json and tools/external_evidence.py (NF-R04), standalone consumer e2e qualification suite (tools/test_nf_ac05_standalone_e2e.py, NF-R05), and the approved API-REF-PILOT backlog plan. All changes are additive and hardening; no shipped schema was narrowed. The local .nizam/ payload is self-installed to the published v3.0.0 release (2b8298ae1d5a41534e00b6710a738b4b181b87fa)."
@@ -18,7 +21,6 @@ change_log:
   - version: "1.11.0"
     date: "2026-10-23"
     summary: "Prepare the v1.11.0 MINOR release: add the provider-neutral semantic observation architecture (Choice/Noul/Score contracts, mode-isolated off-by-default policy, the versioned question/policy catalog, the seven decision families, the optional host-side Jev adapter and provider-attempt usage accounting), the independently-adjudicated evaluation corpus and four-arm harness, and the deterministic governance repairs (strict normalized QA acceptance, complete-delta scope binding, contract-identity consistency, authoritative monotonic attempts, and verified continuation authority); plus the earlier evidence-archive/bounded-preservation, sparse-bootstrap, llms.txt and README/guide refresh work. All new semantic capability is off by default; no shipped schema was narrowed. The installed .nizam/ payload remains pinned to v1.10.1 until the reviewed post-tag re-bootstrap to v1.11.0."
-change_log:
   - version: "1.10.1"
     date: "2026-10-19"
     summary: "Prepare the v1.10.1 PATCH release: full repository-wide documentation and GitHub Pages accuracy refresh across docs/guide/index.html (retiring all v0.1.0 pins, 4-directory payload enumerations, 'Framework-side only so far', and pre-controller runtime-session prose; adding all 6 injected modules, --git-repo/--expected-sha/--require-content-integrity verification modes, semantic 5-route task routing and capture/publish/build-receipt helpers, and Section 4.4 external mutation mediation), CONTEXT.md (complete Module Map and Execution Commands), ecosystem/01_clean_state_preflight.md (v0.1.5 work-specific diagnostic stopping policy reference), methodology/10_live_runtime_sessions.md (v0.2.1) and methodology/11_sbcl_runtime_binding.md (v0.1.2) and schema/README.md (v0.20.2) (replacing stale phase016 pending prose with delivered features 126-129 bounded runtime controller/SBCL loop and Phase 020 features 130-132 full live SBCL qualification boundary), tools/interface.md (v0.5.2), tools/README.md (v0.37.2), tools/SKILL.md (v0.8.2), tools/skill.json (v0.8.2), NIZAM.json (v1.10.1), and tools/test_public_entry.py regression guards. Pure documentation/prose patch with 278 released files and no schema or behavioral break. The installed .nizam/ payload remains pinned to v1.10.0 until the reviewed post-tag re-bootstrap to v1.10.1. H-FRAMEWORK-RELEASE sign-off, tag, and pin authorization continue under the operator's 2026-10-19 mandate; the annotated tag act remains the separate post-merge Orchestrator mechanic (methodology/06_release_train.md Section 6)."
