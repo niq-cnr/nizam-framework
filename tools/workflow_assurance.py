@@ -300,6 +300,64 @@ def masks(ownership):
     return result
 
 
+def _identity_entries(root, revision=None):
+    """Literal Git leaf identities; gitlinks and nonzero index stages stay unsafe."""
+    rows = git(root, 'ls-tree', '-rz', revision) if revision is not None else git(root, 'ls-files', '--stage', '-z')
+    entries = {}
+    for row in rows.split(b'\0'):
+        if not row:
+            continue
+        metadata, name = row.split(b'\t', 1)
+        mode, middle, last = metadata.decode().split()
+        path = name.decode(); relative_path(path)
+        oid = last if revision is not None else middle
+        safe_kind = middle == 'blob' if revision is not None else last == '0'
+        require(safe_kind and mode in ('100644', '100755', '120000') and path not in entries,
+                'unsafe anchored/index file mode or stage: ' + path)
+        entries[path] = (mode, oid)
+    return entries
+
+
+def _inherited_symlinks(root, baseline, index, selected, executed=None):
+    """Allow unchanged unselected link text, never the linked target's contents."""
+    links = {path: entry for path, entry in baseline.items() if entry[0] == '120000'}
+    for path in links:
+        require(not any(item == path or item.startswith(path + '/') for item in selected),
+                'selected/record symlink path: ' + path)
+    for entries in (index,) if executed is None else (index, executed):
+        require({path: entry for path, entry in entries.items() if entry[0] == '120000'} == links,
+                'inherited symlink added/removed/retargeted or mode changed')
+    values = blobs(root, [oid for mode, oid in links.values()]) if links else {}
+    paths = set(baseline) | set(index) | set(executed or {})
+    paths.update(name.decode() for name in git(root, 'ls-files', '--others', '-z').split(b'\0') if name)
+    try:
+        for path in sorted(paths):
+            relative_path(path)
+            target = Path(root)
+            info = None
+            for part in path.split('/')[:-1]:
+                target = target / part
+                try:
+                    info = target.lstat()
+                except FileNotFoundError:
+                    info = None
+                    break
+                require(stat.S_ISDIR(info.st_mode), 'symlink/non-directory path ancestor: ' + path)
+            else:
+                target = target / path.split('/')[-1]
+                try:
+                    info = target.lstat()
+                except FileNotFoundError:
+                    info = None
+            if path in links:
+                require(info is not None and stat.S_ISLNK(info.st_mode), 'inherited symlink removed/type changed: ' + path)
+                require(os.readlink(os.fsencode(target)) == values[links[path][1]], 'inherited symlink text changed: ' + path)
+            else:
+                require(info is None or not stat.S_ISLNK(info.st_mode), 'new current symlink: ' + path)
+    except OSError as exc:
+        raise AssuranceError('inherited symlink observation failed: ' + str(exc)) from exc
+
+
 def assess_repository(repo, source_commit, inputs, environment_names, record_ownership=None):
     """Observe complete candidate drift against the explicit immutable anchor."""
     try:
@@ -322,29 +380,20 @@ def assess_repository(repo, source_commit, inputs, environment_names, record_own
         environment = {'runtime': {'implementation': platform.python_implementation(), 'version': platform.python_version(),
                                    'system': platform.system(), 'machine': platform.machine()},
                        'variables': {n: os.environ[n] for n in sorted(environment_names)}}
-        baseline = {}
-        for entry in git(root, 'ls-tree', '-rz', source_commit).split(b'\0'):
-            if not entry: continue
-            metadata, name = entry.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
-            path = name.decode(); relative_path(path)
-            require(mode in ('100644', '100755') and kind == 'blob', 'unsupported anchored file mode: ' + path)
-            baseline[path] = (mode, oid)
-        index = {}
-        for entry in git(root, 'ls-files', '--stage', '-z').split(b'\0'):
-            if not entry: continue
-            metadata, name = entry.split(b'\t', 1); mode, oid, stage = metadata.decode().split()
-            path = name.decode(); relative_path(path)
-            require(stage == '0' and mode in ('100644', '100755') and path not in index, 'unmerged/unsafe index input: ' + path)
-            index[path] = (mode, oid)
+        baseline = _identity_entries(root, source_commit)
+        index = _identity_entries(root)
         require(set(index) == set(baseline), 'unknown added/deleted/renamed tracked path')
         require(not git(root, 'ls-files', '--others', '-z'), 'unknown untracked or ignored candidate path')
         all_selected = set(p for paths in selected.values() for p in paths) | set(ownership)
         require(all_selected <= set(baseline), 'assessed/record path missing from immutable anchor')
+        _inherited_symlinks(root, baseline, index, all_selected)
         objects = blobs(root, [oid for mode, oid in baseline.values()] + [oid for mode, oid in index.values()])
         observed = {}
         # Raw bytes for every tracked path, not Git diff text: attributes/filters
         # cannot hide changes to unknown source/build dependencies.
         for path, (mode, oid) in baseline.items():
+            if mode == '120000':
+                continue  # Verified raw link text above; no target dereference.
             target = regular_file(root, path); current = target.read_bytes()
             require(bool(target.stat().st_mode & 0o111) == (mode == '100755') and index[path][0] == mode, 'executable mode changed: ' + path)
             anchor = objects[oid]; staged = objects[index[path][1]]
@@ -960,6 +1009,10 @@ def _receipt_candidate(root, candidate, revision=None):
     require(git(root, 'remote', 'get-url', 'origin').decode().strip() == candidate['repository'], 'receipt actual repository')
     ownership = candidate['record_ownership']
     protected = [entry for category in ('source', 'tests', 'tools') for entry in candidate['assessed_inputs'][category]]
+    selected = {entry['path'] for group in candidate['assessed_inputs'].values() for entry in group} | set(ownership)
+    baseline = _identity_entries(root, anchor)
+    _inherited_symlinks(root, baseline, _identity_entries(root), selected,
+                        baseline if revision == anchor else _identity_entries(root, revision))
     paths = {anchor: {entry['path'] for entry in candidate['assessed_inputs']['contracts']} | set(ownership)}
     for commit in (anchor, revision):
         paths.setdefault(commit, set()).update(entry['path'] for entry in protected)

@@ -7,6 +7,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Assessment and QA/receipt consumption accept unchanged, unselected inherited
+  symlink identities without following their targets. Selected inputs, record
+  paths, symlink ancestors and link/type/index/revision drift still fail closed.
+
 ## [3.1.1] - 2026-10-28
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).
