@@ -2,10 +2,13 @@
 id: nizam-remediation-2026-10-18
 title: "Critical Quality and Velocity Remediation Brief — 2026-10-18"
 description: "Single coordination brief recording the 2026-10-18 operator remediation mandate, live-work reconciliation, CI suite ownership and timing baseline, and reconciled backlog order."
-version: 0.18.0
+version: 0.18.1
 status: active
 authoritative_source: docs/planning/REMEDIATION_2026_10_18.md
 change_log:
+  - version: "0.18.1"
+    date: "2026-10-28"
+    summary: "Qualify historical A7 cost-unit reductions as uncalibrated proxies; preserve completion records and source captures."
   - version: "0.18.0"
     date: "2026-10-22"
     summary: "Mark the remediation mandate COMPLETE as a predecessor and superseded for active direction by mandate NIZAM-JEV-OWNER-2026-10-22 (docs/planning/jev-readiness/PROGRAM.md). All dated R/A/B/C execution facts, evidence paths and release records remain historical and unchanged; no missing remediation work is implied."
@@ -264,3 +267,33 @@ One-shot baseline reproduction probes were executed once against unmodified `3ef
 4. **`C5` (Release, Post-Release `.nizam/` Self-Adoption, and Override Exit — Complete)**:
    - Merged the accepted candidate via PR #123 at `6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7` (`compliance.yml` run `39216541409` green in `17m19s`), published annotated tag `v1.10.0` (`8971603d2091fd5f5602f556b49499a0c8aa7a29`, `release.yml` run `39218964275` succeeded at `2026-10-19T07:54:01Z`), re-bootstrapped `.nizam/` to `v1.10.0` (`278` released files + `provenance.json`, `installed_at: 2026-10-19T07:56:18Z`), verified self-governance and standalone strict consumer verification (`--verify-only --git-repo .nizam-ref/ --expected-sha 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 --require-content-integrity`, captured in `.agent/evidence/release-v1.10.0-closeout/`), and removed the transitional override banner in `AGENTS.md` (`v0.4.0`).
 
+
+## 8. Cost-unit study qualification (2026-10-28)
+
+This qualification narrows interpretation of the historical A7 study; it does
+not change the recorded R/A/B/C completion status, captures or pilot report.
+The pilot report's Routine 61.1% and Standard 45.1% reductions describe its
+declared cost-unit proxies. They are not calibrated measurements of model
+usage, token consumption, charges or completed delivery, and cannot support a
+claim of measured ecosystem productivity savings.
+
+For the Routine README pair, the historical capture records declare baseline
+five roles, six commands and 45 cost units (87 ms), versus shadow two roles,
+three commands and 18 cost units (80 ms). Both recorded argv values execute
+`start_path.py classify --editorial --files README.md` (the shadow also supplies
+`--root .`), and the captured stdout contains route-classification results.
+These artifacts do not demonstrate a completed README edit or execution
+transcripts for the declared roles. The durations measure the captured command,
+not end-to-end delivery time. The declared roles and command counts therefore
+remain proxy inputs rather than independently observed task execution.
+
+Sources: the paired [baseline capture](https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/captures/comp-01-routine-trivial-readme-base.json)
+and [shadow capture](https://github.com/niq-cnr/nizam-framework/blob/606d11ee84deff0d3b7934cbfd715223d64ac79d/.agent/evidence/125/captures/comp-01-routine-trivial-readme-shad.json)
+at the historical v1.8.0 baseline, their referenced stdout records, and
+[pilot-report.json](../../.agent/evidence/remediation-2026-10-18/pilot-report.json)
+as inspected at `99ef862d6be14c539b36e10acd140e880f78b035`.
+Parser, routing, negative-control and consumer-rehearsal evidence retains its
+stated scope; this qualification does not revoke those results or infer the
+same command limitation for every other paired case. A productivity or monetary
+saving claim needs a separately calibrated study of completed comparable tasks,
+observed role execution and actual usage/charge records.
