@@ -1,8 +1,8 @@
 {
   "contract_id": "AI-PIPELINE-historical-symlink-packet",
-  "feature_id": "AI-PIPELINE-G05-A05-historical-symlink",
+  "feature_id": "AI-PIPELINE-historical-symlink-packet",
   "name": "Inert historical symlink evidence in Git review packets",
-  "status": "approved",
+  "status": "proposed",
   "spec_ref": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json#/authorized_outcome",
   "programme_ref": "nizamiq/nizamiq-strategy:docs/planning/llm/AI-PIPELINE-20261029.json#G05,A05",
   "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
@@ -122,13 +122,8 @@
   "release_adoption": "After independent source acceptance and protected PR review, use approved immutable Framework release procedure and official Hermes bootstrap adoption, then verify exact provenance, integrity and consumer compatibility before PR57 OCR.",
   "rollback": "Retain previous immutable pin and restore it with supported bootstrap; do not hand-edit injected payload. Release, adoption, merge and activation are distinct.",
   "approvals": {
-    "validator_mode_a": true,
-    "evaluator_contract_review": true,
-    "candidate": "c18446e7a4903ac0810bb004eeadd83d0660b841",
-    "approved_proposal_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/approved-proposal.json",
-    "approved_proposal_sha256": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
-    "validator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-v3.json",
-    "evaluator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v3.json"
+    "validator_mode_a": false,
+    "evaluator_contract_review": false
   },
   "authorized_outcome": "Operator 2026-10-29 directive: make Hermes PR57 historical symlink deletion reviewable using the smallest safe Framework packet repair, independently accepted and officially adopted.",
   "historical_text_domain": {
@@ -143,5 +138,18 @@
       "supersedes_sha": "52614fd6d156a915952b93eeea0396b835030405",
       "reason": "Independent pre-code rejections: VMA-01/02, VMA-C01/C02/C03 and E1/E2/C1/C2/C3/C4. Original verdicts preserved; no approval implied."
     }
-  ]
+  ],
+  "previous_approval": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "candidate": "c18446e7a4903ac0810bb004eeadd83d0660b841",
+    "approved_proposal_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/approved-proposal.json",
+    "approved_proposal_sha256": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
+    "validator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-v3.json",
+    "evaluator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v3.json"
+  },
+  "identity_correction": {
+    "previous_feature_id": "AI-PIPELINE-G05-A05-historical-symlink",
+    "reason": "Installed workflow_assurance requires contract_id and feature_id to agree; identifier binding correction only. Programme ownership remains referenced by programme_ref. Exact-delta independent reapproval required; previously captured behavioral observations remain history but cannot be relabeled as new typed proof."
+  }
 }
