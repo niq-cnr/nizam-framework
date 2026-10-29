@@ -308,7 +308,7 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ### v3.1.2 patch release candidate
 
-At preparation on 2026-10-28, `v3.1.2` is an untagged PATCH candidate.
+At preparation on 2026-10-29, `v3.1.2` is an untagged PATCH candidate.
 The latest published release is `v3.1.1`
 (`0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2`); the clean source tree retains its portable
 `v3.0.0` governance pin. Actual prepublication installation of the reviewed

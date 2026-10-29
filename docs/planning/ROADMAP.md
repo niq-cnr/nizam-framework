@@ -7,7 +7,7 @@ status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
   - version: "0.65.41"
-    date: "2026-10-28"
+    date: "2026-10-29"
     summary: "Prepare v3.1.2 PATCH for all bounded symlink/route repairs and permanent prepublication self-install enforcement. Record published v3.1.1 separately; source acceptance, genuine primary installation, human merge/sign-off and publication remain explicit dependencies."
   - version: "0.65.40"
     date: "2026-10-28"

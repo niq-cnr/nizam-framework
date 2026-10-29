@@ -7,7 +7,7 @@ status: active
 authoritative_source: CONTEXT.md
 change_log:
   - version: "3.1.2"
-    date: "2026-10-28"
+    date: "2026-10-29"
     summary: "Prepare v3.1.2 PATCH with inherited-symlink/route evidence repairs and the Framework's own prepublication self-install requirement. Consumer schemas remain compatible; source acceptance, actual primary self-install, human merge/sign-off, tag/publication and final official pin binding remain distinct."
   - version: "3.1.1"
     date: "2026-10-28"

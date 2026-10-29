@@ -180,8 +180,16 @@ class ReleaseSelfInstallTests(unittest.TestCase):
                     "evidence_dir": ".agent/evidence/self-install-fixture",
                     "evidence_convention": "Actual native captures in this disposable fixture"}
         write(root, cls.contract_path, contract)
+        cls.decision_path = ".agent/evidence/self-install-operator-decision.json"
+        write(root, cls.decision_path, {
+            "approved": True, "owner": "offline-fixture-owner", "gate": "H-CONSUMER-UPGRADE",
+            "repository": "release-fixture/framework", "commit": cls.candidate,
+            "destination": str(cls.primary),
+            "operator_instruction_verbatim": "Synthetic fixture owner approves C at this disposable primary"})
         cls.authority_path = ".agent/evidence/self-install-authority.json"
         write(root, cls.authority_path, {
+            "approved": True, "owner": "offline-fixture-owner",
+            "authority_ref": ref(root, root / cls.decision_path),
             "recorded_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "source_url": ORIGIN, "repository": "release-fixture/framework",
             "gate": "H-CONSUMER-UPGRADE", "self_install_request": "Synthetic fixture: install C in disposable primary",
@@ -201,7 +209,7 @@ class ReleaseSelfInstallTests(unittest.TestCase):
         tools = [p for p in tools if (root / p).is_file()]
         identity = wa.assess_repository(root, cls.source, {
             "source": ["fixture-source.txt"], "tests": ["fixture-test.txt"], "tools": tools,
-            "contracts": [cls.contract_path, cls.authority_path], "unknown_dependencies": []},
+            "contracts": [cls.contract_path, cls.authority_path, cls.decision_path], "unknown_dependencies": []},
             [wa.QA_CONTEXT_VARIABLE, wa.QA_EXECUTION_ROOT_VARIABLE])
         folder = root / ".agent/evidence/self-install-fixture"
         cls.manifest = write(root, ".agent/evidence/self-install-fixture/candidate.json", identity)
@@ -326,6 +334,14 @@ class ReleaseSelfInstallTests(unittest.TestCase):
     def test_resealed_authority_and_destination_adverse_controls(self):
         root = self.controller
         for name, mutate in [
+            ("denied approval", lambda v: v.update(approved=False)),
+            ("missing approval", lambda v: v.pop("approved", None)),
+            ("pending decision", lambda v: v.update(decision="pending")),
+            ("denied decision", lambda v: v.update(decision="denied")),
+            ("missing owner", lambda v: v.pop("owner", None)),
+            ("foreign owner", lambda v: v.update(owner="another-owner")),
+            ("missing decision reference", lambda v: v.pop("authority_ref", None)),
+            ("wrong decision hash", lambda v: v["authority_ref"].update(sha256="a" * 64)),
             ("foreign repository", lambda v: v.update(repository="foreign/framework")),
             ("wrong source", lambda v: v.update(source_url="https://example.invalid/foreign.git")),
             ("wrong candidate", lambda v: v.update(commit=self.baseline)),
@@ -343,6 +359,40 @@ class ReleaseSelfInstallTests(unittest.TestCase):
         self.change(root / self.readiness_path,
                     lambda v: v["prepublication_self_install"].update(destination=str(self.primary) + "/../declared-primary"))
         self.expect(self.gate(None, "--mode", "pr", "--require-self-install"), 1, "declared resolved destination")
+
+    def test_resealed_underlying_owner_decision_must_approve_this_target(self):
+        root = self.controller
+        for name, mutate in [
+            ("denied", lambda v: v.update(approved=False)),
+            ("absent approval", lambda v: v.pop("approved", None)),
+            ("pending", lambda v: v.update(decision="pending")),
+            ("explicit denied", lambda v: v.update(decision="denied")),
+            ("wrong owner", lambda v: v.update(owner="another-owner")),
+            ("wrong gate", lambda v: v.update(gate="H-FRAMEWORK-RELEASE")),
+            ("wrong repository", lambda v: v.update(repository="foreign/framework")),
+            ("wrong candidate", lambda v: v.update(commit=self.baseline)),
+            ("wrong destination", lambda v: v.update(destination=str(self.home / "other-primary"))),
+            ("absent instruction", lambda v: v.pop("operator_instruction_verbatim", None)),
+        ]:
+            with self.subTest(name=name):
+                self.restore()
+                self.change(root / self.decision_path, mutate)
+                # Keep the reference digest valid: this tests the actual owner
+                # decision/binding, rather than merely rejecting stale bytes.
+                self.change(root / self.authority_path,
+                            lambda v: v.update(authority_ref=ref(root, root / self.decision_path)))
+                self.reseal()
+                self.expect(self.gate(None, "--mode", "pr", "--require-self-install"), 1,
+                            "prepublication self-install evidence")
+        self.restore()
+        self.change(root / self.decision_path, lambda v: v.update(owner="jointly-forged-owner"))
+        self.change(root / self.authority_path, lambda v: v.update(
+            owner="jointly-forged-owner", authority_ref=ref(root, root / self.decision_path)))
+        self.reseal()
+        # Matching owner strings and valid artifact hashes still cannot replace
+        # the exact owner decision assessed at the accepted controller source.
+        self.expect(self.gate(None, "--mode", "pr", "--require-self-install"), 1,
+                    "prepublication self-install evidence")
 
     def test_resealed_capture_and_accepted_qa_adverse_controls(self):
         mutations = [
@@ -376,6 +426,7 @@ class ReleaseSelfInstallTests(unittest.TestCase):
         self.expect(self.gate(None, "--mode", "pr", "--require-self-install"), 1,
                     "actual installed entrypoint")
         for mutation in [lambda v: v.update(qa_pass=False),
+                         lambda v: v.update(verdict="fail"),
                          lambda v: v["final_verdict"].update(approved=False),
                          lambda v: v.update(checks_passed=3),
                          lambda v: (v["checks"].pop(), v.update(checks_run=3, checks_passed=3))]:

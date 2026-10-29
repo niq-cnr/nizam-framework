@@ -7,7 +7,7 @@ status: active
 authoritative_source: methodology/06_release_train.md
 change_log:
   - version: "0.5.0"
-    date: "2026-10-28"
+    date: "2026-10-29"
     summary: "Require actual prepublication Framework self-install before each future release, with accepted controller evidence, portable final-payload equality checks and honest candidate/final-pin separation."
   - version: "0.4.0"
     date: "2026-08-15"
@@ -199,9 +199,13 @@ accepts source-controller evidence for these real destination operations. Do
 not claim native typed acceptance of the destination worktree or commissioning
 when only controller QA and installed smoke checks were performed.
 
-Record the authorization, resolved destination, immutable C, successful actual
-command captures, installed readback and independent accepted QA by existing
-hashed references in the version's release-readiness record. Keep local runtime
+Record the current owner's affirmative approval under the existing
+`H-CONSUMER-UPGRADE` evidence family. The application and its hashed underlying
+owner decision must agree on owner, gate, repository, C and destination; retain
+the actual operator instruction. A logged request or gate registry entry is
+not an approval. Preserve that authority as immutable assessed input alongside
+the successful actual command captures, installed readback and independent
+accepted QA in the version's existing release-readiness record. Keep local runtime
 installation distinct from the clean source tree's portable prior-stable
 `.nizam/` pin. Never commit private-reference provenance as if it were a
 canonical published stable installation, weaken existing pin verifiers or put a

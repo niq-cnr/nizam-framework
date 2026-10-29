@@ -7,10 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.1.2] - 2026-10-28
+## [3.1.2] - 2026-10-29
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).
-At preparation on 2026-10-28, source acceptance, actual prepublication Framework
+At preparation on 2026-10-29, source acceptance, actual prepublication Framework
 self-install, human merge/sign-off, annotated tag and publication remain pending.
 No consumer schema or required-key migration is introduced.
 

@@ -362,6 +362,15 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
         read = lambda ref: _proof_ref(root, ref, revision)
         authority = assurance.parse_json(read(proof["authorization"]))
         assurance._receipt_text(authority.get("self_install_request"), "self-install operator instruction")
+        decision = assurance.parse_json(read(authority["authority_ref"]))
+        for record in (authority, decision):
+            check(record.get("approved") is True and record.get("decision", "approved") == "approved",
+                  "self-install current owner decision not approved")
+            assurance._receipt_text(record.get("owner"), "self-install approval owner")
+        assurance._receipt_text(decision.get("operator_instruction_verbatim"), "self-install owner instruction")
+        check(all(authority[key] == decision[key] for key in
+                  ("owner", "gate", "repository", "commit", "destination")),
+              "self-install current owner authority binding")
         origin = integrity._run_git(root, "remote", "get-url", "origin").decode().strip()
         repository_name = (urlsplit(origin).path if "://" in origin else origin.split(":", 1)[-1]).strip("/").removesuffix(".git")
         check(authority["commit"] == candidate and authority["destination"] == destination and
@@ -370,7 +379,8 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
               "self-install actual authorization binding")
         qa = assurance.parse_json(read(proof["qa_verdict"]))
         assurance._receipt_gate(qa)
-        check(qa.get("qa_pass") is True and not qa.get("required_fixes"), "self-install source QA not accepted")
+        check(qa.get("qa_pass") is True and qa.get("verdict", "pass") == "pass" and
+              not qa.get("required_fixes"), "self-install source QA not accepted")
         assessed = assurance.parse_json(read(qa["candidate_ref"]))
         assurance.validate_identity(assessed)
         source = assessed["source_commit"]
@@ -380,6 +390,13 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
         integrity._run_git(root, "merge-base", "--is-ancestor", source, final)
         check(assessed["repository"] == origin and _payload_identity(root, source) == _payload_identity(root, candidate),
               "self-install accepted controller candidate payload")
+        inputs = {entry["path"]: entry for entry in assessed["assessed_inputs"]["contracts"]}
+        for reference in (proof["authorization"], authority["authority_ref"]):
+            path = reference["path"]
+            check(path in inputs and path not in assessed["record_ownership"] and
+                  reference["sha256"] == inputs[path]["sha256"] and
+                  read(reference) == assurance._entry_blob(root, source, path)[0],
+                  "self-install owner authority changed after accepted controller assessment")
         checks = qa["checks"]
         check(type(checks) is list and checks and type(qa["checks_run"]) is int and
               type(qa["checks_passed"]) is int and qa["checks_run"] == qa["checks_passed"] == len(checks),

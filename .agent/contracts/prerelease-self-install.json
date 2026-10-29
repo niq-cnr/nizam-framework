@@ -134,11 +134,18 @@
   "budget_lineage": {
     "logical_task": "F05-current-state-qualification",
     "known_at_proposal": 31,
-    "total_ceiling": 32,
+    "total_ceiling": 50,
     "root_ledger_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
-    "user_recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total32.json",
+    "user_recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total50.json",
     "new_allowance": false,
-    "ledger_writer": "/root"
+    "ledger_writer": "/root",
+    "prior_proposal_budget": {
+      "user_recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total32.json",
+      "total_ceiling": 32,
+      "known_at_proposal": 31
+    },
+    "current_known_failure_snapshot": 36,
+    "qualification": "Explicituser50recovery supersedes old32proposalceiling; allhistoryretained. Thisis contractmetadata projection only, not native-state reset/extra allowance. Rootsoleledger remainsauthoritative."
   },
   "assurance": {
     "precode": "Existingrequired independentValidator/Evaluator boundedproposal review before sourceediting; managingagent ownsuseroutcome/scope.",
@@ -164,5 +171,12 @@
     "approved_proposal_sha256": "25eeb8dbb22b75c745c1423652dfe29ae342837e9b240a46ef402d9704611335",
     "projection_at": "2026-10-28T22:40:44.967879+00:00",
     "authority": "Root authorized boundedsource scope; actualindependentdualreviews nowapproved. Projectiononly, no newgrant or backdate."
+  },
+  "execution_recovery_projection": {
+    "at": "2026-10-29T00:19:50.186629+00:00",
+    "authority": "Managingagent conveyed explicitUSER approvalTOTAL50retaining32 andcurrentRootledger36/50; sameF05task.",
+    "scope_unchanged": true,
+    "approval_proposal_preserved": ".agent/evidence/prerelease-self-install/approved-proposal-25eeb8db.json",
+    "new_namespace_or_reset": false
   }
 }
