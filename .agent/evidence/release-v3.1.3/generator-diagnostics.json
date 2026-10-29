@@ -1,0 +1,33 @@
+{
+  "logical_task": "release-v3.1.3",
+  "observations": [
+    {
+      "type": "independent-precode-rejections",
+      "count": 2,
+      "refs": [
+        "validator-precode.json",
+        "evaluator-precode.json"
+      ]
+    },
+    {
+      "type": "generator-test-failure",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_public_entry.py"
+      ],
+      "exit": 1,
+      "stderr": "missing required text: --tag v3.1.3",
+      "reason": "Guide candidate command still named v3.1.2; corrected in working candidate."
+    },
+    {
+      "type": "generator-precondition-failure",
+      "description": "Proposed guide edit asserted seven v3.1.2 occurrences; actual count was nine. AssertionError occurred before any file write.",
+      "exit": 1,
+      "reason": "Count inspected and exact current candidate tokens updated."
+    }
+  ],
+  "known_failed_executions_conservative": 4,
+  "ceiling": 6,
+  "status": "No reset; next check requires remaining authority and full candidate assessment."
+}

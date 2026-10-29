@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.41
+version: 0.65.42
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.42"
+    date: "2026-10-29"
+    summary: "Prepare v3.1.3 PATCH for the independently accepted historical symlink packet repair; actual self-install, release and adoption remain separate."
   - version: "0.65.41"
     date: "2026-10-29"
     summary: "Prepare v3.1.2 PATCH for all bounded symlink/route repairs and permanent prepublication self-install enforcement. Record published v3.1.1 separately; source acceptance, genuine primary installation, human merge/sign-off and publication remain explicit dependencies."
@@ -346,6 +349,8 @@ the work is scheduled through the installed planning protocol.
 
 ## Current position — Jev readiness program, 2026-10-22
 
+Release in preparation: v3.1.3 (PATCH); v3.1.2 is published at `8e738a038b18c7009018ef771e83aabc23ad9b03`. Actual self-install and release acceptance are pending.
+
 The active engineering direction is the 2026-10-22 operator mandate
 `NIZAM-JEV-OWNER-2026-10-22`, recorded in
 [/docs/planning/jev-readiness/PROGRAM.md](/docs/planning/jev-readiness/PROGRAM.md). That file is the durable
@@ -412,9 +417,9 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v3.1.2 — PATCH candidate for inherited-symlink/route evidence repairs and the Framework-own prepublication self-install requirement. Required source acceptance and actual primary self-install precede human merge/sign-off, annotated tag and publication; readiness and final pin binding remain separate evidenced outcomes.
+Latest released tag: v3.1.2 (PATCH) — RELEASED 2026-10-29 at `8e738a038b18c7009018ef771e83aabc23ad9b03` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.2)). Actual local installation and the next candidate remain separate.
 
-Latest released tag: v3.1.1 (PATCH) — RELEASED 2026-10-28 at `0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.1)). The clean source tree retains its v3.0.0 governance pin; actual primary installation is separately observed.
+Prior released tag: v3.1.1 (PATCH) — RELEASED 2026-10-28 at `0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.1)). The clean source tree retains its v3.0.0 governance pin; actual primary installation is separately observed.
 
 Prior released tag: v3.1.0 (MINOR) — RELEASED 2026-10-27 at `e68d4eeda080d566ac893b583e1087569ec8883e` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.0)). This release fact does not upgrade the official local v3.0.0 installation.
 
