@@ -1,0 +1,102 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [
+    {
+      "id": "C5",
+      "requirement": "historical_text_domain.accepted: nonempty UTF-8 target bytes excluding ASCII controls, independent of inert target syntax or historical link filename",
+      "finding": "The revised historical domain is explicit, but the independently hardened corpus does not exercise valid target text that matches binary magic or historical link filenames with binary extensions. A repair that only relaxes old path validation can make the current corpus green while still violating the accepted domain.",
+      "evidence": [
+        "Independent frozen-source Git probe: deleting mode-120000 path link with target %PDF-safe is rejected as 'old blob link: symlink mode 120000 cannot be opaque_binary' for explicit 1.0.0, explicit 1.1.0 and auto.",
+        "Independent frozen-source Git probe: deleting mode-120000 path old-link.pdf with target local-target is rejected as 'declared binary media type application/pdf conflicts with validated text/plain; charset=utf-8' for all three version choices.",
+        "tools/convergent_review.py:1913-1947 routes old targets through magic-byte classification and extension-derived media declarations; tools/test_historical_symlink_packet.py positive target corpus does not cross either boundary.",
+        "/home/cnross/.tmp/packet-evaluator-precode-v2-75j6ue8a/media-edge-probe.json"
+      ],
+      "required_fix": "Add positive historical deletion cases for target bytes such as %PDF-safe and GIF89a, and a historical symlink named old-link.pdf or old-link.png with ordinary UTF-8 target bytes, across 1.0.0/1.1.0/auto and both modes. Assert exact old bytes, Git identity, version selection, text record/media consistency where represented, schema validation and consumer acceptance. Preserve existing current-candidate and regular-binary behavior. Re-freeze the test corpus before implementation."
+    }
+  ],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "independent Evaluator pre-code contract/testability review",
+    "candidate_sha": "1b91d3449d5befdaa49badacda9c14e98fbde8b0",
+    "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "contract_path": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+    "contract_sha256": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
+    "test_path": "tools/test_historical_symlink_packet.py",
+    "test_sha256": "e171fa5141d24523be07ddc8ee061d43e7f448df98077e3de911d7cf603e962d",
+    "source_sha256": "26ddc68f52718268eedda77191771f87797675211f4481ce8a7d21b1ccb1565f",
+    "source_unchanged_from_base": true,
+    "resolved_prior_findings": [
+      "E1",
+      "E2",
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+    ],
+    "resolution_summary": "The contract now distinguishes trusted-builder base provenance from selected-packet digest binding, defines historical text and byte limits, preserves version-specific fields and old-consumer boundaries, includes the binary regression suite, and the frozen corpus covers the previously requested transitions, serialization, sentinels and consumer/replay boundary.",
+    "corpus_origin": "The Evaluator independently hardened the Generator-proposed tests; no production author graded its own implementation. The present fresh review identified C5 against that hardened corpus.",
+    "independent_execution": {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_historical_symlink_packet.py",
+        "-v"
+      ],
+      "cwd": "/home/cnross/.tmp/packet-evaluator-precode-v2-75j6ue8a",
+      "exit_code": 1,
+      "summary": "Ran 21 tests in 6.119s; FAILED (failures=6, errors=86). Expected pre-implementation red: historical access-path and old 1024-character restrictions; safe consumer/replay/substitution, negative malformed, candidate and no-follow cases pass.",
+      "stdout": "/home/cnross/.tmp/packet-evaluator-precode-v2-75j6ue8a/baseline.stdout",
+      "stderr": "/home/cnross/.tmp/packet-evaluator-precode-v2-75j6ue8a/baseline.stderr",
+      "metadata": "/home/cnross/.tmp/packet-evaluator-precode-v2-75j6ue8a/metadata.json"
+    },
+    "additional_probe": [
+      {
+        "path": "link",
+        "target": "%PDF-safe",
+        "version": "1.0.0",
+        "outcome": "ReviewError: old blob link: symlink mode 120000 cannot be opaque_binary"
+      },
+      {
+        "path": "link",
+        "target": "%PDF-safe",
+        "version": "1.1.0",
+        "outcome": "ReviewError: old blob link: symlink mode 120000 cannot be opaque_binary"
+      },
+      {
+        "path": "link",
+        "target": "%PDF-safe",
+        "version": "auto",
+        "outcome": "ReviewError: old blob link: symlink mode 120000 cannot be opaque_binary"
+      },
+      {
+        "path": "old-link.pdf",
+        "target": "local-target",
+        "version": "1.0.0",
+        "outcome": "ReviewError: old blob old-link.pdf: declared binary media type application/pdf conflicts with validated text/plain; charset=utf-8"
+      },
+      {
+        "path": "old-link.pdf",
+        "target": "local-target",
+        "version": "1.1.0",
+        "outcome": "ReviewError: old blob old-link.pdf: declared binary media type application/pdf conflicts with validated text/plain; charset=utf-8"
+      },
+      {
+        "path": "old-link.pdf",
+        "target": "local-target",
+        "version": "auto",
+        "outcome": "ReviewError: old blob old-link.pdf: declared binary media type application/pdf conflicts with validated text/plain; charset=utf-8"
+      }
+    ],
+    "previous_verdict": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v1.json",
+    "scope": "Only this exclusively created verdict file was written inside the repository; contract, source, tests and previous evidence were not modified. No gateway calls or external mutations."
+  }
+}

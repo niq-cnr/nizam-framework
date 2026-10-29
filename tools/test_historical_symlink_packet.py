@@ -399,11 +399,17 @@ class HistoricalSymlinkPacketTests(unittest.TestCase):
                 self.assertEqual(json.loads(output.read_text())['delta'][0]['old_content'], '../outside')
                 self.assertEqual(os.readlink(self.repo / 'link'), '../outside')
 
-    def assert_consumer_roundtrip_and_substitution(self, base, head):
+    def assert_consumer_roundtrip_and_substitution(self, base, head, case_label='', historical_path='link'):
         for version, mode in self.variants():
             with self.subTest(version=version, mode=mode):
                 packet = self.packet(base, head, version, mode)
-                case = self.root / f'consumer-{version}-{mode}'
+                self.assert_valid_packet(packet, version, base, head)
+                self.assert_old_git_identity(packet, base, historical_path)
+                if packet['schema_version'] == '1.1.0':
+                    historical = next(x for x in packet['delta'] if x['path'] == historical_path)
+                    self.assertEqual(historical['old_record_kind'], 'text')
+                    self.assertTrue(historical['old_validated_media_type'].startswith('text/'))
+                case = self.root / f'consumer-{case_label}{version}-{mode}'
                 case.mkdir()
                 selected = case / 'packet.json'
                 selected.write_bytes(cr.canonical_json_bytes(packet))
@@ -439,6 +445,19 @@ class HistoricalSymlinkPacketTests(unittest.TestCase):
     def test_historical_packet_consumer_replay_and_retained_digest_boundary(self):
         base, head, _ = self.deleted_link(b'../../outside')
         self.assert_consumer_roundtrip_and_substitution(base, head)
+
+    def test_historical_binary_looking_text_and_binary_extension_paths_are_inert(self):
+        # These are valid target text, not files to classify by magic or suffix.
+        cases = (('link', b'%PDF-safe'), ('link', b'GIF89a'),
+                 ('old-link.pdf', b'local-target'), ('old-link.png', b'local-target'))
+        for number, (path, target) in enumerate(cases):
+            with self.subTest(path=path, target=target):
+                self.entry(path, '120000', target)
+                base = self.commit('historical media-looking link')
+                self.git('update-index', '--force-remove', path)
+                head = self.commit('delete historical media-looking link')
+                self.assert_consumer_roundtrip_and_substitution(
+                    base, head, case_label=f'media-{number}-', historical_path=path)
 
     def test_installed_v3_consumer_accepts_only_claimed_v1_0_boundary(self):
         tool = ROOT / '.nizam/tools/convergent_review.py'
