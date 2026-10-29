@@ -1,0 +1,73 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "SI313-VMB-01",
+      "severity": "high",
+      "finding": "The current committed operation authority has not yet discharged its explicit safe-task-boundary condition before instruction replacement.",
+      "evidence": [
+        "operator-decision.json managing_continuation authorizes proceeding only subject to independent operation source approval, fresh pre-mutation checks and a verified safe task boundary.",
+        "primary-boundary.json records same_uid_cwd_matches=[] but expressly states that a cwd snapshot does not establish absence of all instruction consumers and requires an immediate recheck and hold for any known consuming lane.",
+        "The committed boundary/decision records contain no affirmative current managing-lane determination that no known active task consumes PRIMARY governing instructions; inaccessible and already-loaded consumers are explicitly outside the observation.",
+        "Approved contract preconditions require safe lane continuation and forbid checkout/install until preceding gates are satisfied; methodology/06_release_train.md Section 6.1 forbids changing governing instructions underneath another active task."
+      ],
+      "required_fix": "Before effect clearance, retain a current affirmative managing-lane decision tied to exact C/destination and the current snapshot that no known active lane depends on the PRIMARY governing installation, or record explicit continuation for any known consumer. Preserve the disclosed inaccessible-process limits; do not claim global absence or infer clearance solely from cwd_matches=[]. Complete immediate backup/HEAD/status/payload/reference drift checks at the execution boundary. This fulfills an existing scoped precondition and does not require redundant blanket user permission, global process certainty, or a new policy gate."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode B, pre-effect source/authority review",
+    "candidate_sha": "262e8cc00e9f3594648a9c19e2a786cb80eb93a5",
+    "approved_proposal_candidate": "5a920e3f08c953b1a67d58f4bce447a305e9ad2a",
+    "payload_candidate_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "contract_path": ".agent/contracts/release-v3.1.3-self-install.json",
+    "contract_sha256": "8ba50b80d64a590f8f4bdea2b503e069fad868469e5db1b897fb7c2eb595e76c",
+    "input_sha256": {
+      ".agent/contracts/release-v3.1.3-self-install.json": "8ba50b80d64a590f8f4bdea2b503e069fad868469e5db1b897fb7c2eb595e76c",
+      ".agent/evidence/release-v3.1.3-self-install/approved-proposal.json": "1c314e80029f904b2046f2712fb0df6e2c1afe7581c5c23639992e156d6208ea",
+      ".agent/evidence/release-v3.1.3-self-install/validator-precode-v2.json": "b7bf3c92d8b1a1f8ae03845ede9b8a99c998490cd1ac477fcbfb366e6fb24f6c",
+      ".agent/evidence/release-v3.1.3-self-install/evaluator-precode-v2.json": "e1ec87205775d5a42d8c09bba03f4db224a9289ee76b642d4bc00c7c693efaa8",
+      ".agent/evidence/release-v3.1.3-self-install/operator-decision.json": "8a3a7564fa560d4407fc97d421d438b0493f76e9a52cff821f04dd0bde228f11",
+      ".agent/evidence/release-v3.1.3-self-install/upgrade-authorization.json": "8e26904d6d61bb246d9b969be5dfad6a70b7a0bed54c527d8dc8b2d3ea75cdab",
+      ".agent/evidence/release-v3.1.3-self-install/primary-boundary.json": "8d7fdd7b4473b531574fe03b81a02e854fe3332ba2195d05baef61260edf6fc6",
+      ".agent/evidence/release-v3.1.3-self-install/readback.py": "8505cc5a1c66f1406780dd0d25e0a57ecdec5773db06f51c25ab80b100a9ae51",
+      ".agent/evidence/release-v3.1.3/evaluator-source-partial.json": "07f9f81f64876b812fcaac3a986435894e61ee3ae5bd2cb4c550a5dcdca396f1",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c"
+    },
+    "source_conformance_approved": true,
+    "pre_effect_mutation_clearance": false,
+    "independence": "Reviewer did not author the operation implementation or authority projection. Only this exclusively created verdict was written. No source, contract, reference, backup, destination or previous evidence modified; no checkout, install, behavioral suite, model call, activation or remote action performed.",
+    "untracked_initial_backup_review": "initial-backup-review.json was visible but is not committed at the reviewed candidate. Its prose was not treated as immutable assessed authority or as execution clearance; independent read-only byte/mode checks below were performed directly."
+  },
+  "verified_source_authority_conformance": [
+    "Approved contract preserves the exact corrected proposal semantics and differs only in status/approval binding. Both referenced independent pre-code verdicts approve the corrected proposal with empty blocking arrays.",
+    "Current application and hashed underlying decision are committed, approved exactly true and agree on owner/gate/repository/C/destination. Actual instruction text in self_install_request equals operator_instruction_verbatim. The decision explicitly identifies its managing-agent projection under the current mandate; it is not represented as a historical scheduler grant.",
+    "Authority proposal digest binds the exact approved proposal; source_partial_acceptance and safe_boundary_observation references match actual committed SHA-256 values.",
+    "Independent source partial report binds C2162b8 and matching payload identity, with two passing captured source checks and explicit false full-release-QA/self-install/closeout completion claims. Every preserved source artifact hash matches. It is partial source evidence, not final release acceptance or PRIMARY commissioning.",
+    "Four command strings tokenize exactly to their approved argv arrays. The private reference actual v3.1.3-rc.selfinstall-20261029 still peels to C2162b8. Install/integrity commands keep genuine file transport, exact expected SHA, actual destination, trusted reference outside payload and full integrity requirements.",
+    "Authoritative shipped payload selection is identical at controller262e8 and C2162b8 with SHA-256 6f7662a9a8d66a31ada5b332f13b7c25d17d139b08195c4778d6532e7a635853. Official bootstrap SHA-256 remains 4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7. No source repair or installed payload handpatch introduced."
+  ],
+  "independent_current_rollback_observation": {
+    "destination": "/home/cnross/code/nizamiq/nizam-framework",
+    "original_head": "69908838142b77003c391a7f3b9da12e483b8a21",
+    "original_branch": "chore/prerelease-selfinstall-v3.1.2-20261029",
+    "backup_directory": "/home/cnross/code/worktrees/framework-v313-primary-preservation-20261029",
+    "tar_sha256": "3ac4ba885f8936fe0172ce8400c66c45616e1529b11f842b21f5ca89f04be747",
+    "status_sha256": "4168125fe2f5bdd6cf641e8cd90a908d21414431190bfe4cf7cfcaff44da2fdd",
+    "archive_members_compared": 365,
+    "all_archived_regular_file_bytes_and_modes_match_current": true,
+    "current_porcelain_status_matches_preserved_snapshot": true,
+    "staged_status_entries": 0,
+    "limitations": [
+      "Archive is installed .nizam payload/provenance preservation, not a full source checkout, Git index/config/metadata or external reference repository backup.",
+      "Original source state remains recoverable through retained immutable Git history and original branch/HEAD; do not reset or blindly replace index/owned work. Preserve existing external reference independently and leave canonical remotes unchanged.",
+      "Tar snapshot does not preserve fractional mtime precision; current independent check claims byte and permission-mode equality only, not a performed restore or full filesystem metadata equivalence.",
+      "No live checkout/install or restoration was performed. A fresh execution-boundary comparison and ownership-limited reconciliation remain required; this observation does not clear active-lane conditions."
+    ]
+  },
+  "compatibility_boundary": "Existing release closeout can consume the declared four accepted native controller captures, actual provenance/index/SKILL/entrypoint readback, immutable owner authority and unchanged C-to-D payload/bootstrap. No actual capture, final readiness, native PRIMARY typed commissioning, publication or adoption is approved here."
+}

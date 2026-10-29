@@ -1,0 +1,74 @@
+{
+  "reviewer": "/root/adoption_prep",
+  "review_kind": "independent initial rollback preservation verification",
+  "reviewed_at_utc": "2026-10-29T17:20:27.196372+00:00",
+  "primary": "/home/cnross/code/nizamiq/nizam-framework",
+  "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "branch": "chore/prerelease-selfinstall-v3.1.2-20261029",
+  "backup_manifest": "/home/cnross/code/worktrees/framework-v313-primary-preservation-20261029/manifest.json",
+  "backup_manifest_sha256": "2c03fa5f7a7ec1593f3033769fd64566ad539c454b31ea41b0c953b9a737a54c",
+  "archive": "/home/cnross/code/worktrees/framework-v313-primary-preservation-20261029/primary-nizam.tar",
+  "tar_sha256": "3ac4ba885f8936fe0172ce8400c66c45616e1529b11f842b21f5ca89f04be747",
+  "tar_bytes": 3686400,
+  "tar_hash_and_size_match_manifest": true,
+  "status_sha256": "4168125fe2f5bdd6cf641e8cd90a908d21414431190bfe4cf7cfcaff44da2fdd",
+  "status_matches_manifest_and_current_primary": true,
+  "inventory": {
+    "archive_entries": 365,
+    "current_entries": 365,
+    "types": {
+      "directory": 24,
+      "regular": 341
+    },
+    "missing": [],
+    "extra": [],
+    "bytes_type_modes_numeric_uid_gid_mismatches": [],
+    "all_file_bytes_and_permission_modes_match": true,
+    "numeric_uid_gid": [
+      1000,
+      1000
+    ],
+    "untracked_paths_count": 9,
+    "untracked_omitted": [],
+    "untracked_outside_dot_nizam": [],
+    "fractional_mtimes_not_preserved": 365,
+    "whole_second_mtimes_match": true,
+    "current_paths_with_xattrs": []
+  },
+  "backup_access": {
+    "directory_mode": "0o700",
+    "directory_owner_uid_gid": [
+      1000,
+      1000
+    ],
+    "archive_mode": "0o664",
+    "manifest_mode": "0o664"
+  },
+  "root_boundary_report": {
+    "path": "/home/cnross/code/worktrees/framework-v313-selfinstall-controller/.agent/evidence/release-v3.1.3-self-install/primary-boundary.json",
+    "sha256": "8d7fdd7b4473b531574fe03b81a02e854fe3332ba2195d05baef61260edf6fc6",
+    "observed_at_utc": "2026-10-29T17:17:51.401862+00:00",
+    "inaccessible_cwd_by_comm": {
+      "(sd-pam)": 1,
+      "chrome": 31,
+      "xdg-open": 2,
+      "sshd": 2,
+      "ssh-agent": 1,
+      "gpg-agent": 1
+    },
+    "chrome_inaccessible": 31,
+    "chrome_and_xdg_open_inaccessible_total": 33,
+    "attribution": "Root-recorded process census read as evidence; not independently repeated by this backup reviewer."
+  },
+  "limitations": [
+    "Initial preservation review only; this record does not establish a current safe boundary or authorize checkout, instruction replacement, installation, activation, merge or publication.",
+    "All 365 archived entries lose fractional mtime precision; bytes, permission modes, numeric ownership and whole-second mtimes match. No symlinks are present, so symlink restoration has not been empirically exercised.",
+    "Archive contains only .nizam, including genuine provenance and all nine untracked additions; it omits source files, Git index/config/metadata and the external reference repository.",
+    "Existing provenance names file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312. Preserve that reference unchanged or separately before mutating it; the archive is not an independent offline reference backup.",
+    "Branch and HEAD are recorded, not independently preserved as a complete Git repository backup. No restoration or extraction was performed.",
+    "Root reports 31 inaccessible Chrome processes and two inaccessible xdg-open processes (33 combined), alongside inaccessible service/agent processes. No accessible matching cwd does not prove absence of instruction consumers.",
+    "Recheck archive integrity, current HEAD/status/payload, owned changes and actual consuming lanes immediately before a separately reviewed concrete continuation. Hold on drift or known consuming lanes."
+  ],
+  "conclusion": "Sufficient as preparation-only rollback preservation of current installed .nizam bytes, modes, owner identities and provenance; not a complete checkout/reference backup and not installation authorization.",
+  "actions": "Read-only inspection of primary and backup; exclusively created this controller evidence record. No source or destination mutation, extraction, checkout or installation."
+}
