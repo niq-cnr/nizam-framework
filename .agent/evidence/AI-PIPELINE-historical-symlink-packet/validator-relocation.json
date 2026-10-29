@@ -1,0 +1,98 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent bounded evidence relocation reviewer",
+    "candidate_sha": "a970111c3e84ca13f392ad01ab057b14dc874d9c",
+    "previous_reviewed_sha": "02f6507cd91c3ada11ac61ea82caf8a7f9cea0a9",
+    "origin_revision": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "input_sha256": {
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-map.json": "3976681b7db3cb630348b6915bd22e839b8e278461d9258848f7bd057bc41f7d",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-verification.json": "0fea7f02e8c14d8a05259c0f50a0cfed13a63812e9b1dad3e79cb44740da197b",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-qa.json": "d11bb2f72fa6ca5eeb614b2d9b9f8f46d370d17f19d2dce1f9baf6f06b58b478",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/artifact-index.json": "1727c61aff30045bc95ceaabcbb7a39dc465c04c7bab0ae6090b00fa403ef99a",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/candidate.json": "333b956595ebc9cdc6f91595c4f1b6216c19e571f8714193ad7f8b38758c6837",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/proof-consumer.json": "3a7ab90e8afa5421cb49a1efe856320f9c97ae042ced2cdb7f55a85af884a66d",
+      "tools/evidence_archive.py": "ef56abd83bfc57c57dc39cfde6742874a9e35b4b6dbe14386fa4e56ae20d3c6f",
+      "tools/convergent_review.py": "ff95978468cb7b7fdf3bb0b8df934006027c27a6ff5dfc4c4042817018037027",
+      "tools/test_historical_symlink_packet.py": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+      ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json": "279bfd966d046b8ec52af75d960a7ee90a7c59f694ea3cbbe7fa5f4e75820b20",
+      ".nizam/tools/workflow_assurance.py": "f0720074478f0e8e6302d6a98bfc4c3804edec5683afd34f8b22a73e789bd8ad"
+    },
+    "delta_name_status": [
+      "A\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-map.json",
+      "A\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-verification.json",
+      "D\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz"
+    ],
+    "scope": "One supplementary large packet removed from active checkout with immutable Git-history retrieval; verify unchanged accepted proof dependencies and final growth gate.",
+    "independence": "Reviewer did not author relocation map or report. Only this exclusively created verdict was written. No source, tests, contracts, prior evidence, restored files or remote resources changed; no behavioral suites or 4213-input QA consumer replayed."
+  },
+  "retained_object_verification": {
+    "retrieval_argv": [
+      "git",
+      "--no-replace-objects",
+      "show",
+      "47ed5b9d4e3a91012d66c4321c92014a6931d040:.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz"
+    ],
+    "exit_code": 0,
+    "origin_revision_reachable_as_head_ancestor": true,
+    "original_blob_oid": "aa187d9e09a47cba1365903c86f34a412c93ff35",
+    "object_type": "blob",
+    "original_mode": "100644",
+    "compressed_bytes": 6032998,
+    "compressed_sha256": "bcc386e452c5041ee6f8a03cd5bf458c83ded226f23b7fd1faa57a29ab57a9cb",
+    "raw_bytes": 23634089,
+    "raw_sha256": "5d852139f1a692f88ae313474a19b4d7aca728eac123225b3ecfb5acbc0437fb",
+    "independent_checks": "Executed the map retrieval argv into process memory, verified Git hash-object matches the recorded blob OID, cat-file type and ls-tree mode/OID, compressed SHA-256/length, then gzip raw SHA-256/length and JSON packet identity. No restored evidence was executed.",
+    "packet_identity": {
+      "schema_version": "1.1.0",
+      "mode": "full_audit",
+      "delta_paths": 306,
+      "review_files": 2406
+    }
+  },
+  "proof_preservation": {
+    "required_manifest_capture_stream_consumer_artifacts": 17,
+    "assessed_input_hashes_verified": 4213,
+    "distinct_required_and_assessed_paths_verified": 4232,
+    "original_qa_verdict_sha256": "d11bb2f72fa6ca5eeb614b2d9b9f8f46d370d17f19d2dce1f9baf6f06b58b478",
+    "original_artifact_index_sha256": "1727c61aff30045bc95ceaabcbb7a39dc465c04c7bab0ae6090b00fa403ef99a",
+    "original_consumer_result_equals_verdict": true,
+    "supplementary_sidecar_is_assessed_input": false,
+    "supplementary_sidecar_in_required_capture_refs": false,
+    "supplementary_sidecar_in_verdict_evidence_files": false,
+    "evidence": [
+      "Independently derived the required manifest/capture/stream/consumer closure from unchanged QA and five captures; exact 17-path set equals the report inventory. All hashes and recorded byte lengths match; required files are byte-identical to prior reviewed head.",
+      "Computed hashes and executable flags for all 4213 manifest-selected inputs; each still matches the immutable assessed manifest. This is dependency preservation, not execution-proof replay.",
+      "Original QA verdict and artifact-index bytes match both the origin revision and prior reviewed head; their supplementary packet hash/length/raw identity agree exactly with the retrieval map and retrieved Git bytes.",
+      "The map accurately explains that the original index is an immutable historical preservation snapshot and the supplementary packet now resolves through retained Git history rather than an active checkout path.",
+      "No source, tests, contract, verifier, active capture/stream, approved verdict or failure-history record changes are present in the exact delta. Original failed and rejected records are preserved; no counters or results are relabeled."
+    ]
+  },
+  "growth_check": {
+    "argv": [
+      "python3",
+      "-B",
+      "tools/evidence_archive.py",
+      "check-growth",
+      "--base",
+      "8e738a038b18c7009018ef771e83aabc23ad9b03"
+    ],
+    "cwd": "/home/cnross/code/worktrees/framework-historical-packet-20261029",
+    "candidate_sha": "a970111c3e84ca13f392ad01ab057b14dc874d9c",
+    "exit_code": 0,
+    "stdout": "ARCHIVE GROWTH OK: 93 added evidence file(s), max 989685 bytes (limit 1048576)\n",
+    "claim": "Independent final committed-head growth check before this new review artifact. Newly created verdict is bounded below the same 1 MiB per-file limit; downstream final-head changes remain independently inspectable."
+  },
+  "merge_constraint": {
+    "history_preserving_merge_required": true,
+    "squash_or_history_rewrite_permitted": false,
+    "required_retained_ancestor": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "reason": "The exact retrieval command depends on this reachable origin commit/path. Preserve the existing commits in the merge; do not squash, rewrite or prune the only object anchor. Verify origin ancestry after integration."
+  },
+  "approval_scope": "Approve this exact bounded evidence relocation only. No new behavioral QA, source acceptance expansion, GitHub review approval, merge execution, release, installation, adoption or activation is claimed."
+}
