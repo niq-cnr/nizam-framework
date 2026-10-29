@@ -1,0 +1,194 @@
+{
+  "feature_id": "F05-inherited-symlink",
+  "qa_pass": true,
+  "proof_version": 2,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "candidate_ref": {
+    "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/assessed-candidate.json",
+    "sha256": "9518665342d42114adf8096db6339e6bebc8e82cee69b99d123fafdd8f53de3e"
+  },
+  "checks": [
+    {
+      "id": "symlink-boundaries",
+      "capture": {
+        "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-symlink-boundaries-attempt3-20261028T233716Z-e50f1b1e.capture.json",
+        "sha256": "77d45a62cc9fc995749657a88650305e654da11d0b69dfcfba4918c61b146130"
+      }
+    },
+    {
+      "id": "workflow-regression",
+      "capture": {
+        "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-workflow-regression-attempt4-20261028T233731Z-1b471020.capture.json",
+        "sha256": "5f4dd11fde1e3695f9c4350329b1c86cd49b5ef57ade6028fa8a8bf47af895b9"
+      }
+    },
+    {
+      "id": "repository-compliance",
+      "capture": {
+        "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-repository-compliance-attempt3-20261028T235431Z-2593dad6.capture.json",
+        "sha256": "6baf0d98b6b804aab6533cc647a520fba7a69f009f9fe2630e273104c6587094"
+      }
+    },
+    {
+      "id": "validator-fixtures",
+      "capture": {
+        "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-validator-fixtures-attempt3-20261028T232640Z-64267078.capture.json",
+        "sha256": "017e41549a9ed73464ac0a4c13b635b2be948c20a7f4dd5eb4b8f1ef0d7ea46d"
+      }
+    },
+    {
+      "id": "payload-bootstrap",
+      "capture": {
+        "path": ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-payload-bootstrap-attempt1-20261028T235744Z-a69c26a4.capture.json",
+        "sha256": "e454a3eca0e8ae298fc1d1cb56a1cf0aa5a57e7dc776745356aca959071a3a19"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "result": "pass",
+    "description": "Actual producer, public QA and stage-consumer positive/adverse fixtures cover inherited no-follow links and strict generic identity; immutable route snapshots preserve prebegin unselected links while rejecting later drift. Batching controls retain selected-byte/mode readset and count all actual Git launches."
+  },
+  "evidence_files": [
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-payload-bootstrap-attempt1-20261028T235744Z-a69c26a4.capture.json",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-payload-bootstrap-attempt1-20261028T235744Z-a69c26a4.stdout.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-payload-bootstrap-attempt1-20261028T235744Z-a69c26a4.stderr.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-repository-compliance-attempt3-20261028T235431Z-2593dad6.capture.json",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-repository-compliance-attempt3-20261028T235431Z-2593dad6.stdout.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-repository-compliance-attempt3-20261028T235431Z-2593dad6.stderr.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-symlink-boundaries-attempt3-20261028T233716Z-e50f1b1e.capture.json",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-symlink-boundaries-attempt3-20261028T233716Z-e50f1b1e.stdout.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-symlink-boundaries-attempt3-20261028T233716Z-e50f1b1e.stderr.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-validator-fixtures-attempt3-20261028T232640Z-64267078.capture.json",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-validator-fixtures-attempt3-20261028T232640Z-64267078.stdout.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-validator-fixtures-attempt3-20261028T232640Z-64267078.stderr.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-workflow-regression-attempt4-20261028T233731Z-1b471020.capture.json",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-workflow-regression-attempt4-20261028T233731Z-1b471020.stdout.txt",
+    ".agent/evidence/F05-inherited-symlink/independent-oracle-final/F05-inherited-symlink-independent-workflow-regression-attempt4-20261028T233731Z-1b471020.stderr.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Frozen seven-input source candidate passes all five declared checks and actual installed structured QA proof validation. Source acceptance only; release, adoption, Hermes consumer acceptance and activation remain pending."
+  },
+  "reviewer": "/root/independent_acceptance",
+  "executed_at": "2026-10-28T23:59:24.282151+00:00",
+  "source_commit": "b62004ad4e094bd935e8498bddbee0ed7c427d0f",
+  "implementation_commit": "4a72ecd37e9a1019eed4aa53ff93cf2eb5585143",
+  "assessed_commit": "e612b979062aed36a3cd6b9332aaab3d44418e54",
+  "base_commit": "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
+  "source_hashes": {
+    "tools/workflow_assurance.py": "e9ab704b5dd3770b98f251bd6b6842276e32fbbe9c9fea813082f65098685d8f",
+    "tools/start_path.py": "4643d94389045c16e7ca78ced8696646ef8d30bc97d6ea5b818a55f8cc0d575e",
+    "tools/test_nf_ac01_git_identity.py": "91e43106348063e3f41ad4c2e98b803369fa19814754db680ba25a7a551b687c",
+    "tools/test_receipt_candidate_batching.py": "139f5efc5f49f6d43b4304f25eea08450e9bf9fb77dc538d2f194869e236cbb4",
+    "tools/test_start_path.py": "70feaf1e0c56074bb53b5b28351f84a211daf60431671b815bc48d47608c7529",
+    "CHANGELOG.md": "a2feb4d0465509fb1d7e1975944bb9c3f1ef4d5a299d3f0190310fce34a49c57",
+    ".agent/contracts/F05-inherited-symlink.json": "8a0c1409ee17b8732c83d8675f0d7531286278f10d6d30bb1188564da1e985aa"
+  },
+  "actual_results": {
+    "payload-bootstrap": {
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "duration_ms": 55133,
+      "exit_code": 0,
+      "outcome": "success",
+      "completion_state": "completed",
+      "attempt": 1,
+      "revision": "e612b979062aed36a3cd6b9332aaab3d44418e54"
+    },
+    "repository-compliance": {
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "duration_ms": 191381,
+      "exit_code": 0,
+      "outcome": "success",
+      "completion_state": "completed",
+      "attempt": 3,
+      "revision": "e612b979062aed36a3cd6b9332aaab3d44418e54"
+    },
+    "symlink-boundaries": {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_nf_ac01_git_identity.py"
+      ],
+      "duration_ms": 13732,
+      "exit_code": 0,
+      "outcome": "success",
+      "completion_state": "completed",
+      "attempt": 3,
+      "revision": "e612b979062aed36a3cd6b9332aaab3d44418e54"
+    },
+    "validator-fixtures": {
+      "argv": [
+        "bash",
+        "tools/fixtures_self_test.sh"
+      ],
+      "duration_ms": 633689,
+      "exit_code": 0,
+      "outcome": "success",
+      "completion_state": "completed",
+      "attempt": 3,
+      "revision": "e612b979062aed36a3cd6b9332aaab3d44418e54"
+    },
+    "workflow-regression": {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py"
+      ],
+      "duration_ms": 1017339,
+      "exit_code": 0,
+      "outcome": "success",
+      "completion_state": "completed",
+      "attempt": 4,
+      "revision": "e612b979062aed36a3cd6b9332aaab3d44418e54"
+    }
+  },
+  "results": {
+    "fixtures": "SELF-TEST OK: 176/176 fixtures accounted for, 0 failed",
+    "symlink_boundaries": "11 tests, OK",
+    "repository_compliance": "SUMMARY: 16 passed, 0 failed",
+    "workflow_regression": "All existing workflow regression controls completed successfully. Prior 900-second timeout retained; current actual duration recorded without inferring a performance cause.",
+    "bootstrap": "Official candidate bootstrap positive/adverse consumer rehearsal completed successfully."
+  },
+  "failure_accounting": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "known_failures_at_final_validation": 34,
+    "total_ceiling": 50,
+    "native_prior_failed_captures": 3,
+    "root_trusted_coordination": true,
+    "native_history_is_subset": true,
+    "history_reset": false,
+    "qualification": "All previous failed captures, timeout, fixture incompatibility and evaluator oracle defect remain preserved under their original identities. Native recovery projection retains all three actual failed captures; root accounts for full mixed history."
+  },
+  "evidence_reuse": {
+    "current_candidate": "All five final captures bind the same current assessed candidate and exact current contract.",
+    "historical": "Earlier passing captures and focused diagnostic remain valid historical observations, not relabelled current-source proof.",
+    "unchanged_control": "No model, product research, live primary installation, release or activation claim."
+  },
+  "sufficiency": {
+    "assessment": "One shared inherited-link guard serves existing producer and receipt consumers; route compatibility reuses the immutable prebegin v2 base and existing endpoint observation rather than a second evidence schema.",
+    "smaller_alternative": "A generic allowlist or following symlink targets would omit required identity/adverse assurance; rewriting unrelated installed links would conceal the demonstrated shared compatibility defect.",
+    "bounded_scope": "No schema, installed governance, release anchor, model configuration or permission change in this repair."
+  },
+  "limitations": [
+    "Source QA does not release or adopt Framework. Hermes final checks still require a supported accepted/released/adopted implementation.",
+    "No live model/provider calls or activated installed profile were tested. Temporary bootstrap fixtures establish bounded consumer compatibility only.",
+    "No financial savings or ecosystem-wide performance claim; durations and actual invocations only."
+  ]
+}

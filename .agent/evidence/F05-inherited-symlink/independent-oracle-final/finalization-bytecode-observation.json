@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-29T00:02:57.811263+00:00",
+  "observation": "Finalization interpreter set bytecode environment after startup; sys.dont_write_bytecode remained false, producing these two untracked cache files during proof imports.",
+  "affected_files": [
+    {
+      "path": "/home/cnross/code/audit-remediation/nizam-framework-symlink/.nizam/tools/__pycache__/start_path.cpython-312.pyc",
+      "sha256": "5562ecada8969c89489c373f305b6d8a73e7d47a1692eabe410d56db9e271c3d",
+      "mtime_ns": 1793231964349327359,
+      "size": 208952
+    },
+    {
+      "path": "/home/cnross/code/audit-remediation/nizam-framework-symlink/.nizam/tools/__pycache__/workflow_assurance.cpython-312.pyc",
+      "sha256": "13a3e373f21ac7eb4e3ff830b19b0d121dbfbc892f656bc6c801e8d26cbdc14c",
+      "mtime_ns": 1793231964322327718,
+      "size": 308962
+    }
+  ],
+  "resolution": "Removed only the two identified generated files and their now-empty directory. No tracked files, captures or source hashes changed.",
+  "verified_cache_directory_absent": true,
+  "cleanup_interpreter_dont_write_bytecode": true,
+  "proof_scope": "All five actual captures and final schema/structured proof remain valid; no runtime/source behavior claim depends on generated cache bytes.",
+  "budget_authority": "Root notified; root sole failure ledger owner."
+}
