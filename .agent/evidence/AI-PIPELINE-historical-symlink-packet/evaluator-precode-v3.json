@@ -1,0 +1,92 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "independent Evaluator pre-code contract/testability review",
+    "candidate_sha": "c18446e7a4903ac0810bb004eeadd83d0660b841",
+    "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "contract_path": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+    "contract_sha256": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
+    "test_path": "tools/test_historical_symlink_packet.py",
+    "test_sha256": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+    "source_sha256": "26ddc68f52718268eedda77191771f87797675211f4481ce8a7d21b1ccb1565f",
+    "schema_sha256": "8e6e0948efb388a26eab88608fe02fab095767a64275563f70b74d5819013944",
+    "review_scope": "Review of the C5 correction only; the unchanged contract, source, schema and previously resolved E1/E2/C1-C4 conclusions reuse the independent v2 review. No implementation acceptance is granted.",
+    "unchanged_from_previous_candidate": {
+      "tools/convergent_review.py": true,
+      "tools/git_seam.py": true,
+      "schema/review_packet.schema.json": true,
+      "tools/test_historical_symlink_packet.py": false,
+      ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json": true
+    },
+    "previous_candidate": "1b91d3449d5befdaa49badacda9c14e98fbde8b0",
+    "prior_verdicts": [
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v1.json",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v2.json"
+    ],
+    "resolved_finding": {
+      "id": "C5",
+      "resolution": "The new positive corpus covers %PDF-safe and GIF89a historical text plus old-link.pdf and old-link.png historical paths across explicit 1.0.0, explicit 1.1.0 and auto, in ordinary and full_audit modes. The shared harness validates version selection, exact Git-derived old mode/content/digest/blob identity, text record/media consistency where represented, closed schema and canonical JSON, then actual convergence, replay and retained/trial packet substitution rejection.",
+      "verification_quality": "Expected bytes and identities come from independent Git tree/blob queries. Unique case labels avoid fixture/output collisions; the safe-consumer companion independently proves that the shared harness operates on supported baseline packets."
+    },
+    "independent_execution": {
+      "cwd": "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a",
+      "fresh_process_and_private_fixture": true,
+      "runs": [
+        {
+          "label": "targeted-c5",
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tools",
+            "-p",
+            "test_historical_symlink_packet.py",
+            "-k",
+            "historical_binary_looking",
+            "-v"
+          ],
+          "exit_code": 1,
+          "summary": "--------------------------------------------------------------------\nRan 1 test in 0.314s\n\nFAILED (errors=24)\n"
+        },
+        {
+          "label": "safe-consumer-companion",
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tools",
+            "-p",
+            "test_historical_symlink_packet.py",
+            "-k",
+            "safe_packet_consumer",
+            "-v"
+          ],
+          "exit_code": 0,
+          "summary": "dary) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.406s\n\nOK\n"
+        }
+      ],
+      "targeted_c5_result": "Expected pre-implementation red: 24 errors, comprising 12 binary-magic classification refusals, 6 PDF filename media conflicts and 6 PNG filename media conflicts. These fail for the exact behavior C5 targets.",
+      "safe_companion_result": "PASS across all three version selections and both modes, including schema/Git identity, convergence/replay and packet substitution checks.",
+      "full_baseline_reexecuted": false,
+      "captures": [
+        "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a/metadata.json",
+        "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a/targeted-c5.stdout",
+        "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a/targeted-c5.stderr",
+        "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a/safe-consumer-companion.stdout",
+        "/home/cnross/.tmp/packet-evaluator-precode-v3-ygknl31a/safe-consumer-companion.stderr"
+      ]
+    },
+    "write_scope": "Only this verdict was exclusively created inside the repository. Contract, tests, production source and prior evidence were not modified. No gateway calls or external mutations."
+  }
+}
