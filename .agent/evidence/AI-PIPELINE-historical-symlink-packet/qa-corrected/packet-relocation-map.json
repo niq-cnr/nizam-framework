@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "supplementary-packet-git-history-relocation",
+  "original_artifact_path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz",
+  "original_qa_verdict": {
+    "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-qa.json",
+    "revision": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "sha256": "d11bb2f72fa6ca5eeb614b2d9b9f8f46d370d17f19d2dce1f9baf6f06b58b478"
+  },
+  "original_artifact_index": {
+    "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/artifact-index.json",
+    "revision": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "sha256": "1727c61aff30045bc95ceaabcbb7a39dc465c04c7bab0ae6090b00fa403ef99a"
+  },
+  "storage": {
+    "kind": "reachable-immutable-git-history",
+    "revision": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz",
+    "object_type": "blob",
+    "object_id": "aa187d9e09a47cba1365903c86f34a412c93ff35",
+    "mode": "100644",
+    "byte_length": 6032998,
+    "sha256": "bcc386e452c5041ee6f8a03cd5bf458c83ded226f23b7fd1faa57a29ab57a9cb",
+    "uncompressed_byte_length": 23634089,
+    "uncompressed_sha256": "5d852139f1a692f88ae313474a19b4d7aca728eac123225b3ecfb5acbc0437fb"
+  },
+  "retrieval": {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "show",
+      "47ed5b9d4e3a91012d66c4321c92014a6931d040:.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz"
+    ],
+    "output_policy": "Write stdout to a new file outside the checkout, verify blob identity plus compressed SHA-256 before decompression, then verify raw SHA-256. No execution of restored evidence.",
+    "requires_retained_ancestor": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "publication_constraint": "Retain the existing merge history including the immutable origin commit. Do not squash, rewrite or prune away the only retained object anchor."
+  },
+  "required_typed_proof": {
+    "sidecar_is_assessed_input": false,
+    "sidecar_in_required_check_refs": false,
+    "sidecar_in_evidence_files": false,
+    "required_capture_streams_and_candidate_manifest": "Remain active and unchanged at their original relative paths."
+  },
+  "honesty_boundary": "Original QA verdict and artifact-index bytes remain unchanged historical records of the accepted source execution and original preservation snapshot. Their supplementary packet path now resolves through this explicit Git-history map, not as a live checkout file. This map grants no fresh QA acceptance, does not alter any required proof, and does not relabel historical results.",
+  "verification_report": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-verification.json"
+}
