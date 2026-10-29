@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "production_base": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "source_worktree_head": "1b91d3449d5befdaa49badacda9c14e98fbde8b0",
+    "test_sha256": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+    "runs": [
+      {
+        "label": "targeted-c5",
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools",
+          "-p",
+          "test_historical_symlink_packet.py",
+          "-k",
+          "historical_binary_looking",
+          "-v"
+        ],
+        "exit": 1
+      },
+      {
+        "label": "safe-consumer-companion",
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools",
+          "-p",
+          "test_historical_symlink_packet.py",
+          "-k",
+          "safe_packet_consumer",
+          "-v"
+        ],
+        "exit": 0
+      }
+    ]
+  },
+  "streams": {
+    "targeted-c5.stderr": {
+      "sha256": "8da7e4091b9e1efc23331202aa8bec6ad4aa485a7e104dca1ae8d69d58780235",
+      "bytes": 49498,
+      "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-c5-targeted-c5.stderr.gz"
+    },
+    "targeted-c5.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-c5-targeted-c5.stdout.gz"
+    },
+    "safe-consumer-companion.stderr": {
+      "sha256": "8e738bf7d02545c8459bbed32b56c2df56b5b69ae88f0337cb0c37ae696777d8",
+      "bytes": 290,
+      "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-c5-safe-consumer-companion.stderr.gz"
+    },
+    "safe-consumer-companion.stdout": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-c5-safe-consumer-companion.stdout.gz"
+    }
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "contract_id": "AI-PIPELINE-historical-symlink-packet",
+  "feature_id": "AI-PIPELINE-historical-symlink-packet",
+  "name": "Inert historical symlink evidence in Git review packets",
+  "status": "approved",
+  "spec_ref": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json#/authorized_outcome",
+  "programme_ref": "nizamiq/nizamiq-strategy:docs/planning/llm/AI-PIPELINE-20261029.json#G05,A05",
+  "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+  "author_assignment": "Operator assigned current remediation coding-agent session Generator responsibility for contract and implementation; independent Validator and Evaluator review required.",
+  "problem": "Building a complete PR57 packet fails before review because old Git symlink blob ../../.agents/skills/typesafe-ai is validated as a safe access path. Base 4301be610bc0c673bd08cc3daf1e79e8ee99c995 and head c06a03b20903598a050c8416557f1cf9b88173c1 reproduce the rejection.",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+        "purpose": "This proposed contract, with approvals retained separately."
+      },
+      {
+        "path": "tools/test_historical_symlink_packet.py",
+        "purpose": "Author-provided executable Git-based acceptance proposal to be independently examined and hardened by the Evaluator."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/convergent_review.py",
+        "purpose": "Distinguish historical immutable evidence bytes from candidate links and actual access paths in packet construction and validation."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Describe the reviewed compatibility boundary."
+      }
+    ]
+  },
+  "requirements": [
+    "Construct old and new sides from immutable Git objects. Encode supported historical link bytes inertly with correct deletion, old mode, blob identity where represented, digest and exact content; never follow, resolve or materialise the link.",
+    "Preserve no-follow and safe-root checks for real retrieval, artifact and output paths. Preserve candidate-link safety on added, changed or surviving symlinks, including mode transitions and full-audit paths.",
+    "Use existing packet representations when sufficient, with existing version and consumer compatibility. If exact bytes cannot be represented without a schema or consumer change, fail closed with a specific documented limitation and obtain independent review of the smallest required extension before implementation.",
+    "Preserve Git mode, digest and object authentication appropriate to each packet version, validate byte/digest/blob substitution where represented and bind selected packet digest across trials, retain all changed paths and safely serialize hostile text. Limits on malformed, binary or oversized historical targets must be explicit and fail closed, not silently reclassified as valid.",
+    "Cover ordinary and full-audit mode, safe and escaping old links, candidate restrictions, link/file transitions and rename/deletion cases, actual worktree drift, forbidden retrieval paths and outside sentinel non-access.",
+    "Validate builder old mode and object against immutable base via independent Git lookup and detect later packet substitution against a trusted captured packet digest. Never claim standalone base-tree mode authentication in existing packet formats."
+  ],
+  "non_goals": [
+    "No global path traversal allowance; no target dereference or escaping-link materialization.",
+    "No routing, accounting, context, telemetry, unrelated inherited-link changes or injected .nizam edits.",
+    "No production installation or activation under this source contract.",
+    "No unreviewed schema change, waiver, forged packet or self-approval."
+  ],
+  "verification": [
+    {
+      "id": "historical-symlink-corpus",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_historical_symlink_packet.py"
+      ],
+      "command": "python3 -B -m unittest discover -s tools -p test_historical_symlink_packet.py",
+      "acceptance_test": "Immutable Git positive and adverse corpus with real packet construction and no-follow protections.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "existing-convergent-review",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_convergent_review.py"
+      ],
+      "command": "python3 -B tools/test_convergent_review.py",
+      "acceptance_test": "Existing packet, consumer, retrieval and security regressions remain valid.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "existing-binary-review",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_nf_ac03_binary_review.py"
+      ],
+      "command": "python3 -B tools/test_nf_ac03_binary_review.py",
+      "acceptance_test": "Existing 1.1 media, binary, mode and symlink regression suite.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "repository-compliance",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "command": "bash tools/validate.sh",
+      "acceptance_test": "Framework required repository compliance.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "payload-bootstrap",
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "acceptance_test": "Supported immutable bootstrap and consumer compatibility in a temporary local fixture.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 200,
+  "evidence_dir": ".agent/evidence/AI-PIPELINE-historical-symlink-packet",
+  "evidence_convention": "Retain exact pre-code and post-code verdicts, candidate identities, command captures and failures separately; authored tests are not independent acceptance.",
+  "assurance": "High-assurance: independent Validator Mode A and Evaluator contract review before implementation; independent Validator Mode B and Evaluator execution against frozen candidate, plus applicable convergent/isolation gate and final-head checks. Evaluator independently hardens or replaces Generator-provided tests.",
+  "release_adoption": "After independent source acceptance and protected PR review, use approved immutable Framework release procedure and official Hermes bootstrap adoption, then verify exact provenance, integrity and consumer compatibility before PR57 OCR.",
+  "rollback": "Retain previous immutable pin and restore it with supported bootstrap; do not hand-edit injected payload. Release, adoption, merge and activation are distinct.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "candidate": "d65fdac719a6c7321f15a590c9e19a000265c109",
+    "approved_proposal_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/approved-identity-proposal.json",
+    "approved_proposal_sha256": "8f9ca985c6cab24f2ff627fe68a8b94142bf3f04987a05ea721f99010c1b56b6",
+    "validator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-identity.json",
+    "evaluator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-identity.json"
+  },
+  "authorized_outcome": "Operator 2026-10-29 directive: make Hermes PR57 historical symlink deletion reviewable using the smallest safe Framework packet repair, independently accepted and officially adopted.",
+  "historical_text_domain": {
+    "accepted": "Nonempty UTF-8 encoded historical target bytes, at most 10,000,000 bytes, excluding NUL and ASCII control characters 0x00\u20130x1f and 0x7f. Traversal, absolute paths, drive syntax, backslashes and HTML-significant printable characters are inert text and preserved exactly, never used as paths.",
+    "rejected": "Empty, invalid UTF-8, NUL/ASCII controls or oversized historical link targets are rejected with an explicit diagnostic; no binary or lossy conversion.",
+    "candidate_boundary": "All current candidate link validation remains unchanged, including restrictions in full-audit head trees."
+  },
+  "compatibility_and_trust": "Maintain 1.0.0, 1.1.0 and auto wire schemas. Trusted builder obtains old mode from the specified immutable base tree and old bytes from its Git blob; tests independently compare git ls-tree and blob identity. Standalone existing packet formats do not prove old_mode or base_sha against base-tree bytes. Whole packet digest bound to independent trial/replay protects the selected packet from later alteration; it does not itself establish base-tree provenance. No standalone base-tree authentication is claimed. v1.0 carries content digest but not old blob OID; v1.1 carries and checks old blob OID. Older v3.0 consumer is only claimed for v1.0, not v1.1.",
+  "revision_history": [
+    {
+      "revision": 1,
+      "supersedes_sha": "52614fd6d156a915952b93eeea0396b835030405",
+      "reason": "Independent pre-code rejections: VMA-01/02, VMA-C01/C02/C03 and E1/E2/C1/C2/C3/C4. Original verdicts preserved; no approval implied."
+    }
+  ],
+  "previous_approval": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "candidate": "c18446e7a4903ac0810bb004eeadd83d0660b841",
+    "approved_proposal_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/approved-proposal.json",
+    "approved_proposal_sha256": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
+    "validator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-v3.json",
+    "evaluator_ref": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v3.json"
+  },
+  "identity_correction": {
+    "previous_feature_id": "AI-PIPELINE-G05-A05-historical-symlink",
+    "reason": "Installed workflow_assurance requires contract_id and feature_id to agree; identifier binding correction only. Programme ownership remains referenced by programme_ref. Exact-delta independent reapproval required; previously captured behavioral observations remain history but cannot be relabeled as new typed proof."
+  }
+}

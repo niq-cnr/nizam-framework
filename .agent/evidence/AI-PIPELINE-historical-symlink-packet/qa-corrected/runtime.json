@@ -1,0 +1,82 @@
+{
+  "candidate_sha": "aaca37cc4575306f433c300c40aed038e4552a8f",
+  "repo": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/repo",
+  "evidence_rel": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected",
+  "manifest_rel": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/candidate.json",
+  "candidate_manifest_sha256": "333b956595ebc9cdc6f91595c4f1b6216c19e571f8714193ad7f8b38758c6837",
+  "candidate_canonical_sha256": "e5819ec1fc2604482ec247597e8f579ec79b0ef2e61a7abc8f33bafa04b99b02",
+  "environment": {
+    "HOME": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/home",
+    "XDG_CACHE_HOME": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/cache",
+    "TMPDIR": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LC_ALL": "C",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "NIZAM_QA_EXECUTION_ROOT": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/repo",
+    "NIZAM_QA_CONTEXT_SHA256": "2b94f1f028e9b6c0e9f1eefb23e232871759e7838461d419a1b31c9bb83d3509",
+    "NIZAM_QA_PRIOR_FAILURE_COUNT": "4",
+    "NIZAM_QA_SANDBOX_IMAGE": "docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213"
+  },
+  "checks": [
+    {
+      "id": "historical-symlink-corpus",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_historical_symlink_packet.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "existing-convergent-review",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_convergent_review.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "existing-binary-review",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_nf_ac03_binary_review.py"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "repository-compliance",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "payload-bootstrap",
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ]
+}

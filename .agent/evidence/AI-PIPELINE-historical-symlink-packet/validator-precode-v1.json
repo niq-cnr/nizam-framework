@@ -1,0 +1,77 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "VMA-01",
+      "severity": "high",
+      "finding": "The proposed acceptance corpus requires historical mode authentication that existing packet representations do not supply.",
+      "evidence": [
+        "tools/test_historical_symlink_packet.py:67–71 requires validate_packet to reject old_mode changed from 120000 to 100644.",
+        "tools/convergent_review.py:598 validates old_mode against an enum; lines 605–607 bind old content to byte length, SHA-256 and Git blob OID. A blob OID does not bind Git tree mode.",
+        "tools/convergent_review.py:816–857 authenticates the head tree only. Deleted historical entries have no authenticated base-tree mode.",
+        "Independent temporary Git fixture probe accepted old_mode 120000→100644 for a deleted safe link under both versions 1.0.0 and 1.1.0, in both ordinary and full_audit modes."
+      ],
+      "required_fix": "Resolve the authentication boundary before approval. The smallest compatible repair can preserve trusted-builder-derived historical mode and existing content consistency checks while explicitly disclaiming standalone base-tree mode authentication. Remove the incompatible mode-tamper assertion under that boundary. If historical mode must be cryptographically authenticated, separately propose the necessary base commit/tree proof, schema/version and consumer changes for Loop 1 review."
+    },
+    {
+      "id": "VMA-02",
+      "severity": "medium",
+      "finding": "The contract leaves the supported historical-target language and limits undefined.",
+      "evidence": [
+        ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json:34 refers to supported historical link bytes.",
+        "The same contract:37 requires explicit malformed, binary and oversized limits but does not define them.",
+        "tools/convergent_review.py:433–437 currently combines single-path text validity with safe relative-path access restrictions.",
+        "The authored corpus tests invalid UTF-8 only at tools/test_historical_symlink_packet.py:122–125."
+      ],
+      "required_fix": "Specify the inert historical text boundary, including empty content, NUL, CR/LF, other controls, absolute/drive/backslash targets, UTF-8 handling and byte limits. State precisely which fail closed and which remain exact inert evidence."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    {
+      "id": "VMA-C01",
+      "requirement": "Existing packet versions and consumer compatibility",
+      "evidence": "tools/test_historical_symlink_packet.py:43 defaults every packet to explicit 1.1.0; there are no 1.0.0 or auto-version historical tests. The builder selects 1.0.0 for text-only packets at tools/convergent_review.py:2141.",
+      "required_fix": "Cover explicit 1.0.0, explicit 1.1.0 and auto selection, with version-appropriate assertions. Define compatibility as preservation of existing accepted packets and consumers after official adoption; distinguish this from unsupported old consumers accepting the newly allowed evidence."
+    },
+    {
+      "id": "VMA-C02",
+      "requirement": "Candidate restrictions, full-audit paths and transitions",
+      "evidence": "Only the deleted escaping-link test loops over ordinary/full_audit at tools/test_historical_symlink_packet.py:57. Candidate addition/modification, link/file transitions and rename tests run ordinary mode only. No unchanged surviving unsafe symlink is exercised in a full-audit tree.",
+      "required_fix": "Add explicit candidate and transition coverage in full_audit, including an unchanged unsafe surviving symlink, same-content mode transitions, and an unsafe renamed destination."
+    },
+    {
+      "id": "VMA-C03",
+      "requirement": "Malformed/oversized targets, hostile serialization and preservation of changed paths",
+      "evidence": "The corpus has no size-boundary cases, hostile text serialization round trip, multi-path delta completeness assertion, or historical content mutation assertion. Its rename test checks only the deleted origin at tools/test_historical_symlink_packet.py:116–120.",
+      "required_fix": "Map these required cases to concrete independent acceptance assertions, including renamed destination metadata and candidate safety."
+    }
+  ],
+  "unsupported_claims": [],
+  "advisory_minor": [
+    "Historical escaping UTF-8 target text fits the existing old_content string representation without adding schema fields. The access-path restriction is imposed by executable validation.",
+    "No repository files or remote resources were modified. The mode-authentication probe used disposable local Git fixtures.",
+    "This verdict must be retained durably by the coordinating agent before gate advancement; this reviewer was instructed not to modify files."
+  ],
+  "review_metadata": {
+    "role": "independent Validator Mode A",
+    "candidate_sha": "52614fd6d156a915952b93eeea0396b835030405",
+    "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "contract": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+    "pr": "https://github.com/niq-cnr/nizam-framework/pull/148",
+    "persistence_note": "Original verdict fields above are retained exactly. On subsequent explicit coordinating-agent instruction, this new evidence file alone was exclusively created; original advisory comments describe the review before persistence.",
+    "probe": {
+      "cwd": "/home/cnross/code/worktrees/framework-historical-packet-20261029",
+      "argv": [
+        "python3",
+        "-B",
+        "-"
+      ],
+      "stdin": "import copy, importlib.util\nfrom pathlib import Path\np=Path('tools/test_historical_symlink_packet.py')\ns=importlib.util.spec_from_file_location('test',p); m=importlib.util.module_from_spec(s);s.loader.exec_module(m)\nt=m.HistoricalSymlinkPacketTests(); t.setUp()\ntry:\n b,h,_=t.deleted_link(b'local-target')\n for v in ('1.0.0','1.1.0'):\n  for mode in ('ordinary','full_audit'):\n   p=t.packet(b,h,version=v,mode=mode); a=copy.deepcopy(p); a['delta'][0]['old_mode']='100644';m.cr.validate_packet(a)\n   print(v, mode, 'accepts old_mode 120000->100644')\nfinally:\n t.doCleanups()\n",
+      "stdout": "1.0.0 ordinary accepts old_mode 120000->100644\n1.0.0 full_audit accepts old_mode 120000->100644\n1.1.0 ordinary accepts old_mode 120000->100644\n1.1.0 full_audit accepts old_mode 120000->100644\n",
+      "exit_status_note": "Probe Python process completed successfully and printed all four outcomes. The enclosing original shell command ultimately exited 2 because an unrelated trailing ls checked an absent .ocr/skills/SKILL.md; this is not the Python probe exit status.",
+      "execution_scope": "Disposable temporary Git repository; source imported read-only; no gateway calls or remote mutations."
+    }
+  }
+}

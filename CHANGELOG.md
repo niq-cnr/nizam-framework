@@ -7,6 +7,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Review packets preserve supported historical symlink target text from Git as
+  inert evidence, including deleted escaping links. Candidate links and artifact
+  access retain their existing safety restrictions. Historical text is limited
+  to nonempty UTF-8 without ASCII controls; standalone packet formats do not
+  authenticate old modes against the base tree.
+
 ## [3.1.2] - 2026-10-29
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).

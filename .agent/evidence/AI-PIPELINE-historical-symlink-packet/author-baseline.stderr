@@ -1,0 +1,96 @@
+test_binary_historical_link_has_explicit_fail_closed_limit (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_binary_historical_link_has_explicit_fail_closed_limit) ... ok
+test_candidate_added_and_modified_unsafe_links_rejected (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_candidate_added_and_modified_unsafe_links_rejected) ... ok
+test_deleted_escaping_target_is_exact_inert_evidence (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_escaping_target_is_exact_inert_evidence) ... 
+  test_deleted_escaping_target_is_exact_inert_evidence (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_escaping_target_is_exact_inert_evidence) (mode='ordinary') ... ERROR
+  test_deleted_escaping_target_is_exact_inert_evidence (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_escaping_target_is_exact_inert_evidence) (mode='full_audit') ... ERROR
+test_deleted_safe_link_and_worktree_change (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_safe_link_and_worktree_change) ... ok
+test_link_to_file_and_file_to_unsafe_link (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_link_to_file_and_file_to_unsafe_link) ... ERROR
+test_outside_fifo_not_read_by_builder (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_outside_fifo_not_read_by_builder) ... FAIL
+test_retrieval_path_rejects_traversal_and_symlink (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_retrieval_path_rejects_traversal_and_symlink) ... ok
+test_safe_rename_keeps_deletion_and_identity (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_safe_rename_keeps_deletion_and_identity) ... ok
+
+======================================================================
+ERROR: test_deleted_escaping_target_is_exact_inert_evidence (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_escaping_target_is_exact_inert_evidence) (mode='ordinary')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 59, in test_deleted_escaping_target_is_exact_inert_evidence
+    packet = self.packet(base, head, mode=mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 44, in packet
+    return cr.build_packet_from_git(self.repo, 'example/repo', 'historical-link', mode, base, head,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 2058, in build_packet_from_git
+    old_kind, old_content, old_decl, old_val = _classify_git_blob(
+                                               ^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 1933, in _classify_git_blob
+    _validate_symlink_target_text(content, ctx)
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 437, in _validate_symlink_target_text
+    validate_path(text, f"{ctx} symlink target")
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 299, in validate_path
+    return _safe_slash_path(value, ctx, maximum=1024, minimum_segments=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 294, in _safe_slash_path
+    raise ReviewError(f"{ctx}: must be a normalized slash-separated relative identity")
+convergent_review.ReviewError: old blob link symlink target: must be a normalized slash-separated relative identity
+
+======================================================================
+ERROR: test_deleted_escaping_target_is_exact_inert_evidence (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_deleted_escaping_target_is_exact_inert_evidence) (mode='full_audit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 59, in test_deleted_escaping_target_is_exact_inert_evidence
+    packet = self.packet(base, head, mode=mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 44, in packet
+    return cr.build_packet_from_git(self.repo, 'example/repo', 'historical-link', mode, base, head,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 2058, in build_packet_from_git
+    old_kind, old_content, old_decl, old_val = _classify_git_blob(
+                                               ^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 1933, in _classify_git_blob
+    _validate_symlink_target_text(content, ctx)
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 437, in _validate_symlink_target_text
+    validate_path(text, f"{ctx} symlink target")
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 299, in validate_path
+    return _safe_slash_path(value, ctx, maximum=1024, minimum_segments=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 294, in _safe_slash_path
+    raise ReviewError(f"{ctx}: must be a normalized slash-separated relative identity")
+convergent_review.ReviewError: old blob link symlink target: must be a normalized slash-separated relative identity
+
+======================================================================
+ERROR: test_link_to_file_and_file_to_unsafe_link (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_link_to_file_and_file_to_unsafe_link)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 101, in test_link_to_file_and_file_to_unsafe_link
+    packet = self.packet(base, head)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 44, in packet
+    return cr.build_packet_from_git(self.repo, 'example/repo', 'historical-link', mode, base, head,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 2058, in build_packet_from_git
+    old_kind, old_content, old_decl, old_val = _classify_git_blob(
+                                               ^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 1933, in _classify_git_blob
+    _validate_symlink_target_text(content, ctx)
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 437, in _validate_symlink_target_text
+    validate_path(text, f"{ctx} symlink target")
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 299, in validate_path
+    return _safe_slash_path(value, ctx, maximum=1024, minimum_segments=1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/convergent_review.py", line 294, in _safe_slash_path
+    raise ReviewError(f"{ctx}: must be a normalized slash-separated relative identity")
+convergent_review.ReviewError: old blob link symlink target: must be a normalized slash-separated relative identity
+
+======================================================================
+FAIL: test_outside_fifo_not_read_by_builder (test_historical_symlink_packet.HistoricalSymlinkPacketTests.test_outside_fifo_not_read_by_builder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/worktrees/framework-historical-packet-20261029/tools/test_historical_symlink_packet.py", line 145, in test_outside_fifo_not_read_by_builder
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : convergent_review: error: old blob link symlink target: must be a normalized slash-separated relative identity
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.345s
+
+FAILED (failures=1, errors=3)
