@@ -437,6 +437,14 @@ def _validate_symlink_target_text(text: str, ctx: str) -> None:
     validate_path(text, f"{ctx} symlink target")
 
 
+def _validate_historical_symlink_text(text: str, ctx: str) -> None:
+    """Validate inert Git blob text without interpreting it as an access path."""
+    if not text or any(ord(char) < 32 or ord(char) == 127 for char in text):
+        raise ReviewError(f"{ctx}: historical symlink target must be non-empty UTF-8 text without ASCII controls")
+    if len(text.encode("utf-8")) > MAX_SOURCE_BYTES:
+        raise ReviewError(f"{ctx}: historical symlink target exceeds {MAX_SOURCE_BYTES} bytes")
+
+
 def _validate_review_file_v1_1(item: Any, index: int) -> Mapping[str, Any]:
     ctx = f"packet.review_files[{index}]"
     entry = _closed(
@@ -606,7 +614,7 @@ def _validate_delta_entry_v1_1(item: Any, index: int) -> Mapping[str, Any]:
             if len(old_raw) != old_len or sha256(old_raw) != old_digest or _git_object_id("blob", old_raw) != old_oid:
                 raise ReviewError(f"{ctx}: old text content does not match old_byte_length/old_digest/old_object_id")
             if old_mode == "120000":
-                _validate_symlink_target_text(entry["old_content"], f"{ctx}.old")
+                _validate_historical_symlink_text(entry["old_content"], f"{ctx}.old")
         else:
             if old_mode == "120000":
                 raise ReviewError(f"{ctx}.old_mode: symlink 120000 cannot be opaque_binary")
@@ -769,7 +777,7 @@ def validate_packet_relations(packet: Mapping[str, Any]) -> None:
             if old_content is not None and sha256(old_content.encode("utf-8")) != old:
                 raise ReviewError(f"packet.delta[{index}].old_digest: does not match authenticated old_content bytes")
             if old_mode == "120000" and old_content is not None:
-                _validate_symlink_target_text(old_content, f"packet.delta[{index}].old")
+                _validate_historical_symlink_text(old_content, f"packet.delta[{index}].old")
         source = source_by_path.get(path)
         if new is None:
             if source is None or source["content"] is not None or source["content_digest"] != EMPTY_DIGEST:
@@ -1919,9 +1927,18 @@ def _classify_git_blob(
     *,
     max_binary_bytes: int,
     declared_media_types: Mapping[str, str] | None,
+    historical: bool = False,
 ) -> tuple[str, str | None, str, str]:
     if len(raw) > max_binary_bytes:
         raise ReviewError(f"{ctx}: blob size {len(raw)} exceeds max_bytes {max_binary_bytes}")
+    if historical and git_mode == "120000":
+        try:
+            content = raw.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ReviewError(f"{ctx}: historical symlink target is not UTF-8") from exc
+        _validate_historical_symlink_text(content, ctx)
+        media = "text/plain; charset=utf-8"
+        return "text", content, media, media
     validated_media = sniff_media_type(raw)
     is_text = validated_media.startswith("text/")
     if is_text:
@@ -2058,6 +2075,7 @@ def build_packet_from_git(
             old_kind, old_content, old_decl, old_val = _classify_git_blob(
                 old_raw, changed_path, old_mode, f"old blob {changed_path}",
                 max_binary_bytes=max_binary_bytes, declared_media_types=declared_media_types,
+                historical=True,
             )
             if old_kind == "opaque_binary":
                 any_binary = True
