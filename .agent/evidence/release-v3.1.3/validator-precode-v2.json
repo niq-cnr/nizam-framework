@@ -1,0 +1,68 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode A, revised release contract delta",
+    "candidate_sha": "072d6ab1e0329207e7f5d04e98b97711fd5c8d3a",
+    "prior_candidate_sha": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+    "contract_path": ".agent/contracts/release-v3.1.3.json",
+    "contract_sha256": "1e4b2c0a19fb9a4ec77fbd19baffebe18832ff394199192401113cb4b228b172",
+    "input_sha256": {
+      ".agent/contracts/release-v3.1.3.json": "1e4b2c0a19fb9a4ec77fbd19baffebe18832ff394199192401113cb4b228b172",
+      "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      "tools/test_public_entry.py": "778b7c83d29e5585353367c9bf0e3df80e88adea901e50d69b192317f2a555f2",
+      "tools/test_corrective_release.py": "c41ee7eda18c69458b3a987f68c70611ac89537defac0df3f1e0e08fe07ba3a1",
+      ".agent/evidence/release-v3.1.3/validator-precode.json": "56c196d2810fe1ec52e2907a70324bc521f58114af3d06a9e3d1cb95bbe4c213"
+    },
+    "review_scope": "Prior concrete findings and material remaining gaps only. Approval covers anchor/readiness source preparation and mandatory separately gated actual-operation handoff.",
+    "independence": "Reviewer did not author the revised contract. Only this exclusively created verdict file was written. No source, contract, tests, real destination, earlier evidence, references or remote resources changed; no behavioral test or bootstrap executed."
+  },
+  "prior_findings_assessment": [
+    {
+      "id": "R313-VMA-01",
+      "status": "resolved",
+      "evidence": "Revised requirement expressly limits this contract to release anchor/readiness source preparation and prohibits actual destination mutation. It requires a separate exact-C approved operation contract covering declared destination/controller, complete external backup verification, pre-mutation state comparison, safe-lane continuation, drift guard and guarded rollback preserving intervening work. The separate operation contract has an explicit files_create entry.",
+      "boundary": "Actual long-lived destination remains to be concretely declared and re-observed by that independent operation review; the prior C699 observation and its 25 changed paths are historical context, not continuing permission."
+    },
+    {
+      "id": "R313-VMA-02",
+      "status": "resolved",
+      "evidence": "Actual operation is a separate mandatory approval gate and must cover immutable owner-decision/application binding. The preparation contract supplies no destination mutation authority. Its existing non-goals prohibit inferred approval from task labels, prior install or validation.",
+      "boundary": "The later operation review must enforce Section 6.1 affirmative current-owner decision, actual instruction, matching owner/gate/repository/C/destination and wholly immutable assessed authority records before effects."
+    },
+    {
+      "id": "R313-C01",
+      "status": "resolved",
+      "evidence": "Separate exact-C operation contract must cover four native checks; actual execution and independent acceptance are explicit prerequisites to final release closeout and readiness. The existing final --require-self-install checker remains unchanged and binds accepted install/integrity/entrypoint/readback proof plus C-to-D payload equality.",
+      "boundary": "The release preparation verification inventory is not presented as the actual operation inventory, and disposable rollback remains expressly distinct from real destination acceptance."
+    },
+    {
+      "id": "R313-C02",
+      "status": "resolved",
+      "evidence": "The separate operation contract now explicitly requires complete external backup verification, pre-mutation state comparison, safe-lane continuation, drift guard and guarded rollback preserving intervening work. Assurance prohibits inferring actual backup/install proof from a disposable fixture.",
+      "boundary": "Actual backup contents, ownership and immediately preceding drift/safety observations must be independently accepted under the later concrete operation; none is accepted by this review."
+    }
+  ],
+  "independent_checks": [
+    "Confirmed exact frozen HEAD and working contract bytes against Git blob; computed SHA-256 directly.",
+    "Revised contract validates against schema/contract.schema.json and has matching contract_id/feature_id with status proposed.",
+    "Compared exact revised contract delta against the original reviewed proposal; original rejection evidence is retained.",
+    "Six release-anchor files, release-train procedure, closeout checker, official bootstrap and existing verification scripts are byte-identical to the previously reviewed candidate. No implementation or policy was changed during this contract revision.",
+    "All six anchor paths remain exactly the existing release checker surface. Existing rollback pins prior release v3.1.2 to exact SHA; final closeout remains conditional on separately accepted actual self-install and final payload equality."
+  ],
+  "approval_scope": "Approve bounded release anchor/readiness preparation and creation of a separately proposed exact-C self-install contract. This approval does not approve that future operation contract, its authority, destination mutation, native destination commissioning, final release readiness, merge/tag/publication or Hermes adoption. Preserve Section 2/6 human sign-off and reviewed-merge-before-annotated-tag sequencing.",
+  "remaining_gates": [
+    "Independent Evaluator approval of this revised proposal and recorded contract approval before source preparation.",
+    "Source preparation review/QA and immutable complete candidate C freeze after PR148 merge identity reconciliation.",
+    "Separate exact-C self-install operation contract with independent pre-code approvals, owner authority and actual owned-state/lane boundary before any real destination mutation.",
+    "Accepted native controller proof for real operations before final readiness/closeout; independent final QA/evidence capture and C-to-D payload/bootstrap equality.",
+    "Existing human release sign-off, reviewed merge and separately authorized annotated-tag/publication/adoption procedures."
+  ]
+}

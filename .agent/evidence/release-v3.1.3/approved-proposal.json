@@ -1,0 +1,131 @@
+{
+  "contract_id": "release-v3.1.3",
+  "feature_id": "release-v3.1.3",
+  "name": "Prepare Framework v3.1.3 with accepted historical packet repair",
+  "status": "proposed",
+  "spec_ref": ".agent/contracts/release-v3.1.3.json#/authorized_outcome",
+  "authorized_outcome": "Prepare the smallest supported immutable Framework release and self-install for the independently accepted historical symlink packet repair, followed by official Hermes adoption.",
+  "source_identity": {
+    "repository": "https://github.com/niq-cnr/nizam-framework.git",
+    "base_candidate": "02f6507cd91c3ada11ac61ea82caf8a7f9cea0a9",
+    "base_condition": "PR148 merge and accepted upstream identity must be reconciled before release candidate freeze",
+    "prior_tag": "v3.1.2",
+    "prior_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03"
+  },
+  "scope": {
+    "files_modify": [
+      {
+        "path": "NIZAM.json",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      },
+      {
+        "path": "README.md",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Update only release version, current release status or required existing release anchors; preserve historical material."
+      }
+    ],
+    "files_create": [
+      {
+        "path": ".agent/contracts/release-v3.1.3.json",
+        "purpose": "Proposed bounded release contract and independent approvals."
+      },
+      {
+        "path": ".agent/evidence/release-v3.1.3/readiness.json",
+        "purpose": "Existing release-readiness record including exact accepted self-install evidence and immutable provenance."
+      },
+      {
+        "path": ".agent/contracts/release-v3.1.3-self-install.json",
+        "purpose": "Separately proposed and independently approved exact-C primary self-install operation; no destination mutation under this release preparation contract."
+      }
+    ]
+  },
+  "requirements": [
+    "Prepare a PATCH release preserving packet 1.0 and 1.1 compatibility and original historical release records.",
+    "Freeze exact candidate C; independent source acceptance and disposable prior-release rollback precede actual long-lived Framework self-install.",
+    "Record independent controller captures and QA. Final metadata commit D must retain payload equality to C. Do not claim production activation or future final tag before publication.",
+    "This contract authorizes release anchor and readiness source preparation only. Actual primary self-install requires a separate exact-C approved operation contract covering destination, controller, four native checks, immutable owner-decision/application binding, complete external backup verification, pre-mutation state comparison, safe lane continuation, drift guard, and guarded rollback preserving intervening work.",
+    "Do not mark self-install readiness or run final release closeout until that separately approved operation is executed and independently accepted; retain actual captures and payload C-to-D equality proof."
+  ],
+  "non_goals": [
+    "No change to packet implementation, consumer schemas, unrelated governance, routing or installed payload by hand.",
+    "No production activation, unreviewed mutation, blanket cleanup, or overwrite of owned installation without preservation and safe boundary.",
+    "No inferred approval from task labels, prior self-install, source validation or successful exit alone."
+  ],
+  "verification": [
+    {
+      "id": "release-closeout",
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr",
+        "--require-self-install"
+      ],
+      "command": "python3 .github/scripts/release_closeout.py --mode pr --require-self-install",
+      "acceptance_test": "Existing release closeout accepts actual independent self-install evidence and final payload equality; run after real installation.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "public-entry",
+      "argv": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "command": "python3 tools/test_public_entry.py",
+      "acceptance_test": "Public acquisition, pin and prepared-versus-published release boundaries.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "pinned-install-rollback",
+      "argv": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v3.1.2",
+        "--prior-sha",
+        "8e738a038b18c7009018ef771e83aabc23ad9b03"
+      ],
+      "command": "python3 tools/test_corrective_release.py --candidate HEAD --prior v3.1.2 --prior-sha 8e738a038b18c7009018ef771e83aabc23ad9b03",
+      "acceptance_test": "Disposable candidate install and immutable prior release rollback; not actual destination acceptance.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 120,
+  "evidence_dir": ".agent/evidence/release-v3.1.3",
+  "evidence_convention": "Capture exact commands and stream bytes in existing release evidence family; preserve failures and independently accepted source/controller proof; no invented future SHA.",
+  "assurance": "High assurance: independent Validator and Evaluator pre-code contract review and independent post-code review and QA. A separately approved operation contract and independently accepted actual installation are prerequisites to final release closeout; do not infer actual backup or installation proof from disposable fixture.",
+  "rollback": "Release preparation rolls back by reverting its source increment. The separate actual self-install operation must preserve complete current C699 primary payload/provenance and checkout, verify backup and drift, and protect intervening owned changes.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false
+  },
+  "revision_history": [
+    {
+      "prior_candidate": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+      "reason": "Independent Validator and Evaluator rejections: separate the concrete C-specific self-install operation and require actual backup, drift and rollback evidence; original verdicts retained."
+    }
+  ]
+}

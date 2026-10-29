@@ -2,7 +2,7 @@
   "contract_id": "release-v3.1.3",
   "feature_id": "release-v3.1.3",
   "name": "Prepare Framework v3.1.3 with accepted historical packet repair",
-  "status": "proposed",
+  "status": "approved",
   "spec_ref": ".agent/contracts/release-v3.1.3.json#/authorized_outcome",
   "authorized_outcome": "Prepare the smallest supported immutable Framework release and self-install for the independently accepted historical symlink packet repair, followed by official Hermes adoption.",
   "source_identity": {
@@ -119,8 +119,13 @@
   "assurance": "High assurance: independent Validator and Evaluator pre-code contract review and independent post-code review and QA. A separately approved operation contract and independently accepted actual installation are prerequisites to final release closeout; do not infer actual backup or installation proof from disposable fixture.",
   "rollback": "Release preparation rolls back by reverting its source increment. The separate actual self-install operation must preserve complete current C699 primary payload/provenance and checkout, verify backup and drift, and protect intervening owned changes.",
   "approvals": {
-    "validator_mode_a": false,
-    "evaluator_contract_review": false
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "candidate": "072d6ab1e0329207e7f5d04e98b97711fd5c8d3a",
+    "approved_proposal_ref": ".agent/evidence/release-v3.1.3/approved-proposal.json",
+    "approved_proposal_sha256": "1e4b2c0a19fb9a4ec77fbd19baffebe18832ff394199192401113cb4b228b172",
+    "validator_ref": ".agent/evidence/release-v3.1.3/validator-precode-v2.json",
+    "evaluator_ref": ".agent/evidence/release-v3.1.3/evaluator-precode-v2.json"
   },
   "revision_history": [
     {
