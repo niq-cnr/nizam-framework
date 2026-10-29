@@ -1,0 +1,216 @@
+{
+  "feature_id": "release-v3.1.2",
+  "qa_pass": true,
+  "proof_version": 2,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "candidate_ref": {
+    "path": ".agent/evidence/release-v3.1.2/independent-final/assessed-candidate.json",
+    "sha256": "1956a6190fa135a7f728c2d49bdbfdf20a7b41923c9ebfaaed033ede4743fa81"
+  },
+  "checks": [
+    {
+      "id": "release-anchors-and-selfinstall",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-release-anchors-and-selfinstall-attempt1-20261029T042700Z-56e3a92f.capture.json",
+        "sha256": "a9536a1b8fd25b5b260bf1fb3d03260c1e6977dc870d94e2e397eeb7906100ce"
+      }
+    },
+    {
+      "id": "public-entry",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-public-entry-attempt1-20261029T042702Z-518bdf89.capture.json",
+        "sha256": "f7982c6433cc5c333429d31761cc47e87cb10c46af1be13e66ebde75f0cb3ae5"
+      }
+    },
+    {
+      "id": "pinned-install-rollback",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-pinned-install-rollback-attempt1-20261029T042728Z-8610919a.capture.json",
+        "sha256": "ff9b5ec8238d7372bd852a6e554cd54051901c6af603ea5c478dbd042c59b339"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "result": "pass",
+    "description": "Current final gate consumes actual accepted prepublication installation evidence and immutable C/payload joins; existing public-entry and genuine pinned-install/rollback controls executed. Accepted core/operation adverse evidence is reused without relabel or duplicate execution.",
+    "source_core_evidence": {
+      "path": ".agent/qa/prerelease-self-install.json",
+      "sha256": "9dfde37a93ab84bf5d1d5b74af8311dc3b58df97cb5c0eac914bdbda5f5aa72a"
+    },
+    "operation_evidence": {
+      "path": ".agent/qa/release-v3.1.2-self-install.json",
+      "sha256": "48473f4615cb13dd5a1fb0d638c3ec26317663c009c011dd7cfc0f9ba9514cd3"
+    }
+  },
+  "evidence_files": [
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-pinned-install-rollback-attempt1-20261029T042728Z-8610919a.capture.json",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-pinned-install-rollback-attempt1-20261029T042728Z-8610919a.stdout.txt",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-pinned-install-rollback-attempt1-20261029T042728Z-8610919a.stderr.txt",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-release-anchors-and-selfinstall-attempt1-20261029T042700Z-56e3a92f.capture.json",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-release-anchors-and-selfinstall-attempt1-20261029T042700Z-56e3a92f.stdout.txt",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-release-anchors-and-selfinstall-attempt1-20261029T042700Z-56e3a92f.stderr.txt",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-public-entry-attempt1-20261029T042702Z-518bdf89.capture.json",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-public-entry-attempt1-20261029T042702Z-518bdf89.stdout.txt",
+    ".agent/evidence/release-v3.1.2/independent-final/release-v3.1.2-public-entry-attempt1-20261029T042702Z-518bdf89.stderr.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Prepared v3.1.2 release candidate passes all three final required checks and actual installed structured QA consumption after accepted real checkout self-install. Ready for normal human merge/sign-off; no stable tag or publication performed."
+  },
+  "reviewer": "/root/independent_acceptance",
+  "accepted_at": "2026-10-29T04:29:13.820768+00:00",
+  "source_commit": "972f956de33db48d4f06d00a8896b176f4f923fd",
+  "assessed_commit": "7af4273e6e2a55f5371eec8241d5c1c2e341cf30",
+  "installed_candidate_C": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "source_sha256": {
+    "NIZAM.json": "d063833eec3490ef9c3cd9592e32e831e9516e05e5cd176538d23e4c16179dfb",
+    "CONTEXT.md": "f62da69a41976829e699ff9e023c56438188614267e522c59e81dbf73fcdf980",
+    "CHANGELOG.md": "d4f8f8fb13a3becd957157d53fca585dc8bc011d4713fc6efaadd784f8b44a8e",
+    "README.md": "0f27627858c2c16766f0e6d425caa7d18ced33994fc683c60fd52794934647c8",
+    "docs/guide/index.html": "ff56d15f6bcc2ff652809b55ab6747fa969610a828cdd1d506b8a4dd02c92aa2",
+    "docs/planning/ROADMAP.md": "997bdb460d345f5783a323b0478b5372b3f64dc08aebfc50ccd45b54587e3647",
+    ".agent/contracts/release-v3.1.2.json": "9270161efa56960ffbee1b85f080bc8479d2a1c0740c2fc92bff2f86bad59c65",
+    ".agent/evidence/release-v3.1.2/readiness.json": "f17f26dfe80c31602347b7a6819320e17e7a2f1646c30b52b518a5e706324168"
+  },
+  "actual_results": {
+    "pinned-install-rollback": {
+      "argv": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v3.1.1",
+        "--prior-sha",
+        "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2"
+      ],
+      "revision": "7af4273e6e2a55f5371eec8241d5c1c2e341cf30",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 23203
+    },
+    "release-anchors-and-selfinstall": {
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr",
+        "--require-self-install"
+      ],
+      "revision": "7af4273e6e2a55f5371eec8241d5c1c2e341cf30",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 252
+    },
+    "public-entry": {
+      "argv": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "revision": "7af4273e6e2a55f5371eec8241d5c1c2e341cf30",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 24461
+    }
+  },
+  "actual_stream_tails": {
+    "pinned-install-rollback": {
+      "stdout": [
+        "[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)",
+        "[C14] OUT_OF_SCOPE workflow-sha-pins (payload mode)",
+        "[C15] OUT_OF_SCOPE capability-profile-roles (payload mode)",
+        "[C16] NOT_APPLICABLE feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload)",
+        "SUMMARY (payload mode): 10 exercised passed, 0 failed, 2 not-applicable (C11, C16), 1 skipped (C6), 3 out-of-scope (C12, C14, C15); content_integrity=not_checked, operational_acceptance=not_assessed",
+        "{\"candidate_payload\": {\"canonicalization\": \"sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance\", \"files\": 340, \"inventory_sha256\": \"48618438133ee439a6d1017faf53c5c932494abb6018e55dd2840ea8e1aacf82\"}, \"candidate_sha\": \"7af4273e6e2a55f5371eec8241d5c1c2e341cf30\", \"commissioning\": \"not_performed\", \"core_install\": \"passed\", \"documentation_origin\": \"not_configured_or_contacted\", \"documentation_packages\": \"absent\", \"prior_payload\": {\"canonicalization\": \"sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance\", \"files\": 340, \"inventory_sha256\": \"82cf418c5af20880387668c9be2611e758675106839233a503aac4019375bdcf\"}, \"prior_sha\": \"0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2\", \"release_publication\": \"not_performed\", \"rollback\": \"passed\"}"
+      ],
+      "stderr": []
+    },
+    "release-anchors-and-selfinstall": {
+      "stdout": [
+        "PASS docs/guide/index.html version anchors (meta + footer)",
+        "PASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)",
+        "PASS CHANGELOG.md top released section (heading + tier banner)",
+        "PASS ROADMAP.md disposition line (Latest released tag / Release in preparation)",
+        "PASS prepublication accepted source proof and actual runtime captures; final authored payload matches",
+        "Release close-out: all internal version anchors agree with V=3.1.2 (--mode pr)."
+      ],
+      "stderr": []
+    },
+    "public-entry": {
+      "stdout": [
+        "public-entry: feature, bug-fix, and small-change paths present",
+        "public-entry: install pin, payload integrity, payload summary, and policy/metadata coherence verified"
+      ],
+      "stderr": []
+    }
+  },
+  "readiness_input": {
+    "path": ".agent/evidence/release-v3.1.2/readiness.json",
+    "sha256": "f17f26dfe80c31602347b7a6819320e17e7a2f1646c30b52b518a5e706324168"
+  },
+  "readiness_scope": "Immutable prepared input captured before final checks; its Final3 pending item is historical to updated_at04:06, and validation_results_ref now resolves this actual QA. No readiness hash or original status was silently rewritten.",
+  "actual_primary_installation": {
+    "framework_version": "3.1.2",
+    "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+    "provenance": {
+      "framework_version": "3.1.2",
+      "installed_at": "2026-10-29T03:53:09Z",
+      "resolved_sha": "69908838142b77003c391a7f3b9da12e483b8a21",
+      "source_url": "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+      "tag": "v3.1.2-rc.selfinstall-20261029"
+    },
+    "readback": {
+      "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-readback-attempt1-20261029T035316Z-2bf84314.stdout.txt",
+      "revision": null,
+      "sha256": "5be37578619ef78f55ea187fb39d0a51846e4064f9f49e7193884ccc752957de"
+    },
+    "accepted_at": "2026-10-29T03:59:10.379832+00:00",
+    "qualification": "Actual designated checkout installed reviewed C before publication; trusted inventory, actual installed entrypoint and resolved index/SKILL reads passed. Controller typed QA accepted four actual operations, not PRIMARY typed commissioning or fresh LLM-session acceptance."
+  },
+  "prior_immutable_release": {
+    "tag": "v3.1.1",
+    "sha": "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
+    "published_at": "2026-10-28T18:29:21Z"
+  },
+  "publication_status": {
+    "source_ready_for_human_review": true,
+    "human_merge_signoff": "pending",
+    "stable_tag": "not created",
+    "github_release": "not published",
+    "official_final_tag_adoption": "pending"
+  },
+  "evidence_continuity": {
+    "core": "Original accepted core source80 and QA9df retain their actual protected input identities. No fresh old-core consumption is claimed after readiness output changed.",
+    "operation": "Actual four-operation sourcefab and QA484 retain exact current owner authorization, capture refs, observed C installation and native consumption. No operation repeated.",
+    "release": "New current candidate/context binds exact current readiness, transitive hashed evidence inputs and all three final captures. Diagnostic public-entry remains separately labelled diagnostic."
+  },
+  "failure_accounting": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "actual_root_known_failures": 43,
+    "total_ceiling": 50,
+    "native_release_failed_captures": 0,
+    "native_history_is_subset": true,
+    "preparation_failure43_ref": "/tmp/independent-framework-final-release-preparation-failure-20261029.json",
+    "new_allowance": false,
+    "history_reset": false,
+    "qualification": "Actual KeyError preparation failure is retained outside native captures; no fake failed capture or reset. Root global history includes other precode/review/preparation/source failures."
+  },
+  "limitations": [
+    "Human merge-commit/sign-off and annotated stable tag/publication remain reserved; accepted C and execution ancestors must remain reachable for portable release evidence.",
+    "No model/provider invocation, fresh LLM-session acceptance or activation of Hermes/Pi/OpenCode/parked products.",
+    "No financial savings or ecosystem-wide performance claim; actual durations and outcomes are recorded."
+  ]
+}
