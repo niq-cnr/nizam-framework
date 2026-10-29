@@ -1,0 +1,53 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "E1",
+      "location": "tools/test_historical_symlink_packet.py:67",
+      "finding": "The proposed old_mode tampering assertion requires authentication unavailable in either existing packet version. Independent probes changed a deleted safe link's old_mode from 120000 to 100644 or 100755; validate_packet accepted every mutation in ordinary and full_audit modes for both 1.0.0 and 1.1.0. Changing base_sha also passed. Blob identity authenticates bytes, not base-tree mode; scope_commitment authenticates only the head tree.",
+      "required_fix": "Specify the trust boundary before implementation. For the smallest compatible repair, verify builder-produced old modes against an independent git ls-tree lookup at base_sha, retain version-appropriate byte/digest/blob consistency checks, and explicitly exclude standalone base-tree authentication claims. If rejecting valid-enum old-mode substitution is mandatory, independently review an authenticated-base extension or trusted repository validation interface first.",
+      "evidence": "/home/cnross/.tmp/packet-evaluator-_avk9pyq/probe.stdout.json"
+    },
+    {
+      "id": "E2",
+      "location": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json:37",
+      "finding": "The supported historical-target domain remains unspecified. 'Malformed' and 'oversized' do not define expected handling of empty targets, NUL, CR/LF, other controls, absolute paths, backslashes, or exact byte-limit boundaries.",
+      "required_fix": "Define accepted historical bytes and explicit rejection limits in the contract, including diagnostics, before implementing the relaxed historical validation."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    {
+      "id": "C1",
+      "finding": "Every proposed historical test uses 1.1.0. Neither 1.0.0 nor auto selection is exercised. The verification commands also omit tools/test_nf_ac03_binary_review.py, which contains the existing 1.1 binary, media, mode, and symlink regressions.",
+      "required_fix": "Parameterize applicable historical cases over 1.0.0, 1.1.0, and auto; add python3 -B tools/test_nf_ac03_binary_review.py to verification. Assert exact version-specific fields and schema acceptance."
+    },
+    {
+      "id": "C2",
+      "finding": "Only escaping deletion runs in both review modes. Candidate-link restrictions and transitions are tested only in ordinary mode; unchanged unsafe head links in full_audit, escaping-old to safe-new links, identical-byte mode transitions, and unsafe renames are absent.",
+      "required_fix": "Add these cases with independently derived Git identities and targeted rejection diagnostics. Clarify ordinary-mode treatment of unchanged inherited links so coverage does not silently expand the stated scope."
+    },
+    {
+      "id": "C3",
+      "finding": "The proposed suite tests invalid UTF-8 but lacks the remaining malformed-target and size boundaries, hostile-text canonical JSON round trips, and historical content/length tampering checks.",
+      "required_fix": "Cover the domain established by E2, exact byte preservation through serialization, inconsistent content/digest/blob/length rejection where represented, and at least one structurally invalid packet rejected by the schema."
+    },
+    {
+      "id": "C4",
+      "finding": "The bootstrap command does not exercise the new historical packet through an actual review consumer. Compatibility therefore lacks a concrete packet-consumption test.",
+      "required_fix": "Exercise the repaired packet through the supported consumer/replay path and document the compatibility matrix. Independent probing found that the closed schema accepts escaped historical text in both versions; installed v3.0.0 accepts that 1.0.0 representation but rejects 1.1.0 as unsupported.",
+      "evidence": "/home/cnross/.tmp/packet-evaluator-_avk9pyq/compatibility-probe.json"
+    }
+  ],
+  "unsupported_claims": [],
+  "evidence": {
+    "candidate_head": "52614fd6d156a915952b93eeea0396b835030405",
+    "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "source_equals_base": true,
+    "identity_capture": "/home/cnross/.tmp/packet-evaluator-_avk9pyq/probe-metadata.json",
+    "independent_author_suite_execution": "/home/cnross/.tmp/packet-evaluator-_avk9pyq/author-tests-with-seam.stderr",
+    "baseline_result": "8 tests; 1 failure and 3 errors from historical traversal rejection, as expected before repair.",
+    "review_boundary": "Read-only pre-code evaluation; repository source and approval files were not modified."
+  }
+}
