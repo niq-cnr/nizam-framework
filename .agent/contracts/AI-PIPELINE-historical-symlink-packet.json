@@ -3,19 +3,31 @@
   "feature_id": "AI-PIPELINE-G05-A05-historical-symlink",
   "name": "Inert historical symlink evidence in Git review packets",
   "status": "proposed",
-  "spec_ref": "docs/planning/nf-owner-2026-10-27/GAUNTLET_AND_GATES.md",
+  "spec_ref": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json#/authorized_outcome",
   "programme_ref": "nizamiq/nizamiq-strategy:docs/planning/llm/AI-PIPELINE-20261029.json#G05,A05",
   "base_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
   "author_assignment": "Operator assigned current remediation coding-agent session Generator responsibility for contract and implementation; independent Validator and Evaluator review required.",
   "problem": "Building a complete PR57 packet fails before review because old Git symlink blob ../../.agents/skills/typesafe-ai is validated as a safe access path. Base 4301be610bc0c673bd08cc3daf1e79e8ee99c995 and head c06a03b20903598a050c8416557f1cf9b88173c1 reproduce the rejection.",
   "scope": {
     "files_create": [
-      {"path":".agent/contracts/AI-PIPELINE-historical-symlink-packet.json","purpose":"This proposed contract, with approvals retained separately."},
-      {"path":"tools/test_historical_symlink_packet.py","purpose":"Author-provided executable Git-based acceptance proposal to be independently examined and hardened by the Evaluator."}
+      {
+        "path": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+        "purpose": "This proposed contract, with approvals retained separately."
+      },
+      {
+        "path": "tools/test_historical_symlink_packet.py",
+        "purpose": "Author-provided executable Git-based acceptance proposal to be independently examined and hardened by the Evaluator."
+      }
     ],
     "files_modify": [
-      {"path":"tools/convergent_review.py","purpose":"Distinguish historical immutable evidence bytes from candidate links and actual access paths in packet construction and validation."},
-      {"path":"CHANGELOG.md","purpose":"Describe the reviewed compatibility boundary."}
+      {
+        "path": "tools/convergent_review.py",
+        "purpose": "Distinguish historical immutable evidence bytes from candidate links and actual access paths in packet construction and validation."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Describe the reviewed compatibility boundary."
+      }
     ]
   },
   "requirements": [
@@ -25,12 +37,69 @@
     "Preserve Git mode, digest and object authentication appropriate to each packet version, validate tampering, retain all changed paths and safely serialize hostile text. Limits on malformed, binary or oversized historical targets must be explicit and fail closed, not silently reclassified as valid.",
     "Cover ordinary and full-audit mode, safe and escaping old links, candidate restrictions, link/file transitions and rename/deletion cases, actual worktree drift, forbidden retrieval paths and outside sentinel non-access."
   ],
-  "non_goals": ["No global path traversal allowance; no target dereference or escaping-link materialization.","No routing, accounting, context, telemetry, unrelated inherited-link changes or injected .nizam edits.","No production installation or activation under this source contract.","No unreviewed schema change, waiver, forged packet or self-approval."],
+  "non_goals": [
+    "No global path traversal allowance; no target dereference or escaping-link materialization.",
+    "No routing, accounting, context, telemetry, unrelated inherited-link changes or injected .nizam edits.",
+    "No production installation or activation under this source contract.",
+    "No unreviewed schema change, waiver, forged packet or self-approval."
+  ],
   "verification": [
-    {"id":"historical-symlink-corpus","argv":["python3","-B","-m","unittest","discover","-s","tools","-p","test_historical_symlink_packet.py"],"command":"python3 -B -m unittest discover -s tools -p test_historical_symlink_packet.py","acceptance_test":"Immutable Git positive and adverse corpus with real packet construction and no-follow protections.","expected_exit":0,"proof_kind":"success","diagnostic":null},
-    {"id":"existing-convergent-review","argv":["python3","-B","tools/test_convergent_review.py"],"command":"python3 -B tools/test_convergent_review.py","acceptance_test":"Existing packet, consumer, retrieval and security regressions remain valid.","expected_exit":0,"proof_kind":"success","diagnostic":null},
-    {"id":"repository-compliance","argv":["bash","tools/validate.sh"],"command":"bash tools/validate.sh","acceptance_test":"Framework required repository compliance.","expected_exit":0,"proof_kind":"success","diagnostic":null},
-    {"id":"payload-bootstrap","argv":["bash","tools/e2e_bootstrap_test.sh"],"command":"bash tools/e2e_bootstrap_test.sh","acceptance_test":"Supported immutable bootstrap and consumer compatibility in a temporary local fixture.","expected_exit":0,"proof_kind":"success","diagnostic":null}
+    {
+      "id": "historical-symlink-corpus",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools",
+        "-p",
+        "test_historical_symlink_packet.py"
+      ],
+      "command": "python3 -B -m unittest discover -s tools -p test_historical_symlink_packet.py",
+      "acceptance_test": "Immutable Git positive and adverse corpus with real packet construction and no-follow protections.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "existing-convergent-review",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/test_convergent_review.py"
+      ],
+      "command": "python3 -B tools/test_convergent_review.py",
+      "acceptance_test": "Existing packet, consumer, retrieval and security regressions remain valid.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "repository-compliance",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "command": "bash tools/validate.sh",
+      "acceptance_test": "Framework required repository compliance.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "payload-bootstrap",
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "acceptance_test": "Supported immutable bootstrap and consumer compatibility in a temporary local fixture.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
   ],
   "estimated_lines": 200,
   "evidence_dir": ".agent/evidence/AI-PIPELINE-historical-symlink-packet",
@@ -38,5 +107,9 @@
   "assurance": "High-assurance: independent Validator Mode A and Evaluator contract review before implementation; independent Validator Mode B and Evaluator execution against frozen candidate, plus applicable convergent/isolation gate and final-head checks. Evaluator independently hardens or replaces Generator-provided tests.",
   "release_adoption": "After independent source acceptance and protected PR review, use approved immutable Framework release procedure and official Hermes bootstrap adoption, then verify exact provenance, integrity and consumer compatibility before PR57 OCR.",
   "rollback": "Retain previous immutable pin and restore it with supported bootstrap; do not hand-edit injected payload. Release, adoption, merge and activation are distinct.",
-  "approvals": {"validator_mode_a":false,"evaluator_contract_review":false}
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false
+  },
+  "authorized_outcome": "Operator 2026-10-29 directive: make Hermes PR57 historical symlink deletion reviewable using the smallest safe Framework packet repair, independently accepted and officially adopted."
 }
