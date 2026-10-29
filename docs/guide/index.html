@@ -771,6 +771,14 @@
 
   <section id="quickstart" aria-labelledby="quickstart-heading">
     <h2 id="quickstart-heading">Quickstart</h2>
+    <p><strong>Prepared v3.1.2 command &mdash; after publication only.</strong> v3.1.2 is an
+    unpublished candidate. Run this example only after its release is published and
+    <code>NIZAM_RELEASE_SHA</code> is set to the verified final tag commit. The v3.0.0
+    examples below remain versioned compatibility examples.</p>
+    <pre><code>: "${NIZAM_RELEASE_SHA:?Set the verified final v3.1.2 release commit after publication}"
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.1.2/bootstrap.sh -o bootstrap.sh
+chmod +x bootstrap.sh
+GOVERNANCE_TAG=v3.1.2 ./bootstrap.sh --tag v3.1.2 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/</code></pre>
     <p>Governance inheritance is one atomic clone &rarr; inject &rarr; verify operation, implemented
     once as <code>bootstrap.sh</code> at the framework's repository root &mdash; an evolution of
     AGIP (the earlier prototype this framework evolved from, per <code>bootstrap.sh</code>'s own
