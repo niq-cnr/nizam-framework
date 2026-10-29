@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 3.1.2
+version: 3.1.3
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "3.1.3"
+    date: "2026-10-29"
+    summary: "Prepare v3.1.3 PATCH for inert historical symlink packet evidence; preserve candidate-link and no-follow controls. Source merge, actual Framework self-install, release and consumer adoption remain separate gates."
   - version: "3.1.2"
     date: "2026-10-29"
     summary: "Prepare v3.1.2 PATCH with inherited-symlink/route evidence repairs and the Framework's own prepublication self-install requirement. Consumer schemas remain compatible; source acceptance, actual primary self-install, human merge/sign-off, tag/publication and final official pin binding remain distinct."

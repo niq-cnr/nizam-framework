@@ -1,0 +1,109 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "candidate_sha": "e3ece60e43aeea3e8b71faa64051fe5d5642d53f",
+  "ready_for_independent_final_qa": true,
+  "verified": [
+    "Required release closeout passes.",
+    "Live installed integrity passes: 341 files and genuine private-reference provenance.",
+    "Four actual captures, streams and authority references match their hashes.",
+    "Final shipped payload equals C2162b8."
+  ],
+  "metadata_boundary": "Only readiness differs among the 4,290 assessed inputs. Its original hash matches execution commit 6519e756; the update packages accepted proof without changing shipped payload.",
+  "remaining": "Independent final release QA and existing merge, sign-off, publication and adoption gates. No reinstall or behavioral suites were executed; no files were modified during the review.",
+  "review_metadata": {
+    "role": "Independent bounded release-readiness reviewer",
+    "payload_C": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "operation_assessed_controller": "6519e756e3b6f127b746e5a3b81f98ab5b0ec2d8",
+    "actual_destination": "/home/cnross/code/nizamiq/nizam-framework",
+    "input_sha256": {
+      ".agent/evidence/release-v3.1.3/readiness.json": "72c2a01ab2182611b966642975d616344206ce7b186e4b3ab4e396d125bcf4f2",
+      ".agent/contracts/release-v3.1.3.json": "b2bbd09d9f48ab2bb7fefcf1081dd0db61a920b8c7694dccb6c63bfc05e6cf07",
+      ".agent/contracts/release-v3.1.3-self-install.json": "8ba50b80d64a590f8f4bdea2b503e069fad868469e5db1b897fb7c2eb595e76c",
+      ".agent/qa/release-v3.1.3-self-install.json": "cf9a1698c1042bd70efe0a6c4882cd6071d4ed10c291af1cb8dbc20e37d2437d",
+      ".agent/evidence/release-v3.1.3-self-install/upgrade-authorization.json": "8e26904d6d61bb246d9b969be5dfad6a70b7a0bed54c527d8dc8b2d3ea75cdab",
+      ".agent/evidence/release-v3.1.3-self-install/operator-decision.json": "8a3a7564fa560d4407fc97d421d438b0493f76e9a52cff821f04dd0bde228f11",
+      ".agent/evidence/release-v3.1.3-self-install/managing-lane-continuation.json": "2e547f28b99405356bfcf52b94be337e2a1fcee0420ce7e3cc5cf20ab8a90563",
+      ".agent/evidence/release-v3.1.3-self-install/independent-actual/candidate.json": "09e159e8ca0edfb7bdba6b6544cfe07d670b02bf9a7167e78eb09ecfe35110d3",
+      ".agent/evidence/release-v3.1.3-self-install/independent-actual/proof-consumption.json": "b48d28b951f10ae86b85a0ea81d32b04a1f460eef7a94a34ae7a839156e3eb47",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "tools/payload_integrity.py": "2965098e62141d6fbad61b055757ed9717d96f8bee7f286a653ed865c3d15779",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7"
+    },
+    "scope": "Readiness proof integrity and eligibility for independent final release QA only. This is review evidence, not final release acceptance or broader operational authority.",
+    "independence": "Reviewer did not author readiness or operation QA artifacts. Original review was read-only. Subsequent explicit instruction authorizes exclusive creation of this evidence file only; no source changes, commits or remote actions."
+  },
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr",
+        "--require-self-install"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "cwd": "/home/cnross/code/worktrees/framework-v313-selfinstall-controller",
+      "exit_code": 0,
+      "captured_stdout": "PASS CONTEXT.md version anchor (frontmatter + change_log[0])\nPASS docs/guide/index.html version anchors (meta + footer)\nPASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)\nPASS CHANGELOG.md top released section (heading + tier banner)\nPASS ROADMAP.md disposition line (Latest released tag / Release in preparation)\nPASS prepublication accepted source proof and actual runtime captures; final authored payload matches\nRelease close-out: all internal version anchors agree with V=3.1.3 (--mode pr).\n",
+      "kind": "Independent read-only portable proof and final-payload check; not fresh host-operation acceptance."
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "tools/payload_integrity.py",
+        "--payload-dir",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam",
+        "--git-repo",
+        "/home/cnross/code/worktrees/framework-v313-selfinstall-reference.git",
+        "--expected-tag",
+        "v3.1.3-rc.selfinstall-20261029",
+        "--expected-sha",
+        "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+        "--expected-source-url",
+        "file:///home/cnross/code/worktrees/framework-v313-selfinstall-reference.git",
+        "--expected-framework-version",
+        "3.1.3",
+        "--expected-file-count",
+        "341",
+        "--require-tag-ref",
+        "--require-reference-tree"
+      ],
+      "exit_code": 0,
+      "captured_stdout": "PAYLOAD-INTEGRITY PASS (content_integrity=verified): 341 released files + genuine provenance; v3.1.3-rc.selfinstall-20261029 at 2162b8e9397e4a0c7b508bbdc88acba0bffd1548 (git:/home/cnross/code/worktrees/framework-v313-selfinstall-reference.git@2162b8e9397e4a0c7b508bbdc88acba0bffd1548)\n",
+      "kind": "Independent live destination read-only content/mode/inventory/provenance verification; no bootstrap or installation."
+    },
+    {
+      "kind": "Independent hash/reference and chronology-context review",
+      "verified_distinct_paths": 4304,
+      "assessed_inputs": 4290,
+      "unchanged_assessed_inputs": 4289,
+      "sole_changed_assessed_path": ".agent/evidence/release-v3.1.3/readiness.json",
+      "historical_readiness_hash_verified_at_assessed_execution_commit": true,
+      "four_actual_command_argv_equal_approved_operation_policy": true,
+      "capture_exit_completion_and_executed_fields_valid": true,
+      "capture_stream_hashes_and_candidate_reference_hash_valid": true,
+      "owner_gate_repository_C_destination_bindings_agree": true,
+      "application_and_underlying_decision_approved_exact_true": true,
+      "operator_instruction_preserved_equally_in_both_records": true,
+      "authority_and_managing_lane_inputs_immutable_in_assessed_candidate": true,
+      "final_authored_payload_equals_C": true,
+      "qualification": "The packaging change intentionally replaces readiness metadata after operation assessment. Historical operation proof remains tied to its original assessed commit; old captures were not relabeled as final-release proof."
+    }
+  ],
+  "limitations": [
+    "No full validate_qa_proof replay of the 4290-input operation manifest was performed. Existing native accepted controller proof, its referenced actual captures and immutable dependencies were checked; portable closeout and live integrity were independently executed.",
+    "This is not independent final release QA: the remaining source/public-entry/rollback/final-closeout evidence must be accepted in its proper final assessed context. Do not relabel provisional source captures or actual-operation captures as newly executed final-release commands.",
+    "Actual native acceptance applies to the controller and actual installed integrity/readback/entrypoint operations. No native PRIMARY typed commissioning, fresh model behavior or production activation is claimed.",
+    "Live integrity is an observation at review time, not a guarantee against later destination changes. Any subsequent relevant source/payload change requires an affected recheck.",
+    "No GitHub approval, human sign-off, merge/tag/publication authority, official final stable provenance or Hermes adoption is granted. The retained private prerelease reference is genuine local transport, not a published RC or stable release.",
+    "Only this exclusive persistence file was added after the original read-only review; no original evidence was edited or committed."
+  ]
+}

@@ -7,6 +7,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.1.3] - 2026-10-29
+
+**Patch release** (`methodology/06_release_train.md` Section 3.3).
+Preparation only: actual Framework self-install, release and adoption remain pending.
+
 ### Fixed
 
 - Review packets preserve supported historical symlink target text from Git as

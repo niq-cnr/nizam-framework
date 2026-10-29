@@ -1,0 +1,95 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [
+    {
+      "id": "REL-E01",
+      "requirement": "Contract requirements 2-3 and rollback: preserve existing destination payload, provenance, checkout and owned work outside the destination; verify no intervening owned changes before actual install or restore.",
+      "finding": "The preservation/safe-boundary requirement has no concrete acceptance mapping in the proposed verification plan. tools/test_corrective_release.py creates a fresh temporary consumer and rolls that fixture back to the published prior release. It does not preserve or recover the actual primary baseline, its existing installed provenance or owned tracked/untracked state. release_closeout.py validates accepted installation/authority/readback/C-D proof but does not check a primary-state backup, concurrent owned-state changes or rollback recoverability. A release can satisfy all three listed commands without demonstrating this required preservation boundary.",
+      "evidence": [
+        ".agent/contracts/release-v3.1.3.json:55-58,116",
+        "tools/test_corrective_release.py:48-73 uses a new temporary consumer and official prior-tag rollback.",
+        ".github/scripts/release_closeout.py:351-512 has concrete authority/capture/payload checks but no original-primary owned-state preservation predicate.",
+        "Read-only primary observation: HEAD 69908838142b77003c391a7f3b9da12e483b8a21, installed provenance resolves to 69908838142b77003c391a7f3b9da12e483b8a21; current status has 25 modified/untracked paths, including installed .nizam files. This is not a clean disposable consumer."
+      ],
+      "required_fix": "Using the existing release/controller evidence family, explicitly map pre-install preservation and safe-boundary acceptance: identify the resolved long-lived destination and current checkout/provenance; retain an external complete baseline snapshot and inventory including owned tracked/untracked state; independently check backup completeness/recoverability and unchanged owned state immediately before mutation; bind the current owner continuation to C and that destination. State how rollback restores the preserved baseline without overwriting intervening work, and record the acceptance refs in readiness/controller QA. Retain the existing three release checks; no new release engine or product-code change is requested."
+    }
+  ],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "independent Evaluator pre-code release contract testability review",
+    "candidate_sha": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+    "contract_path": ".agent/contracts/release-v3.1.3.json",
+    "contract_sha256": "092db42468cfb953cba510837ca3cfc3e671856fd32633d4ed06313b803e2f51",
+    "prior_tag_verification": {
+      "tag": "v3.1.2",
+      "annotated_tag_object": "c989ed1d0d349affd393cf0c93219af37e389433",
+      "peeled_commit": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+      "local_and_origin_refs_match": true,
+      "remote_read_command": [
+        "git",
+        "ls-remote",
+        "--tags",
+        "origin",
+        "refs/tags/v3.1.2",
+        "refs/tags/v3.1.2^{}"
+      ],
+      "captured_remote_output": "c989ed1d0d349affd393cf0c93219af37e389433\trefs/tags/v3.1.2\n8e738a038b18c7009018ef771e83aabc23ad9b03\trefs/tags/v3.1.2^{}\n"
+    },
+    "reviewed_existing_process": {
+      "release_policy": "methodology/06_release_train.md#61-actual-self-install-before-each-framework-release",
+      "authority_and_real_destination_checks": "Existing closeout validates approved current owner decision and hashed underlying decision, C/destination/repository binding, actual bootstrap/integrity/entrypoint/readback captures and source-controller acceptance.",
+      "payload_C_D_equality": "Existing closeout compares integrity-verifier selected authored payload and bootstrap bytes at C/final; contract preserves this boundary.",
+      "validation_scope": "Existing closeout, public-entry and immutable prior rollback checks remain appropriate; the finding adds a concrete acceptance mapping for an already required actual-primary preservation step, not a broader implementation test suite.",
+      "safe_claim_boundary": "Contract separates prepared source, actual self-install, controller QA, future publication and activation; no current installation or future tag acceptance inferred."
+    },
+    "primary_read_only_observation": {
+      "destination": "/home/cnross/code/nizamiq/nizam-framework",
+      "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+      "provenance": {
+        "framework_version": "3.1.2",
+        "tag": "v3.1.2-rc.selfinstall-20261029",
+        "resolved_sha": "69908838142b77003c391a7f3b9da12e483b8a21",
+        "source_url": "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "installed_at": "2026-10-29T03:53:09Z"
+      },
+      "status": [
+        " M .nizam/NIZAM.json",
+        " M .nizam/methodology/03_circuit_breaker.md",
+        " M .nizam/methodology/06_release_train.md",
+        " M .nizam/methodology/07_eval_gated_promotion.md",
+        " M .nizam/provenance.json",
+        " M .nizam/schema/README.md",
+        " M .nizam/schema/review_packet.schema.json",
+        " M .nizam/standard/GIP.md",
+        " M .nizam/tools/README.md",
+        " M .nizam/tools/convergent_review.py",
+        " M .nizam/tools/payload_integrity.py",
+        " M .nizam/tools/start_path.py",
+        " M .nizam/tools/test_receipt_candidate_batching.py",
+        " M .nizam/tools/test_start_path.py",
+        " M .nizam/tools/test_workflow_assurance.py",
+        " M .nizam/tools/workflow_assurance.py",
+        "?? .nizam/schema/external_evidence_admission.schema.json",
+        "?? .nizam/tools/external_evidence.py",
+        "?? .nizam/tools/git_seam.py",
+        "?? .nizam/tools/test_nf_ac01_git_identity.py",
+        "?? .nizam/tools/test_nf_ac02_policy_reconciliation.py",
+        "?? .nizam/tools/test_nf_ac03_binary_review.py",
+        "?? .nizam/tools/test_nf_ac04_generic_admission.py",
+        "?? .nizam/tools/test_nf_ac05_standalone_e2e.py",
+        "?? .nizam/tools/test_nf_owner_dag_and_backlog.py"
+      ],
+      "qualification": "Observation only, not owner authority or a guarantee of a safe active-lane boundary."
+    },
+    "reviewed_input_sha256": {
+      "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "tools/test_corrective_release.py": "c41ee7eda18c69458b3a987f68c70611ac89537defac0df3f1e0e08fe07ba3a1",
+      "tools/test_public_entry.py": "778b7c83d29e5585353367c9bf0e3df80e88adea901e50d69b192317f2a555f2"
+    },
+    "write_scope": "Only this exclusively created verdict; source, contract, actual primary installation and previous evidence were not modified. No QA or installation commands were executed."
+  }
+}

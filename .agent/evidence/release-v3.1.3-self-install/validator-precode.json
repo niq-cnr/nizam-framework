@@ -1,0 +1,81 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "SI313-VMA-01",
+      "severity": "high",
+      "finding": "Both immutable bootstrap operation commands bind a nonexistent, invalid double-v prerelease tag.",
+      "evidence": [
+        "Contract verification entries install and integrity use --tag vv3.1.3-rc.selfinstall-20261029 in both argv and command strings.",
+        "Private reference /home/cnross/code/worktrees/framework-v313-selfinstall-reference.git contains refs/tags/v3.1.3-rc.selfinstall-20261029, which independently peels to 2162b8e9397e4a0c7b508bbdc88acba0bffd1548. Exact lookup of the contract double-v tag exits 128.",
+        "Unchanged bootstrap.sh:302 requires the tag regex to begin ^v(0|[1-9][0-9]*) followed by semantic-version components; vv3.1.3-rc.selfinstall-20261029 cannot match.",
+        "The contracted install and integrity checks therefore cannot reach their promised successful results or genuine matching-provenance closeout."
+      ],
+      "required_fix": "Replace vv3.1.3-rc.selfinstall-20261029 with the existing v3.1.3-rc.selfinstall-20261029 in both argv arrays and both command strings, refreeze the exact contract candidate and obtain independent pre-code reapproval. Preserve the exact expected C, private source URL and all pre-effect authority/safety gates; do not relax bootstrap validation or invent a new tag."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode A, exact primary self-install operation",
+    "candidate_sha": "4a8a33b0fa50506831b1121df8bc322c07066877",
+    "payload_candidate_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "contract_path": ".agent/contracts/release-v3.1.3-self-install.json",
+    "contract_sha256": "173c79b34981737a4953e01f136bb70e22c808310ac661a8a6c2dbc274d98979",
+    "input_sha256": {
+      ".agent/contracts/release-v3.1.3-self-install.json": "173c79b34981737a4953e01f136bb70e22c808310ac661a8a6c2dbc274d98979",
+      ".agent/evidence/release-v3.1.3-self-install/readback.py": "8505cc5a1c66f1406780dd0d25e0a57ecdec5773db06f51c25ab80b100a9ae51",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      "tools/payload_integrity.py": "2965098e62141d6fbad61b055757ed9717d96f8bee7f286a653ed865c3d15779",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+      "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164"
+    },
+    "scope": "Proposed four-operation actual-primary self-install contract; authority and runtime safety are prerequisites, not granted by this review.",
+    "independence": "Reviewer did not author contract or readback helper. Only this exclusively created verdict was written; no source, actual destination, reference tag, backup or previous evidence changed. No installation, behavioral suite, paid call, publication or activation performed."
+  },
+  "independently_confirmed_properties": {
+    "contract_schema_valid": true,
+    "contract_id_equals_feature_id": true,
+    "status": "proposed",
+    "actual_destination": "/home/cnross/code/nizamiq/nizam-framework",
+    "controller": "/home/cnross/code/worktrees/framework-v313-selfinstall-controller",
+    "private_reference": "/home/cnross/code/worktrees/framework-v313-selfinstall-reference.git",
+    "private_reference_is_bare": true,
+    "actual_reference_tag": "v3.1.3-rc.selfinstall-20261029",
+    "tag_peeled_commit": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "controller_and_C_payload_identity_equal": true,
+    "payload_identity_sha256": "6f7662a9a8d66a31ada5b332f13b7c25d17d139b08195c4778d6532e7a635853",
+    "unchanged_bootstrap_sha256": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+    "tracked_nizam_diff_between_C699_and_C216": [],
+    "preservation_snapshot": {
+      "directory": "/home/cnross/code/worktrees/framework-v313-primary-preservation-20261029",
+      "manifest_sha256": "2c03fa5f7a7ec1593f3033769fd64566ad539c454b31ea41b0c953b9a737a54c",
+      "payload_tar_sha256": "3ac4ba885f8936fe0172ce8400c66c45616e1529b11f842b21f5ca89f04be747",
+      "payload_tar_bytes": 3686400,
+      "status_sha256": "4168125fe2f5bdd6cf641e8cd90a908d21414431190bfe4cf7cfcaff44da2fdd",
+      "complete_payload_archive_members_checked": 365,
+      "archive_matches_current_inventory_member_types_bytes_and_modes": true,
+      "current_HEAD_branch_and_porcelain_status_match_snapshot": true,
+      "original_head": "69908838142b77003c391a7f3b9da12e483b8a21",
+      "original_branch": "chore/prerelease-selfinstall-v3.1.2-20261029",
+      "qualification": "Read-only current snapshot verification, not a future pre-mutation drift check, lane absence proof, runtime authority or exercised recovery."
+    }
+  },
+  "scope_and_gate_assessment": [
+    "Contract names actual long-lived destination, separate controller and external trusted reference, and declares all four install/integrity/entrypoint/readback operations. Except for the tag defect, argument roles match existing release closeout requirements.",
+    "Authority application and hashed underlying current-owner decision are explicitly required to be approved exactly true, retain actual instruction, agree on owner/gate/repository/C/destination and be immutable assessed inputs before effects. Missing authority at proposed status is a deliberate pending prerequisite, not permission to install.",
+    "Preconditions require complete preservation validation, current state comparison, safe lane continuation, drift guards and no source checkout/install before gates. Rollback quarantines owned new payload and guards intervening work before restoring exact original payload/branch/HEAD, without blanket index overwrite.",
+    "Readback helper returns required destination/origin/HEAD/provenance and installed index/SKILL/entrypoint hashes. It confines resolved skill reads to payload; full trusted inventory/integrity is a separate preceding operation.",
+    "Private local transport provenance is distinguished from published RC/stable identity. Controller accepted QA and installed smoke/readback are distinguished from native PRIMARY typed commissioning, release publication and activation."
+  ],
+  "remaining_pre_effect_conditions": [
+    "Correct the exact tag spelling and pass both independent pre-code gates.",
+    "Record approval, current owner authority/application and genuine immutable assessed controller inputs before effects.",
+    "Satisfy independent source-acceptance prerequisites for C and immediately recheck owned-state backup, real HEAD/status, reference state and active consumers at the safe boundary.",
+    "Execute four native controller operations under actual controller environment with PYTHONDONTWRITEBYTECODE=1; stop and reconcile uncertain or failed effects before further operations or guarded rollback.",
+    "Require independent accepted actual captures/readback and C-to-D payload/bootstrap equality before final release closeout. No release/tag/publication/adoption authority is granted here."
+  ]
+}

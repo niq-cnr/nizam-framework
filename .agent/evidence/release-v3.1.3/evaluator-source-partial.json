@@ -1,0 +1,173 @@
+{
+  "report_kind": "independent-provisional-release-source-checks",
+  "partial_outcome": "pass",
+  "candidate_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+  "candidate_payload_identity_sha256": "6f7662a9a8d66a31ada5b332f13b7c25d17d139b08195c4778d6532e7a635853",
+  "checks_run": 2,
+  "checks_passed": 2,
+  "full_release_qa_complete": false,
+  "release_closeout_executed": false,
+  "actual_primary_self_install_executed": false,
+  "remaining_release_check": {
+    "id": "release-closeout",
+    "reason": "Intentionally deferred until separately approved actual self-install is executed and independently accepted."
+  },
+  "candidate_ref": {
+    "path": ".agent/evidence/release-v3.1.3/independent-source-C/candidate.json",
+    "sha256": "8fb59a57aae3662f687c4cbbe78ec8740df11dfc9172d8b1437f03d66bb99526"
+  },
+  "assessed_input_count": 4262,
+  "typed_capture_context": "7e81ff634abb16e1bc21e3b669de297f30af16021f1004b8609a3c0d80a0ce68",
+  "original_execution_root": "/home/cnross/.tmp/release-v313-source-qa-xz47sr60/repo",
+  "producer": {
+    "agent_id": "independent-packet-evaluator",
+    "session_id": "release-source-C2162b8"
+  },
+  "checks": [
+    {
+      "id": "public-entry",
+      "argv": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "attempt": 2,
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "completion_state": "completed",
+      "candidate_canonical_sha256": "39d74b2453050c1e6d54474e08b3165f02cc8937a140dbf7c86781ace8301ec6",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.capture.json",
+        "sha256": "555bfcdef7c03d8c0b62eb8945289a92b57e63ef45346fff1aad02a5b4823425"
+      },
+      "stdout": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.stdout.txt",
+        "revision": null,
+        "sha256": "5793b0ebe77d6bcd3e85149c08a48cf717327781fbc54db458f8059661485f93"
+      },
+      "stderr": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.stderr.txt",
+        "revision": null,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "pinned-install-rollback",
+      "argv": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v3.1.2",
+        "--prior-sha",
+        "8e738a038b18c7009018ef771e83aabc23ad9b03"
+      ],
+      "attempt": 1,
+      "expected_exit": 0,
+      "actual_exit": 0,
+      "completion_state": "completed",
+      "candidate_canonical_sha256": "39d74b2453050c1e6d54474e08b3165f02cc8937a140dbf7c86781ace8301ec6",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.capture.json",
+        "sha256": "4b7da3a52f9f4cecaff792af9810fce608797f5f250d39df2157c057f9aad06f"
+      },
+      "stdout": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.stdout.txt",
+        "revision": null,
+        "sha256": "4e18884e3599e1a0c199ef7768e19ab7717961926c8971c14658d766b4d82c87"
+      },
+      "stderr": {
+        "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.stderr.txt",
+        "revision": null,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "semantic_observations": {
+    "public_entry": "Public feature/bugfix/small-change paths, install pin, negative integrity controls, payload summary and policy/metadata coherence passed.",
+    "pinned_install_rollback": {
+      "candidate_payload": {
+        "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+        "files": 341,
+        "inventory_sha256": "ab0204e3d6d718cbf45962f7af1b13a8115d0fd3dbae546d642932ad5f35757f"
+      },
+      "candidate_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+      "commissioning": "not_performed",
+      "core_install": "passed",
+      "documentation_origin": "not_configured_or_contacted",
+      "documentation_packages": "absent",
+      "prior_payload": {
+        "canonicalization": "sorted paths; JSON sort_keys=true separators=comma:colon; path,sha256,executable; excludes provenance",
+        "files": 340,
+        "inventory_sha256": "48618438133ee439a6d1017faf53c5c932494abb6018e55dd2840ea8e1aacf82"
+      },
+      "prior_sha": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+      "release_publication": "not_performed",
+      "rollback": "passed"
+    },
+    "qualification": "The install and rollback used a newly created temporary consumer and local immutable source/reference. They do not establish preservation or acceptance of the actual long-lived primary installation."
+  },
+  "failure_reconciliation": {
+    "task": "release-v3.1.3",
+    "conservative_prior_failures": 4,
+    "ceiling": 6,
+    "native_capture_failures": 0,
+    "counting": "Two independent pre-code rejections + generator public-entry failure + generator precondition failure, retained without reset. Generator public-entry -B variation is the same logical step, consuming its first attempt.",
+    "attempts": {
+      "public-entry": 2,
+      "pinned-install-rollback": 1
+    },
+    "generator_diagnostics_sha256": "7252b8e7e0123a7ee97b1cc359dd713bb8af7a3540e900fd5bba02b2dbd550e5",
+    "signature_counts": {
+      "precode-concrete-self-install-preservation": 2,
+      "generator-public-entry-guide-version": 1,
+      "generator-guide-occurrence-precondition": 1
+    },
+    "new_failures": 0,
+    "conservative_total_failures": 4
+  },
+  "preserved_artifacts": [
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/candidate.json",
+      "sha256": "8fb59a57aae3662f687c4cbbe78ec8740df11dfc9172d8b1437f03d66bb99526",
+      "bytes": 952757
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.capture.json",
+      "sha256": "4b7da3a52f9f4cecaff792af9810fce608797f5f250d39df2157c057f9aad06f",
+      "bytes": 2772
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-pinned-install-rollback-attempt1-20261029T171054Z-686cc4bb.stdout.txt",
+      "sha256": "4e18884e3599e1a0c199ef7768e19ab7717961926c8971c14658d766b4d82c87",
+      "bytes": 9342
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.capture.json",
+      "sha256": "555bfcdef7c03d8c0b62eb8945289a92b57e63ef45346fff1aad02a5b4823425",
+      "bytes": 2482
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/captures/release-v3.1.3-public-entry-attempt2-20261029T171014Z-ec0d0a39.stdout.txt",
+      "sha256": "5793b0ebe77d6bcd3e85149c08a48cf717327781fbc54db458f8059661485f93",
+      "bytes": 165
+    },
+    {
+      "path": ".agent/evidence/release-v3.1.3/independent-source-C/failure-lineage.json",
+      "sha256": "dc26e4ff265fe37d3e28c42e48ef4980fb25bd14cfe74ea3ac6afa31ca45e8e1",
+      "bytes": 707
+    }
+  ],
+  "approval_boundary": "This is independent partial source evidence for only the two authorized C checks, not a full release QA verdict or a complete validate_qa_proof record. No actual installation, owner continuation, safe-lane clearance, final closeout, publication, commissioning or activation is approved.",
+  "write_scope": "No implementation, tests, contract or destination files modified; only newly created evidence with canonical capture paths was preserved."
+}

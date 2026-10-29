@@ -1,0 +1,33 @@
+{
+  "final_verdict": {
+    "approved": true,
+    "summary": "Approve revised release preparation and its explicit separately approved exact-C operation prerequisite; no primary installation is authorized by this review."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "independent Evaluator bounded revised pre-code release review",
+    "candidate_sha": "072d6ab1e0329207e7f5d04e98b97711fd5c8d3a",
+    "previous_candidate": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+    "contract_path": ".agent/contracts/release-v3.1.3.json",
+    "contract_sha256": "1e4b2c0a19fb9a4ec77fbd19baffebe18832ff394199192401113cb4b228b172",
+    "resolved_findings": [
+      "REL-E01"
+    ],
+    "resolution": "Release preparation now excludes destination mutation. A separate exact-C operation contract must be independently approved and must cover complete external backup verification, pre-mutation state comparison, current-owner decision/application binding, safe-lane continuation, drift guard, guarded rollback preserving intervening work, controller and four native checks. Actual execution and independent acceptance are explicit prerequisites to readiness success and final closeout. Disposable prior-release rollback remains honestly distinguished from actual-primary preservation.",
+    "unchanged_verification_inventory": true,
+    "unchanged_non_goals": true,
+    "unchanged_prior_tag_identity": "v3.1.2 / 8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "reused_prior_tag_evidence": ".agent/evidence/release-v3.1.3/evaluator-precode.json#review_metadata.prior_tag_verification",
+    "unchanged_existing_process_sha256": {
+      "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "tools/test_corrective_release.py": "c41ee7eda18c69458b3a987f68c70611ac89537defac0df3f1e0e08fe07ba3a1",
+      "tools/test_public_entry.py": "778b7c83d29e5585353367c9bf0e3df80e88adea901e50d69b192317f2a555f2",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      "tools/payload_integrity.py": "2965098e62141d6fbad61b055757ed9717d96f8bee7f286a653ed865c3d15779"
+    },
+    "scope_boundary": "Existing release process and three declared validations are retained. No concrete self-install operation, owner continuation, installation, source QA, tag or publication is accepted here; those remain separately gated. No source/test/contract edits or installation performed."
+  }
+}

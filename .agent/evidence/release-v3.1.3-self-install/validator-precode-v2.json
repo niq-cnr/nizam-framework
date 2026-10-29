@@ -1,0 +1,57 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode A, double-v correction only",
+    "candidate_sha": "5a920e3f08c953b1a67d58f4bce447a305e9ad2a",
+    "previous_candidate_sha": "4a8a33b0fa50506831b1121df8bc322c07066877",
+    "contract_path": ".agent/contracts/release-v3.1.3-self-install.json",
+    "contract_sha256": "1c314e80029f904b2046f2712fb0df6e2c1afe7581c5c23639992e156d6208ea",
+    "input_sha256": {
+      ".agent/contracts/release-v3.1.3-self-install.json": "1c314e80029f904b2046f2712fb0df6e2c1afe7581c5c23639992e156d6208ea",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      ".agent/evidence/release-v3.1.3-self-install/readback.py": "8505cc5a1c66f1406780dd0d25e0a57ecdec5773db06f51c25ab80b100a9ae51",
+      "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      ".agent/evidence/release-v3.1.3-self-install/validator-precode.json": "40314e2c7d5bc5d6b817c58e9ccd1daa6743fadfe4ec423fe97636bd7d1aa457",
+      ".agent/evidence/release-v3.1.3-self-install/evaluator-precode.json": "93d95d13b2b51f00dfd03dd4d24d1cd70ec9df995c8fd7b00b21f1a45c1a57dd"
+    },
+    "review_scope": "Exact tag spelling correction and revision provenance; reuse unchanged prior scope/safety/compatibility review. No current destination safety or runtime authorization is inferred.",
+    "independence": "Reviewer did not author correction. Only this exclusively created verdict was written; no source, proposal, previous evidence, reference or destination effects. No installation or behavioral suite executed."
+  },
+  "resolved_findings": [
+    {
+      "id": "SI313-VMA-01",
+      "status": "resolved",
+      "evidence": "Install and integrity argv arrays and command strings now use v3.1.3-rc.selfinstall-20261029, the exact actual private ref. Shell-tokenized command strings equal their argv arrays; both expected SHA and actual destination remain exact."
+    }
+  ],
+  "independent_checks": {
+    "contract_schema_valid": true,
+    "matching_contract_feature_identity": true,
+    "status": "proposed",
+    "actual_private_ref": "refs/tags/v3.1.3-rc.selfinstall-20261029",
+    "private_repository": "/home/cnross/code/worktrees/framework-v313-selfinstall-reference.git",
+    "peeled_commit": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "matches_payload_candidate": true,
+    "tag_matches_unchanged_bootstrap_semver_rule": true,
+    "delta_only_corrects_four_tag_tokens_and_adds_revision_history": true,
+    "bootstrap_readback_schema_unchanged": true,
+    "unchanged_scope_fields": "All requirements, acceptance obligations, non-goals, runtime surfaces, destination/controller, payload/bootstrap identities, backup/rollback preconditions, four command roles and authority bindings remain exact."
+  },
+  "reused_prior_review": {
+    "path": ".agent/evidence/release-v3.1.3-self-install/validator-precode.json",
+    "sha256": "40314e2c7d5bc5d6b817c58e9ccd1daa6743fadfe4ec423fe97636bd7d1aa457",
+    "scope": "Prior independent source/payload identity, real destination, complete then-current backup and preserved-state snapshot checks, authority and four-operation compatibility review. Historical observations are not a fresh pre-mutation safe-boundary approval."
+  },
+  "remaining_pre_effect_gates": [
+    "Independent Evaluator pre-code approval and recorded approval of this exact corrected proposal.",
+    "Genuine current-owner upgrade application and hashed decision, actual instruction and exact repository/C/destination bindings committed as immutable assessed inputs.",
+    "Required source acceptance plus immediate backup/reference/HEAD/status and active-consumer drift/boundary checks before real checkout or installation.",
+    "Four actual controller captures under genuine execution root/environment and independent accepted QA; stop/reconcile uncertainty and use guarded owned-state restoration on failure.",
+    "Existing C-to-D payload/bootstrap equality and final release closeout; no PRIMARY typed commissioning, tag/publication/adoption or activation approval is granted."
+  ]
+}
