@@ -19,15 +19,18 @@ Covers Finding F02 and requirement NF-R01:
 from __future__ import annotations
 
 import copy
+from contextlib import ExitStack, contextmanager
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 TOOLS_DIR = Path(__file__).resolve().parent
 ROOT_DIR = TOOLS_DIR.parent
@@ -39,6 +42,7 @@ import git_seam  # noqa: E402
 import payload_integrity as pi  # noqa: E402
 import start_path as sp  # noqa: E402
 import workflow_assurance as wa  # noqa: E402
+import test_workflow_assurance as receipt_fixtures  # noqa: E402
 
 
 ORIGIN_URL = "https://github.com/niq-cnr/nizam-framework.git"
@@ -454,6 +458,260 @@ class NfAc01GitIdentityTests(unittest.TestCase):
 
         after = self._snapshot_git_state(repo)
         self.assertEqual(before, after, "read-only Git inspection must not mutate HEAD, index, or refs")
+
+
+class InheritedSymlinkIdentityTests(unittest.TestCase):
+    """Unselected link identity is permitted; targets and selected paths are not.
+
+    Reuse the existing synthetic authority/receipt setup, actual copied verifier
+    modules and actual local commands. These fixtures grant no real authority.
+    All acceptance/refusal calls below reach public QA and stage consumption,
+    rather than invoking only a proposed private symlink helper.
+    """
+
+    def setUp(self) -> None:
+        self.area = Path(tempfile.mkdtemp(prefix="nizam-inherited-links-")).resolve()
+        self.addCleanup(shutil.rmtree, self.area, ignore_errors=True)
+        self.saved_env = {key: os.environ.get(key) for key in
+                          ("NIZAM_WA120_FIXTURE", wa.QA_CONTEXT_VARIABLE, wa.QA_EXECUTION_ROOT_VARIABLE)}
+        for key, previous in self.saved_env.items():
+            self.addCleanup(self.restore_env, key, previous)
+        os.environ["NIZAM_WA120_FIXTURE"] = "observed"
+        self.number = 0
+
+    @staticmethod
+    def restore_env(key, value):
+        if value is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = value
+
+    def fixture(self, target_kind="relative"):
+        self.number += 1
+        parent = self.area / str(self.number)
+        parent.mkdir()
+        outside = parent / "outside.txt"
+        outside.write_bytes(b"external target contents are not qualified\n")
+        target = str(outside) if target_kind == "absolute" else (
+            "../../outside.txt" if target_kind == "relative" else "../../absent-target")
+
+        class ReceiptWithInheritedLink(receipt_fixtures.ReceiptFixture):
+            def commit(inner, message):
+                if not hasattr(inner, "link"):
+                    inner.link = inner.root / "skills/optional"
+                    inner.link.parent.mkdir()
+                    inner.link.symlink_to(target)
+                    # Exercise the actual hardened Git dependency, not its old
+                    # fixture-only fallback when a copied seam is absent.
+                    inner.write("tools/git_seam.py", (TOOLS_DIR / "git_seam.py").read_bytes())
+                    inner.inputs["tools"].append("tools/git_seam.py")
+                    inner.write("unselected.txt", b"ordinary unselected tracked input\n")
+                return super().commit(message)
+
+        f = ReceiptWithInheritedLink(wa, parent)
+        f.outside = outside
+        f.producer_anchor = _git_raw(f.root, "rev-parse", "HEAD")
+        entry = next(e for e in f.policy["prerequisites"] if e["kind"] == "fresh-qa")
+        f.qa = json.loads(f.api._receipt_artifact(f.root, entry["artifact"]))
+        return f
+
+    def assess(self, f, inputs=None, ownership=None):
+        return f.api.assess_repository(f.root, f.producer_anchor, inputs or f.inputs,
+                                      list(f.candidate["environment"]["variables"]),
+                                      f.candidate["record_ownership"] if ownership is None else ownership)
+
+    def consumers(self, f, qa=None):
+        f.api.validate_qa_proof(f.root, f.qa if qa is None else qa,
+                               feature_id="120", candidate=f.candidate,
+                               required_checks=[f.qa_check])
+        result = f.api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)
+        self.assertEqual(result, f.receipt)
+
+    @staticmethod
+    def snapshot(root):
+        result = {}
+
+        def walk(directory):
+            for item in os.scandir(directory):
+                path = Path(item.path)
+                if path.name == ".git":
+                    continue
+                mode = item.stat(follow_symlinks=False).st_mode
+                relative = path.relative_to(root).as_posix()
+                if stat.S_ISDIR(mode):
+                    result[relative] = (stat.S_IFMT(mode), None)
+                    walk(path)
+                else:
+                    result[relative] = (stat.S_IFMT(mode),
+                                        os.readlink(os.fsencode(path)) if stat.S_ISLNK(mode)
+                                        else hashlib.sha256(path.read_bytes()).hexdigest())
+
+        walk(root)
+        result["git-head"] = _git_raw(root, "rev-parse", "HEAD")
+        result["git-index"] = hashlib.sha256((root / ".git/index").read_bytes()).hexdigest()
+        return result
+
+    @contextmanager
+    def deny_target_follow(self, f):
+        forbidden = {os.path.abspath(os.fspath(f.link)), os.path.abspath(os.fspath(f.outside))}
+
+        def guard(name, original):
+            def wrapped(path, *args, **kwargs):
+                if os.path.abspath(os.fspath(path)) in forbidden:
+                    if name != "stat" or kwargs.get("follow_symlinks", True):
+                        raise AssertionError("Unexpected target follow/read: " + name)
+                return original(path, *args, **kwargs)
+            return wrapped
+
+        with ExitStack() as stack:
+            for name in ("read_bytes", "read_text", "open", "resolve", "stat"):
+                stack.enter_context(mock.patch.object(Path, name, guard(name, getattr(Path, name))))
+            yield
+
+    def assert_consumers_reject(self, f):
+        before = self.snapshot(f.root)
+        for operation in (
+                lambda: f.api.validate_qa_proof(f.root, f.qa, feature_id="120", candidate=f.candidate,
+                                                required_checks=[f.qa_check]),
+                lambda: f.api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)):
+            with self.assertRaises(f.api.AssuranceError) as caught:
+                operation()
+            self.assertTrue(str(caught.exception))
+        self.assertEqual(self.snapshot(f.root), before, "Refusal must be read-only")
+
+    def test_unchanged_relative_absolute_and_dangling_links_do_not_follow_targets(self):
+        for kind in ("relative", "absolute", "dangling"):
+            with self.subTest(target_kind=kind):
+                f = self.fixture(kind)
+                before = self.snapshot(f.root)
+                with self.deny_target_follow(f):
+                    identity = self.assess(f)
+                    self.consumers(f)
+                self.assertEqual(set(identity), {"schema_version", "repository", "source_commit", "source_tree",
+                                                 "assessed_inputs", "environment", "record_ownership", "identity_sha256"})
+                self.assertNotIn("skills/optional", {e["path"] for rows in identity["assessed_inputs"].values() for e in rows})
+                self.assertEqual(self.snapshot(f.root), before)
+                # Changing an unselected external target is deliberately NOT a
+                # qualified-input guarantee. Link text, not target data, is bound.
+                f.outside.write_bytes(b"changed external contents, still unqualified\n")
+                with self.deny_target_follow(f):
+                    self.consumers(f)
+
+    def test_link_drift_rejected_by_producer_and_actual_consumers(self):
+        cases = ("unstaged-retarget", "staged-retarget", "remove", "staged-remove",
+                 "regular", "executable", "directory", "untracked-add", "staged-add",
+                 "regular-to-link", "staged-regular-to-link")
+        for case in cases:
+            with self.subTest(drift=case):
+                f = self.fixture()
+                if case.endswith("regular-to-link"):
+                    changed = f.root / "unselected.txt"
+                    changed.unlink()
+                    changed.symlink_to("outside-new-target")
+                    if case.startswith("staged"):
+                        _git_raw(f.root, "add", "--", "unselected.txt")
+                elif case.endswith("add"):
+                    added = f.root / "new-link"
+                    added.symlink_to("outside-new-target")
+                    if case == "staged-add":
+                        _git_raw(f.root, "add", "--", "new-link")
+                else:
+                    f.link.unlink()
+                    if "retarget" in case:
+                        f.link.symlink_to("../../different-target")
+                    elif case in ("regular", "executable"):
+                        f.link.write_bytes(b"../../outside.txt")
+                        if case == "executable":
+                            f.link.chmod(0o755)
+                    elif case == "directory":
+                        f.link.mkdir()
+                    if case.startswith("staged"):
+                        _git_raw(f.root, "add", "--all", "--", "skills/optional")
+                with self.assertRaises(f.api.AssuranceError):
+                    self.assess(f)
+                self.assert_consumers_reject(f)
+
+    def test_selected_owned_and_ancestor_links_remain_forbidden(self):
+        for category in ("source", "tests", "tools", "contracts", "owned"):
+            with self.subTest(selected=category):
+                f = self.fixture()
+                selected = copy.deepcopy(f.inputs)
+                owned = copy.deepcopy(f.candidate["record_ownership"])
+                if category == "owned":
+                    owned["skills/optional"] = ["/status"]
+                else:
+                    selected[category].append("skills/optional")
+                with self.deny_target_follow(f):
+                    with self.assertRaises(f.api.AssuranceError):
+                        self.assess(f, selected, owned)
+        for directory in ("src", "skills"):
+            with self.subTest(ancestor=directory):
+                f = self.fixture()
+                original = f.root / directory
+                renamed = f.root / (directory + "-original")
+                original.rename(renamed)
+                original.symlink_to(renamed, target_is_directory=True)
+                with self.assertRaises(f.api.AssuranceError):
+                    self.assess(f)
+                self.assert_consumers_reject(f)
+
+    def test_gitlinks_and_historical_artifact_symlinks_remain_forbidden(self):
+        f = self.fixture()
+        _git_raw(f.root, "update-index", "--add", "--cacheinfo", "160000", f.producer_anchor, "submodule")
+        with self.assertRaises(f.api.AssuranceError):
+            self.assess(f)
+        self.assert_consumers_reject(f)
+        _git_raw(f.root, "commit", "-qm", "Synthetic unsupported gitlink anchor")
+        f.producer_anchor = _git_raw(f.root, "rev-parse", "HEAD")
+        with self.assertRaises(f.api.AssuranceError):
+            self.assess(f)
+
+        f = self.fixture()
+        bad = copy.deepcopy(f.capture)
+        bad["stdout"] = f.nonregular_artifact(bad["stdout"])
+        f.set_capture(bad)
+        with self.assertRaises(f.api.AssuranceError):
+            f.api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)
+        qa = copy.deepcopy(f.qa)
+        qa["checks"][0]["capture"] = f.nonregular_artifact(qa["checks"][0]["capture"])
+        with self.assertRaises(f.api.AssuranceError):
+            f.api.validate_qa_proof(f.root, qa, feature_id="120", candidate=f.candidate,
+                                    required_checks=[f.qa_check])
+
+    def test_execution_revision_link_drift_rejected_even_after_current_restoration(self):
+        f = self.fixture()
+        original = os.readlink(f.link)
+        f.link.unlink()
+        f.link.symlink_to("../../wrong-at-execution")
+        bad_revision = f.commit("Synthetic link drift at execution revision")
+        f.link.unlink()
+        f.link.symlink_to(original)
+        f.commit("Restore current link; prior execution remains invalid")
+        capture = json.loads(f.api._receipt_artifact(f.root, f.qa["checks"][0]["capture"]))
+        capture["revision"] = bad_revision
+        qa = copy.deepcopy(f.qa)
+        qa["checks"][0]["capture"] = f.pin("proof/wrong-execution.capture.json", capture)
+        with self.assertRaises(f.api.AssuranceError):
+            f.api.validate_qa_proof(f.root, qa, feature_id="120", candidate=f.candidate,
+                                    required_checks=[f.qa_check])
+        bad = copy.deepcopy(f.capture)
+        bad["revision"] = bad_revision
+        f.set_capture(bad)
+        with self.assertRaises(f.api.AssuranceError):
+            f.api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)
+
+    def test_existing_material_and_environment_invalidation_remain(self):
+        for category in ("source", "tests", "tools", "contracts"):
+            with self.subTest(material=category):
+                f = self.fixture()
+                path = f.root / f.inputs[category][0]
+                path.write_bytes(path.read_bytes() + b"\nchanged material input\n")
+                with self.assertRaises(f.api.AssuranceError):
+                    self.assess(f)
+                self.assert_consumers_reject(f)
+        f = self.fixture()
+        os.environ["NIZAM_WA120_FIXTURE"] = "changed"
+        self.assert_consumers_reject(f)
 
 
 if __name__ == "__main__":

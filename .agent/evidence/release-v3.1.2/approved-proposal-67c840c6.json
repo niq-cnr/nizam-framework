@@ -1,0 +1,146 @@
+{
+  "contract_id": "release-v3.1.2",
+  "feature_id": "release-v3.1.2",
+  "name": "Prepare all accepted Framework repairs as v3.1.2 with genuine prepublication self-install evidence",
+  "status": "proposed",
+  "spec_ref": ".agent/contracts/release-v3.1.2.json#/authorized_outcome",
+  "authorized_outcome": "Userrequires finalFrameworkrelease containallrepairs and Frameworkactuallyselfinstallbeforeeachrelease. Rootrequestsone normalFrameworkPR combining independentlyaccepted symlink/route repair, permanent selfinstallrequirement andbounded3.1.2PATCHpreparation. Thiscontractowns existingreleaseanchor/readiness family only; rootremainspublication/activationowner.",
+  "source_identity": {
+    "repository": "https://github.com/niq-cnr/nizam-framework.git",
+    "base_commit": "1b152385d3b9005cd68833ac77290088fb431f8e",
+    "prior_release": {
+      "tag": "v3.1.1",
+      "sha": "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
+      "tag_object_short": "95829669"
+    },
+    "dependencies": [
+      "F05-inherited-symlink acceptance on4a72source/1b152package",
+      "prerelease-self-install25ee approvedsourcefeature + independentQA",
+      "ExactversionedauthoredpayloadC + rootsafe-boundary actualprimarycontinuation beforefinalselfinstallproof check"
+    ]
+  },
+  "route": "high-risk",
+  "scope": {
+    "files_modify": [
+      {
+        "path": "NIZAM.json",
+        "purpose": "framework.version3.1.2 only"
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Version/change_log3.1.2 PATCH preparation; preserve existingarchitecture/history"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Roll acceptedUnreleased symlink/route+selfinstall fixes into dated3.1.2PATCH section; preserve3.1.1 andolderbytes"
+      },
+      {
+        "path": "README.md",
+        "purpose": "Onlycurrent candidate/releasepin block; latestpublished3.1.1 separatedfrom prepared3.1.2 and currenttrackedpriorstablepin"
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Required framework-version meta/footer and candidate/version label only"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Required release-in-preparation disposition and version/change_log; preserve historicalplans"
+      }
+    ],
+    "files_create": [
+      {
+        "path": ".agent/evidence/release-v3.1.2/readiness.json",
+        "purpose": "Existingreadinessfamily: actualpriorrelease/candidateclassification/checkrefs, localtrackedpin/runtime distinction and genuineprepublicationproof refs afterexecuted. No futurefinalSHA."
+      },
+      {
+        "path": ".agent/contracts/release-v3.1.2.json",
+        "purpose": "Boundedexistingreleasepreparation contract; onePR no duplicatebacklog."
+      }
+    ]
+  },
+  "requirements": [
+    "PATCH3.1.2includesall acceptedrepairs andpermanentFramework-own releasepolicyfix; no narrowedconsumer schema/publicinterface. Published3.1.1 staysimmutable. Confirmfinalavailabletag atreleaseboundary; neverinventfinalSHA/tag/success.",
+    "Sixexistingversionanchors agree3.1.2; historicalreleaseentries remainbyte-identical. Preserveinstalled/trackedpriorstable/sourcevsactualPRIMARYlive facts, humanmerge/signoff/tag/publication/consumeradoption statuses.",
+    "VersionedauthoredpayloadC mustbefrozen andsourceaccepted beforeexplicitroot safe-boundary actualselfinstall. RootdesignatedPRIMARY checkout /home/cnross/code/nizamiq/nizam-framework isactualdestination, notdisposablefixture; sharedgate declares perrelease ratherthanhardcodingmachinepath.",
+    "Afteractualofficialcandidatebootstrap/readback/entrypoint+integrity acceptance, packageexistingreadiness/captures/QA asmetadataD. ShippedauthoredpayloadandbootstrapremainexactC; finaltaghashdoesnotoccurinsideits ownpayload. ControllerQAisnotnativePRIMARY acceptance/commissioning.",
+    "Allapplicableindependentproofs retainedwiththeirrealcandidate/context identities. Reuse only unaffectedvalidclaims; do not re-labeloldtypedcaptures undernewcandidate orrerunfullsuiteforadministrativeclosure. Currentreleasefinalgatecheck followsrealselfinstallproof, no knowinglyfailingprobe.",
+    "Stopatreview-ready combinedPR awaitinghumanmerge/signoff. Actualprimarycheckout/bootstraponlyunderrootconcretecontinuation; tag/release/postpublicationofficialbinding/consumeractivation remainseparateauthorizedroute."
+  ],
+  "acceptance": [
+    "All sixrequiredversionanchors/classification/readiness dates/pins agree; explicitPATCHcompatibility; prior3.1.1publishedfact and3.1.2preparedfact distinct.",
+    "Existingtrustedfinalreleasegate accepts actualsafe-hostsourceQA+PRIMARYruntimecaptureproof andrejectspending/missing/invalidselfinstall; finalD payloadexactC, no privatecandidateprovenance substitutedforcanonicalpublishedpin.",
+    "Existingpublic-entry and disposablepinnedcandidate/3.1.1rollback passon acceptedversionedcandidate; actualPRIMARYselfinstall separatelyestablished.",
+    "CombinedPRsource/evidence owned byonewriter, allindependentreviews linked, humanmerge/finaltagsignoff/activation accuratelypending."
+  ],
+  "non_goals": [
+    "No sourcepolicy/code/schema fixesinthiscontract, blanketdocumentationrefresh, publishedtagrewrite, selfmerge/releasepublication/RCpublication/paidcalls.",
+    "No installed.nizam handpatch or silentactualprimarycheckout; actualselfinstall followsrootseparateconcretecontinuationandsafe-boundarydecision.",
+    "No newschema/evidenceplatform/approvalstage/retrybudget; sameF05rootledger32/50, all32failures retained."
+  ],
+  "verification": [
+    {
+      "id": "release-anchors-and-selfinstall",
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr",
+        "--require-self-install"
+      ],
+      "command": "python3 .github/scripts/release_closeout.py --mode pr --require-self-install",
+      "acceptance_test": "Finalexistingreleasegate verifies actualacceptedselfinstall proof, exactauthoredpayloadC\u2192D andallversionanchors; runonlyafteractualsafe-boundaryinstallation/acceptance.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "public-entry",
+      "argv": [
+        "python3",
+        "tools/test_public_entry.py"
+      ],
+      "command": "python3 tools/test_public_entry.py",
+      "acceptance_test": "Existingpublic acquisition/pin/source/installation distinctionchecks; futuretagURLis clearlypreparednotpublished.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "pinned-install-rollback",
+      "argv": [
+        "python3",
+        "tools/test_corrective_release.py",
+        "--candidate",
+        "HEAD",
+        "--prior",
+        "v3.1.1",
+        "--prior-sha",
+        "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2"
+      ],
+      "command": "python3 tools/test_corrective_release.py --candidate HEAD --prior v3.1.1 --prior-sha 0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
+      "acceptance_test": "Existingdisposableexactcandidate bootstrap/integrity/payload andimmutable3.1.1rollback; localfixturetagonly, notactualFrameworkselfinstall replacement.",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 120,
+  "estimate_qualification": "Inspectiontelemetry only, no quotagate. Existingbrief/priorreleasecontract sufficient; no newplanrequired.",
+  "evidence_dir": ".agent/evidence/release-v3.1.2",
+  "evidence_convention": "Existingreadiness/commandcaptures/sourcefreeze/revieweroutputs/QA; permanentfeature and repairproofremain independentownedrecords inonePR.",
+  "assurance": {
+    "precode": "IndependentValidator+Evaluator boundedreview beforeanchors/readiness sourcewrites; parentownsPlanner/authority.",
+    "postcode": "Independentfrozenanchor/source review; Evaluatorowns3declaredfinalchecks withactualcontext. No generatorGREEN.",
+    "sequence": "VersionCsourcechecks beforeactualactivation; actualselfinstall controllerQA afterconcreteC/rootcontinuation; finalreleasegate andremainingreleasechecks beforecombinedreadyPR."
+  },
+  "budget_lineage": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "user_recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total50.json",
+    "known_at_proposal": 32,
+    "total_ceiling": 50,
+    "new_allowance": false,
+    "ledger_writer": "/root"
+  },
+  "stopping_condition": "Exactcombinedsource/releasepreparation accepted andnormalreadyPR; no concealedreserved merge/publication/activation."
+}

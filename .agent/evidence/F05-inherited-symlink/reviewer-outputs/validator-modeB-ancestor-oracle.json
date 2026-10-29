@@ -1,0 +1,43 @@
+{
+  "review": "affected-only-oracle-prefix-rebind",
+  "feature": "F05-inherited-symlink",
+  "contract_id": "F05-inherited-symlink",
+  "reviewer": "/root/recce_r01",
+  "reviewed_at": "2026-10-28T23:13:58.416221+00:00",
+  "source_commit": "b62004ad4e094bd935e8498bddbee0ed7c427d0f",
+  "prior_source_commit": "4a72ecd37e9a1019eed4aa53ff93cf2eb5585143",
+  "source_hash_checks": {
+    "tools/workflow_assurance.py": true,
+    "tools/start_path.py": true,
+    "tools/test_nf_ac01_git_identity.py": true,
+    "tools/test_receipt_candidate_batching.py": true,
+    "tools/test_start_path.py": true,
+    "CHANGELOG.md": true,
+    ".agent/contracts/F05-inherited-symlink.json": true
+  },
+  "hash_delta": {
+    "tools/test_receipt_candidate_batching.py": {
+      "old": "fbc752cbd53ccd4c6262985b7eb5c1281018be1232702128adf71d3c93aadf4e",
+      "new": "139f5efc5f49f6d43b4304f25eea08450e9bf9fb77dc538d2f194869e236cbb4"
+    }
+  },
+  "substantive_delta_paths": [
+    "tools/test_receipt_candidate_batching.py"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "Read exactone-line diff. Renaming src then replacing it with symlink is stillrequired torefuse. Newguard mayobserve untracked src leaf before trackeddescendant ancestor; exact new current symlink: src diagnostic nowrecognized alongsidetwoexistingdenials.",
+    "No success/negativeexpectation removed, rejectionrequired and restored-directory positive recheck retained. No productcode/otherfixture/contract change; other6frozenhashes exactlymatch prioracceptedstructuralcandidate.",
+    "Originalfailedcapture and earlier3passes keep actualoldidentity; no relabel or replayasnewsuite. Targeted existingfresh-mutations diagnostic is next; independentowner resolves actualstrictcontextrecapture afterit."
+  ],
+  "execution_claim": "Staticaffectedreview only, no tests/source/modelwrites; originalModeBretained.",
+  "budget_qualification": "SameF05 root33/50 latestsnapshot, rootsoleledger; no reset or waiver.",
+  "final_verdict": {
+    "approved": true,
+    "feature": "F05-inherited-symlink",
+    "summary": "Exactnewearlydenialprefix is valid oracle correction; all requiredrefusal/positive controls retained, proceed targetedindependentdiagnostic."
+  }
+}

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.40
+version: 0.65.41
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.41"
+    date: "2026-10-29"
+    summary: "Prepare v3.1.2 PATCH for all bounded symlink/route repairs and permanent prepublication self-install enforcement. Record published v3.1.1 separately; source acceptance, genuine primary installation, human merge/sign-off and publication remain explicit dependencies."
   - version: "0.65.40"
     date: "2026-10-28"
     summary: "Prepare the v3.1.1 PATCH release anchors/readiness from accepted post-v3.1.0 corrections; record actual v3.1.0 publication separately from unchanged v3.0.0 self-installation. Merge, human release sign-off, tag and adoption remain pending."
@@ -409,9 +412,11 @@ checklist is proposed (commit `1471bd41`); start-path gating has landed (`058251
 Current coordination is in [run_state](../../.agent/run_state.json); the live status
 section is this one.
 
-Release in preparation: v3.1.1 — PATCH candidate for accepted promotion/accounting wording corrections, historical cost qualification and internal CI runner update. Required source review/acceptance precedes human merge/sign-off, annotated tag, publication and adoption; none of those release acts is claimed here.
+Release in preparation: v3.1.2 — PATCH candidate for inherited-symlink/route evidence repairs and the Framework-own prepublication self-install requirement. Required source acceptance and actual primary self-install precede human merge/sign-off, annotated tag and publication; readiness and final pin binding remain separate evidenced outcomes.
 
-Latest released tag: v3.1.0 (MINOR) — RELEASED 2026-10-27 at `e68d4eeda080d566ac893b583e1087569ec8883e` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.0)). This release fact does not upgrade the official local v3.0.0 installation.
+Latest released tag: v3.1.1 (PATCH) — RELEASED 2026-10-28 at `0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.1)). The clean source tree retains its v3.0.0 governance pin; actual primary installation is separately observed.
+
+Prior released tag: v3.1.0 (MINOR) — RELEASED 2026-10-27 at `e68d4eeda080d566ac893b583e1087569ec8883e` ([published release](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.0)). This release fact does not upgrade the official local v3.0.0 installation.
 
 Prior released tag: v3.0.0 (MAJOR) — RELEASED 2026-10-27 at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (PR #142, merged by `niq-cnr` at `2026-10-27T10:33:08Z`; annotated tag object `10f7cd3e103d143eef7d151228b1bf3b3344a362`). Official local `.nizam/` adoption installed `331` released files + `provenance.json` at `2026-10-27T15:56:45Z`; the trusted pin verifier, 10-case drift negative suite, commit-bound bootstrap verification and installed preflight each exited `0`. Full consumer commissioning remains incomplete. Existing consumers require the [v3.0.0 migration guide](../migration-v3.0.0.md); retained evidence is under [release closeout](../../.agent/evidence/release-v3.0.0-closeout/).
 

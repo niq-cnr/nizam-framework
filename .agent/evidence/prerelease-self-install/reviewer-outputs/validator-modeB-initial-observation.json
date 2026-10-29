@@ -1,0 +1,33 @@
+{
+  "feature_id": "prerelease-self-install",
+  "reviewer_role": "Validator Mode B",
+  "reviewed_at": "2026-10-29T00:13:36.703823+00:00",
+  "source_commit": "d57e799ac2800cb5a6782be08684e8289f29cfe4",
+  "package_commit": "a39acdddc21c97d45fcc259aefcdf976a146c848",
+  "submission_boundary": "Complete frozen submission for bounded core gate and six-anchor source review; final tracked-copy policy, installation and broad release acceptance were explicitly deferred.",
+  "inspection": "Read immutable release-closeout diff, workflow and methodology, six-anchor/readiness diff and current independent test source. No tests or model calls executed.",
+  "issues": [
+    {
+      "severity": "blocking",
+      "summary": "Authorization binding does not require an explicit current-owner affirmative approval.",
+      "evidence": ".github/scripts/release_closeout.py verify_prepublication_self_install checks text, target, candidate, repository and chronology but lacks affirmative owner approval predicate."
+    },
+    {
+      "severity": "blocking",
+      "summary": "Contradictory QA verdict is not rejected.",
+      "evidence": ".github/scripts/release_closeout.py accepts qa_pass true and receipt gate approval without rejecting an explicit qa.verdict fail."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Bind explicit affirmative current-owner approval to the release-local candidate and destination using existing authority evidence.",
+    "Reject contradictory QA verdict and retain discriminating independently authored adverse controls."
+  ],
+  "scope_qualification": "Other inspected payload, ancestry, captured stream/identity, command-position and six-anchor preparation checks remain reusable subject to unchanged relevant inputs. No approval of actual self-install, tracked-copy policy or broad/final release checks.",
+  "accounting": "One held material core review submission for the combined correction set; root owns the shared F05 failure ledger. No test execution failure is invented.",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Hold d57 core candidate for the two material predicates; delta review after corrected freeze."
+  }
+}

@@ -1,0 +1,27 @@
+ASSERTION_FAILURE: exact per-revision/path observation set
+Traceback (most recent call last):
+  File "/home/cnross/code/audit-remediation/nizam-framework-symlink/tools/test_start_path.py", line 2256, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/cnross/code/audit-remediation/nizam-framework-symlink/tools/test_start_path.py", line 2244, in main
+    test_r02_completion()
+  File "/home/cnross/code/audit-remediation/nizam-framework-symlink/tools/test_start_path.py", line 1862, in test_r02_completion
+    if positive: record_proof(root, 'r02')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/audit-remediation/nizam-framework-symlink/tools/test_start_path.py", line 65, in record_proof
+    candidate = wa.assess_route_candidate(root, path_id, revision, selected, [wa.QA_CONTEXT_VARIABLE, wa.QA_EXECUTION_ROOT_VARIABLE])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-r02-6di_bntk/tools/workflow_assurance.py", line 1225, in assess_route_candidate
+    _receipt_candidate(root, identity)
+  File "/home/cnross/.tmp/nizam-r02-6di_bntk/tools/workflow_assurance.py", line 1014, in _receipt_candidate
+    _inherited_symlinks(root, baseline, _identity_entries(root), selected,
+  File "/home/cnross/.tmp/nizam-r02-6di_bntk/tools/workflow_assurance.py", line 354, in _inherited_symlinks
+    require(os.readlink(os.fsencode(target)) == values[links[path][1]], 'inherited symlink text changed: ' + path)
+  File "/home/cnross/.tmp/nizam-r02-6di_bntk/tools/workflow_assurance.py", line 27, in require
+    raise AssuranceError(message)
+proof_wa_r02.AssuranceError: inherited symlink text changed: link
+........
+----------------------------------------------------------------------
+Ran 8 tests in 2.988s
+
+OK

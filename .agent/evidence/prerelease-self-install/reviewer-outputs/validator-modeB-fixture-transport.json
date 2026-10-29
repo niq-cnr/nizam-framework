@@ -1,0 +1,27 @@
+{
+  "feature_id": "prerelease-self-install",
+  "reviewer_role": "Validator Mode B",
+  "reviewed_at": "2026-10-29T00:35:30.620742+00:00",
+  "source_commit": "c647edf5ce4829060c021a6b132dd8620157c153",
+  "package_commit": "9d2b23e40f7f06fd7e89440fd584705480146856",
+  "source_freeze": {
+    "path": ".agent/evidence/prerelease-self-install/source-freeze.json",
+    "sha256": "c71c647d3494183afe586a35fec91735a26b51dfc2be1fa7026b69436be15306"
+  },
+  "scope": "Test-only local fixture transport rebind; retain prior approved core scope and initial failed review. No source/runtime review restart.",
+  "evidence": [
+    "Exact three-line test delta configures uploadpack.allowFilter=true in the disposable source Git repository before official bootstrap. It enables the actual transport capability required by existing bootstrap; it does not bypass bootstrap or weaken a verification assertion.",
+    "Actual test hash ea96b40abea3b0d54fa4812e80aa6a91a83446648aed647faa4130ef95504333 matches the freeze. The other12 current input hashes and all6 inherited hashes are unchanged from the approved bc82 freeze, and all19 actual file hashes match.",
+    "Clean package status observed before this owned reviewer record. No tests executed by reviewer; the real first setup failure remains preserved at its original identity."
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "next_authorized_action": "After metadata anchor, independent Evaluator may run the same first focused unit under actual supported attempt2 with retained failure history and current root ledger. Broad checks, tracked-copy policy, actual primary installation and final release remain held.",
+  "accounting": "Same shared F05 total50 authority; root sole ledger writer. No reset, new allowance, or relabeling of the failed setup.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Bounded fixture transport correction is sufficient; prior core approval remains valid for the focused-unit boundary only."
+  }
+}

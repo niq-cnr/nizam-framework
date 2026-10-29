@@ -41,7 +41,7 @@ def proof_bootstrap(root: Path) -> None:
     _git(root, "add", "--", *paths); _git(root, "commit", "--only", "-qm", "actual QA fixture implementation", "--", *paths)
 
 
-def record_proof(root: Path, path_id: str, extra_contract_inputs: list[str] | None = None) -> dict:
+def record_proof(root: Path, path_id: str, extra_contract_inputs: list[str] | None = None, *, native_capture: bool = False) -> dict:
     """Execute a real check and bind its exact output to a pinned route candidate."""
     proof_bootstrap(root)
     prefix = ".nizam/" if (root / ".nizam/tools/workflow_assurance.py").exists() else ""
@@ -69,6 +69,17 @@ def record_proof(root: Path, path_id: str, extra_contract_inputs: list[str] | No
     manifest = folder / "candidate.json"; manifest.write_bytes(wa.canonical(candidate))
     proof_checks = []
     for check in checks:
+        if native_capture:
+            # One bounded compatibility fixture reaches the actual producer,
+            # including immutable candidate/context and stopping-policy checks.
+            sp = wa._load_start_path_module()
+            capture = sp.capture_command_evidence(root, task_id=path_id, step=check['id'], attempt=1,
+                output_dir=folder, argv=check['argv'], candidate_sha256=manifest,
+                env_vars=list(candidate['environment']['variables']), proof_kind=check['proof_kind'],
+                agent_id='actual-route-fixture', session_id='inherited-link-binding', timeout_sec=30)
+            assert capture['outcome'] == 'success' and capture['exit_code'] == 0, 'real route capture must pass'
+            proof_checks.append({'id': check['id'], 'capture': ref(root / capture['capture_path'])})
+            continue
         started = datetime.now(timezone.utc).isoformat(); tick = time.monotonic()
         process = subprocess.run(check["argv"], cwd=root, capture_output=True, env=os.environ)
         completed = datetime.now(timezone.utc).isoformat()
@@ -80,7 +91,7 @@ def record_proof(root: Path, path_id: str, extra_contract_inputs: list[str] | No
         capture.update(step=check["id"], attempt=1, binding_state="candidate-bound", started_at=started, completed_at=completed,
             duration_ms=duration_ms, cause_class=None, defect_signature=None, continuation_lineage={}, capture_path=path.relative_to(root).as_posix())
         path.write_bytes(wa.canonical(capture)); proof_checks.append({"id": check["id"], "capture": ref(path)})
-    verdict = qa(path_id, str(folder.relative_to(root) / "ordinary.capture.json"))
+    verdict = qa(path_id, proof_checks[0]['capture']['path'])
     verdict.update(proof_version=2, candidate_ref=ref(manifest), checks=proof_checks, checks_run=len(checks), checks_passed=len(checks))
     write(root, f".agent/qa/{path_id}.json", verdict)
     return verdict
@@ -1788,7 +1799,8 @@ def test_r02_completion() -> None:
     cases = ['schema-approved', 'schema-proposed', 'contract-revoked', 'contract-substituted',
              'tracked', 'untracked', 'index', 'mode', 'symlink', 'rename', 'restored',
              'unchanged', 'committed-cancel', 'staged-cancel', 'rename-source', 'legacy', 'legacy-clean',
-             'malformed', 'repeat-begin', 'scope-substituted', 'unchanged-link', 'unchanged-rename']
+             'malformed', 'repeat-begin', 'scope-substituted', 'unchanged-link', 'unchanged-rename',
+             'qualified-link-drift', 'qualified-base-drift']
     for case in cases:
         with tempfile.TemporaryDirectory(prefix='nizam-r02-') as name:
             root = Path(name)
@@ -1812,7 +1824,7 @@ def test_r02_completion() -> None:
             if case == 'untracked': (root / 'new.txt').write_text('inherited\n')
             if case == 'index':
                 git('add', 'notes.txt'); (root / 'notes.txt').write_text('original\n')
-            if case in ('symlink', 'unchanged-link'):
+            if case in ('symlink', 'unchanged-link', 'qualified-link-drift', 'qualified-base-drift'):
                 (root / 'link').unlink(); (root / 'link').symlink_to('README.md')
             if case in ('rename', 'unchanged-rename'): git('mv', 'notes.txt', 'renamed.txt')
             began = run(root, 'begin', 'bugfix', '--id', 'r02')
@@ -1859,11 +1871,88 @@ def test_r02_completion() -> None:
             ev = '.agent/evidence/r02-output.txt'; (root / ev).write_text('verified\n')
             write(root, '.agent/qa/r02.json', qa('r02', ev))
             positive = case in ('schema-approved', 'unchanged', 'unchanged-link', 'unchanged-rename')
-            if positive: record_proof(root, 'r02')
+            if positive or case in ('qualified-link-drift', 'qualified-base-drift'):
+                record_proof(root, 'r02')
+            # These begin with real, valid route QA. Later link or authority
+            # changes must invalidate it; a route identity cannot grant reuse.
+            if case == 'qualified-link-drift':
+                (root / 'link').unlink(); (root / 'link').symlink_to('elsewhere-after-proof')
+            if case == 'qualified-base-drift':
+                base = json.loads((root / '.agent/evidence/r02-base.json').read_text())
+                base['authorization']['files'].append('notes.txt')
+                write(root, '.agent/evidence/r02-base.json', base)
             done = run(root, 'done', 'bugfix', '--id', 'r02')
             expected = 0 if positive else 1
             if done.returncode != expected: failures.append(case + ': expected ' + str(expected) + ', observed ' + str(done.returncode) + ': ' + done.stderr)
     assert not failures, '\n'.join(failures)
+    test_r02_inherited_route_binding()
+
+
+def test_r02_inherited_route_binding() -> None:
+    """Actual native capture and QA bind one route snapshot; generic use stays strict."""
+    with tempfile.TemporaryDirectory(prefix='nizam-r02-route-binding-') as name:
+        root = Path(name)
+        _git(root, 'init', '-q'); _git(root, 'config', 'user.name', 'Route Fixture')
+        _git(root, 'config', 'user.email', 'fixture@example.invalid')
+        (root / 'README.md').write_text('base\n')
+        (root / 'notes.txt').write_text('original\n')
+        link = root / 'link'; link.symlink_to('notes.txt')
+        _git(root, 'add', '.'); _git(root, 'commit', '-qm', 'route fixture anchor')
+        write(root, '.agent/evidence/r02-cause.json', cause('r02'))
+        write(root, '.agent/evidence/r02-scope.json', scope('r02', ['README.md']))
+        _git(root, 'add', '.agent'); _git(root, 'commit', '-qm', 'route authority')
+        link.unlink(); link.symlink_to('README.md')
+        began = run(root, 'begin', 'bugfix', '--id', 'r02')
+        assert began.returncode == 0, began.stdout + began.stderr
+        (root / 'README.md').write_text('authorized task change\n')
+        verdict = record_proof(root, 'r02', native_capture=True)
+        spec = importlib.util.spec_from_file_location('route_inherited_binding', root / 'tools/workflow_assurance.py')
+        wa = importlib.util.module_from_spec(spec); spec.loader.exec_module(wa)
+        candidate = json.loads((root / verdict['candidate_ref']['path']).read_text())
+        checks = wa.qa_required_checks(json.loads((root / '.agent/evidence/r02-scope.json').read_text())['verification'])
+        wa.validate_qa_proof(root, verdict, feature_id='r02', candidate=candidate, required_checks=checks)
+
+        def reject(operation, prefix):
+            try:
+                operation()
+            except wa.AssuranceError as exc:
+                assert str(exc).startswith(prefix), str(exc)
+            else:
+                raise AssertionError('Expected route binding refusal: ' + prefix)
+
+        def changed_candidate(change):
+            value = json.loads(json.dumps(candidate)); change(value)
+            value['identity_sha256'] = wa.sha(wa.canonical({k: v for k, v in value.items() if k != 'identity_sha256'}))
+            return value
+
+        reject(lambda: wa._receipt_candidate(root, candidate), 'inherited symlink text changed:')
+        reject(lambda: wa._receipt_candidate(root, candidate, route_id='other'), 'inherited symlink text changed:')
+        base_path = '.agent/evidence/r02-base.json'
+        absent = changed_candidate(lambda value: value['assessed_inputs']['contracts'].__setitem__(slice(None),
+            [entry for entry in value['assessed_inputs']['contracts'] if entry['path'] != base_path]))
+        reject(lambda: wa._receipt_candidate(root, absent, route_id='r02'), 'inherited symlink text changed:')
+        wrong_hash = changed_candidate(lambda value: next(entry for entry in value['assessed_inputs']['contracts']
+            if entry['path'] == base_path).update(sha256='0' * 64))
+        reject(lambda: wa._receipt_candidate(root, wrong_hash, route_id='r02'), 'route inherited immutable base changed')
+        owned = changed_candidate(lambda value: value['record_ownership'].update({base_path: ['/metadata']}))
+        reject(lambda: wa._receipt_candidate(root, owned, route_id='r02'), 'route inherited immutable base ownership')
+        original_base = (root / base_path).read_bytes()
+        altered = json.loads(original_base); altered['authorization']['files'].append('notes.txt')
+        write(root, base_path, altered)
+        reject(lambda: wa._receipt_candidate(root, candidate, route_id='r02'), 'route inherited immutable base changed')
+        (root / base_path).write_bytes(original_base)
+        link.unlink(); link.symlink_to('changed-after-proof')
+        reject(lambda: wa.validate_qa_proof(root, verdict, feature_id='r02', candidate=candidate, required_checks=checks),
+               'route inherited symlink changed:')
+        link.unlink(); link.symlink_to('README.md')
+        wa.validate_qa_proof(root, verdict, feature_id='r02', candidate=candidate, required_checks=checks)
+        link.unlink(); link.symlink_to('wrong-at-execution')
+        _git(root, 'add', '--', 'link'); _git(root, 'commit', '--only', '-qm', 'adverse executed link', '--', 'link')
+        executed = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+        _git(root, 'reset', '-q', candidate['source_commit'], '--', 'link')
+        link.unlink(); link.symlink_to('README.md')
+        reject(lambda: wa._receipt_candidate(root, candidate, executed, route_id='r02'),
+               'route inherited executed symlink identity changed')
 
 
 def route_receipt(root: Path, path_id: str, verdict: dict):

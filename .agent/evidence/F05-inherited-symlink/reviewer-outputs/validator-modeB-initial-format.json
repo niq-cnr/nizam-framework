@@ -1,0 +1,40 @@
+{
+  "reviewer": "/root/recce_r01",
+  "role": "Validator Mode B",
+  "reviewed_at": "2026-10-28T18:46:14.087404+00:00",
+  "final_verdict": "approved",
+  "source_commit": "60f54ec1463c5652c1d356214190f7b56849656b",
+  "base_commit": "0b0e25da77bd2adeab1929a0f0f05e1f7d6fe6c2",
+  "contract_sha256": "fc77ef59f8d7922052810b31103e1444e7d2b2242ceff0e8bb84bed264facd58",
+  "source_hash_checks": {
+    "tools/workflow_assurance.py": true,
+    "tools/test_nf_ac01_git_identity.py": true,
+    "CHANGELOG.md": true,
+    ".agent/contracts/F05-inherited-symlink.json": true
+  },
+  "actual_substantive_files": [
+    "CHANGELOG.md",
+    "tools/test_nf_ac01_git_identity.py",
+    "tools/workflow_assurance.py"
+  ],
+  "scope_exact": true,
+  "blocking_findings": [],
+  "inspection_findings": [
+    "Literal Git entries retain blob+stage/mode checks and reject gitlinks. Only inherited120000 leaves are eligible; anchor/index/executed link dictionaries must agree exactly.",
+    "Shared helper checks every path ancestor using lstat and link text via os.readlink bytes against Git blob; no linked-target read/resolve/stat-follow. Relative/absolute/dangling text can pass unchanged while external target contents remain explicitly unqualified.",
+    "Selected source/tests/tools/contracts and owned record links refuse before regular readers. New/current symlinks and link removal/retarget/mode/type/index/executed-revision changes refuse. Existing regular_file and artifact guards remain intact.",
+    "Both assess_repository producer and _receipt_candidate reused by actual QA/stage consumers enforce same inherited-link check. Source_tree/public identity and schema shapes remain unchanged.",
+    "Independent test additions reuse actual copied verifier modules and public producer/QA/stage consumers, deny target follow/read, cover link drift, selected/owned/ancestor/artifact paths, gitlinks, restoration after bad execution revision, and material/environment invalidation. No source-only private helper test substitutes for consumer acceptance."
+  ],
+  "sufficiency": {
+    "assessment": "Small sufficient shared repair: one literal Git parser factors existing duplicate producer loops and one no-follow helper is called at producer and existing consumer boundary. No demonstrated smaller equivalent retains the same anchor/index/current/executed-revision checks and avoids duplication.",
+    "test_scope": "Six focused test methods in existing identity test module; existing fixture family reused, no new platform/public schema."
+  },
+  "tests_executed_by_reviewer": false,
+  "remaining_assurance": "Independent Evaluator owns five declared commands on exact frozen candidate; this structural approval is not executed acceptance, release or activation.",
+  "budget": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "latest_parent_observation": "23/24; root sole writer, no reset or extra allowance from this review."
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "feature_id": "prerelease-self-install",
+  "qa_pass": true,
+  "proof_version": 2,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "candidate_ref": {
+    "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/assessed-candidate.json",
+    "sha256": "68ef61321dd1be99c6bb0a2200f52069e14b32835f413fa2c8e58b72a3f93045"
+  },
+  "checks": [
+    {
+      "id": "selfinstall-gate-fixtures",
+      "capture": {
+        "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-core-unit-attempt3-20261029T030848Z-71e7b026.capture.json",
+        "sha256": "e2365a212067bde94876860149eeb57dccda9dfdc8bec3e72b768b94f131235a"
+      }
+    },
+    {
+      "id": "release-anchors",
+      "capture": {
+        "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-release-anchors-attempt2-20261029T030908Z-c3a2c051.capture.json",
+        "sha256": "102176c1e6be90aa2ea9da9a9c298d6f2b3d2aebd753efe02d8195590e093182"
+      }
+    },
+    {
+      "id": "repository-compliance",
+      "capture": {
+        "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-repository-compliance-attempt2-20261029T030910Z-13d48e72.capture.json",
+        "sha256": "fab3bbeb40898dc3a9d2818d398a32f98f204220ee0bf632f09eed341e1e4627"
+      }
+    },
+    {
+      "id": "validator-fixtures",
+      "capture": {
+        "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-validator-fixtures-attempt2-20261029T031225Z-c10db022.capture.json",
+        "sha256": "02b90b20e3973234c2889de46678594cf8af6015f82be386ff72f74849842654"
+      }
+    },
+    {
+      "id": "payload-bootstrap",
+      "capture": {
+        "path": ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-payload-bootstrap-attempt1-20261029T032310Z-cfad50db.capture.json",
+        "sha256": "5762e241e2cbf3fafc6b6377d333f3700a3c6d9b086d7a8077ab9d208bdfa370"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "result": "pass",
+    "description": "Actual real-Git/native-controller/install fixtures cover accepted proof, portable repository identity, current-owner immutable authority, denied/pending/forged approval, contradictory QA, source/capture/payload drift, false entrypoint argument membership, ordinary versus release PR gates, and ancestry-based history. Existing mandatory validator and bootstrap adverse cases passed."
+  },
+  "evidence_files": [
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-core-unit-attempt3-20261029T030848Z-71e7b026.capture.json",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-core-unit-attempt3-20261029T030848Z-71e7b026.stdout.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-core-unit-attempt3-20261029T030848Z-71e7b026.stderr.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-payload-bootstrap-attempt1-20261029T032310Z-cfad50db.capture.json",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-payload-bootstrap-attempt1-20261029T032310Z-cfad50db.stdout.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-payload-bootstrap-attempt1-20261029T032310Z-cfad50db.stderr.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-release-anchors-attempt2-20261029T030908Z-c3a2c051.capture.json",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-release-anchors-attempt2-20261029T030908Z-c3a2c051.stdout.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-release-anchors-attempt2-20261029T030908Z-c3a2c051.stderr.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-repository-compliance-attempt2-20261029T030910Z-13d48e72.capture.json",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-repository-compliance-attempt2-20261029T030910Z-13d48e72.stdout.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-repository-compliance-attempt2-20261029T030910Z-13d48e72.stderr.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-validator-fixtures-attempt2-20261029T031225Z-c10db022.capture.json",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-validator-fixtures-attempt2-20261029T031225Z-c10db022.stdout.txt",
+    ".agent/evidence/prerelease-self-install/independent-core-guide-final/prerelease-self-install-independent-validator-fixtures-attempt2-20261029T031225Z-c10db022.stderr.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Corrected frozen release-gate source passes all five required current-context checks and actual installed structured QA proof consumption. Source acceptance only; actual PRIMARY operation, final release checks and release/activation remain pending."
+  },
+  "reviewer": "/root/independent_acceptance",
+  "reviewed_at": "2026-10-29T03:26:53.758188+00:00",
+  "source_commit": "5f790a67270ea165b029ad82e1e15ff994697fbe",
+  "assessed_commit": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+  "source_sha256": {
+    "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+    ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+    ".github/workflows/release_closeout.yml": "554882ccbb6ec7e7d566955d4635d2d180a0674a57a5b5037ff9ded42c2ab158",
+    ".github/scripts/test_release_closeout.py": "ea96b40abea3b0d54fa4812e80aa6a91a83446648aed647faa4130ef95504333",
+    "CHANGELOG.md": "d4f8f8fb13a3becd957157d53fca585dc8bc011d4713fc6efaadd784f8b44a8e",
+    "CONTEXT.md": "f62da69a41976829e699ff9e023c56438188614267e522c59e81dbf73fcdf980",
+    "NIZAM.json": "d063833eec3490ef9c3cd9592e32e831e9516e05e5cd176538d23e4c16179dfb",
+    "README.md": "0f27627858c2c16766f0e6d425caa7d18ced33994fc683c60fd52794934647c8",
+    "docs/guide/index.html": "ff56d15f6bcc2ff652809b55ab6747fa969610a828cdd1d506b8a4dd02c92aa2",
+    "docs/planning/ROADMAP.md": "997bdb460d345f5783a323b0478b5372b3f64dc08aebfc50ccd45b54587e3647",
+    ".agent/contracts/prerelease-self-install.json": "55b944ede0c54f888cb5b473c9c0c740dc717f961afa3db05ff62e4ad4201838",
+    ".agent/contracts/release-v3.1.2.json": "9270161efa56960ffbee1b85f080bc8479d2a1c0740c2fc92bff2f86bad59c65",
+    ".agent/evidence/release-v3.1.2/readiness.json": "5c55aa58e2c50a59bde0e72560a012bb8e16475a2b3174be85fe7de2f0d4437c"
+  },
+  "inherited_component_sha256": {
+    "tools/workflow_assurance.py": "e9ab704b5dd3770b98f251bd6b6842276e32fbbe9c9fea813082f65098685d8f",
+    "tools/start_path.py": "4643d94389045c16e7ca78ced8696646ef8d30bc97d6ea5b818a55f8cc0d575e",
+    "tools/test_nf_ac01_git_identity.py": "91e43106348063e3f41ad4c2e98b803369fa19814754db680ba25a7a551b687c",
+    "tools/test_receipt_candidate_batching.py": "139f5efc5f49f6d43b4304f25eea08450e9bf9fb77dc538d2f194869e236cbb4",
+    "tools/test_start_path.py": "70feaf1e0c56074bb53b5b28351f84a211daf60431671b815bc48d47608c7529",
+    ".agent/contracts/F05-inherited-symlink.json": "8a0c1409ee17b8732c83d8675f0d7531286278f10d6d30bb1188564da1e985aa"
+  },
+  "actual_results": {
+    "selfinstall-gate-fixtures": {
+      "argv": [
+        "python3",
+        ".github/scripts/test_release_closeout.py"
+      ],
+      "attempt": 3,
+      "revision": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 18098
+    },
+    "payload-bootstrap": {
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "attempt": 1,
+      "revision": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 55894
+    },
+    "release-anchors": {
+      "argv": [
+        "python3",
+        ".github/scripts/release_closeout.py",
+        "--mode",
+        "pr"
+      ],
+      "attempt": 2,
+      "revision": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 35
+    },
+    "repository-compliance": {
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "attempt": 2,
+      "revision": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 192964
+    },
+    "validator-fixtures": {
+      "argv": [
+        "bash",
+        "tools/fixtures_self_test.sh"
+      ],
+      "attempt": 2,
+      "revision": "80ff2016839dbcf96f4d45551644ba074b59fa01",
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 642636
+    }
+  },
+  "actual_stream_tails": {
+    "selfinstall-gate-fixtures": {
+      "stdout": [],
+      "stderr": [
+        ".........",
+        "----------------------------------------------------------------------",
+        "Ran 9 tests in 18.045s",
+        "",
+        "OK"
+      ]
+    },
+    "payload-bootstrap": {
+      "stdout": [
+        "assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=80ff2016839dbcf96f4d45551644ba074b59fa01); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.",
+        "assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2).",
+        "assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL).",
+        "assert_consumer_zero_reachback: OK -- consumer project executed classify, preflight, trivial begin/done, amend-contract, capture/publish(prepare+deny+publish)/build-receipt/verify-receipt/resume, status, and validate.sh --payload using only .nizam/ with zero reach-back.",
+        "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1793244190-44912, target /home/cnross/.tmp/tmp.DUqRZOx7cu/.nizam)."
+      ],
+      "stderr": []
+    },
+    "release-anchors": {
+      "stdout": [
+        "PASS docs/guide/index.html version anchors (meta + footer)",
+        "PASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)",
+        "PASS CHANGELOG.md top released section (heading + tier banner)",
+        "PASS ROADMAP.md disposition line (Latest released tag / Release in preparation)",
+        "Release close-out: all internal version anchors agree with V=3.1.2 (--mode pr)."
+      ],
+      "stderr": []
+    },
+    "repository-compliance": {
+      "stdout": [
+        "[C13] PASS skill-index",
+        "[C14] PASS workflow-sha-pins",
+        "[C15] PASS capability-profile-roles",
+        "[C16] PASS feature-list-lifecycle",
+        "SUMMARY: 16 passed, 0 failed"
+      ],
+      "stderr": []
+    },
+    "validator-fixtures": {
+      "stdout": [
+        "public-entry: install pin, payload integrity, payload summary, and policy/metadata coherence verified",
+        "OK   public-entry public entry and start-path discoverability checks",
+        "OK   governance-manifest complete shape, uniqueness and unconditional parity",
+        "---",
+        "SELF-TEST OK: 176/176 fixtures accounted for, 0 failed"
+      ],
+      "stderr": [
+        "........",
+        "----------------------------------------------------------------------",
+        "Ran 8 tests in 3.005s",
+        "",
+        "OK"
+      ]
+    }
+  },
+  "scope": "Permanent self-install release-gate source and prepared v3.1.2 anchors only. No live PRIMARY checkout/install, source human merge, stable tag, release publication, agent activation or model call.",
+  "evidence_reuse": {
+    "protected_guide_invalidation": "Original candidate699 protected docs/guide/index.html. Actual public-entry failure led to guide correction and a new exact candidate80ff2016. Earlier unit/anchor/compliance captures remain historical, never relabelled. Focused public-entry diagnostic passed before justified recapture.",
+    "inherited_repair": "Accepted F05-inherited-symlink code/controls remain unchanged and retain their independent five-check acceptance. No additional standalone inherited long-workflow/NF suite was scheduled.",
+    "current_native_proof": "All five final captures use one current candidate/context and actual current protected inputs."
+  },
+  "failure_history": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "current_known_failures": 40,
+    "total_ceiling": 50,
+    "native_history_is_subset": true,
+    "reset": false,
+    "known_task_failures": [
+      "Actual first unit setup refused unfiltered local transport; supported fixture opt-in fixed without changing product behavior.",
+      "Actual first broad fixtures failed the existing public-entry guide version requirement; guide-only correction and focused diagnostic retained."
+    ],
+    "native_prior_failed_capture_count": 2,
+    "qualification": "Current root ledger is checked independently before each launch; candidate environment ledger hash is the assessment snapshot, not a dynamic budget guarantee. All manual/review/other-task failures remain in root mixed history."
+  },
+  "sufficiency": "Existing release closeout, payload selection and artifact/Git/proof helpers are reused. The release-local readiness extension and small actual-readback script avoid another schema, release platform, decision model or approval stage.",
+  "limitations": [
+    "Source acceptance is not the actual long-lived checkout self-installation. Root current-owner/safe-boundary continuation and rollback checks remain required before effects.",
+    "Final release three checks occur only after accepted actual operation evidence is packaged. No human merge/tag/publication authority is implied.",
+    "No LLM agent behavior, PRIMARY typed commissioning, live-session instruction loading or financial savings are established by these deterministic source checks."
+  ]
+}
