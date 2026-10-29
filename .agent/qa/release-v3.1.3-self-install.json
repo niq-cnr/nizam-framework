@@ -1,0 +1,180 @@
+{
+  "proof_version": 2,
+  "feature_id": "release-v3.1.3-self-install",
+  "verdict": "pass",
+  "qa_pass": true,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "candidate_ref": {
+    "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/candidate.json",
+    "sha256": "09e159e8ca0edfb7bdba6b6544cfe07d670b02bf9a7167e78eb09ecfe35110d3"
+  },
+  "candidate_sha256": "9720e654693a2419e44d2d0728cb86bc989a4cf06353216a6689d434c0d248cf",
+  "checks": [
+    {
+      "id": "install",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-install-attempt1-20261029T175012Z-31475255.capture.json",
+        "sha256": "593212533675c4d8f083eb68ece37dec19a1f9310edbe04a70eeba4137c52266"
+      }
+    },
+    {
+      "id": "integrity",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-integrity-attempt1-20261029T175030Z-18f1cc11.capture.json",
+        "sha256": "88623fc51627f024d658571396d9e26ad0f8c671f067163b5ab8f249e16ccce4"
+      }
+    },
+    {
+      "id": "entrypoint",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-entrypoint-attempt1-20261029T175049Z-f1fe383e.capture.json",
+        "sha256": "3753d644b922f83b0d81758466a118aa8d21243cd9136dfcc16048402665af95"
+      }
+    },
+    {
+      "id": "readback",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-readback-attempt1-20261029T175106Z-47134ede.capture.json",
+        "sha256": "aa445fc02c66200949ef50ef2ecc6b8303cace484ccbed8cd72411a624a4318b"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Actual installed controller proof consumer rejects a structurally valid verdict bound to a foreign operation identity.",
+    "result": "pass",
+    "evidence": ".agent/evidence/release-v3.1.3-self-install-qa-adversarial.txt"
+  },
+  "adversarial_check": {
+    "description": "Foreign operation identity cannot reuse the current four actual captures. No destination or proof artifact is mutated.",
+    "result": "pass",
+    "evidence": ".agent/evidence/release-v3.1.3-self-install-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-install-attempt1-20261029T175012Z-31475255.stdout.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-install-attempt1-20261029T175012Z-31475255.stderr.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-integrity-attempt1-20261029T175030Z-18f1cc11.stdout.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-integrity-attempt1-20261029T175030Z-18f1cc11.stderr.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-entrypoint-attempt1-20261029T175049Z-f1fe383e.stdout.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-entrypoint-attempt1-20261029T175049Z-f1fe383e.stderr.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-readback-attempt1-20261029T175106Z-47134ede.stdout.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/captures/release-v3.1.3-self-install-readback-attempt1-20261029T175106Z-47134ede.stderr.txt",
+    ".agent/evidence/release-v3.1.3-self-install-qa-adversarial.txt",
+    ".agent/evidence/release-v3.1.3-self-install/independent-actual/checkout-transition.json"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Accept exact actual Framework v3.1.3 candidate self-install via source-controller native QA and real destination integrity/readback/entrypoint. No PRIMARY typed commissioning, release publication or production activation is claimed."
+  },
+  "executed_at": "2026-10-29T17:58:34.098617+00:00",
+  "review_metadata": {
+    "role": "Independent Evaluator actual operation QA",
+    "controller_candidate": "6519e756e3b6f127b746e5a3b81f98ab5b0ec2d8",
+    "controller_source_tree": "4ef2fae41421c6347fba72024be12a7e1b5c1d99",
+    "payload_C": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "payload_identity_sha256": "6f7662a9a8d66a31ada5b332f13b7c25d17d139b08195c4778d6532e7a635853",
+    "actual_destination": "/home/cnross/code/nizamiq/nizam-framework",
+    "actual_readback": {
+      "NIZAM_sha256": "23517b2f350ca9f4236a8209723c3f4b1501ee7228eb6a4b29edef9e29d1c7a4",
+      "SKILL_sha256": "ca05639da086f5b4a8ec170e8d0812c4f436e503d89cf820a4e623a29bc5ba2f",
+      "destination": "/home/cnross/code/nizamiq/nizam-framework",
+      "entrypoint_sha256": "4643d94389045c16e7ca78ced8696646ef8d30bc97d6ea5b818a55f8cc0d575e",
+      "head": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+      "loaded_index_framework_version": "3.1.3",
+      "provenance": {
+        "framework_version": "3.1.3",
+        "installed_at": "2026-10-29T17:50:13Z",
+        "resolved_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+        "source_url": "file:///home/cnross/code/worktrees/framework-v313-selfinstall-reference.git",
+        "tag": "v3.1.3-rc.selfinstall-20261029"
+      },
+      "qualification": "Actual installed file reads and entrypoint smoke; no fresh LLM session or PRIMARY typed commissioning claimed",
+      "repository": "https://github.com/niq-cnr/nizam-framework.git",
+      "resolved_skill": "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/SKILL.md"
+    },
+    "entrypoint_result": {
+      "capabilities": {
+        "available": true,
+        "dont_write_bytecode": true,
+        "git_available": true,
+        "git_toplevel": "/home/cnross/code/nizamiq/nizam-framework",
+        "installed": true,
+        "operational": true,
+        "origin_url": "https://github.com/niq-cnr/nizam-framework.git",
+        "python_version": "3.12.3",
+        "qualified": true,
+        "repository_binding_aligned": true,
+        "run_state_valid": true,
+        "sandbox_available": true,
+        "sandbox_operational": true,
+        "schemas_present": true,
+        "status": "ready"
+      },
+      "failures": [],
+      "ok": true,
+      "status": "ready"
+    },
+    "integrity_result": "Full trusted immutable reference comparison passed:341 released files plus genuine provenance, bytes/inventory/modes verified.",
+    "owner_authority": {
+      "application": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/upgrade-authorization.json",
+        "sha256": "8e26904d6d61bb246d9b969be5dfad6a70b7a0bed54c527d8dc8b2d3ea75cdab"
+      },
+      "decision": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/operator-decision.json",
+        "sha256": "8a3a7564fa560d4407fc97d421d438b0493f76e9a52cff821f04dd0bde228f11"
+      },
+      "managing_lane": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/managing-lane-continuation.json",
+        "sha256": "2e547f28b99405356bfcf52b94be337e2a1fcee0420ce7e3cc5cf20ab8a90563"
+      },
+      "frozen_before_effects": true,
+      "bindings_and_approval_checked": true,
+      "chronology_checked": true
+    },
+    "pre_effect": {
+      "candidate_preflight": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/preflight-result.json",
+        "sha256": "867692059cbdbcb24c9936a14a5471feeb403f971d00e7d3bf920fca3bb77ec1"
+      },
+      "root_owned_checkout": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/checkout-transition.json",
+        "sha256": "ecff567d59a25f50560d9af2279e8bb67cfd7a0c9f4f58a0fd3db16776171145"
+      },
+      "old_payload_preservation": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/effect-start.json",
+        "sha256": "9e950df30ea69d418f6bdfbfa4a7f33e07a1d2e51283e8e3d5cc0981e8bf610c"
+      },
+      "primary_outside_dot_nizam_changes": false,
+      "unknown_consumers": "Inaccessible/already-loaded consumers remain disclosed unknowns, not asserted absent; managing root explicitly accepted the bounded continuation and rechecked before effects."
+    },
+    "native_context": "8ec94efa680a4b21127cf7202f08982cad2a886464fd76892c9a06b1b9f84e8d",
+    "actual_execution_root": "/home/cnross/code/worktrees/framework-v313-selfinstall-controller",
+    "producer": {
+      "agent_id": "independent-packet-evaluator",
+      "session_id": "actual-selfinstall-6519"
+    },
+    "failure_history": {
+      "conservative_failures": 5,
+      "ceiling": 6,
+      "new_failed_operations": 0,
+      "signature_counts": {
+        "double-v-tag-precode": 2,
+        "conditional-boundary-review": 2,
+        "ignored-bytecode-assessment-refusal": 1
+      },
+      "reset": false,
+      "ledger": {
+        "path": ".agent/evidence/release-v3.1.3-self-install/independent-actual/failure-lineage.json",
+        "sha256": "71e71000cfee8649f39e0efa1a702fb50cb3a35adfc3a108ff2c618d764115ef"
+      }
+    },
+    "proof_consumption_evidence": ".agent/evidence/release-v3.1.3-self-install/independent-actual/proof-consumption.json",
+    "scope": "Four actual operations at the real long-lived destination, independently verified under the assessed controller. This is not native PRIMARY source acceptance, commissioning, a fresh LLM session, final release QA, publication, Hermes adoption or service/model/scheduler activation."
+  }
+}
