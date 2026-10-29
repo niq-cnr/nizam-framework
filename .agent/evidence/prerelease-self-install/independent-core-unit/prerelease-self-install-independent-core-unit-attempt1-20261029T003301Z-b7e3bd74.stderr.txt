@@ -1,0 +1,19 @@
+E
+======================================================================
+ERROR: setUpClass (__main__.ReleaseSelfInstallTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall/.github/scripts/test_release_closeout.py", line 133, in setUpClass
+    checked(root, "bash", "bootstrap.sh", "--repo-url", transport, "--tag", "v" + PRIOR,
+  File "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall/.github/scripts/test_release_closeout.py", line 40, in checked
+    raise AssertionError(f"fixture command {argv!r}: {result.returncode}\n"
+AssertionError: fixture command ('bash', 'bootstrap.sh', '--repo-url', 'file:///home/cnross/.tmp/nizam-release-self-install-sgkqej5d/controller', '--tag', 'v9.8.6', '--expected-sha', '657c81f9c246525d8a42b71c9ce2df5d118f5f1b', '--target', '/home/cnross/.tmp/nizam-release-self-install-sgkqej5d/controller/.nizam'): 1
+bootstrap.sh: fetching file:///home/cnross/.tmp/nizam-release-self-install-sgkqej5d/controller at explicit tag ref refs/tags/v9.8.6 (--depth 1, blob-filtered, sparse payload)...
+transport did not honor the blob filter: the fetch appears to have downloaded the full tree. Refusing to report a filtered installation.
+bootstrap.sh: error: filtered retrieval could not be confirmed for 'file:///home/cnross/.tmp/nizam-release-self-install-sgkqej5d/controller'; refusing to report success for an unfiltered download.
+
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.875s
+
+FAILED (errors=1)
