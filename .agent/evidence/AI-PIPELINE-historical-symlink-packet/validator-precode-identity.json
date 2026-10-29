@@ -1,0 +1,76 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode A, exact-delta identity correction",
+    "candidate_sha": "d65fdac719a6c7321f15a590c9e19a000265c109",
+    "previous_implementation_candidate": "7869943ea57b8befea301193b0d239fa83e1243b",
+    "production_base": "8e738a038b18c7009018ef771e83aabc23ad9b03",
+    "contract_path": ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json",
+    "contract_sha256": "8f9ca985c6cab24f2ff627fe68a8b94142bf3f04987a05ea721f99010c1b56b6",
+    "input_sha256": {
+      ".agent/contracts/AI-PIPELINE-historical-symlink-packet.json": "8f9ca985c6cab24f2ff627fe68a8b94142bf3f04987a05ea721f99010c1b56b6",
+      "tools/convergent_review.py": "ff95978468cb7b7fdf3bb0b8df934006027c27a6ff5dfc4c4042817018037027",
+      "tools/test_historical_symlink_packet.py": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+      "schema/review_packet.schema.json": "8e6e0948efb388a26eab88608fe02fab095767a64275563f70b74d5819013944",
+      "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      "tools/git_seam.py": "952db2931ad2452f16efb508cf9af111630c8ed2aea4bc19ebc18126d359a794",
+      "CHANGELOG.md": "0ef3f046bbc55d4aef9cdb1ce75e6d6ebea6d51b5a437ba10b354e4c15c69de5",
+      "tools/workflow_assurance.py": "e9ab704b5dd3770b98f251bd6b6842276e32fbbe9c9fea813082f65098685d8f",
+      "tools/start_path.py": "4643d94389045c16e7ca78ced8696646ef8d30bc97d6ea5b818a55f8cc0d575e",
+      ".nizam/tools/workflow_assurance.py": "f0720074478f0e8e6302d6a98bfc4c3804edec5683afd34f8b22a73e789bd8ad",
+      ".nizam/schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/approved-proposal.json": "678e83fff20036eb9a7e873bd7ed80e667c79d3844aa09eb268a4fab48c87a1d",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-mode-b.json": "b6f28ea9efe7916bda16db51ebeb3753872c5da35e4877d0c7b5a54f802c84f3",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-v3.json": "2318808bf3235c873115131eaac280a2f58ac32ba744d9d9789438917e8b46fe",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v3.json": "5b388872b85e36c0f478f3735cb9769b6de2b0cbd723d77f03e5be6693e2a7ca"
+    },
+    "scope": "Contract identity correction only. Approval does not claim fresh typed QA or completion, and does not retroactively repair the old identity-bound artifacts.",
+    "independence": "Reviewer did not author the corrected contract or implementation. Only this exclusively created verdict was written; no source, contract, tests or existing evidence modified."
+  },
+  "exact_delta_assessment": {
+    "changed_contract_fields": [
+      "approvals",
+      "feature_id",
+      "identity_correction",
+      "previous_approval",
+      "status"
+    ],
+    "identity": "contract_id == feature_id == contract filename stem == AI-PIPELINE-historical-symlink-packet",
+    "lifecycle": "Status returned to proposed and active approval booleans reset for fresh independent reapproval. previous_approval preserves the exact prior approval object.",
+    "traceability": "Original programme_ref and all original requirement references remain exact; identity_correction records the previous feature identifier and explains proof non-relabeling.",
+    "semantic_invariants_unchanged": [
+      "requirements",
+      "scope",
+      "non_goals",
+      "verification",
+      "historical_text_domain",
+      "compatibility_and_trust",
+      "authorized_outcome",
+      "assurance",
+      "release_adoption",
+      "rollback"
+    ],
+    "implementation_invariants": "tools/convergent_review.py, tools/test_historical_symlink_packet.py, schema/review_packet.schema.json, tools/git_seam.py and CHANGELOG.md are byte-identical to the previously reviewed implementation candidate.",
+    "scope_diff": "Only corrected contract and the separately retained prior Mode B evidence are changed versus the implementation candidate; no new behavior or verification obligation introduced."
+  },
+  "independent_checks": [
+    "Confirmed exact candidate HEAD, computed input hashes directly, and matched primary contract/source/tests/schema/Git seam/changelog working bytes to their frozen candidate Git blobs.",
+    "Compared top-level contract values directly against git show at the prior implementation candidate; only the five declared identity/lifecycle/provenance fields differ.",
+    "Validated the corrected proposal against both source and installed .nizam contract schemas.",
+    "Called qa_authorization_paths read-only in both source tools/workflow_assurance.py and installed .nizam/tools/workflow_assurance.py, supplying a minimal contracts-selection manifest. Both now select exactly .agent/contracts/AI-PIPELINE-historical-symlink-packet.json for the unified identifier.",
+    "Called qa_bound_checks read-only in both layouts. Both correctly refuse the proposed lifecycle with QA contract must remain approved; recapture after lifecycle changes. This proves identity selection and expected preapproval gating, not validation of a complete assessed candidate.",
+    "Read source typed proof consumers: authorization input is wholly immutable; context includes entire authorization-record hashes; proof captures must match candidate digest and environment. No historical capture can be relabeled across this change."
+  ],
+  "prior_proof_claim_boundaries": {
+    "reusable": "Previous semantic contract review and Mode B implementation analysis remain evidence about unchanged requirements and exact unchanged source/test bytes; the earlier independent 22-test result remains a historical behavioral observation for candidate 7869943ea57b8befea301193b0d239fa83e1243b.",
+    "not_reusable_as_fresh_typed_proof": "Previous approvals, behavioral outputs, generator diagnostic and any old candidate/context-bound captures do not become approval or typed execution proof for this corrected contract by renaming identifiers, updating hashes or copying results.",
+    "necessary_next_steps": "After independent Evaluator contract review, record approval for this exact proposal and commit the approved lifecycle. Create a fresh assessed identity including the approved corrected contract and actual verifier inputs; capture all contracted verification commands afresh under the unified identifier, correct environment and execution root. Preserve old evidence unchanged.",
+    "postapproval_scope_gate": "Rebind Mode B by exact delta to the approved corrected contract/candidate before final Evaluator acceptance. This Mode A verdict does not replace that gate.",
+    "installed_typed_eligibility": "The identifier-selection defect is repaired in both installed and source verifier layouts. Full typed eligibility remains conditional on approved lifecycle, complete assessed-input membership, context/environment binding and valid fresh captures."
+  }
+}
