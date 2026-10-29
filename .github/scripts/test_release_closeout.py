@@ -107,6 +107,9 @@ class ReleaseSelfInstallTests(unittest.TestCase):
         git(root, "init", "-q")
         git(root, "config", "user.name", "Offline Release Fixture")
         git(root, "config", "user.email", "fixture@example.invalid")
+        # Match the existing e2e bootstrap fixture's supported local transport:
+        # file:// upload-pack advertises blob filtering only when opted in.
+        git(root, "config", "uploadpack.allowFilter", "true")
         git(root, "remote", "add", "origin", ORIGIN)
         # Export the exact committed implementation through the shipped selector.
         # No private workspace records or inherited installed copy are imported.
