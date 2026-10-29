@@ -47,15 +47,19 @@
       {
         "path": ".agent/evidence/release-v3.1.3/readiness.json",
         "purpose": "Existing release-readiness record including exact accepted self-install evidence and immutable provenance."
+      },
+      {
+        "path": ".agent/contracts/release-v3.1.3-self-install.json",
+        "purpose": "Separately proposed and independently approved exact-C primary self-install operation; no destination mutation under this release preparation contract."
       }
     ]
   },
   "requirements": [
     "Prepare a PATCH release preserving packet 1.0 and 1.1 compatibility and original historical release records.",
     "Freeze exact candidate C; independent source acceptance and disposable prior-release rollback precede actual long-lived Framework self-install.",
-    "Before actual installation, preserve existing destination payload, provenance, checkout and owned work, establish safe lane boundary and record C-specific H-CONSUMER-UPGRADE continuation; no reset or hand editing.",
-    "Use unchanged official bootstrap with immutable exact SHA and private local prerelease ref. Verify actual checkout HEAD, installed provenance, full inventory/bytes/modes, installed index and entrypoint.",
-    "Record independent controller captures and QA. Final metadata commit D must retain payload equality to C. Do not claim production activation or future final tag before publication."
+    "Record independent controller captures and QA. Final metadata commit D must retain payload equality to C. Do not claim production activation or future final tag before publication.",
+    "This contract authorizes release anchor and readiness source preparation only. Actual primary self-install requires a separate exact-C approved operation contract covering destination, controller, four native checks, immutable owner-decision/application binding, complete external backup verification, pre-mutation state comparison, safe lane continuation, drift guard, and guarded rollback preserving intervening work.",
+    "Do not mark self-install readiness or run final release closeout until that separately approved operation is executed and independently accepted; retain actual captures and payload C-to-D equality proof."
   ],
   "non_goals": [
     "No change to packet implementation, consumer schemas, unrelated governance, routing or installed payload by hand.",
@@ -112,10 +116,16 @@
   "estimated_lines": 120,
   "evidence_dir": ".agent/evidence/release-v3.1.3",
   "evidence_convention": "Capture exact commands and stream bytes in existing release evidence family; preserve failures and independently accepted source/controller proof; no invented future SHA.",
-  "assurance": "High assurance: independent Validator and Evaluator pre-code contract review; independent post-code review and QA; actual destination self-install and release closeout require separate verified evidence.",
-  "rollback": "Preserve complete current C699 primary payload/provenance and branch/HEAD outside the destination, verify no intervening owned changes and restore via supported process on failure.",
+  "assurance": "High assurance: independent Validator and Evaluator pre-code contract review and independent post-code review and QA. A separately approved operation contract and independently accepted actual installation are prerequisites to final release closeout; do not infer actual backup or installation proof from disposable fixture.",
+  "rollback": "Release preparation rolls back by reverting its source increment. The separate actual self-install operation must preserve complete current C699 primary payload/provenance and checkout, verify backup and drift, and protect intervening owned changes.",
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false
-  }
+  },
+  "revision_history": [
+    {
+      "prior_candidate": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+      "reason": "Independent Validator and Evaluator rejections: separate the concrete C-specific self-install operation and require actual backup, drift and rollback evidence; original verdicts retained."
+    }
+  ]
 }

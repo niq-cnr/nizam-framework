@@ -1,0 +1,84 @@
+{
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "R313-VMA-01",
+      "severity": "high",
+      "finding": "The contract does not declare the actual installation destination or bound controller operation; its owned-state preservation boundary is insufficiently concrete for the existing long-lived checkout.",
+      "evidence": [
+        "Contract requirements:55-58 use actual long-lived Framework self-install and existing destination without a destination/controller path or an immutable operation-plan reference. The rollback field names C699 primary only.",
+        "methodology/06_release_train.md:185-189 requires the owner to declare the actual long-lived checkout and check revision, owned changes and active lanes before changing governing instructions.",
+        "Independent read-only local observation: /home/cnross/code/nizamiq/nizam-framework resolves to itself, HEAD=69908838142b77003c391a7f3b9da12e483b8a21, branch=chore/prerelease-selfinstall-v3.1.2-20261029, with 25 porcelain status entries.",
+        ".github/scripts/release_closeout.py:376-379 validates supplied destination syntax, not that the destination is the current owner-designated long-lived checkout; a later portable pass does not authorize replacing its owned state."
+      ],
+      "required_fix": "Declare exact resolved long-lived destination and separate controller/reference roles. Require a fresh immutable before-boundary observation, external complete payload/provenance/byte/mode backup, exact checkout/index/staged/unstaged/untracked/ignored owned-state preservation, relevant active-lane reconciliation and ownership-limited restoration. Hold on drift or unrelated changes. Alternatively restrict this contract to release preparation and explicitly require a separately approved candidate-specific actual-operation contract before any destination effect."
+    },
+    {
+      "id": "R313-VMA-02",
+      "severity": "high",
+      "finding": "The authority precondition is described as a C-specific H-CONSUMER-UPGRADE continuation without the required affirmative owner decision/application binding and immutable assessed-input requirement before installation.",
+      "evidence": [
+        "Contract requirement:56 names the continuation but does not require the actual underlying owner instruction, affirmative approved decision, hashed authority reference or matching owner/gate/repository/C/destination fields.",
+        "methodology/06_release_train.md:202-208 explicitly requires the current owner affirmative approval, matching application and hashed underlying decision, actual operator instruction and immutable assessed authority inputs.",
+        ".github/scripts/release_closeout.py:381-420 enforces these exact artifacts retrospectively. The current proposal offers no explicit pre-effect authority predicate preventing a late failing closeout after an unapproved installation."
+      ],
+      "required_fix": "Require both the upgrade application and its hashed underlying current-owner decision to be approved exactly true, preserve the actual operator instruction, and bind both to identical owner/gate/repository/C/destination before effects. Commit and select both as wholly immutable assessed inputs before native controller captures. Existing session authorization may supply the decision when its scope genuinely covers the operation; this review does not require redundant permission or infer authority from a task label."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    {
+      "id": "R313-C01",
+      "requirement": "Actual immutable bootstrap, trusted full integrity, installed entrypoint and real destination readback through accepted native controller QA",
+      "evidence": "The contract verification inventory contains only release-closeout, public-entry and disposable pinned-install-rollback. None is an actual installation/integrity/entrypoint/readback controller command. Section 6.1 and release_closeout.py:425-504 require four separately captured actual operations, accepted QA references, trusted external reference and genuine chronological provenance. The disposable test explicitly operates on a temporary consumer and cannot cover the real destination.",
+      "required_fix": "Declare the four native controller checks and their evidence/QA binding, or explicitly make a separately independently approved exact-C operation contract the mandatory prerequisite for real installation. After C is frozen, bind its actual SHA, local prerelease SemVer ref, real transport URL, external trusted repository and destination without inventing future values. Specify readback of HEAD, provenance, index, SKILL and entrypoint bytes; keep controller acceptance distinct from destination typed commissioning."
+    },
+    {
+      "id": "R313-C02",
+      "requirement": "Owned-state safety and recovery before the real mutation",
+      "evidence": "No verification entry checks pre-install snapshot/backup completeness, absence of intervening owned changes, active-lane boundary or ownership-limited rollback at the actual checkout. The only rollback test uses a fresh disposable installation; it does not preserve the observed 25 changed paths in PRIMARY.",
+      "required_fix": "Map the actual before-boundary, complete external backup, immediate drift guard, stop/reconcile-on-uncertain-effect behavior and guarded restoration to concrete evidence/verification steps in the bounded actual-operation plan. Do not treat a clean fixture rollback as proof of safety for the live owned worktree."
+    }
+  ],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator Mode A",
+    "candidate_sha": "a3b0982ed49ff29fdf846da69d04fed298c82b1b",
+    "contract_path": ".agent/contracts/release-v3.1.3.json",
+    "contract_sha256": "092db42468cfb953cba510837ca3cfc3e671856fd32633d4ed06313b803e2f51",
+    "input_sha256": {
+      ".agent/contracts/release-v3.1.3.json": "092db42468cfb953cba510837ca3cfc3e671856fd32633d4ed06313b803e2f51",
+      "methodology/06_release_train.md": "4c409cc09f362469b5964edf33a04377b829586053913affe784aebaeb1202e5",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      "tools/test_public_entry.py": "778b7c83d29e5585353367c9bf0e3df80e88adea901e50d69b192317f2a555f2",
+      "tools/test_corrective_release.py": "c41ee7eda18c69458b3a987f68c70611ac89537defac0df3f1e0e08fe07ba3a1",
+      "schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      "AGENTS.md": "1ee584073b9233dded8bfe26781eb1ff518ebc0128a8f42aee6b9ea5e5c329e3",
+      ".nizam/NIZAM.json": "50f44777a2cb7c3ff4a6d7f26928d53e5e6c00cf9b1139b4ece3a2f463da6b65",
+      ".nizam/tools/SKILL.md": "ca05639da086f5b4a8ec170e8d0812c4f436e503d89cf820a4e623a29bc5ba2f"
+    },
+    "independence": "Reviewer did not author this release contract. Only this exclusively created verdict file and its necessary evidence directory were created. No source, contract, destination state or previous evidence modified; no bootstrap, tag, release, merge, remote mutation or behavioral verification executed.",
+    "actual_destination_read_only_observation": {
+      "path": "/home/cnross/code/nizamiq/nizam-framework",
+      "resolved_path": "/home/cnross/code/nizamiq/nizam-framework",
+      "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+      "branch": "chore/prerelease-selfinstall-v3.1.2-20261029",
+      "porcelain_entries": 25,
+      "scope": "Read-only observation with GIT_OPTIONAL_LOCKS=0, not a safe-boundary approval or owned-state inventory."
+    }
+  },
+  "confirmed_properties": [
+    "Contract validates against schema/contract.schema.json and contract_id equals feature_id.",
+    "Declared source modifications are exactly the six release checker anchor paths: NIZAM.json, CONTEXT.md, CHANGELOG.md, README.md, docs/guide/index.html and docs/planning/ROADMAP.md.",
+    "Existing closeout command explicitly requires self-install proof and checks C-to-final-D authored payload/bootstrap equality. It also enforces version-anchor consistency; no checker or schema changes are proposed.",
+    "Prior stable identity is pinned to v3.1.2 at 8e738a038b18c7009018ef771e83aabc23ad9b03; disposable corrective-release test verifies that tag/SHA before install and rollback.",
+    "Source identity explicitly leaves PR148 merge reconciliation as a prerequisite before release candidate freeze; base_candidate 02f6507cd91c3ada11ac61ea82caf8a7f9cea0a9 is an evidence commit, not itself a demonstrated mainline merge.",
+    "No implementation, schema or hand-edited installed payload change is authorized. Private prerelease installation is distinguished from future stable publication."
+  ],
+  "advisory_minor": [
+    "Preserve Section 2 human sign-off and Section 6 reviewed-merge-before-annotated-tag sequencing explicitly in the revised contract. This preparation verdict grants no GitHub approval, tag/publication/merge authority or Hermes adoption authority.",
+    "Keep the clean source tree portable prior-stable .nizam pin separate from actual private-reference runtime provenance; later official final-tag re-bootstrap does not replace prepublication self-install proof.",
+    "A concrete candidate SHA is not expected before version-anchor preparation is frozen. A reviewed staged operation contract can bind it afterward without weakening immutable proof or inventing a future SHA."
+  ]
+}
