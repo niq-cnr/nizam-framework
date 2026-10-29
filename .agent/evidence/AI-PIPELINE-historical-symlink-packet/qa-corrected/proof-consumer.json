@@ -1,0 +1,270 @@
+{
+  "installed_module": ".nizam/tools/workflow_assurance.py",
+  "installed_module_sha256": "f0720074478f0e8e6302d6a98bfc4c3804edec5683afd34f8b22a73e789bd8ad",
+  "candidate_sha": "aaca37cc4575306f433c300c40aed038e4552a8f",
+  "verdict_sha256": "d11bb2f72fa6ca5eeb614b2d9b9f8f46d370d17f19d2dce1f9baf6f06b58b478",
+  "validate_qa_proof_result": {
+    "proof_version": 2,
+    "feature_id": "AI-PIPELINE-historical-symlink-packet",
+    "verdict": "pass",
+    "qa_pass": true,
+    "checks_run": 5,
+    "checks_passed": 5,
+    "candidate_ref": {
+      "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/candidate.json",
+      "sha256": "333b956595ebc9cdc6f91595c4f1b6216c19e571f8714193ad7f8b38758c6837"
+    },
+    "candidate_sha256": "e5819ec1fc2604482ec247597e8f579ec79b0ef2e61a7abc8f33bafa04b99b02",
+    "checks": [
+      {
+        "id": "historical-symlink-corpus",
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-historical-symlink-corpus-attempt2-20261029T154412Z-7b4d44f0.capture.json",
+          "sha256": "5e519c3ad3011b7500af40a51a4cea99c9b82d5e8ea60062b7fc35d983d8cb23"
+        }
+      },
+      {
+        "id": "existing-convergent-review",
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-convergent-review-attempt2-20261029T154447Z-500f09f9.capture.json",
+          "sha256": "fe0bb2f54e9f1ce872b8cc730cee5b070b508e6b1331ea552c32462c520e54bc"
+        }
+      },
+      {
+        "id": "existing-binary-review",
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-binary-review-attempt2-20261029T154515Z-cd1ab2da.capture.json",
+          "sha256": "a2db95ffd3f4e0d8e8000251846d62bf2596398920aa5dfc88d4a82bb978e359"
+        }
+      },
+      {
+        "id": "repository-compliance",
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-repository-compliance-attempt2-20261029T154529Z-9a3510d4.capture.json",
+          "sha256": "2a4e24c93118e3f1b10960af5bfbb9e9b456bf9ea8f132d1075a0fc2d0ce25da"
+        }
+      },
+      {
+        "id": "payload-bootstrap",
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-payload-bootstrap-attempt1-20261029T154844Z-78101410.capture.json",
+          "sha256": "1b38f2e0e600aea6c3c8c92b492be98a85760535d8a658e60decc8d390156fd5"
+        }
+      }
+    ],
+    "adversarial": {
+      "performed": true,
+      "description": "One independent scenario combines shell/media-looking immutable historical text, actual FIFO worktree drift and a current-candidate refusal control.",
+      "result": "pass",
+      "evidence": {
+        "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet-qa-adversarial.txt",
+        "sha256": "5268f5f162d777f7869b8a226ec58fbe7a55ddadef96b7d5e1e14a185c4cb4cb"
+      }
+    },
+    "adversarial_check": {
+      "description": "Historical shell/media-looking target remains inert while an actual worktree symlink points to a FIFO; unsafe current candidate remains refused.",
+      "result": "pass",
+      "evidence": ".agent/evidence/AI-PIPELINE-historical-symlink-packet-qa-adversarial.txt"
+    },
+    "evidence_files": [
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-historical-symlink-corpus-attempt2-20261029T154412Z-7b4d44f0.stdout.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-historical-symlink-corpus-attempt2-20261029T154412Z-7b4d44f0.stderr.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-convergent-review-attempt2-20261029T154447Z-500f09f9.stdout.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-convergent-review-attempt2-20261029T154447Z-500f09f9.stderr.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-binary-review-attempt2-20261029T154515Z-cd1ab2da.stdout.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-existing-binary-review-attempt2-20261029T154515Z-cd1ab2da.stderr.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-repository-compliance-attempt2-20261029T154529Z-9a3510d4.stdout.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-repository-compliance-attempt2-20261029T154529Z-9a3510d4.stderr.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-payload-bootstrap-attempt1-20261029T154844Z-78101410.stdout.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/captures/AI-PIPELINE-historical-symlink-packet-payload-bootstrap-attempt1-20261029T154844Z-78101410.stderr.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet-qa-adversarial.txt",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-integration.stdout",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-integration.stderr"
+    ],
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "final_verdict": {
+      "approved": true,
+      "summary": "Source candidate independently passes all five contracted verifications, full Docker conformance, complete PR57 packet coverage and one adversarial check. Installed typed-proof acceptance is required before this verdict is promoted."
+    },
+    "executed_at": "2026-10-29T15:52:43.931463+00:00",
+    "review_metadata": {
+      "role": "Independent Evaluator QA",
+      "candidate_sha": "aaca37cc4575306f433c300c40aed038e4552a8f",
+      "source_sha256": "ff95978468cb7b7fdf3bb0b8df934006027c27a6ff5dfc4c4042817018037027",
+      "tests_sha256": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+      "contract_sha256": "279bfd966d046b8ec52af75d960a7ee90a7c59f694ea3cbbe7fa5f4e75820b20",
+      "source_tree": "268787873b3baa99c85d68daa4f73dd7b9ba10fe",
+      "execution_root": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/repo",
+      "assessed_input_count": 4213,
+      "source_tests_match_approved_mode_b": true,
+      "contract_semantics_match_prior_mode_b": true,
+      "native_qa_context": "2b94f1f028e9b6c0e9f1eefb23e232871759e7838461d419a1b31c9bb83d3509",
+      "producer": {
+        "agent_id": "independent-packet-evaluator",
+        "session_id": "typed-qa-aaca37cc"
+      },
+      "sandbox_image": "docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213",
+      "checks": [
+        {
+          "id": "historical-symlink-corpus",
+          "attempt": 2,
+          "exit_code": 0,
+          "completion_state": "completed"
+        },
+        {
+          "id": "existing-convergent-review",
+          "attempt": 2,
+          "exit_code": 0,
+          "completion_state": "completed"
+        },
+        {
+          "id": "existing-binary-review",
+          "attempt": 2,
+          "exit_code": 0,
+          "completion_state": "completed"
+        },
+        {
+          "id": "repository-compliance",
+          "attempt": 2,
+          "exit_code": 0,
+          "completion_state": "completed"
+        },
+        {
+          "id": "payload-bootstrap",
+          "attempt": 1,
+          "exit_code": 0,
+          "completion_state": "completed"
+        }
+      ],
+      "behavioral_evidence": [
+        "22 historical corpus tests passed across 1.0.0/1.1.0/auto and both modes, including malformed/size/media boundaries, transitions, immutable Git identities, sentinels and actual consumer/replay integrity.",
+        "54 convergent tests passed with actual Docker sandbox and CONFORMANCE: FULL; no unsupported-isolation waiver.",
+        "4 binary regression tests passed.",
+        "Repository compliance reports 16 passed, 0 failed.",
+        "Hermetic local bootstrap fixture passes, including provenance, pin/inventory/mode checks, linked-worktree reproducibility and consumer lifecycle without source reach-back."
+      ],
+      "correctness_review": "Historical relaxation is confined to old mode-120000 text and its version-specific validation. New-side and full-audit head classification keep candidate safety. No access-path, no-follow, immutable Git, packet schema or installed payload edits were introduced. Historical text remains strict UTF-8, nonempty, bounded to 10,000,000 bytes and excludes ASCII controls/DEL; target syntax is inert.",
+      "pr57_integration": {
+        "base_sha": "4301be610bc0c673bd08cc3daf1e79e8ee99c995",
+        "head_sha": "c06a03b20903598a050c8416557f1cf9b88173c1",
+        "changed_paths": 306,
+        "historical_path": "skills/typesafe-ai",
+        "old_mode": "120000",
+        "old_blob_oid": "2b2a2a0c01b464008154f04f3c77928f60ad3163",
+        "old_content": "../../.agents/skills/typesafe-ai",
+        "ordinary_schema": "1.0.0",
+        "full_audit_schema": "1.1.0",
+        "full_audit_review_files": 2406,
+        "capture": {
+          "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-integration.stdout",
+          "sha256": "70cd6d36e27e588c60bd694bb7cfbdd74bec885baa5211aa41eefe925a887451"
+        },
+        "packets": [
+          {
+            "mode": "ordinary",
+            "compressed": {
+              "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-ordinary.packet.json.gz",
+              "sha256": "d4fd0ed4ac2a385804dd1a354df24b75fc5734eb97c0d1941a543cb1011d7acf"
+            },
+            "raw_sha256": "39bb3d1a7fbc4c020deb0f2376d29516fdf2292f5ea6132ced37c263a886c9f4",
+            "raw_bytes": 3424372
+          },
+          {
+            "mode": "full_audit",
+            "compressed": {
+              "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz",
+              "sha256": "bcc386e452c5041ee6f8a03cd5bf458c83ded226f23b7fd1faa57a29ab57a9cb"
+            },
+            "raw_sha256": "5d852139f1a692f88ae313474a19b4d7aca728eac123225b3ecfb5acbc0437fb",
+            "raw_bytes": 23634089
+          }
+        ]
+      },
+      "failure_reconciliation": {
+        "conservative_prior_failures": 4,
+        "native_failed_executions": 1,
+        "independent_rejected_gate_executions": 3,
+        "task_failure_ceiling": 6,
+        "same_signature_counts": {
+          "precode-old-mode-authentication-and-domain": 2,
+          "precode-media-domain-coverage": 1,
+          "execution-isolation-unavailable": 1
+        },
+        "next_attempts": {
+          "historical-symlink-corpus": 2,
+          "existing-convergent-review": 2,
+          "existing-binary-review": 2,
+          "repository-compliance": 2,
+          "payload-bootstrap": 1
+        },
+        "native_history": [
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-qa/AI-PIPELINE-historical-symlink-packet-existing-binary-review-attempt1-20261029T152911Z-dbd5355e.capture.json",
+            "step": "existing-binary-review",
+            "attempt": 1,
+            "exit": 0
+          },
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-qa/AI-PIPELINE-historical-symlink-packet-existing-convergent-review-attempt1-20261029T152906Z-98f4721b.capture.json",
+            "step": "existing-convergent-review",
+            "attempt": 1,
+            "exit": 1
+          },
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-qa/AI-PIPELINE-historical-symlink-packet-historical-symlink-corpus-attempt1-20261029T152844Z-b07be966.capture.json",
+            "step": "historical-symlink-corpus",
+            "attempt": 1,
+            "exit": 0
+          },
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/independent-qa/AI-PIPELINE-historical-symlink-packet-repository-compliance-attempt1-20261029T152912Z-49581501.capture.json",
+            "step": "repository-compliance",
+            "attempt": 1,
+            "exit": 0
+          }
+        ],
+        "prior_gate_refs": [
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v1.json",
+            "sha256": "8a0a39959c91d39969c84b1622da45ff65a47c88eca09d27441feb1bd6503bf7"
+          },
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-precode-v1.json",
+            "sha256": "9792fa0e8ea9c3ea7d0b54f90fa2f57b4aea1e1fc3030cca917cba52defdd5fb"
+          },
+          {
+            "path": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/evaluator-precode-v2.json",
+            "sha256": "1cde3b469f5fec9c4a8f6f5885b95b0e8473681ba21c417c418b7722419bc9f0"
+          }
+        ],
+        "scope": "Archive duplicates deduplicated by original execution identity; no failures cleared or counters reset.",
+        "new_required_failures": 0,
+        "new_integration_failures": 0,
+        "new_adversarial_failures": 0,
+        "conservative_total_failures": 4,
+        "native_total_failed_executions": 1
+      },
+      "proof_consumer_evidence": ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/proof-consumer.json",
+      "approval_scope": "Source acceptance and exact typed QA proof only. No release, production installation, adoption, activation, merge or PR57 model-review outcome is claimed.",
+      "retained_history": "Earlier rejected reviews, failed isolation capture and canonical relocation map are preserved unchanged in the assessed candidate; successful checks do not erase failures."
+    }
+  },
+  "negative_binding_control": "QA artifact digest mismatch",
+  "environment": {
+    "HOME": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/home",
+    "XDG_CACHE_HOME": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/cache",
+    "TMPDIR": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "LC_ALL": "C",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "NIZAM_QA_EXECUTION_ROOT": "/home/cnross/.tmp/packet-evaluator-typed-qa-e0stu_8p/repo",
+    "NIZAM_QA_CONTEXT_SHA256": "2b94f1f028e9b6c0e9f1eefb23e232871759e7838461d419a1b31c9bb83d3509",
+    "NIZAM_QA_PRIOR_FAILURE_COUNT": "4",
+    "NIZAM_QA_SANDBOX_IMAGE": "docker.io/library/python@sha256:618e7b661a89d05565fb402a5e1eab8b1b4e5df1f5ea3dc494998d092ffe1213"
+  },
+  "adoption_claim": false
+}
