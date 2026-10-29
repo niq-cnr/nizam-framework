@@ -309,6 +309,45 @@ class ReleaseSelfInstallTests(unittest.TestCase):
         self.assertEqual(json.loads((self.controller / ".nizam/NIZAM.json").read_text())["framework"]["version"], PRIOR)
         self.assertEqual(json.loads((self.primary / ".nizam/NIZAM.json").read_text())["framework"]["version"], VERSION)
 
+    def test_repository_spelling_portability_preserves_exact_host_and_path(self):
+        spellings = [
+            ("https://example.invalid/release-fixture/framework", True),
+            ("git@example.invalid:release-fixture/framework.git", True),
+            ("ssh://git@example.invalid/release-fixture/framework.git", True),
+            ("https://EXAMPLE.INVALID/release-fixture/framework.git", True),
+            ("https://other.invalid/release-fixture/framework.git", False),
+            ("git@example.invalid:other-owner/framework.git", False),
+            ("ssh://git@example.invalid/release-fixture/other-framework.git", False),
+        ]
+        try:
+            for spelling, accepted in spellings:
+                with self.subTest(remote=spelling):
+                    # Only the disposable verifier clone changes origin. Its
+                    # immutable controller authority, identity and captures keep
+                    # the actual recorded spelling and original hashes.
+                    git(self.portable, "remote", "set-url", "origin", spelling)
+                    self.expect(self.gate(self.portable, "--mode", "tag", "--tag", "v" + VERSION),
+                                0 if accepted else 1,
+                                "actual runtime captures" if accepted else "prepublication self-install evidence")
+        finally:
+            git(self.portable, "remote", "set-url", "origin", ORIGIN)
+        root = self.controller
+        capture_path = self.capture_paths["readback"]
+        original_capture = json.loads(capture_path.read_text())
+        stream = root / original_capture["stdout"]["path"]
+        for spelling, accepted in spellings:
+            with self.subTest(readback=spelling):
+                self.restore()
+                # Metamorphic parser fixture, not another actual installation
+                # or claimed native execution: equivalent observed repository
+                # spellings must preserve the meaning of an accepted record.
+                self.change(stream, lambda v: v.update(repository=spelling))
+                self.change(capture_path, lambda v: v.update(stdout=ref(root, stream)))
+                self.reseal()
+                self.expect(self.gate(None, "--mode", "pr", "--require-self-install"),
+                            0 if accepted else 1,
+                            "actual runtime captures" if accepted else "prepublication self-install evidence")
+
     def test_ordinary_pr_and_missing_release_proof(self):
         (self.controller / self.readiness_path).unlink()
         self.expect(self.gate(None, "--mode", "pr"), 0, "all internal version anchors agree")

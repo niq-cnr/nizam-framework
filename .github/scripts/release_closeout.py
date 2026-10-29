@@ -330,6 +330,24 @@ def _proof_time(value: str) -> datetime:
     return stamp
 
 
+def _repository_identity(value: str) -> tuple[str, str]:
+    """Compare remote spellings without rewriting recorded controller inputs."""
+    if not isinstance(value, str) or not value:
+        raise ValueError("self-install repository identity missing")
+    if "://" not in value:
+        match = re.fullmatch(r"[^/@:]+@([^/:]+):(.+)", value)
+        if match is None:
+            raise ValueError("self-install repository URL unsupported")
+        value = "ssh://" + match[1] + "/" + match[2]
+    remote = urlsplit(value)
+    path = remote.path.strip("/").removesuffix(".git")
+    if (remote.scheme not in ("https", "ssh") or not remote.hostname or
+            remote.port is not None or remote.query or remote.fragment or
+            not path or "\\" in path or any(part in ("", ".", "..") for part in path.split("/"))):
+        raise ValueError("self-install repository URL unsupported")
+    return remote.hostname.lower(), path
+
+
 def verify_prepublication_self_install(root: Path, version: str, *, revision: Optional[str] = None,
                                       deadline: Optional[datetime] = None) -> None:
     """Verify accepted controller proof, not fresh execution on a CI host.
@@ -372,10 +390,12 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
                   ("owner", "gate", "repository", "commit", "destination")),
               "self-install current owner authority binding")
         origin = integrity._run_git(root, "remote", "get-url", "origin").decode().strip()
-        repository_name = (urlsplit(origin).path if "://" in origin else origin.split(":", 1)[-1]).strip("/").removesuffix(".git")
+        repository_identity = _repository_identity(origin)
         check(authority["commit"] == candidate and authority["destination"] == destination and
-              authority["source_url"] == origin and authority["gate"] == "H-CONSUMER-UPGRADE" and
-              authority.get("repository") in (origin, origin.removesuffix(".git"), repository_name),
+              _repository_identity(authority["source_url"]) == repository_identity and
+              authority["gate"] == "H-CONSUMER-UPGRADE" and
+              (authority.get("repository") == repository_identity[1] or
+               _repository_identity(authority["repository"]) == repository_identity),
               "self-install actual authorization binding")
         qa = assurance.parse_json(read(proof["qa_verdict"]))
         assurance._receipt_gate(qa)
@@ -388,7 +408,8 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
               "self-install accepted controller actual source tree")
         integrity._run_git(root, "merge-base", "--is-ancestor", candidate, source)
         integrity._run_git(root, "merge-base", "--is-ancestor", source, final)
-        check(assessed["repository"] == origin and _payload_identity(root, source) == _payload_identity(root, candidate),
+        check(_repository_identity(assessed["repository"]) == repository_identity and
+              _payload_identity(root, source) == _payload_identity(root, candidate),
               "self-install accepted controller candidate payload")
         inputs = {entry["path"]: entry for entry in assessed["assessed_inputs"]["contracts"]}
         for reference in (proof["authorization"], authority["authority_ref"]):
@@ -459,7 +480,8 @@ def verify_prepublication_self_install(root: Path, version: str, *, revision: Op
         provenance = readback["provenance"]
         check(type(provenance) is dict and set(provenance) == integrity.PROVENANCE_KEYS and
               all(type(value) is str and value for value in provenance.values()), "self-install genuine provenance fields")
-        check(readback["destination"] == destination and readback["repository"] == origin and readback["head"] == candidate and
+        check(readback["destination"] == destination and
+              _repository_identity(readback["repository"]) == repository_identity and readback["head"] == candidate and
               provenance["resolved_sha"] == candidate and provenance["framework_version"] == version,
               "self-install actual runtime readback identity")
         for key, path in (("NIZAM_sha256", "NIZAM.json"), ("SKILL_sha256", "tools/SKILL.md"),
