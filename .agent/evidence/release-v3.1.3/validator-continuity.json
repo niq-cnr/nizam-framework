@@ -1,0 +1,97 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review_metadata": {
+    "role": "Independent Validator, narrow release source continuity",
+    "candidate_sha": "2162b8e9397e4a0c7b508bbdc88acba0bffd1548",
+    "previous_mode_b_candidate": "5c8c2fc1dbbe5c57f03b62894877cd67c4e88574",
+    "input_sha256": {
+      "NIZAM.json": "23517b2f350ca9f4236a8209723c3f4b1501ee7228eb6a4b29edef9e29d1c7a4",
+      "CONTEXT.md": "7806fa9c788199f424a878686b18b07730522e6763042e5273121ffad4ef08fc",
+      "CHANGELOG.md": "faeab52db0a64907126a5240d61055d8ba36058498139adc19b8187c06d92035",
+      "README.md": "16d98be6d2b914860dfa106b7063eb7d102386350b06720d9870ba8db75923de",
+      "docs/guide/index.html": "15ec73c1641a4f121b0c31dc12d76b74b9c2eb562359689ddf9fbe6e436acc4e",
+      "docs/planning/ROADMAP.md": "03bfc700b1fd3716527cd2d9137064d38332a9904c22a0e36b0e5e9b8d314276",
+      ".agent/contracts/release-v3.1.3.json": "b2bbd09d9f48ab2bb7fefcf1081dd0db61a920b8c7694dccb6c63bfc05e6cf07",
+      "bootstrap.sh": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+      "tools/convergent_review.py": "ff95978468cb7b7fdf3bb0b8df934006027c27a6ff5dfc4c4042817018037027",
+      "tools/test_historical_symlink_packet.py": "d0a991f0deb0237b03a8e83403f415cbcd5afabb4ea77c1b20d27b830e182ff2",
+      "schema/review_packet.schema.json": "8e6e0948efb388a26eab88608fe02fab095767a64275563f70b74d5819013944",
+      ".github/scripts/release_closeout.py": "dad430416ab9c07e5903b85500f8410c1e182976944ebf38998725b6d1b6a23c",
+      ".agent/evidence/release-v3.1.3/readiness.json": "ae285224e144c74591901a7b0f49be470331d74dafd1b155c09295feb5fb4810",
+      ".agent/evidence/release-v3.1.3/validator-mode-b.json": "ba9298d3c045b43430b27a93eebeb287b558b842a7eb3337fca7720cc242cb8f",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-relocation.json": "754e4316b42f837b590755c9e236ec0baa6898c8637c4d181c75783091d95541",
+      ".agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-map.json": "3976681b7db3cb630348b6915bd22e839b8e278461d9258848f7bd057bc41f7d"
+    },
+    "delta_name_status": [
+      "A\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-map.json",
+      "A\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/packet-relocation-verification.json",
+      "D\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/qa-corrected/pr57-full_audit.packet.json.gz",
+      "A\t.agent/evidence/AI-PIPELINE-historical-symlink-packet/validator-relocation.json",
+      "M\t.agent/evidence/release-v3.1.3/readiness.json",
+      "A\t.agent/evidence/release-v3.1.3/validator-mode-b.json"
+    ],
+    "scope": "Continuity of approved six-anchor release preparation and shipped payload after PR148 integration and readiness source-base correction. No installation or final release acceptance.",
+    "independence": "Reviewer did not author these merge or metadata changes. Only this exclusively created verdict was written; no source, tests, contract or previous evidence modified. No behavioral suite, bootstrap, source mutation or remote action executed."
+  },
+  "continuity_checks": {
+    "six_anchor_paths": [
+      "NIZAM.json",
+      "CONTEXT.md",
+      "CHANGELOG.md",
+      "README.md",
+      "docs/guide/index.html",
+      "docs/planning/ROADMAP.md"
+    ],
+    "six_anchors_byte_identical_to_mode_b_candidate": true,
+    "authoritative_shipped_payload_equal": true,
+    "payload_identity_method": "Compared .github/scripts/release_closeout.py::_payload_identity at both commits, sharing tools/payload_integrity.py authoritative module selection and exact git ls-tree entries.",
+    "payload_identity_sha256": "6f7662a9a8d66a31ada5b332f13b7c25d17d139b08195c4778d6532e7a635853",
+    "payload_entries": 341,
+    "bootstrap_byte_identical": true,
+    "contract_byte_identical": true,
+    "packet_source_tests_schema_verifier_byte_identical": true,
+    "installed_payload_unchanged": true,
+    "pr148_merge": {
+      "commit": "5d41ca016c39c643b7f1b6cfd8f496493d1ac720",
+      "parents": [
+        "8e738a038b18c7009018ef771e83aabc23ad9b03",
+        "737a8087819f0b87d0bcc747a813321b5540fb89"
+      ],
+      "subject": "Merge pull request #148 from niq-cnr/fix/historical-symlink-packet-20261029",
+      "is_release_candidate_ancestor": true
+    },
+    "release_integration_merge": {
+      "commit": "c2679f76b96c6e26a736e2253d64ab166eb91da7",
+      "parents": [
+        "7684950273dd2ec50eff577df45fbe068978b1b8",
+        "5d41ca016c39c643b7f1b6cfd8f496493d1ac720"
+      ]
+    },
+    "required_retained_origin_commit": "47ed5b9d4e3a91012d66c4321c92014a6931d040",
+    "retained_origin_is_candidate_ancestor": true,
+    "readiness_changed_fields": [
+      "source_base",
+      "source_base_condition"
+    ],
+    "readiness_source_base": "5d41ca016c39c643b7f1b6cfd8f496493d1ac720",
+    "readiness_prepublication_self_install": null,
+    "readiness_candidate_commit": null,
+    "readiness_claim": "Preparation; actual self-install not executed. Final source integration is now recorded without claiming actual install or release acceptance."
+  },
+  "scope_assessment": [
+    "Exact delta consists solely of the previously independently approved supplementary evidence relocation, retained review evidence, and readiness source-base metadata correction. No other tracked paths changed.",
+    "PR148 is integrated through real two-parent merge ancestry, preserving the origin packet evidence commit required by the retrieval map. The repair implementation was already present in the Mode B source and remains exact.",
+    "The unchanged approved release contract requires upstream merge reconciliation before freeze. Readiness now records that actual merge identity; changing these two metadata fields fulfills that prerequisite without expanding source scope.",
+    "Original source/anchor Mode B conclusions remain valid for these exact bytes. The historical relocation verdict is approved for a970111c with empty blocking arrays and its retained-origin constraint is satisfied by the merge."
+  ],
+  "remaining_boundaries": [
+    "This continuity verdict does not itself complete independent source QA or final immutable candidate freeze.",
+    "Actual self-install still requires the separately approved exact-C operation contract, current-owner authority, preservation/backup and safe-boundary evidence, four actual native controller captures and independent acceptance.",
+    "Final release closeout/readiness, C-to-D payload equality, human sign-off, merge/tag/publication and official Hermes adoption remain separately gated."
+  ]
+}
