@@ -1,0 +1,97 @@
+{
+  "prepared_at": "2026-10-29T02:36:29.134621+00:00",
+  "proposal_contract": "/home/cnross/code/audit-remediation/framework-selfinstall-operation/release-v3.1.2-self-install.json",
+  "eventual_controller_contract": "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall/.agent/contracts/release-v3.1.2-self-install.json",
+  "candidate_commit": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "destination": "/home/cnross/code/nizamiq/nizam-framework",
+  "current_boundary": "/home/cnross/code/audit-remediation/framework-selfinstall-operation/primary-before-observation.json",
+  "rollback_inventory": "/home/cnross/code/audit-remediation/framework-selfinstall-operation/primary-before-inventory.json",
+  "reference_preparation": [
+    "After root continuation, create isolated no-checkout/no-hardlinks local reference clone from controller. Do not change source/PRIMARY remotes.",
+    "Set only reference uploadpack.allowFilter=true (actual existing bootstrap fixture requirement).",
+    "Create local-only v3.1.2-rc.selfinstall-20261029 at exact 69908838142b77003c391a7f3b9da12e483b8a21 in reference; no remote tag push or release publication.",
+    "Fetch exact private ref into PRIMARY, create new chore/prerelease-selfinstall-v3.1.2-20261029 branch at C only after confirming original detached HEAD/status/inventory/known lane boundary."
+  ],
+  "rollback_preparation": "Before any checkout, preserve exact original HEAD/detached state, complete .nizam bytes/modes/provenance and all owned differences outside PRIMARY, with readback hashes. Original current status is clean. No active-lane mutation or destructive reset/clean.",
+  "rollback_if_needed": [
+    "Stop and reconcile actual effects; compare PRIMARY changed paths to owned operation manifest. If unrelated changes appear, preserve them and hold for owner.",
+    "Quarantine the new installed .nizam outside PRIMARY; retain failed candidate evidence. Restore only owned tracked .nizam from C as needed for clean checkout; return to original detached 6a4afd21eebeb6a11ae40ff533293d3cdbbaadd7 without reset/clean.",
+    "Verify original complete .nizam inventory/provenance against preserved copy and HEAD/status against boundary snapshot. Reconstitute only owned backup bytes if required; never overwrite unrelated work."
+  ],
+  "authority": "Pending concrete root safe-boundary continuation under existing current user self-install instruction and clarification. This proposal does not itself approve or execute.",
+  "four_exact_checks": [
+    {
+      "id": "install",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam",
+      "acceptance_test": "Official exact candidate installation into designated PRIMARY",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "integrity",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam",
+        "--verify-only",
+        "--require-content-integrity",
+        "--git-repo",
+        "/home/cnross/code/audit-remediation/framework-selfinstall-reference-v312"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam --verify-only --require-content-integrity --git-repo /home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+      "acceptance_test": "Full installed payload equality to trusted candidate, reference outside payload",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "entrypoint",
+      "argv": [
+        "python3",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py",
+        "preflight",
+        "--root",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 /home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py preflight --root /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual installed entrypoint execution",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "readback",
+      "argv": [
+        "python3",
+        ".agent/evidence/release-v3.1.2-self-install/readback.py",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 .agent/evidence/release-v3.1.2-self-install/readback.py /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual resolved installed index/SKILL/provenance/HEAD/origin and byte hashes",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "qualification": "No source/PRIMARY/reference mutation, local tag, bootstrap, native capture or activation performed by preparation."
+}

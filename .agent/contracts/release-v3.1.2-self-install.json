@@ -1,0 +1,164 @@
+{
+  "contract_id": "release-v3.1.2-self-install",
+  "feature_id": "release-v3.1.2-self-install",
+  "name": "Actual Framework prepublication self-install of accepted v3.1.2 candidate",
+  "status": "approved",
+  "spec_ref": ".agent/contracts/release-v3.1.2-self-install.json#/authorized_outcome",
+  "authorized_outcome": "User requires Framework self-install before every release and clarified that actual checkout installation before publication is sufficient. Execute only reviewed candidate C into designated PRIMARY at root-confirmed safe boundary, verify four real operations through accepted controller QA; do not claim PRIMARY typed commissioning.",
+  "repository": "https://github.com/niq-cnr/nizam-framework.git",
+  "route": "high-risk existing H-CONSUMER-UPGRADE/self-install operation",
+  "candidate_commit": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "candidate_payload_identity_sha256": "b6ed14d7d3a49e7f2b87d8705f6a5ef611096a41d95a3ab8f1a9bb37db5d8c40",
+  "candidate_payload_selector": "Existing tools/payload_integrity.py MODULES plus NIZAM.json; literal Git ls-tree identity",
+  "bootstrap_sha256": "4c13de5c394fb8908f1ed68fb64f5d9adb479d5798cd2e1aee29076a98547ee7",
+  "controller": "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall",
+  "destination": "/home/cnross/code/nizamiq/nizam-framework",
+  "scope": {
+    "files_modify": [],
+    "files_create": [
+      {
+        "path": ".agent/contracts/release-v3.1.2-self-install.json",
+        "purpose": "Existing operation contract and four native verification bindings"
+      },
+      {
+        "path": ".agent/evidence/release-v3.1.2-self-install/readback.py",
+        "purpose": "Bounded actual installed file/provenance readback"
+      },
+      {
+        "path": ".agent/evidence/release-v3.1.2-self-install/upgrade-authorization.json",
+        "purpose": "Current H-CONSUMER-UPGRADE application, approved only after root continuation"
+      },
+      {
+        "path": ".agent/evidence/release-v3.1.2-self-install/operator-decision.json",
+        "purpose": "Hashed current-owner decision bound to C/destination, root-owned projection"
+      }
+    ],
+    "runtime_surfaces": [
+      "/home/cnross/code/nizamiq/nizam-framework checkout and .nizam only",
+      "/home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 isolated local reference",
+      "External exact rollback copy; no product configuration or service activation"
+    ]
+  },
+  "dependencies": [
+    "Accepted prerelease-self-install full five-check QA; four remaining currently active, unit nine tests accepted",
+    "Accepted F05-inherited-symlink proof retained unchanged",
+    "Actual owner decision and root continuation after rechecking PRIMARY HEAD/status/known lanes and complete rollback preservation",
+    "Reference prep and approved contract/authority/readback records committed in clean controller before native assessment/captures"
+  ],
+  "requirements": [
+    "Preserve canonical remotes, all owned changes and existing counter/failure history. Do not mutate the active controller during its core QA.",
+    "Use unchanged official bootstrap with genuine local pinned SemVer ref and expected C; transport provenance honestly names file:// reference, no published RC/stable tag claim.",
+    "PRIMARY checkout must actually resolve C before installation. No other lane may consume governing instructions during mutation without explicit continuation.",
+    "Application and underlying hashed decision approved exactly true with owner/gate/repository/C/destination agreement and actual instruction; both assessed immutable contract inputs before effects.",
+    "Four native controller captures and independent accepted QA required; no native PRIMARY acceptance, commissioning or model behavior claim.",
+    "Actual source files and installed payload must match C; final metadata D shipped payload/bootstrap remain C. Released tracked pin may remain prior stable as user clarified.",
+    "On unknown/external effects or source drift stop and reconcile before any retry; no full rollback without owned-path guard."
+  ],
+  "acceptance": [
+    "Four listed operations succeed with C, genuine provenance, exact trusted inventory, actual installed entrypoint and resolved index/SKILL reads; independent QA accepts exact candidate/context.",
+    "Current PRIMARY rollback identity/inventory is preserved, no unowned changed paths or active-lane instruction replacement.",
+    "Missing/denied authority or unresolved lane/source/payload/evidence mismatch prevents mutation/completion; original proofs/counters remain readable."
+  ],
+  "non_goals": [
+    "No source repair, installed file handpatch, service/model activation, paid calls, PR merge, stable tag/RC publication or release publication.",
+    "No blanket configuration/provider/model/plugin overwrite; no root shared failure-ledger edits or new allowance/reset.",
+    "No embedding future stable tag/hash in its own source; tracked prior stable governance remains portable."
+  ],
+  "verification": [
+    {
+      "id": "install",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam",
+      "acceptance_test": "Official exact candidate installation into designated PRIMARY",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "integrity",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam",
+        "--verify-only",
+        "--require-content-integrity",
+        "--git-repo",
+        "/home/cnross/code/audit-remediation/framework-selfinstall-reference-v312"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam --verify-only --require-content-integrity --git-repo /home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+      "acceptance_test": "Full installed payload equality to trusted candidate, reference outside payload",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "entrypoint",
+      "argv": [
+        "python3",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py",
+        "preflight",
+        "--root",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 /home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py preflight --root /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual installed entrypoint execution",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "readback",
+      "argv": [
+        "python3",
+        ".agent/evidence/release-v3.1.2-self-install/readback.py",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 .agent/evidence/release-v3.1.2-self-install/readback.py /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual resolved installed index/SKILL/provenance/HEAD/origin and byte hashes",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "estimated_lines": 70,
+  "evidence_dir": ".agent/evidence/release-v3.1.2-self-install",
+  "evidence_convention": "Existing native command captures, hashed authority/application, source candidate, independent QA and release readiness refs; one programme and one combined PR.",
+  "budget_lineage": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "user_recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total50.json",
+    "known_at_preparation": 38,
+    "total_ceiling": 50,
+    "new_allowance": false,
+    "ledger_writer": "/root"
+  },
+  "stopping_condition": "Four actual operations independently accepted, readback packaged into existing release-v3.1.2 readiness; final three release checks and normal PR follow; merge/tag/publication reserved.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "validator_ref": ".agent/evidence/release-v3.1.2-self-install/reviewer-outputs/validator-precode.json",
+    "evaluator_ref": ".agent/evidence/release-v3.1.2-self-install/reviewer-outputs/evaluator-precode.json",
+    "approved_proposal_ref": ".agent/evidence/release-v3.1.2-self-install/approved-proposal-29662f32.json",
+    "approved_proposal_sha256": "29662f3220819aeaf1794670293e5d8f3e1d38defa985617971cf48b8856b112",
+    "projection_at": "2026-10-29T02:47:07.509579+00:00",
+    "qualification": "Projection of actual existing dual precode approvals only. Does not grant current owner safe-boundary/live effects authority; core QA and root decision remain prerequisites."
+  }
+}

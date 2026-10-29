@@ -1,0 +1,157 @@
+{
+  "prepared_at": "2026-10-29T02:44:27.236377+00:00",
+  "contract_proposal": {
+    "path": "/home/cnross/code/audit-remediation/framework-selfinstall-operation/release-v3.1.2-self-install.json",
+    "sha256": "29662f3220819aeaf1794670293e5d8f3e1d38defa985617971cf48b8856b112"
+  },
+  "source_controller": "/home/cnross/code/audit-remediation/nizam-framework-prerelease-selfinstall",
+  "candidate_commit": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "destination": "/home/cnross/code/nizamiq/nizam-framework",
+  "logical_budget": "F05-current-state-qualification",
+  "capture_identity": "release-v3.1.2-self-install",
+  "budget_mapping": "Native capture identity is the actual operation contract. It is not a new logical allowance; root shared F05 ledger/current user50 decision governs every launch; native counters remain their actual subset.",
+  "root_ledger_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+  "recovery_ref": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-operator-recovery-total50.json",
+  "protected_assessed_contracts": [
+    ".agent/contracts/release-v3.1.2-self-install.json",
+    ".agent/evidence/release-v3.1.2-self-install/upgrade-authorization.json",
+    ".agent/evidence/release-v3.1.2-self-install/operator-decision.json"
+  ],
+  "protected_assessed_tools": [
+    "bootstrap.sh",
+    "tools/start_path.py",
+    "tools/workflow_assurance.py",
+    "tools/payload_integrity.py",
+    "tools/git_seam.py",
+    "schema/contract.schema.json",
+    "schema/qa_verdict.schema.json",
+    ".agent/evidence/release-v3.1.2-self-install/readback.py",
+    ".nizam/tools/start_path.py",
+    ".nizam/tools/workflow_assurance.py",
+    ".nizam/tools/payload_integrity.py",
+    ".nizam/schema/contract.schema.json",
+    ".nizam/schema/qa_verdict.schema.json",
+    ".nizam/schema/run_state.schema.json"
+  ],
+  "readback_script_sha256": "8505cc5a1c66f1406780dd0d25e0a57ecdec5773db06f51c25ab80b100a9ae51",
+  "authority_ownership": "All three selected contract records are immutable; neither authority record may appear in record_ownership. Root fills current true owner/application decisions; unapproved placeholders are never execution authority.",
+  "execution_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "qa_context": "Use actual installed qa_context_sha256 for exact approved operation contract and same four verification entries",
+    "qa_execution_root": "Actual controller path, not PRIMARY spoofing",
+    "admission": "Actual current root ledger/grant checked before every launch; inherited source QA/candidate environments remain historical identities, not budget authority"
+  },
+  "checks": [
+    {
+      "id": "install",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam",
+      "acceptance_test": "Official exact candidate installation into designated PRIMARY",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "timeout_sec": 120,
+      "initial_attempt": 1
+    },
+    {
+      "id": "integrity",
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam",
+        "--verify-only",
+        "--require-content-integrity",
+        "--git-repo",
+        "/home/cnross/code/audit-remediation/framework-selfinstall-reference-v312"
+      ],
+      "command": "bash bootstrap.sh --repo-url file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312 --tag v3.1.2-rc.selfinstall-20261029 --expected-sha 69908838142b77003c391a7f3b9da12e483b8a21 --target /home/cnross/code/nizamiq/nizam-framework/.nizam --verify-only --require-content-integrity --git-repo /home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+      "acceptance_test": "Full installed payload equality to trusted candidate, reference outside payload",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "timeout_sec": 120,
+      "initial_attempt": 1
+    },
+    {
+      "id": "entrypoint",
+      "argv": [
+        "python3",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py",
+        "preflight",
+        "--root",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 /home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py preflight --root /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual installed entrypoint execution",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "timeout_sec": 120,
+      "initial_attempt": 1
+    },
+    {
+      "id": "readback",
+      "argv": [
+        "python3",
+        ".agent/evidence/release-v3.1.2-self-install/readback.py",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "command": "python3 .agent/evidence/release-v3.1.2-self-install/readback.py /home/cnross/code/nizamiq/nizam-framework",
+      "acceptance_test": "Actual resolved installed index/SKILL/provenance/HEAD/origin and byte hashes",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "timeout_sec": 120,
+      "initial_attempt": 1
+    }
+  ],
+  "scheduling": "Sequential install, integrity, actual installed entrypoint, readback. No extra suite or parallel duplicate operation.",
+  "failure_rule": "A nonzero/interrupted/uncertain effect stops the remaining sequence. Preserve raw captures and report root; reconcile actual checkout/install effects and owned process identities before any retry or rollback. Never claim timeout means no start.",
+  "rollback_preservation_ref": "/home/cnross/code/audit-remediation/framework-selfinstall-operation/rollback-preservation.json",
+  "review_refs": [
+    "/home/cnross/code/audit-remediation/framework-selfinstall-operation/validator-precode.json",
+    "/home/cnross/code/audit-remediation/framework-selfinstall-operation/evaluator-precode.json"
+  ],
+  "before_effects": [
+    "Full core source QA accepted and actual proof consumed",
+    "Root current-owner/application binding, exact clean controller commit/assessment and existing structural ModeB",
+    "Fresh PRIMARY identity/status and relevant lane readback; exact rollback backup still matches",
+    "Explicit managing safe-boundary continuation after above prerequisites"
+  ],
+  "status": "Preparation only; no target/reference/tag/bootstrap or operation capture has occurred.",
+  "actual_native_verifier_layout": {
+    "producer": ".nizam/tools/start_path.py",
+    "proof_verifier": ".nizam/tools/workflow_assurance.py",
+    "framework_root": ".nizam",
+    "installed_governance": "v3.0.0 unchanged in controller; actual PRIMARY candidateC entrypoint is a separate operation target",
+    "protected_installed_tools_sha256": {
+      ".nizam/tools/start_path.py": "62f0ae0453eb9b14485e170fd24e40e137bd177f479ea212023fc96694b1fd0c",
+      ".nizam/tools/workflow_assurance.py": "f0720074478f0e8e6302d6a98bfc4c3804edec5683afd34f8b22a73e789bd8ad",
+      ".nizam/tools/payload_integrity.py": "a586995d86b15f4674ccbafd66f1744da6b9f259802a4c18d09a98852050895d",
+      ".nizam/schema/contract.schema.json": "856a976e8681f8a95e0485bfbfdf215228be6b3c368786cd26e6eee4bb560164",
+      ".nizam/schema/qa_verdict.schema.json": "cc2e4c2c63af9d7f748b9a8e475dfad20cbe475e62451fea143901acbcc5fbc8",
+      ".nizam/schema/run_state.schema.json": "c921255f77db65e554d34636b04a4446d7d9a4c6c0b7efa528b177ca12966020"
+    },
+    "git_seam_observation": "No controller .nizam/tools/git_seam.py exists; do not select or invent one. Root authored tools/git_seam.py remains selected for authored bootstrap/source dependencies."
+  },
+  "layout_projection_at": "2026-10-29T03:23:54.928720+00:00",
+  "layout_projection": "Actual installed native producer/verifier/schema paths explicitly protected, alongside authored inputs; no contract command/check or live file changed. Builder must use this single installed layout, actual qa_context and controller environment; no PRIMARY spoofing."
+}
