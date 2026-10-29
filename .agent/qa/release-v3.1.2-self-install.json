@@ -1,0 +1,273 @@
+{
+  "feature_id": "release-v3.1.2-self-install",
+  "qa_pass": true,
+  "proof_version": 2,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "candidate_ref": {
+    "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/assessed-candidate.json",
+    "sha256": "67c4db4c024ecffa2ad70d288ad531c8db9375c60393ddfc6d186dd433a0df89"
+  },
+  "checks": [
+    {
+      "id": "install",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-install-attempt1-20261029T035309Z-dfe760ea.capture.json",
+        "sha256": "9e9b82b8fd537331910fe8a38146a933efdf8311826713167ddf949ed2f3127e"
+      }
+    },
+    {
+      "id": "integrity",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-integrity-attempt1-20261029T035311Z-f5e6a26c.capture.json",
+        "sha256": "8f3ccfc490644fb8786ceb1dda08bc00263373277aaa1f69c52403c4c96e7fa7"
+      }
+    },
+    {
+      "id": "entrypoint",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-entrypoint-attempt1-20261029T035314Z-b8167faf.capture.json",
+        "sha256": "013bc30f93f043b275031cd11ffcecb3b11d011b0e56567e5650668101815d66"
+      }
+    },
+    {
+      "id": "readback",
+      "capture": {
+        "path": ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-readback-attempt1-20261029T035316Z-2bf84314.capture.json",
+        "sha256": "0158f087476ffd0f4f41e42657d38f9d4b0db0008a440b42bf8f872b15a7b863"
+      }
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "result": "pass",
+    "method": "Independent current authority/source/capture/effect invariant review plus reuse of accepted core real-Git/native/bootstrap positive and adverse fixtures. No destructive adverse injection on PRIMARY.",
+    "reused_evidence": {
+      "path": ".agent/qa/prerelease-self-install.json",
+      "sha256": "9dfde37a93ab84bf5d1d5b74af8311dc3b58df97cb5c0eac914bdbda5f5aa72a"
+    },
+    "limitations": "Prepared rollback verified; no live rollback or PRIMARY typed commissioning exercised."
+  },
+  "evidence_files": [
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-readback-attempt1-20261029T035316Z-2bf84314.capture.json",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-readback-attempt1-20261029T035316Z-2bf84314.stdout.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-readback-attempt1-20261029T035316Z-2bf84314.stderr.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-entrypoint-attempt1-20261029T035314Z-b8167faf.capture.json",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-entrypoint-attempt1-20261029T035314Z-b8167faf.stdout.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-entrypoint-attempt1-20261029T035314Z-b8167faf.stderr.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-integrity-attempt1-20261029T035311Z-f5e6a26c.capture.json",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-integrity-attempt1-20261029T035311Z-f5e6a26c.stdout.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-integrity-attempt1-20261029T035311Z-f5e6a26c.stderr.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-install-attempt1-20261029T035309Z-dfe760ea.capture.json",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-install-attempt1-20261029T035309Z-dfe760ea.stdout.txt",
+    ".agent/evidence/release-v3.1.2-self-install/independent-actual/release-v3.1.2-self-install-install-attempt1-20261029T035309Z-dfe760ea.stderr.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Actual designated Framework checkout self-installed immutable candidate C before publication. Four real native controller operations and current installed readback pass independent acceptance. No stable publication, PRIMARY typed commissioning, LLM-session or other-agent activation claimed."
+  },
+  "reviewer": "/root/independent_acceptance",
+  "accepted_at": "2026-10-29T03:58:52.224271+00:00",
+  "source_commit": "fab0ad120e07bc832281906ed48fa8287ab0fb9a",
+  "installed_candidate_C": "69908838142b77003c391a7f3b9da12e483b8a21",
+  "destination": "/home/cnross/code/nizamiq/nizam-framework",
+  "actual_install_completed_at": "2026-10-29T03:53:09Z",
+  "actual_operations": {
+    "readback": {
+      "argv": [
+        "python3",
+        ".agent/evidence/release-v3.1.2-self-install/readback.py",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "revision": "fab0ad120e07bc832281906ed48fa8287ab0fb9a",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 29,
+      "started_at": "2026-10-29T03:53:16Z",
+      "completed_at": "2026-10-29T03:53:16Z"
+    },
+    "entrypoint": {
+      "argv": [
+        "python3",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/start_path.py",
+        "preflight",
+        "--root",
+        "/home/cnross/code/nizamiq/nizam-framework"
+      ],
+      "revision": "fab0ad120e07bc832281906ed48fa8287ab0fb9a",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 176,
+      "started_at": "2026-10-29T03:53:14Z",
+      "completed_at": "2026-10-29T03:53:14Z"
+    },
+    "integrity": {
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam",
+        "--verify-only",
+        "--require-content-integrity",
+        "--git-repo",
+        "/home/cnross/code/audit-remediation/framework-selfinstall-reference-v312"
+      ],
+      "revision": "fab0ad120e07bc832281906ed48fa8287ab0fb9a",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 826,
+      "started_at": "2026-10-29T03:53:11Z",
+      "completed_at": "2026-10-29T03:53:12Z"
+    },
+    "install": {
+      "argv": [
+        "bash",
+        "bootstrap.sh",
+        "--repo-url",
+        "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+        "--tag",
+        "v3.1.2-rc.selfinstall-20261029",
+        "--expected-sha",
+        "69908838142b77003c391a7f3b9da12e483b8a21",
+        "--target",
+        "/home/cnross/code/nizamiq/nizam-framework/.nizam"
+      ],
+      "revision": "fab0ad120e07bc832281906ed48fa8287ab0fb9a",
+      "attempt": 1,
+      "outcome": "success",
+      "exit_code": 0,
+      "completion_state": "completed",
+      "duration_ms": 444,
+      "started_at": "2026-10-29T03:53:09Z",
+      "completed_at": "2026-10-29T03:53:09Z"
+    }
+  },
+  "actual_readback": {
+    "NIZAM_sha256": "d063833eec3490ef9c3cd9592e32e831e9516e05e5cd176538d23e4c16179dfb",
+    "SKILL_sha256": "ca05639da086f5b4a8ec170e8d0812c4f436e503d89cf820a4e623a29bc5ba2f",
+    "destination": "/home/cnross/code/nizamiq/nizam-framework",
+    "entrypoint_sha256": "4643d94389045c16e7ca78ced8696646ef8d30bc97d6ea5b818a55f8cc0d575e",
+    "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+    "loaded_index_framework_version": "3.1.2",
+    "provenance": {
+      "framework_version": "3.1.2",
+      "installed_at": "2026-10-29T03:53:09Z",
+      "resolved_sha": "69908838142b77003c391a7f3b9da12e483b8a21",
+      "source_url": "file:///home/cnross/code/audit-remediation/framework-selfinstall-reference-v312",
+      "tag": "v3.1.2-rc.selfinstall-20261029"
+    },
+    "qualification": "Actual installed file reads and entrypoint smoke; no fresh LLM session or PRIMARY typed commissioning claimed",
+    "repository": "https://github.com/niq-cnr/nizam-framework.git",
+    "resolved_skill": "/home/cnross/code/nizamiq/nizam-framework/.nizam/tools/SKILL.md"
+  },
+  "observed_installed_preflight": {
+    "capabilities": {
+      "available": true,
+      "dont_write_bytecode": true,
+      "git_available": true,
+      "git_toplevel": "/home/cnross/code/nizamiq/nizam-framework",
+      "installed": true,
+      "operational": true,
+      "origin_url": "https://github.com/niq-cnr/nizam-framework.git",
+      "python_version": "3.12.3",
+      "qualified": true,
+      "repository_binding_aligned": true,
+      "run_state_valid": true,
+      "sandbox_available": true,
+      "sandbox_operational": true,
+      "schemas_present": true,
+      "status": "ready"
+    },
+    "failures": [],
+    "ok": true,
+    "status": "ready"
+  },
+  "preflight_scope": "Reported ready/qualified capability flags are observed CLI output, not independent PRIMARY typed commissioning or fresh LLM-session acceptance.",
+  "current_owned_effects": {
+    "head": "69908838142b77003c391a7f3b9da12e483b8a21",
+    "tracked_changed_paths": [
+      ".nizam/NIZAM.json",
+      ".nizam/methodology/03_circuit_breaker.md",
+      ".nizam/methodology/06_release_train.md",
+      ".nizam/methodology/07_eval_gated_promotion.md",
+      ".nizam/provenance.json",
+      ".nizam/schema/README.md",
+      ".nizam/schema/review_packet.schema.json",
+      ".nizam/standard/GIP.md",
+      ".nizam/tools/README.md",
+      ".nizam/tools/convergent_review.py",
+      ".nizam/tools/payload_integrity.py",
+      ".nizam/tools/start_path.py",
+      ".nizam/tools/test_receipt_candidate_batching.py",
+      ".nizam/tools/test_start_path.py",
+      ".nizam/tools/test_workflow_assurance.py",
+      ".nizam/tools/workflow_assurance.py"
+    ],
+    "new_paths": [
+      ".nizam/schema/external_evidence_admission.schema.json",
+      ".nizam/tools/external_evidence.py",
+      ".nizam/tools/git_seam.py",
+      ".nizam/tools/test_nf_ac01_git_identity.py",
+      ".nizam/tools/test_nf_ac02_policy_reconciliation.py",
+      ".nizam/tools/test_nf_ac03_binary_review.py",
+      ".nizam/tools/test_nf_ac04_generic_admission.py",
+      ".nizam/tools/test_nf_ac05_standalone_e2e.py",
+      ".nizam/tools/test_nf_owner_dag_and_backlog.py"
+    ],
+    "all_changed_paths_under_nizam": true
+  },
+  "authority": {
+    "current_owner_ref": {
+      "path": ".agent/evidence/release-v3.1.2-self-install/operator-decision.json",
+      "sha256": "b11c227174b259cfa1531540ddf7bfb6c4fbe79c845f3a81c7ff7ba7609510e2"
+    },
+    "application_ref": {
+      "path": ".agent/evidence/release-v3.1.2-self-install/upgrade-authorization.json",
+      "sha256": "d1cb62dbf9201ca82b7efa8d0c5f14cbdcfd2409559ae57f1b27dcc9b40fc7f7"
+    },
+    "root_continuation": "Exact current-user grant and managing safe-boundary continuation; earlier source review is not substituted for authority.",
+    "no_global_liveness_guarantee": "Known-lane decision retains documented inaccessible/non-cwd consumer limitations."
+  },
+  "rollback": {
+    "preservation_ref": {
+      "path": ".agent/evidence/release-v3.1.2-self-install/rollback-preservation.json",
+      "sha256": "bc64301d7a2826bff111b8e6f8601db2082f5d2a217edb9d2ffe98592362d307"
+    },
+    "status": "External original1.9.0/6a4 backup remains preserved and was independently verified before effects. No rollback needed or executed.",
+    "ownership": "Future recovery preserves unrelated changes and reconciles effects before only owned restoration; no blind index restore/reset/clean."
+  },
+  "failure_accounting": {
+    "logical_task": "F05-current-state-qualification",
+    "root_ledger": "/home/cnross/code/nizamiq-forensic-audit/20261028T081720Z/f05-failure-ledger.json",
+    "current_root_failures": 40,
+    "total_ceiling": 50,
+    "native_operation_failed_captures": 0,
+    "native_history_is_subset": true,
+    "new_allowance": false,
+    "history_reset": false
+  },
+  "limits": {
+    "commands": 4,
+    "configured_timeout_seconds_each": 120,
+    "no_retry": true,
+    "controller_installed_verifier": "v3.0.0 .nizam unchanged; target Framework payload3.1.2 at C",
+    "scope": "No model/provider calls, human source merge, stable/RC publication, service activation or installation of Hermes/Pi/OpenCode/parked products."
+  },
+  "remaining": "Package exact operation QA/captures into existing release readiness, execute final release three checks, then normal human merge/tag/publication route."
+}
