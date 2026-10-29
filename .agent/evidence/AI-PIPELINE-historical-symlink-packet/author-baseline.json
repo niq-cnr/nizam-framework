@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tools",
+    "-p",
+    "test_historical_symlink_packet.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "expected": "red against unchanged base; author-prepared test corpus, not independent acceptance",
+  "known_test_correction": "Initial interactive run used nonexistent _read_regular_file; corrected to existing _read_regular_nofollow before this retained capture. Initial tool transcript remains history.",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "a4783913c1bb319f62317a06fb4a1014cc1ef12a9dd082e27867c81a4ac921d8"
+}
