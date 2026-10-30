@@ -16,7 +16,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from test_workflow_assurance import ReceiptFixture, load_api
+from test_workflow_assurance import ReceiptFixture, load_api, git as git_for_resume
 
 
 def worker(arguments):
@@ -73,13 +73,17 @@ def worker(arguments):
 
         Path.write_text = direct_write
         os.replace, os.rename = publish(original_replace), publish(original_rename)
-    elif mode == "directory-sync-failure":
+    elif mode in ("directory-sync-failure", "recovery-directory-sync-failure", "observe-recovery-sync"):
         original_sync = os.fsync
 
         def sync(fd):
             if (stat.S_ISDIR(os.fstat(fd).st_mode)
                     and Path(os.readlink(f"/proc/self/fd/{fd}")).resolve() == state.parent.resolve()
-                    and state.read_bytes() != before):
+                    and (state.read_bytes() != before or mode != "directory-sync-failure")):
+                if mode == "observe-recovery-sync":
+                    result = original_sync(fd)
+                    Path(marker).write_text("target-parent-synced")
+                    return result
                 raise OSError("independent post-publication directory sync failure")
             return original_sync(fd)
 
@@ -211,6 +215,26 @@ class ResumeDurabilityTests(unittest.TestCase):
         self.assertEqual(residue.read_bytes(), b"unowned-concurrent-replacement")
         self.assertEqual(stat.S_IMODE(residue.stat().st_mode), 0o644)
         self.assertEqual(self.state.read_bytes(), self.before)
+
+    def test_postpublication_recovery_requires_directory_sync_before_clearing_intent(self):
+        administration = Path(git_for_resume(self.root, "rev-parse", "--absolute-git-dir"))
+        existing = set(administration.rglob("*.json"))
+        first = self.run_worker("directory-sync-failure")
+        self.assertNotEqual(first.returncode, 0, first.stdout + first.stderr)
+        self.assertEqual(json.loads(self.state.read_bytes()), self.expected)
+        intents = {path: path.read_bytes() for path in set(administration.rglob("*.json")) - existing}
+        self.assertTrue(intents, "uncertain publication must retain recoverable intent")
+        second = self.run_worker("recovery-directory-sync-failure")
+        self.assertNotEqual(second.returncode, 0, "recovery falsely acknowledged unsynced publication")
+        self.assertTrue(all(path.exists() and path.read_bytes() == raw for path, raw in intents.items()),
+                        "failed recovery discarded or rewrote unresolved intent")
+        marker = administration / "independent-recovery-sync-observed"
+        third = subprocess.run(self.command("observe-recovery-sync", marker=marker),
+            capture_output=True, text=True, timeout=40)
+        self.assertEqual(third.returncode, 0, third.stdout + third.stderr)
+        self.assertEqual(json.loads(third.stdout)["action"], "noop")
+        self.assertEqual(marker.read_text(), "target-parent-synced")
+        self.assertEqual(json.loads(self.state.read_bytes()), self.expected)
 
     def test_symlink_state_target_refuses_without_mutating_referent(self):
         alias = self.root / "record-alias.json"

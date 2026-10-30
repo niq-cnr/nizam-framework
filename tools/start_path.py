@@ -3542,6 +3542,10 @@ def _recover_receipt_publication(target: Path, journal: Path, binding: dict[str,
             _sync_receipt_directory(target.parent)
         elif current not in (intent["base_sha256"], intent["new_sha256"]):
             raise ValueError("unknown current state preserved")
+        elif current == intent["new_sha256"]:
+            # A successful rename may precede a failed directory fsync. Replay
+            # must establish that durability before clearing intent or noop.
+            _sync_receipt_directory(target.parent)
         journal.unlink()
         _sync_receipt_directory(journal.parent)
     except (OSError, ValueError, TypeError, KeyError) as exc:
