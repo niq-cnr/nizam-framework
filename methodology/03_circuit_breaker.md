@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, escalating investigative strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions."
-version: 0.6.2
+version: 0.6.3
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.6.3"
+    date: "2026-10-30"
+    summary: "Charge unresolved reservations against existing finite task/signature capacity under a common lock while preserving bounded independent parallelism and actual failure history."
   - version: "0.6.2"
     date: "2026-10-28"
     summary: "Clarify typed capture enforcement coverage and separate external admission history without changing recovery authority or permitting fabricated legacy captures."
@@ -89,6 +92,18 @@ the escalating order exists so that cheap, likely fixes are exhausted before
 expensive, uncertain ones are attempted. Capture enforces a default ceiling of
 six failed executions per task across every step and output directory, plus a
 three-failure ceiling for any one signature. Successes do not erase failures.
+Before authorizing execution, unresolved reservations occupy potential failure
+capacity alongside actual observed failures. Native continuation is checked
+fresh under the common task reservation lock; external allocation derives its
+pending slots from the existing permit ledger. Without explicit finite recovery,
+another reservation requires both observed task failures plus pending slots to
+be below six, and maximum observed same-signature failures plus pending slots
+to be below three. Pending is never recorded as an observed failure. Independent
+steps may overlap within that allowance; the same step must await its prior
+outcome. Success releases its pending slot. Unknown interruption preserves its
+slot after process restart. Corrupt or contradictory history remains held.
+The concrete source behavior and recovery boundary are recorded in
+`docs/architecture/task-budget-reservations.md`.
 Narrative repair summaries, existing amendments and decomposition labels grant
 no budget. A decomposition must name a real, distinct failed parent capture or
 its recorded step. Configured positive integer step limits remain finite.

@@ -17,6 +17,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Native and external task reservations now charge unresolved executions against
+  existing finite failure/signature capacity across steps. Fresh native policy
+  evaluation and reservation share one lock, preventing stale concurrent checks
+  from exceeding the task ceiling. Independent steps retain bounded parallelism;
+  actual failures, pending holds and finite operator recovery remain distinct.
 - Receipt resume apply now serializes the existing read/verify/plan/publication
   sequence per state target and publishes complete JSON through file and directory
   fsync with atomic replacement. Concurrent identical receipts advance once and

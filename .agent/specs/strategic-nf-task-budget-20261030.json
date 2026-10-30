@@ -1,0 +1,53 @@
+{
+  "contract_id": "strategic-nf-task-budget-20261030",
+  "status": "proposed",
+  "source_base": "9087cf40fd7ad8406759b8ddea8eab37d4257dc0",
+  "programme_refs": [
+    "NF04",
+    "NF07",
+    "I02",
+    "I05"
+  ],
+  "finding": {
+    "id": "NF04-task-wide-pending-capacity",
+    "evidence": [
+      "/home/cnross/code/strategic-refactoring-20261030/evidence/nizam/task-wide-concurrency-accepted-source-probe.json",
+      "/home/cnross/code/strategic-refactoring-20261030/evidence/nizam/task-wide-concurrency-probe.json"
+    ],
+    "behavior": "Actual public native capture dispatched7 distinct-step executions for one task before any result; all7 failed despite default6. Same behavior accepted8865 and currentbridge. Native continuation checked before reservation; pending external admission checked onlyperstep."
+  },
+  "policy_basis": [
+    "methodology/03_circuit_breaker.md section3 actual failure ceiling6 and signature3; no global serialization mandate",
+    "tools/interface.md section9 pending prior STEP permit holds; independent steps may overlap subject task allowance"
+  ],
+  "behavior": [
+    "Preserve bounded parallelism for independently authorized steps; existing policy has no global one-pending mandate. Native/public capture and external allocation atomically reserve potential failure capacity against current actual failed outcomes plus all unresolved same-task reservations, across steps, directories and restarts, under the existing common task reservation lock.",
+    "No new ledger, failure counter, mode marker or recovery authority. Derive native pending slots from existing safe reservation markers without matching validated terminal capture; derive external pending slots from existing unconsumed permits and allocated/admitted step counts, refusing contradictions/corrupt/partial unknown records. Actual failed counts remain actual observed failures, never relabel pending as failed.",
+    "Before creating native reservation, re-evaluate existing continuation policy using fresh task history while holding the common task lock; a terminal failure published between an earlier check and reservation cannot let a stale authorization exceed its ceiling. Release the lock before running the command; outstanding reservation continues to hold potential capacity.",
+    "Same-step retry requires its prior outcome; independently authorized other steps can run concurrently only while failed_count+pending_count is below the finite task failure ceiling. Also conservatively charge unknown pending outcomes against the existing three-signature allowance (max observed same-signature failures+pending_count<3), unless existing exact finite operator recovery applies. Do not trust changing labels to manufacture capacity.",
+    "Existing finite operator recovery preserves all histories and actual failed counts, changes only its already-authorized finite ceiling/signature policy, and cannot clear unresolved executions, override same-step pending, repair corrupt histories, or create an unbounded extension.",
+    "Terminal successful evidence releases pending capacity without increasing failures; terminal failure converts pending to one observed failure. Restart/unknown interruption retains its capacity until actual existing outcome reconciliation. Mixed native/external history continues to hold rather than merge counters or grant a fresh channel budget.",
+    "Default remaining potential failure capacity is the minimum of task allowance (6-actual_failed) and unresolved signature allowance (3-max observed signature count), with each pending reservation occupying one slot. Pending identities remain stable; no global serialization when at least two slots are available.",
+    "Actual seven-process distinct-step barrier cannot dispatch beyond reserved capacity or produce seven failures over default six. Positive controls prove at least two independent steps overlap when capacity exists; native stale-check race, same-step pending, terminal success release, non-Git/restart, external cross-step pending/ceiling and existing finite operator recovery remain enforced."
+  ],
+  "non_goals": [
+    "No model/network/paid/live call, deployment or .nizam edit",
+    "No semantic signature classifier, guessed failure or new controller",
+    "No history conversion/reset or automatic unresolved evidence deletion",
+    "No global single-flight restriction when independent step capacity exists"
+  ],
+  "unknown_outcome_boundary": "Interrupted reservation without genuine terminal evidence remains a conservative reconciliation hold; no invented successful capture or operator consent.",
+  "fixture_isolation_amendment": {
+    "type": "bounded-independent-semantic-fixture-isolation",
+    "re_approval_required": true,
+    "reason": "Current corrected pendingcapacity makes fourth of seven unsettled permits under F-201 refuse during setup of independent semantic metadata cases, before MAC assertions. Their attack controls are independent and should not share task allocation quota.",
+    "exact_method": "NfAc04GenericAdmissionTests.test_semantic_metadata_cannot_be_spliced_after_producer_proof",
+    "allowed_change": "Only allocate_attempt_permit task_id=\"F-201\" becomes task_id=f\"F-201-{name}\" within this method; step/run/contract/candidate/proof/artifact/mutation/expected-binding/assertion bytes otherwise remain unchanged.",
+    "invariants": [
+      "All existing attack mutations, expected host binding overrides, forged_producer_proof and exact unchanged ledger assertions preserved",
+      "Original13 new capacity test file remains byte-identical SHA256c4e0dd86fe71e79cecf6ffda42843927389ec591b59d0a2b6b6851bb160ee823",
+      "No runtime code, public API, newledger or authority change from this amendment",
+      "Independent Test Engineer authors the one-field fixture correction after both amendment gates"
+    ]
+  }
+}
