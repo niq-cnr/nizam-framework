@@ -7,6 +7,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Receipt resume apply now serializes the existing read/verify/plan/publication
+  sequence per state target and publishes complete JSON through file and directory
+  fsync with atomic replacement. Concurrent identical receipts advance once and
+  replay as a noop; interrupted publication preserves complete old or new state.
+  Symlink/nonregular targets refuse, original permissions are preserved, and
+  read-only planning creates no lock or output.
+
 ## [3.1.3] - 2026-10-29
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).

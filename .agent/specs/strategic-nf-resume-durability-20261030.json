@@ -1,0 +1,184 @@
+{
+  "contract_id": "strategic-nf-resume-durability-20261030",
+  "status": "proposed",
+  "repository": "niq-cnr/nizam-framework",
+  "base_rule": "Current main plus accepted admission repair only if required; no installed payload edits.",
+  "plan_refs": [
+    "NF03",
+    "I02",
+    "I05"
+  ],
+  "finding": {
+    "source": "tools/start_path.py:resume_from_receipt",
+    "behavior": "Current --apply reads/plans then calls Path.write_text on owned state without lock, temporary file, fsync or atomic replace. Partial failure can truncate durable state; concurrent serialized intentions can race on the same starting snapshot.",
+    "evidence_status": "Static source confirmed; independent failure injection required before repair."
+  },
+  "scope": [
+    "tools/test_resume_durability.py",
+    "docs/architecture/receipt-state-publication.md",
+    ".agent/contracts/strategic-nf-resume-durability-20261030.json",
+    ".agent/specs/strategic-nf-resume-durability-20261030.json",
+    ".agent/evidence/strategic-nizam-resume-20261030/*",
+    "tools/start_path.py",
+    "CHANGELOG.md",
+    ".github/workflows/compliance.yml"
+  ],
+  "non_goals": [
+    "No new receipt/attempt authority or completion state schema",
+    "No bypass of plan_receipt_transition or existing proof validation",
+    "No live state migration, production operation or .nizam modification"
+  ],
+  "proposed_behavior": [
+    "Read-only resume stays write-free and does not create a lock.",
+    "Apply validates target state and serializes read-plan-write under one per-state OS lock; every contender replans from locked current bytes.",
+    "For advance, publish complete JSON to same-directory exclusive temp, preserve regular-file permissions, fsync file, atomic replace target, fsync directory; incomplete temp cannot replace valid state.",
+    "Noop/republish retains owned state bytes and records the actual outcome without duplicate history.",
+    "On interrupted publication, exact replay uses existing receipt verification; no attempt reset, replay counter or new state store.",
+    "Reject symlink/nonregular publication targets and preserve unrelated files."
+  ],
+  "acceptance": [
+    "Independent real interruption before replace preserves old parseable state; interruption after replace yields complete new parseable state.",
+    "Two concurrent apply calls on same valid receipt yield exactly one history transition and one noop.",
+    "Concurrent conflicting receipts cannot both advance from stale source state.",
+    "Read-only run has no filesystem effects, old/new mode preserved, failure refuses with evidence and does not mark applied.",
+    "Existing real receipt/recovery and task-wide retry cases remain passing."
+  ],
+  "verification": [
+    {
+      "id": "NF-RES-01",
+      "command": "python3 tools/test_resume_durability.py",
+      "argv": [
+        "python3",
+        "tools/test_resume_durability.py"
+      ],
+      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-02",
+      "command": "python3 tools/test_workflow_assurance.py --case idempotent-replay",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "idempotent-replay"
+      ],
+      "acceptance_test": "Existing actual verified receipt idempotence",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-03",
+      "command": "python3 tools/test_workflow_assurance.py --case reject-double-advance",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-double-advance"
+      ],
+      "acceptance_test": "Existing receipt conflicting advancement refusal",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-04",
+      "command": "python3 tools/test_workflow_assurance.py --case recover-missing-receipt",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "recover-missing-receipt"
+      ],
+      "acceptance_test": "Missing receipt recovery preserves original state",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-05",
+      "command": "python3 tools/test_start_path.py",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "acceptance_test": "Full existing start-path routing/proof/retry/publication regressions",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-06",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "acceptance_test": "Repository compliance",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-07",
+      "command": "git diff f19357479220b6bf2b3292d31c06c66279f91efa..HEAD --check",
+      "argv": [
+        "git",
+        "diff",
+        "f19357479220b6bf2b3292d31c06c66279f91efa..HEAD",
+        "--check"
+      ],
+      "acceptance_test": "Full assessed committed delta whitespace",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "execution_prerequisite": "Independent Test Engineer RED plus ModeA and independent evaluator contract review; actual runtime fault injection must discriminate atomicity without assuming an implementation-specific helper name.",
+  "scope_note": "The owning contract exact file scope and seven-command verification inventory supersede optional paths in the earlier external concept proposal. No test_start_path.py or tools/interface.md mutation is authorized by this task.",
+  "ci_wiring": {
+    "type": "bounded-ci-regression-wiring",
+    "prior_contract_sha256": "aa74467872cf9548b632b3896d1a60e6de9b34163cace3f794df8a2cf99fb6b1",
+    "re_approval_required": true,
+    "reason": "Current workflows execute none of test_nf_ac*, test_start_path or new resume suite, so green CI does not protect these source fixes. Workflow path is normative under installed classifier; no lightweight bypass.",
+    "proposed_commands": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac04_generic_admission.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_resume_durability.py"
+    ],
+    "invariants": [
+      "Same existing fixtures_self_test job, runner and permissions",
+      "No required-check-name or repository-protection change",
+      "No live or paid calls",
+      "No source/test assertion changes"
+    ]
+  }
+}

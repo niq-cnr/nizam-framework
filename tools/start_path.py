@@ -30,6 +30,7 @@ Supports:
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import copy
 import datetime
 import hashlib
@@ -3415,21 +3416,46 @@ def resume_from_receipt(
     except ModuleNotFoundError:
         from tools import workflow_assurance as wa
 
-    target_state_path = state_path or (root / ".agent" / "run_state.json")
-    if not target_state_path.is_file():
-        raise StartPathError(f"state file does not exist: {target_state_path}", 1)
-    state_data = _read_json_file(target_state_path)
-    policy_data = _read_json_file(policy_path)
-    receipt_data = _read_json_file(receipt_path) if receipt_path is not None else None
-    try:
-        planned = wa.plan_receipt_transition(root, state_data, receipt_data, policy=policy_data)
-    except wa.AssuranceError as exc:
-        raise StartPathError(str(exc), 1) from exc
+    root = root.resolve(strict=True)
+    supplied = state_path or (root / ".agent" / "run_state.json")
+    if not supplied.is_absolute():
+        supplied = root / supplied
+
+    def target_path() -> Path:
+        try:
+            relative = supplied.relative_to(root).as_posix()
+        except ValueError as exc:
+            raise StartPathError("receipt state must be inside the target repository", 1) from exc
+        target = resolve_project_file(root, relative)
+        if not target.is_file() or not stat.S_ISREG(target.lstat().st_mode):
+            raise StartPathError(f"state file is not a regular file: {target}", 1)
+        return target
+
+    target_state_path = target_path()  # Reject aliases before resolving identity.
+
+    def plan_current() -> dict[str, Any]:
+        state_data = _read_json_file(target_path())
+        policy_data = _read_json_file(policy_path)
+        receipt_data = _read_json_file(receipt_path) if receipt_path is not None else None
+        try:
+            return wa.plan_receipt_transition(root, state_data, receipt_data, policy=policy_data)
+        except wa.AssuranceError as exc:
+            raise StartPathError(str(exc), 1) from exc
 
     applied = False
-    if apply_changes and planned["action"] == "advance":
-        target_state_path.write_text(json.dumps(planned["state"], indent=2) + "\n", encoding="utf-8")
-        applied = True
+    if apply_changes:
+        with _receipt_state_lock(root, target_state_path):
+            planned = plan_current()
+            if planned["action"] == "advance":
+                try:
+                    _publish_receipt_state(target_path(), planned["state"])
+                except OSError as exc:
+                    raise StartPathError(
+                        "receipt state publication failed; inspect current state and replay the same verified receipt: " + str(exc), 1,
+                    ) from exc
+                applied = True
+    else:
+        planned = plan_current()
     return {
         "action": planned["action"],
         "reason": planned["reason"],
@@ -3437,6 +3463,48 @@ def resume_from_receipt(
         "status": planned["state"].get("status"),
         "updated_at": planned["state"].get("updated_at"),
     }
+
+
+@contextmanager
+def _receipt_state_lock(root: Path, state_path: Path):
+    """Serialize read/plan/publish on one stable lock, independent of replaced inode."""
+    import fcntl
+    key = sha256_hex(os.fsencode(str(state_path)))
+    lock_path = resolve_project_file(root, ".agent/evidence/receipt-state-locks/" + key + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(lock_path, flags, 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise StartPathError("receipt state lock is not a regular file", 1)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
+
+
+def _publish_receipt_state(target: Path, state: dict[str, Any]) -> None:
+    """Publish a complete owned state and acknowledge only after directory fsync."""
+    mode = stat.S_IMODE(target.lstat().st_mode)
+    fd, name = tempfile.mkstemp(prefix=".nizam-resume-", suffix=".json", dir=target.parent)
+    temporary = Path(name)
+    try:
+        os.fchmod(fd, mode)
+        with os.fdopen(fd, "wb") as stream:
+            stream.write((json.dumps(state, indent=2) + "\n").encode("utf-8"))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, target)
+        directory_fd = os.open(target.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_CLOEXEC", 0))
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _read_json_file(path: Path) -> dict[str, Any]:
