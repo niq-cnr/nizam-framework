@@ -17,8 +17,11 @@ new receipt authority, or replenish an attempt budget.
 Read-only planning checks the current state and proof without creating a lock
 or changing files. Apply requires a regular state file inside the target
 repository and rejects symlink identity before canonical resolution. It uses
-a stable per-state OS lock under `.agent/evidence/receipt-state-locks/`, keyed
-by the canonical target path. The lock covers reading current state, real
+a stable per-state OS lock under the worktree's Git administrative directory,
+resolved with the hardened read-only `git rev-parse --absolute-git-dir` query
+and keyed by the canonical target path. Coordination metadata therefore stays
+outside the assessed candidate inventory, including linked worktrees; missing
+Git administrative metadata refuses without a worktree fallback. The lock covers reading current state, real
 receipt verification, planning and publication. Each contender therefore
 plans against the preceding completed publication rather than a stale copy.
 

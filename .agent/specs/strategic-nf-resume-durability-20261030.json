@@ -34,14 +34,16 @@
     "For advance, publish complete JSON to same-directory exclusive temp, preserve regular-file permissions, fsync file, atomic replace target, fsync directory; incomplete temp cannot replace valid state.",
     "Noop/republish retains owned state bytes and records the actual outcome without duplicate history.",
     "On interrupted publication, exact replay uses existing receipt verification; no attempt reset, replay counter or new state store.",
-    "Reject symlink/nonregular publication targets and preserve unrelated files."
+    "Reject symlink/nonregular publication targets and preserve unrelated files.",
+    "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback."
   ],
   "acceptance": [
     "Independent real interruption before replace preserves old parseable state; interruption after replace yields complete new parseable state.",
     "Two concurrent apply calls on same valid receipt yield exactly one history transition and one noop.",
     "Concurrent conflicting receipts cannot both advance from stale source state.",
     "Read-only run has no filesystem effects, old/new mode preserved, failure refuses with evidence and does not mark applied.",
-    "Existing real receipt/recovery and task-wide retry cases remain passing."
+    "Existing real receipt/recovery and task-wide retry cases remain passing.",
+    "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees."
   ],
   "verification": [
     {
@@ -51,7 +53,7 @@
         "python3",
         "tools/test_resume_durability.py"
       ],
-      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls",
+      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls; actual trivial route, clean-worktree and linked-worktree coordination isolation",
       "expected_exit": 0,
       "proof_kind": "success",
       "diagnostic": null,

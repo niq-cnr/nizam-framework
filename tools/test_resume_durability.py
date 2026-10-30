@@ -207,6 +207,59 @@ class ResumeDurabilityTests(unittest.TestCase):
         self.assertTrue(alias.is_symlink())
 
 
+class TrivialResumeIntegrationTests(unittest.TestCase):
+    def test_real_trivial_receipt_and_replay_do_not_contaminate_ordinary_or_linked_worktree(self):
+        import test_start_path as fixtures
+        from test_workflow_assurance import git
+        with patch.dict(os.environ, {}):
+            for linked in (False, True):
+                with self.subTest(linked_worktree=linked), tempfile.TemporaryDirectory(prefix="resume-trivial-") as directory:
+                    parent = Path(directory)
+                    root = parent / "main"
+                    fixtures.proof_bootstrap(root)
+                    (root / "schema/run_state.schema.json").write_bytes(
+                        (Path(__file__).resolve().parents[1] / "schema/run_state.schema.json").read_bytes())
+                    state = dict(repository="https://example.invalid/qa-fixture.git", current_phase="fixture-phase",
+                        current_feature="trivial-resume", status="in_progress", updated_at="2026-10-24T00:00:00Z",
+                        scope_budget=dict(original_estimate_lines=10, total_lines_changed=0, per_feature=[]),
+                        circuit_breaker={}, history=[])
+                    fixtures.write(root, ".agent/run_state.json", state)
+                    (root / "README.md").write_text("before\n")
+                    git(root, "add", ".")
+                    git(root, "commit", "-qm", "actual trivial consumer baseline")
+                    if linked:
+                        checkout = parent / "linked"
+                        git(root, "worktree", "add", "-qb", "trivial-lane", str(checkout), "HEAD")
+                        root = checkout
+                        self.assertTrue((root / ".git").is_file())
+                    fixtures.write(root, ".agent/evidence/trivial-resume-intent.json", dict(
+                        id="trivial-resume", path="trivial", summary="Scoped editorial change",
+                        needs_new_contract=False, files=["README.md"], verification=[dict(fixtures.CHECK)]))
+                    begin = fixtures.run(root, "begin", "trivial", "--id", "trivial-resume")
+                    self.assertEqual(begin.returncode, 0, begin.stdout + begin.stderr)
+                    (root / "README.md").write_text("after\n")
+                    verdict = fixtures.record_proof(root, "trivial-resume")
+                    _, policy, receipt = fixtures.route_receipt(root, "trivial-resume", verdict)
+                    folder = root / ".agent/evidence/trivial-resume"
+                    policy_path, receipt_path = folder / "policy.json", folder / "receipt.json"
+                    policy_path.write_text(json.dumps(policy)); receipt_path.write_text(json.dumps(receipt))
+                    untracked_before = git(root, "ls-files", "--others", "--exclude-standard", "-z")
+                    def resume():
+                        return fixtures.run(root, "resume", "--policy", str(policy_path),
+                                            "--receipt", str(receipt_path), "--apply")
+                    applied = resume()
+                    self.assertEqual(git(root, "ls-files", "--others", "--exclude-standard", "-z"),
+                        untracked_before, "coordination lock contaminated assessed worktree")
+                    self.assertEqual(applied.returncode, 0, applied.stdout + applied.stderr)
+                    self.assertEqual(json.loads(applied.stdout)["action"], "advance")
+                    completed = (root / ".agent/run_state.json").read_bytes()
+                    replay = resume()
+                    self.assertEqual(replay.returncode, 0, replay.stdout + replay.stderr)
+                    self.assertEqual(json.loads(replay.stdout)["action"], "noop")
+                    self.assertEqual((root / ".agent/run_state.json").read_bytes(), completed)
+                    self.assertEqual(git(root, "ls-files", "--others", "--exclude-standard", "-z"), untracked_before)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--worker":
         raise SystemExit(worker(sys.argv[2:]))

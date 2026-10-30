@@ -3470,8 +3470,17 @@ def _receipt_state_lock(root: Path, state_path: Path):
     """Serialize read/plan/publish on one stable lock, independent of replaced inode."""
     import fcntl
     key = sha256_hex(os.fsencode(str(state_path)))
-    lock_path = resolve_project_file(root, ".agent/evidence/receipt-state-locks/" + key + ".lock")
-    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    observed = _run_git_readonly(root, ["rev-parse", "--absolute-git-dir"], text=True)
+    if observed.returncode != 0 or not observed.stdout.strip():
+        raise StartPathError("receipt state lock requires Git administrative metadata", 1)
+    administration = Path(observed.stdout.strip())
+    if not administration.is_absolute() or not administration.is_dir():
+        raise StartPathError("receipt state Git administrative directory is invalid", 1)
+    lock_directory = administration / "nizam-receipt-state-locks"
+    if lock_directory.is_symlink():
+        raise StartPathError("receipt state lock directory is a symlink", 1)
+    lock_directory.mkdir(mode=0o700, exist_ok=True)
+    lock_path = lock_directory / (key + ".lock")
     flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
     fd = os.open(lock_path, flags, 0o600)
     try:

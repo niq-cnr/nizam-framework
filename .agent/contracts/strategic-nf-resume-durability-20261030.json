@@ -56,10 +56,11 @@
     "Concurrent conflicting receipts cannot both advance from stale source state.",
     "Read-only run has no filesystem effects, old/new mode preserved, failure refuses with evidence and does not mark applied.",
     "Existing real receipt/recovery and task-wide retry cases remain passing.",
-    "Use one stable per-state OS lock in the owned .agent evidence namespace keyed by canonical state target; no adjacent untracked source lock that changes assessed inputs.",
+    "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback.",
     "Apply locks before reading current state and planning; each contender sees current bytes. Read-only does not create a lock.",
     "Atomic JSON publication fsyncs file and directory, preserves original regular-file permissions and rejects symlink/nonregular target. On any uncertain post-publication failure do not assert applied success; exact existing receipt replay reconciles.",
-    "Independent tests exercise real verified receipt fixture for at least one path; controlled publication-layer fault injection may isolate IO but cannot replace all proof with a fake planner."
+    "Independent tests exercise real verified receipt fixture for at least one path; controlled publication-layer fault injection may isolate IO but cannot replace all proof with a fake planner.",
+    "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees."
   ],
   "verification": [
     {
@@ -69,7 +70,7 @@
         "python3",
         "tools/test_resume_durability.py"
       ],
-      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls",
+      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls; actual trivial route, clean-worktree and linked-worktree coordination isolation",
       "expected_exit": 0,
       "proof_kind": "success",
       "diagnostic": null,
@@ -214,6 +215,34 @@
         "approved_proposal_sha256": "6e999a818af7d45ef6ad3426b7fe82652076913fcef76ec4cf358496c97115d7",
         "mode_a": ".agent/validator/strategic-nf-resume-ci-mode-a.json",
         "contract_review": ".agent/qa/strategic-nf-resume-ci-contract-review.json"
+      }
+    },
+    {
+      "type": "bounded-git-administrative-lock-location",
+      "prior_contract_sha256": "1a907512c37d1d4258e937056fe953f42777eca57ebae6ddd6f4ab8543aacf30",
+      "re_approval_required": false,
+      "reason": "Hosted actual zero-reachback trivial receipt at f7260d5e refuses because .agent/evidence coordination lock is undeclared task change; preserve the eligibility check and move only coordination metadata.",
+      "source_paths": [
+        "tools/start_path.py",
+        "tools/test_resume_durability.py",
+        "docs/architecture/receipt-state-publication.md"
+      ],
+      "behavior": [
+        "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback.",
+        "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees."
+      ],
+      "invariants": [
+        "No native proof/receipt planner or scope exclusion changes",
+        "Existing seven independent durability/concurrency assertions remain unchanged",
+        "Read-only remains entirely write-free",
+        "Stable lock retained across atomic state replacement",
+        "No network/provider dependency or fallback"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "c014067e87f84f3b6521ee7de4460d55a158927b5ff28c9b17a249ec212d7a6c",
+        "mode_a": ".agent/validator/strategic-nf-resume-lock-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-resume-lock-contract-review.json",
+        "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-trivial-resume-independent-red.json"
       }
     }
   ]
