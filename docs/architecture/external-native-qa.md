@@ -13,7 +13,14 @@ authoritative_source: docs/architecture/external-native-qa.md
 existing `generic-external-evidence-v1` profile at version `1.1.0`. It runs no
 verifier, creates no second budget, and does not advance completion. The host
 allocates one canonical permit before an actual trusted verifier invocation.
-Native and external first reservations share a Git-administrative task lock;
+Native and external first reservations share one POSIX task lock in a fixed
+private `/tmp/nizam-task-reservations-<effective uid>` directory, keyed by the
+canonical root path and task identifier. Opened directory/lock descriptors must
+be user-owned with modes `0700`/`0600` and reject symlinks. Ambient temporary or
+home directories and Git initialization cannot select another lock. This
+supported coordination profile assumes cooperating controllers with the same
+effective user. Lock files contain no ownership or budget data and are never
+removed by the reservation protocol;
 existing native reservations/captures and external permits/ledger remain the
 owners. Mixed, corrupt or interrupted matching history holds the task rather
 than selecting a fresh authority. Output directory, step and contract changes

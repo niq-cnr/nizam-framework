@@ -128,6 +128,107 @@ except Exception as exc:print(json.dumps({'reserved':False,'kind':kind,'error':s
             self.assertEqual(fixture.state, original_state, "unmapped admission cannot advance state")
 
 
+class ReservationNamespaceCompatibilityTests(unittest.TestCase):
+    """Independent actual-process compatibility and stable-namespace regressions."""
+    def clean_environment(self, directory):
+        env = {key: os.environ[key] for key in ("PATH", "LANG", "SYSTEMROOT") if key in os.environ}
+        for key in ("HOME", "TMPDIR", "XDG_RUNTIME_DIR"):
+            value = directory / key.lower(); value.mkdir(parents=True)
+            env[key] = str(value)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        return env
+
+    def test_public_unbound_capture_still_works_without_git_initialization(self):
+        with tempfile.TemporaryDirectory(prefix="bridge-nongit-public-") as directory:
+            base = Path(directory); root = base / "project"; root.mkdir()
+            result = subprocess.run([sys.executable, str(Path(start_path.__file__).resolve()),
+                "capture", "--root", str(root), "--id", "compat-nongit", "--step", "verify",
+                "--attempt", "1", "--output-dir", str(root / ".agent/evidence/capture"),
+                "--", sys.executable, "-c", "print('actual-unbound-capture')"],
+                env=self.clean_environment(base / "ambient"), capture_output=True, text=True, timeout=20)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            capture = json.loads(result.stdout)
+            self.assertEqual(capture["binding_state"], "unbound")
+            self.assertEqual(capture["outcome"], "success")
+            self.assertEqual((root / capture["stdout"]["path"]).read_text().strip(), "actual-unbound-capture")
+            self.assertFalse((root / ".git").exists(), "capture must not initialize Git implicitly")
+
+    def test_native_external_lock_survives_git_init_and_ambient_path_changes(self):
+        import time
+        native_code = r"""import contextlib,json,pathlib,sys,time
+sys.path.insert(0,sys.argv[1]);import start_path
+root=pathlib.Path(sys.argv[2]); ready=pathlib.Path(sys.argv[3]); release=pathlib.Path(sys.argv[4])
+original=start_path._task_reservation_lock
+@contextlib.contextmanager
+def observed_lock(root,task):
+ with original(root,task):
+  ready.write_text('actual-lock-acquired')
+  deadline=time.monotonic()+15
+  while not release.exists():
+   if time.monotonic()>deadline:raise RuntimeError('release deadline')
+   time.sleep(.01)
+  yield
+start_path._task_reservation_lock=observed_lock
+try:
+ start_path._reserve_attempt(root,'compat-reservation','verify',1)
+ print(json.dumps({'reserved':True}))
+except Exception as exc:print(json.dumps({'reserved':False,'error':str(exc)}))
+"""
+        external_code = r"""import json,pathlib,sys
+sys.path.insert(0,sys.argv[1]);import external_evidence
+pathlib.Path(sys.argv[3]).write_text('actual-external-call-starting')
+try:
+ external_evidence.allocate_attempt_permit(pathlib.Path(sys.argv[2]),task_id='compat-reservation',step_id='verify',run_id='external-contender',candidate_commit=sys.argv[4])
+ print(json.dumps({'reserved':True}))
+except Exception as exc:print(json.dumps({'reserved':False,'error':str(exc)}))
+"""
+        for initialize_before_lock in (False, True):
+            with self.subTest(git_initialized_before_lock=initialize_before_lock), tempfile.TemporaryDirectory(prefix="bridge-namespace-race-") as directory:
+                base=Path(directory); root=base/"project"; root.mkdir(); (root/"source.txt").write_text("private source\n")
+                def initialize():
+                    for args in (("init",), ("config","user.name","Private fixture"),
+                                 ("config","user.email","private@example.invalid"),
+                                 ("add","source.txt"), ("commit","-m","private fixture")):
+                        subprocess.run(["git","-C",str(root),*args],check=True,capture_output=True)
+                if initialize_before_lock: initialize()
+                ready=base/"native-ready"; release=base/"release"; external_ready=base/"external-ready"
+                native=subprocess.Popen([sys.executable,"-c",native_code,str(Path(__file__).resolve().parent),
+                    str(root),str(ready),str(release)],env=self.clean_environment(base/"native-ambient"),
+                    stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+                external=None
+                try:
+                    deadline=time.monotonic()+5
+                    while not ready.exists() and native.poll() is None and time.monotonic()<deadline: time.sleep(.01)
+                    if not ready.exists():
+                        out,err=native.communicate(timeout=2)
+                        self.fail("native must acquire actual reservation lock before Git init: "+out+err)
+                    if not initialize_before_lock: initialize()
+                    candidate=git(root,"rev-parse","HEAD")
+                    external=subprocess.Popen([sys.executable,"-c",external_code,str(Path(__file__).resolve().parent),
+                        str(root),str(external_ready),candidate],env=self.clean_environment(base/"external-ambient"),
+                        stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+                    deadline=time.monotonic()+5
+                    while not external_ready.exists() and external.poll() is None and time.monotonic()<deadline: time.sleep(.01)
+                    self.assertTrue(external_ready.exists(), "external contender must really start")
+                    time.sleep(.2)
+                    self.assertIsNone(external.poll(), "external contender must wait on same actual lock despite Git init and ambient paths")
+                    release.write_text("release")
+                    native_out,native_err=native.communicate(timeout=10)
+                    external_out,external_err=external.communicate(timeout=10)
+                    self.assertEqual(native.returncode,0,native_err); self.assertEqual(external.returncode,0,external_err)
+                    self.assertIs(json.loads(native_out)["reserved"],True,native_out)
+                    self.assertIs(json.loads(external_out)["reserved"],False,external_out)
+                    marker=root/".agent/evidence/compat-reservation-verify-attempt1.reservation.json"
+                    self.assertTrue(marker.is_file(), "native winner retains real attempt authority")
+                    ledger=root/".agent/evidence/external_admissions/ledger.json"
+                    if ledger.exists(): self.assertNotIn("compat-reservation",json.loads(ledger.read_bytes())["tasks"])
+                finally:
+                    release.write_text("release")
+                    for process in (native,external):
+                        if process is not None and process.poll() is None:
+                            process.kill(); process.wait()
+
+
 class ExternalQaMappingTests(unittest.TestCase):
     """Actual native proof, authenticated projection, and durable replay integration."""
     def setUp(self):
@@ -303,6 +404,104 @@ class ExternalQaMappingTests(unittest.TestCase):
         with self.assertRaises(self.fixture.api.AssuranceError):
             self.fixture.api.validate_qa_proof(self.root, self.qa, feature_id="120",
                 candidate=self.fixture.candidate, required_checks=[self.fixture.qa_check])
+
+    def test_native_optional_revision_references_remain_supported(self):
+        self.context_ref.pop("revision")
+        for field in ("candidate_ref", "qa_ref"):
+            self.context[field] = {k: v for k, v in self.context[field].items() if k != "revision"}
+        self.reseal()
+        self.assertEqual(self.admit()["completion_status"], "not_advanced")
+
+    def test_legacy_profile_refuses_without_history_or_permit_changes(self):
+        path = self.root / ".agent/evidence/external_admissions/ledger.json"
+        original = path.read_bytes()
+        self.envelope["profile_version"] = "1.0.0"
+        with self.assertRaises(self.api.ee.ExternalEvidenceError) as refused: self.admit()
+        self.assertEqual(refused.exception.code, "unsupported_profile")
+        self.assertEqual(path.read_bytes(), original)
+
+    def test_pinned_prebridge_reader_refuses_new_typed_record_preserving_history(self):
+        import importlib.util
+        self.admit()
+        ledger_path = self.root / ".agent/evidence/external_admissions/ledger.json"
+        original = ledger_path.read_bytes(); ledger = json.loads(original)
+        entry = next(iter(ledger["admissions"].values()))
+        source = subprocess.check_output(["git", "-C", str(Path(__file__).resolve().parents[1]),
+            "show", "8865b30faa010b76045deb89ce062a7bd22ede99:tools/external_evidence.py"])
+        path = Path(self.directory.name) / "pinned-prebridge-external-evidence.py"; path.write_bytes(source)
+        spec = importlib.util.spec_from_file_location("pinned_prebridge_" + ee.sha256_hex(source), path)
+        old = importlib.util.module_from_spec(spec); spec.loader.exec_module(old)
+        with self.assertRaises(old.ExternalEvidenceError) as refused:
+            old._read_admission_record(self.root, entry["admission_path"], entry["admission_key"])
+        self.assertEqual(refused.exception.code, "corrupt_admission")
+        self.assertEqual(ledger_path.read_bytes(), original)
+
+    def test_generic_only_record_cannot_be_silently_upgraded_on_replay(self):
+        self.api.ee.admit_external_evidence(self.root, self.envelope, **self.expectations)
+        path = self.root / ".agent/evidence/external_admissions/ledger.json"
+        original = path.read_bytes()
+        with self.assertRaises(self.api.ee.ExternalEvidenceError): self.admit()
+        self.assertEqual(path.read_bytes(), original)
+        with self.assertRaises(self.fixture.api.AssuranceError):
+            self.fixture.api.validate_qa_proof(self.root, self.qa, feature_id="120",
+                candidate=self.fixture.candidate, required_checks=[self.fixture.qa_check])
+
+    def test_completed_host_rejection_settles_once_without_typed_completion_credit(self):
+        self.envelope["status_separation"]["admission_decision"] = "rejected"; self.reseal()
+        result = self.admit()
+        self.assertIsNone(result["qa_mapping"])
+        self.assertEqual(result["completion_status"], "not_advanced")
+        self.assertTrue(self.admit()["idempotent_replay"])
+        ledger = json.loads((self.root / ".agent/evidence/external_admissions/ledger.json").read_bytes())
+        self.assertEqual(ledger["tasks"]["120"]["failed_count"], 1)
+        self.assertEqual(len(ledger["tasks"]["120"]["history"]), 1)
+        with self.assertRaises(self.fixture.api.AssuranceError):
+            self.fixture.api.validate_qa_proof(self.root, self.qa, feature_id="120",
+                candidate=self.fixture.candidate, required_checks=[self.fixture.qa_check])
+
+
+class CoordinationBoundaryTests(unittest.TestCase):
+    def test_external_symlink_publication_history_refuses_before_outside_writes(self):
+        helper = generic.NfAc04GenericAdmissionTests(methodName="runTest"); helper.setUp()
+        try:
+            with tempfile.TemporaryDirectory(prefix="outside-external-history-") as directory:
+                outside = Path(directory)
+                evidence = helper.repo / ".agent/evidence"; evidence.mkdir(parents=True)
+                (evidence / "external_admissions").symlink_to(outside, target_is_directory=True)
+                with self.assertRaises(ee.ExternalEvidenceError):
+                    ee.allocate_attempt_permit(helper.repo, task_id="safe-history", step_id="verify",
+                        run_id="history-run", candidate_commit=helper.cand_commit)
+                self.assertEqual(list(outside.iterdir()), [], "unsafe history created an outside lock or ledger")
+        finally:
+            helper.tearDown()
+
+    def test_nofollow_and_opened_metadata_refuse_without_repair_or_native_execution(self):
+        with tempfile.TemporaryDirectory(prefix="coordination-boundary-") as directory:
+            root = Path(directory)
+            with start_path._task_reservation_lock(root, "positive-control"):
+                pass
+            namespace = Path("/tmp") / ("nizam-task-reservations-" + str(os.geteuid()))
+            key = start_path.sha256_hex(start_path.canonical_bytes([str(root.resolve()), "unsafe-lock"]))
+            lock = namespace / (key + ".lock")
+            sentinel = root / "sentinel"; sentinel.write_text("preserve\n")
+            try:
+                lock.symlink_to(sentinel)
+                with self.assertRaises(start_path.StartPathError):
+                    start_path._reserve_attempt(root, "unsafe-lock", "verify", 1)
+                self.assertEqual(sentinel.read_text(), "preserve\n")
+                self.assertTrue(lock.is_symlink())
+                lock.unlink()
+                original_open = os.open
+                def change_opened_mode(path, flags, *args, **kwargs):
+                    fd = original_open(path, flags, *args, **kwargs)
+                    if str(path) == key + ".lock": os.fchmod(fd, 0o644)
+                    return fd
+                with patch.object(os, "open", change_opened_mode), self.assertRaises(start_path.StartPathError):
+                    start_path._reserve_attempt(root, "unsafe-lock", "verify", 1)
+                self.assertEqual(lock.stat().st_mode & 0o777, 0o644, "unsafe opened mode must not be repaired")
+                self.assertFalse((root / ".agent/evidence/unsafe-lock-verify-attempt1.reservation.json").exists())
+            finally:
+                lock.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

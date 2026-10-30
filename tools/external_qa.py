@@ -37,7 +37,7 @@ def _native_api():
 
 
 def _ref(reference):
-    if type(reference) is not dict or set(reference) != {"path", "sha256", "revision"}:
+    if type(reference) is not dict or set(reference) not in ({"path", "sha256"}, {"path", "sha256", "revision"}):
         raise ee.ExternalEvidenceError("external QA requires native typed artifact references", code="invalid_qa_mapping")
     return reference
 
@@ -97,7 +97,7 @@ def _validated_projection(repo_root, envelope, *, context_ref, expected_feature_
         for field, category in (("host_policy_ref", "contracts"), ("execution_profile_ref", "tools")):
             reference = _ref(context[field]); raw = bound(reference)
             selected = {row["path"]: row for row in candidate["assessed_inputs"][category]}
-            if (reference["revision"] is None or reference["path"] not in selected
+            if (reference.get("revision") is None or reference["path"] not in selected
                     or reference["path"] in candidate["record_ownership"]
                     or selected[reference["path"]]["sha256"] != ee.sha256_hex(raw)):
                 raise ee.ExternalEvidenceError("external QA policy/profile must be whole immutable assessed inputs", code="qa_unassessed_profile")
@@ -106,7 +106,7 @@ def _validated_projection(repo_root, envelope, *, context_ref, expected_feature_
         if TOOLS_DIR != root / (prefix + "tools"):
             raise ee.ExternalEvidenceError("external QA must use the assessed active consumer layout", code="qa_active_layout_mismatch")
         selected_tools = {row["path"] for row in candidate["assessed_inputs"]["tools"]}
-        needed = {prefix + p for p in ("tools/external_qa.py", "tools/external_evidence.py", "schema/external_qa_context.schema.json", "schema/external_evidence_admission.schema.json")}
+        needed = {prefix + p for p in ("tools/external_qa.py", "tools/external_evidence.py", "tools/git_seam.py", "schema/external_qa_context.schema.json", "schema/external_evidence_admission.schema.json")}
         if not needed <= selected_tools:
             raise ee.ExternalEvidenceError("external QA manifest omits active bridge/schema inputs", code="qa_unassessed_bridge")
         qa = json.loads(bound(context["qa_ref"]))

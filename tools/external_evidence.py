@@ -33,7 +33,13 @@ ROOT_DIR = TOOLS_DIR.parent
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
-import git_seam  # noqa: E402
+_seam_name = "_nizam_external_git_seam_" + hashlib.sha256(str(TOOLS_DIR).encode()).hexdigest()
+if _seam_name not in sys.modules:
+    _seam_spec = importlib.util.spec_from_file_location(_seam_name, TOOLS_DIR / "git_seam.py")
+    _seam_module = importlib.util.module_from_spec(_seam_spec)
+    sys.modules[_seam_name] = _seam_module
+    _seam_spec.loader.exec_module(_seam_module)
+git_seam = sys.modules[_seam_name]
 
 
 SCHEMA_VERSION = "1.0.0"
@@ -352,11 +358,13 @@ def _external_reservation_guard(function):
         task_id = arguments.get("task_id")
         _validate_identifier(task_id, "task_id")
         root = Path(repo_root).resolve(strict=True)
+        git_seam.validate_repo_root(root)
         sp = _start_path_api()
         try:
             with sp._task_reservation_lock(root, task_id):
                 if sp._native_task_history_exists(root, task_id):
                     raise ExternalEvidenceError("task has native attempt history; external reservation refused", code="mixed_attempt_authority")
+                sp._external_task_state(root, task_id)  # Refuse unsafe/corrupt matching publication before writes.
                 return function(root, **arguments)
         except sp.StartPathError as exc:
             raise ExternalEvidenceError(str(exc), code="mixed_or_corrupt_attempt_history", exit_code=2) from exc
