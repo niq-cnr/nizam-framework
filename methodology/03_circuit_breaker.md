@@ -125,8 +125,12 @@ qualify. Configured step limits still apply. Recovery preserves all history;
 it cannot permit failures beyond its recorded finite ceiling. Root remains
 responsible for recording real operator authority, never fabricating consent.
 
-Capture scans all regular task captures below `.agent/evidence/`, including
-other output directories and step names, and refuses corrupt matching history.
+Capture reads regular task captures below `.agent/evidence/` and safe planned
+capture paths bound in existing reservation metadata, including supported other
+output directories and step names, and refuses corrupt matching history. Missing
+or conflicting planned output remains unresolved. Legacy unlinked output outside
+canonical history requires owner reconciliation rather than inferred success or
+a repository-wide search.
 Explicit defect signatures span steps; automatic signatures include exact argv,
 observed outcome/exit/signal and stdout/stderr byte digests so unrelated empty
 stderr failures do not collapse into one defect.

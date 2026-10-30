@@ -18,7 +18,14 @@ runs after release. External allocation uses the same task lock and its existing
 serialized permit ledger transition.
 
 Unresolved native reservation markers occupy capacity until a matching validated
-terminal capture exists. Unconsumed external permits occupy capacity according to
+terminal capture exists. Before dispatch, the existing reservation binds the safe
+planned capture path in the caller's selected output directory. History validates
+that exact task, step, attempt, path and stream bytes, including supported output
+directories outside canonical evidence. It does not scan arbitrary repository
+content or infer success from an unrelated record. A missing or conflicting link
+remains held. Legacy unlinked captures outside canonical history require explicit
+owner reconciliation; automatic rolling migration is not claimed.
+Unconsumed external permits occupy capacity according to
 their existing allocated/admitted step counters, cross-checked against permit
 records. These are derived values, not a second budget or owner ledger. Actual
 failed counts remain actual observed failures. A process interruption without

@@ -122,6 +122,36 @@ class NativePendingCapacityTests(unittest.TestCase):
             self.assertEqual(json.loads(out)["outcome"], "success")
         self.assertFalse((self.root / ".git").exists())
 
+    def test_allowed_alternate_output_successes_release_pending_capacity(self):
+        for index in range(4):
+            args = self.argv("alternate-success" + str(index))
+            args[args.index("--output-dir") + 1] = "proof/captures"
+            result = subprocess.run(args, env=self.env, capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 0, "legitimate completed success retained a pending slot: " + result.stdout + result.stderr)
+            capture = json.loads(result.stdout)
+            self.assertEqual(capture["outcome"], "success")
+            self.assertTrue(capture["capture_path"].startswith("proof/captures/"))
+            self.assertEqual(capture["continuation_lineage"]["failed_execution_count"], 0)
+            self.assertEqual(json.loads((self.root / capture["capture_path"]).read_bytes()), capture)
+        self.assertEqual(len(list((self.root / "proof/captures").glob("*.capture.json"))), 4)
+        result = self.capture("canonical-after-alternate-success")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(json.loads(result.stdout)["continuation_lineage"]["failed_execution_count"], 0)
+
+    def test_allowed_alternate_output_failures_are_observed_not_unresolved_capacity(self):
+        for index in range(3):
+            args = self.argv("alternate-failure" + str(index), code="raise SystemExit(7)", signature="same-alternate-defect")
+            args[args.index("--output-dir") + 1] = "proof/captures"
+            result = subprocess.run(args, env=self.env, capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            capture = json.loads(result.stdout)
+            self.assertEqual(capture["outcome"], "failed")
+            self.assertEqual(capture["continuation_lineage"]["failed_execution_count"], index,
+                             "completed alternate-output failures disappeared from actual failure history")
+        result = self.capture("canonical-after-alternate-failures", signature="changed-label")
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("signature", result.stderr.lower())
+
     def test_unknown_interrupted_reservation_holds_capacity_in_fresh_processes(self):
         interrupted = self.blocked("unknown")
         self.await_ready([interrupted]); self.assertTrue(interrupted[1].exists())
