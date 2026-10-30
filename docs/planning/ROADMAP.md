@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.43
+version: 0.65.44
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.44"
+    date: "2026-10-30"
+    summary: "Preserve independent rejection of the partial-MAC candidate and bind the profile-1.1 whole-envelope correction to its reviewed coverage amendment."
   - version: "0.65.43"
     date: "2026-10-30"
     summary: "Record the strategic current-source generic external-admission repair and the remaining trusted-producer/owned-completion integration boundary."
@@ -347,6 +350,13 @@ after ledger-write interruption, and unchecked permit identifiers reaching paths
 The repair requires a trusted host-selected expected digest, validates replay,
 preserves unresolved records and checks existing identifier bounds before writes.
 Exact verification and source acceptance remain in the owning contract/evidence.
+
+Independent review rejected the first source candidate because a producer proof
+could be spliced onto changed host-expected assessed metadata. The reviewed
+coverage amendment retains that failure and independent RED controls, requires
+complete-envelope authentication in profile `1.1.0`, and refuses old `1.0.0`
+proof semantics. This is a source compatibility change, not a release or an
+instruction to discard old records or reset task budgets.
 
 The installed `.nizam/` payload, release preparation and prior evidence remain separate.
 NF07 is not full Agentic integration: token possession does not establish trusted

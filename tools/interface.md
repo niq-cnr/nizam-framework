@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.9.0
+version: 0.9.1
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.9.1"
+    date: "2026-10-30"
+    summary: "Require profile 1.1.0 complete-envelope producer authentication and reject legacy proof splicing without resetting retained history."
   - version: "0.9.0"
     date: "2026-10-30"
     summary: "Document optional generic external admission, trusted expected candidate digests, revalidated replay and interrupted-record recovery boundaries."
@@ -537,7 +540,7 @@ erasing history, uninstalling packages or changing governance/task state.
 
 The authored tools/external_evidence.py API and
 schema/external_evidence_admission.schema.json define
-`generic-external-evidence-v1` / `1.0.0`. This optional local profile has no
+`generic-external-evidence-v1` / `1.1.0`. This optional local profile has no
 Agentic SDLC dependency and adds no mandatory adapter item. Select and qualify
 the exact framework/consumer implementation pair before using it in a governed
 integration. Its existence in current source does not upgrade an installed payload.
@@ -560,9 +563,18 @@ source change requires existing callers to supply the new argument before adopti
 the repaired implementation; unsafe legacy acceptance is not a compatibility mode.
 
 The host keeps the returned permit token private and supplies it only to its
-selected trusted producer channel. `compute_producer_proof` binds possession of
-that token to candidate commit/tree, execution identity and artifact descriptors
-using HMAC-SHA256. The MAC alone does not authenticate an independent producer,
+selected trusted producer channel. `compute_producer_proof` requires the complete
+`envelope_binding` in addition to its existing arguments. It excludes only the
+self-referential `producer_proof` object, and authenticates every other top-level
+field plus the producer identity and timestamp with domain-separated HMAC-SHA256
+(`nizam-external-envelope-hmac-v2`). This includes assessed candidate digest,
+policy/framework, contract/requirements, collections, lineage, status, execution
+identity and artifact descriptors. Missing binding fields refuse. The current
+API refuses profile `1.0.0`; it does not accept its partial MAC semantics as a
+fallback. Historical records and failure counts remain preserved, and callers
+must explicitly adopt `1.1.0` and requalify their producer mapping. The frozen
+historical corpus remains unchanged; current static conformance projects only
+its profile-version metadata. The MAC alone does not authenticate an independent producer,
 establish isolation, or prove a human decision. The host must establish those facts
 through the actual selected execution and trust mechanism.
 

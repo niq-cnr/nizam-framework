@@ -809,7 +809,7 @@ class StandaloneQualificationTests(unittest.TestCase):
         ee_api = importlib.util.module_from_spec(ee_spec)
         ee_spec.loader.exec_module(ee_api)
 
-        proof = ee_api.compute_producer_proof(
+        proof_args = dict(
             permit_digest=permit_digest,
             permit_token=permit_token,
             candidate_commit=head_sha,
@@ -844,7 +844,7 @@ class StandaloneQualificationTests(unittest.TestCase):
             "schema_version": "1.0.0",
             "protocol_version": "1.0.0",
             "profile_id": "generic-external-evidence-v1",
-            "profile_version": "1.0.0",
+            "profile_version": ee_api.SUPPORTED_PROFILE_VERSION,
             "policy_binding": {
                 "policy_id": policy_id,
                 "policy_version": policy_ver,
@@ -888,7 +888,7 @@ class StandaloneQualificationTests(unittest.TestCase):
                 "regression_collection_digest": reg_dig,
             },
             "execution_identity": exec_id,
-            "producer_proof": proof,
+            "producer_proof": {},
             "status_separation": {
                 "test_outcome": "passed",
                 "execution_status": "completed",
@@ -896,6 +896,7 @@ class StandaloneQualificationTests(unittest.TestCase):
             },
             "artifacts": artifacts,
         }
+        envelope["producer_proof"] = ee_api.compute_producer_proof(envelope_binding=envelope, **proof_args)
         env_file = self.temp_dir / "n08-envelope.json"
         env_file.write_text(json.dumps(envelope, indent=2) + "\n", encoding="utf-8")
 

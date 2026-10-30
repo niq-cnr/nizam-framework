@@ -37,7 +37,7 @@ import git_seam  # noqa: E402
 SCHEMA_VERSION = "1.0.0"
 PROTOCOL_VERSION = "1.0.0"
 SUPPORTED_PROFILE_ID = "generic-external-evidence-v1"
-SUPPORTED_PROFILE_VERSION = "1.0.0"
+SUPPORTED_PROFILE_VERSION = "1.1.0"
 DEFAULT_STEP_LIMIT = 3
 DEFAULT_TASK_FAILURE_CEILING = 6
 MAX_SIGNATURE_FAILURES = 3
@@ -463,6 +463,7 @@ def allocate_attempt_permit(
 
 def compute_producer_proof(
     *,
+    envelope_binding: Mapping[str, Any],
     permit_digest: str,
     permit_token: str,
     candidate_commit: str,
@@ -473,8 +474,14 @@ def compute_producer_proof(
     session_id: str,
     issued_at: str,
 ) -> dict[str, str]:
-    """Compute host-authenticated HMAC-SHA256 producer proof bound to the allocated permit token."""
+    """Authenticate the complete profile-1.1 envelope and producer identity."""
+    binding = {key: value for key, value in envelope_binding.items() if key != "producer_proof"}
+    required = set(_load_admission_schema()["required"]) - {"producer_proof"}
+    if set(binding) != required:
+        raise ExternalEvidenceError("producer proof requires complete envelope binding", code="incomplete_proof_binding")
     payload = {
+        "mac_profile": "nizam-external-envelope-hmac-v2",
+        "envelope_binding": binding,
         "permit_digest": permit_digest,
         "candidate_commit": candidate_commit,
         "candidate_tree": candidate_tree,
@@ -633,23 +640,6 @@ def admit_external_evidence(
                 code="candidate_mismatch",
             )
 
-        expected_proof = compute_producer_proof(
-            permit_digest=permit_digest,
-            permit_token=permit_token,
-            candidate_commit=consumer["candidate_commit"],
-            candidate_tree=consumer["candidate_tree"],
-            execution_identity=envelope["execution_identity"],
-            artifacts=envelope["artifacts"],
-            producer_id=producer_proof["producer_id"],
-            session_id=producer_proof["session_id"],
-            issued_at=producer_proof["issued_at"],
-        )
-        if not hmac.compare_digest(expected_proof["permit_binding_digest"], producer_proof["permit_binding_digest"]):
-            raise ExternalEvidenceError(
-                "producer_proof.permit_binding_digest failed host permit authentication",
-                code="forged_producer_proof",
-            )
-
         # 5. Verify policy, framework, repository/git, contract, collection, and tool/adapter bindings
         pol = envelope["policy_binding"]
         if (
@@ -781,6 +771,24 @@ def admit_external_evidence(
             raise ExternalEvidenceError(
                 f"partial capture rejected: missing required artifact roles {sorted(missing_roles)}",
                 code="partial_capture",
+            )
+
+        expected_proof = compute_producer_proof(
+            envelope_binding=envelope,
+            permit_digest=permit_digest,
+            permit_token=permit_token,
+            candidate_commit=consumer["candidate_commit"],
+            candidate_tree=consumer["candidate_tree"],
+            execution_identity=envelope["execution_identity"],
+            artifacts=envelope["artifacts"],
+            producer_id=producer_proof["producer_id"],
+            session_id=producer_proof["session_id"],
+            issued_at=producer_proof["issued_at"],
+        )
+        if not hmac.compare_digest(expected_proof["permit_binding_digest"], producer_proof["permit_binding_digest"]):
+            raise ExternalEvidenceError(
+                "producer_proof.permit_binding_digest failed host permit authentication",
+                code="forged_producer_proof",
             )
 
         # 8. Durable record publication followed by one atomic ledger transition.

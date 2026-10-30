@@ -39,6 +39,10 @@
       {
         "path": "docs/planning/ROADMAP.md",
         "purpose": "Record current-source correction and NF07 boundary without claiming installed adoption/release."
+      },
+      {
+        "path": "schema/external_evidence_admission.schema.json",
+        "purpose": "Declare profile version 1.1.0 for whole-envelope authenticated binding; old proof semantics are not silently accepted."
       }
     ]
   },
@@ -57,7 +61,8 @@
     "If admission file publication succeeds but ledger write fails, reconcile reports unresolved orphan (not ok). Repeating exact valid admission revalidates all inputs and uses identical retained record before one ledger transition; conflicting orphan remains untouched and refuses.",
     "Reconciliation validates stored envelope digest rather than trusting its declared digest, detects unmatched admission/permit files and preserves them for explicit recovery.",
     "Real adverse controls include candidate mismatch, replay artifact/contract/policy and record mutation, allocation/admission persistence interruption and retry/concurrency; existing ceilings and standalone API behavior remain passing.",
-    "Source acceptance is separate from neutral-profile conformance, installed adoption and Agentic A08/A09/J01 qualification."
+    "Source acceptance is separate from neutral-profile conformance, installed adoption and Agentic A08/A09/J01 qualification.",
+    "Independent evaluator splice finding requires producer HMAC to bind every semantically relevant envelope field, including assessed digest/policy/framework/contract/collections/attempt/status metadata. Use domain-separated full-envelope authentication excluding only producer_proof itself, plus existing producer identity/timestamp. Old profile 1.0.0 refuses; current profile 1.1.0 and required helper argument documented. Preserve original conformance corpus; only explicit metadata projection in current static test is allowed."
   ],
   "verification": [
     {
@@ -159,5 +164,22 @@
   ],
   "evidence_convention": "Exact command argv/cwd/base/candidate/environment, true exits and immutable stdout/stderr captures; independent verdicts separate from assessed source inputs.",
   "additional_reproduction": ".agent/evidence/strategic-nizam-20261030/permit-path-probe.log",
-  "compatibility_note": "The library admit_external_evidence call requires a new keyword expected_candidate_sha256 and CLI --expected-candidate-sha256. Missing values refuse rather than preserve unsafe legacy acceptance. Update both authored current callers and document this source-only compatibility change. The host supplies its independently approved frozen-manifest digest; never obtain the expected value from the submitted envelope."
+  "compatibility_note": "The library admit_external_evidence call requires a new keyword expected_candidate_sha256 and CLI --expected-candidate-sha256. Missing values refuse rather than preserve unsafe legacy acceptance. Update both authored current callers and document this source-only compatibility change. The host supplies its independently approved frozen-manifest digest; never obtain the expected value from the submitted envelope.",
+  "amendments": [
+    {
+      "type": "semantic-security-coverage-amendment",
+      "prior_contract_sha256": "bed71567547c321c906b3aa20ca0ec3cbbe275b808d2bf2cef8494e57e385384",
+      "reason": "Independent evaluator reproduced assessed-digest proof splice at ace04fed; Test Engineer captured independent RED.",
+      "re_approval_required": false,
+      "source_finding": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-candidate-splice-probe.log",
+      "test_engineer_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-splice-independent-red.json",
+      "proposed_profile": "generic-external-evidence-v1/1.1.0",
+      "proposed_mac": "domain-separated all envelope fields except producer_proof; producer identity retained",
+      "approval_evidence": {
+        "mode_a": ".agent/validator/strategic-nf-external-admission-20261030-amendment-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-external-admission-20261030-amendment-contract-review.json",
+        "approved_proposal_sha256": "1f45db133a6b7e4ac603cb9ad11c76cc2d261cb66ab58590918cb261065298dc"
+      }
+    }
+  ]
 }

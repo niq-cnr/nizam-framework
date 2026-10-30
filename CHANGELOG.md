@@ -15,6 +15,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   transition; unresolved or conflicting records refuse. Permit identifiers are checked
   against existing schema bounds before filesystem writes. Existing callers must supply
   `expected_candidate_sha256` / `--expected-candidate-sha256` when adopting this source.
+- Independent review found that the original producer MAC omitted assessed metadata.
+  Profile `1.1.0` now authenticates the complete envelope and producer identity with
+  domain separation. `compute_producer_proof` requires `envelope_binding`; legacy
+  `1.0.0` proof semantics refuse while historical records and counters remain intact.
 
 ## [3.1.3] - 2026-10-29
 

@@ -170,7 +170,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             "isolation_mode": "container",
             "isolation_digest": "88" * 32,
         }
-        proof = ee.compute_producer_proof(
+        proof_args = dict(
             permit_digest=permit_digest,
             permit_token=permit_token,
             candidate_commit=self.cand_commit,
@@ -181,11 +181,11 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             session_id="sess-20261027-0001",
             issued_at="2026-10-27T12:00:00Z",
         )
-        return {
+        envelope = {
             "schema_version": "1.0.0",
             "protocol_version": "1.0.0",
             "profile_id": "generic-external-evidence-v1",
-            "profile_version": "1.0.0",
+            "profile_version": ee.SUPPORTED_PROFILE_VERSION,
             "policy_binding": {
                 "policy_id": POLICY_ID,
                 "policy_version": POLICY_VERSION,
@@ -229,7 +229,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 "regression_collection_digest": REG_COLLECTION_DIGEST,
             },
             "execution_identity": exec_id,
-            "producer_proof": proof,
+            "producer_proof": {},
             "status_separation": {
                 "test_outcome": test_outcome,
                 "execution_status": execution_status,
@@ -237,6 +237,8 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             },
             "artifacts": artifacts,
         }
+        envelope["producer_proof"] = ee.compute_producer_proof(envelope_binding=envelope, **proof_args)
+        return envelope
 
     def _admit(self, envelope: dict[str, object], **overrides: str) -> dict[str, object]:
         expected = dict(
@@ -281,7 +283,9 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        jsonschema.Draft202012Validator(schema).validate(corpus["positive_templates"]["valid_passed_admission"])
+        current_template = copy.deepcopy(corpus["positive_templates"]["valid_passed_admission"])
+        current_template["profile_version"] = ee.SUPPORTED_PROFILE_VERSION
+        jsonschema.Draft202012Validator(schema).validate(current_template)
 
         alloc = ee.allocate_attempt_permit(
             self.repo,
@@ -305,6 +309,85 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 with self.assertRaises(ee.ExternalEvidenceError) as ctx:
                     self._admit(mutated)
                 self.assertEqual(ctx.exception.code, neg["expected_code"])
+
+    def test_candidate_digest_cannot_be_spliced_after_producer_proof(self) -> None:
+        alloc = ee.allocate_attempt_permit(
+            self.repo,
+            task_id="F-201",
+            step_id="verify-unit",
+            run_id="run-01",
+            candidate_commit=self.cand_commit,
+        )
+        original = self._build_valid_envelope(alloc, self._write_artifacts("digest-splice"))
+        proof = copy.deepcopy(original["producer_proof"])
+        spliced = copy.deepcopy(original)
+        spliced["consumer_binding"]["candidate_sha256"] = "33" * 32
+        self.assertEqual(spliced["producer_proof"], proof)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(spliced, expected_candidate_sha256="33" * 32)
+        self.assertEqual(ctx.exception.code, "forged_producer_proof")
+        # Refusal must leave the original authenticated submission usable.
+        self.assertTrue(self._admit(original)["ok"])
+
+    def test_semantic_metadata_cannot_be_spliced_after_producer_proof(self) -> None:
+        variants = (
+            "policy", "framework", "acceptance-collection", "regression-collection",
+            "contract-requirements", "admission-decision", "execution-status",
+        )
+        contract_path = self.repo / self.contract_rel
+        original_contract = contract_path.read_bytes()
+        ledger_path = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        for name in variants:
+            with self.subTest(binding=name):
+                try:
+                    alloc = ee.allocate_attempt_permit(
+                        self.repo, task_id="F-201", step_id="verify-" + name,
+                        run_id="run-01", candidate_commit=self.cand_commit,
+                    )
+                    envelope = self._build_valid_envelope(
+                        alloc, self._write_artifacts("semantic-splice-" + name)
+                    )
+                    proof = copy.deepcopy(envelope["producer_proof"])
+                    expected = {}
+                    if name == "policy":
+                        envelope["policy_binding"]["policy_digest"] = "43" * 32
+                        expected["expected_policy_digest"] = "43" * 32
+                    elif name == "framework":
+                        envelope["framework_identity"].update(
+                            version="3.0.1", commit_sha="ab" * 20, tree_sha="cd" * 20
+                        )
+                        expected.update(
+                            expected_framework_version="3.0.1",
+                            expected_framework_commit="ab" * 20,
+                            expected_framework_tree="cd" * 20,
+                        )
+                    elif name == "acceptance-collection":
+                        envelope["collection_binding"]["acceptance_collection_digest"] = "44" * 32
+                        expected["expected_acceptance_collection_digest"] = "44" * 32
+                    elif name == "regression-collection":
+                        envelope["collection_binding"]["regression_collection_digest"] = "45" * 32
+                        expected["expected_regression_collection_digest"] = "45" * 32
+                    elif name == "contract-requirements":
+                        contract = json.loads(original_contract)
+                        contract["requirements"] = ["REQ-201-B"]
+                        updated = ee.canonical_json_bytes(contract) + b"\n"
+                        contract_path.write_bytes(updated)
+                        envelope["contract_binding"]["requirement_ids"] = ["REQ-201-B"]
+                        envelope["contract_binding"]["contract_digest"] = ee.sha256_hex(updated)
+                    elif name == "admission-decision":
+                        envelope["status_separation"]["admission_decision"] = "rejected"
+                    else:
+                        envelope["status_separation"].update(
+                            execution_status="interrupted", admission_decision="quarantined"
+                        )
+                    self.assertEqual(envelope["producer_proof"], proof)
+                    before = ledger_path.read_bytes()
+                    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                        self._admit(envelope, **expected)
+                    self.assertEqual(ctx.exception.code, "forged_producer_proof")
+                    self.assertEqual(ledger_path.read_bytes(), before)
+                finally:
+                    contract_path.write_bytes(original_contract)
 
     def test_admission_idempotency_conflicting_reuse_and_binding_rejections(self) -> None:
         """Verify valid admission, idempotent duplicate delivery, conflicting reuse rejection, and all binding checks."""
@@ -352,6 +435,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
         bad_tool["execution_identity"]["tool_id"] = "other-tool"
         # Recompute proof so it tests tool_mismatch rather than forged_producer_proof
         bad_tool["producer_proof"] = ee.compute_producer_proof(
+            envelope_binding=bad_tool,
             permit_digest=str(alloc["permit_digest"]),
             permit_token=str(alloc["permit_token"]),
             candidate_commit=self.cand_commit,
