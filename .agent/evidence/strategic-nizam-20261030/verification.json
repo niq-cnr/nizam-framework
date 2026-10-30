@@ -1,0 +1,79 @@
+{
+  "source_candidate": "ace04fed3738ec67b373ffc7980a58f8f9f6ac4a",
+  "source_sha256": {
+    "tools/external_evidence.py": "9e5856bbb9f8fe5b90596453ef49e9351fc3776f77fc2d23fbc09409597e1666",
+    "tools/test_nf_ac04_generic_admission.py": "b13f3f7824e39d644d2b679c311e100e1254c74290ece6deaf0ad95fbf964efc",
+    "tools/test_nf_ac05_standalone_e2e.py": "41c63b08d242789ca931d5dc29aa491f05a65a614b0f9694dc3365e95eee020a",
+    "tools/interface.md": "d003fca7bc23d1676fe2e432349a78ea2facddd37df56edf9d9dc484e0d22bcd",
+    "docs/planning/ROADMAP.md": "1c0b91ba2e8095ef753732a6c0d3783e754e3fa12fdb0633206c5fb3f7034801",
+    "CHANGELOG.md": "65f83bbfcbbdaf3d03e357e4878bf049dca2a6ff6185fe4a9d5c73b99c7c8a35"
+  },
+  "execution_environment": {
+    "python": "3.12.3",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "checks": [
+    {
+      "id": "NF-EXT-01",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "output": ".agent/evidence/strategic-nizam-20261030/admission-green.log",
+      "output_sha256": "da12431a213546d42a171e9ca61baf1b263183556639c078a9103229fd345344"
+    },
+    {
+      "id": "NF-EXT-02",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "output": ".agent/evidence/strategic-nizam-20261030/standalone-green.log",
+      "output_sha256": "3206dfaacd208f6c3b119cbda99eee89427726499f17cc2107b3fd6acc0604e2"
+    },
+    {
+      "id": "NF-EXT-03",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--base-cases"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "output": ".agent/evidence/strategic-nizam-20261030/workflow-green.log",
+      "output_sha256": "efa2ce1ff061f9aa7db1c33fede5d386c029176f7c0f6f5c05b3608cd6dcb833"
+    },
+    {
+      "id": "NF-EXT-04",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "output": ".agent/evidence/strategic-nizam-20261030/compliance-green.log",
+      "output_sha256": "1643c81b81705bf6832a1cb625e1bfbc40ad453b1ca81573c3bf4bce3f46f45c"
+    }
+  ],
+  "whitespace_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "observed_exit": 0
+  },
+  "limitations": [
+    "Command outputs were captured from frozen source bytes before the source commit; source hashes bind the committed candidate.",
+    "This manifest is a command execution record, not a typed v2 QA verdict or completion receipt.",
+    "Independent ModeB/QA review and actual optional consumer integration remain separate."
+  ]
+}
