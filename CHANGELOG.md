@@ -17,6 +17,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- External admission validates its complete existing managed-state directory,
+  lock and ledger namespace before creation or cleanup. Nofollow directory
+  descriptors, nonblocking opens and actual regular-file checks reject unsafe components;
+  staging cleanup preserves unknown nonregular entries without partial cleanup.
+  This guards a cooperative host namespace, not hostile same-user concurrent renames.
 - Native and external task reservations now charge unresolved executions against
   existing finite failure/signature capacity across steps. Fresh native policy
   evaluation and reservation share one lock, preventing stale concurrent checks

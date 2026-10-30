@@ -177,53 +177,159 @@ def _admission_dir(repo_root: Path) -> Path:
     return repo_root / ".agent" / "evidence" / "external_admissions"
 
 
-@contextmanager
-def _exclusive_state_lock(repo_root: Path) -> Iterator[Path]:
+def _unsafe_namespace(message: str) -> ExternalEvidenceError:
+    return ExternalEvidenceError(message, code="unsafe_state_namespace")
+
+
+def _preflight_state_namespace(repo_root: Path) -> None:
+    """Inspect the complete existing namespace before creating or cleaning anything.
+
+    This guards a cooperative host's pre-existing namespace. It does not defend
+    path-based publication against a hostile same-UID concurrent directory rename.
+    """
+    for primitive in ("O_NOFOLLOW", "O_DIRECTORY", "O_NONBLOCK"):
+        if not hasattr(os, primitive):
+            raise _unsafe_namespace(f"external state requires {primitive}")
     state_dir = _admission_dir(repo_root)
-    state_dir.mkdir(parents=True, exist_ok=True)
-    lock_path = state_dir / "state.lock"
-    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0), 0o600)
+    directories = (
+        repo_root / ".agent", repo_root / ".agent" / "evidence", state_dir,
+        state_dir / "permits", state_dir / "admitted",
+    )
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX)
-        yield state_dir
+        for directory in directories:
+            try:
+                info = directory.lstat()
+            except FileNotFoundError:
+                continue
+            if not stat.S_ISDIR(info.st_mode):
+                raise _unsafe_namespace(f"external state directory is unsafe: {directory}")
+        for filename in ("state.lock", "ledger.json"):
+            try:
+                info = (state_dir / filename).lstat()
+            except FileNotFoundError:
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                raise _unsafe_namespace(f"external state {filename} must be a regular file")
+    except OSError as exc:
+        raise _unsafe_namespace(f"external state preflight failed: {exc}") from exc
+
+
+def _open_state_directory(name: str | Path, *, parent_fd: int | None = None) -> int:
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    fd = os.open(name, flags, dir_fd=parent_fd)
+    try:
+        if not stat.S_ISDIR(os.fstat(fd).st_mode):
+            raise _unsafe_namespace(f"external state opened directory is unsafe: {name}")
+    except BaseException:
+        os.close(fd)
+        raise
+    return fd
+
+
+@contextmanager
+def _exclusive_state_lock(repo_root: Path) -> Iterator[tuple[Path, int]]:
+    _preflight_state_namespace(repo_root)
+    state_dir = _admission_dir(repo_root)
+    directories: list[int] = []
+    lock_fd: int | None = None
+    locked = False
+    try:
+        directories.append(_open_state_directory(repo_root))
+        for component in (".agent", "evidence", "external_admissions"):
+            try:
+                os.mkdir(component, dir_fd=directories[-1])
+            except FileExistsError:
+                pass
+            directories.append(_open_state_directory(component, parent_fd=directories[-1]))
+        state_fd = directories[-1]
+        # Check every existing managed child before creating the lock. A bad
+        # sibling must not grant cleanup or missing-directory creation credit.
+        for child in ("permits", "admitted"):
+            try:
+                child_fd = _open_state_directory(child, parent_fd=state_fd)
+            except FileNotFoundError:
+                continue
+            directories.append(child_fd)
+        flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
+        lock_fd = os.open("state.lock", flags, 0o600, dir_fd=state_fd)
+        if not stat.S_ISREG(os.fstat(lock_fd).st_mode):
+            raise _unsafe_namespace("external state opened lock must be a regular file")
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        locked = True
+    except OSError as exc:
+        if lock_fd is not None:
+            os.close(lock_fd)
+        for directory_fd in reversed(directories):
+            os.close(directory_fd)
+        raise _unsafe_namespace(f"external state namespace open failed: {exc}") from exc
+    except BaseException:
+        if lock_fd is not None:
+            os.close(lock_fd)
+        for directory_fd in reversed(directories):
+            os.close(directory_fd)
+        raise
+    try:
+        yield state_dir, state_fd
     finally:
         try:
-            fcntl.flock(fd, fcntl.LOCK_UN)
+            if locked:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN)
         finally:
-            os.close(fd)
+            os.close(lock_fd)
+            for directory_fd in reversed(directories):
+                os.close(directory_fd)
 
 
-def _cleanup_staging_files(state_dir: Path) -> list[str]:
-    """Remove any leftover `.tmp-*` staging files from interrupted/crashed processes."""
-    cleaned: list[str] = []
-    if not state_dir.exists():
-        return cleaned
-    for sub in (state_dir, state_dir / "permits", state_dir / "admitted"):
-        if not sub.is_dir():
-            continue
-        for item in sub.iterdir():
-            if item.name.startswith(".tmp-"):
-                try:
-                    item.unlink()
-                    cleaned.append(str(item.relative_to(state_dir)))
-                except OSError:
-                    pass
-    return sorted(cleaned)
+def _cleanup_staging_files(state_dir: Path, *, state_fd: int) -> list[str]:
+    """Preflight all staging entries, then unlink regular stages by directory FD."""
+    children: list[int] = []
+    stages: list[tuple[int, str, str]] = []
+    try:
+        containers = [("", state_fd)]
+        for child in ("permits", "admitted"):
+            try:
+                child_fd = _open_state_directory(child, parent_fd=state_fd)
+            except FileNotFoundError:
+                continue
+            children.append(child_fd)
+            containers.append((child, child_fd))
+        for prefix, directory_fd in containers:
+            for name in os.listdir(directory_fd):
+                if not name.startswith(".tmp-"):
+                    continue
+                info = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+                if not stat.S_ISREG(info.st_mode):
+                    raise _unsafe_namespace(f"unknown external state staging entry preserved in {state_dir}: {prefix}/{name}")
+                stages.append((directory_fd, name, f"{prefix}/{name}" if prefix else name))
+        for directory_fd, name, _ in stages:
+            os.unlink(name, dir_fd=directory_fd)
+        return sorted(relative for _, _, relative in stages)
+    except OSError as exc:
+        raise _unsafe_namespace(f"external state staging cleanup failed: {exc}") from exc
+    finally:
+        for child_fd in reversed(children):
+            os.close(child_fd)
 
 
 def _load_or_init_ledger(state_dir: Path) -> dict[str, Any]:
     ledger_path = state_dir / "ledger.json"
-    if not ledger_path.exists():
+    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(ledger_path, flags)
+    except FileNotFoundError:
         return {
             "schema_version": SCHEMA_VERSION,
             "tasks": {},
             "permits": {},
             "admissions": {},
         }
-    if ledger_path.is_symlink():
-        raise ExternalEvidenceError("external admission ledger.json is a symlink", code="corrupt_ledger")
+    except OSError as exc:
+        raise ExternalEvidenceError(f"cannot open external admission ledger: {exc}", code="corrupt_ledger") from exc
     try:
-        raw = ledger_path.read_bytes()
+        with os.fdopen(fd, "rb") as handle:
+            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                raise ExternalEvidenceError("external admission opened ledger must be regular", code="corrupt_ledger")
+            raw = handle.read()
         data = json.loads(raw.decode("utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ExternalEvidenceError(f"corrupt external admission ledger: {exc}", code="corrupt_ledger") from exc
@@ -437,8 +543,8 @@ def allocate_attempt_permit(
     if verified_commit != candidate_commit:
         raise ExternalEvidenceError("candidate_commit must be an exact 40-hex commit SHA", code="invalid_candidate_commit")
 
-    with _exclusive_state_lock(repo_root) as state_dir:
-        _cleanup_staging_files(state_dir)
+    with _exclusive_state_lock(repo_root) as (state_dir, state_fd):
+        _cleanup_staging_files(state_dir, state_fd=state_fd)
         ledger = _load_or_init_ledger(state_dir)
         _refuse_task_orphans(repo_root, state_dir, ledger, task_id)
         pending = _pending_attempts(ledger, task_id)
@@ -694,8 +800,8 @@ def admit_external_evidence(
     envelope_sha256 = sha256_hex(envelope_raw)
     admission_key = f"{task_id}:{step_id}:{attempt_number}"
 
-    with _exclusive_state_lock(repo_root) as state_dir:
-        _cleanup_staging_files(state_dir)
+    with _exclusive_state_lock(repo_root) as (state_dir, state_fd):
+        _cleanup_staging_files(state_dir, state_fd=state_fd)
         ledger = _load_or_init_ledger(state_dir)
 
         # 3. Identify replay, but never bypass current host bindings or evidence checks.
@@ -994,8 +1100,8 @@ def admit_external_evidence(
 def reconcile_admission_state(repo_root: Path) -> dict[str, Any]:
     """Reconcile external admission state after an interrupted run and verify ledger consistency."""
     repo_root = Path(repo_root).resolve(strict=True)
-    with _exclusive_state_lock(repo_root) as state_dir:
-        cleaned = _cleanup_staging_files(state_dir)
+    with _exclusive_state_lock(repo_root) as (state_dir, state_fd):
+        cleaned = _cleanup_staging_files(state_dir, state_fd=state_fd)
         ledger = _load_or_init_ledger(state_dir)
         orphans = _untracked_state_files(repo_root, state_dir, ledger)
         if orphans:

@@ -1,0 +1,32 @@
+{
+  "review_id": "nizam-ledger-regular-read-precode-semantic-20261030",
+  "proposal_binding": {
+    "path": "coordination/nizam-ledger-regular-read-amendment-proposal.json",
+    "sha256": "c3087af1c724e1b68f618b3bd399f72acddd3097c7b75fd4e9f2521e5e7462f5"
+  },
+  "assessed_base": "702d1032b25b60b19dd226a125f720a780a1978b",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "semantic_findings": [
+    "Actual source _load_or_init_ledger calls arbitrary read_bytes after exists/symlink checks; current public reconciliation can block on FIFO. Reviewer independently reproduced702d public reconcile timeout2s in owned disposable FIFO fixture and observed existing regular staging file removed before reaching unsafe ledger read.",
+    "Adding existing ledger kind to complete preflight before any namespace/lock/cleanup effect is necessary. Missing ledger keeps existing initializer; present symlink/dangling/nonregular refuses without mutation. No new source/state authority, path migration or version conversion.",
+    "Actual O_RDONLY|O_NOFOLLOW|O_NONBLOCK descriptor followed by fstat regular check before reading bytes closes the direct blocking/symlink-read surface under the explicit cooperative namespace bound. Descriptors must close on all paths; existing regular JSON/shape/counter corruption diagnostics remain.",
+    "Independent added public ledger-type tests must retain all eight existing method/helper ASTs and assertions, prove prompt refusal and full state/outside byte-mode preservation with regular staged canary and missing lock, plus valid existing/absent ledger and corrupted regular JSON controls. Eight typed exact commands remain unchanged."
+  ],
+  "evidence_refs": [
+    "reviews/nizam-ledger-fifo-independent-probe.json",
+    "evidence/nizam/ledger-nonregular-probe.json",
+    "reviews/nizam-external-state-boundary-postcode-semantic.json",
+    "worktrees/nizam-state-boundary/tools/external_evidence.py"
+  ],
+  "advancement": "Semantic amendment accepted for bounded source implementation after root selection/structural approval and independently frozen actual RED. This verdict does not author tests/source or itself perform implementation.",
+  "limitations": [
+    "Scope regularity/preflight of ledger only, not malicious sameUID concurrent rename/process isolation or all external record formats.",
+    "Full authentication/counters/native proof separation and actual producer pair qualification remain unchanged.",
+    "No candidate source/tests edited; private local publicAPI probe only, no paid calls or installed mutation."
+  ]
+}

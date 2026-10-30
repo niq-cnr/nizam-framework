@@ -1,0 +1,76 @@
+{
+  "contract_id": "strategic-nf-state-boundary-20261030",
+  "status": "proposed",
+  "source_base": "6eba6d14dbabaacbe315edf77e01125a0d162187",
+  "programme_refs": [
+    "NF03",
+    "NF05",
+    "EF26"
+  ],
+  "finding": {
+    "evidence": "/home/cnross/code/strategic-refactoring-20261030/evidence/nizam/external-state-symlink-probe.json",
+    "behavior": "Actual valid admission refuses symlink only after cleanup followed redirected state directory and removed an outside owned .tmp sentinel."
+  },
+  "behavior": [
+    "Before creating missing managed directories, opening/creating state.lock, staging cleanup or writing state, validate every existing fixed namespace component beneath canonical repo_root: .agent, evidence, external_admissions, permits and admitted. Refuse symlink or non-directory components without deleting or modifying any existing owned/outside files or ledgers. Preflight all existing components before any namespace creation; missing safe components may then be created.",
+    "Open the validated root and fixed child directories using directory descriptors with O_DIRECTORY/O_NOFOLLOW and actual fstat directory checks; create missing components relative to validated parent descriptors. Unsupported nofollow primitives fail closed. No chmod/owner repair and no namespace relocation.",
+    "Open state.lock relative to anchored state directory with O_NOFOLLOW, O_NONBLOCK, O_CLOEXEC and existing create/readwrite semantics; require actual opened fstat regular file before flock. Existing symlink, FIFO, directory and other nonregular lock must refuse promptly without touching target bytes or running cleanup. Preserve common task-lock ordering.",
+    "Validate existing permits/admitted directories before lockfile creation or cleanup; stage cleanup enumerates and unlinks only regular .tmp-* entries relative to anchored validated directory descriptors. Unknown symlink/nonregular .tmp-* entries are preserved and refused; do not follow them or reinterpret as published state. Existing valid regular staging recovery remains supported.",
+    "Apply the same guard through allocation, generic admission, typed admission via existing generic core, and reconciliation; public domain exceptions must be controlled, not raw OSError or hangs. Existing authenticated admission/replay, unknown/orphan preservation, counter accounting and wire/API/schema behavior remain unchanged.",
+    "Independent actual accepted-source reproduction must retain outside owned .tmp sentinel bytes/mode for whole-state and managed-subdirectory symlinks, existing ancestor symlinks, and state.lock symlink/nonregular cases. Snapshot complete outside tree and ledger/permit/admission counts before and after refusals; positive real regular allocation/admit/replay/reconcile and staging cleanup must pass.",
+    "This is a cooperative host managed-namespace guard against unsafe preexisting components. It does not claim protection from hostile sameUID concurrent directory renames after validation; existing path-based publication is retained. No new ledger/controller/history conversion/authority or broad artifact-symlink permission."
+  ],
+  "verification_ref": ".agent/contracts/strategic-nf-state-boundary-20261030.json#/verification",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_external_state_boundary.py",
+        "purpose": "Independent Test Engineer real public allocation/admission/reconcile negative and positive namespace controls."
+      },
+      {
+        "path": "docs/architecture/external-state-boundary.md",
+        "purpose": "Cooperative namespace safety and precise hostile-sameUID-race exclusion."
+      },
+      {
+        "path": ".agent/contracts/strategic-nf-state-boundary-20261030.json",
+        "purpose": "Bounded EF26 owning source contract."
+      },
+      {
+        "path": ".agent/specs/strategic-nf-state-boundary-20261030.json",
+        "purpose": "Exact selected namespace guard and acceptance controls."
+      },
+      {
+        "path": ".agent/evidence/strategic-nf-state-boundary-20261030/*",
+        "purpose": "Preserved RED/green/review exact-source evidence."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/external_evidence.py",
+        "purpose": "Nofollow managed-directory and opened regular lock guard before cleanup/write; anchored staging cleanup."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "One exact offline corpus command in existing fixtures job; no runner/permissions/check identity change."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased current-source EF26 correction."
+      }
+    ]
+  },
+  "independent_test_owner": "/root/acs_assurance",
+  "implementation_owner": "/root/nizam_assurance",
+  "ledger_regular_read_amendment": {
+    "id": "nizam-ledger-regular-read-20261030",
+    "approved_proposal_sha256": "c3087af1c724e1b68f618b3bd399f72acddd3097c7b75fd4e9f2521e5e7462f5",
+    "scope": "Existing EE runtime/test/doc/changelog/owncontract/spec/evidence paths only; original eight test/helper ASTs preserved, three independent methods appended.",
+    "requirement": "Existing ledger.json must be regular in full preflight before namespace creation/lock/cleanup. Actual readonly nofollow/nonblocking opened descriptor must be regular before bytes. Only absent ledger initializes; no history conversion, guessed outcomes or extra authority.",
+    "precode_structural": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-ledger-regular-read-precode-structural.json",
+    "precode_semantic": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-ledger-regular-read-precode-semantic.json",
+    "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-ledger-independent-red.json",
+    "frozen_extended_test_sha256": "f105c0982d1dacdcb06f4ed2af7b6d00ddf47a31401eff123fad59dec30f10f8",
+    "original_namespace_eight_sha256": "6a5cbf283cda4a8c51d13e5ccb61bc85ad805e0db31406df06a8b29d3cbc5f72",
+    "verification": "Original eight exact typed verification commands retained unchanged."
+  }
+}
