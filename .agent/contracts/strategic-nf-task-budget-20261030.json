@@ -1,0 +1,273 @@
+{
+  "contract_id": "strategic-nf-task-budget-20261030",
+  "feature_id": "strategic-nf-task-budget-20261030",
+  "name": "Reserve existing task failure capacity atomically across concurrent steps",
+  "status": "approved",
+  "spec_ref": ".agent/specs/strategic-nf-task-budget-20261030.json",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_task_budget_reservations.py",
+        "purpose": "Independent actual-process/native and external-ledger concurrency/capacity controls; frozen RED before source."
+      },
+      {
+        "path": "docs/architecture/task-budget-reservations.md",
+        "purpose": "Exact derived pending capacity, bounded parallelism, truthful unknown/recovery and compatibility boundary."
+      },
+      {
+        "path": ".agent/contracts/strategic-nf-task-budget-20261030.json",
+        "purpose": "Owning bounded NF04 finding execution contract."
+      },
+      {
+        "path": ".agent/specs/strategic-nf-task-budget-20261030.json",
+        "purpose": "Exact selected policy/algorithm and finding evidence."
+      },
+      {
+        "path": ".agent/evidence/strategic-nizam-task-budget-20261030/*",
+        "purpose": "Immutable actual RED/green streams, role-owned reviews and source identities."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Fresh existing continuation policy plus derived pending reservations under existing common lock; preserve public unbound captures and terminal evidence."
+      },
+      {
+        "path": "tools/external_evidence.py",
+        "purpose": "Charge pending same-task permits against existing task/signature capacity under same ledger transition; no new counters."
+      },
+      {
+        "path": "methodology/03_circuit_breaker.md",
+        "purpose": "Normative clarification pending potential capacity vs actual failure, bounded independent concurrency and unchanged operator authority."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Exact caller concurrency/unknown/compatibility constraints for existing source API."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased confirmed NF04 source behavior change, not a release."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "One exact new task-budget corpus command in existing fixtures job, unchanged runner/permissions/check identity."
+      },
+      {
+        "path": "tools/test_nf_ac04_generic_admission.py",
+        "purpose": "Independent Test Engineer fixture-only migration: distinct task_id per semantic-metadata splice subcase so each reaches its unchanged forged-proof/invariant assertions under new pending capacity; no other change."
+      },
+      {
+        "path": "tools/test_start_path.py",
+        "purpose": "Independently authored fe4b075 publication-fixture reconciliation: substantive distinct assertions and identical-proof refusal; preserve all prior assertions and runtime dedupe."
+      }
+    ]
+  },
+  "non_goals": [
+    "No model/network/paid/live call, deployment or .nizam edit",
+    "No semantic signature classifier, guessed failure or new controller",
+    "No history conversion/reset or automatic unresolved evidence deletion",
+    "No global single-flight restriction when independent step capacity exists"
+  ],
+  "acceptance_requirements": [
+    "Preserve bounded parallelism for independently authorized steps; existing policy has no global one-pending mandate. Native/public capture and external allocation atomically reserve potential failure capacity against current actual failed outcomes plus all unresolved same-task reservations, across steps, directories and restarts, under the existing common task reservation lock.",
+    "No new ledger, failure counter, mode marker or recovery authority. Derive native pending slots from existing safe reservation markers without matching validated terminal capture; derive external pending slots from existing unconsumed permits and allocated/admitted step counts, refusing contradictions/corrupt/partial unknown records. Actual failed counts remain actual observed failures, never relabel pending as failed.",
+    "Before creating native reservation, re-evaluate existing continuation policy using fresh task history while holding the common task lock; a terminal failure published between an earlier check and reservation cannot let a stale authorization exceed its ceiling. Release the lock before running the command; outstanding reservation continues to hold potential capacity.",
+    "Same-step retry requires its prior outcome; independently authorized other steps can run concurrently only while failed_count+pending_count is below the finite task failure ceiling. Also conservatively charge unknown pending outcomes against the existing three-signature allowance (max observed same-signature failures+pending_count<3), unless existing exact finite operator recovery applies. Do not trust changing labels to manufacture capacity.",
+    "Existing finite operator recovery preserves all histories and actual failed counts, changes only its already-authorized finite ceiling/signature policy, and cannot clear unresolved executions, override same-step pending, repair corrupt histories, or create an unbounded extension.",
+    "Terminal successful evidence releases pending capacity without increasing failures; terminal failure converts pending to one observed failure. Restart/unknown interruption retains its capacity until actual existing outcome reconciliation. Mixed native/external history continues to hold rather than merge counters or grant a fresh channel budget.",
+    "Default remaining potential failure capacity is the minimum of task allowance (6-actual_failed) and unresolved signature allowance (3-max observed signature count), with each pending reservation occupying one slot. Pending identities remain stable; no global serialization when at least two slots are available.",
+    "Actual seven-process distinct-step barrier cannot dispatch beyond reserved capacity or produce seven failures over default six. Positive controls prove at least two independent steps overlap when capacity exists; native stale-check race, same-step pending, terminal success release, non-Git/restart, external cross-step pending/ceiling and existing finite operator recovery remain enforced."
+  ],
+  "verification": [
+    {
+      "id": "NF-BUD-01",
+      "command": "python3 tools/test_task_budget_reservations.py",
+      "argv": [
+        "python3",
+        "tools/test_task_budget_reservations.py"
+      ],
+      "acceptance_test": "Independent real dispatch/pending/stale-check/parallel-success/operator/restart controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-02",
+      "command": "python3 tools/test_external_qa.py",
+      "argv": [
+        "python3",
+        "tools/test_external_qa.py"
+      ],
+      "acceptance_test": "Existing optional provider/mixedmode21 corpus unchanged",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-03",
+      "command": "python3 tools/test_nf_ac04_generic_admission.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "acceptance_test": "Current full-envelope admission/ceilings/operator/orphan12",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-04",
+      "command": "python3 tools/test_start_path.py",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "acceptance_test": "Unchanged full native public capture/retry and receipt controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-05",
+      "command": "python3 tools/test_nf_ac05_standalone_e2e.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "acceptance_test": "Installed generic consumer controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-06",
+      "command": "python3 tools/test_workflow_assurance.py --base-cases",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--base-cases"
+      ],
+      "acceptance_test": "Current native proof identity/base controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-07",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "acceptance_test": "Full compliance including normative documents and CI",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-BUD-08",
+      "command": "git diff 9087cf40fd7ad8406759b8ddea8eab37d4257dc0..HEAD --check",
+      "argv": [
+        "git",
+        "diff",
+        "9087cf40fd7ad8406759b8ddea8eab37d4257dc0..HEAD",
+        "--check"
+      ],
+      "acceptance_test": "Full assessed committed delta whitespace",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "estimated_lines": 600,
+  "evidence_dir": ".agent/evidence/strategic-nizam-task-budget-20261030",
+  "source_identity": {
+    "base_commit": "9087cf40fd7ad8406759b8ddea8eab37d4257dc0",
+    "installed_governance": "v3.0.0 unchanged",
+    "source_baseline": "Accepted generic1.1 and resume plus provider foundation9087 pending independent final source review; current code not releases"
+  },
+  "evidence_convention": "Independent frozen actual RED before source. Record exact argv/env/source/true exits and lossless streams; preserve failed history and distinguish actual failure from pending capacity.",
+  "root_authority": "User approved complete programme and root explicitly assigned NF04 reproduced concurrency repair; no new operator authorization or live operation.",
+  "approval_evidence": {
+    "proposed_contract_sha256": "98f6a3750eeec4bb318da9fe00ad53c1056e920708bf4f258007dd5b3dc0627d",
+    "mode_a": ".agent/validator/strategic-nf-task-budget-mode-a.json",
+    "contract_review": ".agent/qa/strategic-nf-task-budget-contract-review.json",
+    "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-task-budget-independent-red.json"
+  },
+  "amendments": [
+    {
+      "type": "bounded-independent-semantic-fixture-isolation",
+      "re_approval_required": false,
+      "reason": "Current corrected pendingcapacity makes fourth of seven unsettled permits under F-201 refuse during setup of independent semantic metadata cases, before MAC assertions. Their attack controls are independent and should not share task allocation quota.",
+      "exact_method": "NfAc04GenericAdmissionTests.test_semantic_metadata_cannot_be_spliced_after_producer_proof",
+      "allowed_change": "Only allocate_attempt_permit task_id=\"F-201\" becomes task_id=f\"F-201-{name}\" within this method; step/run/contract/candidate/proof/artifact/mutation/expected-binding/assertion bytes otherwise remain unchanged.",
+      "invariants": [
+        "All existing attack mutations, expected host binding overrides, forged_producer_proof and exact unchanged ledger assertions preserved",
+        "Original13 new capacity test file remains byte-identical SHA256c4e0dd86fe71e79cecf6ffda42843927389ec591b59d0a2b6b6851bb160ee823",
+        "No runtime code, public API, newledger or authority change from this amendment",
+        "Independent Test Engineer authors the one-field fixture correction after both amendment gates"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "71312e00b451048bdfaca7af97b3b443d8638f2292f310c14abfa39ebb1e0d51",
+        "mode_a": ".agent/validator/strategic-nf-task-budget-fixture-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-task-budget-fixture-contract-review.json",
+        "independent_migration": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-task-budget-fixture-amendment.json"
+      }
+    },
+    {
+      "type": "bounded-independent-publication-fixture-reconciliation",
+      "approved_proposal_sha256": "fe4b075d26ac0ab7c650cc2c6243c5b46b7a49f47fb4db1275e664f3fde970b3",
+      "reason": "Safe arbitrary-output terminal discovery enforces existing identical successful assessed-proof guard. Publication fixture previously recaptured identical command under changed labels. Preserve guard and make scenario checks substantively distinct.",
+      "scope": "Only tools/test_start_path.py plus this owning contract/spec/evidence; no runtime or other frozen test change.",
+      "review_refs": [
+        "/home/cnross/code/strategic-refactoring-20261030/coordination/nizam-publication-fixture-amendment-proposal.json",
+        "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-publication-fixture-amendment-semantic.json"
+      ],
+      "independent_te_freeze": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-publication-fixture-amendment-freeze.json",
+      "test_sha256": "97847b621e030d61a1ba374d1c6743b45b6780cb2f706d2e1e2a810a168de7dc",
+      "prior_assertion_asts_preserved": 71,
+      "new_assertion_count": 76,
+      "runtime_and_capacity15_and_mac_tests": "byte-identical to6eba; no dedupe relaxation"
+    }
+  ],
+  "integration_evidence": {
+    "accepted_provider_main": "804cd1bf5c6362adc690970d65468363ba94b120",
+    "integration_head_before_source": "9fd285bca06d8b303483e185d2d84e496f2de31b",
+    "source_rule": "Original reviewed9087 runtime unchanged by accepted804 integration; original RED not relabelled."
+  },
+  "post_review_corrections": [
+    {
+      "finding": "EF27 alternate supported capture output directory",
+      "rejected_candidate": "df5ad6632ab8b6fc87b79c7970c17f81667b85b0",
+      "rejection_evidence": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-task-budget-postcode-r0.json",
+      "root_scope_ruling": "Existing capacity/history scope: bind safe planned capture_path in existing reservation before dispatch, validate exact terminal identity and streams; retain legacy-unlinked/missing/conflicting holds; no repository-wide scan or second authority ledger.",
+      "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-task-budget-alternate-output-independent-red.json",
+      "extended_corpus_sha256": "457456703e5379bb79f9d4d60319c8f2bee8fe81c687e10be7d8126f6a4339f3",
+      "original13_preservation": "Original13 methods/helpers AST verified unchanged by independent TestEngineer; original c4e0 file and RED retained in df5 and evidence history. Two additional methods test actual public arbitrary supported directory release and failure accounting."
+    }
+  ]
+}

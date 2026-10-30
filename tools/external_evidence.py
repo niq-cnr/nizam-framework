@@ -304,6 +304,35 @@ def _untracked_state_files(repo_root: Path, state_dir: Path, ledger: Mapping[str
     return sorted(actual - expected)
 
 
+def _refuse_task_orphans(repo_root, state_dir, ledger, task_id):
+    for relative in _untracked_state_files(repo_root, state_dir, ledger):
+        path = Path(relative)
+        if not path.name.startswith(task_id + "-"):
+            continue
+        try:
+            if path.suffix == ".token":
+                path = path.with_suffix(".permit.json")
+            _, raw = _read_regular_file(repo_root, path.as_posix(), "unreconciled task record")
+            doc = json.loads(raw)
+            if path.name.endswith(".permit.json"):
+                owner = doc.get("task_id")
+            else:
+                owner = doc.get("envelope", {}).get("attempt_lineage", {}).get("task_id")
+            if isinstance(owner, str) and owner != task_id:
+                continue
+        except (ExternalEvidenceError, OSError, ValueError, TypeError, AttributeError):
+            pass
+        raise ExternalEvidenceError("unreconciled task publication preserved; reconcile before new allocation", code="unreconciled_state")
+
+
+def _pending_attempts(ledger, task_id):
+    sp = _start_path_api()
+    try:
+        return sp._external_pending_reservations(ledger, task_id)
+    except sp.StartPathError as exc:
+        raise ExternalEvidenceError(str(exc), code="corrupt_ledger", exit_code=2) from exc
+
+
 def _verify_operator_recovery(
     repo_root: Path,
     task_id: str,
@@ -411,6 +440,8 @@ def allocate_attempt_permit(
     with _exclusive_state_lock(repo_root) as state_dir:
         _cleanup_staging_files(state_dir)
         ledger = _load_or_init_ledger(state_dir)
+        _refuse_task_orphans(repo_root, state_dir, ledger, task_id)
+        pending = _pending_attempts(ledger, task_id)
         task_state = ledger["tasks"].setdefault(
             task_id,
             {
@@ -462,13 +493,23 @@ def allocate_attempt_permit(
                 code="task_ceiling_exhausted",
                 exit_code=2,
             )
+        if int(task_state["failed_count"]) + pending >= task_ceiling:
+            raise ExternalEvidenceError(
+                f"remaining task failure capacity reserved: {task_state['failed_count']} observed failures, {pending} unresolved permits, ceiling {task_ceiling}; await or reconcile actual outcomes",
+                code="pending_task_capacity", exit_code=2,
+            )
 
         sig_counts = task_state.get("signature_counts", {})
-        if any(int(c) >= MAX_SIGNATURE_FAILURES for c in sig_counts.values()) and recovered_ceiling is None:
+        if max(sig_counts.values(), default=0) >= MAX_SIGNATURE_FAILURES and recovered_ceiling is None:
             raise ExternalEvidenceError(
                 f"circuit-breaker halt: task {task_id} has {MAX_SIGNATURE_FAILURES} failures with the same defect signature; explicit finite operator recovery required",
                 code="signature_ceiling_exhausted",
                 exit_code=2,
+            )
+        if max(sig_counts.values(), default=0) + pending >= MAX_SIGNATURE_FAILURES and recovered_ceiling is None:
+            raise ExternalEvidenceError(
+                f"remaining signature capacity reserved: {max(sig_counts.values(), default=0)} observed same-signature failures, {pending} unresolved permits; await or reconcile actual outcomes",
+                code="pending_signature_capacity", exit_code=2,
             )
 
         if next_attempt > step_limit and recovered_ceiling is None:
@@ -658,6 +699,7 @@ def admit_external_evidence(
         ledger = _load_or_init_ledger(state_dir)
 
         # 3. Identify replay, but never bypass current host bindings or evidence checks.
+        _pending_attempts(ledger, task_id)
         existing_admission = ledger["admissions"].get(admission_key)
         if existing_admission is not None:
             if existing_admission.get("envelope_sha256") != envelope_sha256 or existing_admission.get("permit_id") != permit_id:

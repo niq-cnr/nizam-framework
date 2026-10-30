@@ -341,7 +341,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             with self.subTest(binding=name):
                 try:
                     alloc = ee.allocate_attempt_permit(
-                        self.repo, task_id="F-201", step_id="verify-" + name,
+                        self.repo, task_id=f"F-201-{name}", step_id="verify-" + name,
                         run_id="run-01", candidate_commit=self.cand_commit,
                     )
                     envelope = self._build_valid_envelope(

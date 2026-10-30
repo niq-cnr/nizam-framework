@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.9.1
+version: 0.9.2
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.9.2"
+    date: "2026-10-30"
+    summary: "Describe shared pending-capacity holds, bounded independent parallelism and preserved actual failure/recovery history."
   - version: "0.9.1"
     date: "2026-10-30"
     summary: "Require profile 1.1.0 complete-envelope producer authentication and reject legacy proof splicing without resetting retained history."
@@ -551,6 +554,16 @@ satisfy the schema's `safe_token` contract: 1–128 ASCII letters, digits, dots,
 underscores, colons or hyphens, beginning with a letter or digit. Invalid values
 are rejected before creating state or paths. A pending prior step permit holds
 new allocation; recorded finite ceilings and explicit recovery still apply.
+Independent steps can overlap only within remaining task and signature capacity.
+Every unresolved permit or native reservation occupies a potential failure slot;
+native continuation is rechecked under the shared task lock before reservation.
+Success releases a slot without increasing observed failures. Pending capacity
+holds (`pending_task_capacity`, `pending_signature_capacity`) require awaiting or
+reconciling actual outcomes and differ from actual failed-ceiling exhaustion.
+Changing step, output directory, controller or channel grants no new allowance.
+No second ledger, guessed failure, automatic reissue or recovery authority is
+created. See `docs/architecture/task-budget-reservations.md` for the exact
+same-user POSIX profile, finite recovery and process-restart boundary.
 
 `admit_external_evidence` (CLI `admit-evidence`) requires an independently selected
 `expected_candidate_sha256` / `--expected-candidate-sha256`, in addition to the

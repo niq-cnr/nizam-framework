@@ -1352,7 +1352,7 @@ def _external_task_state(root: Path, task_id: str):
                 raise ValueError("invalid ledger shape")
             owned = task_id in ledger["tasks"]
             for entry in ledger["permits"].values():
-                if type(entry) is not dict:
+                if type(entry) is not dict or not isinstance(entry.get("task_id"), str):
                     raise ValueError("invalid permit entry")
                 owned = owned or entry.get("task_id") == task_id
         except (OSError, ValueError, TypeError) as exc:
@@ -1384,6 +1384,8 @@ def _external_task_state(root: Path, task_id: str):
                     owned = True
                 elif not isinstance(identity, str):
                     raise StartPathError("corrupt matching external task history", 2)
+    if owned and ledger is not None:
+        _external_pending_reservations(ledger, task_id)
     return owned, ledger
 
 
@@ -1403,7 +1405,103 @@ def _native_task_history_exists(root: Path, task_id: str) -> bool:
     return False
 
 
-def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
+def _task_reservation_records(root: Path, task_id: str) -> list[dict[str, Any]]:
+    """Read existing marker lineage, including its producer-planned output."""
+    evidence = resolve_project_file(root, ".agent/evidence")
+    if not evidence.exists():
+        return []
+    records = []; seen = set()
+    for marker in sorted(evidence.rglob(task_id + "-*.reservation.json")):
+        try:
+            doc = _read_json_file(resolve_project_file(root, marker.relative_to(root).as_posix()))
+            if doc.get("id") != task_id:
+                if not isinstance(doc.get("id"), str) or not ID_PATTERN.fullmatch(doc["id"]):
+                    raise ValueError("unknown reservation owner")
+                continue
+            if (type(doc.get("schema_version")) is not int or doc["schema_version"] != 1
+                    or not ID_PATTERN.fullmatch(str(doc.get("step", "")))
+                    or type(doc.get("attempt")) is not int or doc["attempt"] < 1
+                    or not isinstance(doc.get("reserved_at"), str) or not doc["reserved_at"]):
+                raise ValueError("invalid reservation identity")
+            pair = (doc["step"], doc["attempt"])
+            if marker.name != f"{task_id}-{pair[0]}-attempt{pair[1]}.reservation.json" or pair in seen:
+                raise ValueError("duplicate or contradictory reservation")
+            seen.add(pair)
+            if "capture_path" in doc:
+                if not isinstance(doc["capture_path"], str):
+                    raise ValueError("invalid planned capture reference")
+                target = resolve_project_file(root, doc["capture_path"])
+                if (not target.name.startswith(f"{task_id}-{pair[0]}-attempt{pair[1]}-")
+                        or not target.name.endswith(".capture.json")):
+                    raise ValueError("planned capture identity differs")
+            records.append(doc)
+        except (OSError, ValueError, TypeError, KeyError, StartPathError) as exc:
+            raise StartPathError("stopping policy halt: corrupt pending native reservation: " + str(marker), 2) from exc
+    return records
+
+
+def _pending_native_reservations(root: Path, task_id: str, history: list[dict[str, Any]]) -> list[tuple[str, int]]:
+    """Derive unresolved slots from existing markers, never invent outcomes."""
+    terminal = {}
+    for capture in history:
+        if capture.get("completion_state") not in ("completed", "interrupted"):
+            raise StartPathError("stopping policy halt: unknown native capture completion", 2)
+        terminal.setdefault((capture["step"], capture["attempt"]), set()).add(capture["capture_path"])
+    pending = []
+    for record in _task_reservation_records(root, task_id):
+        pair = (record["step"], record["attempt"])
+        observed = terminal.get(pair, set())
+        if "capture_path" in record:
+            if observed and record["capture_path"] not in observed:
+                raise StartPathError("stopping policy halt: conflicting terminal capture lineage", 2)
+            if record["capture_path"] not in observed:
+                pending.append(pair)
+        elif not observed:
+            pending.append(pair)  # Legacy unlinked evidence is never guessed.
+    return pending
+
+
+def _external_pending_reservations(ledger: dict[str, Any], task_id: str) -> int:
+    """Cross-check existing permit and step counters; no new budget record."""
+    try:
+        task = ledger["tasks"].get(task_id)
+        if any(type(p) is not dict or not isinstance(p.get("task_id"), str) for p in ledger["permits"].values()):
+            raise ValueError("unknown permit owner")
+        permits = [p for p in ledger["permits"].values() if isinstance(p, dict) and p.get("task_id") == task_id]
+        if task is None:
+            if permits:
+                raise ValueError("permits without task counters")
+            return 0
+        if type(task) is not dict or type(task.get("steps")) is not dict:
+            raise ValueError("invalid task counters")
+        if type(task.get("failed_admissions")) is not list or type(task.get("history")) is not list:
+            raise ValueError("invalid task outcome history")
+        if type(task.get("failed_count")) is not int or task["failed_count"] < 0 or type(task.get("signature_counts")) is not dict:
+            raise ValueError("invalid observed failure counters")
+        if any(type(n) is not int or n < 0 for n in task["signature_counts"].values()) or sum(task["signature_counts"].values()) != task["failed_count"]:
+            raise ValueError("contradictory observed failure counters")
+        pending = 0
+        for step_id, step in task["steps"].items():
+            if type(step) is not dict or any(type(step.get(k)) is not int or step[k] < 0 for k in ("allocated_attempts", "admitted_attempts")):
+                raise ValueError("invalid step counters")
+            entries = [p for p in permits if p.get("step_id") == step_id]
+            if (any(type(p.get("consumed")) is not bool or type(p.get("attempt_number")) is not int for p in entries)
+                    or len(entries) != step["allocated_attempts"]
+                    or any(number != index + 1 for index, number in enumerate(sorted(p["attempt_number"] for p in entries)))
+                    or sum(p["consumed"] for p in entries) != step["admitted_attempts"]):
+                raise ValueError("permit/counter history differs")
+            unresolved = step["allocated_attempts"] - step["admitted_attempts"]
+            if unresolved not in (0, 1):
+                raise ValueError("invalid unresolved step history")
+            pending += unresolved
+        if any(p.get("step_id") not in task["steps"] for p in permits):
+            raise ValueError("permit without step counters")
+        return pending
+    except (ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise StartPathError("stopping policy halt: corrupt external pending history: " + str(exc), 2) from exc
+
+
+def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int, *, continuation_request=None):
     """Atomically reserve an attempt number before dispatch.
 
     The reservation marker lives in the canonical evidence tree (not the
@@ -1415,10 +1513,15 @@ def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
         external, _ = _external_task_state(root, task_id)
         if external:
             raise StartPathError("task is externally owned; native reservation refused", 2)
-        _reserve_native_attempt(root, task_id, step, attempt)
+        options = dict(continuation_request) if continuation_request is not None else {}
+        capture_path = options.pop("capture_path", None)
+        options.setdefault("target_dir", root / ".agent/evidence")
+        lineage = _evaluate_attempt_continuation(root, task_id=task_id, step=step, attempt=attempt, **options)
+        _reserve_native_attempt(root, task_id, step, attempt, capture_path=capture_path)
+        return lineage
 
 
-def _reserve_native_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
+def _reserve_native_attempt(root: Path, task_id: str, step: str, attempt: int, *, capture_path=None) -> None:
     marker = root / ".agent" / "evidence" / f"{task_id}-{step}-attempt{attempt}.reservation.json"
     marker.parent.mkdir(parents=True, exist_ok=True)
     doc = {
@@ -1428,6 +1531,14 @@ def _reserve_native_attempt(root: Path, task_id: str, step: str, attempt: int) -
         "attempt": attempt,
         "reserved_at": utc_now_iso(),
     }
+    if capture_path is not None:
+        planned = resolve_project_file(root, capture_path)
+        if (not planned.name.startswith(f"{task_id}-{step}-attempt{attempt}-")
+                or not planned.name.endswith(".capture.json")):
+            raise StartPathError("planned capture identity differs from reservation", 2)
+        if os.path.lexists(planned):
+            raise StartPathError("planned capture already exists; refusing reservation", 2)
+        doc["capture_path"] = capture_path
     try:
         with marker.open("xb") as fh:
             fh.write(canonical_bytes(doc) + b"\n")
@@ -1446,7 +1557,18 @@ def _task_capture_history(root: Path, task_id: str) -> list[dict[str, Any]]:
         return history
     if evidence.is_symlink():
         raise StartPathError("stopping policy halt: symlink evidence history", 2)
-    for path in sorted(evidence.rglob("*.capture.json")):
+    paths = set(evidence.rglob("*.capture.json")); linked = {}
+    for record in _task_reservation_records(root, task_id):
+        if "capture_path" not in record:
+            continue
+        target = resolve_project_file(root, record["capture_path"])
+        pair = (record["step"], record["attempt"])
+        if target in linked and linked[target] != pair:
+            raise StartPathError("stopping policy halt: conflicting planned capture reuse", 2)
+        linked[target] = pair
+        if os.path.lexists(target):
+            paths.add(target)
+    for path in sorted(paths):
         doc = None
         relevant_name = path.name.startswith(task_id + "-")
         try:
@@ -1457,6 +1579,8 @@ def _task_capture_history(root: Path, task_id: str) -> list[dict[str, Any]]:
             doc = json.loads(path.read_bytes())
             if not isinstance(doc, dict):
                 raise ValueError("non-object history")
+            if path in linked and doc.get("id") != task_id:
+                raise ValueError("planned capture task differs")
             if doc.get("id") != task_id:
                 if relevant_name and not isinstance(doc.get("id"), str):
                     raise ValueError("missing task identity")
@@ -1464,6 +1588,8 @@ def _task_capture_history(root: Path, task_id: str) -> list[dict[str, Any]]:
             relative = path.relative_to(root).as_posix()
             if resolve_project_file(root, relative) != path or doc.get("capture_path") != relative or not ID_PATTERN.fullmatch(str(doc.get("step", ""))) or type(doc.get("attempt")) is not int or doc["attempt"] < 1:
                 raise ValueError("invalid capture identity")
+            if path in linked and (doc["step"], doc["attempt"]) != linked[path]:
+                raise ValueError("planned capture step/attempt differs")
             if not isinstance(doc.get("argv"), list) or not doc["argv"] or any(not isinstance(v, str) or not v for v in doc["argv"]) or type(doc.get("executed")) is not bool or not isinstance(doc.get("outcome"), str):
                 raise ValueError("invalid observed execution")
             if doc.get("executed") and type(doc.get("exit_code")) is not int:
@@ -1533,6 +1659,9 @@ def _evaluate_attempt_continuation(
     if attempt <= consumed:
         raise StartPathError(f"stopping policy halt: attempt {attempt} reuses already-consumed attempt history for {task_id}:{step}", 2)
     history = _task_capture_history(root, task_id)
+    pending = _pending_native_reservations(root, task_id, history)
+    if any(prior_step == step for prior_step, _ in pending):
+        raise StartPathError("stopping policy halt: prior step reservation has no recorded terminal outcome", 2)
     failed = [p for p in history if not _successful_task_capture(root, p, qa_checks, candidate_sha256)]
     state_path = root / ".agent" / "run_state.json"
     state = {}
@@ -1570,12 +1699,16 @@ def _evaluate_attempt_continuation(
         recovered = True
     if len(failed) >= ceiling:
         raise StartPathError(f"stopping policy halt: finite task failed-execution budget ({ceiling}) exhausted", 2)
+    if len(failed) + len(pending) >= ceiling:
+        raise StartPathError(f"stopping policy hold: remaining task capacity reserved by unresolved executions ({len(failed)} observed failures, {len(pending)} pending, ceiling {ceiling}); await or reconcile actual outcomes", 2)
     signatures: dict[str, int] = {}
     for doc in failed:
         signature = _failure_signature(doc)
         signatures[signature] = signatures.get(signature, 0) + 1
     if max(signatures.values(), default=0) >= 3 and not recovered:
         raise StartPathError("stopping policy halt: three failures of the same task-wide defect signature; explicit finite task operator recovery required", 2)
+    if max(signatures.values(), default=0) + len(pending) >= 3 and not recovered:
+        raise StartPathError(f"stopping policy hold: remaining signature capacity reserved by unresolved executions ({max(signatures.values(), default=0)} observed same-signature failures, {len(pending)} pending); await or reconcile actual outcomes", 2)
     if decomposition_of:
         if decomposition_of in (task_id, step, f"{task_id}-{step}"):
             raise StartPathError("stopping policy halt: decomposition parent must be distinct", 2)
@@ -1592,6 +1725,7 @@ def _evaluate_attempt_continuation(
         "decomposition_of": decomposition_of, "continuation_basis": continuation_basis or ("initial-attempt" if attempt == 1 else "strategy-ladder"),
         "repair_summary": repair_summary, "configured_step_limit": limit, "contract_amendment_present": False,
         "operator_extension_present": recovered, "failed_execution_count": len(failed), "task_failed_execution_ceiling": ceiling,
+        "pending_execution_count": len(pending),
         "prior_attempts": [{k: p.get(k) for k in ("id", "step", "attempt", "capture_path", "outcome", "exit_code", "defect_signature")} for p in history]}
 
 
@@ -1665,12 +1799,19 @@ def capture_command_evidence(
     target_dir = resolve_project_file(root, rel_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    continuation_lineage = _evaluate_attempt_continuation(
-        root,
-        task_id=task_id,
-        step=step,
-        attempt=attempt,
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    nonce = secrets.token_hex(4)
+    stem = f"{task_id}-{step}-attempt{attempt}-{stamp}-{nonce}"
+    stdout_path = target_dir / f"{stem}.stdout.txt"
+    stderr_path = target_dir / f"{stem}.stderr.txt"
+    receipt_path = target_dir / f"{stem}.capture.json"
+    for path in (stdout_path, stderr_path, receipt_path):
+        if os.path.lexists(path):
+            raise StartPathError(f"evidence target already exists; refusing overwrite: {path}", 1)
+
+    continuation_lineage = _reserve_attempt(root, task_id, step, attempt, continuation_request=dict(
         target_dir=target_dir,
+        capture_path=receipt_path.relative_to(root).as_posix(),
         continuation_basis=continuation_basis,
         parent_attempt=parent_attempt,
         decomposition_of=decomposition_of,
@@ -1679,23 +1820,10 @@ def capture_command_evidence(
         invariant_breach=invariant_breach,
         qa_checks=checks,
         candidate_sha256=resolved_sha,
-    )
-
-    _reserve_attempt(root, task_id, step, attempt)
+    ))
 
     head_res = _run_git_readonly(root, ["rev-parse", "HEAD"], text=True)
     revision = head_res.stdout.strip() if head_res.returncode == 0 else None
-
-    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    nonce = secrets.token_hex(4)
-    stem = f"{task_id}-{step}-attempt{attempt}-{stamp}-{nonce}"
-    stdout_path = target_dir / f"{stem}.stdout.txt"
-    stderr_path = target_dir / f"{stem}.stderr.txt"
-    receipt_path = target_dir / f"{stem}.capture.json"
-
-    for p in (stdout_path, stderr_path, receipt_path):
-        if p.exists():
-            raise StartPathError(f"evidence target already exists; refusing overwrite: {p}", 1)
 
     started_at = utc_now_iso()
     start_ns = time.monotonic_ns()

@@ -946,6 +946,37 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         raw_cap = json.loads(res_chain_cap.stdout)
         assert len(counter_file.read_text(encoding="utf-8").splitlines()) == 1
 
+        # A changed label/output path cannot spend another execution on the same
+        # successful assessed proof. The independent publication scenarios below
+        # must perform genuinely different assertions rather than rename this one.
+        duplicate_head = subprocess.check_output(["git", "-C", str(froot), "rev-parse", "HEAD"])
+        duplicate_index = (froot / ".git" / "index").read_bytes()
+        duplicate_reservations = {
+            p.relative_to(froot).as_posix(): p.read_bytes()
+            for p in (froot / ".agent" / "evidence").rglob("*.reservation.json")
+        }
+        alternate_captures = froot / "proof" / "duplicate-output-captures"
+        res_identical_proof = subprocess.run(
+            [
+                sys.executable, str(froot / "tools/start_path.py"), "capture",
+                "--id", "120", "--step", "different-label-same-proof", "--attempt", "1",
+                "--output-dir", "proof/duplicate-output-captures", "--candidate", "proof/qa-candidate.json",
+                "--env-var", "NIZAM_WA120_FIXTURE=observed",
+                "--agent-id", fixture.producer["agent_id"],
+                "--session-id", fixture.producer["session_id"],
+                "--root", str(froot), "--", sys.executable, "-c", cmd_code,
+            ], cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        expect(res_identical_proof, 2, "identical successful assessed proof already exists")
+        assert len(counter_file.read_text(encoding="utf-8").splitlines()) == 1
+        assert not alternate_captures.exists()
+        assert subprocess.check_output(["git", "-C", str(froot), "rev-parse", "HEAD"]) == duplicate_head
+        assert (froot / ".git" / "index").read_bytes() == duplicate_index
+        assert {
+            p.relative_to(froot).as_posix(): p.read_bytes()
+            for p in (froot / ".agent" / "evidence").rglob("*.reservation.json")
+        } == duplicate_reservations
+
         # Publish the raw capture into Git via --mode publish + NIZAM_MUTATION_ADAPTER and project the closed 12-field receipt capture
         res_pub = subprocess.run(
             [
@@ -1267,6 +1298,16 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
 
         # (B1.d + C1) Default noncommitting publish (prepare), strict adapter mediation (no/empty/{}/bool/invalid/denied),
         #             unknown_external_commit_outcome reconciliation, and base/branch/delta binding
+        prior_capture_ref = pub_doc["receipt_capture_ref"]
+        b1_cmd_code = (
+            "import os, pathlib, subprocess, hashlib; "
+            "assert os.environ['NIZAM_WA120_FIXTURE'] == 'observed'; "
+            f"blob = subprocess.check_output(['git', '-C', {str(froot)!r}, 'show', "
+            f"{(prior_capture_ref['revision'] + ':' + prior_capture_ref['path'])!r}]); "
+            f"assert hashlib.sha256(blob).hexdigest() == {prior_capture_ref['sha256']!r}; "
+            f"pathlib.Path({str(counter_file)!r}).open('a').write('ran\\n'); "
+            f"print({fixture.diagnostic!r})"
+        )
         res_cap_b1 = subprocess.run(
             [
                 sys.executable, str(froot / "tools/start_path.py"), "capture",
@@ -1276,7 +1317,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                 "--agent-id", fixture.producer["agent_id"],
                 "--session-id", fixture.producer["session_id"],
                 "--root", str(froot),
-                "--", sys.executable, "-c", cmd_code,
+                "--", sys.executable, "-c", b1_cmd_code,
             ],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
@@ -1488,6 +1529,28 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
         # (B1.e) Multi-capture batch publication & two-stage interruption recovery without re-execution
         exec_before_batch = len(counter_file.read_text(encoding="utf-8").splitlines())
         batch_caps = []
+        finalized_capture_ref = json.loads(res_fin.stdout)["receipt_capture_ref"]
+        batch_commands = {
+            "batch-check-1": (
+                "import os, pathlib, json, hashlib; "
+                "assert os.environ['NIZAM_WA120_FIXTURE'] == 'observed'; "
+                f"candidate = json.loads(pathlib.Path({str(froot / 'proof/qa-candidate.json')!r}).read_bytes()); "
+                "encoded = json.dumps(candidate, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False).encode('utf-8'); "
+                f"assert hashlib.sha256(encoded).hexdigest() == {cand_sha!r}; "
+                f"pathlib.Path({str(counter_file)!r}).open('a').write('ran\\n'); "
+                f"print({fixture.diagnostic!r})"
+            ),
+            "batch-check-2": (
+                "import os, pathlib, subprocess, hashlib; "
+                "assert os.environ['NIZAM_WA120_FIXTURE'] == 'observed'; "
+                f"disk = pathlib.Path({str(froot / finalized_capture_ref['path'])!r}).read_bytes(); "
+                f"blob = subprocess.check_output(['git', '-C', {str(froot)!r}, 'show', "
+                f"{(finalized_capture_ref['revision'] + ':' + finalized_capture_ref['path'])!r}]); "
+                f"assert disk == blob and hashlib.sha256(blob).hexdigest() == {finalized_capture_ref['sha256']!r}; "
+                f"pathlib.Path({str(counter_file)!r}).open('a').write('ran\\n'); "
+                f"print({fixture.diagnostic!r})"
+            ),
+        }
         for step_name in ("batch-check-1", "batch-check-2"):
             rc_b = subprocess.run(
                 [
@@ -1498,7 +1561,7 @@ def test_r6_r7_r8_preflight_capture_status_and_resume(root: Path) -> None:
                     "--agent-id", fixture.producer["agent_id"],
                     "--session-id", fixture.producer["session_id"],
                     "--root", str(froot),
-                    "--", sys.executable, "-c", cmd_code,
+                    "--", sys.executable, "-c", batch_commands[step_name],
                 ],
                 cwd=ROOT, text=True, capture_output=True, check=False,
             )
