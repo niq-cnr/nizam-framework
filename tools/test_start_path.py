@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "tools" / "start_path.py"
@@ -2405,5 +2406,18 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # Scope fixture Git writes, imported fixtures and mutation-adapter children.
+    # Keep strict TemporaryDirectory cleanup; do not leave automatic workers.
+    inherited_git_config_count = int(os.environ.get("GIT_CONFIG_COUNT", "0"))
+    if inherited_git_config_count < 0:
+        raise ValueError("Private fixture GIT_CONFIG_COUNT must be nonnegative")
+    fixture_git_environment = {
+        "GIT_CONFIG_COUNT": str(inherited_git_config_count + 2),
+        f"GIT_CONFIG_KEY_{inherited_git_config_count}": "maintenance.auto",
+        f"GIT_CONFIG_VALUE_{inherited_git_config_count}": "false",
+        f"GIT_CONFIG_KEY_{inherited_git_config_count + 1}": "gc.auto",
+        f"GIT_CONFIG_VALUE_{inherited_git_config_count + 1}": "0",
+    }
+    with patch.dict(os.environ, fixture_git_environment):
+        sys.exit(main())
 
