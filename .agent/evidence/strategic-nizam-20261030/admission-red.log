@@ -1,0 +1,365 @@
+EEEFEEFFFFEEFFFEEFFFEEFEEEEEEEEE
+======================================================================
+ERROR: test_admission_idempotency_conflicting_reuse_and_binding_rejections (__main__.NfAc04GenericAdmissionTests.test_admission_idempotency_conflicting_reuse_and_binding_rejections)
+Verify valid admission, idempotent duplicate delivery, conflicting reuse rejection, and all binding checks.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 326, in test_admission_idempotency_conflicting_reuse_and_binding_rejections
+    self._admit(bad_fw)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_candidate_digest_requires_independent_host_expectation (__main__.NfAc04GenericAdmissionTests.test_candidate_digest_requires_independent_host_expectation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 572, in test_candidate_digest_requires_independent_host_expectation
+    self._admit(altered)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_circuit_breaker_ceilings_and_finite_operator_recovery (__main__.NfAc04GenericAdmissionTests.test_circuit_breaker_ceilings_and_finite_operator_recovery)
+Enforce 3-attempt same-signature ceiling, 6-attempt task ceiling, and finite operator_recovery.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 437, in test_circuit_breaker_ceilings_and_finite_operator_recovery
+    res = self._admit(env)
+          ^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_conflicting_orphan_is_preserved_and_refused (__main__.NfAc04GenericAdmissionTests.test_conflicting_orphan_is_preserved_and_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 644, in test_conflicting_orphan_is_preserved_and_refused
+    self._admit(env)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_interrupted_admission_recovers_exactly_once_after_revalidation (__main__.NfAc04GenericAdmissionTests.test_interrupted_admission_recovers_exactly_once_after_revalidation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 622, in test_interrupted_admission_recovers_exactly_once_after_revalidation
+    self._admit(env)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='task_id', invalid=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 277, in allocate_attempt_permit
+    _check_not_commissioning_evidence(task_id, "task_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='task_id', invalid=12)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 277, in allocate_attempt_permit
+    _check_not_commissioning_evidence(task_id, "task_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='step_id', invalid=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 278, in allocate_attempt_permit
+    _check_not_commissioning_evidence(step_id, "step_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='step_id', invalid=12)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 278, in allocate_attempt_permit
+    _check_not_commissioning_evidence(step_id, "step_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='run_id', invalid=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 279, in allocate_attempt_permit
+    _check_not_commissioning_evidence(run_id, "run_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='run_id', invalid=12)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 560, in test_permit_identifiers_refuse_before_creating_state
+    ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 279, in allocate_attempt_permit
+    _check_not_commissioning_evidence(run_id, "run_id")
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py", line 152, in _check_not_commissioning_evidence
+    norm = token.strip().lower()
+           ^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'strip'
+
+======================================================================
+ERROR: test_replay_revalidates_current_expectations_evidence_and_record (__main__.NfAc04GenericAdmissionTests.test_replay_revalidates_current_expectations_evidence_and_record)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 584, in test_replay_revalidates_current_expectations_evidence_and_record
+    admitted = self._admit(env)
+               ^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-01-commissioning-feature117')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-02-commissioning-wa123')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-03-forged-producer-proof')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-04-wrong-policy-digest')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-05-unsupported-version')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-06-unsupported-profile')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-07-status-separation-failed-admitted')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+ERROR: test_schema_closure_and_conformance_corpus_cases (__main__.NfAc04GenericAdmissionTests.test_schema_closure_and_conformance_corpus_cases) (case='NEG-08-status-separation-timeout-admitted')
+Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 306, in test_schema_closure_and_conformance_corpus_cases
+    self._admit(mutated)
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 257, in _admit
+    return ee.admit_external_evidence(self.repo, envelope, **expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: admit_external_evidence() got an unexpected keyword argument 'expected_candidate_sha256'
+
+======================================================================
+FAIL: test_concurrent_admission_and_crash_staging_reconciliation (__main__.NfAc04GenericAdmissionTests.test_concurrent_admission_and_crash_staging_reconciliation)
+Verify concurrent admission race safety under flock and cleanup of interrupted .tmp-* staging files.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 539, in test_concurrent_admission_and_crash_staging_reconciliation
+    self.assertEqual(codes, [0, 1], f"expected one winner (0) and one loser (1), got {codes}: {err1} / {err2}")
+AssertionError: Lists differ: [2, 2] != [0, 1]
+
+First differing element 0:
+2
+0
+
+- [2, 2]
++ [0, 1] : expected one winner (0) and one loser (1), got [2, 2]: usage: external_evidence.py [-h]
+                            {allocate-attempt,admit-evidence,reconcile} ...
+external_evidence.py: error: unrecognized arguments: --expected-candidate-sha256 2222222222222222222222222222222222222222222222222222222222222222
+ / usage: external_evidence.py [-h]
+                            {allocate-attempt,admit-evidence,reconcile} ...
+external_evidence.py: error: unrecognized arguments: --expected-candidate-sha256 2222222222222222222222222222222222222222222222222222222222222222
+
+
+======================================================================
+FAIL: test_partial_permit_allocation_is_unresolved_not_cleaned_or_reissued (__main__.NfAc04GenericAdmissionTests.test_partial_permit_allocation_is_unresolved_not_cleaned_or_reissued)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 667, in test_partial_permit_allocation_is_unresolved_not_cleaned_or_reissued
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='task_id', invalid='../../../../escaped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='task_id', invalid='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='task_id', invalid='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='step_id', invalid='../../../../escaped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='step_id', invalid='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='step_id', invalid='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='run_id', invalid='../../../../escaped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 559, in test_permit_identifiers_refuse_before_creating_state
+    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+AssertionError: ExternalEvidenceError not raised
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='run_id', invalid='')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 561, in test_permit_identifiers_refuse_before_creating_state
+    self.assertEqual(ctx.exception.code, "invalid_identifier")
+AssertionError: 'unsettled_prior_attempt' != 'invalid_identifier'
+- unsettled_prior_attempt
++ invalid_identifier
+
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state) (field='run_id', invalid='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 561, in test_permit_identifiers_refuse_before_creating_state
+    self.assertEqual(ctx.exception.code, "invalid_identifier")
+AssertionError: 'unsettled_prior_attempt' != 'invalid_identifier'
+- unsettled_prior_attempt
++ invalid_identifier
+
+
+======================================================================
+FAIL: test_permit_identifiers_refuse_before_creating_state (__main__.NfAc04GenericAdmissionTests.test_permit_identifiers_refuse_before_creating_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/test_nf_ac04_generic_admission.py", line 563, in test_permit_identifiers_refuse_before_creating_state
+    self.assertFalse((self.repo / "escaped-verify-attempt1.permit.json").exists())
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.466s
+
+FAILED (failures=12, errors=20)

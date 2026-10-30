@@ -909,6 +909,8 @@ class StandaloneQualificationTests(unittest.TestCase):
             str(env_file),
             "--expected-policy-id",
             policy_id,
+            "--expected-candidate-sha256",
+            "22" * 32,
             "--expected-policy-version",
             policy_ver,
             "--expected-policy-digest",

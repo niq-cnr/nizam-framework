@@ -1,0 +1,163 @@
+{
+  "contract_id": "strategic-nf-external-admission-20261030",
+  "feature_id": "strategic-nf-external-admission-20261030",
+  "name": "Bind generic external admission candidate and make replay/recovery fail closed",
+  "status": "approved",
+  "spec_ref": ".agent/evidence/strategic-nizam-20261030/admission-adversarial-probe.log",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/strategic-nf-external-admission-20261030.json",
+        "purpose": "Scoped high-risk repair contract and later reviewer reference."
+      },
+      {
+        "path": ".agent/evidence/strategic-nizam-20261030/*",
+        "purpose": "Command captures and independent verdicts; preserve source input separation."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/external_evidence.py",
+        "purpose": "Require host-selected expected candidate digest, validate before replay, recover identical orphan admission only after all current checks; reconciliation detects orphan/corrupt records. Validate allocation identifiers using existing safe_token contract before path construction."
+      },
+      {
+        "path": "tools/test_nf_ac04_generic_admission.py",
+        "purpose": "Add adversarial tests for digest, replay tamper and failed persistence; adapt direct/CLI callers for required expected digest."
+      },
+      {
+        "path": "tools/test_nf_ac05_standalone_e2e.py",
+        "purpose": "Update installed consumer CLI caller to supply trusted expected candidate digest; retain mandatory conformance."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Document existing optional admission API, new required host expected digest and token/replay/recovery trust boundary."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased bounded source repair entry."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Record current-source correction and NF07 boundary without claiming installed adoption/release."
+      }
+    ]
+  },
+  "non_goals": [
+    "No embedded .nizam changes, version/tag publication, live installation or paid run.",
+    "No new controller/ledger/attempt authority or Agentic dependency.",
+    "No claim that HMAC/token possession authenticates independent producer identity or sandbox isolation.",
+    "No weakening historical acceptance, rewriting old receipts or auto-granting retries.",
+    "No inventing candidate SHA256 encoding: the active trusted host supplies expected_candidate_sha256 using its already-frozen candidate manifest."
+  ],
+  "acceptance_requirements": [
+    "Existing generic optional permit API is reused; current source provides a canonical profile, unlike old release-only absence inventory.",
+    "Permit allocation validates task/step/run IDs against the existing schema safe_token bounds before creating state or filesystem paths; traversal, overlong and non-string identities refuse with no filesystem effects.",
+    "Admission requires trusted expected_candidate_sha256 out of band; missing API/CLI argument refuses; mismatch refuses before any state transition. Existing caller digest is only a declared value until compared to independently selected host expected digest.",
+    "Identical replay revalidates current expected policy/framework/candidate/contract/collections/tool and all artifact bytes plus stored record integrity before returning; tampered evidence or changed expected policy refuses without counters changing.",
+    "If admission file publication succeeds but ledger write fails, reconcile reports unresolved orphan (not ok). Repeating exact valid admission revalidates all inputs and uses identical retained record before one ledger transition; conflicting orphan remains untouched and refuses.",
+    "Reconciliation validates stored envelope digest rather than trusting its declared digest, detects unmatched admission/permit files and preserves them for explicit recovery.",
+    "Real adverse controls include candidate mismatch, replay artifact/contract/policy and record mutation, allocation/admission persistence interruption and retry/concurrency; existing ceilings and standalone API behavior remain passing.",
+    "Source acceptance is separate from neutral-profile conformance, installed adoption and Agentic A08/A09/J01 qualification."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Generic optional admission positive/adverse cases",
+      "command": "python3 tools/test_nf_ac04_generic_admission.py",
+      "expected_exit": 0,
+      "id": "NF-EXT-01",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "acceptance_test": "Installed standalone consumer exercise and mandatory refusal controls",
+      "command": "python3 tools/test_nf_ac05_standalone_e2e.py",
+      "expected_exit": 0,
+      "id": "NF-EXT-02",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "acceptance_test": "Existing current root typed QA/receipt regression inventory",
+      "command": "python3 tools/test_workflow_assurance.py --base-cases",
+      "expected_exit": 0,
+      "id": "NF-EXT-03",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--base-cases"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "acceptance_test": "Repository compliance with scoped documentation",
+      "command": "bash tools/validate.sh",
+      "expected_exit": 0,
+      "id": "NF-EXT-04",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "acceptance_test": "Whitespace integrity",
+      "command": "git diff --check",
+      "expected_exit": 0,
+      "id": "NF-EXT-05",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "source_identities": {
+    "repository": "niq-cnr/nizam-framework",
+    "base_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+    "installed_governance": "v3.0.0; immutable; not upgrade target"
+  },
+  "evidence_dir": ".agent/evidence/strategic-nizam-20261030",
+  "route": "high-risk",
+  "approval_evidence": {
+    "proposed_contract_sha256": "094601df93c70e3ef9906ce35c19d8678b528c421f04c5f970921021e0593387",
+    "mode_a": ".agent/validator/strategic-nf-external-admission-20261030-mode-a.json",
+    "contract_review": ".agent/qa/strategic-nf-external-admission-20261030-contract-review.json",
+    "root_authority": "Root instruction 2026-10-30: approves contract status advancement with both bound precode records; proceed test-first."
+  },
+  "estimated_lines": 240,
+  "remaining_issues_outside_scope": [
+    "Producer credential/channel trust requires selected host integration; SHA256/HMAC alone does not establish independence.",
+    "Concurrent in-process mutation by privileged host code is outside envelope data validation threat model.",
+    "NF01-NF06 broader root-source controls still require their own recorded suite coverage."
+  ],
+  "evidence_convention": "Exact command argv/cwd/base/candidate/environment, true exits and immutable stdout/stderr captures; independent verdicts separate from assessed source inputs.",
+  "additional_reproduction": ".agent/evidence/strategic-nizam-20261030/permit-path-probe.log",
+  "compatibility_note": "The library admit_external_evidence call requires a new keyword expected_candidate_sha256 and CLI --expected-candidate-sha256. Missing values refuse rather than preserve unsafe legacy acceptance. Update both authored current callers and document this source-only compatibility change. The host supplies its independently approved frozen-manifest digest; never obtain the expected value from the submitted envelope."
+}

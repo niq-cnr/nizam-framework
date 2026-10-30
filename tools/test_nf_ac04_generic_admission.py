@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import jsonschema
 
@@ -237,10 +238,8 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             "artifacts": artifacts,
         }
 
-    def _admit(self, envelope: dict[str, object]) -> dict[str, object]:
-        return ee.admit_external_evidence(
-            self.repo,
-            envelope,
+    def _admit(self, envelope: dict[str, object], **overrides: str) -> dict[str, object]:
+        expected = dict(
             expected_policy_id=POLICY_ID,
             expected_policy_version=POLICY_VERSION,
             expected_policy_digest=POLICY_DIGEST,
@@ -252,7 +251,10 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             expected_regression_collection_digest=REG_COLLECTION_DIGEST,
             expected_tool_id="neutral-pytest-runner",
             expected_adapter_id="neutral-local-adapter",
+            expected_candidate_sha256="22" * 32,
         )
+        expected.update(overrides)
+        return ee.admit_external_evidence(self.repo, envelope, **expected)
 
     def test_schema_closure_and_conformance_corpus_cases(self) -> None:
         """Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus."""
@@ -505,6 +507,8 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                     str(env_path),
                     "--expected-policy-id",
                     POLICY_ID,
+                    "--expected-candidate-sha256",
+                    "22" * 32,
                     "--expected-policy-version",
                     POLICY_VERSION,
                     "--expected-policy-digest",
@@ -544,6 +548,128 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
         self.assertIn(".tmp-ledger.json-crashed", rec["cleaned_staging_files"])
         self.assertFalse(stale_tmp.exists())
         self.assertEqual(rec["admission_count"], 1)
+
+    def test_permit_identifiers_refuse_before_creating_state(self) -> None:
+        state = self.repo / ".agent/evidence/external_admissions"
+        for field in ("task_id", "step_id", "run_id"):
+            for invalid in ("../../../../escaped", "", "x" * 129, None, 12):
+                with self.subTest(field=field, invalid=invalid):
+                    args = dict(task_id="F-SAFE", step_id="verify", run_id="run-safe")
+                    args[field] = invalid
+                    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                        ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+                    self.assertEqual(ctx.exception.code, "invalid_identifier")
+                    self.assertFalse(state.exists())
+        self.assertFalse((self.repo / "escaped-verify-attempt1.permit.json").exists())
+
+    def test_candidate_digest_requires_independent_host_expectation(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-DIGEST", step_id="verify",
+                                           run_id="run-digest", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("digest"))
+        altered = copy.deepcopy(env)
+        altered["consumer_binding"]["candidate_sha256"] = "ff" * 32
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(altered)
+        self.assertEqual(ctx.exception.code, "candidate_digest_mismatch")
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env, expected_candidate_sha256="not-a-digest")
+        self.assertEqual(ctx.exception.code, "invalid_expected_candidate_digest")
+        self.assertEqual(self._admit(env)["admission_decision"], "admitted")
+
+    def test_replay_revalidates_current_expectations_evidence_and_record(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-REPLAY", step_id="verify",
+                                           run_id="run-replay", candidate_commit=self.cand_commit)
+        arts = self._write_artifacts("replay")
+        env = self._build_valid_envelope(alloc, arts)
+        admitted = self._admit(env)
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        for path, code in ((self.repo / arts[0]["path"], "artifact_digest_mismatch"),
+                           (self.repo / self.contract_rel, "contract_mismatch")):
+            raw = path.read_bytes()
+            try:
+                path.write_bytes(raw + b"changed\n")
+                with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                    self._admit(env)
+                self.assertEqual(ctx.exception.code, code)
+                self.assertEqual(ledger.read_bytes(), before)
+            finally:
+                path.write_bytes(raw)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env, expected_policy_digest="99" * 32)
+        self.assertEqual(ctx.exception.code, "policy_mismatch")
+        record = self.repo / admitted["admission_path"]
+        raw = record.read_bytes()
+        corrupt = json.loads(raw)
+        corrupt["envelope"]["consumer_binding"]["candidate_sha256"] = "ff" * 32
+        record.write_bytes(ee.canonical_json_bytes(corrupt))
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env)
+        self.assertEqual(ctx.exception.code, "corrupt_admission")
+        with self.assertRaises(ee.ExternalEvidenceError):
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ledger.read_bytes(), before)
+        record.write_bytes(raw)
+        self.assertTrue(self._admit(env)["idempotent_replay"])
+        self.assertEqual(ledger.read_bytes(), before)
+
+    def test_interrupted_admission_recovers_exactly_once_after_revalidation(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-CRASH", step_id="verify",
+                                           run_id="run-crash", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("crash"))
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                self._admit(env)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ctx.exception.code, "unreconciled_state")
+        result = self._admit(env)
+        self.assertFalse(result["idempotent_replay"])
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        state = json.loads(before)
+        self.assertEqual(len(state["admissions"]), 1)
+        self.assertEqual(len(state["tasks"]["F-CRASH"]["history"]), 1)
+        self.assertEqual(state["tasks"]["F-CRASH"]["failed_count"], 0)
+        self.assertTrue(self._admit(env)["idempotent_replay"])
+        self.assertEqual(ledger.read_bytes(), before)
+        self.assertEqual(ee.reconcile_admission_state(self.repo)["admission_count"], 1)
+
+    def test_conflicting_orphan_is_preserved_and_refused(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-ORPHAN", step_id="verify",
+                                           run_id="run-orphan", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("orphan"))
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                self._admit(env)
+        record = next((self.repo / ".agent/evidence/external_admissions/admitted").iterdir())
+        conflict = json.loads(record.read_bytes())
+        conflict["envelope"]["status_separation"]["admission_decision"] = "quarantined"
+        conflict["envelope_sha256"] = ee.sha256_hex(ee.canonical_json_bytes(conflict["envelope"]))
+        raw = ee.canonical_json_bytes(conflict)
+        record.write_bytes(raw)
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env)
+        self.assertEqual(ctx.exception.code, "conflicting_orphan_admission")
+        self.assertEqual(record.read_bytes(), raw)
+        self.assertEqual(ledger.read_bytes(), before)
+
+    def test_partial_permit_allocation_is_unresolved_not_cleaned_or_reissued(self) -> None:
+        args = dict(task_id="F-PARTIAL", step_id="verify", run_id="run-partial",
+                    candidate_commit=self.cand_commit)
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                ee.allocate_attempt_permit(self.repo, **args)
+        state = self.repo / ".agent/evidence/external_admissions"
+        retained = {p.name: p.read_bytes() for p in (state / "permits").iterdir()}
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ctx.exception.code, "unreconciled_state")
+        with self.assertRaises(ee.ExternalEvidenceError):
+            ee.allocate_attempt_permit(self.repo, **args)
+        self.assertEqual({p.name: p.read_bytes() for p in (state / "permits").iterdir()}, retained)
 
 
 if __name__ == "__main__":
