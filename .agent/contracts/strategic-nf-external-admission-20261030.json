@@ -128,12 +128,13 @@
     },
     {
       "acceptance_test": "Whitespace integrity",
-      "command": "git diff --check",
+      "command": "git diff f19357479220b6bf2b3292d31c06c66279f91efa..HEAD --check",
       "expected_exit": 0,
       "id": "NF-EXT-05",
       "argv": [
         "git",
         "diff",
+        "f19357479220b6bf2b3292d31c06c66279f91efa..HEAD",
         "--check"
       ],
       "proof_kind": "success",
@@ -180,6 +181,13 @@
         "contract_review": ".agent/qa/strategic-nf-external-admission-20261030-amendment-contract-review.json",
         "approved_proposal_sha256": "1f45db133a6b7e4ac603cb9ad11c76cc2d261cb66ab58590918cb261065298dc"
       }
+    },
+    {
+      "type": "mechanical-verification-command-correction",
+      "prior_contract_sha256": "f770ab0bb660a379e007f388ac67567ee0d3f481db99c8dcd75f238b8ace7a68",
+      "summary": "Check full assessed committed base/candidate delta instead of only uncommitted working-tree diff; original whitespace failure and lossless raw capture retained.",
+      "re_approval_required": false,
+      "acceptance_unchanged": true
     }
   ]
 }
