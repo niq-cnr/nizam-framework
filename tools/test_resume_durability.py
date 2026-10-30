@@ -196,6 +196,22 @@ class ResumeDurabilityTests(unittest.TestCase):
         replay = self.run_worker(); self.assertEqual(replay.returncode, 0, replay.stdout + replay.stderr)
         self.assertEqual(json.loads(replay.stdout)["action"], "noop")
 
+    def test_unknown_interrupted_temporary_content_is_preserved_and_refused(self):
+        before_paths = set(self.state.parent.iterdir())
+        interrupted = self.run_worker("before")
+        self.assertEqual(interrupted.returncode, 75, interrupted.stdout + interrupted.stderr)
+        self.assertEqual(self.state.read_bytes(), self.before)
+        new_files = [path for path in set(self.state.parent.iterdir()) - before_paths if path.is_file()]
+        self.assertEqual(len(new_files), 1, "fixture must reach actual unpublished temporary file")
+        residue = new_files[0]
+        residue.write_bytes(b"unowned-concurrent-replacement")
+        residue.chmod(0o644)
+        replay = self.run_worker()
+        self.assertNotEqual(replay.returncode, 0, "unknown residue cannot authorize recovery or publication")
+        self.assertEqual(residue.read_bytes(), b"unowned-concurrent-replacement")
+        self.assertEqual(stat.S_IMODE(residue.stat().st_mode), 0o644)
+        self.assertEqual(self.state.read_bytes(), self.before)
+
     def test_symlink_state_target_refuses_without_mutating_referent(self):
         alias = self.root / "record-alias.json"
         alias.symlink_to(self.state.name)
@@ -208,6 +224,31 @@ class ResumeDurabilityTests(unittest.TestCase):
 
 
 class TrivialResumeIntegrationTests(unittest.TestCase):
+    def test_interrupted_trivial_publication_replays_without_undeclared_temporary_files(self):
+        import test_start_path as fixtures
+        original = fixtures.run
+        interrupted_roots = set()
+
+        def interrupt_first_apply(root, *arguments):
+            if arguments and arguments[0] == "resume" and str(root) not in interrupted_roots:
+                interrupted_roots.add(str(root))
+                policy = arguments[arguments.index("--policy") + 1]
+                receipt = arguments[arguments.index("--receipt") + 1]
+                state = root / ".agent/run_state.json"
+                before = state.read_bytes()
+                interrupted = subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                    "--worker", str(root), policy, receipt, str(state), "before", "unused", "unused"],
+                    capture_output=True, text=True, timeout=40)
+                self.assertEqual(interrupted.returncode, 75, interrupted.stdout + interrupted.stderr)
+                self.assertEqual(state.read_bytes(), before, "actual interrupted publication changed old state")
+            return original(root, *arguments)
+
+        with patch.object(fixtures, "run", interrupt_first_apply):
+            # Reuse the exact real trivial-route/ordinary+linked flow, retaining
+            # every successful apply, noop, unchanged-untracked and byte assertion.
+            self.test_real_trivial_receipt_and_replay_do_not_contaminate_ordinary_or_linked_worktree()
+        self.assertEqual(len(interrupted_roots), 2, "both ordinary and linked paths must reach interruption")
+
     def test_real_trivial_receipt_and_replay_do_not_contaminate_ordinary_or_linked_worktree(self):
         import test_start_path as fixtures
         from test_workflow_assurance import git

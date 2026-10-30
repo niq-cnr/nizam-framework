@@ -3433,10 +3433,8 @@ def resume_from_receipt(
 
     target_state_path = target_path()  # Reject aliases before resolving identity.
 
-    def plan_current() -> dict[str, Any]:
+    def plan_current(policy_data, receipt_data) -> dict[str, Any]:
         state_data = _read_json_file(target_path())
-        policy_data = _read_json_file(policy_path)
-        receipt_data = _read_json_file(receipt_path) if receipt_path is not None else None
         try:
             return wa.plan_receipt_transition(root, state_data, receipt_data, policy=policy_data)
         except wa.AssuranceError as exc:
@@ -3444,18 +3442,24 @@ def resume_from_receipt(
 
     applied = False
     if apply_changes:
-        with _receipt_state_lock(root, target_state_path):
-            planned = plan_current()
+        with _receipt_state_lock(root, target_state_path) as journal:
+            policy_data = _read_json_file(policy_path)
+            receipt_data = _read_json_file(receipt_path) if receipt_path is not None else None
+            binding = {"policy_sha256": sha256_hex(canonical_bytes(policy_data)),
+                "receipt_sha256": sha256_hex(canonical_bytes(receipt_data))}
+            _recover_receipt_publication(target_path(), journal, binding)
+            planned = plan_current(policy_data, receipt_data)
             if planned["action"] == "advance":
                 try:
-                    _publish_receipt_state(target_path(), planned["state"])
+                    _publish_receipt_state(target_path(), planned["state"], journal, binding)
                 except OSError as exc:
                     raise StartPathError(
                         "receipt state publication failed; inspect current state and replay the same verified receipt: " + str(exc), 1,
                     ) from exc
                 applied = True
     else:
-        planned = plan_current()
+        planned = plan_current(_read_json_file(policy_path),
+            _read_json_file(receipt_path) if receipt_path is not None else None)
     return {
         "action": planned["action"],
         "reason": planned["reason"],
@@ -3487,7 +3491,7 @@ def _receipt_state_lock(root: Path, state_path: Path):
         if not stat.S_ISREG(os.fstat(fd).st_mode):
             raise StartPathError("receipt state lock is not a regular file", 1)
         fcntl.flock(fd, fcntl.LOCK_EX)
-        yield
+        yield lock_path.with_suffix(".publication.json")
     finally:
         try:
             fcntl.flock(fd, fcntl.LOCK_UN)
@@ -3495,25 +3499,84 @@ def _receipt_state_lock(root: Path, state_path: Path):
             os.close(fd)
 
 
-def _publish_receipt_state(target: Path, state: dict[str, Any]) -> None:
+def _sync_receipt_directory(directory: Path) -> None:
+    fd = os.open(directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_CLOEXEC", 0))
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def _recover_receipt_publication(target: Path, journal: Path, binding: dict[str, str]) -> None:
+    """Clean only a complete proven intent; journal bytes never publish state."""
+    if not os.path.lexists(journal):
+        return
+    try:
+        if journal.is_symlink() or not stat.S_ISREG(journal.lstat().st_mode):
+            raise ValueError("unsafe intent record")
+        intent = _read_json_file(journal)
+        fields = {"schema_version", "target", "temporary", "base_sha256", "new_sha256", "byte_length", "mode", *binding}
+        if set(intent) != fields or intent["schema_version"] != 1 or intent["target"] != str(target):
+            raise ValueError("intent target/shape mismatch")
+        if any(intent[k] != value for k, value in binding.items()):
+            raise ValueError("intent policy/receipt differs; replay the original verified receipt")
+        temporary = Path(intent["temporary"])
+        if temporary.parent != target.parent or not re.fullmatch(r"\.nizam-resume-[0-9a-f]{32}\.json", temporary.name):
+            raise ValueError("intent temporary identity mismatch")
+        if (any(not isinstance(intent[k], str) or not re.fullmatch(r"[0-9a-f]{64}", intent[k]) for k in ("base_sha256", "new_sha256"))
+                or type(intent["byte_length"]) is not int or intent["byte_length"] < 0
+                or type(intent["mode"]) is not int or not 0 <= intent["mode"] <= 0o7777):
+            raise ValueError("intent content identity invalid")
+        current = sha256_hex(target.read_bytes())
+        if stat.S_IMODE(target.stat().st_mode) != intent["mode"]:
+            raise ValueError("current state mode changed")
+        if os.path.lexists(temporary):
+            if (current != intent["base_sha256"] or temporary.is_symlink()
+                    or not stat.S_ISREG(temporary.lstat().st_mode)
+                    or stat.S_IMODE(temporary.stat().st_mode) != intent["mode"]):
+                raise ValueError("unknown temporary/state identity or mode")
+            raw = temporary.read_bytes()
+            if len(raw) != intent["byte_length"] or sha256_hex(raw) != intent["new_sha256"]:
+                raise ValueError("unknown or partial temporary bytes preserved")
+            temporary.unlink()
+            _sync_receipt_directory(target.parent)
+        elif current not in (intent["base_sha256"], intent["new_sha256"]):
+            raise ValueError("unknown current state preserved")
+        journal.unlink()
+        _sync_receipt_directory(journal.parent)
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        raise StartPathError("receipt publication recovery held; preserve evidence and reconcile the original receipt: " + str(exc), 1) from exc
+
+
+def _publish_receipt_state(target: Path, state: dict[str, Any], journal: Path, binding: dict[str, str]) -> None:
     """Publish a complete owned state and acknowledge only after directory fsync."""
     mode = stat.S_IMODE(target.lstat().st_mode)
-    fd, name = tempfile.mkstemp(prefix=".nizam-resume-", suffix=".json", dir=target.parent)
-    temporary = Path(name)
+    raw = (json.dumps(state, indent=2) + "\n").encode("utf-8")
+    temporary = target.parent / (".nizam-resume-" + secrets.token_hex(16) + ".json")
+    intent = dict(schema_version=1, target=str(target), temporary=str(temporary),
+        base_sha256=sha256_hex(target.read_bytes()), new_sha256=sha256_hex(raw),
+        byte_length=len(raw), mode=mode, **binding)
+    # Publish complete coordination metadata before the worktree temp exists.
+    fd, name = tempfile.mkstemp(prefix=".publication-", dir=journal.parent)
     try:
-        os.fchmod(fd, mode)
         with os.fdopen(fd, "wb") as stream:
-            stream.write((json.dumps(state, indent=2) + "\n").encode("utf-8"))
+            stream.write(canonical_bytes(intent) + b"\n")
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, target)
-        directory_fd = os.open(target.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_CLOEXEC", 0))
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        os.replace(name, journal)
+        _sync_receipt_directory(journal.parent)
     finally:
-        temporary.unlink(missing_ok=True)
+        Path(name).unlink(missing_ok=True)
+    fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    with os.fdopen(fd, "wb") as stream:
+        os.fchmod(stream.fileno(), mode)
+        stream.write(raw)
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, target)
+    _sync_receipt_directory(target.parent)
+    journal.unlink()
+    _sync_receipt_directory(journal.parent)
 
 
 def _read_json_file(path: Path) -> dict[str, Any]:

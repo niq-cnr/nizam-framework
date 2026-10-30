@@ -35,7 +35,11 @@
     "Noop/republish retains owned state bytes and records the actual outcome without duplicate history.",
     "On interrupted publication, exact replay uses existing receipt verification; no attempt reset, replay counter or new state store.",
     "Reject symlink/nonregular publication targets and preserve unrelated files.",
-    "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback."
+    "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback.",
+    "Before exclusive same-directory temporary creation, durably publish one per-state Git-admin publication-intent journal under the existing state lock, binding canonical target path, random temporary path, original state SHA256, complete new-state SHA256/byte length/mode, and exact current policy/receipt canonical digests.",
+    "Apply recovery runs under the same lock before real receipt planning. With exact current policy/receipt binding and unchanged original state, remove only a regular nonsymlink temporary whose full bytes, length and mode match the recorded complete publication. Missing temp with old state clears a precreation intent; missing temp with exact new state clears a postreplacement intent. Fsync worktree directory after removal and Git-admin directory after journal changes.",
+    "Unknown, partial, corrupt, changed-mode or mismatched target/temp/journal/policy/receipt evidence is preserved and refuses; never blanket-delete names/prefixes, exempt worktree paths, publish state from journal, or reset attempts. Interrupted partial writes remain explicit reconciliation holds.",
+    "After safe intent cleanup, re-run the actual existing receipt planner and normal durable publication. Real ordinary and linked-worktree crash immediately before replacement must preserve old state and allow exact replay without untracked residue, then identical noop; unknown residue remains byte-identical on refusal."
   ],
   "acceptance": [
     "Independent real interruption before replace preserves old parseable state; interruption after replace yields complete new parseable state.",
@@ -43,7 +47,8 @@
     "Concurrent conflicting receipts cannot both advance from stale source state.",
     "Read-only run has no filesystem effects, old/new mode preserved, failure refuses with evidence and does not mark applied.",
     "Existing real receipt/recovery and task-wide retry cases remain passing.",
-    "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees."
+    "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees.",
+    "After safe intent cleanup, re-run the actual existing receipt planner and normal durable publication. Real ordinary and linked-worktree crash immediately before replacement must preserve old state and allow exact replay without untracked residue, then identical noop; unknown residue remains byte-identical on refusal."
   ],
   "verification": [
     {
@@ -53,7 +58,7 @@
         "python3",
         "tools/test_resume_durability.py"
       ],
-      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls; actual trivial route, clean-worktree and linked-worktree coordination isolation",
+      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls; actual trivial route, clean-worktree and linked-worktree coordination isolation; actual trivial before-replace crash/replay and unknown-residue preservation",
       "expected_exit": 0,
       "proof_kind": "success",
       "diagnostic": null,

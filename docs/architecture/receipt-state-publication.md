@@ -36,7 +36,21 @@ existing proof interpretation.
 An interruption before replacement leaves the complete old state. An
 interruption after replacement leaves complete new state; exact receipt
 replay observes the recorded transition and does not append another event.
-Unfinished temporary files are not authoritative state. If publication or
+Before creating the same-directory temporary, apply durably writes a small
+publication intent in Git administrative metadata under the same state lock.
+The intent binds the target and random temporary path, old and complete new
+content hashes, byte length, original mode, and exact policy and receipt
+digests. It supplies no state publication authority. Exact replay can remove
+only the complete matching temporary while the original state is unchanged,
+then reruns real receipt verification and planning. Missing temporary files
+are reconciled only against the exact old or new state. Directory fsync
+confirms cleanup. Read-only planning never performs recovery.
+
+Unknown, partial, corrupt or changed-mode temporary files and mismatched
+policy, receipt or state identities remain preserved and cause a recovery
+hold. Recovery does not delete arbitrary prefixed files or exempt any path
+from task eligibility. Unfinished temporary files are not authoritative
+state. If publication or
 directory durability cannot be confirmed, the operation reports failure
 rather than applied success. The host inspects current state and replays the
 same verified receipt; it must not infer a new execution or reset attempts.
