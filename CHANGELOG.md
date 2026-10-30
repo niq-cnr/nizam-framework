@@ -7,6 +7,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Optional authenticated external-to-native QA mapping reuses the existing permit
+  and admission ledger, with shared task reservation ownership and native proof
+  interpretation. Public native completion requires a matching recorded mapping
+  for externally owned tasks; generic admission and producer observations grant
+  no independent review, human approval or automatic completion.
+
 ### Fixed
 
 - Generic optional external evidence admission now requires a trusted host-selected

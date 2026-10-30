@@ -1,0 +1,87 @@
+{
+  "id": "strategic-nf-external-qa-20261030",
+  "scope": "Canonical optional external verification to existing native typed QA, with one existing attempt authority and completion gating.",
+  "source_base": "ba6d19560f45675f7d960ce5cf088f9887166528",
+  "dependency": "PR150 accepted profile1.1 source; root owns merge ordering.",
+  "producer": "Existing Agentic trusted Python controller invoking fixed reviewed driver around DockerSandboxRunner/HandoffGateEnforcer; no new orchestrator.",
+  "granularity": "One exact frozen verifier-driver argv per selected gate; internal VerificationPlan/lock/oracles/check inventory are authenticated artifacts, not extra native attempts.",
+  "api": {
+    "module": "tools/external_qa.py",
+    "admit_external_qa": {
+      "positional": [
+        "repo_root",
+        "envelope"
+      ],
+      "required_keywords": [
+        "context_ref",
+        "expected_feature_id",
+        "expected_candidate",
+        "required_checks",
+        "expected_execution_identity",
+        "expected_producer",
+        "admission_expectations"
+      ],
+      "return": [
+        "generic admission result",
+        "qa_mapping context/candidate/QA references",
+        "completion_status=not_advanced"
+      ]
+    },
+    "context_schema": "schema/external_qa_context.schema.json",
+    "context_fields": [
+      "schema_version=1",
+      "mapping_id=generic-external-native-qa-v1",
+      "feature_id",
+      "candidate_ref",
+      "qa_ref",
+      "host_policy_ref",
+      "execution_profile_ref",
+      "required_checks_sha256",
+      "execution_identity_sha256",
+      "producer={agent_id,session_id}",
+      "artifact_modes=[{path,sha256,byte_length,mode}]"
+    ]
+  },
+  "binding_rules": [
+    "Context, native QA, assessed candidate, each check capture and streams must be covered by full-envelope authenticated artifact descriptors; exclude only context self-reference from its own artifact-mode list.",
+    "Context host policy and execution-profile refs must be whole immutable assessed candidate contract/tool inputs, selected before execution; no caller-owned approval or code loading from input data.",
+    "Native capture.revision is consumer source-preserving commit, not Agentic tool revision. Producer has exactly native agent_id/session_id fields; driver source/image/tool/isolation identities belong in authenticated execution/profile artifacts.",
+    "Native capture.cwd/environment match actual assessed execution root/environment; exact argv/exit/proof kind match independently approved required inventory.",
+    "One observed driver invocation uses one external permit; no native capture_command_evidence/_reserve_attempt and no standalone SQLite allocation.",
+    "Use existing workflow_assurance proof interpretation, including exact counts/diagnostics and required native verifier/schema membership.",
+    "Successful typed mapping is stored as a projection in existing external admission ledger in the same serialized durable transition; no new authority ledger.",
+    "Generic admitted alone has no typed mapping and cannot satisfy native governed completion.",
+    "Current public validate_qa_proof and existing route/receipt completion consumers require matching recorded mapping for externally owned tasks; canonical pre-admission validation uses a private core proof routine without advancing state.",
+    "Native and external first reservations share a stable task lock and inspect existing history. Mixed, corrupt or unknown matching history refuses; no automatic conversion, reset or fallback.",
+    "Failures/unknown cleanup remain actual statuses; no new attempt until prior execution reconciled. A rejected malformed proof can be repaired from retained same-run evidence but does not authorize another execution.",
+    "Read-only proof validation/discovery creates no new authority record; locks are coordination only."
+  ],
+  "producer_driver_proposal": {
+    "argv": [
+      "<trusted-python>",
+      "-I",
+      "<trusted-driver-file>",
+      "--workspace",
+      "<root>",
+      "--image",
+      "<digest>",
+      "--gate",
+      "backend-red|backend-green",
+      "--output",
+      "<host-evidence-dir>"
+    ],
+    "token_delivery": "Host-only controller memory/private channel; absent from argv, candidate mounts/environment/output.",
+    "result": "Closed GateCheckResult plus authenticated binding/artifact manifest; actual runner records retained; return0 only passed+completed,1 completed mismatch,2 error/unknown."
+  },
+  "scope_limits": [
+    "No human UI approval semantics supplied by generic envelope; selected typed approval profile required separately.",
+    "No HMAC/schema assertion proves execution identity; actual trusted producer/isolation pairing must execute for qualification.",
+    "No model calls, release tags, production install or paid campaign from this source contract."
+  ],
+  "ci_amendment": {
+    "scope": ".github/workflows/compliance.yml",
+    "job": "fixtures_self_test",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_external_qa.py",
+    "preserve": "Existing runner, permissions, required-check identity and protections; no live/paid call."
+  }
+}

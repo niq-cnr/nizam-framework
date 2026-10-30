@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.40.0
+version: 0.41.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.41.0"
+    date: "2026-10-30"
+    summary: "Index optional authenticated external-to-native QA mapping and its single task-attempt owner/completion boundary."
   - version: "0.40.0"
     date: "2026-10-27"
     summary: "NF-R01/NF-R03/NF-R04: index tools/git_seam.py (shared read-only no-replace Git seam), tools/external_evidence.py (generic optional external evidence admission CLI and library), and versioned 1.1.0 typed binary packet coverage in tools/convergent_review.py."
@@ -338,6 +341,7 @@ agent runtime through the same adapter contract — no per-runtime forks.
 | [`git_seam.py`](git_seam.py) | Hardened read-only Git execution seam (`--no-replace-objects`, `-c core.replaceRefs=false`, sanitized `GIT_*` environment, verified worktree/git-dir resolution, literal pathspecs, and batch object reads) shared across `workflow_assurance.py`, `start_path.py`, `convergent_review.py`, and `payload_integrity.py`. |
 | [`payload_integrity.py`](payload_integrity.py) | Shared installed-payload integrity comparator invoked from outside the target payload by `bootstrap.sh --verify-only` and `.github/scripts/verify_self_governance.py`: compares the complete file inventory (excluding only `provenance.json`), exact byte content, regular-file/no-symlink rules, and executable file modes (`100755` vs `100644`) of an installed payload against an explicit `--git-repo` + `--expected-sha` commit tree (`content_integrity=verified`) or an unbound `--source-root` directory (`content_integrity=directory_match_unbound`). |
 | [`external_evidence.py`](external_evidence.py) | Generic optional external evidence admission library and CLI (`allocate-attempt`, `admit-evidence`, `reconcile`) validating external evidence envelopes against `schema/external_evidence_admission.schema.json` with monotonic attempt permits, candidate/tree/worktree binding, HMAC-SHA256 producer proof verification, idempotent duplicate replay, and crash-recovery reconciliation. |
+| [`external_qa.py`](external_qa.py) | Explicit authenticated external observation mapping using the existing permit/admission ledger and native QA interpretation. Records no completion; public native QA and receipts require its matching latest typed mapping for external-owned tasks. See [the supported boundary](../docs/architecture/external-native-qa.md). |
 | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction (`"1.0.0"` text-only and `"1.1.0"` typed binary coverage); authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
 | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
 | [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |

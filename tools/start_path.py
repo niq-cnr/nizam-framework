@@ -30,6 +30,7 @@ Supports:
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import copy
 import datetime
 import hashlib
@@ -1280,6 +1281,104 @@ def _authoritative_consumed_attempts(root: Path, task_id: str, step: str) -> int
     return consumed
 
 
+@contextmanager
+def _task_reservation_lock(root: Path, task_id: str):
+    """Coordinate native/external reservations; existing histories own the budget."""
+    import fcntl
+    if not isinstance(task_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", task_id):
+        raise StartPathError("invalid task reservation identity", 2)
+    observed = _run_git_readonly(root, ["rev-parse", "--absolute-git-dir"], text=True)
+    if observed.returncode != 0 or not observed.stdout.strip():
+        raise StartPathError("task reservation requires Git administrative metadata", 2)
+    administration = Path(observed.stdout.strip())
+    if not administration.is_absolute() or not administration.is_dir():
+        raise StartPathError("invalid task reservation administrative directory", 2)
+    directory = administration / "nizam-task-reservation-locks"
+    if directory.is_symlink():
+        raise StartPathError("symlink task reservation lock directory", 2)
+    directory.mkdir(mode=0o700, exist_ok=True)
+    fd = os.open(directory / (sha256_hex(task_id.encode()) + ".lock"),
+        os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise StartPathError("nonregular task reservation lock", 2)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
+
+
+def _external_task_state(root: Path, task_id: str):
+    """Read external ownership, including interrupted publications, without writes."""
+    directory = resolve_project_file(root, ".agent/evidence/external_admissions")
+    if not directory.exists():
+        return False, None
+    if not directory.is_dir():
+        raise StartPathError("corrupt external task history", 2)
+    path = directory / "ledger.json"
+    ledger = None
+    owned = False
+    if path.exists():
+        try:
+            ledger = _read_json_file(resolve_project_file(root, path.relative_to(root).as_posix()))
+            if ledger.get("schema_version") != "1.0.0" or any(type(ledger.get(k)) is not dict for k in ("tasks", "permits", "admissions")):
+                raise ValueError("invalid ledger shape")
+            owned = task_id in ledger["tasks"]
+            for entry in ledger["permits"].values():
+                if type(entry) is not dict:
+                    raise ValueError("invalid permit entry")
+                owned = owned or entry.get("task_id") == task_id
+        except (OSError, ValueError, TypeError) as exc:
+            raise StartPathError("corrupt external task ledger", 2) from exc
+    for child in (directory / "permits", directory / "admitted"):
+        if child.is_symlink():
+            raise StartPathError("symlink external task history", 2)
+        if child.exists():
+            for record in child.glob(task_id + "-*"):
+                if record.is_symlink() or not record.is_file():
+                    raise StartPathError("unsafe matching external task history", 2)
+                # Tokens have no embedded identity; their canonical name still
+                # holds the task closed after interrupted permit publication.
+                if record.suffix == ".token":
+                    permit_path = record.with_suffix(".permit.json")
+                    if not permit_path.exists():
+                        owned = True
+                    else:
+                        permit = _read_json_file(resolve_project_file(root, permit_path.relative_to(root).as_posix()))
+                        if not isinstance(permit.get("task_id"), str):
+                            raise StartPathError("corrupt matching external permit", 2)
+                        owned = owned or permit["task_id"] == task_id
+                    continue
+                doc = _read_json_file(record)
+                envelope = doc.get("envelope")
+                lineage = envelope.get("attempt_lineage") if isinstance(envelope, dict) else None
+                identity = doc.get("task_id", lineage.get("task_id") if isinstance(lineage, dict) else None)
+                if identity == task_id:
+                    owned = True
+                elif not isinstance(identity, str):
+                    raise StartPathError("corrupt matching external task history", 2)
+    return owned, ledger
+
+
+def _native_task_history_exists(root: Path, task_id: str) -> bool:
+    if _task_capture_history(root, task_id):
+        return True
+    evidence = resolve_project_file(root, ".agent/evidence")
+    if evidence.exists():
+        for marker in evidence.rglob(task_id + "-*.reservation.json"):
+            doc = _read_json_file(resolve_project_file(root, marker.relative_to(root).as_posix()))
+            if doc.get("id") == task_id:
+                if not ID_PATTERN.fullmatch(str(doc.get("step", ""))) or type(doc.get("attempt")) is not int or doc["attempt"] < 1:
+                    raise StartPathError("corrupt matching native reservation", 2)
+                return True
+            if not isinstance(doc.get("id"), str):
+                raise StartPathError("corrupt matching native reservation", 2)
+    return False
+
+
 def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
     """Atomically reserve an attempt number before dispatch.
 
@@ -1288,6 +1387,14 @@ def _reserve_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
     changes cannot share or reset a sequence number. Exclusive create is the
     compare-and-swap; a pre-existing marker means the number is already taken.
     """
+    with _task_reservation_lock(root, task_id):
+        external, _ = _external_task_state(root, task_id)
+        if external:
+            raise StartPathError("task is externally owned; native reservation refused", 2)
+        _reserve_native_attempt(root, task_id, step, attempt)
+
+
+def _reserve_native_attempt(root: Path, task_id: str, step: str, attempt: int) -> None:
     marker = root / ".agent" / "evidence" / f"{task_id}-{step}-attempt{attempt}.reservation.json"
     marker.parent.mkdir(parents=True, exist_ok=True)
     doc = {
