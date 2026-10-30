@@ -1,0 +1,27 @@
+{
+  "role": "Independent Test Engineer",
+  "contract_sha256": "608c8ece539128a75a44632dc2b0e7e034665afc602512f18b6773934f4efd36",
+  "spec_sha256": "64d2a1f6679299b507207baf7b77e561ca5da32006e19e008b9edb233ebc72cc",
+  "test_file": "tools/test_external_state_boundary.py",
+  "test_sha256": "6a5cbf283cda4a8c51d13e5ccb61bc85ad805e0db31406df06a8b29d3cbc5f72",
+  "runtime_sha256": "15405b62088c6e6f64651b790333483aa57f193dd864a8103ebeb4e634a754b8",
+  "runtime_unchanged": true,
+  "argv": [
+    "python3",
+    "tools/test_external_state_boundary.py"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit": 1,
+  "stdout": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-external-state-boundary-independent-red-r1/stdout",
+  "stderr": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-external-state-boundary-independent-red-r1/stderr",
+  "methods": 8,
+  "failures": 100,
+  "errors": 0,
+  "scope": "Real public allocation, generic and typed admission sharedcore, reconciliation against owned temporary fixtures; real generic HMAC/envelopes and bytes/mode/state-count snapshots. Typed fixture exercises boundary guard before unqualified native context; it does not qualify typed QA or consumerpair. Childpublic calls bounded5s. No sameUID hostile concurrent rename claim.",
+  "preserved_existing_tests": true,
+  "source_edits_by_TE": false,
+  "draft_predecessor": "reviews/nizam-external-state-boundary-independent-red-draft.json; typedcall missing canonical expectations corrected before freeze after actual signature read",
+  "freeze": "Exact test bytes now frozen; owner may implement source only, no assertions edited absent documented independent fixture defect"
+}

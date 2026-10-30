@@ -1,0 +1,35 @@
+{
+  "review_id": "nizam-external-state-boundary-semantic-precode-20261030",
+  "contract_sha256": "608c8ece539128a75a44632dc2b0e7e034665afc602512f18b6773934f4efd36",
+  "spec_sha256": "64d2a1f6679299b507207baf7b77e561ca5da32006e19e008b9edb233ebc72cc",
+  "base_commit": "6eba6d14dbabaacbe315edf77e01125a0d162187",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "semantic_findings": [
+    "Current lock setup follows state-directory symlink and cleanup removes outside.tmp before later artifact reader refuses symlink. Existing errorcode is therefore insufficient; actual outside bytes/modes and statecounts must be preserved before unsafe namespace refusal.",
+    "All existing fixed ancestors and managed directories must be preflighted before mkdir/open/cleanup/write, then opened relative to anchored nofollow directory descriptors with actual fstat checks. Unsupported safe primitives refuse without permissionrepair, namespace relocation or newstateauthority.",
+    "State.lock must open O_NOFOLLOW/O_NONBLOCK/O_CLOEXEC and prove opened regularfile beforeflock, refusing FIFO/directory/symlink promptly and before cleanup. Preserve existing common task/state lock order.",
+    "Stagecleanup is confined to validated descriptors and regular.tmp-* entries; unknown symlink/nonregular staging remains preserved/refused. Allocation/generic/typed admission and reconciliation share guarded core with controlled public errors, retaining auth/replay/counter/orphan semantics.",
+    "Boundary expressly excludes hostile sameUID concurrent directory rename after validation because laterpublication remains pathbased. This is a cooperative preexisting-namespace correction, not full OS isolation or general adversarial path-race proof."
+  ],
+  "required_acceptance_controls": [
+    "Independent actualpublic negative controls at everyfixed ancestor/managed child, whole-state and subdirectory symlinks, dangling links/non-directory and regular/symlink/FIFO/directory locks. A missing safe child alongside an existing unsafe sibling must refuse before creating missing namespace or lock.",
+    "Snapshot actual outside sentinel tree bytes/modes and currentledger/permit/admission counts before/after; errorlabel alone cannot qualify. No realoutsideuserfiles targeted.",
+    "Positive real allocation/admission/replay/reconciliation and knownregular stagingcleanup must remain; unknown stagingtype preserved, no cleanup through symlinks.",
+    "Original15 capacity/MAC12/typed21 tests unchanged; integrate acceptedNF153 fixture successor before finalfreeze, run exact8checks, preserve priorrootproof/failures. CIadds only dedicated offlinecorpus in existingjob."
+  ],
+  "evidence_refs": [
+    "evidence/nizam/external-state-symlink-probe.json",
+    "worktrees/nizam-state-boundary/.agent/contracts/strategic-nf-state-boundary-20261030.json",
+    "worktrees/nizam-state-boundary/.agent/specs/strategic-nf-state-boundary-20261030.json",
+    "reviews/nizam-task-budget-postcode-r1.json"
+  ],
+  "limits": [
+    "Precode source approval only; separate structuralgate and independentRED before runtime edits. No actual integration/payloadupgrade/producerpair/release/modelcall qualification.",
+    "Reviewer wrote no source/test/actualstate; rootinstalledv3.0 remains unchanged."
+  ]
+}

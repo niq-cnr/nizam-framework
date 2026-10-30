@@ -1,0 +1,204 @@
+{
+  "contract_id": "strategic-nf-state-boundary-20261030",
+  "feature_id": "strategic-nf-state-boundary-20261030",
+  "name": "Refuse unsafe external managed-state namespace before mutation",
+  "status": "approved",
+  "spec_ref": ".agent/specs/strategic-nf-state-boundary-20261030.json",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_external_state_boundary.py",
+        "purpose": "Independent Test Engineer real public allocation/admission/reconcile negative and positive namespace controls."
+      },
+      {
+        "path": "docs/architecture/external-state-boundary.md",
+        "purpose": "Cooperative namespace safety and precise hostile-sameUID-race exclusion."
+      },
+      {
+        "path": ".agent/contracts/strategic-nf-state-boundary-20261030.json",
+        "purpose": "Bounded EF26 owning source contract."
+      },
+      {
+        "path": ".agent/specs/strategic-nf-state-boundary-20261030.json",
+        "purpose": "Exact selected namespace guard and acceptance controls."
+      },
+      {
+        "path": ".agent/evidence/strategic-nf-state-boundary-20261030/*",
+        "purpose": "Preserved RED/green/review exact-source evidence."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/external_evidence.py",
+        "purpose": "Nofollow managed-directory and opened regular lock guard before cleanup/write; anchored staging cleanup."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "One exact offline corpus command in existing fixtures job; no runner/permissions/check identity change."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased current-source EF26 correction."
+      }
+    ]
+  },
+  "non_goals": [
+    "No installed .nizam mutation, production/live/paid operation or release",
+    "No hostile sameUID concurrent rename guarantee",
+    "No new ledger, recovery authority, capture policy or retry budget change",
+    "No existing frozen test modification"
+  ],
+  "acceptance_requirements": [
+    "Before creating missing managed directories, opening/creating state.lock, staging cleanup or writing state, validate every existing fixed namespace component beneath canonical repo_root: .agent, evidence, external_admissions, permits and admitted. Refuse symlink or non-directory components without deleting or modifying any existing owned/outside files or ledgers. Preflight all existing components before any namespace creation; missing safe components may then be created.",
+    "Open the validated root and fixed child directories using directory descriptors with O_DIRECTORY/O_NOFOLLOW and actual fstat directory checks; create missing components relative to validated parent descriptors. Unsupported nofollow primitives fail closed. No chmod/owner repair and no namespace relocation.",
+    "Open state.lock relative to anchored state directory with O_NOFOLLOW, O_NONBLOCK, O_CLOEXEC and existing create/readwrite semantics; require actual opened fstat regular file before flock. Existing symlink, FIFO, directory and other nonregular lock must refuse promptly without touching target bytes or running cleanup. Preserve common task-lock ordering.",
+    "Validate existing permits/admitted directories before lockfile creation or cleanup; stage cleanup enumerates and unlinks only regular .tmp-* entries relative to anchored validated directory descriptors. Unknown symlink/nonregular .tmp-* entries are preserved and refused; do not follow them or reinterpret as published state. Existing valid regular staging recovery remains supported.",
+    "Apply the same guard through allocation, generic admission, typed admission via existing generic core, and reconciliation; public domain exceptions must be controlled, not raw OSError or hangs. Existing authenticated admission/replay, unknown/orphan preservation, counter accounting and wire/API/schema behavior remain unchanged.",
+    "Independent actual accepted-source reproduction must retain outside owned .tmp sentinel bytes/mode for whole-state and managed-subdirectory symlinks, existing ancestor symlinks, and state.lock symlink/nonregular cases. Snapshot complete outside tree and ledger/permit/admission counts before and after refusals; positive real regular allocation/admit/replay/reconcile and staging cleanup must pass.",
+    "This is a cooperative host managed-namespace guard against unsafe preexisting components. It does not claim protection from hostile sameUID concurrent directory renames after validation; existing path-based publication is retained. No new ledger/controller/history conversion/authority or broad artifact-symlink permission."
+  ],
+  "verification": [
+    {
+      "id": "NF-STATE-01",
+      "command": "python3 tools/test_external_state_boundary.py",
+      "argv": [
+        "python3",
+        "tools/test_external_state_boundary.py"
+      ],
+      "acceptance_test": "Independent namespace negative/positive public controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-02",
+      "command": "python3 tools/test_task_budget_reservations.py",
+      "argv": [
+        "python3",
+        "tools/test_task_budget_reservations.py"
+      ],
+      "acceptance_test": "Preserve current fifteen pending-capacity/history controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-03",
+      "command": "python3 tools/test_external_qa.py",
+      "argv": [
+        "python3",
+        "tools/test_external_qa.py"
+      ],
+      "acceptance_test": "Preserve typed native mapping21 and shared authority",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-04",
+      "command": "python3 tools/test_nf_ac04_generic_admission.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "acceptance_test": "Preserve complete-envelope12 replay/authentication/ceilings",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-05",
+      "command": "python3 tools/test_nf_ac05_standalone_e2e.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "acceptance_test": "Preserve installed generic consumer controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-06",
+      "command": "python3 tools/test_start_path.py",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "acceptance_test": "Full native fixture after separately approved publication fixture reconciliation",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-07",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "acceptance_test": "Current-source compliance",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-STATE-08",
+      "command": "git diff 6eba6d14dbabaacbe315edf77e01125a0d162187..HEAD --check",
+      "argv": [
+        "git",
+        "diff",
+        "6eba6d14dbabaacbe315edf77e01125a0d162187..HEAD",
+        "--check"
+      ],
+      "acceptance_test": "Committed assessed delta whitespace",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "estimated_lines": 350,
+  "evidence_dir": ".agent/evidence/strategic-nf-state-boundary-20261030",
+  "source_identity": {
+    "base_commit": "6eba6d14dbabaacbe315edf77e01125a0d162187",
+    "accepted_provider_main": "804cd1bf5c6362adc690970d65468363ba94b120",
+    "integration_rule": "NF153 fixture correction and capacity final acceptance remain separate; integrate accepted capacity successor before final source freeze.",
+    "installed_payload": "v3.0.0 unchanged",
+    "integrated_capacity_successor": "1b18fb6362e1656a80e93b8941aea0314f5256c5",
+    "integration_head_before_source": "1b18fb6362e1656a80e93b8941aea0314f5256c5",
+    "capacity_acceptance": "Both final structural and semantic approvals; root retains actual hosted/main merge gate."
+  },
+  "evidence_convention": "Independent Test Engineer frozen actual RED before runtime edits; preserve raw prior failures and exact argv/environment/source hashes/exit/streams. Refusal proves outside bytes/mode/counts unchanged, not merely error code.",
+  "approval_evidence": {
+    "proposed_contract_sha256": "608c8ece539128a75a44632dc2b0e7e034665afc602512f18b6773934f4efd36",
+    "proposed_spec_sha256": "64d2a1f6679299b507207baf7b77e561ca5da32006e19e008b9edb233ebc72cc",
+    "structural": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-external-state-boundary-precode-structural.json",
+    "semantic": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-external-state-boundary-precode-semantic.json",
+    "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-external-state-boundary-independent-red-r1.json",
+    "frozen_test_sha256": "6a5cbf283cda4a8c51d13e5ccb61bc85ad805e0db31406df06a8b29d3cbc5f72"
+  }
+}
