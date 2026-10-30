@@ -26,6 +26,14 @@ required primitives refuse with a controlled `unsafe_state_namespace` diagnostic
 Existing directory and regular lock modes are preserved; no permission repair or
 namespace relocation occurs. The existing common task lock retains its ordering.
 
+An existing `ledger.json` must also be regular before namespace creation, locking
+or cleanup. This includes rejecting dangling ledger symlinks instead of treating
+them as an absent ledger. Reading uses `O_NOFOLLOW` and `O_NONBLOCK`, and checks the
+actual opened descriptor before reading bytes, so a FIFO cannot block ledger
+parsing. Only an absent ledger selects the existing empty-ledger initializer;
+malformed regular JSON retains its existing controlled corruption refusal.
+No existing history is converted, removed or guessed.
+
 Staging cleanup opens the validated managed directories relative to the state
 descriptor. It first inspects all `.tmp-*` entries without following links, across
 all three directories. Only after every such entry is regular does it unlink

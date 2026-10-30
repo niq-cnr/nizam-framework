@@ -331,5 +331,79 @@ class ExternalStateBoundaryTests(unittest.TestCase):
         self.assertEqual(self.checkpoint(f), before)
 
 
+    def test_unsafe_existing_ledger_refuses_before_missing_lock_or_staging_effects(self):
+        for operation in OPERATIONS:
+            for kind in ("symlink", "dangling", "fifo", "directory", "socket"):
+                with self.subTest(operation=operation, kind=kind):
+                    f = self.fixture()
+                    ledger = f.state / "ledger.json"
+                    retained = f.outside / "retained-original-ledger.json"
+                    ledger.rename(retained)
+                    f.physical["ledger"] = retained
+                    (f.state / "state.lock").unlink()
+                    (f.state / ".tmp-before-ledger-validation").write_bytes(
+                        b"unsafe ledger must be checked before cleanup\n"
+                    )
+                    if kind in ("symlink", "dangling"):
+                        ledger.symlink_to(retained if kind == "symlink" else f.outside / "missing-ledger")
+                    elif kind == "fifo":
+                        os.mkfifo(ledger, 0o640)
+                    elif kind == "directory":
+                        ledger.mkdir(mode=0o750)
+                    else:
+                        owned_socket = socket.socket(socket.AF_UNIX)
+                        self.addCleanup(owned_socket.close)
+                        owned_socket.bind(str(ledger))
+                    before = self.checkpoint(f)
+                    try:
+                        result = self.invoke(f, operation)
+                    except subprocess.TimeoutExpired:
+                        self.assertEqual(self.checkpoint(f), before,
+                                         "unsafe ledger timed out after state/outside mutation")
+                        self.fail("unsafe ledger blocked public " + operation + " beyond5s")
+                    self.assertEqual(self.checkpoint(f), before,
+                                     "unsafe ledger was refused only after state/outside mutation")
+                    self.assertEqual(result["status"], "refused", result)
+                    self.assertEqual(result["type"], "ExternalEvidenceError", result)
+                    self.assertFalse(os.path.lexists(f.state / "state.lock"))
+
+    def test_corrupt_regular_ledger_bytes_are_preserved_on_controlled_public_refusal(self):
+        for operation in OPERATIONS:
+            for raw in (b"{broken-json", b'{"schema_version":true}\n'):
+                with self.subTest(operation=operation, corruption=raw):
+                    f = self.fixture()
+                    ledger = f.state / "ledger.json"
+                    retained = f.outside / "retained-original-ledger.json"
+                    ledger.rename(retained)
+                    f.physical["ledger"] = retained
+                    ledger.write_bytes(raw)
+                    ledger.chmod(0o640)
+                    self.refuse_unchanged(f, operation)
+                    self.assertEqual(ledger.read_bytes(), raw)
+
+    def test_genuinely_fresh_consumer_initializes_absent_ledger_without_history_deletion(self):
+        f = generic.NfAc04GenericAdmissionTests(methodName="runTest")
+        f.setUp()
+        self.addCleanup(f.tearDown)
+        f.allocation = {}
+        f.envelope = {}
+        state = f.repo / ".agent/evidence/external_admissions"
+        self.assertFalse(os.path.lexists(state))
+        before_source = snapshot(f.repo / "src")
+        before_contract = (f.repo / f.contract_rel).read_bytes()
+        result = self.invoke(f, "allocate")
+        self.assertEqual(result["status"], "accepted", result)
+        self.assertEqual(result["result"]["permit"]["attempt_number"], 1)
+        ledger = json.loads((state / "ledger.json").read_bytes())
+        self.assertEqual(set(ledger["tasks"]), {"namespace-new"})
+        self.assertEqual(len(ledger["permits"]), 1)
+        self.assertEqual(len(ledger["admissions"]), 0)
+        self.assertEqual(snapshot(f.repo / "src"), before_source)
+        self.assertEqual((f.repo / f.contract_rel).read_bytes(), before_contract)
+        reconciled = self.invoke(f, "reconcile")
+        self.assertEqual(reconciled["status"], "accepted", reconciled)
+        self.assertEqual(reconciled["result"]["permit_count"], 1)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

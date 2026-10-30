@@ -203,12 +203,13 @@ def _preflight_state_namespace(repo_root: Path) -> None:
                 continue
             if not stat.S_ISDIR(info.st_mode):
                 raise _unsafe_namespace(f"external state directory is unsafe: {directory}")
-        try:
-            info = (state_dir / "state.lock").lstat()
-        except FileNotFoundError:
-            return
-        if not stat.S_ISREG(info.st_mode):
-            raise _unsafe_namespace("external state lock must be a regular file")
+        for filename in ("state.lock", "ledger.json"):
+            try:
+                info = (state_dir / filename).lstat()
+            except FileNotFoundError:
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                raise _unsafe_namespace(f"external state {filename} must be a regular file")
     except OSError as exc:
         raise _unsafe_namespace(f"external state preflight failed: {exc}") from exc
 
@@ -312,17 +313,23 @@ def _cleanup_staging_files(state_dir: Path, *, state_fd: int) -> list[str]:
 
 def _load_or_init_ledger(state_dir: Path) -> dict[str, Any]:
     ledger_path = state_dir / "ledger.json"
-    if not ledger_path.exists():
+    flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(ledger_path, flags)
+    except FileNotFoundError:
         return {
             "schema_version": SCHEMA_VERSION,
             "tasks": {},
             "permits": {},
             "admissions": {},
         }
-    if ledger_path.is_symlink():
-        raise ExternalEvidenceError("external admission ledger.json is a symlink", code="corrupt_ledger")
+    except OSError as exc:
+        raise ExternalEvidenceError(f"cannot open external admission ledger: {exc}", code="corrupt_ledger") from exc
     try:
-        raw = ledger_path.read_bytes()
+        with os.fdopen(fd, "rb") as handle:
+            if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                raise ExternalEvidenceError("external admission opened ledger must be regular", code="corrupt_ledger")
+            raw = handle.read()
         data = json.loads(raw.decode("utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ExternalEvidenceError(f"corrupt external admission ledger: {exc}", code="corrupt_ledger") from exc

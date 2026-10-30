@@ -1,0 +1,29 @@
+{
+  "role": "Independent Test Engineer",
+  "proposal": "coordination/nizam-ledger-regular-read-amendment-proposal.json",
+  "proposal_sha256": "c3087af1c724e1b68f618b3bd399f72acddd3097c7b75fd4e9f2521e5e7462f5",
+  "prior_test_sha256": "6a5cbf283cda4a8c51d13e5ccb61bc85ad805e0db31406df06a8b29d3cbc5f72",
+  "test_sha256": "f105c0982d1dacdcb06f4ed2af7b6d00ddf47a31401eff123fad59dec30f10f8",
+  "all_original_test_and_helper_ASTs_unchanged": true,
+  "new_methods": [
+    "test_corrupt_regular_ledger_bytes_are_preserved_on_controlled_public_refusal",
+    "test_genuinely_fresh_consumer_initializes_absent_ledger_without_history_deletion",
+    "test_unsafe_existing_ledger_refuses_before_missing_lock_or_staging_effects"
+  ],
+  "runtime_sha256": "de4ffc32e168ef87aa78ac569d945518ba697357c838bf9dd6ca076edf9befec",
+  "runtime_unchanged": true,
+  "argv": [
+    "python3",
+    "tools/test_external_state_boundary.py"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exit": 1,
+  "stdout": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-ledger-independent-red/stdout",
+  "stderr": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-ledger-independent-red/stderr",
+  "failures": 15,
+  "errors": 0,
+  "scope": "Real public4operations, ledger symlink/dangling/FIFO/directory/socket with existingstage+missinglock/fullownedoutside/state/counters preservation; actual corruptregularJSON refusal; genuinelynewconsumer absent-ledger initialize positive. Original8namespacemethods/helpers unchanged. No installed/realuser/model operation or nativeQA/pair claim.",
+  "freeze": "Exact11-method corpus frozen for source repair; no owner test edits absent documented independent fixture defect"
+}
