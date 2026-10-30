@@ -1306,6 +1306,85 @@ def validate_qa_context(root, feature_id, candidate, required_checks):
 
 def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
     """One fail-closed proof interpretation for completion and both receipt paths."""
+    validated = _validate_qa_proof_core(root, verdict, feature_id=feature_id,
+        candidate=candidate, required_checks=required_checks)
+    try:
+        _require_external_qa_mapping(root, validated, feature_id, candidate, required_checks)
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, UnicodeError) as exc:
+        raise AssuranceError('external QA mapping invalid: ' + str(exc)) from exc
+    return validated
+
+
+def _require_external_qa_mapping(root, verdict, feature_id, candidate, required_checks):
+    """An external task needs a recorded typed projection, not generic admission."""
+    sp = _load_start_path_module()
+    try:
+        owned, ledger = sp._external_task_state(Path(root), feature_id)
+    except sp.StartPathError as exc:
+        raise AssuranceError('external task history invalid: ' + str(exc)) from exc
+    if not owned:
+        return
+    require(type(ledger) is dict, 'external task has no complete admission ledger')
+    task = ledger['tasks'].get(feature_id)
+    require(type(task) is dict and type(task.get('steps')) is dict and type(task.get('history')) is list and
+            task['history'], 'external task has no complete outcome history')
+    require(all(type(step) is dict and step.get('allocated_attempts') == step.get('admitted_attempts')
+                for step in task['steps'].values()), 'external task has an unsettled execution permit')
+    latest = task['history'][-1]['admission_key']
+    for entry in ledger['admissions'].values():
+        if type(entry) is not dict or entry.get('admission_key') != latest:
+            continue
+        mapping = entry.get('qa_mapping') if type(entry) is dict else None
+        if type(mapping) is not dict or mapping.get('feature_id') != feature_id:
+            continue
+        if (mapping.get('candidate_sha256') != sha(canonical(candidate)) or
+                mapping.get('qa_sha256') != sha(canonical(verdict)) or
+                mapping.get('required_checks_sha256') != sha(canonical(qa_required_checks(required_checks)))):
+            continue
+        require(entry.get('admission_decision') == 'admitted' and entry.get('test_outcome') == 'passed' and
+                entry.get('execution_status') == 'completed', 'external QA mapping outcome does not pass')
+        import importlib.util
+        path = Path(__file__).resolve().with_name('external_evidence.py')
+        name = '_nizam_external_evidence_' + sha(str(path.parent).encode())
+        if name not in sys.modules:
+            spec = importlib.util.spec_from_file_location(name, path)
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[name] = module
+            spec.loader.exec_module(module)
+        record = sys.modules[name]._verify_recorded_admission(root, ledger, entry,
+            expected_candidate_sha256=sha(canonical(candidate)))
+        require(record.get('qa_mapping') == mapping and record.get('envelope_sha256') == entry.get('envelope_sha256') and
+                sha(canonical(record.get('envelope'))) == entry.get('envelope_sha256'), 'external QA admission record changed')
+        context_raw = _qa_artifact(root, mapping['context_ref'])
+        context = parse_json(context_raw)
+        require(context.get('mapping_id') == 'generic-external-native-qa-v1' and context.get('feature_id') == feature_id and
+                context.get('artifact_modes') == mapping.get('artifact_modes') and
+                context.get('required_checks_sha256') == mapping['required_checks_sha256'] and
+                context.get('execution_identity_sha256') == mapping['execution_identity_sha256'] == sha(canonical(record['envelope']['execution_identity'])) and
+                context.get('producer') == mapping.get('producer') == dict(agent_id=record['envelope']['producer_proof']['producer_id'],
+                    session_id=record['envelope']['producer_proof']['session_id']) and
+                record['envelope']['attempt_lineage']['task_id'] == feature_id, 'external QA context changed')
+        require(sha(canonical(parse_json(_qa_artifact(root, context['qa_ref'])))) == mapping['qa_sha256'] and
+                canonical(parse_json(_qa_artifact(root, context['candidate_ref']))) == canonical(candidate), 'external QA references changed')
+        descriptors = {a['path']: a for a in record['envelope']['artifacts']}
+        references = list(mapping['artifact_modes']) + [dict(path=mapping['context_ref']['path'],
+            sha256=sha(context_raw), byte_length=len(context_raw))]
+        for artifact in references:
+            path = regular_file(Path(root), artifact['path']); raw = path.read_bytes()
+            descriptor = descriptors.get(artifact['path'])
+            require(type(descriptor) is dict and descriptor['sha256'] == artifact['sha256'] and
+                    descriptor['byte_length'] == artifact['byte_length'] and sha(raw) == artifact['sha256'] and
+                    len(raw) == artifact['byte_length'], 'external QA authenticated artifact changed')
+            if 'mode' in artifact:
+                require(artifact['mode'] == ('100755' if path.stat().st_mode & 0o111 else '100644'), 'external QA artifact mode changed')
+        return
+    raise AssuranceError('external task requires matching recorded native QA mapping; generic admission cannot complete')
+
+
+def _validate_qa_proof_core(root, verdict, *, feature_id, candidate, required_checks):
+    """Private interpretation only; admission calls this without completion effects."""
     try:
         require(type(verdict) is dict and verdict.get('proof_version', 2) == 2, 'structured QA proof version')
         _receipt_schema(root, verdict, 'qa_verdict')

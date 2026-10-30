@@ -12,8 +12,10 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 import fcntl
+from functools import wraps
 import hashlib
 import hmac
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -31,7 +33,13 @@ ROOT_DIR = TOOLS_DIR.parent
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
-import git_seam  # noqa: E402
+_seam_name = "_nizam_external_git_seam_" + hashlib.sha256(str(TOOLS_DIR).encode()).hexdigest()
+if _seam_name not in sys.modules:
+    _seam_spec = importlib.util.spec_from_file_location(_seam_name, TOOLS_DIR / "git_seam.py")
+    _seam_module = importlib.util.module_from_spec(_seam_spec)
+    sys.modules[_seam_name] = _seam_module
+    _seam_spec.loader.exec_module(_seam_module)
+git_seam = sys.modules[_seam_name]
 
 
 SCHEMA_VERSION = "1.0.0"
@@ -236,7 +244,9 @@ def _read_admission_record(repo_root: Path, rel_path: str, admission_key: str) -
         doc = json.loads(raw.decode("utf-8"))
         valid = (
             isinstance(doc, dict)
-            and set(doc) == {"schema_version", "admission_key", "envelope_sha256", "envelope"}
+            and set(doc) in ({"schema_version", "admission_key", "envelope_sha256", "envelope"},
+                {"schema_version", "admission_key", "envelope_sha256", "envelope", "qa_mapping"})
+            and ("qa_mapping" not in doc or isinstance(doc["qa_mapping"], dict))
             and doc["schema_version"] == SCHEMA_VERSION
             and doc["admission_key"] == admission_key
             and isinstance(doc["envelope"], dict)
@@ -247,6 +257,32 @@ def _read_admission_record(repo_root: Path, rel_path: str, admission_key: str) -
     if not valid:
         raise ExternalEvidenceError("retained admission record digest/binding mismatch", code="corrupt_admission")
     return doc
+
+
+def _verify_recorded_admission(repo_root, ledger, entry, *, expected_candidate_sha256):
+    """Read-only authentication for native consumers; no replay writes/cleanup."""
+    record = _read_admission_record(Path(repo_root), entry["admission_path"], entry["admission_key"])
+    envelope = record["envelope"]
+    if (envelope["profile_id"] != SUPPORTED_PROFILE_ID or envelope["profile_version"] != SUPPORTED_PROFILE_VERSION
+            or record["envelope_sha256"] != entry["envelope_sha256"]
+            or envelope["consumer_binding"]["candidate_sha256"] != expected_candidate_sha256):
+        raise ExternalEvidenceError("recorded admission binding changed", code="corrupt_admission")
+    lineage = envelope["attempt_lineage"]
+    permit = ledger["permits"][entry["permit_id"]]
+    _, permit_raw = _read_regular_file(Path(repo_root), permit["permit_path"], "recorded permit")
+    _, token_raw = _read_regular_file(Path(repo_root), permit["token_path"], "recorded permit token")
+    if (sha256_hex(permit_raw.strip()) != permit["permit_digest"] or permit["permit_digest"] != lineage["permit_digest"]
+            or permit.get("consumed") is not True or entry["permit_id"] != lineage["permit_id"]
+            or any(permit[k] != lineage[k] for k in ("task_id", "step_id", "run_id", "attempt_number", "parent_attempt", "continuation_basis", "operator_recovery_ref"))):
+        raise ExternalEvidenceError("recorded permit binding changed", code="corrupt_admission")
+    proof = envelope["producer_proof"]
+    expected = compute_producer_proof(envelope_binding=envelope, permit_digest=permit["permit_digest"],
+        permit_token=token_raw.decode("ascii").strip(), candidate_commit=envelope["consumer_binding"]["candidate_commit"],
+        candidate_tree=envelope["consumer_binding"]["candidate_tree"], execution_identity=envelope["execution_identity"],
+        artifacts=envelope["artifacts"], producer_id=proof["producer_id"], session_id=proof["session_id"], issued_at=proof["issued_at"])
+    if not hmac.compare_digest(expected["permit_binding_digest"], proof["permit_binding_digest"]):
+        raise ExternalEvidenceError("recorded producer authentication changed", code="forged_producer_proof")
+    return record
 
 
 def _untracked_state_files(repo_root: Path, state_dir: Path, ledger: Mapping[str, Any]) -> list[str]:
@@ -305,6 +341,37 @@ def _verify_operator_recovery(
     return int(doc["max_task_attempts"])
 
 
+def _start_path_api():
+    """Load the fixed owning sibling, never a caller-selected module."""
+    name = "_nizam_external_start_path_" + sha256_hex(os.fsencode(str(TOOLS_DIR)))
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, TOOLS_DIR / "start_path.py")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
+def _external_reservation_guard(function):
+    @wraps(function)
+    def guarded(repo_root, **arguments):
+        task_id = arguments.get("task_id")
+        _validate_identifier(task_id, "task_id")
+        root = Path(repo_root).resolve(strict=True)
+        git_seam.validate_repo_root(root)
+        sp = _start_path_api()
+        try:
+            with sp._task_reservation_lock(root, task_id):
+                if sp._native_task_history_exists(root, task_id):
+                    raise ExternalEvidenceError("task has native attempt history; external reservation refused", code="mixed_attempt_authority")
+                sp._external_task_state(root, task_id)  # Refuse unsafe/corrupt matching publication before writes.
+                return function(root, **arguments)
+        except sp.StartPathError as exc:
+            raise ExternalEvidenceError(str(exc), code="mixed_or_corrupt_attempt_history", exit_code=2) from exc
+    return guarded
+
+
+@_external_reservation_guard
 def allocate_attempt_permit(
     repo_root: Path,
     *,
@@ -525,6 +592,7 @@ def admit_external_evidence(
     expected_regression_collection_digest: str,
     expected_tool_id: str | None = None,
     expected_adapter_id: str | None = None,
+    _qa_request: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Validate and atomically admit or record an external evidence submission under lock."""
     if not isinstance(expected_candidate_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", expected_candidate_sha256) is None:
@@ -791,6 +859,19 @@ def admit_external_evidence(
                 code="forged_producer_proof",
             )
 
+        qa_mapping = None
+        if _qa_request is not None:
+            # The fixed owning module derives this projection from authenticated
+            # artifacts and native interpretation. No caller-authored projection
+            # or dynamically selected callback can enter the ledger.
+            name = "_nizam_external_qa_" + sha256_hex(os.fsencode(str(TOOLS_DIR)))
+            if name not in sys.modules:
+                spec = importlib.util.spec_from_file_location(name, TOOLS_DIR / "external_qa.py")
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[name] = module
+                spec.loader.exec_module(module)
+            qa_mapping = sys.modules[name]._validated_projection(repo_root, envelope, **dict(_qa_request))
+
         # 8. Durable record publication followed by one atomic ledger transition.
         admission_rel = f".agent/evidence/external_admissions/admitted/{task_id}-{step_id}-attempt{attempt_number}.admission.json"
         admission_record = {
@@ -799,6 +880,8 @@ def admit_external_evidence(
             "envelope_sha256": envelope_sha256,
             "envelope": dict(envelope),
         }
+        if qa_mapping is not None:
+            admission_record["qa_mapping"] = qa_mapping
         if existing_admission is not None:
             retained = _read_admission_record(repo_root, existing_admission["admission_path"], admission_key)
             if retained != admission_record:
@@ -807,6 +890,7 @@ def admit_external_evidence(
                 "ok": True, "idempotent_replay": True, "admission_key": admission_key,
                 "envelope_sha256": envelope_sha256, "admission_path": existing_admission["admission_path"],
                 "admission_decision": decision, "test_outcome": test_outcome, "execution_status": exec_status,
+                **({"qa_mapping": qa_mapping} if qa_mapping is not None else {}),
             }
         if os.path.lexists(repo_root / admission_rel):
             retained = _read_admission_record(repo_root, admission_rel, admission_key)
@@ -849,6 +933,8 @@ def admit_external_evidence(
             "execution_status": exec_status,
             "admission_decision": decision,
         }
+        if qa_mapping is not None:
+            ledger["admissions"][admission_key]["qa_mapping"] = qa_mapping
         _write_atomic_json(state_dir / "ledger.json", ledger)
         return {
             "ok": True,
@@ -859,6 +945,7 @@ def admit_external_evidence(
             "admission_decision": decision,
             "test_outcome": test_outcome,
             "execution_status": exec_status,
+            **({"qa_mapping": qa_mapping} if qa_mapping is not None else {}),
         }
 
 

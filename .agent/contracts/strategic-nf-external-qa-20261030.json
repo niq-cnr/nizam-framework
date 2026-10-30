@@ -1,0 +1,283 @@
+{
+  "contract_id": "strategic-nf-external-qa-20261030",
+  "feature_id": "strategic-nf-external-qa-20261030",
+  "name": "Bind optional external verification to native QA under one attempt owner",
+  "status": "approved",
+  "spec_ref": ".agent/specs/strategic-nf-external-qa-20261030.json",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/external_qa.py",
+        "purpose": "Canonical authenticated native-QA mapping and recorded mapping validation; no execution loop."
+      },
+      {
+        "path": "schema/external_qa_context.schema.json",
+        "purpose": "Closed optional mapping context reusing native QA/artifact semantics; no completion authority from data."
+      },
+      {
+        "path": "tools/test_external_qa.py",
+        "purpose": "Independent neutral current-source conformance cases for mapping, authority exclusion and recovery."
+      },
+      {
+        "path": "docs/architecture/external-native-qa.md",
+        "purpose": "Exact supported producer/controller and completion boundary, source-only limitations."
+      },
+      {
+        "path": ".agent/contracts/strategic-nf-external-qa-20261030.json",
+        "purpose": "Owning bounded contract."
+      },
+      {
+        "path": ".agent/specs/strategic-nf-external-qa-20261030.json",
+        "purpose": "Exact interface rendezvous and accepted producer granularity."
+      },
+      {
+        "path": ".agent/evidence/strategic-nizam-external-qa-20261030/*",
+        "purpose": "Actual captures and role-owned review records."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/external_evidence.py",
+        "purpose": "Reuse existing full-envelope authentication and atomic ledger publication to validate/store typed mapping projection in same authority transition; guard external allocation against native history."
+      },
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Stable common task reservation lock and native/external history conflict guard; no new budget or capture execution."
+      },
+      {
+        "path": "tools/workflow_assurance.py",
+        "purpose": "Reuse current proof core; public typed QA checks matching recorded authenticated mapping for external-owned tasks."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Index optional module and schema; no implicit activation."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Document optional module and authority limits."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased optional source interface change."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Run exact optional external-native QA regression in existing fixtures_self_test job without runner/permissions/check identity change."
+      }
+    ]
+  },
+  "non_goals": [
+    "No human UI approval semantics supplied by generic envelope; selected typed approval profile required separately.",
+    "No HMAC/schema assertion proves execution identity; actual trusted producer/isolation pairing must execute for qualification.",
+    "No model calls, release tags, production install or paid campaign from this source contract.",
+    "No new controller, attempt ledger, semantic score, caller approval or completion schema.",
+    "No edits to installed .nizam, frozen historical corpus or unrelated source packages.",
+    "No weakening native QA, required inventories, independent review or mutation authority."
+  ],
+  "acceptance_requirements": [
+    "Context, native QA, assessed candidate, each check capture and streams must be covered by full-envelope authenticated artifact descriptors; exclude only context self-reference from its own artifact-mode list.",
+    "Context host policy and execution-profile refs must be whole immutable assessed candidate contract/tool inputs, selected before execution; no caller-owned approval or code loading from input data.",
+    "Native capture.revision is consumer source-preserving commit, not Agentic tool revision. Producer has exactly native agent_id/session_id fields; driver source/image/tool/isolation identities belong in authenticated execution/profile artifacts.",
+    "Native capture.cwd/environment match actual assessed execution root/environment; exact argv/exit/proof kind match independently approved required inventory.",
+    "One observed driver invocation uses one external permit; no native capture_command_evidence/_reserve_attempt and no standalone SQLite allocation.",
+    "Use existing workflow_assurance proof interpretation, including exact counts/diagnostics and required native verifier/schema membership.",
+    "Successful typed mapping is stored as a projection in existing external admission ledger in the same serialized durable transition; no new authority ledger.",
+    "Generic admitted alone has no typed mapping and cannot satisfy native governed completion.",
+    "Current public validate_qa_proof and existing route/receipt completion consumers require matching recorded mapping for externally owned tasks; canonical pre-admission validation uses a private core proof routine without advancing state.",
+    "Native and external first reservations share a stable task lock and inspect existing history. Mixed, corrupt or unknown matching history refuses; no automatic conversion, reset or fallback.",
+    "Failures/unknown cleanup remain actual statuses; no new attempt until prior execution reconciled. A rejected malformed proof can be repaired from retained same-run evidence but does not authorize another execution.",
+    "Read-only proof validation/discovery creates no new authority record; locks are coordination only.",
+    "Neutral tests show current public QA/done/receipt consumers reject a generic external admission without matching authenticated mapping.",
+    "Actual optional Agentic adapter pairing remains separately owned and must run at exact source/profile/image pins before A08/A09/J01/C22 qualification.",
+    "New schema/API cannot load verifiers or producer plugins from data; actual trusted application code selects producer and complete expected metadata.",
+    "Preserve existing unbound native captures in non-Git directories. All native/external task reservations use one fixed environment-independent POSIX coordination directory /tmp/nizam-task-reservations-<effective uid>, outside candidate inventory, keyed by SHA256 of canonical JSON [canonical root path, task id]. Git initialization or ambient HOME/TMPDIR/XDG changes cannot select a second lock.",
+    "The private coordination directory must be an existing or exclusively created nonsymlink directory owned by the effective user with mode0700; lock must be nonsymlink regular user-owned mode0600, opened nofollow/close-on-exec, never unlinked by the reservation protocol. Unsafe ownership/mode/path/platform refuses; no permission repair or mutable-environment fallback.",
+    "Lock files contain no mode selection, count, budget or completion data; existing native reservations/captures and external permit/admission histories alone determine ownership. Preserve native-before-external, external-before-native, corrupt/unknown history and actual simultaneous first-reservation refusals.",
+    "Existing non-Git task-wide retry/ceiling cases pass unchanged. Actual native-first non-Git reservation concurrent with Git initialization/external allocation has only one winner; altered TMPDIR cannot split coordination. Host code or administration outside protocol remains outside lock integrity guarantees."
+  ],
+  "verification": [
+    {
+      "id": "NF-XQA-01",
+      "command": "python3 tools/test_external_qa.py",
+      "argv": [
+        "python3",
+        "tools/test_external_qa.py"
+      ],
+      "acceptance_test": "Neutral happy/adverse full mapping, no second reservation, mixed-mode race, replay/crash and no generic-admission completion",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-02",
+      "command": "python3 tools/test_nf_ac04_generic_admission.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "acceptance_test": "Existing profile1.1 full-envelope and finite recovery controls",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-03",
+      "command": "python3 tools/test_nf_ac05_standalone_e2e.py",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "acceptance_test": "Standalone bootstrap/native operation remains independent",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-04",
+      "command": "python3 tools/test_start_path.py",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "acceptance_test": "Existing route, capture, finite retry and receipt behavior",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-05",
+      "command": "python3 tools/test_workflow_assurance.py --base-cases",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--base-cases"
+      ],
+      "acceptance_test": "Existing typed assessed identity behavior",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-06",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "acceptance_test": "Repository schema/index/documentation compliance",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-XQA-07",
+      "command": "git diff ba6d19560f45675f7d960ce5cf088f9887166528..HEAD --check",
+      "argv": [
+        "git",
+        "diff",
+        "ba6d19560f45675f7d960ce5cf088f9887166528..HEAD",
+        "--check"
+      ],
+      "acceptance_test": "Assessed committed delta whitespace",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "estimated_lines": 700,
+  "evidence_dir": ".agent/evidence/strategic-nizam-external-qa-20261030",
+  "evidence_convention": "Independent RED before source; exact argv/cwd/source/environment, actual statuses/streams, authenticated descriptor coverage and immutable source identities; no fixture is producer authenticity or human acceptance.",
+  "source_identity": {
+    "base_commit": "ba6d19560f45675f7d960ce5cf088f9887166528",
+    "requires": "accepted current source PR150, not released payload",
+    "installed_governance": "v3.0.0 unchanged"
+  },
+  "root_concept_approval": "Root selected actual DockerSandboxRunner trusted controller / permit-once / typed QA / existing completion interface; exact source awaits independent precode reviews and RED.",
+  "approval_evidence": {
+    "proposed_contract_sha256": "19e68036f528a8bbade3cae15bbe4679dd97df6e721997a8621000bc5291f34b",
+    "mode_a": ".agent/validator/strategic-nf-external-qa-mode-a.json",
+    "contract_review": ".agent/qa/strategic-nf-external-qa-contract-review.json",
+    "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-bridge-independent-red.json"
+  },
+  "amendments": [
+    {
+      "type": "bounded-external-qa-ci-regression-wiring",
+      "re_approval_required": false,
+      "reason": "Existing CI commands do not execute new optional bridge corpus, leaving shared attempt/completion guards and actual typed mapping unprotected. Preserve all current CI jobs and protections.",
+      "proposed_command": {
+        "argv": [
+          "python3",
+          "tools/test_external_qa.py"
+        ],
+        "environment": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "expected_exit": 0,
+        "proof_kind": "success",
+        "diagnostic": null
+      },
+      "invariants": [
+        "Same existing fixtures_self_test job, runner and permissions",
+        "No required-check identity/protection changes",
+        "No source/test assertions changed by wiring",
+        "Offline neutral fixtures; no consumer/provider dependency"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "22cae815b09b25c784d0c3153d7aa35fdecffe48276a08101818af0f8519071d",
+        "mode_a": ".agent/validator/strategic-nf-external-qa-ci-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-external-qa-ci-contract-review.json"
+      }
+    },
+    {
+      "type": "bounded-common-lock-non-git-compatibility",
+      "re_approval_required": false,
+      "reason": "Full existing tools/test_start_path.py at integrated3c25 fails: supported non-Git unbound capture now rejects Gitadmin lock requirement. Root selected fixed private POSIX coordination namespace preserving shared lock before/after Git init.",
+      "behavior": [
+        "Preserve existing unbound native captures in non-Git directories. All native/external task reservations use one fixed environment-independent POSIX coordination directory /tmp/nizam-task-reservations-<effective uid>, outside candidate inventory, keyed by SHA256 of canonical JSON [canonical root path, task id]. Git initialization or ambient HOME/TMPDIR/XDG changes cannot select a second lock.",
+        "The private coordination directory must be an existing or exclusively created nonsymlink directory owned by the effective user with mode0700; lock must be nonsymlink regular user-owned mode0600, opened nofollow/close-on-exec, never unlinked by the reservation protocol. Unsafe ownership/mode/path/platform refuses; no permission repair or mutable-environment fallback.",
+        "Lock files contain no mode selection, count, budget or completion data; existing native reservations/captures and external permit/admission histories alone determine ownership. Preserve native-before-external, external-before-native, corrupt/unknown history and actual simultaneous first-reservation refusals.",
+        "Existing non-Git task-wide retry/ceiling cases pass unchanged. Actual native-first non-Git reservation concurrent with Git initialization/external allocation has only one winner; altered TMPDIR cannot split coordination. Host code or administration outside protocol remains outside lock integrity guarantees."
+      ],
+      "source_paths": [
+        "tools/start_path.py",
+        "tools/external_evidence.py",
+        "tools/test_external_qa.py",
+        "docs/architecture/external-native-qa.md"
+      ],
+      "invariants": [
+        "No second owner/attempt ledger",
+        "Resume Gitadmin state lock unchanged",
+        "No existing test assertion weakening",
+        "No worktree scope exclusion",
+        "No source execution or model/network dependency"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "6180c3cd5d7b71f8efb5cb7244cb1d24fd8ee8ff5a24d2be65aa7f2708edb30a",
+        "mode_a": ".agent/validator/strategic-nf-external-qa-lock-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-external-qa-lock-contract-review.json",
+        "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-bridge-namespace-independent-red.json"
+      }
+    }
+  ]
+}

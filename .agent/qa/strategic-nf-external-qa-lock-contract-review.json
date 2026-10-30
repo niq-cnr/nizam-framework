@@ -1,0 +1,27 @@
+{
+  "review_id": "nizam-bridge-common-lock-amendment-20261030",
+  "contract_sha256": "6180c3cd5d7b71f8efb5cb7244cb1d24fd8ee8ff5a24d2be65aa7f2708edb30a",
+  "spec_sha256": "14278a4d4597921605871a68690c8e6f108671cc86891c4024aa87bf7e1df5a8",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "semantic_basis": [
+    "Current common reservation helper requires Git administration before taking native reservation; existing non-Git capture path is a real supported regression.",
+    "One fixed /tmp user-owned0700 namespace and0600 regular nofollow lock keyed by canonical root+task is stable across Git initialization and ambient HOME/TMPDIR/XDG changes.",
+    "Ownership/mode/symlink/platform failures refuse, do not chmod unsafe existing paths or fall back; stable locks never unlinked. Existing native/external histories retain exclusive attempt authority.",
+    "Acceptance requires real non-Git native-first concurrent Git-init/external-first discrimination and unchanged full start-path retry/ceiling cases; resume Git-admin publication lock remains independent and unchanged."
+  ],
+  "evidence_refs": [
+    "worktrees/nizam-bridge/.agent/contracts/strategic-nf-external-qa-20261030.json",
+    "worktrees/nizam-bridge/.agent/specs/strategic-nf-external-qa-20261030.json",
+    "worktrees/nizam-bridge/tools/start_path.py:1285",
+    "worktrees/nizam-bridge/tools/external_evidence.py:357"
+  ],
+  "limitations": [
+    "Precode semantic approval of exact bounded amendment, not implementation acceptance. Final source must anchor/check actual opened directory and file metadata and exercise required independent race/unsafe-path tests.",
+    "Host administration or same-user mutation outside protocol is outside advisory lock guarantees. No model, endpoint, installation or completion qualification inferred."
+  ]
+}

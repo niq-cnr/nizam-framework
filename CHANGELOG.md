@@ -7,6 +7,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Optional authenticated external-to-native QA mapping reuses the existing permit
+  and admission ledger, with shared task reservation ownership and native proof
+  interpretation. Public native completion requires a matching recorded mapping
+  for externally owned tasks; generic admission and producer observations grant
+  no independent review, human approval or automatic completion.
+
 ### Fixed
 
 - Receipt resume apply now serializes the existing read/verify/plan/publication

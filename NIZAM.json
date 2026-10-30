@@ -112,7 +112,8 @@
         "schema/semantic_request.schema.json",
         "schema/governance_skill.schema.json",
         "schema/recommended_skills.schema.json",
-        "schema/external_evidence_admission.schema.json"
+        "schema/external_evidence_admission.schema.json",
+        "schema/external_qa_context.schema.json"
       ]
     },
     {
@@ -141,7 +142,9 @@
         "tools/recommended_skills.json",
         "tools/skill_recommendations.py",
         "tools/test_skill_recommendation_boundaries.py",
-        "tools/test_skill_routing.py"
+        "tools/test_skill_routing.py",
+        "tools/external_qa.py",
+        "tools/test_external_qa.py"
       ]
     },
     {
@@ -378,6 +381,11 @@
       "id": "nizam-offline-skill-recommendations",
       "summary": "Bounded no-follow local Nizam host observations and contextual routing; compatible offers require a programmatically trusted released exact-pair verifier, which is unavailable by default. No package body loading, execution or installation.",
       "authoritative_source": "tools/skill_recommendations.py"
+    },
+    {
+      "id": "nizam-optional-external-native-qa",
+      "summary": "Explicit authenticated external observation mapping to existing native QA under one task attempt owner; separate governed completion and producer qualification remain required.",
+      "authoritative_source": "tools/external_qa.py"
     }
   ],
   "schemas": [
@@ -415,7 +423,8 @@
     "schema/evidence_archive.schema.json",
     "schema/governance_skill.schema.json",
     "schema/recommended_skills.schema.json",
-    "schema/external_evidence_admission.schema.json"
+    "schema/external_evidence_admission.schema.json",
+    "schema/external_qa_context.schema.json"
   ],
   "templates": [
     "templates/CONTEXT.md",
