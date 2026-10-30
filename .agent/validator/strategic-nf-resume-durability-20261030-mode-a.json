@@ -1,0 +1,29 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review": {
+    "role": "independent structural Validator Mode A",
+    "contract_id": "strategic-nf-resume-durability-20261030",
+    "contract_sha256": "ebc5c695f393364aea3c5bedbcbcca41e11511a9684f2c514b9bef8dec913957",
+    "spec_sha256": "2d8604bf07ff338b8af4f688b3d2dc73e603b463e2fd80282c6770d94bc080ea",
+    "base_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+    "checked": [
+      "Exact current resume_from_receipt reads/plans without lock then Path.write_text overwrites active state; independent runtime interruption/concurrencyRED required before repair.",
+      "Contract/spec exact mutation paths and seven-command inventory now aligned; optional test_start_path.py/interface.md mutations explicitly excluded.",
+      "Stable per-canonical-state OS lock lives in owned evidence namespace, acquired before current-state read/plan; avoids adjacent source mutation affecting assessed identity.",
+      "Readonly path creates no lock or output; advance uses same-directory exclusive temp, original regular-file permissions, file fsync, atomic replace then directory fsync; symlink/nonregular target refuses.",
+      "Uncertain post-publication failure must refuse applied success; exact existing receipt replay/noop reconciles without counter reset/new controller.",
+      "Real existing ReceiptFixture proof path required at least once; publication-layer fault injection may isolateIO but cannot replace all proof with fake planner.",
+      "Concurrent identical receipt produces exactly one history transition plus noop, conflicting receipts never both advance from stale state; interruption assertions require complete old/new JSON.",
+      "Existing proof interpretation/receipt/task-wide retry cases and fullstart_path regression commands remain; installed payload/schema unchanged."
+    ],
+    "limitations": [
+      "Precode source durability proposal only; no live state migration, broader cross-process writer isolation, producer authentication, installed adoption or commissioned governance.",
+      "Root-selected concept authorizes source only after both exact precode reviews and independentRED, not further runtime authority."
+    ]
+  }
+}
