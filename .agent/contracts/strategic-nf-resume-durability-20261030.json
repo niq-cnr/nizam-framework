@@ -1,0 +1,286 @@
+{
+  "contract_id": "strategic-nf-resume-durability-20261030",
+  "feature_id": "strategic-nf-resume-durability-20261030",
+  "name": "Serialize and durably publish existing receipt resume state",
+  "status": "approved",
+  "spec_ref": ".agent/specs/strategic-nf-resume-durability-20261030.json",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_resume_durability.py",
+        "purpose": "Independent failure/concurrency tests of real resume apply publication boundary; no implementation-mirroring assertion."
+      },
+      {
+        "path": "docs/architecture/receipt-state-publication.md",
+        "purpose": "Describe actual existing API publication/recovery behavior and explicit trust limits."
+      },
+      {
+        "path": ".agent/contracts/strategic-nf-resume-durability-20261030.json",
+        "purpose": "Owning bounded high-risk contract."
+      },
+      {
+        "path": ".agent/specs/strategic-nf-resume-durability-20261030.json",
+        "purpose": "Reuse approved programme scope and selected durability concept."
+      },
+      {
+        "path": ".agent/evidence/strategic-nizam-resume-20261030/*",
+        "purpose": "Captured execution evidence and role-owned verdicts."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/start_path.py",
+        "purpose": "Wrap existing resume apply read/plan/write in one stable per-state lock and atomically publish durable complete JSON; preserve actual plan_receipt_transition proof interpretation."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased source behavior change only."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Run exact existing generic/standalone/start-path and new resume regressions in the current fixtures job; preserve job identity, runner and permissions."
+      }
+    ]
+  },
+  "non_goals": [
+    "No new receipt/attempt authority or completion state schema",
+    "No bypass of plan_receipt_transition or existing proof validation",
+    "No live state migration, production operation or .nizam modification",
+    "No extra receipt counter, new completion schema or execution controller.",
+    "No tool/policy/provider changes or task-budget reset.",
+    "No unsafe fallback if required platform locking/atomic primitives unavailable."
+  ],
+  "acceptance_requirements": [
+    "Independent real interruption before replace preserves old parseable state; interruption after replace yields complete new parseable state.",
+    "Two concurrent apply calls on same valid receipt yield exactly one history transition and one noop.",
+    "Concurrent conflicting receipts cannot both advance from stale source state.",
+    "Read-only run has no filesystem effects, old/new mode preserved, failure refuses with evidence and does not mark applied.",
+    "Existing real receipt/recovery and task-wide retry cases remain passing.",
+    "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback.",
+    "Apply locks before reading current state and planning; each contender sees current bytes. Read-only does not create a lock.",
+    "Atomic JSON publication fsyncs file and directory, preserves original regular-file permissions and rejects symlink/nonregular target. On any uncertain post-publication failure do not assert applied success; exact existing receipt replay reconciles.",
+    "Independent tests exercise real verified receipt fixture for at least one path; controlled publication-layer fault injection may isolate IO but cannot replace all proof with a fake planner.",
+    "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees.",
+    "Before exclusive same-directory temporary creation, durably publish one per-state Git-admin publication-intent journal under the existing state lock, binding canonical target path, random temporary path, original state SHA256, complete new-state SHA256/byte length/mode, and exact current policy/receipt canonical digests.",
+    "Apply recovery runs under the same lock before real receipt planning. With exact current policy/receipt binding and unchanged original state, remove only a regular nonsymlink temporary whose full bytes, length and mode match the recorded complete publication. Missing temp with old state clears a precreation intent; missing temp with exact new state clears a postreplacement intent. Fsync worktree directory after removal and Git-admin directory after journal changes.",
+    "Unknown, partial, corrupt, changed-mode or mismatched target/temp/journal/policy/receipt evidence is preserved and refuses; never blanket-delete names/prefixes, exempt worktree paths, publish state from journal, or reset attempts. Interrupted partial writes remain explicit reconciliation holds.",
+    "After safe intent cleanup, re-run the actual existing receipt planner and normal durable publication. Real ordinary and linked-worktree crash immediately before replacement must preserve old state and allow exact replay without untracked residue, then identical noop; unknown residue remains byte-identical on refusal."
+  ],
+  "verification": [
+    {
+      "id": "NF-RES-01",
+      "command": "python3 tools/test_resume_durability.py",
+      "argv": [
+        "python3",
+        "tools/test_resume_durability.py"
+      ],
+      "acceptance_test": "Actual interruption/concurrency/read-only/noop/permission/symlink publication controls; actual trivial route, clean-worktree and linked-worktree coordination isolation; actual trivial before-replace crash/replay and unknown-residue preservation",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-02",
+      "command": "python3 tools/test_workflow_assurance.py --case idempotent-replay",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "idempotent-replay"
+      ],
+      "acceptance_test": "Existing actual verified receipt idempotence",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-03",
+      "command": "python3 tools/test_workflow_assurance.py --case reject-double-advance",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-double-advance"
+      ],
+      "acceptance_test": "Existing receipt conflicting advancement refusal",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-04",
+      "command": "python3 tools/test_workflow_assurance.py --case recover-missing-receipt",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "recover-missing-receipt"
+      ],
+      "acceptance_test": "Missing receipt recovery preserves original state",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-05",
+      "command": "python3 tools/test_start_path.py",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "acceptance_test": "Full existing start-path routing/proof/retry/publication regressions",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-06",
+      "command": "bash tools/validate.sh",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "acceptance_test": "Repository compliance",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "id": "NF-RES-07",
+      "command": "git diff f19357479220b6bf2b3292d31c06c66279f91efa..HEAD --check",
+      "argv": [
+        "git",
+        "diff",
+        "f19357479220b6bf2b3292d31c06c66279f91efa..HEAD",
+        "--check"
+      ],
+      "acceptance_test": "Full assessed committed delta whitespace",
+      "expected_exit": 0,
+      "proof_kind": "success",
+      "diagnostic": null,
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    }
+  ],
+  "estimated_lines": 230,
+  "evidence_dir": ".agent/evidence/strategic-nizam-resume-20261030",
+  "evidence_convention": "Exact argv/cwd/source/environment, true exits, immutable output streams and source hashes; independent Test Engineer RED before implementation; raw failed bytes preserved losslessly.",
+  "source_identity": {
+    "base_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+    "source_baseline": "current main, not release",
+    "installed_governance": "v3.0.0 unchanged"
+  },
+  "root_concept_approval": "Root selected resume durability concept 2026-10-30; source awaits two bound precode reviews and independent RED.",
+  "approval_evidence": {
+    "proposed_contract_sha256": "ebc5c695f393364aea3c5bedbcbcca41e11511a9684f2c514b9bef8dec913957",
+    "mode_a": ".agent/validator/strategic-nf-resume-durability-20261030-mode-a.json",
+    "contract_review": ".agent/qa/strategic-nf-resume-durability-20261030-contract-review.json",
+    "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-resume-independent-red.json",
+    "root_authority": "Root selected concept and authorized source after both precode verdicts and independent RED; no additional gate."
+  },
+  "amendments": [
+    {
+      "type": "bounded-ci-regression-wiring",
+      "prior_contract_sha256": "aa74467872cf9548b632b3896d1a60e6de9b34163cace3f794df8a2cf99fb6b1",
+      "re_approval_required": false,
+      "reason": "Current workflows execute none of test_nf_ac*, test_start_path or new resume suite, so green CI does not protect these source fixes. Workflow path is normative under installed classifier; no lightweight bypass.",
+      "proposed_commands": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac04_generic_admission.py",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_resume_durability.py"
+      ],
+      "invariants": [
+        "Same existing fixtures_self_test job, runner and permissions",
+        "No required-check-name or repository-protection change",
+        "No live or paid calls",
+        "No source/test assertion changes"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "6e999a818af7d45ef6ad3426b7fe82652076913fcef76ec4cf358496c97115d7",
+        "mode_a": ".agent/validator/strategic-nf-resume-ci-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-resume-ci-contract-review.json"
+      }
+    },
+    {
+      "type": "bounded-git-administrative-lock-location",
+      "prior_contract_sha256": "1a907512c37d1d4258e937056fe953f42777eca57ebae6ddd6f4ab8543aacf30",
+      "re_approval_required": false,
+      "reason": "Hosted actual zero-reachback trivial receipt at f7260d5e refuses because .agent/evidence coordination lock is undeclared task change; preserve the eligibility check and move only coordination metadata.",
+      "source_paths": [
+        "tools/start_path.py",
+        "tools/test_resume_durability.py",
+        "docs/architecture/receipt-state-publication.md"
+      ],
+      "behavior": [
+        "Use one stable per-state OS lock under the target Git administrative directory resolved by readonly git rev-parse --absolute-git-dir, keyed by canonical state target; coordination files must not enter the assessed worktree or weaken undeclared-change eligibility. Refuse unavailable Git admin metadata instead of an unsafe worktree fallback.",
+        "Actual trivial receipt apply and exact replay pass with unchanged clean-worktree eligibility; coordination files are outside tracked and untracked candidate inventory, including linked Git worktrees."
+      ],
+      "invariants": [
+        "No native proof/receipt planner or scope exclusion changes",
+        "Existing seven independent durability/concurrency assertions remain unchanged",
+        "Read-only remains entirely write-free",
+        "Stable lock retained across atomic state replacement",
+        "No network/provider dependency or fallback"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "c014067e87f84f3b6521ee7de4460d55a158927b5ff28c9b17a249ec212d7a6c",
+        "mode_a": ".agent/validator/strategic-nf-resume-lock-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-resume-lock-contract-review.json",
+        "independent_red": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-trivial-resume-independent-red.json"
+      }
+    },
+    {
+      "type": "bounded-owned-publication-intent-recovery",
+      "prior_contract_sha256": "092fca3ee75876dfc700bacd86326b0327dfeef7852adbf7b182425566873aba",
+      "re_approval_required": false,
+      "reason": "Independent actual trivial-route interruption before replacement leaves same-directory temp that strict eligibility correctly rejects on exact replay. Preserve failure and strict eligibility; prove exact owned complete temp before cleanup.",
+      "source_paths": [
+        "tools/start_path.py",
+        "tools/test_resume_durability.py",
+        "docs/architecture/receipt-state-publication.md"
+      ],
+      "behavior": [
+        "Before exclusive same-directory temporary creation, durably publish one per-state Git-admin publication-intent journal under the existing state lock, binding canonical target path, random temporary path, original state SHA256, complete new-state SHA256/byte length/mode, and exact current policy/receipt canonical digests.",
+        "Apply recovery runs under the same lock before real receipt planning. With exact current policy/receipt binding and unchanged original state, remove only a regular nonsymlink temporary whose full bytes, length and mode match the recorded complete publication. Missing temp with old state clears a precreation intent; missing temp with exact new state clears a postreplacement intent. Fsync worktree directory after removal and Git-admin directory after journal changes.",
+        "Unknown, partial, corrupt, changed-mode or mismatched target/temp/journal/policy/receipt evidence is preserved and refuses; never blanket-delete names/prefixes, exempt worktree paths, publish state from journal, or reset attempts. Interrupted partial writes remain explicit reconciliation holds.",
+        "After safe intent cleanup, re-run the actual existing receipt planner and normal durable publication. Real ordinary and linked-worktree crash immediately before replacement must preserve old state and allow exact replay without untracked residue, then identical noop; unknown residue remains byte-identical on refusal."
+      ],
+      "invariants": [
+        "No receipt/proof planner or completion state authority changes",
+        "Existing eight independent tests/assertions remain unchanged",
+        "Read-only remains entirely write-free, including recovery",
+        "Same-filesystem same-directory atomic state replacement remains",
+        "No network/provider/consumer integration dependency"
+      ],
+      "approval_evidence": {
+        "approved_proposal_sha256": "94c1537d6e44136277fbbd8f9f0fd491cd368c988efbd67dc405f3a0a117c460",
+        "mode_a": ".agent/validator/strategic-nf-resume-intent-mode-a.json",
+        "contract_review": ".agent/qa/strategic-nf-resume-intent-contract-review.json",
+        "independent_red": [
+          "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-trivial-crash-replay-independent-red.json",
+          "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-unknown-residue-independent-red.json"
+        ]
+      }
+    }
+  ]
+}

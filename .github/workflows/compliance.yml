@@ -97,6 +97,14 @@ jobs:
       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
       - run: bash tools/fixtures_self_test.sh
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+      - name: Exercise generic external admission and installed consumer regressions
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac04_generic_admission.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py
+      - name: Exercise start paths and durable receipt resume
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_resume_durability.py
       - name: Historical archive integrity and preservation deduplication
         run: |
           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_archive.py

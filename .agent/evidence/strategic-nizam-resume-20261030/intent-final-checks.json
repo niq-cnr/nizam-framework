@@ -1,0 +1,200 @@
+{
+  "assessed_source": "d1ab2f90a2e78218cce4c58fb00153d5bfed4c82",
+  "runtime_sha256": "604e0c6ff4170a5d5aca7806832cd5984d5ec7be9d460001a25c1534cb62130d",
+  "frozen_test_sha256": "108b45a4dcf33e81530471ce277337187b10a86bef1ee598b1ec9eb1119e009d",
+  "checks": [
+    {
+      "id": "NF-RES-01",
+      "argv": [
+        "python3",
+        "tools/test_resume_durability.py"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        },
+        "stderr": {
+          "sha256": "1401e1ab8e36cbb381ace1eb013f6f7439ff682d50512d902cb5c53eeba7d006",
+          "byte_length": 110,
+          "encoding": "base64",
+          "data": "Li4uLi4uLi4uLgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClJhbiAxMCB0ZXN0cyBpbiAyMS4xMzVzCgpPSwo="
+        }
+      }
+    },
+    {
+      "id": "NF-RES-02",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "idempotent-replay"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "868540af1064d6edd8edf72310b16576d971ce16d0e75fd7654ef9f1af6475a6",
+          "byte_length": 23,
+          "encoding": "base64",
+          "data": "UEFTUyBpZGVtcG90ZW50LXJlcGxheQo="
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        }
+      }
+    },
+    {
+      "id": "NF-RES-03",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-double-advance"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "52d15edb499ec78946c0949a50d752586202443d7cb31c4ee94cb2ac1d1a58da",
+          "byte_length": 27,
+          "encoding": "base64",
+          "data": "UEFTUyByZWplY3QtZG91YmxlLWFkdmFuY2UK"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        }
+      }
+    },
+    {
+      "id": "NF-RES-04",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "recover-missing-receipt"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "8ca6eaafb333200eaea6530a6cc4a91e5b67d3472dc6be042ceecbc631567443",
+          "byte_length": 29,
+          "encoding": "base64",
+          "data": "UEFTUyByZWNvdmVyLW1pc3NpbmctcmVjZWlwdAo="
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        }
+      }
+    },
+    {
+      "id": "NF-RES-05",
+      "argv": [
+        "python3",
+        "tools/test_start_path.py"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "ec2a5769367ff0fd20ee56c41ebb9c56920eba6f94fff1e9520ffd02b54bf19c",
+          "byte_length": 699,
+          "encoding": "base64",
+          "data": "cjAyIHN0cnVjdHVyZWQgcHJvb2Y6IHJlYWwgZGlyZWN0L3JvdXRlIHN1Y2Nlc3MsIG5lZ2F0aXZlLCB3cmFwcGVyLCBlbXB0eSBzdHJlYW1zLCBib3RoIGxheW91dHMsIGluaGVyaXRlZCBwcmVzZXJ2YXRpb24gYW5kIG11dGF0aW9uIHJlZnVzYWwKcjAyIGNvbnRleHQvbWF0ZXJpYWw6IHNhbWUtY2FuZGlkYXRlIGNyb3NzLXRhc2sgY2FwdHVyZSByZXVzZSBhbmQgaW5oZXJpdGVkIHNlbGVjdGVkIGRlcGVuZGVuY3kgZHJpZnQgcmVmdXNlZApQQVNTIHIwMiBmaW5pdGUgdGFza3dpZGUgbG9vcCBwcmV2ZW50aW9uLCBkZWNvbXBvc2l0aW9uLCBuby1vcCBhbmQgcHJvb2YgcmV1c2UgY29udHJvbHMKamV2LXJlYWRpbmVzczogc3RyaWN0IFFBLCBjb21wbGV0ZS1kZWx0YSBzY29wZSBhbmQgY29udHJhY3QgaWRlbnRpdHkgY29udHJvbHMgcGFzcwpqZXYtcmVhZGluZXNzOiBhdXRob3JpdGF0aXZlIG1vbm90b25pYyBhdHRlbXB0IGFsbG9jYXRpb24gcGFzc2VzCmpldi1yZWFkaW5lc3M6IGNvbnRpbnVhdGlvbiBhdXRob3JpdHkgY2Fubm90IGJlIGdyYW50ZWQgYnkgbmFycmF0aXZlIHN1bW1hcnkKc3RhcnQtcGF0aDogYnVnZml4LCBzbWFsbC1jaGFuZ2UsIHRyaXZpYWwsIGNsYXNzaWZ5LCBhbWVuZC1jb250cmFjdCwgcHJlZmxpZ2h0LCBjYXB0dXJlLCBwdWJsaXNoLCBidWlsZC1yZWNlaXB0LCBhbmQgc3RhdHVzIGdhdGVzIHBhc3MK"
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        }
+      }
+    },
+    {
+      "id": "NF-RES-06",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam-resume",
+      "environment": {},
+      "actual_exit": 0,
+      "streams": {
+        "stdout": {
+          "sha256": "1643c81b81705bf6832a1cb625e1bfbc40ad453b1ca81573c3bf4bce3f46f45c",
+          "byte_length": 475,
+          "encoding": "base64",
+          "data": "W0MxXSBQQVNTIGZyb250bWF0dGVyLXNjaGVtYQpbQzJdIFBBU1MgZm9ybWF0CltDM10gUEFTUyB1bnRhZ2dlZC1mZW5jZS1zd2VlcApbQzRdIFBBU1MgaW5kZXgtaW50ZWdyaXR5CltDNV0gUEFTUyBicmFuZGluZy1sZWFrYWdlCltDNl0gUEFTUyBib290c3RyYXAtc2FuaXR5CltDN10gUEFTUyBtb2R1bGUtcmVhZG1lLXByZXNlbmNlCltDOF0gUEFTUyB2ZXJzaW9uLWJ1bXAtdnMtY2hhbmdlbG9nCltDOV0gUEFTUyBwYXRoLXJlc29sdXRpb24KW0MxMF0gUEFTUyBjb25zaXN0ZW5jeQpbQzExXSBQQVNTIGRvZ2Zvb2QKW0MxMl0gUEFTUyBlY29zeXN0ZW0tZml4dHVyZXMKW0MxM10gUEFTUyBza2lsbC1pbmRleApbQzE0XSBQQVNTIHdvcmtmbG93LXNoYS1waW5zCltDMTVdIFBBU1MgY2FwYWJpbGl0eS1wcm9maWxlLXJvbGVzCltDMTZdIFBBU1MgZmVhdHVyZS1saXN0LWxpZmVjeWNsZQpTVU1NQVJZOiAxNiBwYXNzZWQsIDAgZmFpbGVkCg=="
+        },
+        "stderr": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "encoding": "base64",
+          "data": ""
+        }
+      }
+    },
+    {
+      "id": "NF-RES-E2E",
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "actual_exit": 0,
+      "source": "d1ab2f90a2e78218cce4c58fb00153d5bfed4c82",
+      "scope": "actual official hermetic current source bootstrap using synthetic local fixture tags; no production install/release",
+      "streams": {
+        "stdout": {
+          "encoding": "base64",
+          "sha256": "2e0bdea8a1298d13f9650c469e4511ac471efc25f49a11f1ee7d92cd3a9bd5d5",
+          "byte_length": 4104,
+          "data": "ZTJlX2Jvb3RzdHJhcF90ZXN0LnNoOiBpbnN0YWxsaW5nIHBpbm5lZCB0YWcgJ2UyZS0xNzkzMzU1ODk2LTY0MzAzMScgZnJvbSAnZmlsZTovLy9ob21lL2Nucm9zcy9jb2RlL3N0cmF0ZWdpYy1yZWZhY3RvcmluZy0yMDI2MTAzMC93b3JrdHJlZXMvbml6YW0tcmVzdW1lJyBpbnRvICcvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0nIChoZXJtZXRpYyAtLSBsb2NhbCBmaWxlOi8vIGNsb25lLCBubyBuZXR3b3JrKS4uLgpib290c3RyYXAuc2g6IGZldGNoaW5nIGZpbGU6Ly8vaG9tZS9jbnJvc3MvLnRtcC90bXAuMjlycmJLSTZoZS9zb3VyY2UtcmVwbyBhdCBleHBsaWNpdCB0YWcgcmVmIHJlZnMvdGFncy9lMmUtMTc5MzM1NTg5Ni02NDMwMzEgKC0tZGVwdGggMSwgYmxvYi1maWx0ZXJlZCwgc3BhcnNlIHBheWxvYWQpLi4uCmJsb2IgZmlsdGVyIGFwcGxpZWQ6IDMzNDAgZXhjbHVkZWQgb2JqZWN0KHMpIGFic2VudCBsb2NhbGx5CnJlZmVyZW5jZSBwYXlsb2FkIG9iamVjdHMgcHJlc2VudDogMzM5IGZpbGUocykKYm9vdHN0cmFwLnNoOiBzdGFnaW5nIGdvdmVybmFuY2UgcGF5bG9hZCBpbiAvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0tc3RhZ2UuS0ladUw5Li4uCmJvb3RzdHJhcC5zaDogdmVyaWZ5aW5nIHN0YWdlZCBpbmplY3Rpb24gYmVmb3JlIGRlY2xhcmluZyBzdWNjZXNzLi4uCk5JWkFNLmpzb24gcGFyc2VzOyAxMTIgaW5kZXhlZCBwYXRoKHMpIHJlc29sdmUgdW5kZXIgL2hvbWUvY25yb3NzLy50bXAvdG1wLjZKakVLRlFRSEkvLm5pemFtLXN0YWdlLktJWnVMOS4KYm9vdHN0cmFwLnNoOiByZWNvcmRpbmcgcHJvdmVuYW5jZSAoZnJhbWV3b3JrX3ZlcnNpb249My4xLjMsIHRhZz1lMmUtMTc5MzM1NTg5Ni02NDMwMzEsIHJlc29sdmVkX3NoYT1kMWFiMmY5MGEyZTc4MjE4Y2NlNGM1OGZiMDAxNTNkNWJmZWQ0YzgyKS4uLgpib290c3RyYXAuc2g6IGluc3RhbGwgY29tcGxldGUuIEdvdmVybmFuY2UgcGF5bG9hZCB2ZXJzaW9uIDMuMS4zICh0YWcgZTJlLTE3OTMzNTU4OTYtNjQzMDMxKSBpcyBub3cgYXQgJy9ob21lL2Nucm9zcy8udG1wL3RtcC42SmpFS0ZRUUhJLy5uaXphbScuCmFzc2VydF9wYXlsb2FkX3ByZXNlbnQ6IE9LIC0tIHN0YW5kYXJkLywgdGVtcGxhdGVzLywgc2NoZW1hLywgdG9vbHMvLCBtZXRob2RvbG9neS8sIGVjb3N5c3RlbS8sIE5JWkFNLmpzb24sIHByb3ZlbmFuY2UuanNvbiBhbGwgcHJlc2VudCB1bmRlciAvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0KYXNzZXJ0X25pemFtX2luZGV4X3ZhbGlkOiBPSyAtLSBOSVpBTS5qc29uIHBhcnNlczsgMTExIGluZGV4ZWQgcGF0aChzKSByZXNvbHZlIHVuZGVyIC9ob21lL2Nucm9zcy8udG1wL3RtcC42SmpFS0ZRUUhJLy5uaXphbS4KYXNzZXJ0X2Rpc2NvdmVyeV9wYXRoOiBPSyAtLSAvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0vdG9vbHMvc2tpbGwuanNvbiByZXNvbHZlcyAoSDQgcmVncmVzc2lvbiBndWFyZCBzYXRpc2ZpZWQpCmJvb3RzdHJhcC5zaDogdmVyaWZ5LW9ubHk6IGNoZWNraW5nICcvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0nIGFnYWluc3QgcGlubmVkIHRhZyAnZTJlLTE3OTMzNTU4OTYtNjQzMDMxJyAobm8gY2xvbmUsIG5vIG5ldHdvcmspLi4uCk5JWkFNLmpzb24gcGFyc2VzOyAxMTIgaW5kZXhlZCBwYXRoKHMpIHJlc29sdmUgdW5kZXIgL2hvbWUvY25yb3NzLy50bXAvdG1wLjZKakVLRlFRSEkvLm5pemFtLgpib290c3RyYXAuc2g6IHZlcmlmeS1vbmx5OiBQQVNTIChzdHJ1Y3R1cmFsX29ubHk7IGNvbnRlbnRfaW50ZWdyaXR5PW5vdF9jaGVja2VkKSAtLSAnL2hvbWUvY25yb3NzLy50bXAvdG1wLjZKakVLRlFRSEkvLm5pemFtJyByZXF1aXJlZCBmaWxlcywgaW5kZXggcGF0aHMsIGFuZCByZWNvcmRlZCBwcm92ZW5hbmNlIHRhZyAnZTJlLTE3OTMzNTU4OTYtNjQzMDMxJyB2ZXJpZmllZDsgZmlsZSBieXRlcyBhbmQgY29tcGxldGUgaW52ZW50b3J5IHdlcmUgbm90IGNvbXBhcmVkIGFnYWluc3QgYSByZWZlcmVuY2UgdHJlZS4KYXNzZXJ0X3Byb3ZlbmFuY2Vfc2hhX3BpbjogT0sgLS0gcmVzb2x2ZWRfc2hhIHJlY29yZGVkIChkMWFiMmY5MGEyZTc4MjE4Y2NlNGM1OGZiMDAxNTNkNWJmZWQ0YzgyKSA9PSB0YWcncyB0cnVlIGNvbW1pdDsgLS12ZXJpZnktb25seSBlbmZvcmNlcyAtLWdpdC1yZXBvICsgLS1leHBlY3RlZC1zaGEgbWF0Y2gsIGNvbnRlbnQgYnl0ZXMsIGZpbGUgaW52ZW50b3J5LCBleGVjdXRhYmxlIG1vZGVzLCBhbmQgQzIgZ3VhcmRzLgphc3NlcnRfaW5zdGFsbF90YWdfYW5kX3NoYV9waW5fYW5kX3dvcmt0cmVlX3JlcHJvZHVjaWJpbGl0eTogT0sgLS0gcHVibGljIFNlbVZlciB0YWcgZ2F0ZSwgaW5zdGFsbC10aW1lIC0tZXhwZWN0ZWQtc2hhIG1hdGNoL21pc21hdGNoLCBhbm5vdGF0ZWQrbGlnaHR3ZWlnaHQgdGFncywgYW5kIDMtZm9ybSBsaW5rZWQtd29ya3RyZWUgcmVwcm9kdWNpYmlsaXR5IHZlcmlmaWVkLgphc3NlcnRfcGF5bG9hZF92YWxpZGF0ZV9jd2RfaW5kZXBlbmRlbnQ6IE9LIC0tIC0tcGF5bG9hZCBpcyBDV0QtaW5kZXBlbmRlbnQgYW5kIHJlcG9ydHMgbm9uLWNvbmZsYXRlZCBzdW1tYXJ5IChib3RoIGludm9jYXRpb24gZm9ybXMgZ3JlZW4gd2l0aCBpZGVudGljYWwgW0MqXSB2ZXJkaWN0cyB1bmRlciAvaG9tZS9jbnJvc3MvLnRtcC90bXAuNkpqRUtGUVFISS8ubml6YW0pCmFzc2VydF9wcmVmbGlnaHRfZ292ZXJuYW5jZV9yb290OiBPSyAtLSBlY29zeXN0ZW1fcHJlZmxpZ2h0LnB5IGRpc2NvdmVyZWQgdGhlIGluamVjdGVkIC5uaXphbS8gZ292ZXJuYW5jZS1yb290IChleGl0IDI6IFBBU1NfV0lUSF9FWENFUFRJT05TOyB0aGUgaW5qZWN0ZWQgcGF5bG9hZCBpcyBhbiBleHBlY3RlZCBleGNlcHRpb24sIHJlcXVpcmVkIHJlZmVyZW5jZXMgcmVzb2x2ZSB1bmRlciAubml6YW0vKS4KYXNzZXJ0X2dlbmVzaXM6IE9LIC0tIGdlbmVzaXMgc3Rvb2QgdXAgYSBuZXcgcHJvamVjdCBmcm9tIG5vdGhpbmcgKHNjYWZmb2xkIHByZXNlbnQ7IHByb3ZlbmFuY2UgcmVzb2x2ZWRfc2hhPWQxYWIyZjkwYTJlNzgyMThjY2U0YzU4ZmIwMDE1M2Q1YmZlZDRjODIpOyBQcmVmbGlnaHQgYWNjZXB0cyBpdCAoZXhpdCAyOiBQQVNTX1dJVEhfRVhDRVBUSU9OUyk7IGEgbm9uLWVtcHR5IC0tcHJvamVjdC1yb290IGlzIHJlZnVzZWQuCmFzc2VydF9tdWx0aXJlcG86IE9LIC0tIGEgc2NyYXRjaCAyLW1lbWJlciBlY29zeXN0ZW0gKGJvdGggZ2VuZXNpcydkIGZyb20gbm90aGluZyBhdCBvbmUgcGluKSBpdGVyYXRlcyArIGFnZ3JlZ2F0ZXMgdG8gYSBzY2hlbWEtdmFsaWQgZWNvc3lzdGVtLWxldmVsIHJlc3VsdCAoZWNvc3lzdGVtX3ZlcmRpY3QgUEFTUywgZnJhbWV3b3JrX3Bpbl9jb25zaXN0ZW50IHRydWUsIG1lbWJlcl9jb3VudCAyKS4KYXNzZXJ0X3N0YWdlNDogT0sgLS0gdGhlIGFnZ3JlZ2F0ZSAtPiByZWNvbmNpbGlhdGlvbiAtPiByZWxlYXNlLXRyYWluIGNoYWluIHJ1bnMgYWNyb3NzIHRoZSAyLW1lbWJlciBzZXQ6IGEgUEFTUyBwbGFuICsgYSBQQVNTIHRyYWluIG1hbmlmZXN0IChib3RoIEMxMi12YWxpZCksIGFuZCBhbiB1bmdhdGVkIGFkbWlzc2lvbiBpcyBjb3JyZWN0bHkgcmVmdXNlZCBhIFBBU1MgKEZBSUwpLgphc3NlcnRfY29uc3VtZXJfemVyb19yZWFjaGJhY2s6IE9LIC0tIGNvbnN1bWVyIHByb2plY3QgZXhlY3V0ZWQgY2xhc3NpZnksIHByZWZsaWdodCwgdHJpdmlhbCBiZWdpbi9kb25lLCBhbWVuZC1jb250cmFjdCwgY2FwdHVyZS9wdWJsaXNoKHByZXBhcmUrZGVueStwdWJsaXNoKS9idWlsZC1yZWNlaXB0L3ZlcmlmeS1yZWNlaXB0L3Jlc3VtZSwgc3RhdHVzLCBhbmQgdmFsaWRhdGUuc2ggLS1wYXlsb2FkIHVzaW5nIG9ubHkgLm5pemFtLyB3aXRoIHplcm8gcmVhY2gtYmFjay4KZTJlX2Jvb3RzdHJhcF90ZXN0LnNoOiBQQVNTIC0tIGhlcm1ldGljIGJvb3RzdHJhcCBpbmplY3QtdGhlbi12ZXJpZnkgY3ljbGUgc3VjY2VlZGVkICh0YWcgZTJlLTE3OTMzNTU4OTYtNjQzMDMxLCB0YXJnZXQgL2hvbWUvY25yb3NzLy50bXAvdG1wLjZKakVLRlFRSEkvLm5pemFtKS4K"
+        },
+        "stderr": {
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byte_length": 0,
+          "data": ""
+        }
+      }
+    }
+  ],
+  "committed_diffcheck": {
+    "argv": [
+      "git",
+      "diff",
+      "f19357479220b6bf2b3292d31c06c66279f91efa..HEAD",
+      "--check"
+    ],
+    "actual_exit": 0
+  }
+}
