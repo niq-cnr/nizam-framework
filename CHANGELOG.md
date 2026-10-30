@@ -16,6 +16,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Symlink/nonregular targets refuse, original permissions are preserved, and
   read-only planning creates no lock or output.
 
+- Generic optional external evidence admission now requires a trusted host-selected
+  candidate digest and revalidates current bindings and artifact bytes on replay.
+  Interrupted admission records are preserved and can complete one validated ledger
+  transition; unresolved or conflicting records refuse. Permit identifiers are checked
+  against existing schema bounds before filesystem writes. Existing callers must supply
+  `expected_candidate_sha256` / `--expected-candidate-sha256` when adopting this source.
+- Independent review found that the original producer MAC omitted assessed metadata.
+  Profile `1.1.0` now authenticates the complete envelope and producer identity with
+  domain separation. `compute_producer_proof` requires `envelope_binding`; legacy
+  `1.0.0` proof semantics refuse while historical records and counters remain intact.
+
 ## [3.1.3] - 2026-10-29
 
 **Patch release** (`methodology/06_release_train.md` Section 3.3).

@@ -2,10 +2,16 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three core abstract operations plus external mutation mediation (Section 4.4), and the conformance checklist an integrator ticks through."
-version: 0.8.2
+version: 0.9.1
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.9.1"
+    date: "2026-10-30"
+    summary: "Require profile 1.1.0 complete-envelope producer authentication and reject legacy proof splicing without resetting retained history."
+  - version: "0.9.0"
+    date: "2026-10-30"
+    summary: "Document optional generic external admission, trusted expected candidate digests, revalidated replay and interrupted-record recovery boundaries."
   - version: "0.8.2"
     date: "2026-10-27"
     summary: "Reject opaque keys, selectors and metaclass comparisons before dispatch; bound the early flag scan under the operation-wide JSON node budget."
@@ -529,3 +535,66 @@ Catalogue lifecycle, local observation, evidence admission and host acceptance
 remain separate. Candidate/verified never offer; recommended also needs trusted
 released activation. Withdrawal returns withdrawn without reading package bytes,
 erasing history, uninstalling packages or changing governance/task state.
+
+## 9. Optional generic external evidence admission
+
+The authored tools/external_evidence.py API and
+schema/external_evidence_admission.schema.json define
+`generic-external-evidence-v1` / `1.1.0`. This optional local profile has no
+Agentic SDLC dependency and adds no mandatory adapter item. Select and qualify
+the exact framework/consumer implementation pair before using it in a governed
+integration. Its existence in current source does not upgrade an installed payload.
+
+`allocate_attempt_permit` (CLI `allocate-attempt`) reserves host-owned task/step/run
+lineage under the existing exclusive ledger lock. The three identifiers must
+satisfy the schema's `safe_token` contract: 1–128 ASCII letters, digits, dots,
+underscores, colons or hyphens, beginning with a letter or digit. Invalid values
+are rejected before creating state or paths. A pending prior step permit holds
+new allocation; recorded finite ceilings and explicit recovery still apply.
+
+`admit_external_evidence` (CLI `admit-evidence`) requires an independently selected
+`expected_candidate_sha256` / `--expected-candidate-sha256`, in addition to the
+existing expected policy/framework/contract/collection bindings. The host supplies
+the digest of its already-frozen candidate manifest using that manifest's declared
+encoding. Never copy the expected digest from the submitted envelope. This profile
+does not invent another candidate-manifest encoding. Missing expected digest is a
+required-argument error; malformed or mismatching digests refuse admission. This
+source change requires existing callers to supply the new argument before adopting
+the repaired implementation; unsafe legacy acceptance is not a compatibility mode.
+
+The host keeps the returned permit token private and supplies it only to its
+selected trusted producer channel. `compute_producer_proof` requires the complete
+`envelope_binding` in addition to its existing arguments. It excludes only the
+self-referential `producer_proof` object, and authenticates every other top-level
+field plus the producer identity and timestamp with domain-separated HMAC-SHA256
+(`nizam-external-envelope-hmac-v2`). This includes assessed candidate digest,
+policy/framework, contract/requirements, collections, lineage, status, execution
+identity and artifact descriptors. Missing binding fields refuse. The current
+API refuses profile `1.0.0`; it does not accept its partial MAC semantics as a
+fallback. Historical records and failure counts remain preserved, and callers
+must explicitly adopt `1.1.0` and requalify their producer mapping. The frozen
+historical corpus remains unchanged; current static conformance projects only
+its profile-version metadata. The MAC alone does not authenticate an independent producer,
+establish isolation, or prove a human decision. The host must establish those facts
+through the actual selected execution and trust mechanism.
+
+An identical replay rechecks current expected bindings, permit proof, retained
+record integrity and on-disk artifact bytes before returning. Changed policy,
+contract or artifacts cannot reuse old acceptance. Rejected replay leaves ledger
+counters unchanged. Admission persists a record before atomically replacing the
+ledger; this is not a multi-file transaction. After ledger-write interruption,
+`reconcile_admission_state` (CLI `reconcile`) preserves and reports unmatched
+published records as unresolved. Resubmitting the exact admission performs all
+current checks before completing its ledger transition once. A conflicting or
+corrupt orphan remains preserved and refuses. Orphan allocation files require
+explicit host recovery; reconciliation does not delete them or issue another permit.
+
+Reconciliation checks ledger/record consistency; it does not re-admit evidence or
+replace current admission checks. This API records external admission only under
+`.agent/evidence/external_admissions/`. It does not mark a feature complete or
+advance `.agent/run_state.json`. A governed host must bind the resulting observation
+to its existing owned completion gate without allocating a second attempt budget.
+Test outcome, execution status, evidence admission and task completion remain distinct.
+The generic artifact roles support captured streams/reports/traces, but do not define
+UI design or manual accessibility approval semantics; such claims need the selected
+typed artifact and genuine approval profile.

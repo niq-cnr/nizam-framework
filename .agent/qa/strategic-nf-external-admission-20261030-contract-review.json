@@ -1,0 +1,58 @@
+{
+  "review_id": "nizam-precode-20261030-r1",
+  "role": "independent evaluator contract review",
+  "base_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+  "contract": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/.agent/contracts/strategic-nf-external-admission-20261030.json",
+  "contract_sha256": "094601df93c70e3ef9906ce35c19d8678b528c421f04c5f970921021e0593387",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "resolved_prior_issues": [
+    {
+      "id": "NF-PC-01",
+      "evidence": "Five unique NF-EXT IDs now carry exact argv, integer exits, success proof and null diagnostics; environment is separate; installed schema validation passes."
+    }
+  ],
+  "advisory_minor": [
+    {
+      "id": "NF-PC-A1",
+      "note": "Keep independently supplied expected candidate digest required in library and CLI; no default copied from envelope. Compatibility note and current authored callers must agree."
+    },
+    {
+      "id": "NF-PC-A2",
+      "note": "Replay checks all current host expectations and retained envelope/artifact integrity before returning; identical valid orphan recovery produces one ledger transition and conflicting orphans remain intact."
+    },
+    {
+      "id": "NF-PC-A3",
+      "note": "Reject unsafe permit task/step/run IDs before entering state lock or any filesystem creation. Record exact schema safe_token bounds and test overlong/nonstring/traversal input."
+    }
+  ],
+  "verification_observed": [
+    {
+      "check": "installed contract schema validation",
+      "result": "pass"
+    },
+    {
+      "check": "source permit allocation path inspected for additional traversal fix",
+      "result": "path identifiers currently reach state/path construction without declared safe_token validation"
+    },
+    {
+      "check": "source edits absent at review",
+      "result": "pass"
+    }
+  ],
+  "evidence_refs": [
+    "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/.agent/contracts/strategic-nf-external-admission-20261030.json",
+    "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py:261-298",
+    "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/tools/external_evidence.py:457-785",
+    "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/.nizam/schema/contract.schema.json",
+    "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-precode-r0.json"
+  ],
+  "limitations": [
+    "Fresh-context source/proposal review is not enforced sandbox or distinct physical model-lineage evidence.",
+    "No implementation, installed adoption, Agentic A08/A09 pairing or external canonical approval is established."
+  ]
+}

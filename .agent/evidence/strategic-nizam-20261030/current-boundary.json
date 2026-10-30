@@ -1,0 +1,52 @@
+{
+  "repository": "niq-cnr/nizam-framework",
+  "source_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+  "scope": "Bounded current-source NF01/NF07 discovery; not independent assurance or consumer admission qualification.",
+  "profile": {
+    "id": "generic-external-evidence-v1",
+    "version": "1.0.0",
+    "schema": "schema/external_evidence_admission.schema.json",
+    "library": "tools/external_evidence.py",
+    "entrypoints": [
+      "allocate_attempt_permit",
+      "compute_producer_proof",
+      "admit_external_evidence",
+      "reconcile_admission_state"
+    ],
+    "cli": [
+      "allocate-attempt",
+      "admit-evidence",
+      "reconcile"
+    ]
+  },
+  "source_sha256": {
+    "tools/external_evidence.py": "19952653ce4015a7ce351aeb7d240dd028890ce78291faded52f9ae3db806b68",
+    "schema/external_evidence_admission.schema.json": "fe666ec4bb4eed5ec5b69f53d81f14cabb5fb41060b060850636ebb43b042f6f",
+    "tools/test_nf_ac04_generic_admission.py": "b6ef53f08e5d5641a12598765fb2a958bab1113cf676c389f856d2e23f93eda0",
+    "tools/test_nf_ac05_standalone_e2e.py": "6fa0850007058b5823a9ec82bb4266d68f2ebdba01c240e021b0c66f91ea5cd2"
+  },
+  "verified_capabilities": [
+    "Generic consumer tests have no Agentic dependency.",
+    "Allocation records monotonic lineage under flock and refuses unsettled prior step attempt.",
+    "Admission compares policy/framework/contract/collections and immutable Git candidate commit/tree.",
+    "Producer HMAC binds allocated token to candidate commit/tree, execution identity and artifact descriptors.",
+    "Execution/test/admission statuses remain separate; failure counters and finite recovery preserved."
+  ],
+  "confirmed_gaps": [
+    "candidate_sha256 was not compared to any host expected digest.",
+    "Identical replay returned before current policy/contract/artifact validation.",
+    "Admission record published before ledger; interrupted persistence creates orphan and false okay reconciliation.",
+    "Allocation task/step/run identifiers were not validated against safe_token before filesystem writes."
+  ],
+  "trust_limits": [
+    "Token possession does not establish independent producer identity, OS isolation, or human approval.",
+    "No actual Agentic paired adapter was executed.",
+    "Embedded installed governance is v3.0.0 and unchanged; root current source is separate."
+  ],
+  "evidence": [
+    "admission-baseline.log",
+    "admission-adversarial-probe.log",
+    "permit-path-probe.log",
+    "standalone-baseline.log"
+  ]
+}

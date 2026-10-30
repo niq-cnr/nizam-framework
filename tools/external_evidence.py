@@ -37,7 +37,7 @@ import git_seam  # noqa: E402
 SCHEMA_VERSION = "1.0.0"
 PROTOCOL_VERSION = "1.0.0"
 SUPPORTED_PROFILE_ID = "generic-external-evidence-v1"
-SUPPORTED_PROFILE_VERSION = "1.0.0"
+SUPPORTED_PROFILE_VERSION = "1.1.0"
 DEFAULT_STEP_LIMIT = 3
 DEFAULT_TASK_FAILURE_CEILING = 6
 MAX_SIGNATURE_FAILURES = 3
@@ -157,6 +157,14 @@ def _check_not_commissioning_evidence(token: str, field_name: str) -> None:
         )
 
 
+def _validate_identifier(value: Any, field_name: str) -> None:
+    """Enforce the existing wire identifier contract before constructing paths."""
+    try:
+        jsonschema.Draft202012Validator(_load_admission_schema()["$defs"]["safe_token"]).validate(value)
+    except jsonschema.ValidationError as exc:
+        raise ExternalEvidenceError(f"{field_name}: invalid safe_token identifier", code="invalid_identifier") from exc
+
+
 def _admission_dir(repo_root: Path) -> Path:
     return repo_root / ".agent" / "evidence" / "external_admissions"
 
@@ -222,6 +230,44 @@ def _load_or_init_ledger(state_dir: Path) -> dict[str, Any]:
     return data
 
 
+def _read_admission_record(repo_root: Path, rel_path: str, admission_key: str) -> dict[str, Any]:
+    _, raw = _read_regular_file(repo_root, rel_path, "admission record")
+    try:
+        doc = json.loads(raw.decode("utf-8"))
+        valid = (
+            isinstance(doc, dict)
+            and set(doc) == {"schema_version", "admission_key", "envelope_sha256", "envelope"}
+            and doc["schema_version"] == SCHEMA_VERSION
+            and doc["admission_key"] == admission_key
+            and isinstance(doc["envelope"], dict)
+            and doc["envelope_sha256"] == sha256_hex(canonical_json_bytes(doc["envelope"]))
+        )
+    except (UnicodeDecodeError, ValueError, TypeError) as exc:
+        raise ExternalEvidenceError("invalid retained admission record", code="corrupt_admission") from exc
+    if not valid:
+        raise ExternalEvidenceError("retained admission record digest/binding mismatch", code="corrupt_admission")
+    return doc
+
+
+def _untracked_state_files(repo_root: Path, state_dir: Path, ledger: Mapping[str, Any]) -> list[str]:
+    """Never silently discard records published before an interrupted ledger write."""
+    expected: set[str] = set()
+    for entry in ledger["permits"].values():
+        if not isinstance(entry, dict) or not all(isinstance(entry.get(k), str) for k in ("permit_path", "token_path")):
+            raise ExternalEvidenceError("malformed retained permit entry", code="corrupt_ledger")
+        expected.update((entry["permit_path"], entry["token_path"]))
+    for entry in ledger["admissions"].values():
+        if not isinstance(entry, dict) or not isinstance(entry.get("admission_path"), str):
+            raise ExternalEvidenceError("malformed retained admission entry", code="corrupt_ledger")
+        expected.add(entry["admission_path"])
+    actual = {
+        str(item.relative_to(repo_root))
+        for sub in (state_dir / "permits", state_dir / "admitted") if sub.is_dir()
+        for item in sub.iterdir()
+    }
+    return sorted(actual - expected)
+
+
 def _verify_operator_recovery(
     repo_root: Path,
     task_id: str,
@@ -272,6 +318,8 @@ def allocate_attempt_permit(
     step_limit: int = DEFAULT_STEP_LIMIT,
 ) -> dict[str, Any]:
     """Allocate a host-owned monotonic attempt permit under exclusive lock."""
+    for field, value in (("task_id", task_id), ("step_id", step_id), ("run_id", run_id)):
+        _validate_identifier(value, field)
     repo_root = Path(repo_root).resolve(strict=True)
     git_seam.validate_repo_root(repo_root)
     _check_not_commissioning_evidence(task_id, "task_id")
@@ -415,6 +463,7 @@ def allocate_attempt_permit(
 
 def compute_producer_proof(
     *,
+    envelope_binding: Mapping[str, Any],
     permit_digest: str,
     permit_token: str,
     candidate_commit: str,
@@ -425,8 +474,14 @@ def compute_producer_proof(
     session_id: str,
     issued_at: str,
 ) -> dict[str, str]:
-    """Compute host-authenticated HMAC-SHA256 producer proof bound to the allocated permit token."""
+    """Authenticate the complete profile-1.1 envelope and producer identity."""
+    binding = {key: value for key, value in envelope_binding.items() if key != "producer_proof"}
+    required = set(_load_admission_schema()["required"]) - {"producer_proof"}
+    if set(binding) != required:
+        raise ExternalEvidenceError("producer proof requires complete envelope binding", code="incomplete_proof_binding")
     payload = {
+        "mac_profile": "nizam-external-envelope-hmac-v2",
+        "envelope_binding": binding,
         "permit_digest": permit_digest,
         "candidate_commit": candidate_commit,
         "candidate_tree": candidate_tree,
@@ -458,6 +513,7 @@ def admit_external_evidence(
     repo_root: Path,
     envelope: Mapping[str, Any],
     *,
+    expected_candidate_sha256: str,
     expected_policy_id: str,
     expected_policy_version: str,
     expected_policy_digest: str,
@@ -471,6 +527,8 @@ def admit_external_evidence(
     expected_adapter_id: str | None = None,
 ) -> dict[str, Any]:
     """Validate and atomically admit or record an external evidence submission under lock."""
+    if not isinstance(expected_candidate_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", expected_candidate_sha256) is None:
+        raise ExternalEvidenceError("expected_candidate_sha256 must be a trusted lowercase SHA256", code="invalid_expected_candidate_digest")
     repo_root = Path(repo_root).resolve(strict=True)
     git_seam.validate_repo_root(repo_root)
 
@@ -497,6 +555,9 @@ def admit_external_evidence(
             f"external evidence schema validation failed: {exc.message}",
             code="schema_violation",
         ) from exc
+
+    if envelope["consumer_binding"]["candidate_sha256"] != expected_candidate_sha256:
+        raise ExternalEvidenceError("candidate_sha256 does not match trusted host expectation", code="candidate_digest_mismatch")
 
     lineage = envelope["attempt_lineage"]
     task_id = lineage["task_id"]
@@ -528,24 +589,13 @@ def admit_external_evidence(
         _cleanup_staging_files(state_dir)
         ledger = _load_or_init_ledger(state_dir)
 
-        # 3. Idempotent duplicate delivery vs conflicting reuse check
+        # 3. Identify replay, but never bypass current host bindings or evidence checks.
         existing_admission = ledger["admissions"].get(admission_key)
         if existing_admission is not None:
-            if existing_admission.get("envelope_sha256") == envelope_sha256:
-                return {
-                    "ok": True,
-                    "idempotent_replay": True,
-                    "admission_key": admission_key,
-                    "envelope_sha256": envelope_sha256,
-                    "admission_path": existing_admission["admission_path"],
-                    "admission_decision": existing_admission["admission_decision"],
-                    "test_outcome": existing_admission["test_outcome"],
-                    "execution_status": existing_admission["execution_status"],
-                }
-            raise ExternalEvidenceError(
-                f"conflicting reuse of attempt {admission_key}: prior digest {existing_admission.get('envelope_sha256')} != {envelope_sha256}",
-                code="conflicting_attempt_reuse",
-            )
+            if existing_admission.get("envelope_sha256") != envelope_sha256 or existing_admission.get("permit_id") != permit_id:
+                raise ExternalEvidenceError(
+                    f"conflicting reuse of attempt {admission_key}", code="conflicting_attempt_reuse",
+                )
 
         # 4. Verify host-allocated permit binding and authenticate producer proof
         permit_entry = ledger["permits"].get(permit_id)
@@ -554,7 +604,7 @@ def admit_external_evidence(
                 f"unallocated or unknown permit_id {permit_id!r}",
                 code="unallocated_permit",
             )
-        if permit_entry.get("consumed") is True:
+        if permit_entry.get("consumed") is True and existing_admission is None:
             raise ExternalEvidenceError(
                 f"permit {permit_id!r} was already consumed by another admission",
                 code="conflicting_attempt_reuse",
@@ -588,23 +638,6 @@ def admit_external_evidence(
             raise ExternalEvidenceError(
                 "consumer_binding candidate_commit/candidate_tree does not match host-allocated permit",
                 code="candidate_mismatch",
-            )
-
-        expected_proof = compute_producer_proof(
-            permit_digest=permit_digest,
-            permit_token=permit_token,
-            candidate_commit=consumer["candidate_commit"],
-            candidate_tree=consumer["candidate_tree"],
-            execution_identity=envelope["execution_identity"],
-            artifacts=envelope["artifacts"],
-            producer_id=producer_proof["producer_id"],
-            session_id=producer_proof["session_id"],
-            issued_at=producer_proof["issued_at"],
-        )
-        if not hmac.compare_digest(expected_proof["permit_binding_digest"], producer_proof["permit_binding_digest"]):
-            raise ExternalEvidenceError(
-                "producer_proof.permit_binding_digest failed host permit authentication",
-                code="forged_producer_proof",
             )
 
         # 5. Verify policy, framework, repository/git, contract, collection, and tool/adapter bindings
@@ -740,7 +773,25 @@ def admit_external_evidence(
                 code="partial_capture",
             )
 
-        # 8. Durable atomic state transition
+        expected_proof = compute_producer_proof(
+            envelope_binding=envelope,
+            permit_digest=permit_digest,
+            permit_token=permit_token,
+            candidate_commit=consumer["candidate_commit"],
+            candidate_tree=consumer["candidate_tree"],
+            execution_identity=envelope["execution_identity"],
+            artifacts=envelope["artifacts"],
+            producer_id=producer_proof["producer_id"],
+            session_id=producer_proof["session_id"],
+            issued_at=producer_proof["issued_at"],
+        )
+        if not hmac.compare_digest(expected_proof["permit_binding_digest"], producer_proof["permit_binding_digest"]):
+            raise ExternalEvidenceError(
+                "producer_proof.permit_binding_digest failed host permit authentication",
+                code="forged_producer_proof",
+            )
+
+        # 8. Durable record publication followed by one atomic ledger transition.
         admission_rel = f".agent/evidence/external_admissions/admitted/{task_id}-{step_id}-attempt{attempt_number}.admission.json"
         admission_record = {
             "schema_version": SCHEMA_VERSION,
@@ -748,7 +799,23 @@ def admit_external_evidence(
             "envelope_sha256": envelope_sha256,
             "envelope": dict(envelope),
         }
-        _write_exclusive_bytes(repo_root / admission_rel, canonical_json_bytes(admission_record) + b"\n", mode=0o600)
+        if existing_admission is not None:
+            retained = _read_admission_record(repo_root, existing_admission["admission_path"], admission_key)
+            if retained != admission_record:
+                raise ExternalEvidenceError("retained admission differs from validated replay", code="corrupt_admission")
+            return {
+                "ok": True, "idempotent_replay": True, "admission_key": admission_key,
+                "envelope_sha256": envelope_sha256, "admission_path": existing_admission["admission_path"],
+                "admission_decision": decision, "test_outcome": test_outcome, "execution_status": exec_status,
+            }
+        if os.path.lexists(repo_root / admission_rel):
+            retained = _read_admission_record(repo_root, admission_rel, admission_key)
+            if retained != admission_record:
+                raise ExternalEvidenceError("conflicting orphan admission preserved", code="conflicting_orphan_admission")
+            # The previous record was durable but the ledger transition was not.
+            # All current bindings above were rechecked before completing it once.
+        else:
+            _write_exclusive_bytes(repo_root / admission_rel, canonical_json_bytes(admission_record) + b"\n", mode=0o600)
 
         task_state = ledger["tasks"][task_id]
         step_state = task_state["steps"][step_id]
@@ -801,13 +868,17 @@ def reconcile_admission_state(repo_root: Path) -> dict[str, Any]:
     with _exclusive_state_lock(repo_root) as state_dir:
         cleaned = _cleanup_staging_files(state_dir)
         ledger = _load_or_init_ledger(state_dir)
+        orphans = _untracked_state_files(repo_root, state_dir, ledger)
+        if orphans:
+            raise ExternalEvidenceError(
+                f"unresolved published records preserved for explicit recovery: {orphans}", code="unreconciled_state",
+            )
         for permit_id, pentry in ledger["permits"].items():
             _, raw = _read_regular_file(repo_root, pentry["permit_path"], f"permit {permit_id}")
             if sha256_hex(raw.strip()) != pentry["permit_digest"]:
                 raise ExternalEvidenceError(f"permit {permit_id} digest mismatch during reconciliation", code="corrupt_permit")
         for adm_key, aentry in ledger["admissions"].items():
-            _, raw = _read_regular_file(repo_root, aentry["admission_path"], f"admission {adm_key}")
-            doc = json.loads(raw.decode("utf-8"))
+            doc = _read_admission_record(repo_root, aentry["admission_path"], adm_key)
             if doc.get("envelope_sha256") != aentry["envelope_sha256"]:
                 raise ExternalEvidenceError(f"admission {adm_key} digest mismatch during reconciliation", code="corrupt_admission")
         return {
@@ -836,6 +907,7 @@ def _build_parser() -> argparse.ArgumentParser:
     admit = sub.add_parser("admit-evidence", help="validate and admit an external evidence envelope")
     admit.add_argument("--root", required=True)
     admit.add_argument("--envelope", required=True)
+    admit.add_argument("--expected-candidate-sha256", required=True)
     admit.add_argument("--expected-policy-id", required=True)
     admit.add_argument("--expected-policy-version", required=True)
     admit.add_argument("--expected-policy-digest", required=True)
@@ -876,6 +948,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             res = admit_external_evidence(
                 Path(args.root),
                 env_doc,
+                expected_candidate_sha256=args.expected_candidate_sha256,
                 expected_policy_id=args.expected_policy_id,
                 expected_policy_version=args.expected_policy_version,
                 expected_policy_digest=args.expected_policy_digest,
