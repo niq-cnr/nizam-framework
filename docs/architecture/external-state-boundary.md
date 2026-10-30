@@ -5,7 +5,7 @@ description: "Nofollow namespace checks precede external state creation, locking
 tags: [security, evidence, filesystem]
 status: active
 last_audited: "2026-10-30"
-authoritative_source: tools/external_evidence.py
+authoritative_source: docs/architecture/external-state-boundary.md
 version: 1.0.0
 ---
 
