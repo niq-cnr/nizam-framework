@@ -2,10 +2,16 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.42
+version: 0.65.44
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.44"
+    date: "2026-10-30"
+    summary: "Preserve independent rejection of the partial-MAC candidate and bind the profile-1.1 whole-envelope correction to its reviewed coverage amendment."
+  - version: "0.65.43"
+    date: "2026-10-30"
+    summary: "Record the strategic current-source generic external-admission repair and the remaining trusted-producer/owned-completion integration boundary."
   - version: "0.65.42"
     date: "2026-10-29"
     summary: "Prepare v3.1.3 PATCH for the independently accepted historical symlink packet repair; actual self-install, release and adoption remain separate."
@@ -332,6 +338,34 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Strategic current-source admission repair — 2026-10-30
+
+The approved six-repository refactoring selects the bounded current-source repair
+in .agent/contracts/strategic-nf-external-admission-20261030.json. The current
+generic external-evidence profile exists; an older released-source absence inventory
+does not describe this implementation. Four defects were reproduced before repair:
+unchecked candidate digest, replay before current proof validation, orphan admission
+after ledger-write interruption, and unchecked permit identifiers reaching paths.
+The repair requires a trusted host-selected expected digest, validates replay,
+preserves unresolved records and checks existing identifier bounds before writes.
+Exact verification and source acceptance remain in the owning contract/evidence.
+
+Independent review rejected the first source candidate because a producer proof
+could be spliced onto changed host-expected assessed metadata. The reviewed
+coverage amendment retains that failure and independent RED controls, requires
+complete-envelope authentication in profile `1.1.0`, and refuses old `1.0.0`
+proof semantics. This is a source compatibility change, not a release or an
+instruction to discard old records or reset task budgets.
+
+The installed `.nizam/` payload, release preparation and prior evidence remain separate.
+NF07 is not full Agentic integration: token possession does not establish trusted
+producer execution, and an external-admission ledger record does not advance governed
+task completion. The next bounded cross-repository contract must select an actual
+trusted producer/run channel and bind the existing permit/admission primitives to the
+host's owned completion gate, preserving one attempt authority. Agentic A08/A09/J01,
+UI approval mapping, release and installation cannot be closed by schema validity or
+the local neutral-consumer suite alone.
 
 ## Approved backlog additions — 2026-10-27
 

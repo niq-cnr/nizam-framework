@@ -1,0 +1,31 @@
+{
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "review": {
+    "role": "structural Validator Mode A semantic security amendment",
+    "contract_id": "strategic-nf-external-admission-20261030",
+    "contract_sha256": "1f45db133a6b7e4ac603cb9ad11c76cc2d261cb66ab58590918cb261065298dc",
+    "checked": [
+      "Independent frozen RED proves assessed candidate digest can be spliced after producer proof",
+      "Semantic amendment explicitly expands authenticated binding to every envelope field excluding producer_proof self-reference",
+      "Producer identity/timestamp remain authenticated separately and MAC domain separation explicit",
+      "Profile version1.1 makes stronger proof semantics explicit; legacy1.0 not silently admitted",
+      "Schema update scoped; historical corpus preserved with version-only projection for current static validation",
+      "Mandatory helper API construction migration documented; no acceptance assertion weakening authorized",
+      "No state/admission transition before complete actual-envelope authentication",
+      "Same exact five verification commands retain existing regression and independent splice test"
+    ],
+    "limitations": [
+      "Required actual source correction and independent final QA remain; prior nizam-modeb.json is still superseded by nizam-modeb-hold.json.",
+      "No operator/producer identity trust or general isolation conferred by an HMAC token."
+    ]
+  },
+  "advisory_minor": [
+    "Record both new exact-bound amendment verdicts and set contract approved only after both gates; old precode approval does not alone authorize semantic amendment.",
+    "Shared fixture construction may migrate to required envelope_binding but the independent splice test behavior/assertions remain frozen."
+  ]
+}

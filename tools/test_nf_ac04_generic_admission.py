@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import jsonschema
 
@@ -169,7 +170,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             "isolation_mode": "container",
             "isolation_digest": "88" * 32,
         }
-        proof = ee.compute_producer_proof(
+        proof_args = dict(
             permit_digest=permit_digest,
             permit_token=permit_token,
             candidate_commit=self.cand_commit,
@@ -180,11 +181,11 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             session_id="sess-20261027-0001",
             issued_at="2026-10-27T12:00:00Z",
         )
-        return {
+        envelope = {
             "schema_version": "1.0.0",
             "protocol_version": "1.0.0",
             "profile_id": "generic-external-evidence-v1",
-            "profile_version": "1.0.0",
+            "profile_version": ee.SUPPORTED_PROFILE_VERSION,
             "policy_binding": {
                 "policy_id": POLICY_ID,
                 "policy_version": POLICY_VERSION,
@@ -228,7 +229,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 "regression_collection_digest": REG_COLLECTION_DIGEST,
             },
             "execution_identity": exec_id,
-            "producer_proof": proof,
+            "producer_proof": {},
             "status_separation": {
                 "test_outcome": test_outcome,
                 "execution_status": execution_status,
@@ -236,11 +237,11 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             },
             "artifacts": artifacts,
         }
+        envelope["producer_proof"] = ee.compute_producer_proof(envelope_binding=envelope, **proof_args)
+        return envelope
 
-    def _admit(self, envelope: dict[str, object]) -> dict[str, object]:
-        return ee.admit_external_evidence(
-            self.repo,
-            envelope,
+    def _admit(self, envelope: dict[str, object], **overrides: str) -> dict[str, object]:
+        expected = dict(
             expected_policy_id=POLICY_ID,
             expected_policy_version=POLICY_VERSION,
             expected_policy_digest=POLICY_DIGEST,
@@ -252,7 +253,10 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
             expected_regression_collection_digest=REG_COLLECTION_DIGEST,
             expected_tool_id="neutral-pytest-runner",
             expected_adapter_id="neutral-local-adapter",
+            expected_candidate_sha256="22" * 32,
         )
+        expected.update(overrides)
+        return ee.admit_external_evidence(self.repo, envelope, **expected)
 
     def test_schema_closure_and_conformance_corpus_cases(self) -> None:
         """Verify every object in external_evidence_admission.schema.json is closed and exercise the neutral corpus."""
@@ -279,7 +283,9 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        jsonschema.Draft202012Validator(schema).validate(corpus["positive_templates"]["valid_passed_admission"])
+        current_template = copy.deepcopy(corpus["positive_templates"]["valid_passed_admission"])
+        current_template["profile_version"] = ee.SUPPORTED_PROFILE_VERSION
+        jsonschema.Draft202012Validator(schema).validate(current_template)
 
         alloc = ee.allocate_attempt_permit(
             self.repo,
@@ -303,6 +309,85 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                 with self.assertRaises(ee.ExternalEvidenceError) as ctx:
                     self._admit(mutated)
                 self.assertEqual(ctx.exception.code, neg["expected_code"])
+
+    def test_candidate_digest_cannot_be_spliced_after_producer_proof(self) -> None:
+        alloc = ee.allocate_attempt_permit(
+            self.repo,
+            task_id="F-201",
+            step_id="verify-unit",
+            run_id="run-01",
+            candidate_commit=self.cand_commit,
+        )
+        original = self._build_valid_envelope(alloc, self._write_artifacts("digest-splice"))
+        proof = copy.deepcopy(original["producer_proof"])
+        spliced = copy.deepcopy(original)
+        spliced["consumer_binding"]["candidate_sha256"] = "33" * 32
+        self.assertEqual(spliced["producer_proof"], proof)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(spliced, expected_candidate_sha256="33" * 32)
+        self.assertEqual(ctx.exception.code, "forged_producer_proof")
+        # Refusal must leave the original authenticated submission usable.
+        self.assertTrue(self._admit(original)["ok"])
+
+    def test_semantic_metadata_cannot_be_spliced_after_producer_proof(self) -> None:
+        variants = (
+            "policy", "framework", "acceptance-collection", "regression-collection",
+            "contract-requirements", "admission-decision", "execution-status",
+        )
+        contract_path = self.repo / self.contract_rel
+        original_contract = contract_path.read_bytes()
+        ledger_path = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        for name in variants:
+            with self.subTest(binding=name):
+                try:
+                    alloc = ee.allocate_attempt_permit(
+                        self.repo, task_id="F-201", step_id="verify-" + name,
+                        run_id="run-01", candidate_commit=self.cand_commit,
+                    )
+                    envelope = self._build_valid_envelope(
+                        alloc, self._write_artifacts("semantic-splice-" + name)
+                    )
+                    proof = copy.deepcopy(envelope["producer_proof"])
+                    expected = {}
+                    if name == "policy":
+                        envelope["policy_binding"]["policy_digest"] = "43" * 32
+                        expected["expected_policy_digest"] = "43" * 32
+                    elif name == "framework":
+                        envelope["framework_identity"].update(
+                            version="3.0.1", commit_sha="ab" * 20, tree_sha="cd" * 20
+                        )
+                        expected.update(
+                            expected_framework_version="3.0.1",
+                            expected_framework_commit="ab" * 20,
+                            expected_framework_tree="cd" * 20,
+                        )
+                    elif name == "acceptance-collection":
+                        envelope["collection_binding"]["acceptance_collection_digest"] = "44" * 32
+                        expected["expected_acceptance_collection_digest"] = "44" * 32
+                    elif name == "regression-collection":
+                        envelope["collection_binding"]["regression_collection_digest"] = "45" * 32
+                        expected["expected_regression_collection_digest"] = "45" * 32
+                    elif name == "contract-requirements":
+                        contract = json.loads(original_contract)
+                        contract["requirements"] = ["REQ-201-B"]
+                        updated = ee.canonical_json_bytes(contract) + b"\n"
+                        contract_path.write_bytes(updated)
+                        envelope["contract_binding"]["requirement_ids"] = ["REQ-201-B"]
+                        envelope["contract_binding"]["contract_digest"] = ee.sha256_hex(updated)
+                    elif name == "admission-decision":
+                        envelope["status_separation"]["admission_decision"] = "rejected"
+                    else:
+                        envelope["status_separation"].update(
+                            execution_status="interrupted", admission_decision="quarantined"
+                        )
+                    self.assertEqual(envelope["producer_proof"], proof)
+                    before = ledger_path.read_bytes()
+                    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                        self._admit(envelope, **expected)
+                    self.assertEqual(ctx.exception.code, "forged_producer_proof")
+                    self.assertEqual(ledger_path.read_bytes(), before)
+                finally:
+                    contract_path.write_bytes(original_contract)
 
     def test_admission_idempotency_conflicting_reuse_and_binding_rejections(self) -> None:
         """Verify valid admission, idempotent duplicate delivery, conflicting reuse rejection, and all binding checks."""
@@ -350,6 +435,7 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
         bad_tool["execution_identity"]["tool_id"] = "other-tool"
         # Recompute proof so it tests tool_mismatch rather than forged_producer_proof
         bad_tool["producer_proof"] = ee.compute_producer_proof(
+            envelope_binding=bad_tool,
             permit_digest=str(alloc["permit_digest"]),
             permit_token=str(alloc["permit_token"]),
             candidate_commit=self.cand_commit,
@@ -505,6 +591,8 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
                     str(env_path),
                     "--expected-policy-id",
                     POLICY_ID,
+                    "--expected-candidate-sha256",
+                    "22" * 32,
                     "--expected-policy-version",
                     POLICY_VERSION,
                     "--expected-policy-digest",
@@ -544,6 +632,128 @@ class NfAc04GenericAdmissionTests(unittest.TestCase):
         self.assertIn(".tmp-ledger.json-crashed", rec["cleaned_staging_files"])
         self.assertFalse(stale_tmp.exists())
         self.assertEqual(rec["admission_count"], 1)
+
+    def test_permit_identifiers_refuse_before_creating_state(self) -> None:
+        state = self.repo / ".agent/evidence/external_admissions"
+        for field in ("task_id", "step_id", "run_id"):
+            for invalid in ("../../../../escaped", "", "x" * 129, None, 12):
+                with self.subTest(field=field, invalid=invalid):
+                    args = dict(task_id="F-SAFE", step_id="verify", run_id="run-safe")
+                    args[field] = invalid
+                    with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                        ee.allocate_attempt_permit(self.repo, candidate_commit=self.cand_commit, **args)
+                    self.assertEqual(ctx.exception.code, "invalid_identifier")
+                    self.assertFalse(state.exists())
+        self.assertFalse((self.repo / "escaped-verify-attempt1.permit.json").exists())
+
+    def test_candidate_digest_requires_independent_host_expectation(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-DIGEST", step_id="verify",
+                                           run_id="run-digest", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("digest"))
+        altered = copy.deepcopy(env)
+        altered["consumer_binding"]["candidate_sha256"] = "ff" * 32
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(altered)
+        self.assertEqual(ctx.exception.code, "candidate_digest_mismatch")
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env, expected_candidate_sha256="not-a-digest")
+        self.assertEqual(ctx.exception.code, "invalid_expected_candidate_digest")
+        self.assertEqual(self._admit(env)["admission_decision"], "admitted")
+
+    def test_replay_revalidates_current_expectations_evidence_and_record(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-REPLAY", step_id="verify",
+                                           run_id="run-replay", candidate_commit=self.cand_commit)
+        arts = self._write_artifacts("replay")
+        env = self._build_valid_envelope(alloc, arts)
+        admitted = self._admit(env)
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        for path, code in ((self.repo / arts[0]["path"], "artifact_digest_mismatch"),
+                           (self.repo / self.contract_rel, "contract_mismatch")):
+            raw = path.read_bytes()
+            try:
+                path.write_bytes(raw + b"changed\n")
+                with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+                    self._admit(env)
+                self.assertEqual(ctx.exception.code, code)
+                self.assertEqual(ledger.read_bytes(), before)
+            finally:
+                path.write_bytes(raw)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env, expected_policy_digest="99" * 32)
+        self.assertEqual(ctx.exception.code, "policy_mismatch")
+        record = self.repo / admitted["admission_path"]
+        raw = record.read_bytes()
+        corrupt = json.loads(raw)
+        corrupt["envelope"]["consumer_binding"]["candidate_sha256"] = "ff" * 32
+        record.write_bytes(ee.canonical_json_bytes(corrupt))
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env)
+        self.assertEqual(ctx.exception.code, "corrupt_admission")
+        with self.assertRaises(ee.ExternalEvidenceError):
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ledger.read_bytes(), before)
+        record.write_bytes(raw)
+        self.assertTrue(self._admit(env)["idempotent_replay"])
+        self.assertEqual(ledger.read_bytes(), before)
+
+    def test_interrupted_admission_recovers_exactly_once_after_revalidation(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-CRASH", step_id="verify",
+                                           run_id="run-crash", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("crash"))
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                self._admit(env)
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ctx.exception.code, "unreconciled_state")
+        result = self._admit(env)
+        self.assertFalse(result["idempotent_replay"])
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        state = json.loads(before)
+        self.assertEqual(len(state["admissions"]), 1)
+        self.assertEqual(len(state["tasks"]["F-CRASH"]["history"]), 1)
+        self.assertEqual(state["tasks"]["F-CRASH"]["failed_count"], 0)
+        self.assertTrue(self._admit(env)["idempotent_replay"])
+        self.assertEqual(ledger.read_bytes(), before)
+        self.assertEqual(ee.reconcile_admission_state(self.repo)["admission_count"], 1)
+
+    def test_conflicting_orphan_is_preserved_and_refused(self) -> None:
+        alloc = ee.allocate_attempt_permit(self.repo, task_id="F-ORPHAN", step_id="verify",
+                                           run_id="run-orphan", candidate_commit=self.cand_commit)
+        env = self._build_valid_envelope(alloc, self._write_artifacts("orphan"))
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                self._admit(env)
+        record = next((self.repo / ".agent/evidence/external_admissions/admitted").iterdir())
+        conflict = json.loads(record.read_bytes())
+        conflict["envelope"]["status_separation"]["admission_decision"] = "quarantined"
+        conflict["envelope_sha256"] = ee.sha256_hex(ee.canonical_json_bytes(conflict["envelope"]))
+        raw = ee.canonical_json_bytes(conflict)
+        record.write_bytes(raw)
+        ledger = self.repo / ".agent/evidence/external_admissions/ledger.json"
+        before = ledger.read_bytes()
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            self._admit(env)
+        self.assertEqual(ctx.exception.code, "conflicting_orphan_admission")
+        self.assertEqual(record.read_bytes(), raw)
+        self.assertEqual(ledger.read_bytes(), before)
+
+    def test_partial_permit_allocation_is_unresolved_not_cleaned_or_reissued(self) -> None:
+        args = dict(task_id="F-PARTIAL", step_id="verify", run_id="run-partial",
+                    candidate_commit=self.cand_commit)
+        with patch.object(ee, "_write_atomic_json", side_effect=OSError("injected ledger failure")):
+            with self.assertRaises(OSError):
+                ee.allocate_attempt_permit(self.repo, **args)
+        state = self.repo / ".agent/evidence/external_admissions"
+        retained = {p.name: p.read_bytes() for p in (state / "permits").iterdir()}
+        with self.assertRaises(ee.ExternalEvidenceError) as ctx:
+            ee.reconcile_admission_state(self.repo)
+        self.assertEqual(ctx.exception.code, "unreconciled_state")
+        with self.assertRaises(ee.ExternalEvidenceError):
+            ee.allocate_attempt_permit(self.repo, **args)
+        self.assertEqual({p.name: p.read_bytes() for p in (state / "permits").iterdir()}, retained)
 
 
 if __name__ == "__main__":

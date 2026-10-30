@@ -1,0 +1,71 @@
+{
+  "review_id": "nizam-postcode-20261030-r0",
+  "role": "independent implementation evaluator",
+  "base_commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+  "candidate_commit": "ace04fed3738ec67b373ffc7980a58f8f9f6ac4a",
+  "final_verdict": {
+    "approved": false
+  },
+  "issues": [
+    {
+      "id": "NF-QA-01",
+      "severity": "P1",
+      "path": "tools/external_evidence.py",
+      "line": 464,
+      "finding": "Producer MAC omits assessed candidate_sha256 and other semantic envelope bindings; host expected-digest equality can be satisfied by relabeling an old valid proof to a new assessed digest.",
+      "reproduction": "After computing valid producer proof for digest22.., change only consumer_binding.candidate_sha256 to ff.. and give trusted current host expected digest ff... Original proof is unchanged, but admission returns admitted/ok.",
+      "evidence": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-candidate-splice-probe.log",
+      "required_fix": "Authenticate complete semantic envelope using a versioned unambiguous binding excluding the proof itself; require exact assessed digest within authenticated input. Add independently authored semantic splice controls."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    {
+      "id": "NF-QA-C1",
+      "missing": "Candidate and policy/contract/collection/lineage/status metadata mutation after producer signing with matching active host expectation."
+    }
+  ],
+  "unsupported_claims": [],
+  "verification": [
+    {
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "exit_code": 0,
+      "result": "10 passed",
+      "log": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-admission-qa.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "exit_code": 0,
+      "result": "2 passed",
+      "log": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-standalone-qa.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--base-cases"
+      ],
+      "exit_code": 0,
+      "result": "11 cases pass",
+      "log": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-workflow-qa.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "exit_code": 0,
+      "result": "16/16 compliance",
+      "log": "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-compliance-qa.log"
+    }
+  ],
+  "limitations": [
+    "Passing authored suites do not cover the independently reproduced cryptographic splice.",
+    "No code or frozen tests changed by evaluator; this is source rejection, not a deployment or canonical authority decision."
+  ]
+}

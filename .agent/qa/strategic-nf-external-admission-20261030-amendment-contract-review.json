@@ -1,0 +1,36 @@
+{
+  "review_id": "nizam-amendment-precode-20261030",
+  "role": "independent semantic-security amendment evaluator",
+  "contract": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/.agent/contracts/strategic-nf-external-admission-20261030.json",
+  "contract_sha256": "1f45db133a6b7e4ac603cb9ad11c76cc2d261cb66ab58590918cb261065298dc",
+  "final_verdict": {
+    "approved": true
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "approved_change": "Domain-separated authentication of all semantic envelope fields excluding producer_proof plus bound producer identity/timestamp; required envelope_binding helper argument and profile1.1.0 with explicit old-profile refusal.",
+  "advisory_minor": [
+    {
+      "id": "NF-AM-A1",
+      "note": "No partial allowlist of signed fields: all top-level semantic envelope data must be authenticated. Reject hidden legacy fallback. Preserve all independently authored splice assertions."
+    },
+    {
+      "id": "NF-AM-A2",
+      "note": "Historical corpus remains immutable. Only explicit profile_version projection in the current static compatibility test may adapt expected current metadata, without changing actual acceptance conditions or frozen vectors."
+    },
+    {
+      "id": "NF-AM-A3",
+      "note": "This is source/API compatibility change only; do not claim installed adoption or Agentic producer trust from MAC validity."
+    }
+  ],
+  "evidence_refs": [
+    "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam/.agent/contracts/strategic-nf-external-admission-20261030.json",
+    "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-candidate-splice-probe.log",
+    "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-splice-independent-red.json",
+    "/home/cnross/code/strategic-refactoring-20261030/reviews/nizam-amendment-validator.json"
+  ],
+  "limitations": [
+    "No implementation approval yet; exact revised source and real negative controls still require postcode evaluation."
+  ]
+}

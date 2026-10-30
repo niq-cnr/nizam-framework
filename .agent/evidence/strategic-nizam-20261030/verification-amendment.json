@@ -1,0 +1,78 @@
+{
+  "source_candidate": "8d8f9d91ec5a14d662202b9ee8ac38d40f0c7430",
+  "evidence_successor": "8e18fe871e15869233e9d861c5436bb15c84bee6",
+  "source_sha256": {
+    "tools/external_evidence.py": "060e755e5664e75743aaa8cb16d46a885b7ece147dc35742bf0e7ccc1fbba1fe",
+    "schema/external_evidence_admission.schema.json": "c097890f51f20f1398afd0e439c77e17b9d63619327bab38a7720585b303d66d",
+    "tools/test_nf_ac04_generic_admission.py": "bfd8bae7d67de1338a6cbd06da7ff603f0241adc448bbc0cfafeb01b904857d1",
+    "tools/test_nf_ac05_standalone_e2e.py": "308bebb363da75619d4332c80986ad3d42fc591d18e04586b6aa08bd0c6580f8",
+    "tools/interface.md": "dbfba1ee6c7a511d8a44f24ef6bc7f3bd5f8fdb27d33185b0c2152cce0ea7601",
+    "docs/planning/ROADMAP.md": "2c51969c83507be876dbd357d20ab1454a1515c85a0cb58dbf3a0c4743ff4fcd",
+    "CHANGELOG.md": "9320c7e4e06916ceaff0bd2f4d7594e8bd023e09c7552570f31d8991de42b140"
+  },
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "python": "3.12.3"
+  },
+  "checks": [
+    {
+      "id": "NF-EXT-01",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac04_generic_admission.py"
+      ],
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "output": ".agent/evidence/strategic-nizam-20261030/admission-amendment-green.log",
+      "sha256": "d1741f0289a4adbdedfb871a1942b4a1bfa267b70e3b9452d6478c4ade823e40"
+    },
+    {
+      "id": "NF-EXT-02",
+      "argv": [
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "output": ".agent/evidence/strategic-nizam-20261030/standalone-amendment-green.log",
+      "sha256": "c04bf949e05d891e5c5f882c27dd17f79dbd08dcbe9d75c0ecf6ebaae51cf80d"
+    },
+    {
+      "id": "NF-EXT-04",
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "cwd": "/home/cnross/code/strategic-refactoring-20261030/worktrees/nizam",
+      "output": ".agent/evidence/strategic-nizam-20261030/compliance-amendment-green.log",
+      "sha256": "1643c81b81705bf6832a1cb625e1bfbc40ad453b1ca81573c3bf4bce3f46f45c"
+    }
+  ],
+  "unchanged_required_check": {
+    "id": "NF-EXT-03",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--base-cases"
+    ],
+    "observed_exit": 0,
+    "output": ".agent/evidence/strategic-nizam-20261030/workflow-green.log",
+    "scope": "Current typed-workflow source unchanged by MAC amendment; same-candidate generated fixture check remains independently rerun by evaluator."
+  },
+  "assessed_whitespace": {
+    "id": "NF-EXT-05",
+    "argv": [
+      "git",
+      "diff",
+      "f19357479220b6bf2b3292d31c06c66279f91efa..HEAD",
+      "--check"
+    ],
+    "observed_exit": 0,
+    "prior_failure_preserved": ".agent/evidence/strategic-nizam-20261030/nizam-semantic-splice-independent-red.stderr.raw.json"
+  },
+  "status": "Executed command evidence only; independent QA and governed completion separate."
+}

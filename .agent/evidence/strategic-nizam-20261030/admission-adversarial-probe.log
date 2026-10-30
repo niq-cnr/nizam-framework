@@ -1,0 +1,18 @@
+[
+  {
+    "case": "unchecked_candidate_digest",
+    "unexpectedly_admitted": true
+  },
+  {
+    "case": "replay_mutated_artifact",
+    "unexpectedly_admitted": true,
+    "idempotent_replay": true
+  },
+  {
+    "case": "admission_ledger_interruption",
+    "reconcile_claims_ok": true,
+    "ledger_admissions": 0,
+    "orphan_admission_files": 1,
+    "retry": "exclusive_file_exists"
+  }
+]
