@@ -20,3 +20,5 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
 ## Step 3 — NIP chunk 2 committed (1.2, A1, A2)
 ## Step 4 — NIP chunk 3 committed (A3, A4, 3-6)
 ## Step 5 — NIP chunk 3 committed; next: checker
+## Step 6 — checker written, AT1-AT5 PASS (01-check.txt), negative controls (02-negative-controls.txt), placeholders written
+- SPAWN: 0 (none spawned; the independent gates are the next lane step, not run here)

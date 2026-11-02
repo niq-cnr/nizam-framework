@@ -1,0 +1,8 @@
+Negative controls for check_nip0005.py, run against scratch copies (not the repo NIP).
+M1 status: proposed->accepted             -> FAIL AT1 status == proposed            exit=1
+M2 delete '### A3' heading                 -> FAIL AT2 heading '### A3' present      exit=1
+M3 remove 'awaiting H-NIP acceptance'      -> FAIL AT3 Status phrase present         exit=1
+M4 keep phrase, add 'A1 is now active and adopted' -> FAIL AT3 affirmative claim     exit=1
+M5 empty 'Normative predicates' result cell -> FAIL AT4 result cell non-empty; 23/56/33 integers missing  exit=1
+     (first M5 attempt was a sed that did not match the row and PASSED; corrected, then re-run. Recorded, not hidden.)
+M6 drop '56' from table                    -> FAIL AT4 integer 56                    exit=1
