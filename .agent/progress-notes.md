@@ -10,3 +10,8 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
   (contract-first). Approval fields stay false.
 - SPAWN count so far: 0. Authoring is the lane's own artifact work (small, documentary, one author); no
   independent role is spawned here, because the gates that need independence are downstream and must not be run by this lane.
+
+## Step 1 — spec and contract
+- Wrote .agent/product_spec_nip0005.md (85 lines), committed.
+- Wrote .agent/contracts/nip0005-executable-claim-binding.json (status pending, approvals all false), validated as JSON.
+- SPAWN: none so far.

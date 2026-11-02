@@ -1,0 +1,85 @@
+{
+  "contract_id": "nip0005-executable-claim-binding",
+  "feature_id": "nip0005-executable-claim-binding",
+  "name": "NIP-0005 executable claim binding (proposed)",
+  "status": "pending",
+  "spec_ref": ".agent/product_spec_nip0005.md",
+  "base_revision": "1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd",
+  "scope": {
+    "files_create": [
+      {
+        "path": "docs/nips/NIP-0005-executable-claim-binding.md",
+        "purpose": "Proposed NIP body, verbatim from lane brief; status proposed, awaiting H-NIP acceptance"
+      },
+      {
+        "path": ".agent/product_spec_nip0005.md",
+        "purpose": "Durable task spec"
+      },
+      {
+        "path": ".agent/contracts/nip0005-executable-claim-binding.json",
+        "purpose": "Pending contract; approvals all false"
+      },
+      {
+        "path": ".agent/evidence/nip0005/check_nip0005.py",
+        "purpose": "Checker for AT1-AT5; exits non-zero on any failure"
+      },
+      {
+        "path": ".agent/evidence/nip0005/",
+        "purpose": "Evidence directory; actual command/exit/revision captures (01-check.txt)"
+      },
+      {
+        "path": ".agent/validator/nip0005-*.json",
+        "purpose": "Placeholders only, approved false; independent verdicts are not written here by the author"
+      },
+      {
+        "path": ".agent/qa/nip0005-*.json",
+        "purpose": "Placeholders only, approved false; independent QA is not written here by the author"
+      }
+    ],
+    "files_modify": []
+  },
+  "non_goals": [
+    "No .nizam/ edits; the installed payload is immutable under local AGENTS.md.",
+    "No gate changes and no reduction of any existing gate or requirement.",
+    "No claim-binding implementation; the NIP proposes one, this task does not build it.",
+    "No H-NIP self-acceptance; the NIP stays status proposed.",
+    "No approval set true, no status complete, no verdict file asserting a gate passed.",
+    "No push and no PR; commit on the current branch and stop."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: NIP YAML frontmatter parses; id is nip-0005-executable-claim-binding; status is proposed.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/nip0005/check_nip0005.py --at1",
+      "evidence": ".agent/evidence/nip0005/01-check.txt"
+    },
+    {
+      "acceptance_test": "AT2: Headings ### A1, ### A2, ### A3, ### A4 all exist in the NIP.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/nip0005/check_nip0005.py --at2",
+      "evidence": ".agent/evidence/nip0005/01-check.txt"
+    },
+    {
+      "acceptance_test": "AT3: Status section contains 'awaiting H-NIP acceptance'; no gate is asserted active, adopted or accepted.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/nip0005/check_nip0005.py --at3",
+      "evidence": ".agent/evidence/nip0005/01-check.txt"
+    },
+    {
+      "acceptance_test": "AT4: Observations table in section 1.1 has no placeholder result cells; counts 5, 8, 4, 23, 56, 33 each appear as integers.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/nip0005/check_nip0005.py --at4",
+      "evidence": ".agent/evidence/nip0005/01-check.txt"
+    },
+    {
+      "acceptance_test": "AT5: git diff --name-only against base_revision contains no path beginning with .nizam/.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/nip0005/check_nip0005.py --at5",
+      "evidence": ".agent/evidence/nip0005/01-check.txt"
+    }
+  ],
+  "estimated_lines": 420,
+  "evidence_dir": ".agent/evidence/nip0005/",
+  "evidence_convention": "Actual command, exit code and revision captures written by the checker run; no future QA prerequisites.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 0
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
