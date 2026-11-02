@@ -54,3 +54,57 @@ credential outside that gateway. A specification claimed a witness-backed projec
 wrote a witness record, so the projection read a permanent sentinel. A three-credential privilege model
 was described in prose; the DDL contained no `GRANT`, no `REVOKE` and no roles.
 
+### 1.2 Self-certifying evidence
+
+A second, independent instance of the same defect appeared in the evidence mechanism itself:
+
+- The candidate-freeze step **recomputed the expected candidate from the tree under test**, so
+  regeneration was always sufficient to pass. It detected a *forgotten* regeneration, never a *malicious*
+  one.
+- The frozen file set was **derived from the live tree**, so the set could shrink and still pass.
+- The candidate's integrity coverage excluded every architecture, specification, contract and backlog
+  artifact — the deliverable itself. A 2.1 MB pinned evidence artifact could be altered and the
+  integrity check still exited zero.
+
+An artifact that derives its own expectation cannot detect its own defects. That is not a tuning problem;
+it is a category error in the evidence model.
+
+## 2. Proposal
+
+Four amendments. A1–A3 are the mechanism; A4 is the constraint that keeps A1 from producing confident
+nonsense.
+
+### A1 — Every normative claim carries an executable binding
+
+A normative claim is any statement that something *must* hold: a contract decision, an acceptance
+predicate, an invariant, a required property. Each carries exactly one of:
+
+- `verified_by: <check-id>` — an executable check that fails when the claim does not hold; or
+- `unverifiable: {category, reason}` — a typed declaration that the claim cannot be checked
+  mechanically, with a category from a closed set and a reason naming what would be needed.
+
+A gate **fails** if any normative claim carries neither. Three states are required, not two:
+
+```
+PASS     the check ran and the claim held
+FAIL     the check ran and the claim did not hold
+UNBOUND  no check exists and no unverifiability is declared  -> GATE FAILURE
+```
+
+`UNBOUND` is not a skip. A run containing `UNBOUND` entries may not be cited as coverage evidence, and no
+gate may move to pass on the strength of such a run. `UNVERIFIABLE` is a legitimate disposition and is
+counted separately, because "we cannot test this and here is why" is an honest engineering position while
+"nobody looked" is not.
+
+### A2 — No artifact defines its own expected state
+
+Expected state — file sets, digests, counts, predicate coverage — is authored as an artifact independent
+of the thing under test, and pinned outside it.
+
+- Regenerating a derived artifact is **never** verification. A mechanism that recomputes its expectation
+  from the tree it is checking is a staleness check, and must be labelled as one rather than as a freeze.
+- A set that defines its own membership cannot detect shrinkage. The expected membership is recorded
+  externally and a difference is a failure requiring a deliberate update.
+- Integrity coverage must include the deliverable. If the artifacts being claimed are outside the
+  verified set, the claim is about something else.
+
