@@ -108,3 +108,63 @@ of the thing under test, and pinned outside it.
 - Integrity coverage must include the deliverable. If the artifacts being claimed are outside the
   verified set, the claim is about something else.
 
+### A3 — Receipts bind to an independently authored expectation
+
+A receipt records that a command ran. That is not the same as establishing that the claim holds. A receipt
+whose expectation is recomputed from the artifact under test is classified **`SELF_CERTIFYING`** and
+cannot satisfy a gate, however green it is. To satisfy a gate, a receipt binds to an expectation authored
+independently of the artifact it judges, and names that expectation.
+
+### A4 — A bound check's expectation comes from the same authority as the claim
+
+A1 alone is insufficient and there is direct evidence. A predicate case was authored to expect a refusal
+code, `REFUSED:stale_generation`, that **does not exist in the registry that owns the refusal-code
+vocabulary** — the registry defines twelve codes and that is not one of them. The case was therefore
+unsatisfiable on the authority's own terms, and binding it would have produced a permanently failing check
+attributed to the implementation rather than to the expectation.
+
+So: a check's expected value derives from the same authority as the claim it verifies, never from the
+artifact's current behaviour and never from the author's recollection of the specification.
+
+## 3. Conformance
+
+A repository conforms when a machine-readable claim-binding artifact exists and a gate check enforces it:
+
+1. Every normative claim is enumerated with a stable ID and its source location.
+2. Each carries `verified_by` or `unverifiable`.
+3. `UNBOUND` count is zero.
+4. Every `verified_by` resolves to a check that exists and can fail — demonstrated by a negative control
+   that is executed and observed to report failure.
+5. Every candidate/freeze mechanism in the repository carries an external expected-state artifact, and no
+   gate accepts a recomputed expectation as verification.
+
+Conformance is a property of a run, not of a document. A claim-binding artifact that has never been
+executed against the gate is itself an unbound claim.
+
+## 4. What this does not do
+
+- It does not require every claim to be mechanically checkable. `UNVERIFIABLE` with a category and reason
+  is a first-class, acceptable disposition.
+- It does not replace human review. It makes review cheaper by removing the class of question that review
+  is worst at — whether an executable artifact matches prose — so review can spend its budget on judgement.
+- It does not mandate a tool, a schema, or a language. The three-state vocabulary and the independence
+  requirement are the substance; the serialisation is an implementation choice.
+- It does not assert that a bound check is a *good* check. A4 constrains where its expectation comes from;
+  it cannot make a weak test strong.
+
+## 5. Rollout
+
+1. **H-NIP acceptance** of this scope, followed by a versioned release. No gate changes before that.
+2. A claim-binding artifact adopted per repository, starting with one repository and one gate, so the
+   mechanism is exercised before it is generalised.
+3. The three-state reporting vocabulary adopted by any harness that reports coverage, because the
+   two-state collapse is what hid 59% of a normative contract in the observation above.
+4. Existing `SELF_CERTIFYING` receipts reclassified rather than deleted — they remain true records of
+   commands that ran; they simply stop counting as gate evidence.
+
+## 6. Open question
+
+A2 makes the expected state explicit but does not make it *correct*. An externally authored expectation
+pinned from today's state is still today's state, reviewed by whoever authored it. Whether a second
+independence step is required — the expected state authored by a different actor from the artifact — is
+left open, because the observation above had only one actor and cannot answer it.
