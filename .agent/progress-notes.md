@@ -19,3 +19,4 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
 ## Step 2 — NIP chunk 1 committed (frontmatter, status, sec 1, 1.1)
 ## Step 3 — NIP chunk 2 committed (1.2, A1, A2)
 ## Step 4 — NIP chunk 3 committed (A3, A4, 3-6)
+## Step 5 — NIP chunk 3 committed; next: checker
