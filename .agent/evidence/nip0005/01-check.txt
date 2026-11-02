@@ -1,0 +1,33 @@
+AT1 frontmatter
+PASS AT1 frontmatter parses as YAML mapping
+PASS AT1 id == nip-0005-executable-claim-binding (got 'nip-0005-executable-claim-binding')
+PASS AT1 status == proposed (got 'proposed')
+AT2 amendment headings
+PASS AT2 heading '### A1' present
+PASS AT2 heading '### A2' present
+PASS AT2 heading '### A3' present
+PASS AT2 heading '### A4' present
+AT3 status and no affirmative activation claims
+PASS AT3 Status section contains 'awaiting H-NIP acceptance'
+PASS AT3 no unqualified affirmative claim that a gate is active/adopted/accepted
+AT4 observations table
+PASS AT4 table has 4 data rows (got 4)
+PASS AT4 result cell non-empty: 'Independent document-review rounds before executio'
+PASS AT4 result cell non-empty: 'First review that read the executable artifacts ag'
+PASS AT4 result cell non-empty: 'First run of a predicate harness over the normativ'
+PASS AT4 result cell non-empty: 'Normative predicates accounted for'
+PASS AT4 integer 5 appears as a standalone integer in the table
+PASS AT4 integer 8 appears as a standalone integer in the table
+PASS AT4 integer 4 appears as a standalone integer in the table
+PASS AT4 integer 23 appears as a standalone integer in the table
+PASS AT4 integer 56 appears as a standalone integer in the table
+PASS AT4 integer 33 appears as a standalone integer in the table
+PASS AT4 no placeholder 'TODO'
+PASS AT4 no placeholder 'TBD'
+PASS AT4 no placeholder 'XXX'
+PASS AT4 no placeholder '<fill'
+PASS AT4 no placeholder 'PLACEHOLDER'
+AT5 changed paths 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd..HEAD and worktree
+  changed: .agent/contracts/nip0005-executable-claim-binding.json, .agent/product_spec_nip0005.md, .agent/progress-notes.md, docs/nips/NIP-0005-executable-claim-binding.md
+PASS AT5 no path beginning .nizam/
+RESULT: PASS
