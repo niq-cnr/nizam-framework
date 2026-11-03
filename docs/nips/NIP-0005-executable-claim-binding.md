@@ -3,7 +3,7 @@ id: nip-0005-executable-claim-binding
 title: "NIP-0005 — Executable Claim Binding"
 description: "Proposes that every normative claim carry an executable binding, that no artifact define its own expected state, and that a receipt whose expectation is recomputed from the artifact be classified self-certifying rather than satisfying a gate."
 version: 0.1.0
-status: proposed
+status: draft
 authoritative_source: docs/nips/NIP-0005-executable-claim-binding.md
 change_log:
   - version: "0.1.0"

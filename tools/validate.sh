@@ -528,6 +528,41 @@ build_shipped_md_set() {
   printf '%s\n' "${files[@]}"
 }
 
+# H-18 (bounded fix): export the whole Git INDEX into a private temp directory and print nothing;
+# the caller reads PAYLOAD_SNAPSHOT_ROOT / PAYLOAD_SNAPSHOT_DIR. Returns non-zero when the payload is not
+# inside a Git work tree, so the caller keeps the worktree behaviour for non-Git consumers.
+#
+# Option A, deliberately limited: `checkout-index -a` exports EVERY index entry, so tools/verify_lib.sh
+# is present for C9 even when it is staged but absent from disk. The payload's bytes are the staged ones.
+# LIMITATION (not a complete solution): C9 and the other checks still resolve paths and run their
+# helpers by reading the temp export, and they still use the worktree-era CWD conventions. A full
+# in-place rewrite that reads every check through the index needs its own contract and is NOT done here.
+payload_index_snapshot() {
+  local top prefix root
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || return 1
+  prefix="$(git rev-parse --show-prefix 2>/dev/null)" || return 1
+  # root is the private mktemp directory this call owns; it is the only path the caller may remove.
+  root="$(mktemp -d)" || return 1
+  if ! (cd -- "${top}" && git checkout-index -a --prefix="${root}/") >/dev/null 2>&1; then
+    rm -rf -- "${root}"
+    return 1
+  fi
+  PAYLOAD_SNAPSHOT_ROOT="${root}"
+  if [ -n "${prefix%/}" ]; then
+    PAYLOAD_SNAPSHOT_DIR="${root}/${prefix%/}"
+  else
+    PAYLOAD_SNAPSHOT_DIR="${root}"
+  fi
+  # A payload not yet committed has no index entries under its prefix, so there are no staged bytes
+  # to judge. Remove the export and return non-zero so the caller keeps the worktree behaviour.
+  if [ ! -d "${PAYLOAD_SNAPSHOT_DIR}" ]; then
+    rm -rf -- "${root}"
+    PAYLOAD_SNAPSHOT_ROOT=""
+    PAYLOAD_SNAPSHOT_DIR=""
+    return 1
+  fi
+}
+
 # ---------------------------------------------------------------------------
 # Payload file-set builder (used by C1, C2, C3, C5, C8 in --payload mode)
 # ---------------------------------------------------------------------------
@@ -2589,6 +2624,16 @@ main() {
     payload_root="$(dirname -- "${script_dir}")"
     cd -- "${payload_root}" \
       || die "--payload: cannot cd to the payload root '${payload_root}'."
+    # H-18: judge the staged bytes that would be committed, not the worktree copies. Only when the
+    # payload is inside a Git work tree; non-Git consumers keep the worktree behaviour.
+    PAYLOAD_SNAPSHOT_ROOT=""
+    PAYLOAD_SNAPSHOT_DIR=""
+    if payload_index_snapshot; then
+      trap '[ -n "${PAYLOAD_SNAPSHOT_ROOT}" ] && rm -rf -- "${PAYLOAD_SNAPSHOT_ROOT}"' EXIT
+      cd -- "${PAYLOAD_SNAPSHOT_DIR}" \
+        || die "--payload: cannot cd to the staged payload snapshot."
+      echo "MODE: payload source=index (staged bytes; worktree copies are not consulted)"
+    fi
   fi
 
   require_command bash
