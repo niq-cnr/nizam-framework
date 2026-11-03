@@ -6,6 +6,9 @@ version: 0.65.44
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.45"
+    date: "2026-11-03"
+    summary: "Prepare v3.2.0 MINOR release disposition; correct the stale 'Release in preparation: v3.1.3' line, since v3.1.3 is published at f19357479220b6bf2b3292d31c06c66279f91efa (GitHub Release published 2026-10-29)."
   - version: "0.65.44"
     date: "2026-10-30"
     summary: "Preserve independent rejection of the partial-MAC candidate and bind the profile-1.1 whole-envelope correction to its reviewed coverage amendment."
@@ -383,7 +386,7 @@ the work is scheduled through the installed planning protocol.
 
 ## Current position — Jev readiness program, 2026-10-22
 
-Release in preparation: v3.1.3 (PATCH); v3.1.2 is published at `8e738a038b18c7009018ef771e83aabc23ad9b03`. Actual self-install and release acceptance are pending.
+Release in preparation: v3.2.0 (MINOR); v3.1.3 is published at `f19357479220b6bf2b3292d31c06c66279f91efa` (2026-10-29). Merge, human sign-off and tag are pending.
 
 The active engineering direction is the 2026-10-22 operator mandate
 `NIZAM-JEV-OWNER-2026-10-22`, recorded in

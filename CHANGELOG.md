@@ -7,6 +7,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-11-03
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2). Covers
+`v3.1.3..origin/main`: 23 commits, 20 non-merge and 3 merge commits, PRs #150-#158.
+
+**Tier note.** The external evidence admission entries under *Fixed* change an existing
+CLI and library input (`--expected-candidate-sha256` / `expected_candidate_sha256` is now
+required). Under methodology Section 3.4 this may classify as breaking for callers of
+that admission path, which would make this release MAJOR. The tier is recorded here as
+MINOR for operator decision; it is not settled by this section.
+
+**Completeness.** Every commit in `v3.1.3..origin/main` has a disposition below or in the
+completeness table at the end of this section.
+
+**Not yet executed.** Human merge/sign-off, the annotated tag and the GitHub Release
+publication are pending. The installed `.nizam/` payload remains the published `v3.0.0`
+pin; this release does not re-vendor it.
+
 ### Added
 
 - Optional authenticated external-to-native QA mapping reuses the existing permit
@@ -14,9 +32,36 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   interpretation. Public native completion requires a matching recorded mapping
   for externally owned tasks; generic admission and producer observations grant
   no independent review, human approval or automatic completion.
+- **NIP-0005 "Executable Claim Binding" proposed, status `draft`**
+  (`docs/nips/NIP-0005-executable-claim-binding.md`). It proposes that every normative
+  claim carry an executable binding, and that a receipt whose expectation is recomputed
+  from the artifact is self-certifying rather than a gate. It changes no gate and is not
+  active until operator acceptance under H-NIP. The AT1-AT5 checker, captured output and
+  negative controls are in `.agent/evidence/nip0005/`.
+
+### Changed
+
+- Generic optional external evidence admission now requires a trusted host-selected
+  candidate digest and revalidates current bindings and artifact bytes on replay.
+  Interrupted admission records are preserved and can complete one validated ledger
+  transition; unresolved or conflicting records refuse. Permit identifiers are checked
+  against existing schema bounds before filesystem writes. **Existing callers must supply
+  `expected_candidate_sha256` / `--expected-candidate-sha256` when adopting this release.**
+- Independent review found that the original producer MAC omitted assessed metadata.
+  Profile `1.1.0` now authenticates the complete envelope and producer identity with
+  domain separation. `compute_producer_proof` requires `envelope_binding`; legacy
+  `1.0.0` proof semantics refuse while historical records and counters remain intact.
 
 ### Fixed
 
+- `tools/validate.sh --payload` judges the Git index rather than the worktree. A staged
+  defect in a shipped tool fails the gate; an unstaged worktree edit does not change the
+  verdict. The original `FATAL: required library tools/verify_lib.sh not found` abort is
+  fixed: the regression test is `tools/test_payload_index_gate.py`. Scope limit: the
+  index is exported to a private temporary directory and the checks read that export
+  (the "Option A" limitation recorded in the commit). An in-place rewrite that reads every
+  check through the index is not included. A payload with no index entries falls back to
+  worktree behaviour.
 - External admission validates its complete existing managed-state directory,
   lock and ledger namespace before creation or cleanup. Nofollow directory
   descriptors, nonblocking opens and actual regular-file checks reject unsafe components;
@@ -34,16 +79,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Symlink/nonregular targets refuse, original permissions are preserved, and
   read-only planning creates no lock or output.
 
-- Generic optional external evidence admission now requires a trusted host-selected
-  candidate digest and revalidates current bindings and artifact bytes on replay.
-  Interrupted admission records are preserved and can complete one validated ledger
-  transition; unresolved or conflicting records refuse. Permit identifiers are checked
-  against existing schema bounds before filesystem writes. Existing callers must supply
-  `expected_candidate_sha256` / `--expected-candidate-sha256` when adopting this source.
-- Independent review found that the original producer MAC omitted assessed metadata.
-  Profile `1.1.0` now authenticates the complete envelope and producer identity with
-  domain separation. `compute_producer_proof` requires `envelope_binding`; legacy
-  `1.0.0` proof semantics refuse while historical records and counters remain intact.
+### Completeness statement (`v3.1.3..origin/main`)
+
+| Commit(s) | Disposition |
+|---|---|
+| `1dfa47f2` refuse unsafe external state namespace (#154) | Fixed (above) |
+| `452ad19c` reserve task failure capacity before dispatch (#153) | Fixed (above) |
+| `804cd1bf` bind optional external observations to native QA (#152) | Added (above) |
+| `eb31e716` durably serialize verified receipt publication (#151) | Fixed (above) |
+| `8865b30f` authenticate and recover external evidence admission (#150) | Changed (above) |
+| `118c73a2`, `dd5d9bda`, `b16d0b77`, `e6a60bdc`, `ba91eb08`, `3ac5d8dc`, `ef7c715d`, `9393b755`, `6696bc87`, `51542e68`, `89f65ce9`, `51bab7b8` NIP-0005 authoring and checker | Added (NIP-0005 entry above). Authoring-process log commits (`chore`, `*.json` contracts and progress notes) are internal and not user-visible. |
+| `e42d8efa`, `ab621661`, `04121fd0` `--payload` index judgment | Fixed (above). `e42d8efa` first edited the installed `.nizam/tools/validate.sh`; `ab621661` reverted that edit and moved the fix to `tools/`, so the installed payload is byte-identical to `v3.1.3`. |
+| Merges #150, #151, #152, #153, #154, #155, #157, #158 | Covered by their commits above |
+
+The 20 non-merge commits above are the complete set. Process-only commits (evidence logs,
+contracts, progress notes) are not user-visible and carry no entry.
 
 ## [3.1.3] - 2026-10-29
 
