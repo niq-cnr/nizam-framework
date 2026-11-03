@@ -553,6 +553,14 @@ payload_index_snapshot() {
   else
     PAYLOAD_SNAPSHOT_DIR="${root}"
   fi
+  # A payload not yet committed has no index entries under its prefix, so there are no staged bytes
+  # to judge. Remove the export and return non-zero so the caller keeps the worktree behaviour.
+  if [ ! -d "${PAYLOAD_SNAPSHOT_DIR}" ]; then
+    rm -rf -- "${root}"
+    PAYLOAD_SNAPSHOT_ROOT=""
+    PAYLOAD_SNAPSHOT_DIR=""
+    return 1
+  fi
 }
 
 # ---------------------------------------------------------------------------
