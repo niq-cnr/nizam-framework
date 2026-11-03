@@ -36,11 +36,12 @@ passed the framework's own gates.
 | D3 | **Status asserted independently of its evidence.** A record carried a status and cited evidence, and nothing compared the two. | A status field said one thing while the cited evidence said another, and both were preserved. |
 | D4 | **Unverifiable recorded by omission.** Claims whose prerequisite did not exist were dropped from the report, or counted as satisfied. | A harness reported every predicate as `SKIPPED`, which is neither passed nor failed. |
 
-D1–D4 are not hypothetical. The validator's current output in this repository already shows the D3
-pattern in a live record: `docs/nips/NIP-0005-executable-claim-binding.md` declares
-`status: proposed`, a value the schema does not accept (C1, C2), and
-`.agent/contracts/nip0005-executable-claim-binding.json` uses status `pending`, which the contract
-schema does not accept (C11). Neither file is changed by this NIP.
+D1–D4 are not hypothetical. At revision `cf27602a`, `tools/validate.sh` reported the D3 pattern in a
+live record: `docs/nips/NIP-0005-executable-claim-binding.md` declared `status: proposed`, a value the
+schema does not accept (C1, C2), and `.agent/contracts/nip0005-executable-claim-binding.json` used
+status `pending`, which the contract schema does not accept (C11). Both were corrected to the schema
+vocabulary in PR #157 (`51bab7b8`), which is the repair D3 calls for. The observation stands as the
+reason these clauses are proposed, and neither file is changed by this NIP.
 
 ## 2. Proposed standard text
 
