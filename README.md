@@ -25,7 +25,7 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation remains merged and off by default, with live qualification gated. The latest official release is `v3.1.3` at `f19357479220b6bf2b3292d31c06c66279f91efa` (published 2026-10-29); `v3.2.0` is an unreleased MINOR candidate awaiting merge and sign-off. The clean source tree's portable `.nizam/` pin remains `v3.0.0` at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (`331` released files + `provenance.json`), and full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental installations remain historical records. The explicitly versioned v3.0.0 onboarding examples below remain valid compatibility examples.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation remains merged and off by default, with live qualification gated. The latest official release is `v3.1.3` at `f19357479220b6bf2b3292d31c06c66279f91efa` (published 2026-10-29); `v3.2.0` is an unreleased MINOR candidate awaiting merge and sign-off. The local `.nizam/` pin is the published `v3.1.3` release at `f19357479220b6bf2b3292d31c06c66279f91efa` (`341` released files + `provenance.json`, installed `2026-11-03T17:40:46Z`), verified in this repository and in the Hermes (`~/.hermes/.nizam`) and Pi (`~/.pi/agent/.nizam`) agent estates, and full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental installations remain historical records. The explicitly versioned v3.0.0 onboarding examples below remain valid compatibility examples.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v3.0.0`)
 
@@ -310,8 +310,8 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 At preparation on 2026-11-03, `v3.2.0` is an untagged MINOR candidate.
 The latest published release is `v3.1.3`
-(`f19357479220b6bf2b3292d31c06c66279f91efa`). The clean source tree retains its portable
-`v3.0.0` governance pin, which is the installed payload and is not re-vendored by this candidate.
+(`f19357479220b6bf2b3292d31c06c66279f91efa`). The local `.nizam/` payload is the published
+`v3.1.3` release, self-adopted 2026-11-03 and not re-vendored by this candidate.
 Human merge/sign-off, the annotated tag and publication are separate gates; no release SHA is
 claimed here. After publication, verify the final commit before setting `NIZAM_RELEASE_SHA`:
 
@@ -330,10 +330,12 @@ Official final-pin adoption and consumer activation remain separate operations.
 
 ## Local governance
 
-The official local installation is `v3.0.0` at `2b8298ae1d5a41534e00b6710a738b4b181b87fa`,
-installed at `2026-10-27T15:56:45Z` (`331` released files + `provenance.json`).
+The official local installation is `v3.1.3` at `f19357479220b6bf2b3292d31c06c66279f91efa`,
+installed at `2026-11-03T17:40:46Z` (`341` released files + `provenance.json`).
 The trusted pin verifier, commit-bound bootstrap verification and installed
-preflight passed. Earlier experimental source installations remain
+preflight passed. The Hermes agent estate (`~/.hermes/.nizam`) and the Pi agent
+estate (`~/.pi/agent/.nizam`) verify byte-for-byte against the same pin. Earlier
+experimental source installations remain
 historical records; this adoption uses the published immutable tag. Discover
 workspace installation facts from `.nizam/provenance.json`.
 The public installed payload is verified byte-for-byte against its pinned tag by the
