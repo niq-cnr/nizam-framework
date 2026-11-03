@@ -45,7 +45,7 @@ def at1():
     fm = fm or {}
     check(fm.get("id") == "nip-0005-executable-claim-binding",
           f"AT1 id == nip-0005-executable-claim-binding (got {fm.get('id')!r})")
-    check(fm.get("status") == "proposed", f"AT1 status == proposed (got {fm.get('status')!r})")
+    check(fm.get("status") == "draft", f"AT1 status == draft (got {fm.get('status')!r})")
 
 
 def at2():
