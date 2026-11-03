@@ -1864,7 +1864,8 @@ class ControlsFixture(FailureFixture):
             '.github/workflows/compliance.yml', 'tools/fixtures_self_test.sh',
             '.github/scripts/test_sandbox_boundaries.py', 'tools/test_convergent_review.py',
             'templates/convergent-review-prompt.md']
-        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json'))
+        tracked_schemas = set(git(ROOT, 'ls-tree', '--name-only', 'HEAD', 'schema/').splitlines())
+        tool_paths += sorted(str(p.relative_to(ROOT)) for p in (ROOT / 'schema').glob('*.schema.json') if str(p.relative_to(ROOT)) in tracked_schemas)
         source_profile=bool(defect and defect['site']=='source-contract')
         if seed and not source_profile:
             self.root=seed.root;self.source=seed.source

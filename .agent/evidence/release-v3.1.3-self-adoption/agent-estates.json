@@ -1,0 +1,68 @@
+{
+  "recorded_at": "2026-11-03T17:46:34Z",
+  "purpose": "Governance payload state for the agent and subagent estates that inherit Nizam Framework instructions outside a single consumer repository.",
+  "expected": {
+    "tag": "v3.1.3",
+    "commit": "f19357479220b6bf2b3292d31c06c66279f91efa",
+    "payload_file_count": 341,
+    "content_integrity": "verified"
+  },
+  "estates": [
+    {
+      "name": "hermes",
+      "path": "/home/cnross/.hermes/.nizam",
+      "consumers": [
+        "Hermes host sessions",
+        "delegate_task subagents (inherit host config, AGENTS.md and skills)",
+        "nizamiq-governor skill (declares ~/.hermes/.nizam as the pinned governance source)"
+      ],
+      "provenance": {
+        "framework_version": "3.1.3",
+        "tag": "v3.1.3",
+        "resolved_sha": "f19357479220b6bf2b3292d31c06c66279f91efa",
+        "source_url": "https://github.com/niq-cnr/nizam-framework.git",
+        "installed_at": "2026-10-31T11:04:01Z"
+      },
+      "drift_found": "2 untracked generated files: tools/__pycache__/git_seam.cpython-312.pyc, tools/__pycache__/workflow_assurance.cpython-312.pyc (inventory extra, not tracked by git, no tracked payload drift)",
+      "repair": "removed .nizam/tools/__pycache__ so the installed inventory is exact",
+      "verify_exit": 0,
+      "content_integrity": "verified",
+      "preflight": {
+        "exit": 0,
+        "ok": true,
+        "status": "ready",
+        "failures": []
+      }
+    },
+    {
+      "name": "pi",
+      "path": "/home/cnross/.pi/agent/.nizam",
+      "consumers": [
+        "Pi parent and child lane agents"
+      ],
+      "provenance": {
+        "framework_version": "3.1.3",
+        "tag": "v3.1.3",
+        "resolved_sha": "f19357479220b6bf2b3292d31c06c66279f91efa",
+        "source_url": "https://github.com/niq-cnr/nizam-framework.git",
+        "installed_at": "2026-10-31T11:03:58Z"
+      },
+      "drift_found": "none",
+      "verify_exit": 0,
+      "content_integrity": "verified",
+      "preflight": {
+        "exit": 1,
+        "ok": false,
+        "status": "degraded",
+        "failures": [
+          "git rev-parse --show-toplevel failed"
+        ],
+        "qualification": "The agent home is not a git work tree, so the payload's git-dependent preflight probe cannot resolve a toplevel there. Payload integrity is unaffected (byte-exact against v3.1.3) and Pi lanes execute inside git worktrees, where the same probe resolves."
+      }
+    }
+  ],
+  "notes": [
+    "Both estates were already pinned to v3.1.3 on 2026-10-31; this record re-establishes exact content integrity after drift repair rather than re-pinning a different release.",
+    "Installed payload files are never hand-edited; repair is limited to removing generated non-payload files."
+  ]
+}

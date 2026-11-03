@@ -2,10 +2,13 @@
 id: nizam-self-governance
 title: "Nizam Framework — Self-Governance Commissioning"
 description: "Versioned local adoption record for this repository's installed released governance."
-version: 0.10.0
+version: 0.11.0
 status: active
 authoritative_source: docs/planning/SELF_GOVERNANCE.md
 change_log:
+  - version: "0.11.0"
+    date: "2026-11-03"
+    summary: "Record the official v3.1.3 self-adoption at f19357479220b6bf2b3292d31c06c66279f91efa (341 released files + provenance.json, installed_at 2026-11-03T17:40:46Z), verified against annotated tag object ba66c3e6c44bbb61204fe6193d5af2464c6c7825, and re-establish exact content integrity for the Hermes (~/.hermes/.nizam) and Pi (~/.pi/agent/.nizam) agent estates; retain prior released installation and commissioning histories."
   - version: "0.10.0"
     date: "2026-10-27"
     summary: "Record the official v3.0.0 installation at 2b8298ae1d5a41534e00b6710a738b4b181b87fa (331 released files + provenance.json, installed_at 2026-10-27T15:56:45Z), verified against annotated tag object 10f7cd3e103d143eef7d151228b1bf3b3344a362; retain prior released installation and commissioning histories."
@@ -46,25 +49,33 @@ installation:
   repository: niq-cnr/nizam-framework
   local_scope:
   - niq-cnr/nizam-framework
-  tag: v3.0.0
-  resolved_sha: 2b8298ae1d5a41534e00b6710a738b4b181b87fa
-  framework_version: 3.0.0
-  tag_object: 10f7cd3e103d143eef7d151228b1bf3b3344a362
+  tag: v3.1.3
+  resolved_sha: f19357479220b6bf2b3292d31c06c66279f91efa
+  framework_version: 3.1.3
+  tag_object: ba66c3e6c44bbb61204fe6193d5af2464c6c7825
   authorization_gate: H-CONSUMER-UPGRADE
-  authorization_recorded_at: '2026-10-27T15:56:00Z'
-  authorization_verbatim: self install and ready for he next minor release.
+  authorization_recorded_at: '2026-11-03T17:46:34Z'
+  authorization_verbatim: self install the latest nizam-framework.
   status: installed
   commissioning_performed: false
-  payload_file_count: 331
+  payload_file_count: 341
   source_url: https://github.com/niq-cnr/nizam-framework.git
-  installed_at: '2026-10-27T15:56:45Z'
+  installed_at: '2026-11-03T17:40:46Z'
+  agent_estates:
+  - path: /home/cnross/.hermes/.nizam
+    content_integrity: verified
+    preflight: ready
+  - path: /home/cnross/.pi/agent/.nizam
+    content_integrity: verified
+    preflight: degraded (agent home is not a git work tree; payload byte-exact)
   evidence:
-    authorization: .agent/evidence/release-v3.0.0-closeout/upgrade-authorization.json
-    release: .agent/evidence/release-v3.0.0-closeout/release-facts.json
-    bootstrap_install: .agent/evidence/release-v3.0.0-closeout/bootstrap-install.stdout
-    verify_self_governance: .agent/evidence/release-v3.0.0-closeout/installed-integrity.stdout
-    bootstrap_verify_only: .agent/evidence/release-v3.0.0-closeout/bootstrap-verify.stdout
-    installed_preflight: .agent/evidence/release-v3.0.0-closeout/installed-preflight.stdout
+    authorization: .agent/evidence/release-v3.1.3-self-adoption/upgrade-authorization.json
+    release: .agent/evidence/release-v3.1.3-self-adoption/release-facts.json
+    agent_estates: .agent/evidence/release-v3.1.3-self-adoption/agent-estates.json
+    bootstrap_install: .agent/evidence/release-v3.1.3-self-adoption/bootstrap-install.stdout
+    bootstrap_verify_only: .agent/evidence/release-v3.1.3-self-adoption/bootstrap-verify.stdout
+    installed_preflight: .agent/evidence/release-v3.1.3-self-adoption/installed-preflight.stdout
+    summary: .agent/evidence/release-v3.1.3-self-adoption/README.md
 commissioning:
   repository: niq-cnr/nizam-framework
   local_scope:
