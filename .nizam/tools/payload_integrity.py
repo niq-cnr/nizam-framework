@@ -28,8 +28,64 @@ class ReferenceTreeUnavailable(Exception):
     """No trusted release commit tree or source root is reachable for content comparison."""
 
 
+def _load_git_seam():
+    import importlib.util
+    seam_path = Path(__file__).resolve().with_name("git_seam.py")
+    if not seam_path.is_file():
+        return None
+    mod_name = "_nizam_git_seam_pi"
+    if mod_name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(mod_name, seam_path)
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[mod_name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[mod_name]
+
+
+def _sanitized_git_env() -> dict[str, str]:
+    seam = _load_git_seam()
+    if seam is not None:
+        return seam.sanitized_git_env()
+    return {
+        "HOME": os.devnull,
+        "XDG_CONFIG_HOME": os.devnull,
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_ATTR_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_CONFIG_COUNT": "5",
+        "GIT_CONFIG_KEY_0": "core.useReplaceRefs",
+        "GIT_CONFIG_VALUE_0": "false",
+        "GIT_CONFIG_KEY_1": "core.quotePath",
+        "GIT_CONFIG_VALUE_1": "false",
+        "GIT_CONFIG_KEY_2": "core.fsmonitor",
+        "GIT_CONFIG_VALUE_2": "false",
+        "GIT_CONFIG_KEY_3": "core.hooksPath",
+        "GIT_CONFIG_VALUE_3": os.devnull,
+        "GIT_CONFIG_KEY_4": "protocol.allow",
+        "GIT_CONFIG_VALUE_4": "never",
+    }
+
+
 def _run_git(repo: Path, *args: str) -> bytes:
-    result = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, check=False)
+    seam = _load_git_seam()
+    if seam is not None:
+        try:
+            return seam.run_git_readonly(repo, *args, allow_bare=True)
+        except seam.GitSeamError as exc:
+            raise GovernanceDrift(f"git {' '.join(args)}: {exc}") from exc
+    result = subprocess.run(
+        ["git", "-C", str(repo), "--no-replace-objects", "--literal-pathspecs", *args],
+        capture_output=True,
+        check=False,
+        env=_sanitized_git_env(),
+    )
     if result.returncode != 0:
         err = result.stderr.decode("utf-8", errors="replace").strip()
         raise GovernanceDrift(f"git {' '.join(args)}: {err}")
@@ -40,11 +96,13 @@ def _repo_has_commit(repo: Path, sha: str) -> bool:
     if not repo.is_dir():
         return False
     res = subprocess.run(
-        ["git", "-C", str(repo), "cat-file", "-e", f"{sha}^{{commit}}"],
+        ["git", "-C", str(repo), "--no-replace-objects", "rev-parse", "-q", "--verify", f"{sha}^{{commit}}"],
         capture_output=True,
+        text=True,
         check=False,
+        env=_sanitized_git_env(),
     )
-    return res.returncode == 0
+    return res.returncode == 0 and res.stdout.strip() == sha
 
 
 def _is_subpath_or_equal(candidate: Path, root: Path) -> bool:
@@ -260,10 +318,11 @@ def verify_payload_integrity(
             )
         sha = expected_sha
         tag_ref_check = subprocess.run(
-            ["git", "-C", str(resolved_repo), "rev-parse", "-q", "--verify", f"refs/tags/{tag}^{{commit}}"],
+            ["git", "-C", str(resolved_repo), "--no-replace-objects", "rev-parse", "-q", "--verify", f"refs/tags/{tag}^{{commit}}"],
             capture_output=True,
             text=True,
             check=False,
+            env=_sanitized_git_env(),
         )
         if tag_ref_check.returncode == 0:
             tag_commit = tag_ref_check.stdout.strip()

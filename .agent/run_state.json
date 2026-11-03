@@ -3,7 +3,7 @@
   "current_phase": "020-sbcl-fresh-acceptance",
   "current_feature": "130",
   "status": "in_progress",
-  "updated_at": "2026-10-24T03:02:58.760786+00:00",
+  "updated_at": "2026-11-03T18:06:11.325241+00:00",
   "circuit_breaker": {
     "F05-inherited-symlink": {
       "attempts": 0,
@@ -10538,6 +10538,16 @@
       "at": "2026-10-27T15:56:45Z",
       "event": "release_executed",
       "detail": "Official v3.0.0 payload (commit 2b8298ae1d5a41534e00b6710a738b4b181b87fa, annotated tag object 10f7cd3e103d143eef7d151228b1bf3b3344a362) re-bootstrapped at 2026-10-27T15:56:45Z: 331 released files + genuine provenance verified via verify_self_governance.py, test_self_governance.py, bootstrap.sh --verify-only, and installed preflight. Installation only; commissioning not performed. Closeout evidence .agent/evidence/release-v3.0.0-closeout/. Next minor release v3.1.0 prepared in authored root."
+    },
+    {
+      "at": "2026-11-03T17:40:46Z",
+      "event": "release_executed",
+      "detail": "Official v3.1.3 payload (commit f19357479220b6bf2b3292d31c06c66279f91efa, annotated tag object ba66c3e6c44bbb61204fe6193d5af2464c6c7825, release published 2026-10-29T19:02:23Z) re-bootstrapped at 2026-11-03T17:40:46Z: 341 released files + genuine provenance.json; commit-bound bootstrap.sh --verify-only --require-content-integrity exit 0; installed preflight ready; release_closeout.py --mode pr anchors agree. Agent estates ~/.hermes/.nizam (two generated tools/__pycache__/*.pyc removed) and ~/.pi/agent/.nizam verify byte-for-byte against the same pin. Installation only; commissioning not performed. Evidence .agent/evidence/release-v3.1.3-self-adoption/."
+    },
+    {
+      "at": "2026-11-03T18:06:11Z",
+      "event": "operator_gate_decision",
+      "detail": "H-CONSUMER-UPGRADE: operator instructed verbatim 'self install the latest nizam-framework.' and 'also install for agents/subagents'. Official v3.1.3 exact pin f19357479220b6bf2b3292d31c06c66279f91efa (annotated tag object ba66c3e6c44bbb61204fe6193d5af2464c6c7825) adopted; authorization .agent/evidence/release-v3.1.3-self-adoption/upgrade-authorization.json. ORDERING DEVIATION DISCLOSED: this durable record was written during reconciliation AFTER the 2026-11-03T17:40:46Z installation; the operator instruction preceded the effect. Existing feature, phase and counters unchanged."
     }
   ],
   "phase_001_scope_budget_final": {

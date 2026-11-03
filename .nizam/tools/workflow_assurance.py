@@ -135,9 +135,84 @@ def regular_file(root, path):
     return target
 
 
-def git(root, *args):
+def _load_git_seam_module():
+    import importlib.util
+    path = Path(__file__).resolve().with_name('git_seam.py')
+    if not path.is_file():
+        return None
+    name = '_nizam_git_seam_' + sha(str(path).encode())[:16]
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, path)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
+def _sanitized_git_env():
+    seam = _load_git_seam_module()
+    if seam is not None:
+        return seam.sanitized_git_env()
+    return {
+        'HOME': os.devnull,
+        'XDG_CONFIG_HOME': os.devnull,
+        'LANG': 'C',
+        'LC_ALL': 'C',
+        'PATH': '/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin',
+        'GIT_TERMINAL_PROMPT': '0',
+        'GIT_OPTIONAL_LOCKS': '0',
+        'GIT_NO_REPLACE_OBJECTS': '1',
+        'GIT_CONFIG_NOSYSTEM': '1',
+        'GIT_ATTR_NOSYSTEM': '1',
+        'GIT_CONFIG_GLOBAL': os.devnull,
+        'GIT_CONFIG_COUNT': '5',
+        'GIT_CONFIG_KEY_0': 'core.useReplaceRefs',
+        'GIT_CONFIG_VALUE_0': 'false',
+        'GIT_CONFIG_KEY_1': 'core.quotePath',
+        'GIT_CONFIG_VALUE_1': 'false',
+        'GIT_CONFIG_KEY_2': 'core.fsmonitor',
+        'GIT_CONFIG_VALUE_2': 'false',
+        'GIT_CONFIG_KEY_3': 'core.hooksPath',
+        'GIT_CONFIG_VALUE_3': os.devnull,
+        'GIT_CONFIG_KEY_4': 'protocol.allow',
+        'GIT_CONFIG_VALUE_4': 'never',
+    }
+
+
+def _validate_git_root(root):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            seam.validate_repo_root(root, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError('Git observation failed: ' + str(exc)) from exc
+        return
+    p = Path(root)
+    require(not p.is_symlink(), 'Git observation failed: repository root is symlink')
     try:
-        result = subprocess.run(['git', '-C', str(root), *args], capture_output=True, check=True)
+        resolved = p.resolve(strict=True)
+    except OSError as exc:
+        raise AssuranceError('Git observation failed: ' + str(exc)) from exc
+    dotgit = resolved / '.git'
+    require(os.path.lexists(dotgit) and not dotgit.is_symlink(), 'Git observation failed: repository must be Git toplevel')
+
+
+def git(root, *args):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.run_git_readonly(root, *args, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
+    clean_args = [a for idx, a in enumerate(args) if not (idx == 0 and a in ('--literal-pathspecs', '--no-replace-objects'))]
+    try:
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', '--literal-pathspecs', *clean_args],
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
         return result.stdout
     except (OSError, subprocess.CalledProcessError) as exc:
         diagnostic = getattr(exc, 'stderr', b'').decode('utf-8', errors='replace').strip()
@@ -145,10 +220,24 @@ def git(root, *args):
 
 
 def blobs(root, object_ids):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.read_git_blobs(root, object_ids, allow_bare=False)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
     ids = sorted(set(object_ids))
+    for oid in ids:
+        require(type(oid) is str and re.fullmatch('[0-9a-f]{40}', oid), 'missing/nonblob Git input')
     try:
-        result = subprocess.run(['git', '-C', str(root), 'cat-file', '--batch'],
-                                input=('\n'.join(ids) + '\n').encode(), capture_output=True, check=True)
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', 'cat-file', '--batch'],
+            input=('\n'.join(ids) + '\n').encode(),
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
     except (OSError, subprocess.CalledProcessError) as exc:
         raise AssuranceError('Git blob observation failed') from exc
     output = result.stdout; offset = 0; values = {}
@@ -161,6 +250,27 @@ def blobs(root, object_ids):
         values[oid] = output[offset:offset + size]; offset += size + 1
     require(offset == len(output), 'unexpected Git blob output')
     return values
+
+
+def _git_mutate_worktree_remove(root, attempt_root):
+    seam = _load_git_seam_module()
+    if seam is not None:
+        try:
+            return seam.mutate_remove_worktree(root, attempt_root)
+        except seam.GitSeamError as exc:
+            raise AssuranceError(str(exc)) from exc
+    _validate_git_root(root)
+    try:
+        result = subprocess.run(
+            ['git', '-C', str(root), '--no-replace-objects', 'worktree', 'remove', '--force', attempt_root],
+            capture_output=True,
+            check=True,
+            env=_sanitized_git_env(),
+        )
+        return result.stdout
+    except (OSError, subprocess.CalledProcessError) as exc:
+        diagnostic = getattr(exc, 'stderr', b'').decode('utf-8', errors='replace').strip()
+        raise AssuranceError('Git worktree rollback failed: ' + (diagnostic or str(exc))) from exc
 
 
 CATEGORIES = ('source', 'contracts', 'tests', 'tools')
@@ -190,6 +300,103 @@ def masks(ownership):
     return result
 
 
+def _identity_entries(root, revision=None):
+    """Literal Git leaf identities; gitlinks and nonzero index stages stay unsafe."""
+    rows = git(root, 'ls-tree', '-rz', revision) if revision is not None else git(root, 'ls-files', '--stage', '-z')
+    entries = {}
+    for row in rows.split(b'\0'):
+        if not row:
+            continue
+        metadata, name = row.split(b'\t', 1)
+        mode, middle, last = metadata.decode().split()
+        path = name.decode(); relative_path(path)
+        oid = last if revision is not None else middle
+        safe_kind = middle == 'blob' if revision is not None else last == '0'
+        require(safe_kind and mode in ('100644', '100755', '120000') and path not in entries,
+                'unsafe anchored/index file mode or stage: ' + path)
+        entries[path] = (mode, oid)
+    return entries
+
+
+def _route_inherited_links(root, candidate, feature_id):
+    """Use only an explicitly selected, immutable v2 route's pre-existing links."""
+    if feature_id is None:
+        return {}
+    relative_path(feature_id)
+    require('/' not in feature_id, 'route inherited feature identity')
+    path = '.agent/evidence/' + feature_id + '-base.json'
+    entries = [entry for entry in candidate['assessed_inputs']['contracts'] if entry['path'] == path]
+    if not entries:
+        return {}  # A feature/generic candidate receives no route exemption.
+    require(len(entries) == 1 and path not in candidate['record_ownership'], 'route inherited immutable base ownership')
+    entry = entries[0]
+    raw, executable = _entry_blob(root, candidate['source_commit'], path)
+    require(sha(raw) == entry['sha256'] and executable == entry['executable'] and
+            regular_file(root, path).read_bytes() == raw, 'route inherited immutable base changed')
+    sp = _load_start_path_module()
+    try:
+        base = sp._load_task_base(Path(root), feature_id)
+        require(base is not None and base['schema_version'] == 2 and canonical(base) == canonical(parse_json(raw)),
+                'route inherited requires bound v2 base')
+        selected = {entry['path'] for group in candidate['assessed_inputs'].values() for entry in group} | set(candidate['record_ownership'])
+        inherited = {}
+        for name, observed in base['inherited_observations'].items():
+            if observed['worktree'].get('kind') != 'symlink' and not any(item['mode'] == '120000' for item in observed['index']):
+                continue
+            require(not any(item == name or item.startswith(name + '/') for item in selected), 'selected/record symlink path: ' + name)
+            require(sp._observe_inherited_endpoint(Path(root), name) == observed, 'route inherited symlink changed: ' + name)
+            inherited[name] = observed
+        return inherited
+    except sp.StartPathError as exc:
+        raise AssuranceError('route inherited preservation failed: ' + str(exc)) from exc
+
+
+def _inherited_symlinks(root, baseline, index, selected, executed=None, *, inherited=None):
+    """Allow unchanged unselected link text, never the linked target's contents."""
+    inherited = {} if inherited is None else inherited
+    links = {path: entry for path, entry in baseline.items() if entry[0] == '120000' and path not in inherited}
+    for path in links:
+        require(not any(item == path or item.startswith(path + '/') for item in selected),
+                'selected/record symlink path: ' + path)
+    for entries in (index,) if executed is None else (index, executed):
+        require({path: entry for path, entry in entries.items() if entry[0] == '120000' and path not in inherited} == links,
+                'inherited symlink added/removed/retargeted or mode changed')
+    if executed is not None:
+        require(all(executed.get(path) == baseline.get(path) for path in inherited),
+                'route inherited executed symlink identity changed')
+    values = blobs(root, [oid for mode, oid in links.values()]) if links else {}
+    paths = set(baseline) | set(index) | set(executed or {})
+    paths.update(name.decode() for name in git(root, 'ls-files', '--others', '-z').split(b'\0') if name)
+    try:
+        for path in sorted(paths):
+            if path in inherited:
+                continue  # Existing no-follow route snapshot was checked above.
+            relative_path(path)
+            target = Path(root)
+            info = None
+            for part in path.split('/')[:-1]:
+                target = target / part
+                try:
+                    info = target.lstat()
+                except FileNotFoundError:
+                    info = None
+                    break
+                require(stat.S_ISDIR(info.st_mode), 'symlink/non-directory path ancestor: ' + path)
+            else:
+                target = target / path.split('/')[-1]
+                try:
+                    info = target.lstat()
+                except FileNotFoundError:
+                    info = None
+            if path in links:
+                require(info is not None and stat.S_ISLNK(info.st_mode), 'inherited symlink removed/type changed: ' + path)
+                require(os.readlink(os.fsencode(target)) == values[links[path][1]], 'inherited symlink text changed: ' + path)
+            else:
+                require(info is None or not stat.S_ISLNK(info.st_mode), 'new current symlink: ' + path)
+    except OSError as exc:
+        raise AssuranceError('inherited symlink observation failed: ' + str(exc)) from exc
+
+
 def assess_repository(repo, source_commit, inputs, environment_names, record_ownership=None):
     """Observe complete candidate drift against the explicit immutable anchor."""
     try:
@@ -212,29 +419,20 @@ def assess_repository(repo, source_commit, inputs, environment_names, record_own
         environment = {'runtime': {'implementation': platform.python_implementation(), 'version': platform.python_version(),
                                    'system': platform.system(), 'machine': platform.machine()},
                        'variables': {n: os.environ[n] for n in sorted(environment_names)}}
-        baseline = {}
-        for entry in git(root, 'ls-tree', '-rz', source_commit).split(b'\0'):
-            if not entry: continue
-            metadata, name = entry.split(b'\t', 1); mode, kind, oid = metadata.decode().split()
-            path = name.decode(); relative_path(path)
-            require(mode in ('100644', '100755') and kind == 'blob', 'unsupported anchored file mode: ' + path)
-            baseline[path] = (mode, oid)
-        index = {}
-        for entry in git(root, 'ls-files', '--stage', '-z').split(b'\0'):
-            if not entry: continue
-            metadata, name = entry.split(b'\t', 1); mode, oid, stage = metadata.decode().split()
-            path = name.decode(); relative_path(path)
-            require(stage == '0' and mode in ('100644', '100755') and path not in index, 'unmerged/unsafe index input: ' + path)
-            index[path] = (mode, oid)
+        baseline = _identity_entries(root, source_commit)
+        index = _identity_entries(root)
         require(set(index) == set(baseline), 'unknown added/deleted/renamed tracked path')
         require(not git(root, 'ls-files', '--others', '-z'), 'unknown untracked or ignored candidate path')
         all_selected = set(p for paths in selected.values() for p in paths) | set(ownership)
         require(all_selected <= set(baseline), 'assessed/record path missing from immutable anchor')
+        _inherited_symlinks(root, baseline, index, all_selected)
         objects = blobs(root, [oid for mode, oid in baseline.values()] + [oid for mode, oid in index.values()])
         observed = {}
         # Raw bytes for every tracked path, not Git diff text: attributes/filters
         # cannot hide changes to unknown source/build dependencies.
         for path, (mode, oid) in baseline.items():
+            if mode == '120000':
+                continue  # Verified raw link text above; no target dereference.
             target = regular_file(root, path); current = target.read_bytes()
             require(bool(target.stat().st_mode & 0o111) == (mode == '100755') and index[path][0] == mode, 'executable mode changed: ' + path)
             anchor = objects[oid]; staged = objects[index[path][1]]
@@ -837,7 +1035,7 @@ def _receipt_policy(root, policy):
     return minima[policy['stage']]
 
 
-def _receipt_candidate(root, candidate, revision=None):
+def _receipt_candidate(root, candidate, revision=None, *, route_id=None):
     import errno
     validate_identity(candidate)
     anchor = candidate['source_commit']
@@ -850,6 +1048,11 @@ def _receipt_candidate(root, candidate, revision=None):
     require(git(root, 'remote', 'get-url', 'origin').decode().strip() == candidate['repository'], 'receipt actual repository')
     ownership = candidate['record_ownership']
     protected = [entry for category in ('source', 'tests', 'tools') for entry in candidate['assessed_inputs'][category]]
+    selected = {entry['path'] for group in candidate['assessed_inputs'].values() for entry in group} | set(ownership)
+    baseline = _identity_entries(root, anchor)
+    _inherited_symlinks(root, baseline, _identity_entries(root), selected,
+                        baseline if revision == anchor else _identity_entries(root, revision),
+                        inherited=_route_inherited_links(root, candidate, route_id))
     paths = {anchor: {entry['path'] for entry in candidate['assessed_inputs']['contracts']} | set(ownership)}
     for commit in (anchor, revision):
         paths.setdefault(commit, set()).update(entry['path'] for entry in protected)
@@ -1059,7 +1262,7 @@ def assess_route_candidate(root, feature_id, source_commit, inputs, environment_
     identity['identity_sha256'] = sha(canonical(identity))
     checks = qa_bound_checks(root, feature_id, identity)
     validate_qa_context(root, feature_id, identity, checks)
-    _receipt_candidate(root, identity)
+    _receipt_candidate(root, identity, route_id=feature_id)
     return identity
 
 
@@ -1118,7 +1321,7 @@ def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
             require(verdict['candidate_sha256'] == sha(canonical(candidate)), 'QA contradictory declared candidate digest')
         if 'candidate' in verdict:
             require(type(verdict['candidate']) is dict and canonical(verdict['candidate']) == canonical(candidate), 'QA contradictory/untyped declared candidate')
-        _receipt_candidate(root, candidate)
+        _receipt_candidate(root, candidate, route_id=feature_id)
         declared = verdict.get('checks')
         require(type(declared) is list and len(declared) == len(checks) and
                 type(verdict.get('checks_run')) is int and verdict['checks_run'] == len(checks) and
@@ -1162,7 +1365,7 @@ def validate_qa_proof(root, verdict, *, feature_id, candidate, required_checks):
             require(capture.get('candidate_sha256') == sha(canonical(candidate)) and
                     canonical(capture.get('environment')) == canonical(candidate['environment']), 'QA capture candidate/environment mismatch')
             _bundle_hex(capture.get('revision'), 40, 'QA capture revision')
-            _receipt_candidate(root, candidate, capture['revision'])
+            _receipt_candidate(root, candidate, capture['revision'], route_id=feature_id)
             _qa_selected_inputs(root, candidate, capture['revision'])
             require(producer_kind == policy['proof_kind'], 'QA producer proof kind mismatch')
             expected_outcomes = ('success',) if policy['proof_kind'] == 'success' else (('failed',) if policy['expected_exit'] else ('success', 'semantic-negative'))
@@ -1394,7 +1597,8 @@ def verify_stage_receipt(repo, receipt, *, policy):
         require(compare_identity(receipt['candidate'], policy['candidate']), 'receipt candidate identity mismatch')
         require(policy['candidate']['repository'] == policy['repository'], 'receipt candidate repository binding')
         replay_context = canonical({'receipt': receipt, 'policy': policy}) if policy['stage'] in ROUTE_RECEIPT_STAGES else None
-        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy)
+        route_id = policy['feature_id'] if policy['stage'] in ROUTE_RECEIPT_STAGES else None
+        _receipt_candidate(root, policy['candidate'], route_id=route_id); _receipt_operator(root, policy)
         _receipt_prerequisites(root, policy, minimum, replay_context=replay_context)
         _bundle_object(receipt['verdict'], ('final_verdict', 'issues', 'missing_acceptance_coverage', 'unsupported_claims'), 'receipt verdict')
         _receipt_gate(receipt['verdict'])
@@ -1418,7 +1622,7 @@ def verify_stage_receipt(repo, receipt, *, policy):
             require(canonical(capture['producer']) == canonical(policy['producer']) and
                 capture['candidate_sha256'] == sha(canonical(policy['candidate'])) and
                 canonical(capture['environment']) == canonical(policy['candidate']['environment']), 'receipt capture producer/candidate/environment')
-            _receipt_candidate(root, policy['candidate'], capture['revision'])
+            _receipt_candidate(root, policy['candidate'], capture['revision'], route_id=route_id)
             for actual in (capture, check):
                 require(actual['executed'] is True and type(actual['exit_code']) is int and actual['exit_code'] == 0 and
                     actual['outcome'] == command['proof_kind'] and canonical(actual['argv']) == canonical(command['argv']),
@@ -1637,7 +1841,7 @@ def rollback_owned_attempt(repo, request, *, policy):
         require(policy['rollback_ref'] is not None, 'lane captured failure required')
         _lane_record(root, policy['rollback_ref'], request, failure=True)
         require(first == verify_isolated_attempt(repo, request, policy=policy), 'lane attempt changed before rollback')
-        git(root, 'worktree', 'remove', '--force', request['attempt_root'])
+        _git_mutate_worktree_remove(root, request['attempt_root'])
         require(not Path(request['attempt_root']).exists() and not any(r.get('worktree') == request['attempt_root'] for r in _lane_worktrees(root)),
                 'lane rollback removal incomplete')
         return {'operation_id': request['operation_id'], 'attempt_root': request['attempt_root'], 'removed': True}
