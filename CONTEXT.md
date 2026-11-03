@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 3.1.3
+version: 3.2.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "3.2.0"
+    date: "2026-11-03"
+    summary: "Prepare the v3.2.0 MINOR release: NIP-0005 (Executable Claim Binding) proposed as draft with its checker evidence, the --payload index-judgment fix (tools/validate.sh), and the external evidence admission, receipt publication, QA-binding and failure-capacity hardening. The admission input change is recorded as a possible breaking change for operator tier decision. The installed .nizam/ payload remains the published v3.0.0 pin. Human sign-off, tag and publication remain separate gates."
   - version: "3.1.3"
     date: "2026-10-29"
     summary: "Prepare v3.1.3 PATCH for inert historical symlink packet evidence; preserve candidate-link and no-follow controls. Source merge, actual Framework self-install, release and consumer adoption remain separate gates."

@@ -2,7 +2,7 @@
 
 **Proportion-scaled, cryptographically verifiable governance for AI-assisted and human software engineering.**
 
-[![Release v3.1.1](https://img.shields.io/badge/release-v3.1.1-0d9488?style=flat-square)](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.1)
+[![Release v3.1.3](https://img.shields.io/badge/release-v3.1.3-0d9488?style=flat-square)](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.3)
 [![Interactive Guide](https://img.shields.io/badge/docs-Interactive_HTML_Guide-2563eb?style=flat-square)](https://niq-cnr.github.io/nizam-framework/)
 [![LLM Index: llms.txt](https://img.shields.io/badge/AI_Index-llms.txt-7c3aed?style=flat-square)](llms.txt)
 [![LLM Reference: llms-full.txt](https://img.shields.io/badge/AI_Reference-llms--full.txt-6d28d9?style=flat-square)](llms-full.txt)
@@ -25,7 +25,7 @@ find exactly the rule it needs, without reading everything.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
-**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation remains merged and off by default, with live qualification gated. The latest official release is `v3.1.2` at `8e738a038b18c7009018ef771e83aabc23ad9b03`; `v3.1.3` is an untagged PATCH candidate. The clean source tree's portable `.nizam/` pin remains `v3.0.0` at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (`331` released files + `provenance.json`), and full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental installations remain historical records. The explicitly versioned v3.0.0 onboarding examples below remain valid compatibility examples.
+**Current development status:** the durable project position is [ROADMAP.md](docs/planning/ROADMAP.md); the Jev readiness foundation remains merged and off by default, with live qualification gated. The latest official release is `v3.1.3` at `f19357479220b6bf2b3292d31c06c66279f91efa` (published 2026-10-29); `v3.2.0` is an unreleased MINOR candidate awaiting merge and sign-off. The clean source tree's portable `.nizam/` pin remains `v3.0.0` at `2b8298ae1d5a41534e00b6710a738b4b181b87fa` (`331` released files + `provenance.json`), and full consumer commissioning remains incomplete. Discover the active workspace pin from `.nizam/provenance.json`; prior experimental installations remain historical records. The explicitly versioned v3.0.0 onboarding examples below remain valid compatibility examples.
 
 ### Copy & Paste Single-Prompt Agent Onboarding (`v3.0.0`)
 
@@ -306,28 +306,26 @@ Nizam is built from the ground up for machine legibility. In addition to `.nizam
 
 ---
 
-### v3.1.3 patch release candidate
+### v3.2.0 minor release candidate
 
-At preparation on 2026-10-29, `v3.1.3` is an untagged PATCH candidate.
-The latest published release is `v3.1.2`
-(`8e738a038b18c7009018ef771e83aabc23ad9b03`); the clean source tree retains its portable
-`v3.0.0` governance pin. Actual prepublication installation of the reviewed
-candidate at the designated Framework checkout is a separate required outcome,
-recorded in the [release readiness record](.agent/evidence/release-v3.1.3/readiness.json).
-No actual installation or final release SHA is claimed by this candidate block.
-After required acceptance, actual self-install, human merge/sign-off and
-publication, verify the final commit before setting `NIZAM_RELEASE_SHA`:
+At preparation on 2026-11-03, `v3.2.0` is an untagged MINOR candidate.
+The latest published release is `v3.1.3`
+(`f19357479220b6bf2b3292d31c06c66279f91efa`). The clean source tree retains its portable
+`v3.0.0` governance pin, which is the installed payload and is not re-vendored by this candidate.
+Human merge/sign-off, the annotated tag and publication are separate gates; no release SHA is
+claimed here. After publication, verify the final commit before setting `NIZAM_RELEASE_SHA`:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.1.3/bootstrap.sh -o bootstrap.sh
-GOVERNANCE_TAG=v3.1.3 ./bootstrap.sh --tag v3.1.3 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v3.2.0/bootstrap.sh -o bootstrap.sh
+GOVERNANCE_TAG=v3.2.0 ./bootstrap.sh --tag v3.2.0 --expected-sha "$NIZAM_RELEASE_SHA" --git-repo .nizam-ref/
 ```
 
-The [v3.1.3 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.3)
-will exist only after publication. This PATCH requires no additional consumer
-schema migration from `v3.1.2`; the Framework's own self-install release rule
-does not impose a new consumer release workflow. Use the
-[v3.0.0 migration guidance](docs/migration-v3.0.0.md) for earlier major versions.
+The v3.2.0 changes to the external evidence admission path require callers to supply
+`--expected-candidate-sha256`; see the [CHANGELOG](CHANGELOG.md) `[3.2.0]` section for the tier
+decision that remains open. The [v3.2.0 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.2.0)
+will exist only after publication; the [v3.1.3 release page](https://github.com/niq-cnr/nizam-framework/releases/tag/v3.1.3)
+records the previous published release. Use the [v3.0.0 migration guidance](docs/migration-v3.0.0.md)
+for earlier major versions.
 Official final-pin adoption and consumer activation remain separate operations.
 
 ## Local governance
