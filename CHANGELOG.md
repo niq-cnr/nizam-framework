@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- `tools/evidence_archive.py` (and its installed `.nizam/tools/` mirror): the restore path's `os.chmod(tmp, 0o755 if mode == "100755" else 0o644)` after an exclusive-create write is annotated `# codeql[py/overly-permissive-file]` so the consumer CodeQL gate recognizes it as an intentional restore contract. Permissions are unchanged (archived executables stay 0o755, other entries 0o644). `test_evidence_archive.py` now asserts both modes explicitly.
+
 ## [3.2.0] - 2026-11-03
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2). Covers
