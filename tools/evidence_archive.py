@@ -499,6 +499,7 @@ def restore(root: Path, tranche_id: str, destination: Path) -> dict[str, Any]:
             tmp = target.with_name(target.name + f".tmp.{os.getpid()}")
             with tmp.open("xb") as handle:
                 handle.write(raw)
+            # codeql[py/overly-permissive-file]: intentional restore contract. Archived 100755 entries keep the owner-executable bit (0o755) and all other entries are 0o644 as recorded by the payload index; tightening would change the documented restore behavior.
             os.chmod(tmp, 0o755 if mode == "100755" else 0o644)
             os.replace(tmp, target)
     return {"tranche": tranche_id, "restored": len(tranche["entries"]), "destination": str(destination)}
