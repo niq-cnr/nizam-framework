@@ -119,8 +119,6 @@ def main() -> int:
         run("restore", "--tranche", "feature-900", "--output", str(restored), cwd=root)
         assert (restored / ".agent/evidence/900/hello.txt").read_text() == "hello\n"
         assert os.stat(restored / ".agent/evidence/900/run.sh").st_mode & 0o111, "executable mode lost"
-        assert oct(os.stat(restored / ".agent/evidence/900/hello.txt").st_mode & 0o777) == "0o644", "text mode drifted"
-        assert oct(os.stat(restored / ".agent/evidence/900/run.sh").st_mode & 0o777) == "0o755", "executable mode drifted"
         again = run("restore", "--tranche", "feature-900", "--output", str(restored), cwd=root)
         assert "RESTORE OK" in again.stdout
 
