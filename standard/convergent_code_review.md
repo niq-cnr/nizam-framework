@@ -2,10 +2,13 @@
 id: convergent-automated-code-review
 title: "Convergent Automated Code Review"
 description: "Defines prior-ledger-first, authenticated three-trial code review whose lifecycle, verdict, rendering, and replay integrity are owned by deterministic code."
-version: 1.3.1
+version: 1.4.0
 status: active
 authoritative_source: standard/convergent_code_review.md
 change_log:
+  - version: "1.4.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 3b': added Section 2.3 Supersession -- a review run whose PR head has advanced past the packet's head_sha MUST terminate before trial work and MUST NOT publish verdict, ledger, or Markdown output for a superseded head; trial count unchanged (three)."
   - version: "1.3.1"
     date: "2026-10-11"
     summary: "Explicitly deny runtime session endpoints to observation-only trials."
@@ -46,6 +49,12 @@ Whole-tree discovery requires an explicit human choice of `mode: full_audit`. A 
 
 The trusted builder MUST invoke Git with a controlled allowlisted environment that discards inherited repository-redirection variables and disables replace refs through the command line, configuration, and `GIT_NO_REPLACE_OBJECTS`. Base/head resolution, diffs, trees, commits, and blobs therefore name the immutable object database selected by the explicit repository argument. A successful tree lookup with no record means that a path is absent; a non-zero Git command or blob-read failure is an error and MUST NOT be converted into an absence tombstone.
 
+### 2.3 Supersession
+
+A review run whose PR head has advanced past the packet's `head_sha` MUST terminate
+before doing any trial work and MUST NOT publish a verdict for a superseded head. It
+MUST NOT produce a ledger or Markdown output for the superseded head.
+
 ## 3. Safe Identities and Canonical Encoding
 
 Repository identities contain two or more slash-separated segments and may represent subgroups such as `host/org/team/repo` or scoped names such as `registry/@scope/package`. Repository-relative paths may contain spaces and Unicode. Runtime and schemas reject **backslash anywhere**, absolute paths, Windows drive roots, empty segments, `.` and `..` segments, repeated separators, NUL, and both C0/DEL and C1 control characters.
@@ -69,6 +78,8 @@ Every convergence run consumes **exactly three** trial documents, numbered 1, 2,
 The evaluator MUST use trust-anchored, component-by-component no-follow I/O for per-trial packet, prompt, optional prior ledger, trial output, and captured stdout/stderr files. Inputs are re-read after the runner exits, output files MUST be singly linked regular files, and evaluator-created files MUST use exclusive creation. Runner substitution by a symlink, hard link, FIFO, pre-created output name, or rewritten trusted input therefore fails before convergence.
 
 A candidate absent from the prior ledger becomes `new` only when at least two trials independently report it active. This rule applies on initial and later reviews. A singleton candidate is rejected as non-consensus. Matching observations are grouped by recalculated fingerprint. Evidence is de-duplicated and sorted. The most severe current report wins; remaining display fields are chosen by canonical byte order.
+
+The trial count is three; a proportional reduction by diff size is not in force until the deterministic engine supports it.
 
 ## 6. Authenticated Evidence
 

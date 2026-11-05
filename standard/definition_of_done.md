@@ -1,12 +1,15 @@
 ---
 id: nizam-definition-of-done
 title: "Definition of Done"
-description: "Aggregates the framework's eight done-layers -- Step, Handoff, Gate, Feature, Plan, Merge, Release, and Ecosystem -- by citing each layer's existing authority rather than restating its mechanics."
-version: 0.4.1
+description: "Defines the three enforced done-layers -- tests and CI green, a review verdict on the exact head, and live evidence for user-visible change -- plus Appendix A's supporting done-layers, each cited to its single-source authority rather than restated."
+version: 0.5.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/definition_of_done.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 items 8, 9 and 10': compressed to three enforced layers (tests/CI green, review verdict on the exact head, live evidence) with the other layers moved to Appendix A; replaced the never-self-merge rule with recorded accountable-approver semantics (accountable approver plus an Authority-Ref trailer); made comparator acceptance conditional on a declared quality_bar; deleted the restated-not-redefined duplication."
   - version: "0.4.1"
     date: "2026-10-18"
     summary: "Clarify that check C16 (`vlib_feature_list_lifecycle`) is a deterministic structural check over `.agent/feature_list*.json`, `.agent/contracts/`, `.agent/qa/`, and referenced evidence files on disk (requiring contracts, passing QA verdicts, and non-empty evidence files for contemporary `passes: true` features while preserving legacy pre-contract-era exemptions)."
@@ -26,249 +29,91 @@ change_log:
 
 # Definition of Done
 
-> **Partially enforced.** This document's Feature-Done layer (Section 6) --
-> the structural referential rule over `.agent/feature_list*.json`,
-> `.agent/contracts/<id>.json`, `.agent/qa/<id>.json`, and referenced
-> `evidence_files` on disk -- is verified deterministically by
-> `tools/validate.sh` check C16 (`vlib_feature_list_lifecycle`) when a checkout
-> runs it (requiring approved contracts, passing QA verdicts, and non-empty
-> evidence files for contemporary `passes: true` completed features while
-> preserving the legacy pre-contract-era exemption for historical entries without
-> `passes`). Check C16 is a structural file-and-status check; it does not
-> re-execute verification commands. This
-> document's Merge-Done and Release-Done layers (Sections 8-9) are verified
-> by the release close-out gate defined by phase 013, feature 097. Every
-> other named layer -- Step, Handoff, Gate, Plan, and Ecosystem -- is
-> consumer-aspirational: a consuming repository enforces it in its own
-> runtime, mirroring the same aspirational/enforced split already recorded
-> by `standard/capability_profiles.md` and `standard/ci_gates.md`'s own
-> banners. This document does not claim C16 verifies anything beyond the
-> structural Feature-Done file and status invariants.
+> **Partially enforced.** The three enforced layers are Sections 2-4. The C16
+> structural check (`tools/validate.sh` check C16, `vlib_feature_list_lifecycle`)
+> verifies Feature-Done (Appendix A) file-and-status invariants over
+> `.agent/feature_list*.json`, `.agent/contracts/`, `.agent/qa/`, and referenced
+> evidence files on disk; it does not re-execute verification commands. Merge-Done
+> (Section 2) is verified by the jobs `.github/workflows/compliance.yml` declares;
+> Release-Done (Appendix A) by the release close-out gate defined by phase 013,
+> feature 097. Appendix A's remaining layers are consumer-aspirational: a consuming
+> repository enforces them in its own runtime.
 
-## 1. Role and Authority
+## 1. Role
 
-This document defines no completion mechanics of its own. Each layer named
-below is restated here only as a pointer to its existing, single-source
-authority -- never redefined -- mirroring `methodology/01_execution.md`
-Section 4's own governing sentence: "this is restated here, not redefined."
-Where this document quotes another authority's exact wording, that wording
-remains that authority's, restated, not redefined, here.
+The framework recognises no single, monolithic completion state. This document
+names the three enforced done-layers and the appendix's supporting layers, and
+points to the authority that actually governs each. The mechanics live in the
+cited sources.
 
-The framework recognises no single, monolithic completion state. Completion
-is a layered claim: a unit of work can satisfy one layer's authority while a
-higher layer's authority remains unsatisfied, and this document's sole
-purpose is to name each layer, point to the authority that actually governs
-it, and record which layers this framework's own tooling currently
-mechanizes. A reader who wants to know how any one layer's mechanics
-actually work MUST follow this document's citation to that layer's
-authoritative source; this document is a map of the territory, not the
-territory itself.
+## 2. Layer 1 — Tests and CI Green
 
-## 2. The Layered Model
+A change is Tests-and-CI-Green only when every merge gate passes on the latest
+relevant commit: the jobs `.github/workflows/compliance.yml` declares --
+`validate` (checks C1 through C16), `e2e_bootstrap`, `fixtures_self_test`, and
+`convergent_review` (the convergent review suite in required-conformance mode) --
+covering the core merge gates of `standard/ci_gates.md` (capability-gated gates
+apply only where that capability is declared). No single green job is
+sufficient on its own; all MUST hold simultaneously.
+
+## 3. Layer 2 — Review Verdict on the Exact Head
+
+A change carries a review verdict on the exact head only when the convergent
+review defined in `standard/convergent_code_review.md` has produced a verdict
+bound to the exact current `head_sha` (stale-head input fails closed; a
+superseded head is never published, per that standard's Section 2.3), and the
+merge authority of Section 6 is satisfied.
+
+## 4. Layer 3 — Live Evidence for User-Visible Change
+
+A user-visible change is done only with evidence: evidence files in the fixed,
+three-part shape per `methodology/04_tool_driven_state.md` Section 5 (exact
+invocation, captured output, a literal `EXIT:<code>` marker) and, for deployed
+behaviour, live evidence per `methodology/10_live_runtime_sessions.md`.
+
+## 5. Appendix A: Supporting Layers
 
 | Layer | One-Liner | Authority |
 |---|---|---|
-| Step-Done | A single agent action is complete only with captured, externalised evidence. | Section 3 |
-| Handoff-Done | A role's output is durable only once written to its canonical file family, never carried in chat. | Section 4 |
-| Gate-Done | A validator or evaluator gate advances only on a fully-satisfied JSON verdict. | Section 5 |
-| Feature-Done | A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk. | Section 6 |
-| Plan-Done | A phase's features are planned only with atomic acceptance tests inside an enforced scope budget. | Section 7 |
-| Merge-Done | A change is mergeable only when every CI job and the human-review gate pass together. | Section 8 |
-| Release-Done | A version is released only after changelog roll-up, human sign-off, and a tag cut at the signed-off commit. | Section 9 |
-| Ecosystem-Done | A multi-repository engineering claim is closed only with path-referenced closure evidence, never absence alone. | Section 10 |
+| Step-Done | A single agent action is complete only with captured, externalised evidence. | `standard/anti_hallucination.md` Section 4 (AH-3); evidence shape per `methodology/04_tool_driven_state.md` Section 3 |
+| Handoff-Done | A role's output is durable only once written to its canonical file family, never carried in chat. | `standard/AGF.md` Section 5; artifact families per `methodology/04_tool_driven_state.md` Section 4; runtime-session continuity per `methodology/10_live_runtime_sessions.md` Section 8 |
+| Gate-Done | A validator or evaluator gate advances only on a fully-satisfied JSON verdict. | `standard/AGF.md` Section 4 (JSON Verdict Parse Rule) |
+| Feature-Done | A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk. | Loop 2 of `methodology/01_execution.md` Section 3; the five-value enum of `schema/feature_list.schema.json`; adversarial spot-check per `methodology/02_adversarial_tdd.md` Sections 6-8; structurally verified by check C16 (`vlib_feature_list_lifecycle`) over `.agent/feature_list*.json`, `.agent/contracts/<id>.json`, `.agent/qa/<id>.json`, and non-empty `evidence_files` on disk (era-safe exemption only for legacy pre-contract-first entries lacking `passes`) |
+| Plan-Done | A phase's features are planned only with atomic acceptance tests inside an enforced scope budget. | `methodology/00_planning.md` Section 4 (atomic acceptance tests) and Section 6 (Scope Budget Protocol) |
+| Ecosystem-Done | A multi-repository engineering claim is closed only with path-referenced closure evidence, never absence alone. | `schema/engineering_finding.schema.json` conditional; `ecosystem/07_progress_comparison.md` Section 4 (Closure-Only-With-Evidence Rule); Verify stage per `ecosystem/README.md` |
 
-## 3. Step-Done
+Feature-Done note: `docs/planning/manifest.json` phase entries use a four-value
+lifecycle, phase-YAML steps an uppercase five-value vocabulary, and
+`.agent/run_state.json`'s `status` is a free string; these are observed shape
+differences, not requirements.
 
-A single agent action -- a file edit, a verification command, a captured
-result -- is complete only when it satisfies AH-3, evidence-anchored
-completion, defined in `standard/anti_hallucination.md` Section 4: an agent
-may mark a step complete only after capturing command output or a file diff
-that confirms the change, externalised outside the conversation. That
-document's Section 7 directive that automated checks SHOULD verify
-completed steps carry evidence is the framework's own mandate for exactly
-what check C16 mechanizes at the feature-list level (Section 6 below).
+## 6. Merge Authority
 
-Where that evidence lives, and its required shape, is DD-3, evidence
-externalisation, defined in `methodology/04_tool_driven_state.md` Section 3:
-one evidence file per verification unit, referenced by path, never pasted
-inline. That document's Section 5 defines the fixed, three-part evidence
-file shape -- exact invocation, captured output, a literal `EXIT:<code>`
-marker -- every Step-Done claim in this framework ultimately rests on.
+A merge requires (a) a recorded accountable approver and (b) an authority
+reference recorded in the merge commit message: an `Authority-Ref:` trailer
+naming the delegation record. Self-merge is permitted where delegated merge
+authority exists and is referenced by the trailer. Activation gates and
+other actors' pull requests remain human-only. `standard/ci_gates.md`
+Section 2's `MERGE_READY` bar is the consumer-aspirational superset this
+requirement instantiates.
 
-## 4. Handoff-Done
+## 7. Comparator Acceptance (quality_bar)
 
-A role's output is durable, and therefore ready to hand off to the next
-role in the pipeline, only once it exists in its canonical file family --
-never as a claim carried in chat history. `standard/AGF.md` Section 5, the
-Durable State Rule, is the single source of truth for this requirement:
-chat is not state, and a later role MUST NOT act on a result it cannot
-independently read from durable state.
+Where a task declares `quality_bar`, comparator acceptance per
+`standard/acceptance_bars.md` applies; otherwise acceptance is the
+specification plus tests.
 
-`methodology/04_tool_driven_state.md` Section 4 names the concrete artifact
-families -- run state, feature list, contracts, QA verdicts, evidence -- a
-handoff between the Orchestrator, Planner, Generator, Validator, and
-Evaluator roles must have populated before that role's turn is considered
-complete.
-
-For runtime-session handoffs, `methodology/10_live_runtime_sessions.md` Section 8
-requires committed source and replayable commands plus durable owner, lease,
-generation, outstanding-operation and external-resource references. Re-entry
-checks those records against the workspace and reconstructs if continuity cannot
-be established. Session provenance never substitutes for fresh Evaluator
-acceptance or proves that a live heap matches source.
-
-## 5. Gate-Done
-
-A validator or evaluator gate advances the pipeline only when its JSON
-verdict satisfies all four conditions of the JSON Verdict Parse Rule,
-defined in `standard/AGF.md` Section 4: `final_verdict.approved` is `true`,
-and `issues`, `missing_acceptance_coverage`, and `unsupported_claims` are
-each empty. Prose framing -- "mostly approved," "should be fine" -- never
-substitutes for a satisfied JSON block; a single non-empty entry in any of
-the three arrays blocks advancement regardless of `approved`'s value.
-
-Where a gate's verdict covers a quality-bearing deliverable, that deliverable's
-acceptance additionally includes comparator acceptance per
-`standard/acceptance_bars.md`: the cost tier is declared at dispatch, and
-deterministic work is exempt per that standard's Section 1 out-of-scope list.
-
-## 6. Feature-Done
-
-A feature is `complete` over the five-value lifecycle enum
-`schema/feature_list.schema.json` declares: `pending`, `in_progress`,
-`complete`, `blocked`, and `cancelled`. A feature reaches `complete` only
-when Loop 2 of `methodology/01_execution.md` Section 3 has been satisfied in
-full -- an approved implementation, a passing independently-re-derived QA
-verdict, and a passing evidence-capture gate confirming every referenced
-`.agent/evidence/` path actually exists -- and that same document's Section
-6 hands control back to the Dependency Enforcement Rule only once all three
-hold together. No sixth terminal state exists in this enum, and this
-document proposes none: no `done` state exists and none may be added.
-
-Where a feature's completion produces a quality-bearing deliverable, that
-deliverable's acceptance additionally includes comparator acceptance per
-`standard/acceptance_bars.md`: the cost tier is declared at dispatch, and
-deterministic work is exempt per that standard's Section 1 out-of-scope list.
-
-The Evaluator role's independent re-derivation of that verdict is bound by
-`methodology/02_adversarial_tdd.md` Section 6 (the mandatory adversarial
-spot-check), Section 7 (the External Anchor Rule -- an expected value MUST
-be drawn from a source outside the artifact under test), and Section 8 (the
-mandatory adversarial evidence file every such spot-check requires).
-
-Other framework surfaces track related but distinct lifecycle vocabularies,
-observed here as a mapping, not re-legislated: `docs/planning/manifest.json`
-phase entries use a four-value lifecycle (`pending`, `in_progress`,
-`complete`, `blocked`, with no `cancelled` counterpart at the phase level);
-individual phase-YAML steps use an uppercase five-value vocabulary
-(`PENDING`, `IN_PROGRESS`, `AWAITING_IMPLEMENTATION`, `COMPLETED`,
-`BLOCKED`); and `.agent/run_state.json`'s own `status` field is an
-unconstrained free string. This document describes that observed shape
-difference; it does not require any of the three to converge on the
-feature-list enum's five values or wording.
-
-## 7. Plan-Done
-
-Every planned feature's acceptance coverage must be atomic before the
-feature is Plan-Done: `methodology/00_planning.md` Section 4 requires each
-`acceptance_tests` entry to be a concrete, independently runnable command
-verifying exactly one fact, never a vague prose goal a later Validator or
-Evaluator gate would have to interpret rather than execute.
-
-That document's Section 6, the Scope Budget Protocol, is the layer's second
-governing mechanic: a per-feature rolling-average check and a phase-level
-130%-of-`original_estimate_lines` cumulative ceiling that every subsequent
-implementation is measured against once work begins, so Plan-Done also
-bounds how far actual implementation may drift from what was planned
-before a human must re-authorize the plan.
-
-## 8. Merge-Done
-
-A change is mergeable only when every job `.github/workflows/compliance.yml`
-declares -- `validate` (checks C1 through C16), `e2e_bootstrap`,
-`fixtures_self_test`, and `convergent_review` (the convergent review suite
-in required-conformance mode) -- passes on the latest relevant commit,
-together with human review and this framework's own never-self-merge rule.
-No single green job is sufficient on its own; all four, plus a human
-reviewer's approval, MUST hold simultaneously before a pull request lands.
-
-`standard/ci_gates.md` Section 2's `MERGE_READY` formula is the
-consumer-aspirational superset this layer generalises to: this framework's
-own four-job workflow mechanizes one concrete instantiation of that
-formula's `CI_GREEN` and `HUMAN_APPROVED` factors; a consuming repository's
-own CI enforces the formula's remaining factors in its own runtime.
-
-## 9. Release-Done
+## 8. Release-Done
 
 A version is released only after `methodology/06_release_train.md` Section
 2's four conditions hold in order: every intended change is merged to the
-mainline branch, `CHANGELOG.md` carries an entry for the new version, a
-human sign-off gate is satisfied, and only then is the tag created and
-pushed. That document's Section 6 divides the layer further: changelog
-roll-up, the release date, and version anchors are durable preparation that
-MUST pass the ordinary contract/validator/evaluator loops like any other
-feature; only the final tag act belongs to the human-gated release
-mechanic H-FRAMEWORK-RELEASE, and creates no tracked file diff of its own.
+mainline branch, `CHANGELOG.md` carries an entry for the new version, a human
+sign-off gate is satisfied, and only then is the tag created and pushed
+through the human-gated release mechanic H-FRAMEWORK-RELEASE. Release-Done
+for this framework's own repository additionally requires the release
+close-out gate defined by phase 013, feature 097.
 
-Release-Done for this framework's own repository additionally requires the
-release close-out gate defined by phase 013, feature 097, once that
-feature lands -- Merge-Done and Release-Done together are the two layers
-this document's own banner names as verified by that gate.
-
-## 10. Ecosystem-Done
-
-A multi-repository engineering claim reaches its own Verify stage --
-`ecosystem/README.md`'s canonical lifecycle names it the step that confirms
-the executed work actually satisfies its contracts and closes the findings
-it claimed to close -- only with path-referenced closure evidence, never
-the mere absence of a finding from a later scan.
-`schema/engineering_finding.schema.json` mechanizes this precisely: every
-finding requires non-empty `closure_criteria` regardless of status, while
-`closure_evidence` is required and non-empty only when a finding's `status`
-is `resolved`, enforced by the schema's own conditional -- never for a
-finding recorded `open`.
-
-`ecosystem/07_progress_comparison.md` Section 4, the Closure-Only-With-
-Evidence Rule, is the comparison-time restatement of the same discipline: a
-finding is classified `resolved` only with closure evidence, never on the
-basis of its mere absence from a later execution's scan.
-
-A future Verify-stage protocol addition to this ecosystem lifecycle remains
-out of scope for this phase and is not named here by any not-yet-existing
-filename, consistent with this document's own no-forward-path discipline
-(Section 11).
-
-## 11. Enforcement
-
-Exactly two layers are mechanically enforced by this framework's own
-tooling today. Feature-Done (Section 6) is verified structurally by `tools/validate.sh`
-check C16 (`vlib_feature_list_lifecycle`), which checks that every contemporary
-`complete` feature (`passes: true`) has an approved contract in `.agent/contracts/<id>.json`,
-a passing QA verdict in `.agent/qa/<id>.json`, and non-empty `evidence_files`
-resolving on disk (while preserving the era-safe exemption only for legacy
-pre-contract-first entries that lack `passes`). Merge-Done (Section 8) is verified by the
-jobs `.github/workflows/compliance.yml` declares, which already run
-on this repository today. Release-Done (Section 9) additionally requires
-the release close-out gate defined by phase 013, feature 097, once that
-feature lands.
-
-Two further deliverables extend this enforcement without altering it: the
-consumer template defined by phase 013, feature 095, and the pull-request
-template defined by phase 013, feature 096 -- both currently pending in
-this phase's own feature list, and both referenced here by feature id and
-phase only, never by path, because this framework's own DAG does not
-guarantee their landing order relative to this document.
-
-Every other named layer -- Step-Done, Handoff-Done, Gate-Done, Plan-Done,
-and Ecosystem-Done -- is consumer-aspirational: a consuming repository
-enforces it in its own runtime, per the same split `standard/capability_profiles.md`
-and `standard/ci_gates.md` already record for their own domains. A
-per-step evidence check mirroring `methodology/04_tool_driven_state.md`
-Section 5's evidence-capture-convention shape, distinct from C16's
-feature-level check, remains aspirational residue: no such per-step check
-is mechanized by this framework's own tooling today.
-
-## 12. A Floor, Not a Guarantee
+## 9. A Floor, Not a Guarantee
 
 Every layer above is a process floor: a structural, mechanically-checkable
 claim about approvals, evidence, and gates having actually run in the
@@ -286,7 +131,7 @@ judgment, adversarial review, or the semantic correctness of what was
 actually built. A feature can be `complete` by every layer above and still
 be wrong.
 
-## 13. References
+## 10. References
 
 - `standard/anti_hallucination.md`
 - `methodology/04_tool_driven_state.md`
@@ -303,6 +148,6 @@ be wrong.
 - `schema/engineering_finding.schema.json`
 - `ecosystem/07_progress_comparison.md`
 - `standard/capability_profiles.md`
+- `methodology/10_live_runtime_sessions.md`
+- `standard/convergent_code_review.md`
 - `tools/validate.sh`
-- `docs/planning/manifest.json`
-- `.agent/run_state.json`

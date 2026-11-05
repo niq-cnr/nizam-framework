@@ -1,7 +1,30 @@
 {
-  "status": "blocked",
+  "status": "needs_review",
   "tests_passed": true,
   "proof_of_work": {
+    "validate_sh": "bash tools/validate.sh EXIT 0, SUMMARY 16 passed 0 failed (.agent/evidence/gov-simplify-2026-11-05/validate-sh.txt)",
+    "checker_selftest": "tools/check_provenance_lock.py --self-test EXIT 0, 10 cases (.agent/evidence/gov-simplify-2026-11-05/check-provenance-lock-selftest.txt)",
+    "commands": ".agent/evidence/gov-simplify-2026-11-05/commands.txt"
+  },
+  "blockers": [
+    "Item 4 (methodology/03_circuit_breaker.md) NOT applied: the engine (tools/start_path.py, tools/external_evidence.py) enforces a six-capture ceiling and role-operator recovery; changing the text would contradict runtime. Requires an engine change and is outside the no-runtime-change constraint.",
+    "Item 3b trial count NOT made proportionate: tools/convergent_review.py converge hard-codes exactly three trials. Only the supersession rule is text-level; it is NOT engine-enforced.",
+    "tools/check_provenance_lock.py is NOT wired into .github/workflows/compliance.yml: the framework repo carries no consumer .nizam/provenance.lock.json, so a wired gate would fail or be a no-op. Wiring is an open follow-up.",
+    "Item 2 normative core classifies contract-delta-reviewed as core (generator classification; the operator text names only test suite, secret/dependency/SAST scanning, review verdict). Confirm or reclassify.",
+    "templates/DoD.md body still projects the old eight-layer structure; only its description and self-merge line were updated (open follow-up).",
+    "methodology/01_execution.md:209 retains the phrase restated here, not redefined (outside the DoD; not in the commissioned list)."
+  ],
+  "new_dependencies_discovered": [],
+  "demonstration": {
+    "capability_predicate": ".agent/evidence/gov-simplify-2026-11-05/capability-gate-predicate.txt (EXIT:0)",
+    "supersession_predicate": ".agent/evidence/gov-simplify-2026-11-05/supersession-predicate.txt (EXIT:0; ENGINE_ENFORCED: no)"
+  },
+  "prior_handoff_status": "blocked",
+  "prior_tests_passed": true,
+  "prior_blockers": [
+    "Feature 134 step 134-contract circuit breaker TRIPPED: three concluded independent Mode A rejections (attempts 1-3), contract-testability review also rejected attempt 1. Attempt 4 forbidden by .nizam/methodology/03_circuit_breaker.md Sec 4; step BLOCKED in docs/planning/phase_022.yaml (canonical) and run_state.json (derived); NDEBT-055 open. Human review required per Sec 6 to reset or redirect."
+  ],
+  "prior_proof_of_work": {
     "governance": "validate.sh 16/16 and .nizam payload 12/12 green at blocked terminal state (.agent/evidence/134-contract-circuit/lane-exit-captures.txt)",
     "circuit": ".agent/evidence/134-contract-circuit/{summary,attempt1-mode-a-verdict,attempt1-contract-testability-verdict,attempt2-mode-a-verdict,attempt3-mode-a-verdict,lane-exit-captures}.txt",
     "prior_complete_record_preserved": {
@@ -11,15 +34,5 @@
       "code_change": "tools/validate.sh: check_c8_version_changelog() now computes git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo \"\") and calls git show \"HEAD:${git_prefix}${f}\" so payload-mode paths resolve relative to the repo root."
     },
     "source_files_changed": "none (contract never approved; implementation never began)"
-  },
-  "blockers": [
-    "Feature 134 step 134-contract circuit breaker TRIPPED: three concluded independent Mode A rejections (attempts 1-3), contract-testability review also rejected attempt 1. Attempt 4 forbidden by .nizam/methodology/03_circuit_breaker.md Sec 4; step BLOCKED in docs/planning/phase_022.yaml (canonical) and run_state.json (derived); NDEBT-055 open. Human review required per Sec 6 to reset or redirect."
-  ],
-  "new_dependencies_discovered": [
-    "Pinned public image digests for rolling tags are garbage-collected upstream (audit-time python:3-alpine digest unresolvable 2026-10-16); any resumed Docker-adapter work needs an explicit re-pin policy (recorded in NDEBT-055 notes).",
-    "Landlock rules opened through the OverlayFS merged view cover only upper-layer inodes: interpreter binaries in a container image base layer need explicit per-file EXECUTE rules (empirically verified in pre-contract probes; design implication for any equivalent adapter)."
-  ],
-  "prior_handoff_status": "complete",
-  "prior_tests_passed": true,
-  "prior_blockers": []
+  }
 }

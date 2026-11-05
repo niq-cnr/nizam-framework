@@ -1,12 +1,15 @@
 ---
 id: nizam-provenance-policy
 title: "Supply-Chain Provenance Policy"
-description: "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable."
-version: 0.3.0
+description: "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable; consumer pins are governed by a declared version range plus a committed provenance lock."
+version: 0.4.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/provenance_policy.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 6': replaced exact tag+SHA pinning per consumer with a declared version range plus a committed .nizam/provenance.lock.json holding the resolved tag and resolved_sha, with CI asserting lock-to-payload consistency; exact-SHA evidence remains required for release and acceptance claims. Lock schema documented in Section 2."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): state C14 as a supplied validator capability when executed, rather than evidence that an arbitrary consumer executed the check."
@@ -41,5 +44,16 @@ Every build MUST be attributable. Artifacts, prompts, models, tool calls, and re
    - Source artifact hashes
    - Contract versions consumed
 4. **SLSA Alignment:** Higher-assurance deployment paths MUST utilize SLSA-oriented build pipelines.
+5. **Consumer Pin Version Range and Lock:** A consumer MUST declare a version range (`declared_range`) accepted for its inherited framework, not one exact tag alone, and MUST commit a lock file `.nizam/provenance.lock.json` holding the resolved pin. The lock records exactly these keys:
+
+| Key | Value |
+|---|---|
+| `framework_version` | MAJOR.MINOR.PATCH (e.g. `3.1.3`) |
+| `tag` | `v` + framework_version (e.g. `v3.1.3`) |
+| `resolved_sha` | the exact resolved commit, 40 lowercase hex |
+| `declared_range` | comma-separated comparators such as `">=3.1.0,<4.0.0"` or an exact `"==3.1.3"`, each of `==`, `>=`, `<=`, `>`, `<` followed by MAJOR.MINOR.PATCH |
+| `source_url` | the framework repository URL |
+
+CI MUST assert lock-to-payload consistency against `.nizam/provenance.json` and reject drift (the supplied checker `tools/check_provenance_lock.py --repo DIR` performs this). Exact-SHA evidence remains REQUIRED for release and acceptance claims exactly as before: `bootstrap.sh --expected-sha` behaviour is unchanged because bootstrap still installs an exact tag; the range governs the consumer's declared acceptance envelope, not the install resolution.
 
 *Attribution: This provenance policy is derived from the Vibe Coding Manifesto (v2.0), Sections I (Principle 7) and V.4.*

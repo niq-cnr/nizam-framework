@@ -2,10 +2,13 @@
 id: nizam-standard-readme
 title: "Standard Module — Index"
 description: "Index for the standard/ module: the documentation, governance, security, and architectural standards every consumer repository inherits."
-version: 0.5.0
+version: 0.5.1
 status: active
 authoritative_source: standard/README.md
 change_log:
+  - version: "0.5.1"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05': index descriptions for definition_of_done.md (three enforced layers plus Appendix A) and acceptance_bars.md (applies only where a quality_bar is declared) aligned with the amended standards."
   - version: "0.5.0"
     date: "2026-09-17"
     summary: "Update the convergent-review index for authenticated Git tree scope, old-byte diffs, sandboxed trials, no-follow replay, and atomic no-replace publication."
@@ -37,9 +40,9 @@ consumer repository without modification.
 | [`provenance_policy.md`](provenance_policy.md) | Supply-chain provenance rules: artifact attestations, audit envelopes, and SHA-pinned workflows. |
 | [`permission_classes.md`](permission_classes.md) | Deny-by-default role permission classes and Kubernetes RBAC allocations. |
 | [`cross_repo_governance.md`](cross_repo_governance.md) | The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model. |
-| [`definition_of_done.md`](definition_of_done.md) | The canonical, layered Definition of Done -- aggregates the framework's eight done-layers by citing each layer's existing authority, never restating its mechanics. |
+| [`definition_of_done.md`](definition_of_done.md) | The canonical Definition of Done -- three enforced layers (tests and CI green, review verdict on the exact head, live evidence for user-visible change) with supporting layers in Appendix A, each cited to its single-source authority. |
 | [`convergent_code_review.md`](convergent_code_review.md) | Runtime-neutral, prior-ledger-first automated review with trusted Git-object packet construction, authenticated old/current bytes and full-tree scope, three sandbox-isolated trials, deterministic lifecycle/verdict, human suppression, no-follow replay, and race-free publication. |
-| [`acceptance_bars.md`](acceptance_bars.md) | Comparator Acceptance Bars — comparator-based acceptance for quality-bearing deliverables: the named/fetchable/comparable bar tests, the fresh-context blind critic loop, cost tiering, the pin-and-reverify bar library, measurable-halves families, and the circuit-breaker interface. |
+| [`acceptance_bars.md`](acceptance_bars.md) | Comparator Acceptance Bars — comparator-based acceptance, applying only where a task declares a `quality_bar` (default acceptance is the specification plus tests): the named/fetchable/comparable bar tests, the fresh-context blind critic loop, cost tiering, the pin-and-reverify bar library, measurable-halves families, and the circuit-breaker interface. |
 
 ## Machine Validation
 

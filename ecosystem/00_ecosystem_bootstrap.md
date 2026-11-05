@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.8.1
+version: 0.8.2
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.8.2"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 6': Section 4's pinned-tag precondition now references the consumer's declared version range and the committed .nizam/provenance.lock.json per standard/provenance_policy.md Section 2; bootstrap.sh exact-tag install and --expected-sha behaviour are unchanged. Only the pin-contract sentence changed."
   - version: "0.8.1"
     date: "2026-10-19"
     summary: "Phase-019 v1.9.0 audit follow-up C2 (F2): document --git-repo DIR in bootstrap.sh for retaining the verified shallow tag clone outside .nizam/ at install time and running commit-bound content-integrity verification offline without executing ${TARGET_DIR}/tools/payload_integrity.py or reading expected SHA/reference paths from mutable provenance.json. Kept in lockstep with standard/GIP.md v0.7.1."
@@ -123,12 +126,16 @@ cycle.
 ## 4. Pinned-Immutable-Tag Precondition
 
 A Bootstrap MUST inherit from a specific, immutable, released SemVer framework tag
-(`refs/tags/<tag>`, for example `v1.9.0`), never a floating branch reference. `main`,
+(`refs/tags/<tag>`, for example `v1.9.0`) within the consumer's declared version range
+(`declared_range`, recorded in the committed `.nizam/provenance.lock.json` per
+`standard/provenance_policy.md` Section 2), never a floating branch reference. `main`,
 `master`, `HEAD`, any `refs/heads/*` branch, non-SemVer tag names, branch-only refs,
 and same-name branch/tag ambiguity are refused: pinning is what prevents a consumer from
 silently inheriting mid-development governance changes it never reviewed
 (`standard/GIP.md` Section 2, point 1; `bootstrap.sh` enforces this by resolving
-`refs/tags/<tag>` explicitly and rejecting unpinned or ambiguous refs). A consumer that
+`refs/tags/<tag>` explicitly and rejecting unpinned or ambiguous refs). Exact-SHA install
+evidence is unchanged: `bootstrap.sh` still installs an exact tag and honours
+`--expected-sha` exactly as documented in `standard/GIP.md` Section 2. A consumer that
 "adopts the framework" from a floating ref has not performed a valid Bootstrap and MUST
 NOT be treated as having entered the cycle.
 

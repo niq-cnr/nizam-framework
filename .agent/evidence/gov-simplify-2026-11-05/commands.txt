@@ -1,0 +1,12 @@
+Argv and exit codes recorded for branch gov-simplify-2026-11-05 (pre-push gate).
+1  bash tools/validate.sh                                             -> EXIT 0 (16 passed, 0 failed)
+2  PYTHONDONTWRITEBYTECODE=1 python3 tools/check_provenance_lock.py --self-test  -> EXIT 0 (10 cases)
+3  PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_compliance_reference.py --check -> EXIT 0
+4  bash tools/fixtures_self_test.sh                                   -> EXIT 0 (176/176)
+5  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_public_entry.py       -> EXIT 0
+6  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py         -> EXIT 0
+7  python3 -c "import json;json.load(open('NIZAM.json'))"             -> valid
+Not run (out of scope for a text-only change, recorded for honesty):
+  tools/test_convergent_review.py (requires sandbox namespaces / Docker); no engine code changed.
+  tools/e2e_bootstrap_test.sh (no injected-payload runtime changed; bootstrap.sh untouched).
+  .github/workflows/compliance.yml NOT modified: no check or job names changed.

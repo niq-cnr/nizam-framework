@@ -1,0 +1,11 @@
+recognised values (from NIZAM.json): ['agent-eval', 'artifact-attestation', 'consumer-provider-contract', 'plan-pack', 'playwright-e2e']
+undeclared-consumer: declared=[]
+   required=['contract-delta-reviewed', 'human-review', 'integration', 'supply-chain-security', 'unit-and-component']
+declares-agent-eval: declared=['agent-eval']
+   required=['agent-eval-regression', 'contract-delta-reviewed', 'human-review', 'integration', 'supply-chain-security', 'unit-and-component']
+declares-all: declared=['agent-eval', 'artifact-attestation', 'consumer-provider-contract', 'plan-pack', 'playwright-e2e']
+   required=['agent-eval-regression', 'artifact-attestation', 'consumer-provider-contract', 'contract-delta-reviewed', 'human-review', 'integration', 'plan-pack-valid', 'playwright-e2e', 'supply-chain-security', 'unit-and-component']
+ASSERT undeclared not required (playwright-e2e): True
+ASSERT declared stays required (agent-eval-regression): True
+ASSERT core always required (supply-chain-security): True
+EXIT:0

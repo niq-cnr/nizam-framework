@@ -1,10 +1,14 @@
 ---
 id: nizam-template-dod
 title: "DoD.md Template"
-description: "Consumer-repo DoD.md template: the copy-and-fill per-project checklist that projects standard/definition_of_done.md's eight done-layers onto a fillable, Section-N-cited list. Ships seven full checklist blocks (Step through Release) plus a non-checklist eighth-layer pointer paragraph, a project-specific extension block, and a dod_ref linking note."
-version: 0.1.0
+description: "Consumer-repo DoD.md template: the copy-and-fill per-project checklist that projects standard/definition_of_done.md's three enforced done-layers and Appendix A onto a fillable, Section-cited list. Ships checklist blocks plus a project-specific extension block and a dod_ref linking note."
+version: 0.2.0
 status: active
 authoritative_source: templates/DoD.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 10': updated the frontmatter description line to match standard/definition_of_done.md's three enforced layers plus Appendix A; the self-merge checklist line now states accountable-approver plus Authority-Ref semantics. Full template body realignment is an open follow-up."
 ---
 
 <!--
@@ -93,7 +97,7 @@ together."_ (`standard/definition_of_done.md` Section 8)
 - [ ] Every CI job this project requires passes on the latest relevant commit
       (this project's required jobs: {{CI_JOB_LIST}}).
 - [ ] A human reviewer has approved the change.
-- [ ] No self-merge has occurred.
+- [ ] Merge recorded with an accountable approver and an Authority-Ref trailer.
 
 ## Release-Done
 

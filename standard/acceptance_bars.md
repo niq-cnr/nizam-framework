@@ -1,12 +1,15 @@
 ---
 id: nizam-acceptance-bars
 title: "Comparator Acceptance Bars"
-description: "Defines comparator-based acceptance for quality-bearing deliverables: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface."
-version: "0.3.0"
+description: "Defines comparator-based acceptance for tasks that declare a quality_bar: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface; without a declared quality_bar, acceptance is the specification plus tests."
+version: "0.4.0"
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/acceptance_bars.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 9': comparator/NL acceptance applies ONLY where the task declares a quality_bar; the default bar is the specification plus tests. Sections 1, 4 and 9 updated."
   - version: "0.3.0"
     date: "2026-10-18"
     summary: "Align comparator circuit-breaker interface and failure-mode table with methodology/03_circuit_breaker.md work-specific diagnostic stopping and hard-stop rules (V5)."
@@ -41,8 +44,10 @@ This standard defines **comparator-based acceptance**: a named, fetchable, compa
 bar; a separate fresh-context critic judging a blind comparison; and a loop whose only
 exit is winning that comparison.
 
-Applies to **quality-bearing deliverables**: user interfaces, code and tooling,
-documentation, evidence/verification packs, design artifacts, and similar.
+Applies ONLY where the task card declares a `quality_bar`; without it, acceptance is
+the specification plus tests. Typical quality-bearing surfaces include user interfaces,
+code and tooling, documentation, evidence/verification packs, design artifacts, and
+similar.
 
 Explicitly out of scope: **correctness-only work** — deterministic refactors,
 dependency bumps, pins, conflict settlement, infrastructure reconciliation. For those,
@@ -121,6 +126,8 @@ Additional requirements:
 ## 4. Cost Tiering
 
 Critics consume builder-grade resources; tier before dispatch and record the tier.
+Tiers apply only when a `quality_bar` is declared; without it, acceptance is the
+specification plus tests.
 
 | Tier | Applies to | Rigor |
 |---|---|---|
@@ -171,7 +178,7 @@ MUST be disclosed in durable state, per `AGF.md` §2.
 
 ## 9. Adoption Checklist (consumer runtime)
 
-1. Classify the work: quality-bearing vs deterministic.
+1. Declared `quality_bar`? If no, stop: acceptance is specification + tests.
 2. Declare the tier at dispatch.
 3. Name the bar (or offer candidates and record the pick).
 4. Record the bar-of-record: comparator pin, halves, review date.
