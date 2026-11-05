@@ -122,7 +122,7 @@
     },
     "artifacts": {
       "type": "array",
-      "minItems": 4,
+      "minItems": 2,
       "maxItems": 10006,
       "uniqueItems": true,
       "items": {
@@ -147,74 +147,6 @@
           "contains": {
             "properties": {
               "role": {
-                "const": "trial"
-              }
-            },
-            "required": [
-              "role"
-            ]
-          },
-          "minContains": 3,
-          "maxContains": 3
-        },
-        {
-          "contains": {
-            "properties": {
-              "role": {
-                "const": "trial"
-              },
-              "trial_number": {
-                "const": 1
-              }
-            },
-            "required": [
-              "role",
-              "trial_number"
-            ]
-          },
-          "minContains": 1,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "role": {
-                "const": "trial"
-              },
-              "trial_number": {
-                "const": 2
-              }
-            },
-            "required": [
-              "role",
-              "trial_number"
-            ]
-          },
-          "minContains": 1,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "role": {
-                "const": "trial"
-              },
-              "trial_number": {
-                "const": 3
-              }
-            },
-            "required": [
-              "role",
-              "trial_number"
-            ]
-          },
-          "minContains": 1,
-          "maxContains": 1
-        },
-        {
-          "contains": {
-            "properties": {
-              "role": {
                 "const": "prior_ledger"
               }
             },
@@ -224,6 +156,186 @@
           },
           "minContains": 0,
           "maxContains": 1
+        },
+        {
+          "if": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "trial"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 1
+          },
+          "then": {
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 1
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "trial"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 2
+          },
+          "then": {
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 1
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 2
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "trial"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 3
+          },
+          "then": {
+            "allOf": [
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 1
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 2
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              {
+                "contains": {
+                  "properties": {
+                    "role": {
+                      "const": "trial"
+                    },
+                    "trial_number": {
+                      "const": 3
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "trial_number"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              }
+            ]
+          }
+        },
+        {
+          "not": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "trial"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            },
+            "minContains": 4
+          }
         }
       ]
     },

@@ -49,6 +49,10 @@ def evaluate(args: argparse.Namespace) -> int:
     isolation_adapter = Path(args.isolation_adapter).resolve(strict=True)
     prior_path = Path(args.prior_ledger).resolve(strict=True) if args.prior_ledger else None
     output = Path(args.output_dir)
+    change_class, trial_count = cr.resolve_change_class(
+        args.change_class if args.change_class is not None else os.environ.get(cr.CHANGE_CLASS_ENV)
+    )
+    print(f"evaluate_convergent_review_prompt: change_class={change_class} trials={trial_count}", file=sys.stderr)
     if output.exists() or output.is_symlink():
         raise cr.ReviewError(f"output directory must not already exist: {output}")
     if not runner.is_file() or runner.is_symlink() or not os.access(runner, os.X_OK):
@@ -86,7 +90,7 @@ def evaluate(args: argparse.Namespace) -> int:
     trials: list[Path] = []
     receipts: list[dict[str, object]] = []
     try:
-        for trial_number in (1, 2, 3):
+        for trial_number in range(1, trial_count + 1):
             trial_root = evaluation_root / f"trial-{trial_number}"
             trial_root.mkdir()
             trial_packet = trial_root / "packet.json"
@@ -148,7 +152,7 @@ def evaluate(args: argparse.Namespace) -> int:
             trial_raw = cr._read_relative_regular_nofollow(trial_root, "trial.json", f"trial {trial_number}")
             trial = cr.parse_json_bytes(trial_raw, f"trial {trial_number}")
             cr.require_canonical_json(trial, trial_raw, f"trial {trial_number}")
-            cr.validate_trial(trial, packet, packet_digest, f"trial {trial_number}")
+            cr.validate_trial(trial, packet, packet_digest, f"trial {trial_number}", trial_count=trial_count)
             if trial["trial_number"] != trial_number:
                 raise cr.ReviewError(f"trial {trial_number}: output trial_number mismatch")
             verified_trial = verified_root / f"trial-{trial_number}.json"
@@ -167,6 +171,7 @@ def evaluate(args: argparse.Namespace) -> int:
 
         converge_args = argparse.Namespace(
             packet=str(packet_path),
+            change_class=change_class,
             trial=[str(path) for path in trials],
             prior_ledger=str(prior_path) if prior_path else None,
             suppression=[],
@@ -210,6 +215,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="trusted executable implementing the mandatory per-trial sandbox contract",
     )
     parser.add_argument("--prior-ledger")
+    parser.add_argument("--change-class", default=None, help="docs-config | code | governance (default: governance)")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--timeout-seconds", type=int, default=900)
     return parser
