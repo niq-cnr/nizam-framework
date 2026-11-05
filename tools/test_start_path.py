@@ -18,6 +18,18 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "tools" / "start_path.py"
+
+
+def _engine_task_failure_ceiling() -> int:
+    """Read the single source of truth from the engine; never redeclare it in the test."""
+    namespace: dict = {}
+    for line in TOOL.read_text(encoding="utf-8").splitlines():
+        if line.startswith("TASK_FAILURE_CEILING = "):
+            return int(line.split("=", 1)[1].strip())
+    raise AssertionError("start_path.TASK_FAILURE_CEILING is not defined")
+
+
+TASK_FAILURE_CEILING = _engine_task_failure_ceiling()
 WA_TOOL = ROOT / "tools" / "workflow_assurance.py"
 
 
@@ -219,7 +231,7 @@ def test_r5_classification_and_amendments(root: Path) -> None:
     expect(res_trivial, 0, '"route": "trivial"')
     parsed_trivial = json.loads(res_trivial.stdout)
     assert parsed_trivial["stopping_conditions"]["initial_strategy_ladder_attempts"] == 3
-    assert parsed_trivial["stopping_conditions"]["hard_attempt_cap"] == 6
+    assert parsed_trivial["stopping_conditions"]["hard_attempt_cap"] == TASK_FAILURE_CEILING == 10
     assert "finite task-wide" in parsed_trivial["stopping_conditions"]["attempt_counter_role"]
     assert parsed_trivial["stopping_conditions"]["comparator_subordinate"] is True
 
@@ -2195,6 +2207,43 @@ def test_r02_context_and_material() -> None:
         os.environ.clear();os.environ.update(old_env)
 
 
+def test_item4_breaker_trips_on_repeated_semantic_failure_at_ceiling() -> None:
+    """Item 4 trip proof: the breaker halts genuine repeated semantic failure.
+
+    Two independent halts are exercised at the engine's real ceiling:
+    (a) three failures with one defect signature trip the breaker (no recovery);
+    (b) distinct-signature failures trip it when the cross-step ceiling is reached.
+    Infrastructure exclusion is NOT implemented (see PR body); every failure counts.
+    """
+    failures = []
+    with tempfile.TemporaryDirectory(prefix='item4-same-signature-') as tmp:
+        root = Path(tmp)
+        for step in ('s1', 's2', 's3'):
+            result = run_raw('capture', '--id', 'semantic', '--step', step, '--attempt', '1',
+                             '--defect-signature', 'same-semantic-defect', '--output-dir', str(root / '.agent/evidence' / step),
+                             '--root', str(root), '--', sys.executable, '-c', 'raise SystemExit(7)')
+            expect(result, 1, '"outcome": "failed"')
+        result = run_raw('capture', '--id', 'semantic', '--step', 's4', '--attempt', '1',
+                         '--defect-signature', 'same-semantic-defect', '--output-dir', str(root / '.agent/evidence/s4'),
+                         '--root', str(root), '--', sys.executable, '-c', 'pass')
+        if result.returncode != 2 or 'same-signature' not in result.stderr and 'same task-wide defect signature' not in result.stderr:
+            failures.append('same-signature repeated semantic failure did not trip the breaker')
+    with tempfile.TemporaryDirectory(prefix='item4-ceiling-') as tmp:
+        root = Path(tmp)
+        for index in range(TASK_FAILURE_CEILING):
+            result = run_raw('capture', '--id', 'ceiling', '--step', 'c' + str(index), '--attempt', '1',
+                             '--defect-signature', 'distinct-semantic-' + str(index),
+                             '--output-dir', str(root / '.agent/evidence' / str(index)), '--root', str(root),
+                             '--', sys.executable, '-c', 'raise SystemExit(7)')
+            expect(result, 1, '"outcome": "failed"')
+        result = run_raw('capture', '--id', 'ceiling', '--step', 'beyond', '--attempt', '1',
+                         '--output-dir', str(root / '.agent/evidence/beyond'), '--root', str(root),
+                         '--', sys.executable, '-c', 'pass')
+        if result.returncode != 2 or 'budget' not in result.stderr:
+            failures.append('cross-step ceiling did not trip the breaker at ' + str(TASK_FAILURE_CEILING))
+    if failures:
+        raise AssertionError('; '.join(failures))
+
 def test_r02_loop_prevention() -> None:
     """Bounded retries cannot reset failure history or rerun identical assessed QA."""
     failures = []
@@ -2222,7 +2271,7 @@ def test_r02_loop_prevention() -> None:
             expect(capture('expired', 1, '--defect-signature', 'same-defect'), 2, 'finite')
     with tempfile.TemporaryDirectory(prefix='r02-loop-rotating-') as tmp:
         root = Path(tmp)
-        for index in range(6):
+        for index in range(TASK_FAILURE_CEILING):
             result = run_raw('capture', '--id', 'rotating', '--step', 'step' + str(index), '--attempt', '1', '--defect-signature', 'different' + str(index), '--output-dir', str(root / '.agent/evidence' / str(index)), '--root', str(root), '--', sys.executable, '-c', 'raise SystemExit(7)')
             expect(result, 1, '"outcome": "failed"')
         result = run_raw('capture', '--id', 'rotating', '--step', 'seventh', '--attempt', '1', '--output-dir', str(root / '.agent/evidence/seventh'), '--root', str(root), '--', sys.executable, '-c', 'pass')
@@ -2398,6 +2447,7 @@ def main() -> int:
     test_r02_structured_proof()
     test_r02_context_and_material()
     test_r02_loop_prevention()
+    test_item4_breaker_trips_on_repeated_semantic_failure_at_ceiling()
     test_jev_readiness_controls()
     test_jev_readiness_attempts()
     test_jev_readiness_authority()

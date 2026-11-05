@@ -48,6 +48,13 @@ COUNT_KEYS = (
     "active_important",
     "active_minor",
 )
+# Change-class trial cardinality (governance simplification item 3b). The class is an
+# explicit caller input (--change-class or CHANGE_CLASS_ENV); it is never inferred from
+# paths. Absent, unknown or malformed input resolves to governance (fail closed).
+CHANGE_CLASS_ENV = "NIZAM_REVIEW_CHANGE_CLASS"
+CHANGE_CLASS_TRIALS = {"docs-config": 1, "code": 2, "governance": 3}
+DEFAULT_CHANGE_CLASS = "governance"
+MAX_TRIALS = max(CHANGE_CLASS_TRIALS.values())
 MAX_FINDINGS = 10000
 MAX_TEXT = 20000
 MAX_LINE = 1000000000
@@ -887,13 +894,25 @@ def validate_candidate(finding: Any, ctx: str) -> Mapping[str, Any]:
     return obj
 
 
+def resolve_change_class(value: str | None) -> tuple[str, int]:
+    """Return (class, trial_count). Absent, unknown or malformed input fails closed to governance."""
+    if isinstance(value, str) and value in CHANGE_CLASS_TRIALS:
+        return value, CHANGE_CLASS_TRIALS[value]
+    return DEFAULT_CHANGE_CLASS, CHANGE_CLASS_TRIALS[DEFAULT_CHANGE_CLASS]
+
+
+def quorum_for(trial_count: int) -> int:
+    """Strict majority of the trial count: 1->1, 2->2, 3->2 (governance is unchanged at 2-of-3)."""
+    return trial_count // 2 + 1
+
+
 def validate_evidence(evidence: Any, ctx: str, *, ledger: bool = False) -> Mapping[str, Any]:
     required = ("path", "start_line", "end_line", "excerpt", "content_digest")
     if ledger:
         required = ("trial_number",) + required
     obj = _closed(evidence, required, (), ctx)
     if ledger:
-        _integer(obj["trial_number"], f"{ctx}.trial_number", 1, 3)
+        _integer(obj["trial_number"], f"{ctx}.trial_number", 1, MAX_TRIALS)
     validate_path(obj["path"], f"{ctx}.path")
     start = _integer(obj["start_line"], f"{ctx}.start_line", 0, MAX_LINE)
     end = _integer(obj["end_line"], f"{ctx}.end_line", 0, MAX_LINE)
@@ -1020,13 +1039,13 @@ def semantic_fingerprint(repository: str, finding: Mapping[str, Any]) -> str:
     return sha256(canonical_json_bytes(descriptor))
 
 
-def validate_trial(trial: Any, packet: Mapping[str, Any], packet_digest: str, ctx: str) -> Mapping[str, Any]:
+def validate_trial(trial: Any, packet: Mapping[str, Any], packet_digest: str, ctx: str, *, trial_count: int = 3) -> Mapping[str, Any]:
     obj = _closed(trial, ("schema_version", "review_id", "trial_number", "packet_digest", "head_sha", "observations"), (), ctx)
     if obj["schema_version"] != SCHEMA_VERSION:
         raise ReviewError(f"{ctx}.schema_version: expected {SCHEMA_VERSION}")
     if obj["review_id"] != packet["review_id"]:
         raise ReviewError(f"{ctx}.review_id: does not match packet")
-    _integer(obj["trial_number"], f"{ctx}.trial_number", 1, 3)
+    _integer(obj["trial_number"], f"{ctx}.trial_number", 1, trial_count)
     if obj["packet_digest"] != packet_digest:
         raise ReviewError(f"{ctx}.packet_digest: does not bind the exact packet bytes")
     if obj["head_sha"] != packet["head_sha"]:
@@ -1070,13 +1089,13 @@ def validate_suppression(record: Any, repository: str, ctx: str) -> Mapping[str,
     return obj
 
 
-def validate_consensus(value: Any, ctx: str) -> Mapping[str, Any]:
+def validate_consensus(value: Any, ctx: str, *, trial_count: int = 3) -> Mapping[str, Any]:
     obj = _closed(value, ("active_trials", "resolved_trials"), (), ctx)
     for key in ("active_trials", "resolved_trials"):
         trials = obj[key]
-        if not isinstance(trials, list) or len(trials) > 3:
-            raise ReviewError(f"{ctx}.{key}: expected array with at most three entries")
-        normalized = [_integer(item, f"{ctx}.{key}", 1, 3) for item in trials]
+        if not isinstance(trials, list) or len(trials) > trial_count:
+            raise ReviewError(f"{ctx}.{key}: expected array with at most {trial_count} entries")
+        normalized = [_integer(item, f"{ctx}.{key}", 1, trial_count) for item in trials]
         if normalized != sorted(set(normalized)):
             raise ReviewError(f"{ctx}.{key}: trials must be unique and sorted")
     if set(obj["active_trials"]) & set(obj["resolved_trials"]):
@@ -1126,12 +1145,14 @@ def validate_ledger(ledger: Any, ctx: str = "ledger") -> Mapping[str, Any]:
     _digest(obj["packet_digest"], f"{ctx}.packet_digest")
     _nullable_digest(obj["prior_ledger_digest"], f"{ctx}.prior_ledger_digest")
     digests = obj["trial_digests"]
-    if not isinstance(digests, list) or len(digests) != 3:
-        raise ReviewError(f"{ctx}.trial_digests: expected exactly three digests")
+    trial_count = len(digests) if isinstance(digests, list) else -1
+    if trial_count not in CHANGE_CLASS_TRIALS.values():
+        raise ReviewError(f"{ctx}.trial_digests: expected exactly one, two or three digests")
     for index, digest in enumerate(digests):
         _digest(digest, f"{ctx}.trial_digests[{index}]")
-    if len(set(digests)) != 3:
+    if len(set(digests)) != trial_count:
         raise ReviewError(f"{ctx}.trial_digests: digests must be unique")
+    quorum = quorum_for(trial_count)
     findings = obj["findings"]
     if not isinstance(findings, list) or len(findings) > MAX_FINDINGS:
         raise ReviewError(f"{ctx}.findings: expected array with at most {MAX_FINDINGS} entries")
@@ -1182,41 +1203,41 @@ def validate_ledger(ledger: Any, ctx: str = "ledger") -> Mapping[str, Any]:
             for evidence_index, evidence_item in enumerate(evidence):
                 validated_evidence = validate_evidence(evidence_item, f"{prefix}.{evidence_key}[{evidence_index}]", ledger=True)
                 evidence_trials[evidence_key].add(validated_evidence["trial_number"])
-        consensus = validate_consensus(item["consensus"], f"{prefix}.consensus")
+        consensus = validate_consensus(item["consensus"], f"{prefix}.consensus", trial_count=trial_count)
         active_trials = consensus["active_trials"]
         resolved_trials = consensus["resolved_trials"]
         if evidence_trials["evidence"] != set(active_trials):
             raise ReviewError(f"{prefix}.evidence: trial attribution must exactly match active consensus")
         if evidence_trials["resolution_evidence"] != set(resolved_trials):
             raise ReviewError(f"{prefix}.resolution_evidence: trial attribution must exactly match resolved consensus")
-        if lifecycle == "new" and len(active_trials) < 2:
-            raise ReviewError(f"{prefix}.lifecycle: new requires 2-of-3 active consensus")
+        if lifecycle == "new" and len(active_trials) < quorum:
+            raise ReviewError(f"{prefix}.lifecycle: new requires {quorum}-of-{trial_count} active consensus")
         if lifecycle == "reopened":
-            if obj["prior_ledger_digest"] is None or len(active_trials) < 2:
-                raise ReviewError(f"{prefix}.lifecycle: reopened requires a prior ledger and 2-of-3 active consensus")
+            if obj["prior_ledger_digest"] is None or len(active_trials) < quorum:
+                raise ReviewError(f"{prefix}.lifecycle: reopened requires a prior ledger and {quorum}-of-{trial_count} active consensus")
         if lifecycle == "persisting":
             if obj["prior_ledger_digest"] is None:
                 raise ReviewError(f"{prefix}.lifecycle: persisting requires a prior ledger")
-            if len(resolved_trials) >= 2:
-                raise ReviewError(f"{prefix}.lifecycle: persisting cannot carry 2-of-3 resolved consensus")
+            if len(resolved_trials) >= quorum:
+                raise ReviewError(f"{prefix}.lifecycle: persisting cannot carry {quorum}-of-{trial_count} resolved consensus")
         if lifecycle == "resolved":
-            if len(active_trials) >= 2:
-                raise ReviewError(f"{prefix}.lifecycle: resolved finding cannot carry 2-of-3 active consensus")
+            if len(active_trials) >= quorum:
+                raise ReviewError(f"{prefix}.lifecycle: resolved finding cannot carry {quorum}-of-{trial_count} active consensus")
             if resolved == obj["head_sha"]:
                 if obj["prior_ledger_digest"] is None:
                     raise ReviewError(f"{prefix}.lifecycle: current-head resolution requires a prior ledger")
-                if len(resolved_trials) < 2:
-                    raise ReviewError(f"{prefix}.lifecycle: current-head resolution requires 2-of-3 resolved consensus")
+                if len(resolved_trials) < quorum:
+                    raise ReviewError(f"{prefix}.lifecycle: current-head resolution requires {quorum}-of-{trial_count} resolved consensus")
                 if not item["resolution_evidence"]:
                     raise ReviewError(f"{prefix}.resolution_evidence: current-head resolution requires evidence")
         suppression = validate_ledger_suppression(item["suppression"], f"{prefix}.suppression")
         if lifecycle == "suppressed":
             if suppression is None:
                 raise ReviewError(f"{prefix}.suppression: required for suppressed lifecycle")
-            if len(resolved_trials) >= 2:
-                raise ReviewError(f"{prefix}.lifecycle: suppressed finding cannot carry 2-of-3 resolved consensus")
-            if obj["prior_ledger_digest"] is None and len(active_trials) < 2:
-                raise ReviewError(f"{prefix}.lifecycle: initial suppressed finding requires 2-of-3 active consensus")
+            if len(resolved_trials) >= quorum:
+                raise ReviewError(f"{prefix}.lifecycle: suppressed finding cannot carry {quorum}-of-{trial_count} resolved consensus")
+            if obj["prior_ledger_digest"] is None and len(active_trials) < quorum:
+                raise ReviewError(f"{prefix}.lifecycle: initial suppressed finding requires {quorum}-of-{trial_count} active consensus")
         elif suppression is not None:
             raise ReviewError(f"{prefix}.suppression: only valid for suppressed lifecycle")
         if lifecycle == "new" and not item["evidence"]:
@@ -1305,13 +1326,15 @@ def converge_documents(
     if (prior is None) != (prior_digest is None):
         raise ReviewError("prior ledger digest binding is incomplete")
 
-    if len(trials) != 3:
-        raise ReviewError("converge requires exactly three trials")
+    trial_count = len(trials)
+    if trial_count not in CHANGE_CLASS_TRIALS.values():
+        raise ReviewError("converge requires one, two or three trials matching a change class")
+    quorum = quorum_for(trial_count)
     for index, trial in enumerate(trials):
-        validate_trial(trial, packet, packet_digest, f"trial[{index}]")
+        validate_trial(trial, packet, packet_digest, f"trial[{index}]", trial_count=trial_count)
     ordered_trials = sorted(trials, key=lambda item: item["trial_number"])
-    if [item["trial_number"] for item in ordered_trials] != [1, 2, 3]:
-        raise ReviewError("trials must have unique trial_number values 1, 2, and 3")
+    if [item["trial_number"] for item in ordered_trials] != list(range(1, trial_count + 1)):
+        raise ReviewError(f"trials must have unique trial_number values 1 through {trial_count}")
 
     observations: dict[str, dict[str, list[tuple[int, Mapping[str, Any], Sequence[Mapping[str, Any]]]]]] = {}
     delta_paths = {item["path"] for item in packet["delta"]}
@@ -1373,7 +1396,7 @@ def converge_documents(
         resolved_trials = sorted(report[0] for report in resolved_reports)
 
         if prior_finding is None:
-            if len(active_trials) < 2:
+            if len(active_trials) < quorum:
                 continue
             candidate = _representative(active_reports)
             evidence = _dedupe_sorted(
@@ -1400,7 +1423,7 @@ def converge_documents(
         else:
             candidate = _prior_candidate_with_current_severity(prior_finding, active_reports)
             if prior_finding["lifecycle"] in ACTIVE_LIFECYCLES:
-                if len(resolved_trials) >= 2:
+                if len(resolved_trials) >= quorum:
                     resolution_evidence = _dedupe_sorted(
                         item
                         for trial_number, _, items in resolved_reports
@@ -1446,7 +1469,7 @@ def converge_documents(
                         "suppression": prior_finding["suppression"],
                     }
             else:
-                if len(active_trials) >= 2:
+                if len(active_trials) >= quorum:
                     current_evidence = _dedupe_sorted(
                         item
                         for trial_number, _, items in active_reports
@@ -1515,7 +1538,7 @@ def converge_documents(
         "head_sha": packet["head_sha"],
         "packet_digest": packet_digest,
         "prior_ledger_digest": prior_digest,
-        "trial_digests": [trial_digests[number] for number in (1, 2, 3)],
+        "trial_digests": [trial_digests[number] for number in range(1, trial_count + 1)],
         "findings": findings,
         "counts": counts,
         "verdict": "request_changes" if counts["active_blocker"] or counts["active_important"] else "approve",
@@ -1706,8 +1729,8 @@ def validate_replay(replay: Any) -> Mapping[str, Any]:
     validate_repository(obj["repository"], "replay.repository")
     _string(obj["head_sha"], "replay.head_sha", minimum=40, maximum=40, pattern=SHA_RE)
     artifacts = obj["artifacts"]
-    if not isinstance(artifacts, list) or not 4 <= len(artifacts) <= 10006:
-        raise ReviewError("replay.artifacts: expected between 4 and 10006 entries")
+    if not isinstance(artifacts, list) or not 2 <= len(artifacts) <= 10006:
+        raise ReviewError("replay.artifacts: expected between 2 and 10006 entries")
     roles: list[str] = []
     trial_numbers: list[int] = []
     paths: set[str] = set()
@@ -1725,11 +1748,14 @@ def validate_replay(replay: Any) -> Mapping[str, Any]:
         if role == "trial":
             if "trial_number" not in item:
                 raise ReviewError(f"{prefix}.trial_number: required for trial artifact")
-            trial_numbers.append(_integer(item["trial_number"], f"{prefix}.trial_number", 1, 3))
+            trial_numbers.append(_integer(item["trial_number"], f"{prefix}.trial_number", 1, MAX_TRIALS))
         elif "trial_number" in item:
             raise ReviewError(f"{prefix}.trial_number: only valid for trial artifact")
-    if roles.count("packet") != 1 or roles.count("prior_ledger") > 1 or sorted(trial_numbers) != [1, 2, 3]:
-        raise ReviewError("replay.artifacts: require one packet and trials 1, 2, and 3")
+    trial_count = len(trial_numbers)
+    if trial_count not in CHANGE_CLASS_TRIALS.values() or sorted(trial_numbers) != list(range(1, trial_count + 1)):
+        raise ReviewError("replay.artifacts: require trial numbers 1 through N where N matches a change class (1, 2 or 3)")
+    if roles.count("packet") != 1 or roles.count("prior_ledger") > 1:
+        raise ReviewError("replay.artifacts: require one packet and trials 1 through N for a change class")
     outputs = _closed(obj["output_digests"], ("ledger", "markdown"), (), "replay.output_digests")
     for key in ("ledger", "markdown"):
         _digest(outputs[key], f"replay.output_digests.{key}")
@@ -1751,6 +1777,12 @@ def build_replay(
     return replay
 
 
+def _requested_change_class(args: argparse.Namespace) -> str | None:
+    """Single resolution rule shared by the CLI, the evaluator and direct library callers."""
+    value = getattr(args, "change_class", None)
+    return value if value is not None else os.environ.get(CHANGE_CLASS_ENV)
+
+
 def _load_convergence_inputs(args: argparse.Namespace) -> tuple[
     Mapping[str, Any], str, list[Mapping[str, Any]], dict[int, str], Mapping[str, Any] | None, str | None,
     list[tuple[Mapping[str, Any], str]], list[tuple[dict[str, Any], bytes]],
@@ -1762,12 +1794,15 @@ def _load_convergence_inputs(args: argparse.Namespace) -> tuple[
     retained: list[tuple[dict[str, Any], bytes]] = [
         (_path_ref("packet", "inputs/packet.json", packet_digest, len(packet_raw)), packet_raw)
     ]
+    _, trial_count = resolve_change_class(_requested_change_class(args))
+    if len(args.trial) != trial_count:
+        raise ReviewError(f"converge requires exactly {trial_count} --trial argument(s) for this change class")
     trials: list[Mapping[str, Any]] = []
     trial_digests: dict[int, str] = {}
     for trial_arg in args.trial:
         trial, trial_raw = read_raw_json(Path(trial_arg), f"trial {trial_arg}")
         require_canonical_json(trial, trial_raw, f"trial {trial_arg}")
-        validate_trial(trial, packet, packet_digest, f"trial {trial_arg}")
+        validate_trial(trial, packet, packet_digest, f"trial {trial_arg}", trial_count=trial_count)
         number = trial["trial_number"]
         if number in trial_digests:
             raise ReviewError(f"duplicate trial_number: {number}")
@@ -1776,8 +1811,8 @@ def _load_convergence_inputs(args: argparse.Namespace) -> tuple[
         trials.append(trial)
         relative = f"inputs/trial-{number}.json"
         retained.append((_path_ref("trial", relative, digest, len(trial_raw), number), trial_raw))
-    if sorted(trial_digests) != [1, 2, 3]:
-        raise ReviewError("converge requires exactly three trial files numbered 1, 2, and 3")
+    if sorted(trial_digests) != list(range(1, trial_count + 1)):
+        raise ReviewError(f"converge requires exactly {trial_count} trial file(s) numbered 1 through {trial_count}")
 
     prior: Mapping[str, Any] | None = None
     prior_digest: str | None = None
@@ -2436,7 +2471,7 @@ def verify_replay_directory(replay_path: Path) -> None:
     if loaded_packet["review_id"] != replay["review_id"] or loaded_packet["repository"] != replay["repository"] or loaded_packet["head_sha"] != replay["head_sha"]:
         raise ReviewError("replay identity/head does not match retained packet")
     for trial in loaded_trials:
-        validate_trial(trial, loaded_packet, packet_digest, f"replay trial {trial.get('trial_number')}")
+        validate_trial(trial, loaded_packet, packet_digest, f"replay trial {trial.get('trial_number')}", trial_count=len(loaded_trials))
     for suppression, _ in loaded_suppressions:
         validate_suppression(suppression, loaded_packet["repository"], "replay suppression")
     recomputed = converge_documents(loaded_packet, packet_digest, loaded_trials, trial_digests, loaded_prior, prior_digest, loaded_suppressions)
@@ -2468,8 +2503,12 @@ def build_parser() -> argparse.ArgumentParser:
     fingerprint.add_argument("--repository", required=True)
     fingerprint.add_argument("--finding", required=True)
     fingerprint.set_defaults(func=cmd_fingerprint)
-    converge = subparsers.add_parser("converge", help="converge exactly three observation trials")
+    converge = subparsers.add_parser(
+        "converge",
+        help="converge observation trials (1 docs-config, 2 code, 3 governance; absent/unknown class = governance)",
+    )
     converge.add_argument("--packet", required=True)
+    converge.add_argument("--change-class", default=None, help="docs-config | code | governance (default: governance)")
     converge.add_argument("--trial", action="append", required=True)
     converge.add_argument("--prior-ledger")
     converge.add_argument("--suppression", action="append", default=[])
@@ -2493,8 +2532,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     try:
         args = parser.parse_args(argv)
-        if args.command == "converge" and len(args.trial) != 3:
-            raise ReviewError("converge requires exactly three --trial arguments")
+        if args.command == "converge":
+            change_class, trial_count = resolve_change_class(_requested_change_class(args))
+            args.change_class = change_class
+            print(f"convergent_review: change_class={change_class} trials={trial_count}", file=sys.stderr)
+            if len(args.trial) != trial_count:
+                raise ReviewError(f"converge requires exactly {trial_count} --trial argument(s) for change class {change_class}")
         return int(args.func(args))
     except (ReviewError, OSError, UnicodeDecodeError) as exc:
         print(f"convergent_review: error: {exc}", file=sys.stderr)

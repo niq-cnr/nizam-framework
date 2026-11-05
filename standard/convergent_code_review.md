@@ -1,11 +1,14 @@
 ---
 id: convergent-automated-code-review
 title: "Convergent Automated Code Review"
-description: "Defines prior-ledger-first, authenticated three-trial code review whose lifecycle, verdict, rendering, and replay integrity are owned by deterministic code."
-version: 1.4.0
+description: "Defines prior-ledger-first, authenticated class-dependent trial code review (1, 2 or 3 trials) whose lifecycle, verdict, rendering, and replay integrity are owned by deterministic code."
+version: 1.5.0
 status: active
 authoritative_source: standard/convergent_code_review.md
 change_log:
+  - version: "1.5.0"
+    date: "2026-11-05"
+    summary: "Governance simplification item 3b: trial cardinality is now a class-dependent explicit input (docs-config = 1, code = 2, governance = 3). Absent, unknown or malformed class resolves to governance (3 trials, fail closed). Quorum is a strict majority of the trial count. Governance output is byte-identical to 1.4.0, pinned by a golden test."
   - version: "1.4.0"
     date: "2026-11-05"
     summary: "Operator directive 'governance simplification 2026-11-05 item 3b': added Section 2.3 Supersession -- a review run whose PR head has advanced past the packet's head_sha MUST terminate before trial work and MUST NOT publish verdict, ledger, or Markdown output for a superseded head; trial count unchanged (three)."
@@ -61,7 +64,7 @@ Repository identities contain two or more slash-separated segments and may repre
 
 Packet validity is a two-stage contract: (1) `review_packet.schema.json` enforces the closed structural shape and local constraints; (2) the mandatory `validate_packet_relations` contract enforces projected path uniqueness, sibling digest inequality, content/digest equality, and full-tree commitments. Draft 2020-12 cannot express those cross-item and sibling-value relations under this representation. A consumer MUST run both stages and MUST NOT describe plain JSON Schema validation alone as packet validity.
 
-Every packet, trial, prior ledger, suppression record, ledger output, and replay manifest MUST use canonical UTF-8 JSON: Unicode text is emitted directly, object keys are sorted, separators are compact, and one trailing line feed is present. Duplicate JSON keys and noncanonical input bytes fail closed. The exact canonical packet bytes are hashed to bind all three trials.
+Every packet, trial, prior ledger, suppression record, ledger output, and replay manifest MUST use canonical UTF-8 JSON: Unicode text is emitted directly, object keys are sorted, separators are compact, and one trailing line feed is present. Duplicate JSON keys and noncanonical input bytes fail closed. The exact canonical packet bytes are hashed to bind every trial.
 
 ## 4. Stable Semantic Identity
 
@@ -69,17 +72,27 @@ A finding fingerprint is the SHA-256 digest of canonical JSON over `repository`,
 
 A line shift or rewritten explanation does not create a new finding. Changing the affected symbol, path, category, rule, or repository does. The CLI MUST recalculate every fingerprint. Raw trials contain no trusted identifier or model-owned count.
 
-## 5. Three Independent Trials
+## 5. Class-Dependent Independent Trials
 
 Observation-only trials MUST never receive a session endpoint or any runtime-session permission class.
 
-Every convergence run consumes **exactly three** trial documents, numbered 1, 2, and 3. Each is bound to the exact packet digest and current head. A workspace, `cwd`, or `HOME` change alone is **not isolation**. Each trial MUST run through a trusted sandbox adapter that creates a separate process session and enforces: no network connectivity; a private PID/session boundary; read/write but **no execute** access inside that trial's root; read/execute access only to the pre-resolved trusted runner and required runtime; and no access to sibling trial roots, ambient repository files, or prior-trial artifacts. A runner-generated file remains non-executable even if the runner sets its executable mode bit. The evaluator's adapter protocol is `ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS...`. `tools/linux_trial_sandbox.sh` plus `tools/isolated_trial_adapter.py` is the Linux reference implementation using user/network/IPC/UTS/PID namespaces and Landlock. Other runtimes may supply an equivalent container, VM, seatbelt, or capability sandbox adapter, but fail closed if the boundary cannot be enforced.
+The trial count is set by an explicit **change class**, supplied to `converge` as `--change-class` or, when that argument is absent, by the `NIZAM_REVIEW_CHANGE_CLASS` environment variable. The engine never infers the class from file paths or diff content. The class names and trial counts are:
+
+| Change class | Trials | Quorum (strict majority) |
+|---|---|---|
+| `docs-config` | 1 | 1 of 1 |
+| `code` | 2 | 2 of 2 |
+| `governance` | 3 | 2 of 3 |
+
+An absent, empty, unknown or malformed class resolves to `governance` (three trials). Matching is exact and case-sensitive. The resolved class and trial count are printed to stderr on every `converge` run. A `converge` invocation whose `--trial` count differs from the resolved class's count is refused. A verifier that finds a replay or ledger whose trial count is not one of 1, 2 or 3, or whose trial numbers are not exactly 1 through N, refuses it.
+
+Every convergence run consumes **exactly the trial documents its change class requires**, numbered 1 through N. Each is bound to the exact packet digest and current head. A workspace, `cwd`, or `HOME` change alone is **not isolation**. Each trial MUST run through a trusted sandbox adapter that creates a separate process session and enforces: no network connectivity; a private PID/session boundary; read/write but **no execute** access inside that trial's root; read/execute access only to the pre-resolved trusted runner and required runtime; and no access to sibling trial roots, ambient repository files, or prior-trial artifacts. A runner-generated file remains non-executable even if the runner sets its executable mode bit. The evaluator's adapter protocol is `ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS...`. `tools/linux_trial_sandbox.sh` plus `tools/isolated_trial_adapter.py` is the Linux reference implementation using user/network/IPC/UTS/PID namespaces and Landlock. Other runtimes may supply an equivalent container, VM, seatbelt, or capability sandbox adapter, but fail closed if the boundary cannot be enforced.
 
 The evaluator MUST use trust-anchored, component-by-component no-follow I/O for per-trial packet, prompt, optional prior ledger, trial output, and captured stdout/stderr files. Inputs are re-read after the runner exits, output files MUST be singly linked regular files, and evaluator-created files MUST use exclusive creation. Runner substitution by a symlink, hard link, FIFO, pre-created output name, or rewritten trusted input therefore fails before convergence.
 
 A candidate absent from the prior ledger becomes `new` only when at least two trials independently report it active. This rule applies on initial and later reviews. A singleton candidate is rejected as non-consensus. Matching observations are grouped by recalculated fingerprint. Evidence is de-duplicated and sorted. The most severe current report wins; remaining display fields are chosen by canonical byte order.
 
-The trial count is three; a proportional reduction by diff size is not in force until the deterministic engine supports it.
+The trial count is determined only by the explicit change class. Reduction by diff size is not in force: the engine does not infer a class from diff size or paths, and a class is never chosen by a model. The class vocabulary is closed; adding a class requires a versioned revision of this standard and of `CHANGE_CLASS_TRIALS` in `tools/convergent_review.py`.
 
 ## 6. Authenticated Evidence
 
@@ -113,7 +126,7 @@ Ledger arrays are stable-sorted. Markdown is a pure rendering of the ledger and 
 
 ## 10. Replay and Evidence Retention
 
-Every raw canonical packet, all three raw canonical trials, any prior ledger, and every suppression record MUST be retained without reserialization. Replay metadata records each artifact's role, safe relative retained path, byte count, and SHA-256 digest. It also records the ledger and Markdown output digests. Trial artifact numbers MUST be exactly 1, 2, and 3.
+Every raw canonical packet, every raw canonical trial for the change class, any prior ledger, and every suppression record MUST be retained without reserialization. Replay metadata records each artifact's role, safe relative retained path, byte count, and SHA-256 digest. It also records the ledger and Markdown output digests. Trial artifact numbers MUST be exactly 1 through N, where N is 1, 2 or 3 and matches a change class. A replay whose trial count is not one of those values fails verification.
 
 Replay verification MUST walk from an explicit filesystem trust anchor with `lstat`/no-follow-equivalent semantics and MUST reject symlink substitutions for every ancestor of the replay root, the replay-root path itself, the replay manifest, `ledger.json`, `review.md`, every retained path component, and every retained artifact. Resolving a path and opening the resolved target is not equivalent because it silently accepts a symlinked ancestor. It re-hashes every retained artifact and both outputs, requires canonical JSON for retained JSON, validates closed shapes and packet/head bindings, re-authenticates every current evidence item against retained packet bytes, regenerates the ledger, regenerates Markdown, and verifies the embedded ledger. Any byte-level tampering, fabricated evidence, duplicate trial number, or unrelated artifact path fails.
 
@@ -129,7 +142,7 @@ A conforming deterministic implementation provides these operations:
 
 - `build-packet`: construct an ordinary or full-audit packet from immutable Git base/head objects, authenticating old bytes and complete full-audit trees.
 - `fingerprint`: calculate semantic identity from a candidate finding.
-- `converge`: validate and converge one packet, exactly three trials, an optional prior ledger, and optional suppression records.
+- `converge`: validate and converge one packet, the trials required by the change class (1, 2 or 3), an optional prior ledger, and optional suppression records.
 - `render`: render validated canonical ledger content as Markdown.
 - `extract-ledger`: recover and validate the Base64 ledger marker.
 - `verify-replay`: verify retained artifact authenticity and reproduce the outputs.

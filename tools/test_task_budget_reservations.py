@@ -11,6 +11,16 @@ import time
 import unittest
 
 import external_evidence as ee
+
+
+def _engine_task_failure_ceiling() -> int:
+    for line in (Path(__file__).with_name("start_path.py")).read_text(encoding="utf-8").splitlines():
+        if line.startswith("TASK_FAILURE_CEILING = "):
+            return int(line.split("=", 1)[1].strip())
+    raise AssertionError("start_path.TASK_FAILURE_CEILING is not defined")
+
+
+TASK_FAILURE_CEILING = _engine_task_failure_ceiling()
 import test_nf_ac04_generic_admission as generic
 
 TOOLS = Path(__file__).resolve().parent
@@ -90,7 +100,7 @@ class NativePendingCapacityTests(unittest.TestCase):
         finally:
             results = [self.finish(entry) for entry in entries]
         observed = [json.loads(out) for _, out, _ in results if out.strip().startswith("{")]
-        self.assertLessEqual(sum(doc.get("outcome") == "failed" for doc in observed), 6)
+        self.assertLessEqual(sum(doc.get("outcome") == "failed" for doc in observed), TASK_FAILURE_CEILING)
         self.assertEqual(sum(doc.get("executed") is True for doc in observed), started)
 
     def test_two_independent_steps_overlap_and_terminal_success_releases_capacity(self):
@@ -194,8 +204,8 @@ class NativePendingCapacityTests(unittest.TestCase):
         result = self.capture("after-success", signature="yet-another-label")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_fresh_check_inside_reservation_refuses_sixth_failure_race(self):
-        for i in range(5):
+    def test_fresh_check_inside_reservation_refuses_ceiling_failure_race(self):
+        for i in range(TASK_FAILURE_CEILING - 1):
             result = self.capture("failed" + str(i), failed=True, signature="signature-" + str(i))
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         ready, release, executed = self.base / "pre-reserve", self.base / "reserve-release", self.base / "stale-executed"
@@ -227,7 +237,7 @@ except sp.StartPathError as exc:
         self.assertEqual(sixth.returncode, 1, sixth.stdout + sixth.stderr)
         release.write_text("release")
         out, err = process.communicate(timeout=8)
-        self.assertEqual(process.returncode, 2, "stale authorization dispatched after sixth failure: " + out + err)
+        self.assertEqual(process.returncode, 2, "stale authorization dispatched after ceiling failure: " + out + err)
         self.assertFalse(executed.exists())
 
     def test_corrupt_pending_marker_preserved_and_refused_not_treated_as_free_capacity(self):
@@ -306,13 +316,14 @@ class ExternalPendingCapacityTests(unittest.TestCase):
         self.allocate("released-slot")
         self.assertEqual(self.ledger()["tasks"]["pending"]["failed_count"], 2)
 
-    def test_task_ceiling_counts_five_actual_failures_and_one_unsettled_step(self):
-        for i in range(5): self.settle(self.allocate("failed" + str(i)), failed=True, signature=(str(i) * 64))
-        self.allocate("sixth-potential")
+    def test_task_ceiling_counts_actual_failures_and_one_unsettled_step(self):
+        """ceiling-1 observed failures plus one unsettled permit fill the ceiling; the next permit is refused."""
+        for i in range(TASK_FAILURE_CEILING - 1): self.settle(self.allocate("failed" + str(i)), failed=True, signature=(format(i, "x") * 64)[:64])
+        self.allocate("ceiling-potential")
         before = self.ledger()
-        with self.assertRaises(ee.ExternalEvidenceError): self.allocate("seventh")
+        with self.assertRaises(ee.ExternalEvidenceError): self.allocate("beyond-ceiling")
         self.assertEqual(self.ledger(), before)
-        self.assertEqual(before["tasks"]["pending"]["failed_count"], 5)
+        self.assertEqual(before["tasks"]["pending"]["failed_count"], TASK_FAILURE_CEILING - 1)
 
     def test_finite_operator_recovery_reserves_only_remaining_capacity_without_reset(self):
         last = None

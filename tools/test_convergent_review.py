@@ -1468,6 +1468,165 @@ class SemanticMutationTests(unittest.TestCase):
                 visit(load(ROOT / "schema" / schema_name), schema_name)
 
 
+class ChangeClassCardinalityTests(unittest.TestCase):
+    """Item 3b: trial cardinality is an explicit class input, never inferred from paths."""
+
+    CASE = FIXTURES / "02-consensus-blocker"
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.temp = Path(self.temporary.name)
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def _converge(self, change_class, trials, output):
+        argv = ["converge", "--packet", str(self.CASE / "packet.json"), "--output-dir", str(output)]
+        if change_class is not None:
+            argv += ["--change-class", change_class]
+        for number in trials:
+            argv += ["--trial", str(self.CASE / f"trial-{number}.json")]
+        return subprocess.run(["python3", str(CLI), *argv], cwd=ROOT, text=True, capture_output=True, check=False)
+
+    def test_resolution_is_explicit_and_fails_closed_to_governance(self) -> None:
+        for value, expected in [("docs-config", ("docs-config", 1)), ("code", ("code", 2)), ("governance", ("governance", 3))]:
+            with self.subTest(value=value):
+                self.assertEqual(cr.resolve_change_class(value), expected)
+        for value in (None, "", "bogus", "CODE", " code ", "1", "docs_config", "docs-config;rm"):
+            with self.subTest(value=value):
+                self.assertEqual(cr.resolve_change_class(value), ("governance", 3))
+
+    def test_cli_prints_resolved_class_and_trial_count(self) -> None:
+        result = self._converge("code", [1, 2], self.temp / "code")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("change_class=code trials=2", result.stderr)
+        absent = self._converge(None, [1, 2, 3], self.temp / "absent")
+        self.assertEqual(absent.returncode, 0, absent.stderr)
+        self.assertIn("change_class=governance trials=3", absent.stderr)
+
+    def test_class_trial_count_mismatch_fails_closed(self) -> None:
+        result = self._converge("docs-config", [1, 2, 3], self.temp / "mismatch")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("requires exactly 1 --trial", result.stderr)
+        self.assertFalse((self.temp / "mismatch").exists())
+
+    def test_replay_round_trip_per_class(self) -> None:
+        for change_class, trials in [("docs-config", [1]), ("code", [1, 2]), ("governance", [1, 2, 3])]:
+            with self.subTest(change_class=change_class):
+                output = self.temp / change_class
+                self.assertEqual(self._converge(change_class, trials, output).returncode, 0)
+                verified = subprocess.run(
+                    ["python3", str(CLI), "verify-replay", "--replay", str(output / "replay.json")],
+                    cwd=ROOT, text=True, capture_output=True, check=False,
+                )
+                self.assertEqual(verified.returncode, 0, verified.stderr)
+                ledger = load(output / "ledger.json")
+                self.assertEqual(len(ledger["trial_digests"]), len(trials))
+                replay = load(output / "replay.json")
+                self.assertEqual(sorted(a["trial_number"] for a in replay["artifacts"] if a["role"] == "trial"), trials)
+
+    def test_class_boundary_crossed_mid_review_is_rejected(self) -> None:
+        """A 2-trial replay relabelled as governance (3 trials) must not verify."""
+        output = self.temp / "code"
+        self.assertEqual(self._converge("code", [1, 2], output).returncode, 0)
+        ledger_path = output / "ledger.json"
+        ledger = load(ledger_path)
+        # Governance requires three trial digests; a two-digest ledger must not pass as governance.
+        self.assertEqual(len(ledger["trial_digests"]), 2)
+        ledger["trial_digests"].append(ledger["trial_digests"][0])
+        with self.assertRaises(cr.ReviewError):
+            cr.validate_ledger(ledger)
+
+    def test_quorum_is_strict_majority_per_class(self) -> None:
+        self.assertEqual([cr.quorum_for(n) for n in (1, 2, 3)], [1, 2, 2])
+
+    def test_single_trial_cannot_create_finding_under_code_class(self) -> None:
+        """Under code (2 trials) one reporter of two is not quorum: no finding is created."""
+        case = self.temp / "singleton"
+        shutil.copytree(FIXTURES / "03-singleton-hallucination-rejected", case)
+        output = self.temp / "singleton-code"
+        result = subprocess.run(
+            ["python3", str(CLI), "converge", "--change-class", "code", "--packet", str(case / "packet.json"),
+             "--trial", str(case / "trial-1.json"), "--trial", str(case / "trial-2.json"), "--output-dir", str(output)],
+            cwd=ROOT, text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        ledger = load(output / "ledger.json")
+        self.assertEqual(ledger["findings"], [])
+        self.assertEqual(ledger["verdict"], "approve")
+
+    def test_single_trial_creates_finding_under_docs_config_class(self) -> None:
+        output = self.temp / "docs-one"
+        self.assertEqual(self._converge("docs-config", [1], output).returncode, 0)
+        ledger = load(output / "ledger.json")
+        self.assertEqual([f["lifecycle"] for f in ledger["findings"]], ["new"])
+        self.assertEqual(ledger["verdict"], "request_changes")
+
+    def test_replay_schema_and_runtime_agree_on_cardinality_matrix(self) -> None:
+        try:
+            import jsonschema
+        except ImportError as exc:
+            self.skipTest(str(exc))
+        output = self.temp / "parity"
+        self.assertEqual(self._converge("governance", [1, 2, 3], output).returncode, 0)
+        base = load(output / "replay.json")
+        template = next(a for a in base["artifacts"] if a["role"] == "trial")
+        packet = [a for a in base["artifacts"] if a["role"] == "packet"]
+        schema = load(ROOT / "schema/review_replay.schema.json")
+        for numbers, expected in [([1], True), ([1, 2], True), ([1, 2, 3], True),
+                                  ([1, 3], False), ([2, 3], False), ([1, 1], False), ([1, 2, 3, 1], False)]:
+            with self.subTest(numbers=numbers):
+                replay = copy.deepcopy(base)
+                trials = []
+                for number in numbers:
+                    artifact = copy.deepcopy(template)
+                    artifact["trial_number"] = number
+                    artifact["path"] = f"inputs/trial-{number}.json"
+                    trials.append(artifact)
+                replay["artifacts"] = packet + trials
+                schema_ok = True
+                try:
+                    jsonschema.validate(replay, schema)
+                except jsonschema.ValidationError:
+                    schema_ok = False
+                runtime_ok = True
+                try:
+                    cr.validate_replay(replay)
+                except cr.ReviewError:
+                    runtime_ok = False
+                self.assertEqual(schema_ok, expected, "schema")
+                self.assertEqual(runtime_ok, expected, "runtime")
+
+    def test_governance_output_is_byte_identical_to_pre_change_golden(self) -> None:
+        """Item 3b proof: governance (3 trials) output for the frozen corpus equals the
+        SHA-256 golden recorded from the engine before class cardinality was introduced.
+        Covers exit code, stdout, and every retained/output file. stderr is excluded because
+        it carries the intended resolved-class diagnostic line."""
+        # Kept beside the test, not under tools/fixtures/: that tree is a tamper-pinned foundation (test_runtime_session).
+        golden = load(ROOT / "tools" / "governance_golden_sha256.json")
+        manifest = load(FIXTURES / "manifest.json")
+        observed: dict[str, str] = {}
+        with tempfile.TemporaryDirectory() as temporary:
+            temp = Path(temporary)
+            for item in manifest["cases"]:
+                case = FIXTURES / item["id"]
+                output = temp / item["id"]
+                result = run_case(case, output)
+                observed[f"{item['id']}.rc"] = hashlib.sha256(f"{result.returncode} ".encode()).hexdigest()
+                observed[f"{item['id']}.stdout"] = hashlib.sha256(result.stdout.encode()).hexdigest()
+                if output.exists():
+                    for file in sorted(output.rglob("*")):
+                        if file.is_file():
+                            observed[f"{item['id']}/{file.relative_to(output).as_posix()}"] = hashlib.sha256(file.read_bytes()).hexdigest()
+        # Output-only golden entries (absent for error cases) are compared on both sides.
+        for key, digest in golden.items():
+            if key.endswith(".rc") or key.endswith(".stdout"):
+                self.assertEqual(observed.get(key), digest, key)
+            else:
+                self.assertEqual(observed.get(key), digest, key)
+        self.assertEqual(set(k for k in observed if k.endswith(".rc") or ("/" in k)), set(k for k in golden if k.endswith(".rc") or ("/" in k)))
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the suite in required-conformance mode; --allow-unsupported-isolation is local development only."""
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__, epilog="All other arguments are passed to unittest.")
