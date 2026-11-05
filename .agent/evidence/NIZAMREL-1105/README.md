@@ -3,7 +3,7 @@
 Exact head assessed: `1a331c1a1fb179e786d2c4fb806a62a441a4ce80` (= `origin/main`, = `v3.1.3` + 34 commits).
 No tag exists at this head. The latest tag is `v3.1.3` (`f19357479220b6bf2b3292d31c06c66279f91efa`).
 
-## 1. Decision: the next cut is v3.2.0 (MINOR), not v3.1.4 (PATCH)
+## 1. Decision: PATCH (v3.1.4) is rejected; MINOR (v3.2.0) vs MAJOR is pending operator decision
 
 Under `methodology/06_release_train.md` §3.4 (round up when in doubt), the change set is
 not a patch:
@@ -11,11 +11,11 @@ not a patch:
 - §3.2 MINOR covers "a schema change that only loosens constraints". `review_ledger`
   and `review_replay` change trial cardinality (1, 2 or 3 trials; previously exactly 3),
   which is a loosening, so it is MINOR at minimum.
-- §3.1 MAJOR is triggered where a consumer could fail on upgrade. This needs a
-  reviewed decision, see §3 below. It is recorded here as **not decided**, not as a
-  silent MINOR.
-- The new `external_qa_context.schema.json` adds required keys (new file, so not a
-  narrowing of an existing schema; MINOR).
+- §3.1 MAJOR is triggered where a consumer could fail on upgrade. Whether the newly
+  required CLI flag in §1 meets that test is a reviewed decision, see §3 below. It is
+  recorded here as **not decided**, not as a silent MINOR.
+- `schema/external_qa_context.schema.json` is a new file. It is not a narrowing of an
+  existing schema, so by itself it does not force MAJOR.
 - `tools/external_evidence.py admit` now requires `--expected-candidate-sha256`
   (introduced by #150; the flag was absent at v3.1.3, so this is a new required input,
   not a narrowed optional one). Existing `admit` callers without it now fail. §3.1 names removal/rename of
@@ -26,15 +26,17 @@ A PATCH is ruled out: the set adds protocol capability (class-dependent trials,
 external QA binding, task-failure reservation, state-boundary refusal) and schema
 surface, and cannot be a typo/wording correction under §3.3.
 
-Therefore the semantically correct cut is to **complete v3.2.0** (already prepared by
-PR #159), not v3.1.4. A `v3.1.4` tag would mislabel MINOR/MAJOR content as a patch,
-which §3.4 forbids. This PR does not bump `NIZAM.json` (it stays at 3.2.0), so the
+Therefore a v3.1.4 PATCH tag is ruled out: it would mislabel MINOR/MAJOR content as a
+patch, which §3.4 forbids. The remaining choice is between completing the prepared
+v3.2.0 MINOR cut (PR #159) and a MAJOR cut, and that choice belongs to the operator. This PR does not bump `NIZAM.json` (it stays at 3.2.0), so the
 close-out gate will not demand self-install evidence in this PR.
 
 ## 2. Classification of the 34 commits `v3.1.3..1a331c1a`
 
-Merge commits (6) are listed with their PR; non-merge commits (28) are classified
-individually. Tier is per §3; `—` means no shipped-contract effect.
+Merge commits (6), by hash from `git rev-list --merges v3.1.3..1a331c1a`:
+c905615d (#162), e87237bd (#160), 33bd76f0 (#159), edd81c61 (#158), 7c16da3f (#157),
+cf27602a (#155). Non-merge commits (28, `git rev-list --no-merges`) are classified
+individually below. Count check: 28 + 6 = 34 (`git rev-list --count v3.1.3..1a331c1a`). Tier is per §3; `—` means no shipped-contract effect.
 
 | Commit | Subject | Tier | Basis |
 |---|---|---|---|

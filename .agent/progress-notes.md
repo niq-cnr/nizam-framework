@@ -28,9 +28,9 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
 Base/head assessed: 1a331c1a (= origin/main = v3.1.3 + 34 commits). No tag created or pushed.
 Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-1105-intent.json.
 
-- Decision: v3.2.0 (MINOR, completing the prepared cut) rather than v3.1.4 (PATCH); the
-  change set adds schema/protocol capability, which §3.4 forbids mislabelling as PATCH.
-  MAJOR vs MINOR for the new required `--expected-candidate-sha256` is an unresolved operator decision.
+- Decision: PATCH (v3.1.4) is rejected. The change set adds schema/protocol capability, which §3.4 forbids
+  mislabelling as PATCH. MINOR (v3.2.0, completing PR #159) vs MAJOR is an unresolved operator decision,
+  driven by the newly required `--expected-candidate-sha256` on `external_evidence.py admit`.
 - All 34 commits classified: .agent/evidence/NIZAMREL-1105/README.md §2 (no silent skips).
 - ce73d2e9 is an ancestor of HEAD and contained in no tag; it unblocks the consumer CodeQL red on the next tag.
 - Release criteria at HEAD: validate.sh 16/16; release_closeout pr/tag PASS; verify_self_governance PASS;

@@ -18,7 +18,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- `schema/review_ledger.schema.json` and `schema/review_replay.schema.json`: trial-count minimums loosened (`minItems` 3 to 1 for ledgers, 4 to 2 for replays); a `prior_ledger` artifact role is now accepted. Loosening only, so MINOR at minimum.
+- `schema/review_ledger.schema.json` and `schema/review_replay.schema.json`: trial-count minimums loosened (`minItems` 3 to 1 for ledgers, 4 to 2 for replays), and the per-trial contains-clauses become conditional on the resolved trial count. Loosening only, so MINOR at minimum.
 - `tools/external_evidence.py admit`: new **required** `--expected-candidate-sha256` (introduced by #150; absent at `v3.1.3`). Existing `admit` callers without it now fail. Whether this is MAJOR for callers is unresolved (see the release-criteria note above).
 - Task failure capacity is reserved before concurrent dispatch (`tools/start_path.py`), so parallel dispatch cannot exceed the attempt budget.
 - External state namespaces are refused before mutation (`docs/architecture/external-state-boundary.md`).
