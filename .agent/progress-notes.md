@@ -57,3 +57,14 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - No tag created or pushed. No NIZAM.json or .nizam/ change.
 - Blockers before any tag: MINOR vs MAJOR (operator); prepublication self-install of the cut head (§6.1,
   needs H-CONSUMER-UPGRADE owner approval and a safe-host install).
+
+## NIZAMREL-EVAL-1105 — independent release-criteria evaluation receipt (2026-11-05)
+
+- Subject: origin/main `5ecc7e39` (PR #164 squash). Read-only; no tag, merge, CI, changelog or code change.
+- Verdict: **NOT-QUALIFIED**. Record: `docs/eval-records/eval-release-criteria-5ecc7e39.md`.
+- Key findings: §6.1 self-install not met for any candidate; §3.4 round-up not applied to 8865b30f (MAJOR-plausible) or 2ce3d571; current-tense "three trials" text remains in templates/schema outside the CHANGELOG line PR #164 fixed; root NIZAM.json already at 3.2.0 with no tag; independent acceptance `.agent/qa/NIZAMREL-1105.json` absent.
+- ce73d2e9: ancestor of 5ecc7e39 and 1a331c1a; not in v3.1.3; contained in 0 tags. Client unblocking not verified.
+- CI on 5ecc7e39: compliance run 42024036239, 5/5 jobs success. release_closeout/release/pages: no run for this commit.
+- Reporting-doctrine labels named in the brief were not found in repo or local skills; labels applied per the brief's own definitions.
+- Local: `release_closeout.py --mode pr` exit 0; `--mode tag --tag v3.1.3` exit 0.
+- No tag created or pushed. No merge. No changes outside this record and this receipt.
