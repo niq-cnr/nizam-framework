@@ -2,10 +2,13 @@
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative circuit-breaker and work-specific diagnostic stopping policy (DD-2) embedded by every repeatable execution loop: isolated attempt workspaces, escalating investigative strategies or bounded decomposition when invariants hold, and canonical-state halt/escalation on hard-stop conditions."
-version: 0.6.3
+version: 0.7.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-11-05"
+    summary: "Governance simplification item 4: the cross-step total failed-execution ceiling per task is raised from six to ten, enforced identically in tools/start_path.py (TASK_FAILURE_CEILING) and tools/external_evidence.py (DEFAULT_TASK_FAILURE_CEILING). The same-signature limit (three) and the explicit finite operator recovery rule are unchanged. Infrastructure-flake exclusion from the semantic budget is NOT implemented; every failed capture counts."
   - version: "0.6.3"
     date: "2026-10-30"
     summary: "Charge unresolved reservations against existing finite task/signature capacity under a common lock while preserving bounded independent parallelism and actual failure history."
@@ -50,7 +53,7 @@ posture or bounded task decomposition when safety, security, and isolation
 invariants hold; hard stops (`BLOCKED`) apply when invariants or authority
 boundaries are violated, when a specification contradiction requires human
 resolution, or when a third attempt fails on the same unresolved defect
-signature, or when six failed captures accumulate across the task.
+signature, or when ten failed captures accumulate across the task.
 
 ## 2. Scope: Every Repeatable Loop, No Exceptions
 
@@ -90,14 +93,17 @@ Skipping a strategy tier (for example, attempting an architectural rewrite on
 attempt 1 without first trying the direct fix) is itself a protocol violation —
 the escalating order exists so that cheap, likely fixes are exhausted before
 expensive, uncertain ones are attempted. Capture enforces a default ceiling of
-six failed executions per task across every step and output directory, plus a
+ten failed executions per task across every step and output directory, plus a
 three-failure ceiling for any one signature. Successes do not erase failures.
+Every failed capture counts against both limits. No failure category, cause label
+or `--cause-class` value exempts a capture from the count; the engine does not
+classify infrastructure flakes and therefore does not exclude them.
 Before authorizing execution, unresolved reservations occupy potential failure
 capacity alongside actual observed failures. Native continuation is checked
 fresh under the common task reservation lock; external allocation derives its
 pending slots from the existing permit ledger. Without explicit finite recovery,
 another reservation requires both observed task failures plus pending slots to
-be below six, and maximum observed same-signature failures plus pending slots
+be below ten, and maximum observed same-signature failures plus pending slots
 to be below three. Pending is never recorded as an observed failure. Independent
 steps may overlap within that allowance; the same step must await its prior
 outcome. Success releases its pending slot. Unknown interruption preserves its
@@ -122,8 +128,17 @@ recorded failed capture path for this task), and `authority_ref` (a safe relativ
 JSON path). The authority file must equal that object plus `role: "operator"`.
 Boolean limits, truthy authorization flags and unrelated task records do not
 qualify. Configured step limits still apply. Recovery preserves all history;
-it cannot permit failures beyond its recorded finite ceiling. Root remains
-responsible for recording real operator authority, never fabricating consent.
+it cannot permit failures beyond its recorded finite ceiling.
+
+**Enforcement boundary (stated, not assumed).** The engine validates the shape of
+the authority file and that it matches the `run_state` record. It does **not**
+verify who wrote the file: it carries no signature, identity or out-of-band
+attestation. An agent that can write a `role: operator` file within the
+repository can therefore forge recovery, and the engine accepts it. Human-only
+operator recovery is an operating rule enforced by review, not by the engine.
+This item does not add a governor or any agent-issuable recovery path, because
+such a path would inherit the same unauthenticated file and would be a false
+control.
 
 Capture reads regular task captures below `.agent/evidence/` and safe planned
 capture paths bound in existing reservation metadata, including supported other
@@ -221,7 +236,7 @@ additional cause-specific allowance.
 The circuit breaker trips — requiring an immediate hard stop and human
 escalation — when any of the following holds:
 
-- Three task captures fail with one signature, or six task captures fail across
+- Three task captures fail with one signature, or ten task captures fail across
   changing steps/signatures, without explicit finite operator recovery;
 - A safety, security, isolation, or authority invariant is violated; or
 - A specification contradiction or external authority requirement cannot be

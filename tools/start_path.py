@@ -174,6 +174,10 @@ ROUTE_GATES: dict[str, list[str]] = {
 }
 
 
+# Cross-step total failed-execution ceiling per task (item 4). Shared with
+# tools/external_evidence.py DEFAULT_TASK_FAILURE_CEILING; change both together.
+TASK_FAILURE_CEILING = 10
+
 def canonical_bytes(value: Any) -> bytes:
     """Serialize a JSON value into canonical UTF-8 bytes."""
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode("utf-8")
@@ -623,12 +627,12 @@ def classify_task(
         "required_gates": ROUTE_GATES[route],
         "stopping_conditions": {
             "initial_strategy_ladder_attempts": 3,
-            "hard_attempt_cap": 6,
+            "hard_attempt_cap": TASK_FAILURE_CEILING,
             "attempt_counter_role": "finite task-wide failed-execution budget",
             "breaker_ref": "methodology/03_circuit_breaker.md",
             "comparator_subordinate": True,
             "continuation_policy": (
-                "At most six failed executions per task across steps/output directories and at most three "
+                f"At most {TASK_FAILURE_CEILING} failed executions per task across steps/output directories and at most three "
                 "with one defect signature; only explicit task-scoped finite operator recovery can reopen a budget. "
                 "Narratives, amendments, decomposition labels and successful unrelated checks do not reset failures."
             ),
@@ -1683,7 +1687,7 @@ def _evaluate_attempt_continuation(
     if type(limit) is not int or limit < 1:
         raise StartPathError("stopping policy halt: step limit must be finite positive integer", 2)
     recovery = task_entry.get("operator_recovery")
-    ceiling = 6
+    ceiling = TASK_FAILURE_CEILING
     recovered = False
     if recovery is not None:
         required = {"task_id", "approved", "max_task_attempts", "after_capture", "authority_ref"}
