@@ -22,3 +22,22 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
 ## Step 5 — NIP chunk 3 committed; next: checker
 ## Step 6 — checker written, AT1-AT5 PASS (01-check.txt), negative controls (02-negative-controls.txt), placeholders written
 - SPAWN: 0 (none spawned; the independent gates are the next lane step, not run here)
+
+## NIZAMREL-1105 — release-criteria evidence (2026-11-05)
+
+Base/head assessed: 1a331c1a (= origin/main = v3.1.3 + 34 commits). No tag created or pushed.
+Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-1105-intent.json.
+
+- Decision: v3.2.0 (MINOR, completing the prepared cut) rather than v3.1.4 (PATCH); the
+  change set adds schema/protocol capability, which §3.4 forbids mislabelling as PATCH.
+  MAJOR vs MINOR for the new required `--expected-candidate-sha256` is an unresolved operator decision.
+- All 34 commits classified: .agent/evidence/NIZAMREL-1105/README.md §2 (no silent skips).
+- ce73d2e9 is an ancestor of HEAD and contained in no tag; it unblocks the consumer CodeQL red on the next tag.
+- Release criteria at HEAD: validate.sh 16/16; release_closeout pr/tag PASS; verify_self_governance PASS;
+  CI compliance success on main run 41995598380.
+- BLOCKER: no prepublication self-install evidence for HEAD (§6.1). The v3.1.3 proof binds candidate
+  2162b8e9 and is invalid for this head. Needs H-CONSUMER-UPGRADE owner approval + safe-host install.
+- NIZAM.json left at 3.2.0 (no bump), so the close-out gate does not require self-install evidence in this PR.
+- SPAWN count: 0. No independent evaluator spawned in this lane; required independent acceptance is
+  therefore outstanding and is named as a residual in the PR.
+- CHANGELOG: [Unreleased] gained Added/Changed/Fixed entries for #152-#154, #162, #163 with tier notes.

@@ -7,7 +7,29 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+**Release-criteria note (NIZAMREL-1105).** Next cut is recorded in
+`.agent/evidence/NIZAMREL-1105/README.md`. The post-`v3.2.0` set below spans
+`1a331c1a`; its tier is not yet decided between MINOR and MAJOR (`methodology/06_release_train.md` Section 3.4). No tag exists at this head.
+
+### Added
+
+- Class-dependent authenticated trial code review (`standard/convergent_code_review.md` 1.5.0): trial cardinality is now 1, 2 or 3 by explicit class (`docs-config` = 1, `code` = 2, `governance` = 3). Absent or unknown class resolves to `governance`. Quorum is a strict majority. Governance output stays byte-identical, pinned by a golden test.
+- Optional external QA binding (`schema/external_qa_context.schema.json`, new): observations are bound to native QA authority through the existing permit and admission ledger; generic admission grants no independent review or automatic completion.
+
 ### Changed
+
+- `schema/review_ledger.schema.json` and `schema/review_replay.schema.json`: trial-count minimums loosened (`minItems` 3 to 1 for ledgers, 4 to 2 for replays); a `prior_ledger` artifact role is now accepted. Loosening only, so MINOR at minimum.
+- `tools/external_evidence.py admit`: new **required** `--expected-candidate-sha256` (introduced by #150; absent at `v3.1.3`). Existing `admit` callers without it now fail. Whether this is MAJOR for callers is unresolved (see the release-criteria note above).
+- Task failure capacity is reserved before concurrent dispatch (`tools/start_path.py`), so parallel dispatch cannot exceed the attempt budget.
+- External state namespaces are refused before mutation (`docs/architecture/external-state-boundary.md`).
+- Verified receipt state publication is serialized durably (resume and recovery path).
+- `standard/definition_of_done.md` (v0.5.0 line) and `standard/ci_gates.md` (v0.3.0 line): compressed to the operator-approved simplification list (#162). Merge-authority and tiered-gate rules are restated.
+
+### Fixed
+
+- `tools/validate.sh --payload` judges the Git index in the source tree, not the installation, and falls back to the worktree when the payload is not indexed. Regression test added (`tools/test_payload_index_gate.py`).
+
+### Changed (carried)
 
 - `standard/ci_gates.md` (v0.3.0): the mandatory 10-gate MERGE_READY formula is now a tiered bar -- a core set (test suite, supply-chain scanning, review verdict on the exact head) plus capability-gated gates required only where a consumer declares the capability via its `NIZAM.json` `declared_capabilities` key; a gate implemented in zero repositories is documented as a corrected rule defect.
 - `standard/provenance_policy.md` (v0.4.0) with `standard/GIP.md` (v0.8.0) and `ecosystem/00_ecosystem_bootstrap.md` (v0.8.2): consumer exact tag+SHA pinning is replaced by a declared version range plus a committed `.nizam/provenance.lock.json` (CI asserts lock-to-payload consistency via new `tools/check_provenance_lock.py`); exact-SHA evidence for release and acceptance claims is unchanged.
