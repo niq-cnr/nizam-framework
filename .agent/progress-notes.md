@@ -22,3 +22,38 @@ Base: 1dfa47f2f006d92e661aa2ec52b4dd0e1dd0bcdd  Branch: nip/0005-executable-clai
 ## Step 5 — NIP chunk 3 committed; next: checker
 ## Step 6 — checker written, AT1-AT5 PASS (01-check.txt), negative controls (02-negative-controls.txt), placeholders written
 - SPAWN: 0 (none spawned; the independent gates are the next lane step, not run here)
+
+## NIZAMREL-1105 — release-criteria evidence (2026-11-05)
+
+Base/head assessed: 1a331c1a (= origin/main = v3.1.3 + 34 commits). No tag created or pushed.
+Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-1105-intent.json.
+
+- Decision: PATCH (v3.1.4) is rejected. The change set adds schema/protocol capability, which §3.4 forbids
+  mislabelling as PATCH. MINOR (v3.2.0, completing PR #159) vs MAJOR is an unresolved operator decision,
+  driven by the newly required `--expected-candidate-sha256` on `external_evidence.py admit`.
+- All 34 commits classified: .agent/evidence/NIZAMREL-1105/README.md §2 (no silent skips).
+- ce73d2e9 is an ancestor of HEAD and contained in no tag; it unblocks the consumer CodeQL red on the next tag.
+- Release criteria at HEAD: validate.sh 16/16; release_closeout pr/tag PASS; verify_self_governance PASS;
+  CI compliance success on main run 41995598380.
+- BLOCKER: no prepublication self-install evidence for HEAD (§6.1). The v3.1.3 proof binds candidate
+  2162b8e9 and is invalid for this head. Needs H-CONSUMER-UPGRADE owner approval + safe-host install.
+- NIZAM.json left at 3.2.0 (no bump), so the close-out gate does not require self-install evidence in this PR.
+- SPAWN count: 0. No independent evaluator spawned in this lane; required independent acceptance is
+  therefore outstanding and is named as a residual in the PR.
+- CHANGELOG: [Unreleased] gained Added/Changed/Fixed entries for #152-#154, #162, #163 with tier notes.
+
+## NIZAMREL-1105 — PR and receipt (2026-11-05)
+
+- PR: https://github.com/niq-cnr/nizam-framework/pull/164 (base main, head b50ae034).
+- Exact-head CI on b50ae034: closeout, convergent_review, e2e_bootstrap, fixtures_self_test,
+  self_governance, validate — all PASS.
+- Independent evaluator (fresh context, fleet-evaluator/lane-evaluator), 2 rounds. Round 1 failed (62):
+  false prior_ledger claim, MINOR stated as settled, unverified counts. Fixed in aae8189b. Round 2 failed (40):
+  the evaluator had NO shell (read/find/grep only), so re-execution checks were not run; its one real finding
+  (stale v1.4.0 trial-count line) was fixed in b50ae034. Those checks were then run by the lane directly
+  and recorded in .agent/evidence/NIZAMREL-1105/. Evaluator-side re-execution is NOT independent evidence.
+- OPEN: no independent acceptance verdict with shell exists, so .agent/qa/NIZAMREL-1105.json is absent and
+  `start_path.py done small-change` is NOT satisfied. Do not record this lane as accepted.
+- No tag created or pushed. No NIZAM.json or .nizam/ change.
+- Blockers before any tag: MINOR vs MAJOR (operator); prepublication self-install of the cut head (§6.1,
+  needs H-CONSUMER-UPGRADE owner approval and a safe-host install).
