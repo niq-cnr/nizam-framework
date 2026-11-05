@@ -1,0 +1,8 @@
+FINAL CHECK RESULTS (fixed tree, branch fix/convergence-trial-count-docsync-1105)
+Environment: default python3 = hermes venv Python 3.14.9 (no PyYAML). /usr/bin/python3 has PyYAML 6.0.1 and jsonschema.
+  tools/test_convergent_review.py (strict, /usr/bin/python3): rc=1 -- 64 tests OK, 5 skipped; strict conformance requires user-namespace isolation, unavailable on this host (unshare -Ur: EPERM). Same rc=1 on unmodified baseline.
+  tools/test_convergent_review.py --allow-unsupported-isolation (local only): rc=0 -- 64 tests OK (skipped=5)
+  tools/validate.sh (PATH=/usr/bin:$PATH): rc=0 -- SUMMARY 16 passed, 0 failed
+  tools/fixtures_self_test.sh (PATH=/usr/bin:$PATH): rc=0 -- 176/176, 0 failed
+  .github/scripts/release_closeout.py --mode pr: rc=0
+Baseline (pre-fix, stashed template) under default python3: validate rc=1 (yaml missing), fixtures FAIL set identical to fixed tree (108 FAIL lines both), tests rc=1 (isolation) -- failures pre-exist and are environmental.

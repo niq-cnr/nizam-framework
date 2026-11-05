@@ -1,0 +1,315 @@
+OK   scratch      helper rejects the repository as its temporary root
+OK   scratch      helper removes only its recorded temporary root
+== check-level fixtures (validate.sh --target) ==
+FAIL target      bad_authoritative_source.md -> expected [C2] FAIL, got:
+FAIL target      bad_discovery_order.md -> expected [C10] FAIL, got:
+FAIL target      untagged_fence.md -> expected [C3] FAIL, got:
+FAIL target      unresolved_path.md -> expected [C9] FAIL, got:
+FAIL target      stale_payload.md -> expected [C10] FAIL, got:
+FAIL target      stale_payload_cosentence.md -> expected [C10] FAIL, got:
+FAIL target      stale_payload_longwrap.md -> expected [C10] FAIL, got:
+FAIL target      stale_payload_semicolon.md -> expected [C10] FAIL, got:
+FAIL target      stale_payload_html.html -> expected [C10] FAIL, got:
+FAIL target      version_drift.html -> expected [C10] FAIL, got:
+FAIL target      broken_index.json -> expected [C4] FAIL, got:
+FAIL target      invalid_contract.json -> expected [C11] FAIL, got:
+FAIL target      invalid_qa_verdict.json -> expected [C11] FAIL, got:
+FAIL target      invalid_run_state.json -> expected [C11] FAIL, got:
+FAIL target      ecosystem_baseline_neg_missing_revision.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_baseline_neg_mixed_timestamps.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_baseline_neg_inconsistent_revisions.json -> expected [C12] FAIL, got:
+FAIL target      engineering_finding_neg_closure_evidence_incomplete.json -> expected [C12] FAIL, got:
+FAIL target      engineering_finding_neg_missing_owner.json -> expected [C12] FAIL, got:
+FAIL target      engineering_finding_neg_resolved_without_closure_evidence.json -> expected [C12] FAIL, got:
+FAIL target      preflight_verdict_invalid_approval_incomplete.json -> expected [C12] FAIL, got:
+FAIL target      preflight_verdict_invalid_exceptions.json -> expected [C12] FAIL, got:
+FAIL target      preflight_verdict_invalid_verdict.json -> expected [C12] FAIL, got:
+FAIL target      audit_delta_neg_resolved_without_closure_evidence.json -> expected [C12] FAIL, got:
+FAIL target      audit_delta_neg_missing_transition_class.json -> expected [C12] FAIL, got:
+FAIL target      audit_delta_neg_duplicate_id_across_buckets.json -> expected [C12] FAIL, got:
+FAIL target      audit_delta_neg_bare_evidence_path.json -> expected [C12] FAIL, got:
+FAIL target      engineering_finding_neg_bare_evidence_path.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_membership_neg_semver_trailing_dot.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_membership_neg_semver_empty_build.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_membership_neg_semver_dot_suffix.json -> expected [C12] FAIL, got:
+FAIL target      preflight_verdict_invalid_pass_blocking.json -> expected [C12] FAIL, got:
+FAIL target      preflight_verdict_invalid_pass_with_exceptions_blocking.json -> expected [C12] FAIL, got:
+FAIL target      membership_result_neg_consistent_missing_pin.json -> expected [C12] FAIL, got:
+FAIL target      membership_result_neg_consistent_null_pin.json -> expected [C12] FAIL, got:
+FAIL target      reconciliation_plan_neg_fail_missing_cycles.json -> expected [C12] FAIL, got:
+FAIL target      reconciliation_plan_neg_fail_nonempty_order.json -> expected [C12] FAIL, got:
+FAIL target      exempt_paths.md -> expected [C9] PASS, got:
+FAIL target      ecosystem_baseline_valid.json -> expected [C12] PASS, got:
+FAIL target      engineering_finding_valid.json -> expected [C12] PASS, got:
+FAIL target      engineering_finding_valid_resolved.json -> expected [C12] PASS, got:
+FAIL target      preflight_verdict_pass.json -> expected [C12] PASS, got:
+FAIL target      preflight_verdict_pass_with_exceptions.json -> expected [C12] PASS, got:
+FAIL target      preflight_verdict_fail.json -> expected [C12] PASS, got:
+FAIL target      audit_delta_valid.json -> expected [C12] PASS, got:
+FAIL target      ecosystem_membership_valid.json -> expected [C12] PASS, got:
+FAIL target      ecosystem_membership_valid_semver_prerelease_build.json -> expected [C12] PASS, got:
+FAIL target      ecosystem_membership_neg_missing_list.json -> expected [C12] FAIL, got:
+FAIL target      ecosystem_membership_neg_multilist.json -> expected [C12] FAIL, got:
+FAIL target      membership_result_valid.json -> expected [C12] PASS, got:
+FAIL target      membership_result_neg_missing_verdict.json -> expected [C12] FAIL, got:
+FAIL target      membership_result_neg_inconsistent_pass.json -> expected [C12] FAIL, got:
+FAIL target      reconciliation_plan_valid.json -> expected [C12] PASS, got:
+FAIL target      reconciliation_plan_neg_missing_verdict.json -> expected [C12] FAIL, got:
+FAIL target      reconciliation_plan_neg_cycle.json -> expected [C12] FAIL, got:
+FAIL target      reconciliation_plan_neg_bad_order.json -> expected [C12] FAIL, got:
+FAIL target      release_train_manifest_valid.json -> expected [C12] PASS, got:
+FAIL target      release_train_manifest_neg_ungated_pass.json -> expected [C12] FAIL, got:
+FAIL target      release_train_manifest_neg_orphan.json -> expected [C12] FAIL, got:
+FAIL target      release_train_manifest_neg_repo_mismatch.json -> expected [C12] FAIL, got:
+FAIL target      feature_list_valid.json -> expected [C16] PASS, got:
+FAIL target      feature_list_neg_bad_status.json -> expected [C16] FAIL, got:
+== primitive fixtures (verify_lib) ==
+OK   primitive   vlib_no_stale_payload pass (rc=0)
+OK   primitive   vlib_no_stale_payload fail (rc=1)
+OK   primitive   vlib_section_grep pass (rc=0)
+OK   primitive   vlib_section_grep fail (rc=1)
+OK   primitive   vlib_word_present pass (rc=0)
+OK   primitive   vlib_word_present fail (rc=1)
+OK   primitive   vlib_bare_ref_resolves pass (rc=0)
+OK   primitive   vlib_bare_ref_resolves fail (rc=1)
+FAIL target      runtime_operation_valid_rejected_foreign_stale.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_foreign_executed.json -> expected [C12] FAIL, got:
+FAIL target      runtime_operation_neg_stale_generation_executed.json -> expected [C12] FAIL, got:
+FAIL target      runtime_operation_valid_partial_load_condition.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_failed_load_consistent.json -> expected [C12] FAIL, got:
+FAIL target      runtime_operation_valid_running_stopped_waiting.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_valid_rejected_busy.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_timeout_cancelled.json -> expected [C12] FAIL, got:
+FAIL target      runtime_session_valid_reattach_pending.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_session_result_acceptance.json -> expected [C12] FAIL, got:
+FAIL target      runtime_operation_valid_trial_rejected.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_trial_executed.json -> expected [C12] FAIL, got:
+FAIL target      runtime_operation_valid_new_generation_same_attempt.json -> expected [C12] PASS, got:
+FAIL target      runtime_session_valid_replayable_handoff.json -> expected [C12] PASS, got:
+FAIL target      runtime_session_valid_accept_hermetic.json -> expected [C12] PASS, got:
+FAIL target      runtime_session_neg_accept_inherited_cache.json -> expected [C12] FAIL, got:
+FAIL target      runtime_session_valid_transfer_lease.json -> expected [C12] PASS, got:
+FAIL target      runtime_operation_neg_stale_lease_executed.json -> expected [C12] FAIL, got:
+OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)
+OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk, including methodology10)
+OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)
+OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)
+OK   transition  incubating -> in_scope (count-0->1): promotion moves the entry; two-list violation detected
+OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)
+OK   primitive   vlib_feature_list_lifecycle full-chain (contract+QA+evidence present, rc 0)
+OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract (rc 0)
+OK   primitive   vlib_feature_list_lifecycle contract-without-QA (rc 1)
+OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)
+OK   primitive   vlib_feature_list_lifecycle contemporary-complete-without-contract (rc 1)
+OK   primitive   vlib_path_resolves pass (all tokens resolve/exempt)
+OK   primitive   vlib_path_resolves fail (token does not resolve)
+FAIL primitive   vlib_version_increased: a scratch assertion did not hold
+OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)
+== C13 skill-index negative fixture (substitution) ==
+FAIL c13-substitute: substituting skill_index_neg_dangling_module.json did not yield [C13] FAIL
+FAIL c13-substitute: substituting skill_index_neg_unindexed_capability.json did not yield [C13] FAIL
+== template-schema conformance (F-054) ==
+OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json
+== preflight CLI behavior probes (F-056) ==
+OK   preflight   gov-root: injected .nizam/ discovered -> refs resolve + expected exception -> pending(2), not FAIL
+OK   preflight   clean framework-root -> PASS(0); untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)
+== ecosystem_audit CLI behavior probes ==
+OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)
+== compare + freshness CLI behavior probes ==
+OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0); resolved-to-open -> reopened
+== ecosystem_reconcile CLI behavior probes ==
+  produced plan: expected C12 PASS, got 1
+FAIL reconcile   a CLI behavior probe did not hold
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation
+PASS lifecycle-no-evaluation
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema
+CONTROL crash source=37edd39f59dda792e83f392845b95e0e46bb48013514facd1e88c24312f122c5 fault=3593124be69d50c7701c36ba84f7e45f5cc06a28062ed022e437237d129ae6fc
+CONTROL crash: real transport and clean restart positive
+CONTROL crash: ambiguous reopen and fresh dispatch refused; evidence preserved
+PASS record-schema
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered
+CONTROL claim-map valid: actual_exit=0; 
+CONTROL claim-map missing: actual_exit=1; FAIL claim-map: unclaimed subdirectory: runtime_session
+CONTROL claim-map duplicate: actual_exit=1; FAIL claim-map: doubly-claimed subdirectory: runtime_session
+CONTROL claim-map missing-suite: actual_exit=1; FAIL claim-map: claim for runtime_session names a suite file that does not exist: tools/absent.py
+PASS fixture-claim-registered
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub
+PASS case1/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub
+PASS case2/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub
+PASS case3/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub
+PASS case9/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub
+PASS case13/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy
+PASS case8/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmation-required
+PASS cancel-confirmation-required
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check handoff-source-bound
+CONTROL claim-map valid: actual_exit=0; 
+CONTROL claim-map missing: actual_exit=1; FAIL claim-map: unclaimed subdirectory: runtime_session
+CONTROL claim-map duplicate: actual_exit=1; FAIL claim-map: doubly-claimed subdirectory: runtime_session
+CONTROL claim-map missing-suite: actual_exit=1; FAIL claim-map: claim for runtime_session names a suite file that does not exist: tools/absent.py
+PASS handoff-source-bound
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub
+PASS case5/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub
+PASS case6/stub
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub
+PASS case10/stub
+ACTUAL_EXIT: 0
+== claim map demonstrations (guarded scratch area) ==
+OK   claim-map   unclaimed subdirectory -> FAIL
+OK   claim-map   doubly-claimed subdirectory -> FAIL
+OK   claim-map   claim naming a missing suite -> FAIL
+OK   claim-map   claim naming an absent subdirectory -> FAIL
+== completeness guard ==
+REAL_GIT_TRACE {"label": "unchanged-entry-blob-oracle", "launches": [{"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366077}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "-leading.txt"], "pid": 1366078}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366079}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366080}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "-leading.txt"], "pid": 1366081}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366082}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366083}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", ":(glob)*.txt"], "pid": 1366084}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366085}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366086}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", ":(glob)*.txt"], "pid": 1366087}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366088}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366089}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/[*?].txt"], "pid": 1366090}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366091}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366092}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/[*?].txt"], "pid": 1366093}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366094}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366095}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/caf\u00e9.txt"], "pid": 1366096}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366097}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366098}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/caf\u00e9.txt"], "pid": 1366099}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366100}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366101}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/colon:name.txt"], "pid": 1366102}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366103}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366104}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/colon:name.txt"], "pid": 1366105}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366106}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366107}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input00.txt"], "pid": 1366108}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366109}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366110}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input00.txt"], "pid": 1366111}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366112}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366113}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input01.txt"], "pid": 1366114}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366115}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366116}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input01.txt"], "pid": 1366117}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366118}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366119}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input02.txt"], "pid": 1366120}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366121}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366122}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input02.txt"], "pid": 1366123}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366124}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366125}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input03.txt"], "pid": 1366126}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366127}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366128}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input03.txt"], "pid": 1366129}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366130}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366132}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input04.txt"], "pid": 1366133}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366134}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366135}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input04.txt"], "pid": 1366136}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366137}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366138}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input05.txt"], "pid": 1366139}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366140}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366141}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input05.txt"], "pid": 1366142}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366143}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366144}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input06.txt"], "pid": 1366145}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366146}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366147}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input06.txt"], "pid": 1366148}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366149}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366150}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input07.txt"], "pid": 1366151}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366152}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366153}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input07.txt"], "pid": 1366154}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366155}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366156}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input08.txt"], "pid": 1366157}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366158}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366159}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input08.txt"], "pid": 1366160}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366161}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366162}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/input09.txt"], "pid": 1366163}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366164}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366165}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/input09.txt"], "pid": 1366166}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366167}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366168}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/new\nline.txt"], "pid": 1366169}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366170}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366171}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/new\nline.txt"], "pid": 1366172}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366173}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366174}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/tab\tname.txt"], "pid": 1366175}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366176}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366177}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/tab\tname.txt"], "pid": 1366178}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366179}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366180}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "src/with space.txt"], "pid": 1366181}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366182}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366183}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "src/with space.txt"], "pid": 1366184}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366185}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366186}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tests/input0.txt"], "pid": 1366187}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366188}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366189}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tests/input0.txt"], "pid": 1366190}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366191}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366192}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tests/input1.txt"], "pid": 1366193}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366194}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366195}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tests/input1.txt"], "pid": 1366196}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366197}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366198}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tests/input2.txt"], "pid": 1366199}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366200}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366201}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tests/input2.txt"], "pid": 1366202}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366203}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366204}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tests/input3.txt"], "pid": 1366205}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366206}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366207}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tests/input3.txt"], "pid": 1366208}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366209}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366210}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tools/input0.sh"], "pid": 1366211}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366212}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366213}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tools/input0.sh"], "pid": 1366214}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366215}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366216}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tools/input1.sh"], "pid": 1366217}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366218}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366219}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tools/input1.sh"], "pid": 1366220}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366221}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366222}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tools/input2.sh"], "pid": 1366223}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366224}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366225}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tools/input2.sh"], "pid": 1366226}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366227}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366228}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "tools/input3.sh"], "pid": 1366229}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366230}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366231}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "tools/input3.sh"], "pid": 1366232}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366233}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366234}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "contracts/owned.json"], "pid": 1366235}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366236}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366237}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "contracts/unowned.json"], "pid": 1366238}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366239}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366240}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "contracts/owned.json"], "pid": 1366241}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366242}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366243}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "state/progress.json"], "pid": 1366244}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366245}]}
+REAL_GIT_TRACE {"label": "full-candidate-including-fixed-identity", "launches": [{"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{commit}"], "pid": 1366246}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "b4bbe095f5b0fb898638938e3b6e0c795203403d^{tree}"], "pid": 1366247}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "rev-parse", "--verify", "86e4223b40ddc1e1572beb78e246d2271fd37565^{commit}"], "pid": 1366248}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "merge-base", "--is-ancestor", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "86e4223b40ddc1e1572beb78e246d2271fd37565"], "pid": 1366249}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "remote", "get-url", "origin"], "pid": 1366250}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-rz", "b4bbe095f5b0fb898638938e3b6e0c795203403d"], "pid": 1366251}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-files", "--stage", "-z"], "pid": 1366252}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-rz", "86e4223b40ddc1e1572beb78e246d2271fd37565"], "pid": 1366253}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-files", "--others", "-z"], "pid": 1366254}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "b4bbe095f5b0fb898638938e3b6e0c795203403d", "--", "-leading.txt", ":(glob)*.txt", "contracts/owned.json", "contracts/unowned.json", "src/[*?].txt", "src/caf\u00e9.txt", "src/colon:name.txt", "src/input00.txt", "src/input01.txt", "src/input02.txt", "src/input03.txt", "src/input04.txt", "src/input05.txt", "src/input06.txt", "src/input07.txt", "src/input08.txt", "src/input09.txt", "src/new\nline.txt", "src/tab\tname.txt", "src/with space.txt", "state/progress.json", "tests/input0.txt", "tests/input1.txt", "tests/input2.txt", "tests/input3.txt", "tools/input0.sh", "tools/input1.sh", "tools/input2.sh", "tools/input3.sh"], "pid": 1366255}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "--literal-pathspecs", "ls-tree", "-z", "86e4223b40ddc1e1572beb78e246d2271fd37565", "--", "-leading.txt", ":(glob)*.txt", "src/[*?].txt", "src/caf\u00e9.txt", "src/colon:name.txt", "src/input00.txt", "src/input01.txt", "src/input02.txt", "src/input03.txt", "src/input04.txt", "src/input05.txt", "src/input06.txt", "src/input07.txt", "src/input08.txt", "src/input09.txt", "src/new\nline.txt", "src/tab\tname.txt", "src/with space.txt", "tests/input0.txt", "tests/input1.txt", "tests/input2.txt", "tests/input3.txt", "tools/input0.sh", "tools/input1.sh", "tools/input2.sh", "tools/input3.sh"], "pid": 1366256}, {"actual_exit": 0, "argv": ["git", "-C", "/home/cnross/.tmp/nizam133-0ch8g1bo/repo", "--no-replace-objects", "cat-file", "--batch"], "pid": 1366257}]}
+REAL_GIT_COUNTS {"counts": {"optimized": {"by_verb": {"cat-file": 1, "ls-files": 2, "ls-tree": 4, "merge-base": 1, "remote": 1, "rev-parse": 3}, "total": 12}, "oracle": {"by_verb": {"cat-file": 56, "ls-tree": 56, "rev-parse": 56}, "total": 168}}, "full_candidate_denominator": true, "identity_classification": "merge-base/remote/tree rev-parse are fixed; commit-resolution rev-parse includes fixed identity and immutable reads; nothing excluded", "readset_pairs": 56}
+PASS real-git-count-reduction
+EXPECTED_REJECTION receipt candidate actual tree
+EXPECTED_REJECTION receipt actual repository
+EXPECTED_REJECTION Git observation failed: fatal: Needed a single revision
+EXPECTED_REJECTION Git observation failed: error: ce85a2ad9c0e0280c4e544c967942f8782634e00^{commit}: expected commit type, but the object dereferences to tree type
+fatal: Needed a single revision
+EXPECTED_REJECTION invalid receipt executed revision
+EXPECTED_REJECTION Git observation failed: fatal: Needed a single revision
+EXPECTED_REJECTION Git observation failed: error: ce85a2ad9c0e0280c4e544c967942f8782634e00^{commit}: expected commit type, but the object dereferences to tree type
+fatal: Needed a single revision
+EXPECTED_REJECTION receipt candidate exact commit
+EXPECTED_REJECTION receipt executed exact commit
+EXPECTED_REJECTION Git observation failed: Command '['git', '-C', '/home/cnross/.tmp/nizam133-_tv4tqmn/repo', '--no-replace-objects', '--literal-pathspecs', 'merge-base', '--is-ancestor', '3d3a835879b2514e9db5d132807310d3a4c312e3', '42f70bce8d5d6345ef4207e35ec7bfeab9fa8a68']' returned non-zero exit status 1.
+EXPECTED_REJECTION receipt protected Git input changed
+EXPECTED_REJECTION receipt protected Git input changed
+EXPECTED_REJECTION receipt protected Git input changed
+EXPECTED_REJECTION receipt contract assessed digest
+EXPECTED_REJECTION receipt contract assessed digest
+EXPECTED_REJECTION unowned record value changed: ('fixed',)
+EXPECTED_REJECTION unowned record value changed: ('fixed',)
+EXPECTED_REJECTION history original prefix changed
+EXPECTED_REJECTION receipt observed environment changed
+PASS semantic-equivalence
+EXPECTED_REJECTION receipt protected current input changed
+EXPECTED_REJECTION new current symlink: src/input00.txt
+EXPECTED_REJECTION missing/nonregular file: src/input00.txt
+EXPECTED_REJECTION receipt unowned contract changed
+EXPECTED_REJECTION new current symlink: contracts/unowned.json
+EXPECTED_REJECTION missing/nonregular file: contracts/unowned.json
+EXPECTED_REJECTION unowned record value changed: ('fixed',)
+EXPECTED_REJECTION new current symlink: state/progress.json
+EXPECTED_REJECTION missing/nonregular file: state/progress.json
+EXPECTED_REJECTION receipt protected current input changed
+EXPECTED_REJECTION receipt record mode changed
+EXPECTED_REJECTION receipt record mode changed
+EXPECTED_REJECTION new current symlink: src
+EXPECTED_REJECTION receipt observed environment changed
+EXPECTED_REJECTION receipt observed environment changed
+EXPECTED_REJECTION missing/nonblob Git input: 0cfe9b68a231ae1397fc907a39d866466416e1a9
+EXPECTED_REJECTION Git observation failed: fatal: Needed a single revision
+EXPECTED_REJECTION Git observation failed: fatal: Needed a single revision
+PASS fresh-mutations
+EXPECTED_REJECTION missing entry Git input: src
+EXPECTED_REJECTION missing entry Git input: src/absent
+EXPECTED_REJECTION missing entry Git input: src/*
+EXPECTED_REJECTION missing entry Git input: :(glob)src/*
+EXPECTED_REJECTION unsafe or aliased relative path: ../outside
+EXPECTED_REJECTION unsafe or aliased relative path: /absolute
+EXPECTED_REJECTION unsafe or aliased relative path: src/../input00.txt
+EXPECTED_REJECTION unsafe or aliased relative path: src//input00.txt
+EXPECTED_REJECTION unsafe or aliased relative path: .git/config
+EXPECTED_REJECTION receipt protected Git input changed
+EXPECTED_REJECTION inherited symlink added/removed/retargeted or mode changed
+EXPECTED_REJECTION unsafe anchored/index file mode or stage: src/input00.txt
+EXPECTED_REJECTION missing entry Git input: src/input00.txt
+EXPECTED_REJECTION receipt protected Git input changed
+PASS literal-paths-and-modes
+OK   receipt-candidate-batching four focused checks
+expected exit 0 and '"repository": "https://github.com/niq-cnr/nizam-framework.git"'
+got exit 1 for ['/home/cnross/.hermes/installs/f6084792924edd94/environments/6b329795f1914b8b9f60ac377bc824b8/venv/bin/python3', '/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py', 'status', '--format', 'json', '--root', '/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105']
+stdout=
+stderr=Traceback (most recent call last):
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py", line 4174, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py", line 299, in main
+    return _main_extended(raw_argv)
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py", line 519, in _main_extended
+    view = generate_status_view(args.root.resolve())
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py", line 3335, in generate_status_view
+    fl_paths, yaml_paths, manifest_present, phase_summary, contradictions = _discover_cross_surface_status(root)
+                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/.nizam/tools/start_path.py", line 3140, in _discover_cross_surface_status
+    import yaml
+ModuleNotFoundError: No module named 'yaml'
+
+FAIL start-path  task routing, preflight, capture, amendment, status, and resume checks
+validate.sh --payload summary mismatch:
+FATAL: required python3 module 'yaml' is not importable by python3. tools/validate.sh does not vendor or install its own dependencies -- install 'yaml' (e.g. 'pip install yaml' or 'pip install PyYAML' for the 'yaml' module) before running tools/validate.sh.
+
+FAIL public-entry public entry and start-path discoverability checks
+..FF..F.
+======================================================================
+FAIL: test_current_manifest_and_subset (__main__.GovernanceSkillTests.test_current_manifest_and_subset)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 39, in test_current_manifest_and_subset
+    self.check(self.skill, True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 35, in check
+    self.assertEqual(run.returncode, 0 if valid else 1, run.stdout + run.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : [C13] FAIL skill-index
+  failed to parse frontmatter of entry_point tools/SKILL.md: No module named 'yaml'
+
+
+======================================================================
+FAIL: test_extension_policy (__main__.GovernanceSkillTests.test_extension_policy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 102, in test_extension_policy
+    self.check(self.skill, True)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 35, in check
+    self.assertEqual(run.returncode, 0 if valid else 1, run.stdout + run.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : [C13] FAIL skill-index
+  failed to parse frontmatter of entry_point tools/SKILL.md: No module named 'yaml'
+
+
+======================================================================
+FAIL: test_payload_carveout_and_entrypoint (__main__.GovernanceSkillTests.test_payload_carveout_and_entrypoint)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 94, in test_payload_carveout_and_entrypoint
+    self.check(self.skill, True, 'payload')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/code/workspace/worktrees/nizamfw-trialfix-1105/tools/test_governance_skill.py", line 35, in check
+    self.assertEqual(run.returncode, 0 if valid else 1, run.stdout + run.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : [C13] FAIL skill-index
+  failed to parse frontmatter of entry_point tools/SKILL.md: No module named 'yaml'
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.641s
+
+FAILED (failures=3)
+FAIL governance-manifest mutation controls
+---
+SELF-TEST FAILED: 176/176 fixtures accounted for (see FAIL lines above)

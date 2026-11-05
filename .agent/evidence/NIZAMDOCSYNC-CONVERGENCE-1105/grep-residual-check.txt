@@ -1,0 +1,24 @@
+# Stale trial-count text correction -- verification 2026-11-05T21:20:46Z
+HEAD base: a2a861e52300a9cb30508323aff74a8b720b01cc
+
+## Grep (standard/ templates/ schema/ docs/ ecosystem/ tools/, excluding docs/eval-records)
+standard/convergent_code_review.md:87:An absent, empty, unknown or malformed class resolves to `governance` (three trials). Matching is exact and case-sensitive. The resolved class and trial count are printed to stderr on every `converge` run. A `converge` invocation whose `--trial` count differs from the resolved class's count is refused. A verifier that finds a replay or ledger whose trial count is not one of 1, 2 or 3, or whose trial numbers are not exactly 1 through N, refuses it.
+tools/skill.json:59:      "description": "Prior-ledger-first code review with exactly three observation-only trials, 2-of-3 discovery and resolution consensus, fail-closed lifecycle carrying, human-authorized suppression, deterministic outputs, and content-addressed replay.",
+tools/validate.sh:333:      exactly three artifact families against the shipped, already-
+tools/validate.sh:1378:# exactly three artifact families relative to CWD, each existence-guarded
+tools/workflow_assurance.py:2520:        rows=evidence['trial_provenance'];require(type(rows) is list and len(rows)==3 and [r.get('number') for r in rows]==[1,2,3],'three trial provenance length/order')
+tools/README.md:346:| [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
+tools/README.md:475:`tools/fixtures/convergent_review/manifest.json`; every case retains three raw trials.
+tools/convergent_review.py:1331:        raise ReviewError("converge requires one, two or three trials matching a change class")
+tools/test_convergent_review.py:1534:        # Governance requires three trial digests; a two-digest ledger must not pass as governance.
+tools/SKILL.md:297:three independent trials are required through an enforceable sandbox adapter (workspace
+
+## Residual hits in tools/ (non-normative or runtime, not trial-count claims):
+tools/README.md:346:| [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocat
+tools/skill.json:59:      "description": "Prior-ledger-first code review with exactly three observation-only trials, 2-of-3 discovery and resolution consensus, fail-closed lifecycle carrying, human-au
+tools/validate.sh:333:      exactly three artifact families against the shipped, already-
+tools/validate.sh:1378:# exactly three artifact families relative to CWD, each existence-guarded
+
+## Out-of-scope gaps noted:
+docs/planning/backlog_dag.json NIP3-110 acceptance greps old heading '## 5. Three Independent Trials' (heading now '## 5. Class-Dependent Independent Trials'); historical complete packet, not edited.
+tools/skill.json:59 and tools/SKILL.md:297 and tools/README.md:346 retain 'exactly three' wording (follow-up; tools/ prose, not in the four-file scope).

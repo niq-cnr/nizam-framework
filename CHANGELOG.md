@@ -27,6 +27,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Stale current-tense "exactly three trials" text replaced with the class-dependent rule (`standard/convergent_code_review.md` Section 5: docs-config = 1, code = 2, governance = 3) in `templates/convergent-review-prompt.md`, `templates/README.md`, `schema/review_trial.schema.json` (description only; `trial_number` maximum 3 unchanged), and `schema/README.md`. Also corrected the same stale wording in `standard/README.md` and `schema/README.md`'s `review_replay` row. Text-only; no validation semantics changed. Found by `docs/eval-records/eval-release-criteria-5ecc7e39.md` finding 3.
 - `tools/evidence_archive.py restore`: restored files are written through a `0600` temp file and receive their recorded mode (`0755` for `100755`, else `0644`) before the atomic rename, replacing the default-mode write followed by `chmod`. The CodeQL intent annotation is removed; the residual `py/overly-permissive-file` alert must be confirmed by re-analysis (`.nizam/` is pinned at v3.1.3 and is not edited here).
 - `tools/validate.sh --payload` judges the Git index in the source tree, not the installation, and falls back to the worktree when the payload is not indexed. Regression test added (`tools/test_payload_index_gate.py`).
 
