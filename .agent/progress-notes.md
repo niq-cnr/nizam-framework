@@ -41,3 +41,19 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - SPAWN count: 0. No independent evaluator spawned in this lane; required independent acceptance is
   therefore outstanding and is named as a residual in the PR.
 - CHANGELOG: [Unreleased] gained Added/Changed/Fixed entries for #152-#154, #162, #163 with tier notes.
+
+## NIZAMREL-1105 — PR and receipt (2026-11-05)
+
+- PR: https://github.com/niq-cnr/nizam-framework/pull/164 (base main, head b50ae034).
+- Exact-head CI on b50ae034: closeout, convergent_review, e2e_bootstrap, fixtures_self_test,
+  self_governance, validate — all PASS.
+- Independent evaluator (fresh context, fleet-evaluator/lane-evaluator), 2 rounds. Round 1 failed (62):
+  false prior_ledger claim, MINOR stated as settled, unverified counts. Fixed in aae8189b. Round 2 failed (40):
+  the evaluator had NO shell (read/find/grep only), so re-execution checks were not run; its one real finding
+  (stale v1.4.0 trial-count line) was fixed in b50ae034. Those checks were then run by the lane directly
+  and recorded in .agent/evidence/NIZAMREL-1105/. Evaluator-side re-execution is NOT independent evidence.
+- OPEN: no independent acceptance verdict with shell exists, so .agent/qa/NIZAMREL-1105.json is absent and
+  `start_path.py done small-change` is NOT satisfied. Do not record this lane as accepted.
+- No tag created or pushed. No NIZAM.json or .nizam/ change.
+- Blockers before any tag: MINOR vs MAJOR (operator); prepublication self-install of the cut head (§6.1,
+  needs H-CONSUMER-UPGRADE owner approval and a safe-host install).
