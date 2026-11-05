@@ -116,6 +116,25 @@ def _load_index(root: Path) -> dict[str, Any]:
     return doc
 
 
+def _restored_mode(mode: str) -> int:
+    """Final restore mode recorded by the payload index: owner-executable only for 100755."""
+    return 0o755 if mode == "100755" else 0o644
+
+
+def _write_restored(target: Path, raw: bytes, mode: str) -> None:
+    """Write restored bytes to a 0o600 temp file, set the final mode, then rename into place.
+
+    The temp file is created owner-only (no group/other bits while content is written);
+    the recorded mode is applied to the open handle before the atomic rename.
+    """
+    tmp = target.with_name(target.name + f".tmp.{os.getpid()}")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as handle:
+        handle.write(raw)
+        os.fchmod(handle.fileno(), _restored_mode(mode))
+    os.replace(tmp, target)
+
+
 def _atomic_write(path: Path, raw: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + f".tmp.{os.getpid()}")
@@ -496,12 +515,7 @@ def restore(root: Path, tranche_id: str, destination: Path) -> dict[str, Any]:
                 raise ArchiveError(f"refusing to overwrite non-matching content: {target}")
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
-            tmp = target.with_name(target.name + f".tmp.{os.getpid()}")
-            with tmp.open("xb") as handle:
-                handle.write(raw)
-            # codeql[py/overly-permissive-file]: intentional restore contract. Archived 100755 entries keep the owner-executable bit (0o755) and all other entries are 0o644 as recorded by the payload index; tightening would change the documented restore behavior.
-            os.chmod(tmp, 0o755 if mode == "100755" else 0o644)
-            os.replace(tmp, target)
+            _write_restored(target, raw, mode)
     return {"tranche": tranche_id, "restored": len(tranche["entries"]), "destination": str(destination)}
 
 

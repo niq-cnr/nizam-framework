@@ -96,6 +96,45 @@ def make_repo(parent: Path) -> Path:
     return root
 
 
+def test_restore_write_modes() -> None:
+    """Temp file is owner-only while written; final mode is 0755 only for 100755, else 0644."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("evidence_archive", TOOL)
+    assert spec and spec.loader
+    ea = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ea)
+
+    seen: list[int] = []
+    real_replace = os.replace
+
+    def spy_replace(src: object, dst: object) -> None:
+        seen.append(os.stat(src).st_mode & 0o777)
+        real_replace(src, dst)
+
+    with tempfile.TemporaryDirectory(prefix="nizam-archive-modes-") as raw:
+        base = Path(raw)
+        cases = [("100755", 0o755), ("100644", 0o644)]
+        for mode, expected in cases:
+            target = base / f"out-{mode}" / "payload.bin"
+            target.parent.mkdir(parents=True)
+            seen.clear()
+            os.replace = spy_replace  # type: ignore[assignment]
+            try:
+                ea._write_restored(target, b"payload\n", mode)
+            finally:
+                os.replace = real_replace  # type: ignore[assignment]
+            assert seen == [expected], f"{mode}: temp mode at rename was {seen}"
+            final = os.stat(target).st_mode & 0o777
+            assert final == expected, f"{mode}: final mode {oct(final)} != {oct(expected)}"
+            if mode != "100755":
+                assert final & 0o111 == 0, "non-executable payload gained exec bits"
+                assert final & 0o022 == 0, "non-executable payload is group/world writable"
+            assert target.read_bytes() == b"payload\n"
+            assert not list(target.parent.glob("*.tmp.*")), "temp file left behind"
+    print("PASS restore write modes: temp 0600 at write, final 0755/0644, no stray exec bits")
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="nizam-archive-test-") as raw:
         parent = Path(raw)
@@ -191,6 +230,7 @@ def main() -> int:
         nested_fail = run("check-growth", "--base", base, cwd=root, expect=1)
         assert "nested repository metadata" in nested_fail.stderr
 
+    test_restore_write_modes()
     print("PASS evidence archive generate/verify/resolve/restore/determinism/failure-modes/growth")
     return 0
 
