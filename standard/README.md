@@ -14,7 +14,7 @@ change_log:
     summary: "Update the convergent-review index for authenticated Git tree scope, old-byte diffs, sandboxed trials, no-follow replay, and atomic no-replace publication."
   - version: "0.4.0"
     date: "2026-09-17"
-    summary: "Index the Convergent Automated Code Review standard and its deterministic prior-ledger-first, three-trial, replay-verifiable protocol."
+    summary: "Index the Convergent Automated Code Review standard and its deterministic prior-ledger-first, class-dependent (1, 2 or 3 trial), replay-verifiable protocol."
   - version: "0.3.0"
     date: "2026-08-18"
     summary: "Phase 013, feature 093: add the standard/definition_of_done.md index row -- the canonical, layered Definition of Done."
@@ -41,7 +41,7 @@ consumer repository without modification.
 | [`permission_classes.md`](permission_classes.md) | Deny-by-default role permission classes and Kubernetes RBAC allocations. |
 | [`cross_repo_governance.md`](cross_repo_governance.md) | The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model. |
 | [`definition_of_done.md`](definition_of_done.md) | The canonical Definition of Done -- three enforced layers (tests and CI green, review verdict on the exact head, live evidence for user-visible change) with supporting layers in Appendix A, each cited to its single-source authority. |
-| [`convergent_code_review.md`](convergent_code_review.md) | Runtime-neutral, prior-ledger-first automated review with trusted Git-object packet construction, authenticated old/current bytes and full-tree scope, three sandbox-isolated trials, deterministic lifecycle/verdict, human suppression, no-follow replay, and race-free publication. |
+| [`convergent_code_review.md`](convergent_code_review.md) | Runtime-neutral, prior-ledger-first automated review with trusted Git-object packet construction, authenticated old/current bytes and full-tree scope, class-dependent sandbox-isolated trials (1, 2 or 3 by change class), deterministic lifecycle/verdict, human suppression, no-follow replay, and race-free publication. |
 | [`acceptance_bars.md`](acceptance_bars.md) | Comparator Acceptance Bars — comparator-based acceptance, applying only where a task declares a `quality_bar` (default acceptance is the specification plus tests): the named/fetchable/comparable bar tests, the fresh-context blind critic loop, cost tiering, the pin-and-reverify bar library, measurable-halves families, and the circuit-breaker interface. |
 
 ## Machine Validation

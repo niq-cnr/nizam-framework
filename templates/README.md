@@ -37,7 +37,7 @@ templates carry, and contains no filled-in project content of its own.
 | [`phase_template.yaml`](phase_template.yaml) | Phase definition YAML template; validates against `schema/phase.schema.json` and follows DD-3 Evidence Externalisation. |
 | [`manifest.template.json`](manifest.template.json) | Planning manifest JSON template; validates against `schema/manifest.schema.json`. |
 | [`DoD.md`](DoD.md) | Consumer-repo Definition of Done checklist template: Section-N-cited checklist blocks (Step through Release) projecting `standard/definition_of_done.md`, a non-checklist Ecosystem-Done pointer, and a project-specific extension block. |
-| [`convergent-review-prompt.md`](convergent-review-prompt.md) | Runtime-neutral, closed-output trial prompt for exactly three independent observation-only reviews over an authenticated packet; its placeholders are rendered by `tools/evaluate_convergent_review_prompt.py` inside the mandatory per-trial sandbox. |
+| [`convergent-review-prompt.md`](convergent-review-prompt.md) | Runtime-neutral, closed-output trial prompt for one class-required independent observation-only review (1, 2 or 3 trials by change class) over an authenticated packet; its placeholders are rendered by `tools/evaluate_convergent_review_prompt.py` inside the mandatory per-trial sandbox. |
 
 ## Frontmatter Convention
 
