@@ -1,0 +1,11 @@
+PASS case=consistent-pass expected=pass actual=pass
+PASS case=tag-drift expected=lock-payload-drift actual=lock-payload-drift
+PASS case=sha-mismatch expected=lock-payload-drift actual=lock-payload-drift
+PASS case=out-of-range expected=range-unsatisfied actual=range-unsatisfied
+PASS case=malformed-sha expected=lock-format actual=lock-format
+PASS case=extra-key expected=lock-shape actual=lock-shape
+PASS case=missing-payload expected=payload-missing actual=payload-missing
+PASS case=range-exact-pass expected=pass actual=pass
+PASS case=range-exact-fail expected=range-unsatisfied actual=range-unsatisfied
+PASS case=range-open-pass expected=pass actual=pass
+EXIT:0

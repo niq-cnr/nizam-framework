@@ -66,10 +66,12 @@ phase and feature this change implements if it is tracked in
     change touches none of those, this box does not apply; check it and
     say so in Reviewer Notes.
 
-- [ ] This pull request is not self-merged; the release tag remains operator-only, created only via `H-FRAMEWORK-RELEASE`.
-  - No agent or automation merges its own pull request, and no agent
-    creates or pushes a release tag. Both are human-gated by design, and
-    this box exists so that stays true even under time pressure.
+- [ ] The release tag remains operator-only, created only via `H-FRAMEWORK-RELEASE`; the merge carries a recorded accountable approver and an `Authority-Ref:` trailer, and self-merge is permitted only under delegated merge authority.
+  - No agent creates or pushes a release tag. Merge authority is recorded per
+    `standard/definition_of_done.md`'s merge-authority section: an accountable
+    approver plus an Authority-Ref trailer naming the delegation record. Activation
+    gates and other actors' pull requests remain human-only, and this box exists so
+    that stays true even under time pressure.
 
 ## Testing
 

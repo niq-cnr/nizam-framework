@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.7.2
+version: 0.8.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-11-05"
+    summary: "Operator directive 'governance simplification 2026-11-05 item 6': Section 2 point 1 now pairs the tag fetch with the consumer's declared version range and the committed .nizam/provenance.lock.json per standard/provenance_policy.md Section 2; bootstrap install and --expected-sha behaviour are unchanged. Only the pin-contract sentence changed."
   - version: "0.7.2"
     date: "2026-10-27"
     summary: "NF-R02 (Finding F10): reconcile Section 5.2 (Incremental Adoption Tiers) with Section 1 and Section 2 point 2 so every installation retains the complete, atomic, verified six-module-plus-index .nizam/ payload (standard/, templates/, schema/, tools/, methodology/, ecosystem/, and NIZAM.json), while Tiers 1-3 express proportionate workflow activation in external consumer configuration (reconciled with JR-20/JR-45)."
@@ -56,8 +59,15 @@ Inheritance is triggered when a repository first adopts the framework, and re-tr
 whenever it upgrades to a newer framework release.
 
 1. **Clone a pinned tag, never a floating branch.** The consumer MUST fetch an explicit
-   semantic-version git tag of the framework repository (`refs/tags/<tag>`, e.g. `v1.9.0`),
-   never `main` or any other floating branch reference (`refs/heads/*`). Pinning prevents a
+   semantic-version git tag of the framework repository (`refs/tags/<tag>`, e.g. `v1.9.0`)
+   that lies within its declared version range
+   (`declared_range`, per `standard/provenance_policy.md` Section 2),
+   never `main` or any other floating branch reference (`refs/heads/*`). The consumer
+   declares the range and commits `.nizam/provenance.lock.json` recording the resolved
+   tag and `resolved_sha`; CI asserts lock-to-payload consistency and rejects drift.
+   Exact-tag fetch and exact-SHA evidence at install time are unchanged —
+   `bootstrap.sh` still installs an exact tag and honours `--expected-sha` exactly as
+   documented below. Pinning prevents a
    consumer from silently inheriting mid-development governance changes; `bootstrap.sh`
    rejects non-SemVer tag names, branch-only refs, and same-name branch/tag ambiguity,
    and when `--expected-sha` is supplied at install time, verifies that

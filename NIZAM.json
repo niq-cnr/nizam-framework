@@ -199,7 +199,7 @@
     },
     {
       "id": "nizam-ci-gates",
-      "summary": "The mandatory 10-gate MERGE_READY formula that ensures no unverified code bypasses the contract-first execution loop.",
+      "summary": "The tiered MERGE_READY bar: a mandatory core gate set (test suite, supply-chain scanning, review verdict on the exact head) plus capability-gated gates required only where the consumer declares the capability.",
       "authoritative_source": "standard/ci_gates.md"
     },
     {
@@ -349,7 +349,7 @@
     },
     {
       "id": "nizam-definition-of-done",
-      "summary": "The canonical, layered Definition of Done aggregating the framework's eight done-layers (Step, Handoff, Gate, Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing authority; structural Feature-Done file/status invariants are checked by C16, and Merge/Release-Done by the phase-013 feature-097 release close-out gate.",
+      "summary": "The canonical Definition of Done: three enforced layers (tests/CI green, review verdict on the exact head, live evidence) plus Appendix A's supporting done-layers, each cited to its single-source authority; structural Feature-Done file/status invariants are checked by C16, and Merge/Release-Done by the phase-013 feature-097 release close-out gate.",
       "authoritative_source": "standard/definition_of_done.md"
     },
     {
@@ -388,6 +388,10 @@
       "authoritative_source": "tools/external_qa.py"
     }
   ],
+  "declared_capabilities": {
+    "values": ["plan-pack", "consumer-provider-contract", "agent-eval", "artifact-attestation", "playwright-e2e"],
+    "rule": "A gated capability is required only when declared here; an undeclared capability is not required; an implemented (declared) capability stays required."
+  },
   "schemas": [
     "schema/capability_profile.schema.json",
     "schema/debt.schema.json",

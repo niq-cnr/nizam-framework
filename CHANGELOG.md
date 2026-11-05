@@ -7,6 +7,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- `standard/ci_gates.md` (v0.3.0): the mandatory 10-gate MERGE_READY formula is now a tiered bar -- a core set (test suite, supply-chain scanning, review verdict on the exact head) plus capability-gated gates required only where a consumer declares the capability via its `NIZAM.json` `declared_capabilities` key; a gate implemented in zero repositories is documented as a corrected rule defect.
+- `standard/provenance_policy.md` (v0.4.0) with `standard/GIP.md` (v0.8.0) and `ecosystem/00_ecosystem_bootstrap.md` (v0.8.2): consumer exact tag+SHA pinning is replaced by a declared version range plus a committed `.nizam/provenance.lock.json` (CI asserts lock-to-payload consistency via new `tools/check_provenance_lock.py`); exact-SHA evidence for release and acceptance claims is unchanged.
+- `standard/cross_repo_governance.md` (v0.3.0): the five-artifact cross-repo preflight is replaced by one generated `.nizam/context.json`; the SCOPE.md in-scope check stays required, remaining inputs are advisory for read-only work and required only for mutating work. No generator ships in this framework repository (consumer-aspirational).
+- `standard/definition_of_done.md` (v0.5.0): compressed to three enforced layers (tests/CI green, review verdict on the exact head, live evidence) plus Appendix A's supporting layers; merge authority is now a recorded accountable approver plus an `Authority-Ref:` trailer (self-merge permitted only under delegated merge authority); comparator acceptance applies only where a task declares `quality_bar`. Matching updates to `.github/PULL_REQUEST_TEMPLATE.md` and `templates/DoD.md` (v0.2.0; template body realignment is an open follow-up).
+- `standard/acceptance_bars.md` (v0.4.0): comparator/NL acceptance applies only where the task declares `quality_bar`; the default bar is the specification plus tests.
+- `standard/convergent_code_review.md` (v1.4.0): added Section 2.3 Supersession -- a review run whose PR head has advanced past the packet's `head_sha` must terminate before trial work and must not publish a verdict, ledger, or Markdown output for the superseded head; the trial count stays exactly three.
+- `standard/README.md` (v0.5.1): index descriptions for `definition_of_done.md` and `acceptance_bars.md` aligned with the amended rules.
+- `tools/check_provenance_lock.py` (new, standard library only): verifies a consumer's `.nizam/provenance.lock.json` against `.nizam/provenance.json` and its declared range; `--self-test` covers ten synthetic cases. Not yet wired into `compliance.yml`, because this framework repository carries no consumer lock.
+- `NIZAM.json`: added the `declared_capabilities` key (capability-gating declaration values and rule) and updated the `nizam-ci-gates` and `nizam-definition-of-done` capability summaries.
+
 ### Fixed
 
 - `tools/evidence_archive.py` (and its installed `.nizam/tools/` mirror): the restore path's `os.chmod(tmp, 0o755 if mode == "100755" else 0o644)` after an exclusive-create write is annotated `# codeql[py/overly-permissive-file]` so the consumer CodeQL gate recognizes it as an intentional restore contract. Permissions are unchanged (archived executables stay 0o755, other entries 0o644). `test_evidence_archive.py` now asserts both modes explicitly.
