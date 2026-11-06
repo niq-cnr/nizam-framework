@@ -293,8 +293,10 @@ fingerprints, convergence, lifecycle, counts, verdict, rendering, ledger extract
 and replay verification. Models remain observation-only. Ordinary review discovers new
 findings only on the packet delta; whole-tree discovery requires explicit human
 `full_audit` mode and a Git commit/tree commitment produced by the trusted `build-packet`
-command. Packet validity requires both JSON Schema and relational validation. Exactly
-three independent trials are required through an enforceable sandbox adapter (workspace
+command. Packet validity requires both JSON Schema and relational validation. The number
+of independent trials is class-dependent (`standard/convergent_code_review.md` Section 5):
+1 for `docs-config`, 2 for `code`, 3 for `governance`, with `governance` the default when no
+class is supplied. Each trial runs through an enforceable sandbox adapter (workspace
 or `HOME` changes alone do not qualify), prior active findings fail closed, and
 suppression requires a separate human-authorized record.
 
