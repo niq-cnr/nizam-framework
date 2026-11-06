@@ -424,7 +424,10 @@ parse_args() {
   done
 }
 
-# Confirms candidate path $1 is NOT equal to or inside root path $2.
+# Confirms candidate path $1 is outside root path $2: rejects when the candidates
+# are equal, when the candidate lies inside the target root, and when the target
+# root lies inside the candidate (ancestor reference). Only sibling/disjoint
+# paths pass.
 assert_outside_target() {
   local candidate="$1"
   local target_root="$2"
@@ -435,12 +438,13 @@ import sys
 
 cand = os.path.realpath(sys.argv[1])
 targ = os.path.realpath(sys.argv[2])
-if cand == targ or cand.startswith(targ + os.sep):
+# commonpath (not string prefix) so '/' as an ancestor is also detected.
+if os.path.commonpath([cand, targ]) in (cand, targ):
     sys.exit(1)
 sys.exit(0)
 PYEOF
   then
-    die "${label} '${candidate}' must be outside target directory '${target_root}'."
+    die "${label} '${candidate}' must be outside target directory '${target_root}' (no equal, descendant or ancestor overlap)."
   fi
 }
 
@@ -879,6 +883,20 @@ with open(path, "w", encoding="utf-8") as handle:
     handle.write("\n")
 ' "${STAGE_DIR}/provenance.json" "${framework_version}" "${GOVERNANCE_TAG}" "${resolved_sha}" "${GOVERNANCE_REPO_URL}" "${installed_at}" \
     || die "failed to write provenance.json into the staged payload."
+
+  # Carry an existing consumer lock into the staged payload so an
+  # upgrade/install replacement retains provenance.lock.json byte-for-byte
+  # instead of silently dropping it.
+  if [ -e "${TARGET_DIR}/provenance.lock.json" ] || [ -L "${TARGET_DIR}/provenance.lock.json" ]; then
+    # Fail closed: only a regular, non-symlink lock is retained; anything else
+    # would be silently dropped or dereferenced on replacement.
+    if [ -L "${TARGET_DIR}/provenance.lock.json" ] || [ ! -f "${TARGET_DIR}/provenance.lock.json" ]; then
+      die "existing consumer lock '${TARGET_DIR}/provenance.lock.json' is not a regular file; refusing to replace the target."
+    fi
+    cp -- "${TARGET_DIR}/provenance.lock.json" "${STAGE_DIR}/provenance.lock.json" \
+      || die "failed to retain the existing consumer lock provenance.lock.json in the staged payload."
+    log "retained existing consumer lock provenance.lock.json in the staged payload."
+  fi
 
   # Stage the retained reference before replacing either installed location, so
   # both halves of the recoverable installation are verified first.

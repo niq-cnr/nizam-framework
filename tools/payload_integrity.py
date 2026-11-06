@@ -353,7 +353,11 @@ def verify_payload_integrity(
 
     actual_inventory = _walk_directory_inventory(payload)
     actual_paths = set(actual_inventory.keys())
+    # The consumer lock provenance.lock.json is admitted as a permitted extra
+    # regular file, but only when it is actually present; never demanded.
     wanted_paths = expected_paths | {"provenance.json"}
+    if "provenance.lock.json" in actual_paths:
+        wanted_paths.add("provenance.lock.json")
     if actual_paths != wanted_paths:
         raise GovernanceDrift(
             f"file inventory drift: missing={sorted(wanted_paths - actual_paths)}, extra={sorted(actual_paths - wanted_paths)}"

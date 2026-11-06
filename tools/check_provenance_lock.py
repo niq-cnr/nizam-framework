@@ -3,7 +3,7 @@
 
 Checks (stable failure prefixes):
   lock-shape          lock exists, is a JSON object with exactly the five keys
-  lock-format         framework_version/tag/resolved_sha field formats
+  lock-format         framework_version/tag/resolved_sha/source_url field formats
   range-syntax        declared_range parses as comma-separated semver comparators
   range-unsatisfied   framework_version satisfies every comparator
   lock-payload-drift  provenance.json fields equal the lock's fields
@@ -31,6 +31,9 @@ VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
 TAG_OK_RE = re.compile(r"^v\d+\.\d+\.\d+$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 COMPARATOR_RE = re.compile(r"^(==|>=|<=|>|<)(\d+\.\d+\.\d+)$")
+# Forms bootstrap.sh --repo-url can record verbatim: scheme URLs (https/http/ssh/file/git),
+# scp-like git@host:path, or an absolute local path. Whitespace/control chars rejected separately.
+SOURCE_URL_RE = re.compile(r"^((https?|ssh|git|file)://[^\s\x00-\x1f\x7f]+|[\w.-]+@[\w.-]+:[^\s\x00-\x1f\x7f]+|/[^\s\x00-\x1f\x7f]*)$")
 
 FAIL_PREFIX = "[PCL] FAIL "
 PASS_PREFIX = "[PCL] PASS "
@@ -90,12 +93,16 @@ def check_lock(lock_raw: str, payload_raw: str | None) -> list[str]:
         resolved_sha = lock.get("resolved_sha")
         declared_range = lock.get("declared_range")
         tag = lock.get("tag")
+        source_url = lock.get("source_url")
         if not isinstance(framework_version, str) or not VERSION_RE.match(framework_version):
             fails.append(_fail("lock-format", f"framework_version {framework_version!r} is not MAJOR.MINOR.PATCH"))
         if not isinstance(tag, str) or not isinstance(framework_version, str) or tag != "v" + framework_version:
             fails.append(_fail("lock-format", f"tag {tag!r} is not 'v' + framework_version"))
         if not isinstance(resolved_sha, str) or not SHA_RE.match(resolved_sha):
             fails.append(_fail("lock-format", f"resolved_sha {resolved_sha!r} is not 40 lowercase hex"))
+        if (not isinstance(source_url, str) or not source_url
+                or re.search(r"\s", source_url) or not SOURCE_URL_RE.match(source_url)):
+            fails.append(_fail("lock-format", f"source_url {source_url!r} is not a non-empty recordable repository URL (scheme URL, scp-like, or absolute path) without whitespace or control characters"))
 
     comparators = _parse_comparators(declared_range)
     if comparators is None:
@@ -120,6 +127,7 @@ def check_lock(lock_raw: str, payload_raw: str | None) -> list[str]:
                 ("framework_version", "framework_version"),
                 ("tag", "tag"),
                 ("resolved_sha", "resolved_sha"),
+                ("source_url", "source_url"),
             ):
                 pv = payload.get(payload_key)
                 lv = lock.get(lock_key)
@@ -178,6 +186,13 @@ def run_self_test() -> int:
         d.update(over)
         return json.dumps(d, indent=2)
 
+    def expect_prefix(name: str, prefix: str, fails: list[str]):
+        nonlocal ok
+        present = bool(fails) and any(f.startswith(FAIL_PREFIX + prefix) for f in fails)
+        print(f"{'PASS' if present else 'FAIL'} case={name} requires={prefix}")
+        if not present:
+            ok = False
+
     payload_json = json.dumps(payload, indent=2)
     expect("consistent-pass", None, check_lock(lock_json(), payload_json))
     shifted_payload = json.dumps({**payload, "tag": "v9.9.9"}, indent=2)
@@ -189,6 +204,16 @@ def run_self_test() -> int:
     expect("out-of-range", "range-unsatisfied", check_lock(range_lock, range_payload))
     sha_payload = json.dumps({**payload, "resolved_sha": "XYZ"}, indent=2)
     expect("malformed-sha", "lock-format", check_lock(lock_json(resolved_sha="XYZ"), sha_payload))
+    expect("mismatched-source-url", "lock-payload-drift",
+           check_lock(lock_json(source_url="https://evil.example/fork.git"), payload_json))
+    expect_prefix("empty-source-url", "lock-format", check_lock(lock_json(source_url=""), payload_json))
+    expect_prefix("null-source-url", "lock-format", check_lock(lock_json(source_url=None), payload_json))
+    expect_prefix("missing-source-url", "lock-shape",
+                  check_lock(json.dumps({k: v for k, v in base_lock.items() if k != "source_url"}, indent=2), payload_json))
+    expect_prefix("bad-scheme-source-url", "lock-format", check_lock(lock_json(source_url="ftp://example.com/f.git"), payload_json))
+    expect_prefix("whitespace-source-url", "lock-format", check_lock(lock_json(source_url="https://example.com/a b.git"), payload_json))
+    file_payload = json.dumps({**payload, "source_url": "file:///tmp/fw/src"}, indent=2)
+    expect("file-scheme-source-url-pass", None, check_lock(lock_json(source_url="file:///tmp/fw/src"), file_payload))
     expect("extra-key", "lock-shape", check_lock(lock_json(extra="k"), payload_json))
     with tempfile.TemporaryDirectory() as td:
         repo = Path(td)
