@@ -54,7 +54,7 @@ STAGE_VERDICT = {
     3: "PASS_WITH_EXCEPTIONS",
     # 64 from the stage tool is a usage refusal. For a member directory that already holds a
     # completed baseline (SQA-integrity-007) the refusal is deliberate: name it, do not hide it.
-    64: "REFUSED (member output dir already holds a baseline; use a new --output-dir)",
+    64: "REFUSED (usage error from the stage tool; if the member output dir already holds a baseline.json, use a new --output-dir)",
 }
 
 SCOPE_LISTS = ("in_scope", "incubating", "reference_archive", "out_of_scope")

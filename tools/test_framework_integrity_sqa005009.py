@@ -143,6 +143,20 @@ class CiReachability(unittest.TestCase):
         self.assertIn("tools/test_suite_coverage.py", wf)
 
 
+class MembershipRefusalIsNamedNotAccepted(unittest.TestCase):
+    """SQA-integrity-007: a refused member is named as refused and is never acceptable."""
+
+    def test_refused_member_is_not_an_acceptable_exit(self) -> None:
+        import ecosystem_membership_run as mr
+        self.assertNotIn(64, mr.ACCEPTABLE_STAGE_EXITS)
+        self.assertEqual(mr.ACCEPTABLE_STAGE_EXITS, {0, 2, 3})
+
+    def test_refusal_exit_has_a_named_verdict(self) -> None:
+        import ecosystem_membership_run as mr
+        self.assertTrue(mr.STAGE_VERDICT[64].startswith("REFUSED"))
+        self.assertIn("baseline.json", mr.STAGE_VERDICT[64])
+
+
 class C8CommittedBump(unittest.TestCase):
     """SQA-integrity-006: C8 with an explicit comparison base sees a committed bump."""
 
