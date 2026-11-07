@@ -101,3 +101,19 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - Untracked .agent/harness/ (runtime leases/node state written during this session) is not part of this
   change and is not committed.
 - No release tag, no version bump, no NXOS/Mandate work, no H-CONSUMER-UPGRADE self-install.
+
+### SQA-005..009,011 — PR and exact-head CI (2026-11-07, continued)
+
+- PR: https://github.com/niq-cnr/nizam-framework/pull/171 (base main, head 0b0e23dd). Not merged. No tag.
+- Kanban claim: dispatch record comment 2989; correction comment 2990 (relaunched as lane-nzfw-sqa005009-1107b).
+- Exact-head CI at 0b0e23dd (run 42369711547): fixtures_self_test success, e2e_bootstrap success,
+  convergent_review success, self_governance success. validate FAILURE.
+- validate failure is INHERITED: identical [C11] FAIL dogfood and [C16] FAIL feature-list-lifecycle
+  (SUMMARY 14 passed, 2 failed) on origin/main @ 0a0a4d24 (run 42351831899). Intended refusals on
+  historical QA 035/036/123; not edited per brief. This PR cannot make validate green without violating it.
+- Fixed in this round: fixtures_self_test failed on a 1.39 MB derivative diff over the 1 MiB new-blob
+  growth limit (tools/evidence_archive.py). Removed; regenerable from the commits (candidate-final.txt).
+- Local replay: test_external_state_boundary errors (AF_UNIX path too long) occur only with the long
+  local scratch TMPDIR; it passes with a short TMPDIR and reports OK on the GitHub runner. Environmental.
+- Operator decision required before merge: whether the historical-QA refusals (C11/C16) red on main
+  should block this series. Merge, tag and release were NOT performed.
