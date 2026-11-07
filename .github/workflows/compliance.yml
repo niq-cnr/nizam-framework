@@ -36,6 +36,19 @@ jobs:
 
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_compliance_reference.py --check
       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_compliance_reference.py
+      - name: Resolve the C8 comparison base
+        # SQA-integrity-006: C8 compares each document with NIZAM_C8_BASE, not HEAD. On a PR the
+        # base is the target branch tip; on a push it is the prior tip. When no prior revision
+        # exists (a root commit or a first push) no base is exported, so C8 keeps its local default.
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          if [ -z "${BASE}" ]; then BASE="${{ github.event.before }}"; fi
+          if [ -z "${BASE}" ] || [ "${BASE}" = "0000000000000000000000000000000000000000" ]; then
+            BASE="$(git rev-parse --verify --quiet HEAD~1 || true)"
+          fi
+          if [ -n "${BASE}" ] && git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            echo "NIZAM_C8_BASE=${BASE}" >> "$GITHUB_ENV"
+          fi
       - run: bash tools/validate.sh
 
   e2e_bootstrap:
@@ -108,6 +121,15 @@ jobs:
         run: |
           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py
           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_resume_durability.py
+      - name: Dedicated regression suites (tools/ci_suites.txt) and coverage gate
+        # SQA-integrity-005: every top-level tools/test_*.py is either run here or excluded with
+        # a reason (tools/ci_suite_exclusions.txt). The gate fails on an unaccounted suite.
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_suite_coverage.py
+          while IFS= read -r suite; do
+            case "${suite}" in ''|\#*) continue ;; esac
+            env -i PATH="${PATH}" HOME="${HOME}" PYTHONDONTWRITEBYTECODE=1 python3 "${suite}" || { echo "suite failed: ${suite}"; exit 1; }
+          done < tools/ci_suites.txt
       - name: Historical archive integrity and preservation deduplication
         run: |
           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_archive.py

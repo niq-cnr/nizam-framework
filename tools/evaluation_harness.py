@@ -79,21 +79,56 @@ def preregistration_template() -> dict[str, Any]:
     }
 
 
+# Every predeclared design/threshold field the template carries. SQA-integrity-009:
+# a field the template names must be supplied before held-out or live evaluation.
+# The only exceptions are the two non-design fields below.
 REQUIRED_PREREGISTRATION = (
     "corpus_version",
     "assignment",
+    "task_clustering",
+    "carryover_controls",
+    "blinding",
+    "followup_rework_window",
     "sample_size_rationale",
     "quality_criteria",
+    "noninferiority_margin",
+    "critical_miss_tolerance",
     "coverage_abstention_criteria",
+    "latency_cost_limits",
+    "uncertainty_method",
     "stopping_rule",
 )
 
 
+def _is_supplied(value: Any) -> bool:
+    if isinstance(value, bool):
+        return False
+    if isinstance(value, (int, float)):
+        return True
+    return isinstance(value, str) and bool(value.strip())
+
+
 def validate_preregistration(doc: dict[str, Any]) -> dict[str, Any]:
-    """Require every predeclared field before a live cohort may run."""
+    """Require every predeclared field, or an explicit not_applicable declaration.
+
+    A numeric threshold may be 0, so only None/absent/blank text counts as unset.
+    The declaration ``{"not_applicable": "<reason>"}`` is the one permitted way to
+    skip a field; a bare blank or null never is.
+    """
     if not isinstance(doc, dict):
         raise HarnessError("preregistration must be an object")
-    missing = [field for field in REQUIRED_PREREGISTRATION if not (doc.get(field) or "").strip()]
+    declared = doc.get("not_applicable") or {}
+    if not isinstance(declared, dict):
+        raise HarnessError("not_applicable must be an object of field -> reason")
+    missing = []
+    for field in REQUIRED_PREREGISTRATION:
+        value = doc.get(field)
+        if _is_supplied(value):
+            continue
+        reason = declared.get(field)
+        if isinstance(reason, str) and reason.strip():
+            continue
+        missing.append(field)
     if missing:
         raise HarnessError("preregistration is missing predeclared fields: " + ", ".join(missing))
     if doc.get("thresholds_set_after_holdout") is not False:

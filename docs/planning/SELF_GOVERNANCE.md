@@ -97,7 +97,33 @@ commissioning:
   installed_at: "2026-10-10T18:12:44Z"
 ---
 
-# Current installation — `v3.0.0` (installed — commissioning not performed)
+# Current installation — `v3.1.3` (installed — commissioning not performed)
+
+The operator requested: “self install the latest nizam-framework.” and “also
+install for agents/subagents.” The unchanged `bootstrap.sh` installed the
+published immutable `v3.1.3` tag at
+`f19357479220b6bf2b3292d31c06c66279f91efa` from the canonical repository
+`https://github.com/niq-cnr/nizam-framework.git`. The annotated tag object is
+`ba66c3e6c44bbb61204fe6193d5af2464c6c7825`. Installation completed at
+`2026-11-03T17:40:46Z`.
+
+The installation contains **341 released files plus genuine provenance**
+(`.nizam/provenance.json`). The commit-bound bootstrap verification passed with
+exact inventory and content comparisons, and the installed preflight reported
+`status: ready` with no failures. The Hermes (`~/.hermes/.nizam`) and Pi
+(`~/.pi/agent/.nizam`) agent estates carry the same pin, with content integrity
+verified. These observations establish installation integrity; **commissioning
+was not performed**. The Pi estate preflight is `degraded` only because its agent
+home is not a git work tree; its payload is byte-exact.
+
+Evidence: `.agent/evidence/release-v3.1.3-self-adoption/README.md`. The
+`v3.0.0` installation below, and all earlier released installation and
+commissioning records, are retained as historical records and are not current.
+
+# Historical installation — `v3.0.0` (superseded by `v3.1.3`; commissioning not performed)
+
+This record is historical. It was the current installation until 2026-11-03 and
+is superseded by the `v3.1.3` installation above. It is retained unchanged.
 
 The operator requested: “self install and ready for he next minor release.”
 The unchanged `bootstrap.sh` installed the published immutable `v3.0.0` tag at

@@ -1,0 +1,24 @@
+# Top-level tools/test_*.py files deliberately NOT run by the CI suite loop (SQA-integrity-005).
+# Format: <file>|<reason>. Every exclusion needs a reason; tools/test_suite_coverage.py refuses
+# an unlisted, unexcluded suite and refuses an exclusion whose file does not exist.
+tools/test_nf_ac02_policy_reconciliation.py|FAILS at 0a0a4d24: test_f11 expects circuit-breaker exit 2 at the 7th blocked attempt, observed 1; a runtime finite-recovery gap, tracked outside SQA-005..009,011
+tools/test_nf_owner_dag_and_backlog.py|FAILS at 0a0a4d24: asserts the superseded installed tag v3.0.0 while .nizam/provenance.json pins v3.1.3; a stale-state assertion to be rewritten by its owner, not wired red into CI
+tools/test_corrective_release.py|Not a unittest suite: a release-verification CLI requiring --candidate, --prior and --prior-sha; exercised by the release process, not the test loop
+tools/test_nf_ac04_generic_admission.py|Already run by the workflow_assurance and external-admission steps of compliance.yml (named explicitly there)
+tools/test_nf_ac05_standalone_e2e.py|Already run by compliance.yml fixtures_self_test job (named explicitly there)
+tools/test_public_entry.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
+tools/test_governance_skill.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
+tools/test_start_path.py|Already run by compliance.yml and tools/fixtures_self_test.sh (named explicitly there)
+tools/test_receipt_candidate_batching.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
+tools/test_workflow_assurance.py|Already run by compliance.yml (named explicitly there)
+tools/test_resume_durability.py|Already run by compliance.yml (named explicitly there)
+tools/test_external_qa.py|Already run by compliance.yml (named explicitly there)
+tools/test_external_state_boundary.py|Already run by compliance.yml (named explicitly there)
+tools/test_task_budget_reservations.py|Already run by compliance.yml (named explicitly there)
+tools/test_evidence_archive.py|Already run by compliance.yml (named explicitly there)
+tools/test_evidence_preservation.py|Already run by compliance.yml (named explicitly there)
+tools/test_canonical_formats.py|Already run by compliance.yml (named explicitly there)
+tools/test_compliance_reference.py|Already run by compliance.yml validate job (named explicitly there)
+tools/test_convergent_review.py|Already run by compliance.yml convergent_review job (named explicitly there)
+tools/test_runtime_session.py|Not a unittest suite: a CLI requiring --check or --case (exits 2 with no args); its coverage is claimed by the fixtures_self_test.sh C12 runtime_session manifest rows, not by a direct run
+tools/test_suite_coverage.py|Run directly by the fixtures_self_test CI job as the suite-coverage gate itself (named explicitly there); it guards this manifest and is not part of the loop
