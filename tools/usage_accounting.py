@@ -91,35 +91,62 @@ def charged_request_count(events: list[dict[str, Any]]) -> int:
 
 
 def unknown_usage_fields(events: list[dict[str, Any]]) -> dict[str, set[str]]:
-    """Map operation id -> usage fields that are unknown (absent or null)."""
+    """Map operation id -> usage fields no retained row reported (absent or null)."""
     unknown: dict[str, set[str]] = {}
-    for event in events:
-        if event.get("kind") == "reconciliation":
-            continue
-        usage = event.get("usage") or {}
-        missing = {field for field in USAGE_FIELDS if usage.get(field) is None}
+    for operation_id, usage in resolved_usage(events).items():
+        missing = {field for field in USAGE_FIELDS if field not in usage}
         if missing:
-            unknown.setdefault(event["operation_id"], set()).update(missing)
+            unknown[operation_id] = missing
     return unknown
 
 
-def usage_totals(events: list[dict[str, Any]]) -> dict[str, Any]:
-    """Sum known usage and report which fields remain unknown.
+def resolved_usage(events: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
+    """Map operation id -> the usage fields it actually reported, once per operation.
 
-    Unknown fields are reported explicitly and are never folded into zero.
+    Several retained rows may describe one operation (a pre-dispatch row, then a
+    completion). A null never overwrites a reported value, so a completion resolves a
+    field a pre-dispatch row left absent. Two rows that report DIFFERENT non-null values
+    for the same field of one operation contradict each other, and neither is more
+    authoritative, so the operation is refused rather than silently resolved.
+    A field no row reported is absent from the mapping.
     """
-    totals = {field: 0 for field in USAGE_FIELDS}
-    unknown: set[str] = set()
+    resolved: dict[str, dict[str, int]] = {}
     for event in events:
+        validate_event(event)
         if event.get("kind") == "reconciliation":
             continue
         usage = event.get("usage") or {}
+        slot = resolved.setdefault(event["operation_id"], {})
         for field in USAGE_FIELDS:
             value = usage.get(field)
             if value is None:
-                unknown.add(field)
+                continue
+            if field in slot and slot[field] != value:
+                raise UsageError(
+                    f"operation {event['operation_id']!r} reports conflicting {field}: "
+                    f"{slot[field]} and {value}"
+                )
+            slot[field] = value
+    return resolved
+
+
+def usage_totals(events: list[dict[str, Any]]) -> dict[str, Any]:
+    """Sum each operation's resolved usage once and report fields still unknown.
+
+    Unknown fields are reported explicitly and are never folded into zero. A field
+    is unknown only when no retained row for any operation reported it.
+    """
+    per_operation = resolved_usage(events)
+    totals = {field: 0 for field in USAGE_FIELDS}
+    unknown: set[str] = set()
+    for usage in per_operation.values():
+        for field in USAGE_FIELDS:
+            if field in usage:
+                totals[field] += usage[field]
             else:
-                totals[field] += value
+                unknown.add(field)
+    if not per_operation:
+        unknown.update(USAGE_FIELDS)
     return {
         "known": totals,
         "unknown": sorted(unknown),

@@ -18,6 +18,7 @@ whose thresholds are never chosen after seeing held-out results.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 ARMS = ("A", "B", "C", "D")
@@ -79,21 +80,80 @@ def preregistration_template() -> dict[str, Any]:
     }
 
 
+# Every predeclared design/threshold field the template carries. SQA-integrity-009:
+# a field the template names must be supplied before held-out or live evaluation.
+# The only exceptions are the two non-design fields below.
 REQUIRED_PREREGISTRATION = (
     "corpus_version",
     "assignment",
+    "task_clustering",
+    "carryover_controls",
+    "blinding",
+    "followup_rework_window",
     "sample_size_rationale",
     "quality_criteria",
+    "noninferiority_margin",
+    "critical_miss_tolerance",
     "coverage_abstention_criteria",
+    "latency_cost_limits",
+    "uncertainty_method",
     "stopping_rule",
 )
 
 
+# Only fields that have no meaning in some study designs may be declared not applicable.
+# A comparative-threshold field needs no value in a design that makes no such comparison;
+# the design-defining fields below are never waivable, whatever reason is given.
+WAIVABLE_PREREGISTRATION = (
+    "task_clustering",
+    "carryover_controls",
+    "blinding",
+    "followup_rework_window",
+    "noninferiority_margin",
+    "critical_miss_tolerance",
+    "latency_cost_limits",
+    "uncertainty_method",
+)
+
+# Numeric threshold fields: must be finite, non-negative numbers (a bool is never a number here).
+NUMERIC_PREREGISTRATION = ("noninferiority_margin", "critical_miss_tolerance")
+
+
+def _is_supplied(field: str, value: Any) -> bool:
+    if isinstance(value, bool):
+        return False
+    if field in NUMERIC_PREREGISTRATION:
+        return (
+            isinstance(value, (int, float))
+            and math.isfinite(value)
+            and value >= 0
+        )
+    return isinstance(value, str) and bool(value.strip())
+
+
 def validate_preregistration(doc: dict[str, Any]) -> dict[str, Any]:
-    """Require every predeclared field before a live cohort may run."""
+    """Require every predeclared field, or a reasoned waiver on a waivable field only.
+
+    A numeric threshold must be a finite, non-negative number (0 is a real threshold).
+    The declaration ``{"not_applicable": {"<field>": "<reason>"}}`` may waive only a field in
+    WAIVABLE_PREREGISTRATION; it cannot waive a design-defining field such as stopping_rule.
+    """
     if not isinstance(doc, dict):
         raise HarnessError("preregistration must be an object")
-    missing = [field for field in REQUIRED_PREREGISTRATION if not (doc.get(field) or "").strip()]
+    declared = doc.get("not_applicable") or {}
+    if not isinstance(declared, dict):
+        raise HarnessError("not_applicable must be an object of field -> reason")
+    illegal = [f for f in declared if f not in WAIVABLE_PREREGISTRATION]
+    if illegal:
+        raise HarnessError("not_applicable may not waive design-defining fields: " + ", ".join(sorted(illegal)))
+    missing = []
+    for field in REQUIRED_PREREGISTRATION:
+        if _is_supplied(field, doc.get(field)):
+            continue
+        reason = declared.get(field)
+        if field in WAIVABLE_PREREGISTRATION and isinstance(reason, str) and reason.strip():
+            continue
+        missing.append(field)
     if missing:
         raise HarnessError("preregistration is missing predeclared fields: " + ", ".join(missing))
     if doc.get("thresholds_set_after_holdout") is not False:

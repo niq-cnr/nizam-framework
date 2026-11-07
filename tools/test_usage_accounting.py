@@ -60,6 +60,45 @@ def test_replay_not_charged():
     assert ua.charged_request_count([replay]) == 0
 
 
+def test_pre_post_pair_counts_usage_once():
+    # SQA-integrity-008: one operation with a pre_dispatch and a completion row that
+    # both carry the same usage contributes it once (not 240/60), and is charged once.
+    pre = _event(kind="pre_dispatch", event_id="p", outcome=None)
+    post = _event(event_id="c")
+    total = ua.usage_totals([pre, post])
+    assert total["known"]["input_tokens"] == 120
+    assert total["known"]["output_tokens"] == 30
+    assert total["charged_requests"] == 1
+
+
+def test_duplicate_completion_rows_not_double_counted():
+    # SQA-integrity-008: duplicate retained rows for one operation do not add usage
+    first = _event(event_id="c1")
+    second = _event(event_id="c2")
+    total = ua.usage_totals([first, second])
+    assert total["known"]["input_tokens"] == 120
+    assert total["known"]["output_tokens"] == 30
+
+
+def test_completion_resolves_pre_dispatch_unknown():
+    # SQA-integrity-008: a completion's reported usage resolves fields a pre-dispatch row left null
+    pre = _event(kind="pre_dispatch", event_id="p", outcome=None, usage=None)
+    post = _event(event_id="c")
+    assert "input_tokens" not in ua.usage_totals([pre, post])["unknown"]
+    assert ua.unknown_usage_fields([pre, post]) == {"op-1": {"cache_tokens"}}
+
+
+def test_distinct_operations_summed_and_missing_usage_stays_unknown():
+    # SQA-integrity-008: distinct operations sum; genuinely unreported usage stays unknown, not zero
+    a = _event(operation_id="op-a", event_id="a")
+    b = _event(operation_id="op-b", event_id="b", usage={"input_tokens": 5, "output_tokens": None, "cache_tokens": None})
+    total = ua.usage_totals([a, b])
+    assert total["known"]["input_tokens"] == 125
+    assert total["known"]["output_tokens"] == 30
+    assert "output_tokens" in total["unknown"]
+    assert total["charged_requests"] == 2
+
+
 def test_validation_rejects_bad_events():
     # AC-07-02: provider cannot be inferred from a role label; model mismatch rejected
     assert _raises(ua.validate_event, _event(model={"requested": "jev-1", "resolved": "jev-2"}))
@@ -87,6 +126,26 @@ def test_duplicate_numbers_not_reported():
     assert ua.charged_request_count([cancelled]) == 0
 
 
+def test_conflicting_usage_for_one_operation_is_refused():
+    # SQA-integrity-008: two completions disagreeing on a field contradict; neither is
+    # authoritative, so totals refuse rather than silently keep one value.
+    a = _event(event_id="a", usage={"input_tokens": 120, "output_tokens": 30, "cache_tokens": None})
+    b = _event(event_id="b", usage={"input_tokens": 999, "output_tokens": 30, "cache_tokens": None})
+    assert _raises(ua.usage_totals, [a, b])
+
+
+def test_agreeing_duplicate_usage_is_not_a_conflict():
+    # identical duplicate rows are one operation's usage restated, not a contradiction
+    a = _event(event_id="a")
+    b = _event(event_id="b")
+    assert ua.usage_totals([a, b])["known"]["input_tokens"] == 120
+
+
+def test_malformed_event_refused_before_resolution():
+    # the per-operation resolution validates first, so a malformed row is a UsageError
+    assert _raises(ua.resolved_usage, [{"kind": "completion"}])
+
+
 def main() -> int:
     test_unknown_is_not_zero()
     test_batch_charged_once()
@@ -94,6 +153,13 @@ def main() -> int:
     test_validation_rejects_bad_events()
     test_reconciliation_appends_without_mutation()
     test_duplicate_numbers_not_reported()
+    test_pre_post_pair_counts_usage_once()
+    test_duplicate_completion_rows_not_double_counted()
+    test_completion_resolves_pre_dispatch_unknown()
+    test_distinct_operations_summed_and_missing_usage_stays_unknown()
+    test_conflicting_usage_for_one_operation_is_refused()
+    test_agreeing_duplicate_usage_is_not_a_conflict()
+    test_malformed_event_refused_before_resolution()
     print("usage-accounting: charged-once, unknown-not-zero, append-only reconciliation pass")
     return 0
 

@@ -1,0 +1,6 @@
+CASE 005-ci-reachability unreached_top_level_suites=23 (defect observed if >0 without a documented exclusion)
+CASE 006-committed-bump-no-changelog rc=0 ACCEPTED (defect observed: committed bump with no change record passes)
+CASE 007-baseline-reuse first_rc=0 first_sha=1eff4cc72cfa4b6880aebdb6611543e5e6af359345db27c0eb7a988b4ace222e rerun_pass_rc=0 rerun_pass_sha=770bf1d98ec8dabf5afd2adf8c796159f982c4660b728f0977c2915e1dd970cd rerun_fail_rc=1 rerun_fail_sha=absent (defect observed if an existing baseline digest changes or disappears)
+CASE 008-usage-pre-post-pair DEFECT 120 30 ['cache_tokens', 'input_tokens', 'output_tokens'] 1 (defect observed if DEFECT: expect input=120 output=30 unknown=[] charged=1)
+CASE 009-partial-prereg ACCEPTED unset_declared_fields=[corpus_version,task_clustering,carryover_controls,blinding,followup_rework_window,sample_size_rationale,quality_criteria,noninferiority_margin,critical_miss_tolerance,coverage_abstention_criteria,latency_cost_limits,uncertainty_method,stopping_rule] (defect observed if ACCEPTED with unset fields)
+CASE 011-self-governance-heading heading='# Current installation — `v3.0.0` (installed — commissioning not performed)' structured_tag=v3.1.3 DEFECT (heading does not name current tag v3.1.3)

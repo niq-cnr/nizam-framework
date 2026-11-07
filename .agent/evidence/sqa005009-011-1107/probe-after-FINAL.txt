@@ -1,0 +1,6 @@
+CASE 005-ci-reachability unaccounted_suites=0 coverage_gate_rc=0 (defect observed if unaccounted>0 or gate rc!=0)
+CASE 006-committed-bump-no-changelog rc=1 REFUSED (committed bump with no change record is caught)
+CASE 007-baseline-reuse first_rc=0 first_sha=761ec437083e82a704d4eb1bef566591c53cb9b35de8876791200712a66f4124 rerun_pass_rc=64 rerun_pass_sha=761ec437083e82a704d4eb1bef566591c53cb9b35de8876791200712a66f4124 rerun_fail_rc=64 rerun_fail_sha=761ec437083e82a704d4eb1bef566591c53cb9b35de8876791200712a66f4124 (defect observed if an existing baseline digest changes or disappears)
+CASE 008-usage-pre-post-pair CORRECT 120 30 ['cache_tokens'] 1 (defect observed if DEFECT: expect input=120 output=30 unknown=[] charged=1)
+CASE 009-partial-prereg REFUSED unset_declared_fields=[corpus_version,task_clustering,carryover_controls,blinding,followup_rework_window,sample_size_rationale,quality_criteria,noninferiority_margin,critical_miss_tolerance,coverage_abstention_criteria,latency_cost_limits,uncertainty_method,stopping_rule] (defect observed if ACCEPTED with unset fields)
+CASE 011-self-governance-heading heading='# Current installation — `v3.1.3` (installed — commissioning not performed)' structured_tag=v3.1.3 CONSISTENT
