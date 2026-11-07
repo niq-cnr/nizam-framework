@@ -674,21 +674,18 @@ echo "== C13 skill-index negative fixture (substitution) =="
 test_c13() {
   note_covered skill_index_neg_dangling_module.json
   note_covered skill_index_neg_unindexed_capability.json
-  # Each substitution runs in its own scratch copy of the working tree, never the live
-  # tools/skill.json, so historical QA-record refusals in the live tree cannot mask the
-  # [C13] predicate. The predicate and the expected [C13] FAIL lines are unchanged.
-  local c13_dir
+  SKILL_BAK=$(mktemp)
+  SKILL_BAK_OWNER="${BASHPID}"
+  cp -- tools/skill.json "${SKILL_BAK}"
   _c13_substitute_one() {
     local fixture_basename="$1"
     local required_detail="$2"
     local validator_output
-    scratch_dirs c13_dir || { fail=1; return; }
-    cp -a -- "${REPO}/." "${c13_dir}/" || { cleanup_scratch_dirs "${c13_dir}"; fail=1; return; }
-    cp -- "${REPO}/tools/fixtures/${fixture_basename}" "${c13_dir}/tools/skill.json"
-    validator_output=$(cd -- "${c13_dir}" && bash tools/validate.sh 2>&1)
-    cleanup_scratch_dirs "${c13_dir}"
+    cp -- "tools/fixtures/${fixture_basename}" tools/skill.json
+    validator_output=$(bash tools/validate.sh 2>&1)
+    cp -- "${SKILL_BAK}" tools/skill.json
     # Here-strings, not `printf | grep -q`: under pipefail a grep -q early exit gives printf
-    # SIGPIPE (141) and falsely fails a present match.
+    # SIGPIPE (141) and falsely fails a present match. The predicate is unchanged.
     if grep -Eq "^\[C13\] FAIL" <<<"${validator_output}" \
       && { [ -z "${required_detail}" ] || grep -Fq -- "${required_detail}" <<<"${validator_output}"; }; then
       echo "OK   c13-substitute ${fixture_basename} -> [C13] FAIL"
@@ -699,6 +696,9 @@ test_c13() {
   }
   _c13_substitute_one skill_index_neg_dangling_module.json ""
   _c13_substitute_one skill_index_neg_unindexed_capability.json "is not the authoritative_source of any NIZAM.json capability"
+  rm -f -- "${SKILL_BAK}"
+  SKILL_BAK=""
+  SKILL_BAK_OWNER=""
 }
 test_c13
 
