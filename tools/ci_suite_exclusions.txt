@@ -20,5 +20,5 @@ tools/test_evidence_preservation.py|Already run by compliance.yml (named explici
 tools/test_canonical_formats.py|Already run by compliance.yml (named explicitly there)
 tools/test_compliance_reference.py|Already run by compliance.yml validate job (named explicitly there)
 tools/test_convergent_review.py|Already run by compliance.yml convergent_review job (named explicitly there)
-tools/test_runtime_session.py|Not a unittest suite: a CLI requiring --check or --case (exits 2 with no args); its coverage is claimed by the fixtures_self_test.sh C12 runtime_session manifest rows, not by a direct run
+tools/test_runtime_session.py|Not a unittest suite: a CLI requiring --check or --case (exits 2 with no args). Run directly, once per case selector, by tools/fixtures_self_test.sh (the runtime_session case loop near line 1065), so it is already CI-reachable
 tools/test_suite_coverage.py|Run directly by the fixtures_self_test CI job as the suite-coverage gate itself (named explicitly there); it guards this manifest and is not part of the loop

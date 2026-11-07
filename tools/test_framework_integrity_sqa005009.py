@@ -23,6 +23,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import yaml
+
 REPO = Path(__file__).resolve().parent.parent
 TOOLS = REPO / "tools"
 sys.path.insert(0, str(TOOLS))
@@ -94,6 +96,46 @@ class CiReachability(unittest.TestCase):
         finally:
             cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED = saved
         self.assertTrue(any("both run by CI and excluded" in p for p in problems), problems)
+
+    def test_manifest_without_trailing_newline_is_refused(self) -> None:
+        # A final entry lacking a newline is dropped by line-oriented readers; refuse it.
+        d = Path(tempfile.mkdtemp(prefix="s005-"))
+        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
+        (d / "tools").mkdir()
+        (d / "tools" / "test_x.py").write_text("")
+        (d / "tools" / "ci_suites.txt").write_bytes(b"tools/test_x.py")  # no trailing newline
+        (d / "tools" / "ci_suite_exclusions.txt").write_text("")
+        saved = cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED
+        try:
+            cov.ROOT, cov.TOOLS = d, d / "tools"
+            cov.LISTED, cov.EXCLUDED = d / "tools/ci_suites.txt", d / "tools/ci_suite_exclusions.txt"
+            problems = cov.check()
+        finally:
+            cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED = saved
+        self.assertTrue(any("must end with a newline" in p for p in problems), problems)
+
+    def test_ci_loop_fails_when_a_selected_regression_fails(self) -> None:
+        # SQA-integrity-005 closure: a deliberately failing selected regression must fail the
+        # CI path. Run the workflow's own loop text against a manifest naming a failing suite.
+        wf = yaml.safe_load((REPO / ".github/workflows/compliance.yml").read_text(encoding="utf-8"))
+        step = next(
+            s for s in wf["jobs"]["fixtures_self_test"]["steps"]
+            if str(s.get("name", "")).startswith("Dedicated regression suites")
+        )
+        loop = step["run"].split("PYTHONDONTWRITEBYTECODE=1 python3 tools/test_suite_coverage.py", 1)[1]
+        d = Path(tempfile.mkdtemp(prefix="s005-"))
+        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
+        (d / "tools").mkdir()
+        (d / "tools" / "test_fails.py").write_text("import sys\nsys.exit(1)\n")
+        (d / "tools" / "test_passes.py").write_text("import sys\n")
+        # The second entry deliberately has NO trailing newline: it must still be exercised.
+        (d / "tools" / "ci_suites.txt").write_bytes(b"tools/test_passes.py\ntools/test_fails.py")
+        script = "set -e\n" + loop.replace(
+            "done < tools/ci_suites.txt", f"done < {d}/tools/ci_suites.txt"
+        ).lstrip("\n")
+        result = subprocess.run(["bash", "-c", script], cwd=d, capture_output=True, text=True, env=ENV)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("suite failed: tools/test_fails.py", result.stdout)
 
     def test_workflow_runs_the_manifest_loop(self) -> None:
         wf = (REPO / ".github/workflows/compliance.yml").read_text(encoding="utf-8")
@@ -217,6 +259,19 @@ class PreflightBaselineImmutable(unittest.TestCase):
         self.assertNotEqual(second.returncode, 0)
         self.assertTrue((self.out / "baseline.json").is_file(), "failing rerun deleted the baseline")
         self.assertEqual(_sha256(self.out / "baseline.json"), digest)
+
+    def test_dangling_symlink_at_baseline_path_is_refused(self) -> None:
+        # SQA-integrity-007: a dangling symlink is an existing entry; it must not be written through
+        self.out.mkdir(parents=True)
+        (self.out / "baseline.json").symlink_to(self.work / "nowhere")
+        result = self._preflight("E1")
+        self.assertEqual(result.returncode, 64, result.stdout + result.stderr)
+        self.assertFalse((self.work / "nowhere").exists(), "preflight wrote through a dangling symlink")
+
+    def test_directory_at_baseline_path_is_refused(self) -> None:
+        (self.out / "baseline.json").mkdir(parents=True)
+        result = self._preflight("E1")
+        self.assertEqual(result.returncode, 64, result.stdout + result.stderr)
 
     def test_fresh_namespace_still_produces_a_baseline(self) -> None:
         self.assertEqual(self._preflight("E1").returncode, 0)

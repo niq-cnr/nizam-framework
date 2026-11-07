@@ -54,6 +54,10 @@ def load_excluded() -> dict[str, str]:
 
 def check() -> list[str]:
     problems: list[str] = []
+    for manifest in (LISTED, EXCLUDED):
+        # A final entry without a newline is the kind a line-oriented reader can drop silently.
+        if manifest.read_bytes()[-1:] not in (b"\n",):
+            problems.append(f"{manifest.name} must end with a newline")
     listed = load_listed()
     excluded = load_excluded()
     if len(set(listed)) != len(listed):

@@ -44,11 +44,20 @@ jobs:
           BASE="${{ github.event.pull_request.base.sha }}"
           if [ -z "${BASE}" ]; then BASE="${{ github.event.before }}"; fi
           if [ -z "${BASE}" ] || [ "${BASE}" = "0000000000000000000000000000000000000000" ]; then
+            # No prior push tip is supplied: use the parent when one exists, else no base.
             BASE="$(git rev-parse --verify --quiet HEAD~1 || true)"
+            if [ -z "${BASE}" ]; then
+              echo "root commit: no prior revision, C8 uses its local default"
+              exit 0
+            fi
           fi
-          if [ -n "${BASE}" ] && git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
-            echo "NIZAM_C8_BASE=${BASE}" >> "$GITHUB_ENV"
+          # A base that was supplied must resolve. An unresolvable one fails the job here; it is
+          # never dropped, because a silent drop reverts C8 to the same-HEAD comparison.
+          if ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            echo "C8 comparison base ${BASE} is not present in this checkout (fetch-depth: 0 required)"
+            exit 1
           fi
+          echo "NIZAM_C8_BASE=${BASE}" >> "$GITHUB_ENV"
       - run: bash tools/validate.sh
 
   e2e_bootstrap:
@@ -126,7 +135,8 @@ jobs:
         # a reason (tools/ci_suite_exclusions.txt). The gate fails on an unaccounted suite.
         run: |
           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_suite_coverage.py
-          while IFS= read -r suite; do
+          # "|| [ -n ... ]" keeps a final line that lacks a trailing newline; read alone drops it.
+          while IFS= read -r suite || [ -n "${suite}" ]; do
             case "${suite}" in ''|\#*) continue ;; esac
             env -i PATH="${PATH}" HOME="${HOME}" PYTHONDONTWRITEBYTECODE=1 python3 "${suite}" || { echo "suite failed: ${suite}"; exit 1; }
           done < tools/ci_suites.txt

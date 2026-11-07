@@ -104,20 +104,29 @@ def resolved_usage(events: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
     """Map operation id -> the usage fields it actually reported, once per operation.
 
     Several retained rows may describe one operation (a pre-dispatch row, then a
-    completion). Each field takes its last non-null reported value, so a later
-    completion resolves a field a pre-dispatch row left absent, and a null never
-    overwrites a value. A field no row reported is absent from the mapping.
+    completion). A null never overwrites a reported value, so a completion resolves a
+    field a pre-dispatch row left absent. Two rows that report DIFFERENT non-null values
+    for the same field of one operation contradict each other, and neither is more
+    authoritative, so the operation is refused rather than silently resolved.
+    A field no row reported is absent from the mapping.
     """
     resolved: dict[str, dict[str, int]] = {}
     for event in events:
+        validate_event(event)
         if event.get("kind") == "reconciliation":
             continue
         usage = event.get("usage") or {}
         slot = resolved.setdefault(event["operation_id"], {})
         for field in USAGE_FIELDS:
             value = usage.get(field)
-            if value is not None:
-                slot[field] = value
+            if value is None:
+                continue
+            if field in slot and slot[field] != value:
+                raise UsageError(
+                    f"operation {event['operation_id']!r} reports conflicting {field}: "
+                    f"{slot[field]} and {value}"
+                )
+            slot[field] = value
     return resolved
 
 

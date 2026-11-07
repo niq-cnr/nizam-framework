@@ -47,7 +47,15 @@ EXIT_USAGE_ERROR = 64
 # PASS_WITH_EXCEPTIONS variants are acceptable; a hard FAIL(1) or anything else
 # leaves the ecosystem not clean.
 ACCEPTABLE_STAGE_EXITS = {0, 2, 3}
-STAGE_VERDICT = {0: "PASS", 1: "FAIL", 2: "PASS_WITH_EXCEPTIONS", 3: "PASS_WITH_EXCEPTIONS"}
+STAGE_VERDICT = {
+    0: "PASS",
+    1: "FAIL",
+    2: "PASS_WITH_EXCEPTIONS",
+    3: "PASS_WITH_EXCEPTIONS",
+    # 64 from the stage tool is a usage refusal. For a member directory that already holds a
+    # completed baseline (SQA-integrity-007) the refusal is deliberate: name it, do not hide it.
+    64: "REFUSED (member output dir already holds a baseline; use a new --output-dir)",
+}
 
 SCOPE_LISTS = ("in_scope", "incubating", "reference_archive", "out_of_scope")
 

@@ -18,6 +18,7 @@ whose thresholds are never chosen after seeing held-out results.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 ARMS = ("A", "B", "C", "D")
@@ -100,33 +101,57 @@ REQUIRED_PREREGISTRATION = (
 )
 
 
-def _is_supplied(value: Any) -> bool:
+# Only fields that have no meaning in some study designs may be declared not applicable.
+# A comparative-threshold field needs no value in a design that makes no such comparison;
+# the design-defining fields below are never waivable, whatever reason is given.
+WAIVABLE_PREREGISTRATION = (
+    "task_clustering",
+    "carryover_controls",
+    "blinding",
+    "followup_rework_window",
+    "noninferiority_margin",
+    "critical_miss_tolerance",
+    "latency_cost_limits",
+    "uncertainty_method",
+)
+
+# Numeric threshold fields: must be finite, non-negative numbers (a bool is never a number here).
+NUMERIC_PREREGISTRATION = ("noninferiority_margin", "critical_miss_tolerance")
+
+
+def _is_supplied(field: str, value: Any) -> bool:
     if isinstance(value, bool):
         return False
-    if isinstance(value, (int, float)):
-        return True
+    if field in NUMERIC_PREREGISTRATION:
+        return (
+            isinstance(value, (int, float))
+            and math.isfinite(value)
+            and value >= 0
+        )
     return isinstance(value, str) and bool(value.strip())
 
 
 def validate_preregistration(doc: dict[str, Any]) -> dict[str, Any]:
-    """Require every predeclared field, or an explicit not_applicable declaration.
+    """Require every predeclared field, or a reasoned waiver on a waivable field only.
 
-    A numeric threshold may be 0, so only None/absent/blank text counts as unset.
-    The declaration ``{"not_applicable": "<reason>"}`` is the one permitted way to
-    skip a field; a bare blank or null never is.
+    A numeric threshold must be a finite, non-negative number (0 is a real threshold).
+    The declaration ``{"not_applicable": {"<field>": "<reason>"}}`` may waive only a field in
+    WAIVABLE_PREREGISTRATION; it cannot waive a design-defining field such as stopping_rule.
     """
     if not isinstance(doc, dict):
         raise HarnessError("preregistration must be an object")
     declared = doc.get("not_applicable") or {}
     if not isinstance(declared, dict):
         raise HarnessError("not_applicable must be an object of field -> reason")
+    illegal = [f for f in declared if f not in WAIVABLE_PREREGISTRATION]
+    if illegal:
+        raise HarnessError("not_applicable may not waive design-defining fields: " + ", ".join(sorted(illegal)))
     missing = []
     for field in REQUIRED_PREREGISTRATION:
-        value = doc.get(field)
-        if _is_supplied(value):
+        if _is_supplied(field, doc.get(field)):
             continue
         reason = declared.get(field)
-        if isinstance(reason, str) and reason.strip():
+        if field in WAIVABLE_PREREGISTRATION and isinstance(reason, str) and reason.strip():
             continue
         missing.append(field)
     if missing:

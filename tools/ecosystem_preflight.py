@@ -675,7 +675,9 @@ def refuse_baseline_reuse(output_dir: str) -> bool:
     or fail. Such a rerun is refused before any byte is written; a correction belongs in a
     new, separately retained output directory.
     """
-    return os.path.isfile(os.path.join(output_dir, BASELINE_ARTIFACT))
+    # lexists, not isfile: a dangling symlink or a directory at the baseline path is also an
+    # existing entry that a write could go through, so it must refuse too.
+    return os.path.lexists(os.path.join(output_dir, BASELINE_ARTIFACT))
 
 
 def clean_output_dir(output_dir: str) -> None:

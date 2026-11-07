@@ -145,6 +145,30 @@ def test_preregistration_explicit_not_applicable_is_declared():
     assert _raises(eh.validate_preregistration, doc)
 
 
+def test_design_defining_field_cannot_be_waived():
+    # SQA-integrity-009: a reason cannot waive a field the study design depends on
+    for field in ("stopping_rule", "assignment", "corpus_version", "quality_criteria"):
+        doc = _complete_preregistration()
+        doc[field] = ""
+        doc["not_applicable"] = {field: "not needed"}
+        assert _raises(eh.validate_preregistration, doc), field
+
+
+def test_waivable_field_with_reason_is_accepted():
+    # a field with no meaning in some designs may be waived, but only with its reason
+    doc = _complete_preregistration()
+    doc["blinding"] = ""
+    doc["not_applicable"] = {"blinding": "deterministic scoring, no human graders"}
+    assert eh.validate_preregistration(doc)
+
+
+def test_numeric_thresholds_must_be_finite_nonnegative_numbers():
+    for bad in (float("nan"), -0.1, True):
+        doc = _complete_preregistration()
+        doc["noninferiority_margin"] = bad
+        assert _raises(eh.validate_preregistration, doc), bad
+
+
 def main() -> int:
     test_split_keeps_lineage_groups_together()
     test_split_unknown_group_rejected()
@@ -156,6 +180,9 @@ def main() -> int:
     test_preregistration_unset_claimed_mandatory_field_rejected()
     test_preregistration_zero_threshold_is_supplied()
     test_preregistration_explicit_not_applicable_is_declared()
+    test_design_defining_field_cannot_be_waived()
+    test_waivable_field_with_reason_is_accepted()
+    test_numeric_thresholds_must_be_finite_nonnegative_numbers()
     print("evaluation: leakage-free split, matched arms and preregistration pass")
     return 0
 

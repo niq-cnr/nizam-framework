@@ -126,6 +126,26 @@ def test_duplicate_numbers_not_reported():
     assert ua.charged_request_count([cancelled]) == 0
 
 
+def test_conflicting_usage_for_one_operation_is_refused():
+    # SQA-integrity-008: two completions disagreeing on a field contradict; neither is
+    # authoritative, so totals refuse rather than silently keep one value.
+    a = _event(event_id="a", usage={"input_tokens": 120, "output_tokens": 30, "cache_tokens": None})
+    b = _event(event_id="b", usage={"input_tokens": 999, "output_tokens": 30, "cache_tokens": None})
+    assert _raises(ua.usage_totals, [a, b])
+
+
+def test_agreeing_duplicate_usage_is_not_a_conflict():
+    # identical duplicate rows are one operation's usage restated, not a contradiction
+    a = _event(event_id="a")
+    b = _event(event_id="b")
+    assert ua.usage_totals([a, b])["known"]["input_tokens"] == 120
+
+
+def test_malformed_event_refused_before_resolution():
+    # the per-operation resolution validates first, so a malformed row is a UsageError
+    assert _raises(ua.resolved_usage, [{"kind": "completion"}])
+
+
 def main() -> int:
     test_unknown_is_not_zero()
     test_batch_charged_once()
@@ -137,6 +157,9 @@ def main() -> int:
     test_duplicate_completion_rows_not_double_counted()
     test_completion_resolves_pre_dispatch_unknown()
     test_distinct_operations_summed_and_missing_usage_stays_unknown()
+    test_conflicting_usage_for_one_operation_is_refused()
+    test_agreeing_duplicate_usage_is_not_a_conflict()
+    test_malformed_event_refused_before_resolution()
     print("usage-accounting: charged-once, unknown-not-zero, append-only reconciliation pass")
     return 0
 
