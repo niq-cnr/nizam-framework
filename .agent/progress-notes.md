@@ -117,3 +117,29 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
   local scratch TMPDIR; it passes with a short TMPDIR and reports OK on the GitHub runner. Environmental.
 - Operator decision required before merge: whether the historical-QA refusals (C11/C16) red on main
   should block this series. Merge, tag and release were NOT performed.
+
+### SQA005-FU — PR #171 exact-head validate diagnosis (2026-11-07)
+
+- Head reproduced: `e5daa4c7`. `bash tools/validate.sh` -> **14 passed, 2 failed, rc=1**: `[C11] FAIL dogfood`,
+  `[C16] FAIL feature-list-lifecycle`. Captures: `.agent/evidence/sqa005009-011-1107-fu/validate-e5daa4c-head.txt`,
+  `validate-summary.txt`, `refusal-lines.txt`, `qa-records.sha256`.
+- Diagnosis: **(b) pre-existing gap, not a PR defect.** The same two failures reproduce byte-identically at the
+  pristine base `0a0a4d24` (14 passed, 2 failed, same refusal lines). The PR's only `validate.sh` change is the
+  C8 base comparison (`NIZAM_C8_BASE`), which does not touch C11 or C16. The new SQA checks are green.
+- Root cause: historical QA records are self-contradictory and are refused by design:
+  - `.agent/qa/035.json`: `qa_pass=true` but `checks_passed=21 != checks_run=22` (C16).
+  - `.agent/qa/036.json`: `qa_pass=true` but non-empty `unsupported_claims` (C16), and a C11 schema violation
+    (`amendments[0].ratified_by_mode_b` persisted `false`; no Mode-B artifact).
+  - `.agent/qa/123.json`: `qa_pass=true` but `checks_passed=8 != checks_run=9` (C16).
+- Ruling basis: PR #170 "Intended refusals (governor ruling, no exception channel)". Records are not edited,
+  deleted or rebadged. Hashes at head equal base (`qa+contracts unchanged vs base`).
+- Fixes applied: **none.** No change to `tools/validate.sh`, no check weakened, no record edited.
+  The genuine fix for C11/C16 is outside this PR: fresh QA rounds that re-certify 035, 036 and 123.
+- Battery at head (unchanged code): fixtures_self_test 176/176 rc 0; test_start_path rc 0;
+  test_framework_integrity_sqa005009 27 OK.
+- **OPERATOR/GOVERNOR RULING REQUIRED** before this PR can be green on `validate`. Choose one:
+  1. Accept C11/C16 red as inherited from `main` and merge the SQA series on the base-equal refusal (PR #170 precedent), or
+  2. Commission fresh independent QA rounds for features 035, 036, 123 that write new, internally consistent
+     verdicts. Old records remain as history.
+  Option 2 is the only route to 16/16. It is not doable inside this PR without rebadging, which is forbidden.
+- No tag, no version bump, no release, no NXOS work, no branch overlap with `fix/framework-integrity-s003004-1107*`.
