@@ -1,0 +1,212 @@
+{
+  "contract_id": "framework-integrity-f001-1106",
+  "feature_id": "framework-integrity-f001-1106",
+  "name": "Repair consumer lock, bootstrap target/reference overlap, and lock source_url attribution (audit c905615d)",
+  "status": "proposed",
+  "spec_ref": "~/.hermes/audits/framework-integrity-c905615d-2026-11-05.findings.json",
+  "estimated_lines": 60,
+  "evidence_convention": "one raw command-output file per verification command under .agent/evidence/f001-1106/",
+  "route": "high-risk",
+  "authority": "lane brief nizamfw-integrity-f001-1106 (card t_1408e595, umbrella t_04dd4eac); no release, version bump or installed .nizam/ edit",
+  "findings_source": {
+    "file": "~/.hermes/audits/framework-integrity-c905615d-2026-11-05.findings.json",
+    "sha256_prefix": "82d4df0b34fc4235",
+    "sha256": "82d4df0b34fc42358fbca3151b23d31c3d2ae74c6c3a4b3204332a526fabee37",
+    "ids": [
+      "SQA-integrity-001",
+      "SQA-integrity-002",
+      "SQA-integrity-010"
+    ]
+  },
+  "source_identity": {
+    "repository": "https://github.com/niq-cnr/nizam-framework.git",
+    "base": "e020cd135d38ece14ac1f6603c384096689d0499",
+    "branch": "fix/framework-integrity-f001-1106"
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/test_framework_integrity_f001.py",
+        "purpose": "Negative and positive regression tests per finding (stdlib unittest)."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "bootstrap.sh",
+        "purpose": "002: reject equal, descendant and ancestor --git-repo/--target overlap before any replacement; 001: preserve a consumer .nizam/provenance.lock.json across install replacement."
+      },
+      {
+        "path": "tools/payload_integrity.py",
+        "purpose": "001: admit exactly the consumer lock file at .nizam/provenance.lock.json as a permitted extra; every other extra file still fails."
+      },
+      {
+        "path": "tools/check_provenance_lock.py",
+        "purpose": "010: require a non-empty, well-formed source_url in the lock and fail with a stable prefix when it differs from provenance.json."
+      },
+      {
+        "path": "tools/probes/f001_integrity_probe.sh",
+        "purpose": "Committed reproduction probe for the three findings (before/after)."
+      },
+      {
+        "path": "tools/test_framework_integrity_f001.py",
+        "purpose": "Negative and positive regression tests per finding."
+      }
+    ],
+    "files_not_modified": [
+      "standard/provenance_policy.md",
+      "NIZAM.json",
+      ".nizam/",
+      "CHANGELOG.md"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "R-001",
+      "finding": "SQA-integrity-001",
+      "text": "A standalone consumer can install the candidate, add the mandated lock, and pass BOTH lock-consistency and exact payload verification."
+    },
+    {
+      "id": "R-002",
+      "finding": "SQA-integrity-001",
+      "text": "A reinstall/upgrade retains the consumer lock (or it is deliberately regenerated); lock is not silently lost."
+    },
+    {
+      "id": "R-003",
+      "finding": "SQA-integrity-001",
+      "text": "A separate extra non-lock file in the payload still fails exact integrity verification."
+    },
+    {
+      "id": "R-004",
+      "finding": "SQA-integrity-002",
+      "text": "Equal, descendant and ancestor target/reference combinations are rejected BEFORE any replacement; sentinel project files are unchanged."
+    },
+    {
+      "id": "R-005",
+      "finding": "SQA-integrity-002",
+      "text": "A disjoint sibling reference still installs successfully."
+    },
+    {
+      "id": "R-006",
+      "finding": "SQA-integrity-010",
+      "text": "Missing, empty or invalid lock source_url is rejected with a stable failure."
+    },
+    {
+      "id": "R-007",
+      "finding": "SQA-integrity-010",
+      "text": "A lock source_url that mismatches provenance.json gives a stable lock-payload-drift failure."
+    },
+    {
+      "id": "R-008",
+      "finding": "SQA-integrity-010",
+      "text": "Matching supported URL, version, range and SHA cases keep passing."
+    }
+  ],
+  "non_goals": [
+    "Fixing adjacent findings SQA-integrity-003..009 or 011 (sibling cards); they are only noted in the PR body if touched.",
+    "Changing standard/provenance_policy.md wording or installed v3.1.3 .nizam/ payload.",
+    "Release tagging, version bump, Mandate-2 or NXOS product work.",
+    "Making the baseline failures ac02, corrective and convergent green (pre-existing, unrelated, recorded in the lane log)."
+  ],
+  "verification": [
+    {
+      "id": "V-1",
+      "command": "bash tools/probes/f001_integrity_probe.sh",
+      "acceptance_test": "Probe must show after-fix outcomes for 001/002/010 (lock PASS, extra-file FAIL, ancestor/descendant/equal rejected, disjoint ok, source_url mismatch/empty/null rejected).",
+      "expected_exit": 0,
+      "argv": [
+        "bash",
+        "tools/probes/f001_integrity_probe.sh"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-2",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_framework_integrity_f001.py",
+      "acceptance_test": "Regression tests for each finding, including negative cases (extra file, ancestor overlap, source_url mismatch).",
+      "expected_exit": 0,
+      "argv": [
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "tools/test_framework_integrity_f001.py"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-3",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/check_provenance_lock.py --self-test",
+      "acceptance_test": "Existing consumer lock checker self-test still passes (matching/version/range/SHA cases).",
+      "expected_exit": 0,
+      "argv": [
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "tools/check_provenance_lock.py",
+        "--self-test"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-4",
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "acceptance_test": "Hermetic standalone bootstrap e2e still installs and verifies.",
+      "expected_exit": 0,
+      "argv": [
+        "bash",
+        "tools/e2e_bootstrap_test.sh"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-5",
+      "command": "bash tools/validate.sh",
+      "acceptance_test": "Repo compliance sweep C1-C16 green.",
+      "expected_exit": 0,
+      "argv": [
+        "bash",
+        "tools/validate.sh"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-6",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_nf_ac05_standalone_e2e.py",
+      "acceptance_test": "Standalone e2e AC05 still passes.",
+      "expected_exit": 0,
+      "argv": [
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "tools/test_nf_ac05_standalone_e2e.py"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    },
+    {
+      "id": "V-7",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_compliance_reference.py",
+      "acceptance_test": "Compliance reference generator and test still pass.",
+      "expected_exit": 0,
+      "argv": [
+        "PYTHONDONTWRITEBYTECODE=1",
+        "python3",
+        "tools/test_compliance_reference.py"
+      ],
+      "proof_kind": "success",
+      "diagnostic": null
+    }
+  ],
+  "baseline_preexisting_failures": {
+    "tools/test_nf_ac02_policy_reconciliation.py": "rc=1 test_f11 circuit-breaker text (unrelated, sibling scope)",
+    "tools/test_corrective_release.py": "rc=2 required args --candidate/--prior/--prior-sha (usage, not a regression)",
+    "tools/test_convergent_review.py": "rc=1 user-namespace isolation unavailable on this host (CI supplies docker adapter)"
+  },
+  "evidence_dir": ".agent/evidence/f001-1106",
+  "approvals": {
+    "generator": "fleet-implementer/lane-implementer (pending)",
+    "independent_evaluator": "fleet-evaluator/lane-evaluator (pending)",
+    "operator": "pending"
+  }
+}

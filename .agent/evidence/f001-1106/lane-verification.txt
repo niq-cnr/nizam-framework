@@ -1,0 +1,87 @@
+== lane verification (executed by lane, NOT independent acceptance)
+cmd: bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+[C14] PASS workflow-sha-pins
+[C15] PASS capability-profile-roles
+[C16] PASS feature-list-lifecycle
+SUMMARY: 16 passed, 0 failed
+exit=0
+cmd: python3 tools/test_framework_integrity_f001.py
+test_001 (__main__.Test001PayloadIntegrity.test_001) ... ok
+test_001_reinstall_preserves_lock (__main__.Test001PayloadIntegrity.test_001_reinstall_preserves_lock) ... ok
+test_002_installed_paths (__main__.Test002BootstrapOverlap.test_002_installed_paths) ... ok
+test_assert_outside_target (__main__.Test002BootstrapOverlap.test_assert_outside_target) ... ok
+test_010 (__main__.Test010LockSourceUrl.test_010) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.435s
+
+OK
+exit=0
+cmd: python3 tools/check_provenance_lock.py --self-test
+PASS case=consistent-pass expected=pass actual=pass
+PASS case=tag-drift expected=lock-payload-drift actual=lock-payload-drift
+PASS case=sha-mismatch expected=lock-payload-drift actual=lock-payload-drift
+PASS case=out-of-range expected=range-unsatisfied actual=range-unsatisfied
+PASS case=malformed-sha expected=lock-format actual=lock-format
+PASS case=mismatched-source-url expected=lock-payload-drift actual=lock-payload-drift
+PASS case=empty-source-url requires=lock-format
+PASS case=null-source-url requires=lock-format
+PASS case=missing-source-url requires=lock-shape
+PASS case=bad-scheme-source-url requires=lock-format
+PASS case=whitespace-source-url requires=lock-format
+PASS case=file-scheme-source-url-pass expected=pass actual=pass
+PASS case=extra-key expected=lock-shape actual=lock-shape
+PASS case=missing-payload expected=payload-missing actual=payload-missing
+PASS case=range-exact-pass expected=pass actual=pass
+PASS case=range-exact-fail expected=range-unsatisfied actual=range-unsatisfied
+PASS case=range-open-pass expected=pass actual=pass
+exit=0
+cmd: bash tools/probes/f001_integrity_probe.sh
+fixture: tag=v3.2.0 sha=e020cd135d38ece14ac1f6603c384096689d0499
+== 001 consumer lock vs exact payload inventory ==
+install_rc=0
+[PCL] PASS lock-shape
+[PCL] PASS lock-format
+[PCL] PASS range-syntax
+[PCL] PASS range-unsatisfied
+[PCL] PASS payload-missing
+[PCL] PASS lock-payload-drift
+lock_check_rc=0
+PAYLOAD-INTEGRITY PASS (content_integrity=verified): 350 released files + genuine provenance; v3.2.0 at e020cd135d38ece14ac1f6603c384096689d0499 (git:/home/cnross/.tmp/f001-probe.z4yotA/ref001@e020cd135d38ece14ac1f6603c384096689d0499)
+payload_verify_rc=0
+PAYLOAD-INTEGRITY FAIL: file inventory drift: missing=[], extra=['extra-file.txt']
+extra_file_verify_rc=1
+reinstall_rc=0
+lock_after_reinstall=PRESERVED
+== 002 target/reference overlap ==
+case=equal install_rc=1 project_sentinel=intact project_entries=[SENTINEL.txt ]
+case=descendant install_rc=1 project_sentinel=intact project_entries=[SENTINEL.txt ]
+case=ancestor install_rc=1 project_sentinel=intact project_entries=[SENTINEL.txt ]
+case=disjoint install_rc=0 project_sentinel=intact project_entries=[.nizam SENTINEL.txt ]
+== 010 lock source_url attribution (checker) ==
+case=matching-url fails=NONE (silent)
+case=mismatched-url fails=["[PCL] FAIL lock-payload-drift: lock source_url 'https://evil.example/fork.git' != provenance.json source_url 'https://github.com/niq-cnr/nizam-framework.git'"]
+case=empty-url fails=["[PCL] FAIL lock-format: source_url '' is not a non-empty recordable repository URL (scheme URL, scp-like, or absolute path) without whitespace or control characters", "[PCL] FAIL lock-payload-drift: lock source_url '' != provenance.json source_url 'https://github.com/niq-cnr/nizam-framework.git'"]
+case=null-url fails=['[PCL] FAIL lock-format: source_url None is not a non-empty recordable repository URL (scheme URL, scp-like, or absolute path) without whitespace or control characters', "[PCL] FAIL lock-payload-drift: lock source_url None != provenance.json source_url 'https://github.com/niq-cnr/nizam-framework.git'"]
+case=missing-url fails=["[PCL] FAIL lock-shape: keys differ: extra=[] missing=['source_url']", '[PCL] FAIL lock-format: source_url None is not a non-empty recordable repository URL (scheme URL, scp-like, or absolute path) without whitespace or control characters', "[PCL] FAIL lock-payload-drift: lock source_url None != provenance.json source_url 'https://github.com/niq-cnr/nizam-framework.git'"]
+probe_workdir=/home/cnross/.tmp/f001-probe.z4yotA
+exit=0
+cmd: bash tools/e2e_bootstrap_test.sh
+exit=0
+cmd: python3 tools/test_nf_ac05_standalone_e2e.py
+exit=0
+cmd: python3 tools/test_compliance_reference.py
+exit=0
