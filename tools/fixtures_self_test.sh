@@ -684,8 +684,10 @@ test_c13() {
     cp -- "tools/fixtures/${fixture_basename}" tools/skill.json
     validator_output=$(bash tools/validate.sh 2>&1)
     cp -- "${SKILL_BAK}" tools/skill.json
-    if printf '%s\n' "${validator_output}" | grep -Eq "^\[C13\] FAIL" \
-      && { [ -z "${required_detail}" ] || printf '%s\n' "${validator_output}" | grep -Fq -- "${required_detail}"; }; then
+    # Here-strings, not `printf | grep -q`: under pipefail a grep -q early exit gives printf
+    # SIGPIPE (141) and falsely fails a present match. The predicate is unchanged.
+    if grep -Eq "^\[C13\] FAIL" <<<"${validator_output}" \
+      && { [ -z "${required_detail}" ] || grep -Fq -- "${required_detail}" <<<"${validator_output}"; }; then
       echo "OK   c13-substitute ${fixture_basename} -> [C13] FAIL"
     else
       echo "FAIL c13-substitute: substituting ${fixture_basename} did not yield [C13] FAIL"
@@ -855,8 +857,10 @@ echo "== ecosystem_audit CLI behavior probes =="
 _audit_cli_probes() (
   local d rc
   scratch_dirs d || return 1
+  # SQA-integrity-004: the positive case is a fully schema-valid, execution-bound baseline
+  # (all six mandatory reference categories, each item anchored) and a clean preflight.
   printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
-  printf '{"execution_id":"e1"}' > "${d}/baseline.json"
+  printf '%s' '{"execution_id":"e1","captured_at":"t","framework_references":[{"revision":"v3.1.3","timestamp":"t"}],"repository_references":[{"revision":"abc123","timestamp":"t"}],"dependency_references":[{"revision":"1.0.0","timestamp":"t"}],"ci_references":[{"revision":"run-1","timestamp":"t"}],"planning_references":[{"revision":"abc123","timestamp":"t"}],"evidence_references":[{"revision":"abc123","timestamp":"t"}]}' > "${d}/baseline.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
   # (a) a valid audit -> ASSEMBLED (exit 0), both artifacts written
   python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/out" --findings-input "${d}/findings.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
@@ -870,6 +874,24 @@ _audit_cli_probes() (
   printf '{"verdict":"FAIL","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-fail.json"
   python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o3" --findings-input "${d}/findings.json" --preflight "${d}/pf-fail.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 2 ] || { echo "  fail-preflight: expected exit 2, got ${rc}"; return 1; }
+  # (d) SQA-integrity-004 negatives: each must be refused (exit 2) and write no output.
+  # Every refusal case below must leave its output directory absent.
+  local refuse_case n
+  refuse_case() { # $1=case $2=preflight $3=baseline
+    python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/n-$1" --findings-input "${d}/findings.json" --preflight "$2" --baseline "$3" >/dev/null 2>&1
+    rc=$?; [ "${rc}" -eq 2 ] || { echo "  $1: expected exit 2, got ${rc}"; return 1; }
+    [ ! -e "${d}/n-$1" ] || { echo "  $1: refused audit wrote output"; return 1; }
+  }
+  printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-pass-blocking.json"
+  refuse_case pass-with-blocking "${d}/pf-pass-blocking.json" "${d}/baseline.json" || return 1
+  printf '{"verdict":"PASS","generated_at":"t"}' > "${d}/pf-noexec.json"
+  refuse_case preflight-no-execution-id "${d}/pf-noexec.json" "${d}/baseline.json" || return 1
+  printf '{"verdict":"PASS","execution_id":"e2","generated_at":"t"}' > "${d}/pf-mismatch.json"
+  refuse_case execution-id-mismatch "${d}/pf-mismatch.json" "${d}/baseline.json" || return 1
+  printf '{"execution_id":"e1"}' > "${d}/baseline-minimal.json"
+  refuse_case minimal-baseline "${d}/preflight.json" "${d}/baseline-minimal.json" || return 1
+  printf '{"verdict":"PASS_WITH_EXCEPTIONS","execution_id":"e1","generated_at":"t","exceptions":[{"id":"x"}],"operator_approval":{"approver":"op","authorization":"ok"}}' > "${d}/pf-exc-incomplete.json"
+  refuse_case exception-approval-incomplete "${d}/pf-exc-incomplete.json" "${d}/baseline.json" || return 1
   return 0
 )
 if _audit_cli_probes; then

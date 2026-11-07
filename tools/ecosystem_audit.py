@@ -105,6 +105,17 @@ EVIDENCE_PATH_PREFIX = ".agent/evidence/"
 
 APPROVED_PREFLIGHT_VERDICTS: tuple[str, ...] = ("PASS", "PASS_WITH_EXCEPTIONS")
 
+# The six mandatory baseline reference categories (schema/ecosystem_baseline.schema.json
+# `required`; protocol Sec 3). Each must be a non-empty array of anchored items.
+BASELINE_REFERENCE_CATEGORIES: tuple[str, ...] = (
+    "framework_references",
+    "repository_references",
+    "dependency_references",
+    "ci_references",
+    "planning_references",
+    "evidence_references",
+)
+
 
 class AuditUsageError(Exception):
     """Raised for a malformed CLI invocation; the caller maps this to exit 64.
@@ -292,6 +303,34 @@ def validate_findings(findings: object) -> tuple[list[dict], list[str]]:
     return [f for f in findings if isinstance(f, dict)], problems
 
 
+def _check_baseline_shape(baseline: dict) -> list[str]:
+    """Mirror schema/ecosystem_baseline.schema.json for the entry gate (stdlib only).
+
+    Every one of the six mandatory categories must be a non-empty array whose items
+    each declare a non-empty ``revision`` and ``timestamp`` (protocol Sec 3/4).
+    """
+    problems: list[str] = []
+    for category in BASELINE_REFERENCE_CATEGORIES:
+        items = baseline.get(category)
+        if not isinstance(items, list) or not items:
+            problems.append(
+                f"--baseline '{category}' is missing or empty -- a baseline must carry all "
+                "six mandatory reference categories (ecosystem/02_evidence_baseline.md Sec 3)"
+            )
+            continue
+        for index, item in enumerate(items):
+            if not (
+                isinstance(item, dict)
+                and _is_nonempty_str(item.get("revision"))
+                and _is_nonempty_str(item.get("timestamp"))
+            ):
+                problems.append(
+                    f"--baseline {category}[{index}] lacks a non-empty revision and timestamp "
+                    "(ecosystem/02_evidence_baseline.md Sec 4)"
+                )
+    return problems
+
+
 def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
     """Return the reasons the Sec 2 evidence-first entry conditions are unmet.
 
@@ -299,7 +338,9 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
     ``PASS_WITH_EXCEPTIONS``) preflight verdict AND a baseline captured for the
     SAME execution (ecosystem/03_engineering_audit.md Sec 2;
     ecosystem/01_clean_state_preflight.md Sec 3/5). An empty return means the
-    conditions are satisfied.
+    conditions are satisfied. The baseline must also be schema-complete, and a
+    successful preflight must carry no blocking findings (schema/preflight_verdict.schema.json
+    allOf: a PASS/PASS_WITH_EXCEPTIONS verdict may not declare blocking_findings).
     """
     problems: list[str] = []
 
@@ -320,17 +361,30 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
     elif verdict == "PASS_WITH_EXCEPTIONS":
         approval = preflight.get("operator_approval")
         approver = approval.get("approver") if isinstance(approval, dict) else None
+        approved_at = approval.get("approved_at") if isinstance(approval, dict) else None
         authorization = approval.get("authorization") if isinstance(approval, dict) else None
-        if not (_is_nonempty_str(approver) and _is_nonempty_str(authorization)):
+        if not (
+            _is_nonempty_str(approver)
+            and _is_nonempty_str(approved_at)
+            and _is_nonempty_str(authorization)
+        ):
             problems.append(
-                "preflight verdict is PASS_WITH_EXCEPTIONS with no recorded "
-                "operator_approval (approver + authorization) -- an unapproved "
-                "PASS_WITH_EXCEPTIONS does not authorize an audit "
+                "preflight verdict is PASS_WITH_EXCEPTIONS with incomplete "
+                "operator_approval (approver + approved_at + authorization required) -- an "
+                "unapproved PASS_WITH_EXCEPTIONS does not authorize an audit "
                 "(ecosystem/01_clean_state_preflight.md Sec 5)"
             )
 
+    if verdict in APPROVED_PREFLIGHT_VERDICTS and "blocking_findings" in preflight:
+        problems.append(
+            f"preflight verdict is {verdict} but declares blocking_findings -- a successful "
+            "verdict certifies no blocking condition remains (schema/preflight_verdict.schema.json)"
+        )
+
     preflight_execution = preflight.get("execution_id")
     baseline_execution = baseline.get("execution_id")
+    if not _is_nonempty_str(preflight_execution):
+        problems.append("--preflight has no 'execution_id' -- it is not bound to an execution")
     if not _is_nonempty_str(baseline_execution):
         problems.append("--baseline has no 'execution_id' -- it is not a captured baseline")
     if (
@@ -343,6 +397,7 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
             f"'{baseline_execution}' -- both inputs must belong to the SAME execution "
             "(ecosystem/03_engineering_audit.md Sec 2)"
         )
+    problems.extend(_check_baseline_shape(baseline))
     return problems
 
 

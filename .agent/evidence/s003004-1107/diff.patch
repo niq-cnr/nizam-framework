@@ -1,0 +1,297 @@
+diff --git a/schema/qa_verdict.schema.json b/schema/qa_verdict.schema.json
+index 8a06f231..1510d12a 100644
+--- a/schema/qa_verdict.schema.json
++++ b/schema/qa_verdict.schema.json
+@@ -186,7 +186,27 @@
+         "required_fixes",
+         "final_verdict"
+       ],
+-      "additionalProperties": true
++      "additionalProperties": true,
++      "allOf": [
++        {
++          "description": "SQA-integrity-003: a passing verdict must be internally consistent -- approved, every check passed, and no blocking array populated.",
++          "if": { "properties": { "qa_pass": { "const": true } }, "required": ["qa_pass"] },
++          "then": {
++            "properties": {
++              "final_verdict": { "properties": { "approved": { "const": true } }, "required": ["approved"] },
++              "issues": { "maxItems": 0 },
++              "unsupported_claims": { "maxItems": 0 },
++              "missing_acceptance_coverage": { "maxItems": 0 },
++              "required_fixes": { "maxItems": 0 }
++            }
++          }
++        },
++        {
++          "description": "SQA-integrity-003: a rejected verdict may never also be approved.",
++          "if": { "properties": { "qa_pass": { "const": false } }, "required": ["qa_pass"] },
++          "then": { "properties": { "final_verdict": { "properties": { "approved": { "const": false } } } } }
++        }
++      ]
+     }
+   ],
+   "allOf": [
+diff --git a/tools/ecosystem_audit.py b/tools/ecosystem_audit.py
+index f3205a49..ddf114bd 100644
+--- a/tools/ecosystem_audit.py
++++ b/tools/ecosystem_audit.py
+@@ -105,6 +105,17 @@ EVIDENCE_PATH_PREFIX = ".agent/evidence/"
+ 
+ APPROVED_PREFLIGHT_VERDICTS: tuple[str, ...] = ("PASS", "PASS_WITH_EXCEPTIONS")
+ 
++# The six mandatory baseline reference categories (schema/ecosystem_baseline.schema.json
++# `required`; protocol Sec 3). Each must be a non-empty array of anchored items.
++BASELINE_REFERENCE_CATEGORIES: tuple[str, ...] = (
++    "framework_references",
++    "repository_references",
++    "dependency_references",
++    "ci_references",
++    "planning_references",
++    "evidence_references",
++)
++
+ 
+ class AuditUsageError(Exception):
+     """Raised for a malformed CLI invocation; the caller maps this to exit 64.
+@@ -292,6 +303,34 @@ def validate_findings(findings: object) -> tuple[list[dict], list[str]]:
+     return [f for f in findings if isinstance(f, dict)], problems
+ 
+ 
++def _check_baseline_shape(baseline: dict) -> list[str]:
++    """Mirror schema/ecosystem_baseline.schema.json for the entry gate (stdlib only).
++
++    Every one of the six mandatory categories must be a non-empty array whose items
++    each declare a non-empty ``revision`` and ``timestamp`` (protocol Sec 3/4).
++    """
++    problems: list[str] = []
++    for category in BASELINE_REFERENCE_CATEGORIES:
++        items = baseline.get(category)
++        if not isinstance(items, list) or not items:
++            problems.append(
++                f"--baseline '{category}' is missing or empty -- a baseline must carry all "
++                "six mandatory reference categories (ecosystem/02_evidence_baseline.md Sec 3)"
++            )
++            continue
++        for index, item in enumerate(items):
++            if not (
++                isinstance(item, dict)
++                and _is_nonempty_str(item.get("revision"))
++                and _is_nonempty_str(item.get("timestamp"))
++            ):
++                problems.append(
++                    f"--baseline {category}[{index}] lacks a non-empty revision and timestamp "
++                    "(ecosystem/02_evidence_baseline.md Sec 4)"
++                )
++    return problems
++
++
+ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
+     """Return the reasons the Sec 2 evidence-first entry conditions are unmet.
+ 
+@@ -299,7 +338,9 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
+     ``PASS_WITH_EXCEPTIONS``) preflight verdict AND a baseline captured for the
+     SAME execution (ecosystem/03_engineering_audit.md Sec 2;
+     ecosystem/01_clean_state_preflight.md Sec 3/5). An empty return means the
+-    conditions are satisfied.
++    conditions are satisfied. The baseline must also be schema-complete, and a
++    successful preflight must carry no blocking findings (schema/preflight_verdict.schema.json
++    allOf: a PASS/PASS_WITH_EXCEPTIONS verdict may not declare blocking_findings).
+     """
+     problems: list[str] = []
+ 
+@@ -320,17 +361,30 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
+     elif verdict == "PASS_WITH_EXCEPTIONS":
+         approval = preflight.get("operator_approval")
+         approver = approval.get("approver") if isinstance(approval, dict) else None
++        approved_at = approval.get("approved_at") if isinstance(approval, dict) else None
+         authorization = approval.get("authorization") if isinstance(approval, dict) else None
+-        if not (_is_nonempty_str(approver) and _is_nonempty_str(authorization)):
++        if not (
++            _is_nonempty_str(approver)
++            and _is_nonempty_str(approved_at)
++            and _is_nonempty_str(authorization)
++        ):
+             problems.append(
+-                "preflight verdict is PASS_WITH_EXCEPTIONS with no recorded "
+-                "operator_approval (approver + authorization) -- an unapproved "
+-                "PASS_WITH_EXCEPTIONS does not authorize an audit "
++                "preflight verdict is PASS_WITH_EXCEPTIONS with incomplete "
++                "operator_approval (approver + approved_at + authorization required) -- an "
++                "unapproved PASS_WITH_EXCEPTIONS does not authorize an audit "
+                 "(ecosystem/01_clean_state_preflight.md Sec 5)"
+             )
+ 
++    if verdict in APPROVED_PREFLIGHT_VERDICTS and "blocking_findings" in preflight:
++        problems.append(
++            f"preflight verdict is {verdict} but declares blocking_findings -- a successful "
++            "verdict certifies no blocking condition remains (schema/preflight_verdict.schema.json)"
++        )
++
+     preflight_execution = preflight.get("execution_id")
+     baseline_execution = baseline.get("execution_id")
++    if not _is_nonempty_str(preflight_execution):
++        problems.append("--preflight has no 'execution_id' -- it is not bound to an execution")
+     if not _is_nonempty_str(baseline_execution):
+         problems.append("--baseline has no 'execution_id' -- it is not a captured baseline")
+     if (
+@@ -343,6 +397,7 @@ def check_entry_conditions(preflight: object, baseline: object) -> list[str]:
+             f"'{baseline_execution}' -- both inputs must belong to the SAME execution "
+             "(ecosystem/03_engineering_audit.md Sec 2)"
+         )
++    problems.extend(_check_baseline_shape(baseline))
+     return problems
+ 
+ 
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index a3ac9e0c..625af07c 100755
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -855,8 +855,10 @@ echo "== ecosystem_audit CLI behavior probes =="
+ _audit_cli_probes() (
+   local d rc
+   scratch_dirs d || return 1
++  # SQA-integrity-004: the positive case is a fully schema-valid, execution-bound baseline
++  # (all six mandatory reference categories, each item anchored) and a clean preflight.
+   printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
+-  printf '{"execution_id":"e1"}' > "${d}/baseline.json"
++  printf '%s' '{"execution_id":"e1","captured_at":"t","framework_references":[{"revision":"v3.1.3","timestamp":"t"}],"repository_references":[{"revision":"abc123","timestamp":"t"}],"dependency_references":[{"revision":"1.0.0","timestamp":"t"}],"ci_references":[{"revision":"run-1","timestamp":"t"}],"planning_references":[{"revision":"abc123","timestamp":"t"}],"evidence_references":[{"revision":"abc123","timestamp":"t"}]}' > "${d}/baseline.json"
+   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
+   # (a) a valid audit -> ASSEMBLED (exit 0), both artifacts written
+   python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/out" --findings-input "${d}/findings.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+@@ -870,6 +872,24 @@ _audit_cli_probes() (
+   printf '{"verdict":"FAIL","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-fail.json"
+   python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o3" --findings-input "${d}/findings.json" --preflight "${d}/pf-fail.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+   rc=$?; [ "${rc}" -eq 2 ] || { echo "  fail-preflight: expected exit 2, got ${rc}"; return 1; }
++  # (d) SQA-integrity-004 negatives: each must be refused (exit 2) and write no output.
++  # Every refusal case below must leave its output directory absent.
++  local refuse_case n
++  refuse_case() { # $1=case $2=preflight $3=baseline
++    python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/n-$1" --findings-input "${d}/findings.json" --preflight "$2" --baseline "$3" >/dev/null 2>&1
++    rc=$?; [ "${rc}" -eq 2 ] || { echo "  $1: expected exit 2, got ${rc}"; return 1; }
++    [ ! -e "${d}/n-$1" ] || { echo "  $1: refused audit wrote output"; return 1; }
++  }
++  printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-pass-blocking.json"
++  refuse_case pass-with-blocking "${d}/pf-pass-blocking.json" "${d}/baseline.json" || return 1
++  printf '{"verdict":"PASS","generated_at":"t"}' > "${d}/pf-noexec.json"
++  refuse_case preflight-no-execution-id "${d}/pf-noexec.json" "${d}/baseline.json" || return 1
++  printf '{"verdict":"PASS","execution_id":"e2","generated_at":"t"}' > "${d}/pf-mismatch.json"
++  refuse_case execution-id-mismatch "${d}/pf-mismatch.json" "${d}/baseline.json" || return 1
++  printf '{"execution_id":"e1"}' > "${d}/baseline-minimal.json"
++  refuse_case minimal-baseline "${d}/preflight.json" "${d}/baseline-minimal.json" || return 1
++  printf '{"verdict":"PASS_WITH_EXCEPTIONS","execution_id":"e1","generated_at":"t","exceptions":[{"id":"x"}],"operator_approval":{"approver":"op","authorization":"ok"}}' > "${d}/pf-exc-incomplete.json"
++  refuse_case exception-approval-incomplete "${d}/pf-exc-incomplete.json" "${d}/baseline.json" || return 1
+   return 0
+ )
+ if _audit_cli_probes; then
+diff --git a/tools/test_start_path.py b/tools/test_start_path.py
+index 53bd8035..5b6e5829 100644
+--- a/tools/test_start_path.py
++++ b/tools/test_start_path.py
+@@ -1724,7 +1724,16 @@ def test_jev_readiness_controls() -> None:
+         ):
+             write(root, ".agent/qa/gate.json", payload)
+             expect(run(root, "begin", "trivial", "--id", "gate"), 0, "implementation may begin")
+-            expect(run(root, "done", "trivial", "--id", "gate"), code, text)
++            # SQA-integrity-003: a contradictory record may now be refused by the QA schema
++            # (qa_verdict.schema.json cross-field agreement) before the predicate phrase is
++            # reached. Both refusals exit 1; require the refusal, not one specific wording.
++            done = run(root, "done", "trivial", "--id", "gate")
++            combined = done.stdout + done.stderr
++            if done.returncode != code or (text not in combined and "qa_verdict.schema.json" not in combined):
++                raise SystemExit(
++                    f"expected exit {code} refusing the QA record ({text!r} or schema rejection)\n"
++                    f"got exit {done.returncode}\nstdout={done.stdout}\nstderr={done.stderr}"
++                )
+             (root / ".agent/evidence/gate-base.json").unlink(missing_ok=True)
+ 
+     with tempfile.TemporaryDirectory(prefix="nizam-jev-scope-") as git_dir:
+diff --git a/tools/verify_lib.sh b/tools/verify_lib.sh
+index 026ef840..600764ab 100644
+--- a/tools/verify_lib.sh
++++ b/tools/verify_lib.sh
+@@ -877,6 +877,59 @@ def historical_resolution(feature_id, evidence_path):
+     return "historical resolution failed: " + detail
+ 
+ 
++BLOCKING_ARRAYS = ("issues", "missing_acceptance_coverage", "unsupported_claims", "required_fixes")
++
++
++def qa_verdict_approves(doc):
++    """True only for an approving record (evolved qa_pass, legacy verdict, or final_verdict-only)."""
++    if "qa_pass" in doc:
++        fv = doc.get("final_verdict")
++        return doc.get("qa_pass") is True and isinstance(fv, dict) and fv.get("approved") is True
++    fv = doc.get("final_verdict")
++    if "verdict" in doc:
++        return str(doc.get("verdict", "")).upper() == "PASS"
++    return isinstance(fv, dict) and fv.get("approved") is True
++
++
++def qa_verdict_contradiction(doc):
++    """Return a diagnostic naming the first contradiction, or None when consistent."""
++    fv = doc.get("final_verdict")
++    if "qa_pass" in doc:
++        if doc.get("qa_pass") not in (True, False):
++            return "qa_pass is not a boolean"
++        approved = fv.get("approved") if isinstance(fv, dict) else None
++        if doc.get("qa_pass") is True and approved is not True:
++            return "qa_pass=true but final_verdict.approved is not true"
++        if doc.get("qa_pass") is False and approved is True:
++            return "qa_pass=false but final_verdict.approved=true"
++        for key in BLOCKING_ARRAYS:
++            value = doc.get(key)
++            if value is not None and not isinstance(value, list):
++                return f"{key} is not an array"
++            if doc.get("qa_pass") is True and value:
++                return f"qa_pass=true but {key} is non-empty"
++        run, passed = doc.get("checks_run"), doc.get("checks_passed")
++        if isinstance(run, int) and isinstance(passed, int):
++            if passed > run:
++                return f"checks_passed={passed} exceeds checks_run={run}"
++            if doc.get("qa_pass") is True and passed != run:
++                return f"qa_pass=true but checks_passed={passed} != checks_run={run}"
++            if doc.get("qa_pass") is False and run > 0 and passed == run:
++                return f"qa_pass=false but every check passed ({passed}/{run})"
++        return None
++    verdict = str(doc.get("verdict", "")).upper()
++    if verdict == "PASS":
++        checks = doc.get("checks")
++        if isinstance(checks, list) and any(
++            isinstance(c, dict) and c.get("exit_code") != 0 for c in checks
++        ):
++            return "verdict=PASS but a recorded check exited nonzero"
++        for key in BLOCKING_ARRAYS:
++            if isinstance(doc.get(key), list) and doc.get(key):
++                return f"verdict=PASS but {key} is non-empty"
++    return None
++
++
+ lists = sorted(glob.glob(".agent/feature_list*.json"))
+ if not lists:
+     sys.exit(0)
+@@ -964,13 +1017,18 @@ for path in lists:
+             continue
+ 
+         if isinstance(qa_doc, dict):
+-            fv = qa_doc.get("final_verdict")
+-            qa_approved = (
+-                qa_doc.get("qa_pass") is True
+-                or (isinstance(fv, dict) and fv.get("approved") is True)
+-                or str(qa_doc.get("verdict", "")).upper() == "PASS"
+-            )
+-            if not qa_approved:
++            # SQA-integrity-003: a completion requires an approving verdict that is
++            # internally consistent. Any single positive marker is no longer enough: every
++            # marker present must agree, blocking arrays must be empty, and check totals must
++            # match the reported verdict. A rejected or contradictory record never passes.
++            contradiction = qa_verdict_contradiction(qa_doc)
++            if contradiction:
++                errors.append(
++                    f"{path}: feature '{fid}': QA verdict {qa_path} is not an approving, "
++                    f"internally consistent verdict: {contradiction}"
++                )
++                continue
++            if not qa_verdict_approves(qa_doc):
+                 errors.append(
+                     f"{path}: feature '{fid}': QA verdict {qa_path} is not approved/passing"
+                 )
