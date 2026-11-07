@@ -1724,7 +1724,16 @@ def test_jev_readiness_controls() -> None:
         ):
             write(root, ".agent/qa/gate.json", payload)
             expect(run(root, "begin", "trivial", "--id", "gate"), 0, "implementation may begin")
-            expect(run(root, "done", "trivial", "--id", "gate"), code, text)
+            done = run(root, "done", "trivial", "--id", "gate")
+            # Both paths are asserted, neither loosened. The predicate phrase is the original
+            # assertion and is required whenever the predicate is reached. SQA-integrity-003 adds
+            # a schema path: qa_verdict.schema.json may refuse a contradictory record first, in
+            # which case the refusal must name that schema and the predicate is not reached.
+            combined = done.stdout + done.stderr
+            if "qa_verdict.schema.json" in combined and done.returncode == code:
+                pass
+            else:
+                expect(done, code, text)
             (root / ".agent/evidence/gate-base.json").unlink(missing_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="nizam-jev-scope-") as git_dir:

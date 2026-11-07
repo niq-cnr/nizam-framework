@@ -1,0 +1,7 @@
+CASE 003-contradictory-qa C11_schema_rc=0 C16_completion_rc=0 (accept = rc 0; required after fix: both nonzero)
+CASE 003-clean-qa C11_schema_rc=0 C16_completion_rc=0 (required: both 0)
+CASE 004-minimal-baseline-clean-preflight rc=0 ASSEMBLED (accepted)
+CASE 004-pass-with-blocking-findings rc=0 ASSEMBLED (accepted)
+CASE 004-preflight-missing-execution-id rc=0 ASSEMBLED (accepted)
+CASE 004-execution-id-mismatch rc=2 REFUSED
+FIXTURE tools/fixtures_self_test.sh:858-859 baseline='printf '{"execution_id":"e1"}' > "${d}/baseline.json"'

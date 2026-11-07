@@ -186,7 +186,27 @@
         "required_fixes",
         "final_verdict"
       ],
-      "additionalProperties": true
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "description": "SQA-integrity-003: a passing verdict must be internally consistent -- approved, every check passed, and no blocking array populated.",
+          "if": { "properties": { "qa_pass": { "const": true } }, "required": ["qa_pass"] },
+          "then": {
+            "properties": {
+              "final_verdict": { "properties": { "approved": { "const": true } }, "required": ["approved"] },
+              "issues": { "maxItems": 0 },
+              "unsupported_claims": { "maxItems": 0 },
+              "missing_acceptance_coverage": { "maxItems": 0 },
+              "required_fixes": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "description": "SQA-integrity-003: a rejected verdict may never also be approved.",
+          "if": { "properties": { "qa_pass": { "const": false } }, "required": ["qa_pass"] },
+          "then": { "properties": { "final_verdict": { "properties": { "approved": { "const": false } } } } }
+        }
+      ]
     }
   ],
   "allOf": [

@@ -877,6 +877,59 @@ def historical_resolution(feature_id, evidence_path):
     return "historical resolution failed: " + detail
 
 
+BLOCKING_ARRAYS = ("issues", "missing_acceptance_coverage", "unsupported_claims", "required_fixes")
+
+
+def qa_verdict_approves(doc):
+    """True only for an approving record (evolved qa_pass, legacy verdict, or final_verdict-only)."""
+    if "qa_pass" in doc:
+        fv = doc.get("final_verdict")
+        return doc.get("qa_pass") is True and isinstance(fv, dict) and fv.get("approved") is True
+    fv = doc.get("final_verdict")
+    if "verdict" in doc:
+        return str(doc.get("verdict", "")).upper() == "PASS"
+    return isinstance(fv, dict) and fv.get("approved") is True
+
+
+def qa_verdict_contradiction(doc):
+    """Return a diagnostic naming the first contradiction, or None when consistent."""
+    fv = doc.get("final_verdict")
+    if "qa_pass" in doc:
+        if doc.get("qa_pass") not in (True, False):
+            return "qa_pass is not a boolean"
+        approved = fv.get("approved") if isinstance(fv, dict) else None
+        if doc.get("qa_pass") is True and approved is not True:
+            return "qa_pass=true but final_verdict.approved is not true"
+        if doc.get("qa_pass") is False and approved is True:
+            return "qa_pass=false but final_verdict.approved=true"
+        for key in BLOCKING_ARRAYS:
+            value = doc.get(key)
+            if value is not None and not isinstance(value, list):
+                return f"{key} is not an array"
+            if doc.get("qa_pass") is True and value:
+                return f"qa_pass=true but {key} is non-empty"
+        run, passed = doc.get("checks_run"), doc.get("checks_passed")
+        if isinstance(run, int) and isinstance(passed, int):
+            if passed > run:
+                return f"checks_passed={passed} exceeds checks_run={run}"
+            if doc.get("qa_pass") is True and passed != run:
+                return f"qa_pass=true but checks_passed={passed} != checks_run={run}"
+            if doc.get("qa_pass") is False and run > 0 and passed == run:
+                return f"qa_pass=false but every check passed ({passed}/{run})"
+        return None
+    verdict = str(doc.get("verdict", "")).upper()
+    if verdict == "PASS":
+        checks = doc.get("checks")
+        if isinstance(checks, list) and any(
+            isinstance(c, dict) and c.get("exit_code") != 0 for c in checks
+        ):
+            return "verdict=PASS but a recorded check exited nonzero"
+        for key in BLOCKING_ARRAYS:
+            if isinstance(doc.get(key), list) and doc.get(key):
+                return f"verdict=PASS but {key} is non-empty"
+    return None
+
+
 lists = sorted(glob.glob(".agent/feature_list*.json"))
 if not lists:
     sys.exit(0)
@@ -964,13 +1017,18 @@ for path in lists:
             continue
 
         if isinstance(qa_doc, dict):
-            fv = qa_doc.get("final_verdict")
-            qa_approved = (
-                qa_doc.get("qa_pass") is True
-                or (isinstance(fv, dict) and fv.get("approved") is True)
-                or str(qa_doc.get("verdict", "")).upper() == "PASS"
-            )
-            if not qa_approved:
+            # SQA-integrity-003: a completion requires an approving verdict that is
+            # internally consistent. Any single positive marker is no longer enough: every
+            # marker present must agree, blocking arrays must be empty, and check totals must
+            # match the reported verdict. A rejected or contradictory record never passes.
+            contradiction = qa_verdict_contradiction(qa_doc)
+            if contradiction:
+                errors.append(
+                    f"{path}: feature '{fid}': QA verdict {qa_path} is not an approving, "
+                    f"internally consistent verdict: {contradiction}"
+                )
+                continue
+            if not qa_verdict_approves(qa_doc):
                 errors.append(
                     f"{path}: feature '{fid}': QA verdict {qa_path} is not approved/passing"
                 )
