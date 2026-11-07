@@ -68,3 +68,36 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - Reporting-doctrine labels named in the brief were not found in repo or local skills; labels applied per the brief's own definitions.
 - Local: `release_closeout.py --mode pr` exit 0; `--mode tag --tag v3.1.3` exit 0.
 - No tag created or pushed. No merge. No changes outside this record and this receipt.
+
+## SQA-005..009,011 — framework integrity fix (2026-11-07)
+
+- Scope: exactly SQA-integrity-005, -006, -007, -008, -009, -011 from audit c905615d (findings sha256
+  prefix 82d4df0b34fc4235). Base origin/main `0a0a4d24`. Branch `fix/framework-integrity-sqa005-009-1107`.
+- Head: `505d4c04` (tree `1bf85152`); fix commits `75d65b4a`, `e4eddcf4`, `505d4c04`; evidence `5d106314`.
+- Reproduction: all six findings reproduced at the base before any change (probe-before.txt). None was
+  disproved, so none is closed by evidence alone. Per-finding record: .agent/evidence/sqa005009-011-1107/per-finding.md.
+- Fixes: 005 CI manifest + coverage gate (23 of 40 suites were unreached at base); 006 explicit C8 base
+  with fail-closed CI step; 007 refuse baseline reuse before any write (lexists); 008 per-operation usage
+  resolution, conflicts refused; 009 all 14 design fields required, design-defining fields non-waivable;
+  011 SELF_GOVERNANCE current section names v3.1.3, v3.0.0 labeled historical.
+- Battery at 505d4c04: validate.sh 14 passed / 2 failed (C11, C16 only — intended refusals, unchanged);
+  fixtures_self_test 176/176, 0 failed; test_start_path rc 0; test_framework_integrity_s003004 19 OK;
+  test_framework_integrity_sqa005009 27 OK; CI dedicated loop rc 0 (21 suites); coverage gate 0 unaccounted.
+  Captures: .agent/evidence/sqa005009-011-1107/battery-FINAL.txt and *-FINAL.txt.
+- Base negatives: 13 fail + 3 error on pristine 0a0a4d24 (negatives-on-base-table-FINAL.txt). Errors are
+  helper absence (2) and the absent CI loop (1); none is a spurious failure.
+- Independent evaluation: round 1 on 75d65b4a returned fail (72) on six points; each was verified and
+  fixed in e4eddcf4. Round 2 (fresh context) on e4eddcf4 returned pass (86): all eight points closed, with
+  warnings. The P6 label and the stale regression diffstat were then addressed in 505d4c04. Evaluator
+  rounds ran with read/grep tools only; their test results are artifact-verified, not re-executed.
+- Hard constraints verified at head (protected-paths-final.txt): .agent/qa/035/036/123.json unchanged;
+  .nizam/ and NIZAM.json unchanged; tools/verify_lib.sh and tools/ecosystem_audit.py unchanged; no tag;
+  no tracked .pyc. The fixtures_self_test.sh hunks (lines ~749-777) are disjoint from #170 (684, 855, 870).
+- Residuals (not closed here): the excluded suites test_nf_ac02_policy_reconciliation (runtime
+  finite-recovery exit-code gap) and test_nf_owner_dag_and_backlog (asserts superseded v3.0.0) fail at base
+  and are excluded with reasons in tools/ci_suite_exclusions.txt; fixing them is a separate item.
+  The CI workflow step exit-1 for an unresolvable C8 base is verified by reading and by a replayed run,
+  not by a test in the required CI job.
+- Untracked .agent/harness/ (runtime leases/node state written during this session) is not part of this
+  change and is not committed.
+- No release tag, no version bump, no NXOS/Mandate work, no H-CONSUMER-UPGRADE self-install.
