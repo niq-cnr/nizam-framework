@@ -143,3 +143,18 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
      verdicts. Old records remain as history.
   Option 2 is the only route to 16/16. It is not doable inside this PR without rebadging, which is forbidden.
 - No tag, no version bump, no release, no NXOS work, no branch overlap with `fix/framework-integrity-s003004-1107*`.
+
+### SQA005-FU2 — PR #171 merge-up refresh (2026-11-08)
+
+- Branch: `fix/framework-integrity-sqa005-009-1107c` (worktree `nzfw-sqa005-fu2-1108`), started from PR #171 head `b6000871fac72f773330b4f8a8f3d4ec2e300bde` (`fix/framework-integrity-sqa005-009-1107b`).
+- Merged `origin/main` `df66f876eabbe891d0e5cf1a8aeacd3f9aec25bc` (PR #172) with a clean `ort` merge, no conflicts; prior commits preserved, no history rewritten. Merge touched only `.agent/qa/035.json`, `.agent/qa/036.json`, `.agent/qa/123.json`, `.agent/evidence-archive/index.json` (from main).
+- Base-side fix: the prior C11/C16 refusals were repaired on main by PR #172. No check, record or `tools/validate.sh` content was edited, skipped or rebadged.
+- Validate: `TMPDIR=/tmp/v171 bash tools/validate.sh` → **SUMMARY: 16 passed, 0 failed**, rc=0 (`.agent/evidence/sqa005009-1107-fu2/validate.txt`, `validate.rc`).
+- Battery (run with `PYTHONDONTWRITEBYTECODE=1`):
+  - `tools/fixtures_self_test.sh` → rc=0, 176/176 fixtures accounted for.
+  - `tools/test_start_path.py` → rc=0 (all gates pass).
+  - `tools/test_framework_integrity_sqa005009.py` → rc=0, Ran 27 tests, OK.
+- Note on an intermediate run: the first `test_start_path.py` invocation returned rc=1 because my own run created untracked, gitignored `tools/__pycache__/*.pyc` files, which the start-path "undeclared changes" check then flagged. Clearing bytecode and running with `PYTHONDONTWRITEBYTECODE=1` gave rc=0. The failure was caused by the invocation, not the repository content; the rc=0 rerun is the recorded result.
+- Evidence: `.agent/evidence/sqa005009-1107-fu2/`.
+- Head SHA at this receipt: `1b8fd41684396e5f37807cb8cb5f6e7deb4d4470` (merge commit on top of `b6000871`).
+- Not done (governor act): PR open/refresh, exact-head CI verification, merge. No tag, version bump, release, or NXOS/other-repo work.
