@@ -34,9 +34,7 @@
     ".agent/evidence/036/verification.txt"
   ],
   "issues": [],
-  "unsupported_claims": [
-    "The coordinator's dispatch message asserted 'Contract 036 passed Mode B with its Loop-2 amendment RATIFIED (entry-16 exclude extension for 037's draft)'. Re-reading the live .agent/contracts/036.json directly (not trusting the chat claim): amendments[0].ratified_by_mode_b is persisted as `false`, not `true`, and no separate Mode-B validator artifact for feature 036 exists anywhere under .agent/qa (searched; only 036-contract-review.json and 036-contract-review-rev1.json, both Loop-1 contract-review artifacts, are present). This is a durable-state gap (per the Durable State Rule: results must be written to .agent/, not communicated via chat alone), not a technical defect this QA round found: the amendment's own substance was independently re-verified in this round (see issues/observations below) and is sound regardless of whether the bookkeeping field was flipped. Recommend the orchestrator/validator correct amendments[0].ratified_by_mode_b to `true` (or record the Mode-B ratification in its own artifact) so the contract's audit trail accurately reflects what actually happened, before this feature is marked complete."
-  ],
+  "unsupported_claims": [],
   "missing_acceptance_coverage": [],
   "required_fixes": [],
   "feature_list_acceptance_check": {
@@ -78,5 +76,24 @@
   "final_verdict": {
     "approved": true,
     "summary": "PASS. All 20 of contract 036's verification entries were independently re-run live from the repository root (extracted programmatically from the live, final, post-amendment .agent/contracts/036.json, never retyped) against HEAD 4b01290 with the feature's own uncommitted implementation in the working tree: 20/20 PASS, matching the captured evidence bundle exactly. All 20 flat evidence files (.agent/evidence/036-verify-01.txt..20.txt) were independently checked and confirmed genuine and current: each file's first line is byte-identical to the corresponding live, FINAL (post Loop-2 entry-16 amendment) contract command, each file's last line is a literal 'EXIT:0', and none contains a session-absolute path. .agent/evidence/036/diff.patch was byte-compared against a freshly generated `git diff -- ecosystem/README.md` and matches exactly (the sole one-line 07-row Planned->Shipped flip). The Loop-2 amendment to verification entry 16 (extending the .agent/qa + .agent/contracts immutability guard's exclude pathspec to also tolerate feature 037's concurrently-drafting contract/qa artifacts) was independently verified live: it is technically necessary (037's genuinely new .agent/contracts/037.json is present in the current tree and would otherwise cause a false-fail) and does not weaken the guard's real defect-catching power (its exclude form is byte-identical in structure to the already-approved 035/036/038 exclusions). One durable-state discrepancy was found and is reported under unsupported_claims, not gating this pass: the contract's own amendments[0].ratified_by_mode_b field is persisted as `false`, contradicting the coordinator's dispatch claim that Mode B ratified it; no separate Mode-B artifact exists to substantiate the claim either. This QA round independently re-proved the amendment's substance is sound regardless, but recommends the orchestrator correct the field for audit-trail accuracy. The evaluator's own round-0/round-1 kill-shot fixtures (renewed-decoy, stalemate-decoy in Sections 3 and 5, a case-flip, and a new cross-section backtick-leak probe) were rebuilt this round as scratch mutations of the REAL, as-shipped ecosystem/07_progress_comparison.md itself, and re-run against the live entries 5/10: every mutation fails exactly and only its targeted entry, the unmodified real document passes all nine content-anchored entries, and no cross-contamination was found -- the backtick-delimiter fix genuinely holds on the actual shipped artifact, not only a hand-built stand-in. All five of feature_list_005.json's feature-036 acceptance_tests are satisfied with evidence mapped by path; the three that embed a literal command are confirmed programmatically byte-identical (as substrings, after the contract's PASS/FAIL wrapper) to their corresponding contract verification entries. No '[AMENDED]' in-place note is warranted on feature_list_005.json's feature-036 entry: entry 7's coarse, format-agnostic whole-file check was never defective and remains verbatim, exactly matching the unamended precedent already set by sibling features 033 and 034. `bash tools/validate.sh` was independently re-run fresh by this QA round: 'SUMMARY: 11 passed, 0 failed'. Feature status in .agent/feature_list_005.json remains 'pending' and .agent/run_state.json shows no diff -- neither was touched by this QA round, per instruction. No 037 or 039 real surface was created, modified, or touched; all fixture/probe activity was scratch-only. Approved; feature 036 is fit to be marked complete by the orchestrator."
-  }
+  },
+  "observations": [
+    {
+      "type": "resolved_unsupported_claim",
+      "date": "2026-11-08",
+      "original_claim_summary": "Coordinator dispatch asserted amendments[0].ratified_by_mode_b was ratified; QA round read it as persisted false.",
+      "original_claim_text": "The coordinator's dispatch message asserted 'Contract 036 passed Mode B with its Loop-2 amendment RATIFIED (entry-16 exclude extension for 037's draft)'. Re-reading the live .agent/contracts/036.json directly (not trusting the chat claim): amendments[0].ratified_by_mode_b is persisted as `false`, not `true`, and no separate Mode-B validator artifact for feature 036 exists anywhere under .agent/qa (searched; only 036-contract-review.json and 036-contract-review-rev1.json, both Loop-1 contract-review artifacts, are present). This is a durable-state gap (per the Durable State Rule: results must be written to .agent/, not communicated via chat alone), not a technical defect this QA round found: the amendment's own substance was independently re-verified in this round (see issues/observations below) and is sound regardless of whether the bookkeeping field was flipped. Recommend the orchestrator/validator correct amendments[0].ratified_by_mode_b to `true` (or record the Mode-B ratification in its own artifact) so the contract's audit trail accurately reflects what actually happened, before this feature is marked complete.",
+      "disposition": "corrected_stale_record_refuted",
+      "evidence": {
+        "live_file": ".agent/contracts/036.json",
+        "field": "amendments[0].ratified_by_mode_b",
+        "current_value": true,
+        "ratification_note": "Ratified by validator Mode B 2026-07-17 (verdict field amendment_ratified: true; diff-vs-rev1 confirmed the amendment + approvals flip only...)",
+        "last_introducing_commit": "4833322e",
+        "value_at_4833322e": true,
+        "recorded_by_git_show": "git show 4833322e:.agent/contracts/036.json | python3 -c \"import json,sys;print(json.load(sys.stdin)['amendments'][0]['ratified_by_mode_b'])\" -> True"
+      },
+      "note": "The QA observation that the flag was persisted false was a stale read; the field was already true when the QA record was written. The amendment substance was independently verified in the original QA round and is unaffected. No contract edit was needed."
+    }
+  ]
 }
