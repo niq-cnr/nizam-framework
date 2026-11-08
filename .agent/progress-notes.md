@@ -158,3 +158,4 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - Evidence: `.agent/evidence/sqa005009-1107-fu2/`.
 - Head SHA at this receipt: `1b8fd41684396e5f37807cb8cb5f6e7deb4d4470` (merge commit on top of `b6000871`).
 - Not done (governor act): PR open/refresh, exact-head CI verification, merge. No tag, version bump, release, or NXOS/other-repo work.
+- Correction (append-only): the "Head SHA at this receipt" line above records the pre-receipt merge commit `1b8fd41684396e5f37807cb8cb5f6e7deb4d4470`. The final pushed head that carries this receipt is `7b77d56f13b2942c432c1f83b8592a7b436e4f38` (`origin/fix/framework-integrity-sqa005-009-1107c`). The merge commit is an ancestor of it.
