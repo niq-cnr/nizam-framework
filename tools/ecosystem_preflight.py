@@ -657,24 +657,38 @@ def write_json_document(path: str, document: dict[str, object]) -> None:
         handle.write("\n")
 
 
+BASELINE_ARTIFACT = "baseline.json"
+
+# Verdict files a run may regenerate. The baseline is deliberately NOT here: a completed
+# baseline is an immutable point-in-time snapshot (ecosystem/02_evidence_baseline.md Sec 5).
 STALE_OUTPUT_ARTIFACTS: tuple[str, ...] = (
     "preflight.json",
     "preflight.pending.json",
-    "baseline.json",
 )
 
 
+def refuse_baseline_reuse(output_dir: str) -> bool:
+    """Return True when ``output_dir`` already holds a baseline that must not be replaced.
+
+    SQA-integrity-007: an existing ``baseline.json`` is the fixed reference earlier audit
+    evidence cites. A rerun must not delete or overwrite it, whether the rerun would pass
+    or fail. Such a rerun is refused before any byte is written; a correction belongs in a
+    new, separately retained output directory.
+    """
+    # lexists, not isfile: a dangling symlink or a directory at the baseline path is also an
+    # existing entry that a write could go through, so it must refuse too.
+    return os.path.lexists(os.path.join(output_dir, BASELINE_ARTIFACT))
+
+
 def clean_output_dir(output_dir: str) -> None:
-    """Remove any stale verdict/baseline artifacts from a reused output dir.
+    """Remove stale verdict artifacts from a reused output dir (never a baseline).
 
     NDEBT-021.4: a reused ``--output-dir`` could otherwise retain a prior run's
-    ``preflight.json`` / ``preflight.pending.json`` / ``baseline.json`` alongside
-    this run's, producing a contradictory mix -- e.g. a FAIL ``preflight.json``
-    next to a stale PASS-run ``baseline.json``, or an approved ``preflight.json``
-    next to a stale ``preflight.pending.json``. Each run pre-cleans exactly the
-    three artifact names it may write, so the directory reflects only the current
-    run. Nothing else in the directory is touched (evidence logs and any
-    caller-supplied files are left intact).
+    ``preflight.json`` / ``preflight.pending.json`` alongside this run's, producing a
+    contradictory mix. Each run pre-cleans exactly the verdict names it may write.
+    ``baseline.json`` is never removed here (SQA-integrity-007); callers refuse reuse
+    of a completed baseline namespace via :func:`refuse_baseline_reuse` first. Nothing
+    else in the directory is touched.
     """
     for artifact_name in STALE_OUTPUT_ARTIFACTS:
         artifact_path = os.path.join(output_dir, artifact_name)
@@ -838,6 +852,14 @@ def main(argv: Sequence[str]) -> int:
         ci_reference = load_ci_reference(args.ci_run_file) if args.ci_run_file else None
     except PreflightUsageError as usage_error:
         print(f"usage error: {usage_error}", file=sys.stderr)
+        return EXIT_USAGE_ERROR
+
+    if refuse_baseline_reuse(args.output_dir):
+        print(
+            f"usage error: output dir {args.output_dir!r} already holds a baseline.json; "
+            "a completed baseline is immutable and is not replaced -- use a new output dir",
+            file=sys.stderr,
+        )
         return EXIT_USAGE_ERROR
 
     os.makedirs(args.output_dir, exist_ok=True)

@@ -1048,13 +1048,34 @@ check_c8_version_changelog() {
   local files=("$@")
   local errors=()
   local f head_content head_tmp out
+  local base_rev="HEAD"
+
+  # SQA-integrity-006: a CI checkout's HEAD is the very document version under test, so
+  # comparing the worktree with HEAD cannot see a committed bump. When a comparison base
+  # is declared (NIZAM_C8_BASE: the PR base or the prior push SHA), the document is
+  # compared with that earlier revision instead. The local default (no base) is unchanged:
+  # it still detects an uncommitted version edit against HEAD.
+  if [ -n "${NIZAM_C8_BASE:-}" ]; then
+    if git rev-parse --verify --quiet "${NIZAM_C8_BASE}^{commit}" >/dev/null 2>&1; then
+      base_rev="${NIZAM_C8_BASE}"
+    else
+      # An unresolvable base must fail closed, never fall back to the HEAD comparison.
+      errors+=("NIZAM_C8_BASE '${NIZAM_C8_BASE}' is not a commit in this checkout; refusing to compare against HEAD")
+      base_rev=""
+    fi
+  fi
+  if [ -z "${base_rev}" ]; then
+    echo "[C8] FAIL version-bump-vs-changelog"
+    echo "  ${errors[0]}"
+    return 1
+  fi
 
   # Compute the repo-root-relative prefix (empty when CWD is the repo root).
   local git_prefix
   git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo "")
 
   for f in "${files[@]}"; do
-    if ! head_content=$(git show "HEAD:${git_prefix}${f}" 2>/dev/null); then
+    if ! head_content=$(git show "${base_rev}:${git_prefix}${f}" 2>/dev/null); then
       # File is new at HEAD (did not exist there) -- no prior version to
       # compare against, no change record required.
       continue

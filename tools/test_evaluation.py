@@ -76,18 +76,97 @@ def test_arm_d_applicability():
     assert eh.is_arm_d_applicable({"deterministic": False}) is False
 
 
-def test_preregistration_required_fields():
-    # AC-17: thresholds are predeclared; no threshold set after holdout is accepted
+def _complete_preregistration() -> dict:
+    # Every field the template declares, fully specified (SQA-integrity-009).
     doc = eh.preregistration_template()
+    doc.update({
+        "corpus_version": "v1", "assignment": "matched",
+        "task_clustering": "by source document", "carryover_controls": "fresh session per arm",
+        "blinding": "single-blind grader", "followup_rework_window": "7 days",
+        "sample_size_rationale": "power", "quality_criteria": "critical-miss <= 1",
+        "noninferiority_margin": 0.05, "critical_miss_tolerance": 0,
+        "coverage_abstention_criteria": ">= 90%", "latency_cost_limits": "p95 < 5s, budget cap",
+        "uncertainty_method": "bootstrap 95% CI", "stopping_rule": "stop at budget or 3 misses",
+    })
+    return doc
+
+
+def test_preregistration_required_fields():
+    # AC-17 / SQA-integrity-009: every declared design field is required before evaluation
+    assert _raises(eh.validate_preregistration, eh.preregistration_template())
+    doc = _complete_preregistration()
+    assert eh.validate_preregistration(doc)
+    doc["thresholds_set_after_holdout"] = True
     assert _raises(eh.validate_preregistration, doc)
+
+
+def test_preregistration_six_field_partial_record_rejected():
+    # SQA-integrity-009: the six-field subset the validator used to check is no longer sufficient
+    doc = eh.preregistration_template()
     doc.update({
         "corpus_version": "v1", "assignment": "matched", "sample_size_rationale": "power",
         "quality_criteria": "critical-miss <= 1", "coverage_abstention_criteria": ">= 90%",
         "stopping_rule": "stop at budget or 3 misses",
     })
-    assert eh.validate_preregistration(doc)
-    doc["thresholds_set_after_holdout"] = True
     assert _raises(eh.validate_preregistration, doc)
+
+
+# Fields the template declares as predeclared but the base validator never required.
+NEWLY_REQUIRED = (
+    "task_clustering", "carryover_controls", "blinding", "followup_rework_window",
+    "noninferiority_margin", "critical_miss_tolerance", "latency_cost_limits", "uncertainty_method",
+)
+
+
+def test_preregistration_unset_claimed_mandatory_field_rejected():
+    # SQA-integrity-009: each newly-required declared field, when unset, refuses the record
+    assert set(NEWLY_REQUIRED) <= set(eh.REQUIRED_PREREGISTRATION)
+    for field in NEWLY_REQUIRED:
+        doc = _complete_preregistration()
+        doc[field] = None
+        assert _raises(eh.validate_preregistration, doc), field
+
+
+def test_preregistration_zero_threshold_is_supplied():
+    # a numeric threshold of 0 is a real, supplied value, not unset
+    doc = _complete_preregistration()
+    doc["critical_miss_tolerance"] = 0
+    assert eh.validate_preregistration(doc)
+
+
+def test_preregistration_explicit_not_applicable_is_declared():
+    # the only sanctioned way to skip a field is an explicit, reasoned declaration
+    doc = _complete_preregistration()
+    doc["blinding"] = ""
+    assert _raises(eh.validate_preregistration, doc)
+    doc["not_applicable"] = {"blinding": "no human graders; deterministic scoring"}
+    assert eh.validate_preregistration(doc)
+    doc["not_applicable"] = {"blinding": "  "}
+    assert _raises(eh.validate_preregistration, doc)
+
+
+def test_design_defining_field_cannot_be_waived():
+    # SQA-integrity-009: a reason cannot waive a field the study design depends on
+    for field in ("stopping_rule", "assignment", "corpus_version", "quality_criteria"):
+        doc = _complete_preregistration()
+        doc[field] = ""
+        doc["not_applicable"] = {field: "not needed"}
+        assert _raises(eh.validate_preregistration, doc), field
+
+
+def test_waivable_field_with_reason_is_accepted():
+    # a field with no meaning in some designs may be waived, but only with its reason
+    doc = _complete_preregistration()
+    doc["blinding"] = ""
+    doc["not_applicable"] = {"blinding": "deterministic scoring, no human graders"}
+    assert eh.validate_preregistration(doc)
+
+
+def test_numeric_thresholds_must_be_finite_nonnegative_numbers():
+    for bad in (float("nan"), -0.1, True):
+        doc = _complete_preregistration()
+        doc["noninferiority_margin"] = bad
+        assert _raises(eh.validate_preregistration, doc), bad
 
 
 def main() -> int:
@@ -97,6 +176,13 @@ def main() -> int:
     test_arm_attribution_and_matched_inputs()
     test_arm_d_applicability()
     test_preregistration_required_fields()
+    test_preregistration_six_field_partial_record_rejected()
+    test_preregistration_unset_claimed_mandatory_field_rejected()
+    test_preregistration_zero_threshold_is_supplied()
+    test_preregistration_explicit_not_applicable_is_declared()
+    test_design_defining_field_cannot_be_waived()
+    test_waivable_field_with_reason_is_accepted()
+    test_numeric_thresholds_must_be_finite_nonnegative_numbers()
     print("evaluation: leakage-free split, matched arms and preregistration pass")
     return 0
 

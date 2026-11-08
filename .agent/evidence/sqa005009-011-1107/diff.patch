@@ -1,0 +1,1110 @@
+diff --git a/.github/workflows/compliance.yml b/.github/workflows/compliance.yml
+index cadecbba..19a6aac9 100644
+--- a/.github/workflows/compliance.yml
++++ b/.github/workflows/compliance.yml
+@@ -36,6 +36,19 @@ jobs:
+ 
+       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/generate_compliance_reference.py --check
+       - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_compliance_reference.py
++      - name: Resolve the C8 comparison base
++        # SQA-integrity-006: C8 compares each document with NIZAM_C8_BASE, not HEAD. On a PR the
++        # base is the target branch tip; on a push it is the prior tip. When no prior revision
++        # exists (a root commit or a first push) no base is exported, so C8 keeps its local default.
++        run: |
++          BASE="${{ github.event.pull_request.base.sha }}"
++          if [ -z "${BASE}" ]; then BASE="${{ github.event.before }}"; fi
++          if [ -z "${BASE}" ] || [ "${BASE}" = "0000000000000000000000000000000000000000" ]; then
++            BASE="$(git rev-parse --verify --quiet HEAD~1 || true)"
++          fi
++          if [ -n "${BASE}" ] && git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
++            echo "NIZAM_C8_BASE=${BASE}" >> "$GITHUB_ENV"
++          fi
+       - run: bash tools/validate.sh
+ 
+   e2e_bootstrap:
+@@ -108,6 +121,15 @@ jobs:
+         run: |
+           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_start_path.py
+           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_resume_durability.py
++      - name: Dedicated regression suites (tools/ci_suites.txt) and coverage gate
++        # SQA-integrity-005: every top-level tools/test_*.py is either run here or excluded with
++        # a reason (tools/ci_suite_exclusions.txt). The gate fails on an unaccounted suite.
++        run: |
++          PYTHONDONTWRITEBYTECODE=1 python3 tools/test_suite_coverage.py
++          while IFS= read -r suite; do
++            case "${suite}" in ''|\#*) continue ;; esac
++            env -i PATH="${PATH}" HOME="${HOME}" PYTHONDONTWRITEBYTECODE=1 python3 "${suite}" || { echo "suite failed: ${suite}"; exit 1; }
++          done < tools/ci_suites.txt
+       - name: Historical archive integrity and preservation deduplication
+         run: |
+           PYTHONDONTWRITEBYTECODE=1 python3 tools/test_evidence_archive.py
+diff --git a/docs/planning/SELF_GOVERNANCE.md b/docs/planning/SELF_GOVERNANCE.md
+index 687bdec0..0fcea64c 100644
+--- a/docs/planning/SELF_GOVERNANCE.md
++++ b/docs/planning/SELF_GOVERNANCE.md
+@@ -97,7 +97,33 @@ commissioning:
+   installed_at: "2026-10-10T18:12:44Z"
+ ---
+ 
+-# Current installation — `v3.0.0` (installed — commissioning not performed)
++# Current installation — `v3.1.3` (installed — commissioning not performed)
++
++The operator requested: “self install the latest nizam-framework.” and “also
++install for agents/subagents.” The unchanged `bootstrap.sh` installed the
++published immutable `v3.1.3` tag at
++`f19357479220b6bf2b3292d31c06c66279f91efa` from the canonical repository
++`https://github.com/niq-cnr/nizam-framework.git`. The annotated tag object is
++`ba66c3e6c44bbb61204fe6193d5af2464c6c7825`. Installation completed at
++`2026-11-03T17:40:46Z`.
++
++The installation contains **341 released files plus genuine provenance**
++(`.nizam/provenance.json`). The commit-bound bootstrap verification passed with
++exact inventory and content comparisons, and the installed preflight reported
++`status: ready` with no failures. The Hermes (`~/.hermes/.nizam`) and Pi
++(`~/.pi/agent/.nizam`) agent estates carry the same pin, with content integrity
++verified. These observations establish installation integrity; **commissioning
++was not performed**. The Pi estate preflight is `degraded` only because its agent
++home is not a git work tree; its payload is byte-exact.
++
++Evidence: `.agent/evidence/release-v3.1.3-self-adoption/README.md`. The
++`v3.0.0` installation below, and all earlier released installation and
++commissioning records, are retained as historical records and are not current.
++
++# Historical installation — `v3.0.0` (superseded by `v3.1.3`; commissioning not performed)
++
++This record is historical. It was the current installation until 2026-11-03 and
++is superseded by the `v3.1.3` installation above. It is retained unchanged.
+ 
+ The operator requested: “self install and ready for he next minor release.”
+ The unchanged `bootstrap.sh` installed the published immutable `v3.0.0` tag at
+diff --git a/tools/ci_suite_exclusions.txt b/tools/ci_suite_exclusions.txt
+new file mode 100644
+index 00000000..9b1979b1
+--- /dev/null
++++ b/tools/ci_suite_exclusions.txt
+@@ -0,0 +1,24 @@
++# Top-level tools/test_*.py files deliberately NOT run by the CI suite loop (SQA-integrity-005).
++# Format: <file>|<reason>. Every exclusion needs a reason; tools/test_suite_coverage.py refuses
++# an unlisted, unexcluded suite and refuses an exclusion whose file does not exist.
++tools/test_nf_ac02_policy_reconciliation.py|FAILS at 0a0a4d24: test_f11 expects circuit-breaker exit 2 at the 7th blocked attempt, observed 1; a runtime finite-recovery gap, tracked outside SQA-005..009,011
++tools/test_nf_owner_dag_and_backlog.py|FAILS at 0a0a4d24: asserts the superseded installed tag v3.0.0 while .nizam/provenance.json pins v3.1.3; a stale-state assertion to be rewritten by its owner, not wired red into CI
++tools/test_corrective_release.py|Not a unittest suite: a release-verification CLI requiring --candidate, --prior and --prior-sha; exercised by the release process, not the test loop
++tools/test_nf_ac04_generic_admission.py|Already run by the workflow_assurance and external-admission steps of compliance.yml (named explicitly there)
++tools/test_nf_ac05_standalone_e2e.py|Already run by compliance.yml fixtures_self_test job (named explicitly there)
++tools/test_public_entry.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
++tools/test_governance_skill.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
++tools/test_start_path.py|Already run by compliance.yml and tools/fixtures_self_test.sh (named explicitly there)
++tools/test_receipt_candidate_batching.py|Already run by tools/fixtures_self_test.sh (named explicitly there)
++tools/test_workflow_assurance.py|Already run by compliance.yml (named explicitly there)
++tools/test_resume_durability.py|Already run by compliance.yml (named explicitly there)
++tools/test_external_qa.py|Already run by compliance.yml (named explicitly there)
++tools/test_external_state_boundary.py|Already run by compliance.yml (named explicitly there)
++tools/test_task_budget_reservations.py|Already run by compliance.yml (named explicitly there)
++tools/test_evidence_archive.py|Already run by compliance.yml (named explicitly there)
++tools/test_evidence_preservation.py|Already run by compliance.yml (named explicitly there)
++tools/test_canonical_formats.py|Already run by compliance.yml (named explicitly there)
++tools/test_compliance_reference.py|Already run by compliance.yml validate job (named explicitly there)
++tools/test_convergent_review.py|Already run by compliance.yml convergent_review job (named explicitly there)
++tools/test_runtime_session.py|Not a unittest suite: a CLI requiring --check or --case (exits 2 with no args); its coverage is claimed by the fixtures_self_test.sh C12 runtime_session manifest rows, not by a direct run
++tools/test_suite_coverage.py|Run directly by the fixtures_self_test CI job as the suite-coverage gate itself (named explicitly there); it guards this manifest and is not part of the loop
+diff --git a/tools/ci_suites.txt b/tools/ci_suites.txt
+new file mode 100644
+index 00000000..8dfbdebd
+--- /dev/null
++++ b/tools/ci_suites.txt
+@@ -0,0 +1,28 @@
++# Dedicated regression suites run by the fixtures_self_test CI job (SQA-integrity-005).
++#
++# One top-level suite per line, relative to the repository root. tools/test_suite_coverage.py
++# fails the build when a tools/test_*.py file is neither listed here nor named in
++# tools/ci_suite_exclusions.txt, so a new suite cannot silently stay out of CI.
++#
++# Each listed suite must pass in a clean environment (env -i) at the head it gates.
++tools/test_cohort_economics.py
++tools/test_consumer_agent_template.py
++tools/test_evaluation.py
++tools/test_first_contact.py
++tools/test_framework_integrity_f001.py
++tools/test_framework_integrity_s003004.py
++tools/test_framework_integrity_sqa005009.py
++tools/test_historical_symlink_packet.py
++tools/test_jev_adapter.py
++tools/test_nf_ac01_git_identity.py
++tools/test_nf_ac03_binary_review.py
++tools/test_payload_index_gate.py
++tools/test_semantic_catalog.py
++tools/test_semantic_contract.py
++tools/test_semantic_families.py
++tools/test_semantic_policy.py
++tools/test_skill_recommendation_boundaries.py
++tools/test_skill_recommendations.py
++tools/test_skill_routing.py
++tools/test_smoke_preconditions.py
++tools/test_usage_accounting.py
+diff --git a/tools/ecosystem_preflight.py b/tools/ecosystem_preflight.py
+index b2c756ce..19aec111 100644
+--- a/tools/ecosystem_preflight.py
++++ b/tools/ecosystem_preflight.py
+@@ -657,24 +657,36 @@ def write_json_document(path: str, document: dict[str, object]) -> None:
+         handle.write("\n")
+ 
+ 
++BASELINE_ARTIFACT = "baseline.json"
++
++# Verdict files a run may regenerate. The baseline is deliberately NOT here: a completed
++# baseline is an immutable point-in-time snapshot (ecosystem/02_evidence_baseline.md Sec 5).
+ STALE_OUTPUT_ARTIFACTS: tuple[str, ...] = (
+     "preflight.json",
+     "preflight.pending.json",
+-    "baseline.json",
+ )
+ 
+ 
++def refuse_baseline_reuse(output_dir: str) -> bool:
++    """Return True when ``output_dir`` already holds a baseline that must not be replaced.
++
++    SQA-integrity-007: an existing ``baseline.json`` is the fixed reference earlier audit
++    evidence cites. A rerun must not delete or overwrite it, whether the rerun would pass
++    or fail. Such a rerun is refused before any byte is written; a correction belongs in a
++    new, separately retained output directory.
++    """
++    return os.path.isfile(os.path.join(output_dir, BASELINE_ARTIFACT))
++
++
+ def clean_output_dir(output_dir: str) -> None:
+-    """Remove any stale verdict/baseline artifacts from a reused output dir.
++    """Remove stale verdict artifacts from a reused output dir (never a baseline).
+ 
+     NDEBT-021.4: a reused ``--output-dir`` could otherwise retain a prior run's
+-    ``preflight.json`` / ``preflight.pending.json`` / ``baseline.json`` alongside
+-    this run's, producing a contradictory mix -- e.g. a FAIL ``preflight.json``
+-    next to a stale PASS-run ``baseline.json``, or an approved ``preflight.json``
+-    next to a stale ``preflight.pending.json``. Each run pre-cleans exactly the
+-    three artifact names it may write, so the directory reflects only the current
+-    run. Nothing else in the directory is touched (evidence logs and any
+-    caller-supplied files are left intact).
++    ``preflight.json`` / ``preflight.pending.json`` alongside this run's, producing a
++    contradictory mix. Each run pre-cleans exactly the verdict names it may write.
++    ``baseline.json`` is never removed here (SQA-integrity-007); callers refuse reuse
++    of a completed baseline namespace via :func:`refuse_baseline_reuse` first. Nothing
++    else in the directory is touched.
+     """
+     for artifact_name in STALE_OUTPUT_ARTIFACTS:
+         artifact_path = os.path.join(output_dir, artifact_name)
+@@ -840,6 +852,14 @@ def main(argv: Sequence[str]) -> int:
+         print(f"usage error: {usage_error}", file=sys.stderr)
+         return EXIT_USAGE_ERROR
+ 
++    if refuse_baseline_reuse(args.output_dir):
++        print(
++            f"usage error: output dir {args.output_dir!r} already holds a baseline.json; "
++            "a completed baseline is immutable and is not replaced -- use a new output dir",
++            file=sys.stderr,
++        )
++        return EXIT_USAGE_ERROR
++
+     os.makedirs(args.output_dir, exist_ok=True)
+     clean_output_dir(args.output_dir)
+     captured_at = format_iso8601(read_utc_now())
+diff --git a/tools/evaluation_harness.py b/tools/evaluation_harness.py
+index 1ff4e4cd..70b5ff16 100644
+--- a/tools/evaluation_harness.py
++++ b/tools/evaluation_harness.py
+@@ -79,21 +79,56 @@ def preregistration_template() -> dict[str, Any]:
+     }
+ 
+ 
++# Every predeclared design/threshold field the template carries. SQA-integrity-009:
++# a field the template names must be supplied before held-out or live evaluation.
++# The only exceptions are the two non-design fields below.
+ REQUIRED_PREREGISTRATION = (
+     "corpus_version",
+     "assignment",
++    "task_clustering",
++    "carryover_controls",
++    "blinding",
++    "followup_rework_window",
+     "sample_size_rationale",
+     "quality_criteria",
++    "noninferiority_margin",
++    "critical_miss_tolerance",
+     "coverage_abstention_criteria",
++    "latency_cost_limits",
++    "uncertainty_method",
+     "stopping_rule",
+ )
+ 
+ 
++def _is_supplied(value: Any) -> bool:
++    if isinstance(value, bool):
++        return False
++    if isinstance(value, (int, float)):
++        return True
++    return isinstance(value, str) and bool(value.strip())
++
++
+ def validate_preregistration(doc: dict[str, Any]) -> dict[str, Any]:
+-    """Require every predeclared field before a live cohort may run."""
++    """Require every predeclared field, or an explicit not_applicable declaration.
++
++    A numeric threshold may be 0, so only None/absent/blank text counts as unset.
++    The declaration ``{"not_applicable": "<reason>"}`` is the one permitted way to
++    skip a field; a bare blank or null never is.
++    """
+     if not isinstance(doc, dict):
+         raise HarnessError("preregistration must be an object")
+-    missing = [field for field in REQUIRED_PREREGISTRATION if not (doc.get(field) or "").strip()]
++    declared = doc.get("not_applicable") or {}
++    if not isinstance(declared, dict):
++        raise HarnessError("not_applicable must be an object of field -> reason")
++    missing = []
++    for field in REQUIRED_PREREGISTRATION:
++        value = doc.get(field)
++        if _is_supplied(value):
++            continue
++        reason = declared.get(field)
++        if isinstance(reason, str) and reason.strip():
++            continue
++        missing.append(field)
+     if missing:
+         raise HarnessError("preregistration is missing predeclared fields: " + ", ".join(missing))
+     if doc.get("thresholds_set_after_holdout") is not False:
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index 7c50628a..32276345 100644
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -749,8 +749,8 @@ fi
+ # nothing to the completeness manifest.
+ echo "== preflight CLI behavior probes (F-056) =="
+ _preflight_cli_probes() (
+-  local sb out rc
+-  scratch_dirs sb out || return 1
++  local sb out out2 out3 out4 rc
++  scratch_dirs sb out out2 out3 out4 || return 1
+   git -C "${sb}" init -q
+   git -C "${sb}" config user.email t@example.invalid
+   git -C "${sb}" config user.name tester
+@@ -765,14 +765,16 @@ _preflight_cli_probes() (
+   python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+   rc=$?; [ "${rc}" -eq 0 ] || { echo "  clean framework-root: expected exit 0, got ${rc}"; return 1; }
+   printf x > "${sb}/dirty.txt"
++  # SQA-integrity-007: the PASS above retained a completed baseline in ${out}, which a
++  # rerun must not replace. Each dirty-tree probe therefore uses its own fresh namespace.
+   # (a) an untracked-not-tolerated file -> FAIL (exit 1) [the NDEBT-021.5 probe]
+-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
++  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out2}" --repo-root "${sb}" >/dev/null 2>&1
+   rc=$?; [ "${rc}" -eq 1 ] || { echo "  untracked-not-tolerated: expected exit 1, got ${rc}"; return 1; }
+   # (b) exact --tolerate-untracked downgrades it to pending PASS_WITH_EXCEPTIONS (exit 2)
+-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
++  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out3}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
+   rc=$?; [ "${rc}" -eq 2 ] || { echo "  exact tolerate: expected exit 2, got ${rc}"; return 1; }
+   # (c) additive --tolerate-untracked-prefix also downgrades it (exit 2) [NDEBT-018.1]
+-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
++  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out4}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
+   rc=$?; [ "${rc}" -eq 2 ] || { echo "  prefix tolerate: expected exit 2, got ${rc}"; return 1; }
+   return 0
+ )
+diff --git a/tools/probes/sqa005009_integrity_probe.sh b/tools/probes/sqa005009_integrity_probe.sh
+new file mode 100644
+index 00000000..3cdfcc16
+--- /dev/null
++++ b/tools/probes/sqa005009_integrity_probe.sh
+@@ -0,0 +1,102 @@
++#!/usr/bin/env bash
++# Disposable live probes for framework-integrity findings SQA-integrity-005, -006, -007,
++# -008, -009 and -011 (audit c905615d; findings sha256 82d4df0b34fc4235...). Writes only
++# mktemp fixtures; the checkout is read-only input. Each case prints one line:
++#   "CASE <id> rc=<n> <verdict>"  where verdict states whether the defect is observed.
++# Usage: bash tools/probes/sqa005009_integrity_probe.sh [REPO_ROOT]
++set -uo pipefail
++REPO="$(cd "${1:-$(dirname "$0")/../..}" && pwd)"
++W="$(mktemp -d "${TMPDIR:-/tmp}/sqa005009-probe.XXXXXX")"
++export PYTHONDONTWRITEBYTECODE=1
++say() { printf '%s\n' "$*"; }
++trap 'rm -rf "${W}"' EXIT
++
++# ---- 005: CI reachability of dedicated suites (static: named by a workflow or harness) ----
++unreached=()
++for f in "${REPO}"/tools/test_*.py; do
++  rel="tools/$(basename "${f}")"
++  # A suite is accounted for when CI runs it (ci_suites.txt) or it has a documented exclusion.
++  if ! grep -qxF -- "${rel}" "${REPO}/tools/ci_suites.txt" 2>/dev/null \
++     && ! grep -q -- "^${rel}|" "${REPO}/tools/ci_suite_exclusions.txt" 2>/dev/null; then
++    unreached+=("${rel}")
++  fi
++done
++cov_rc=$(cd "${REPO}" && PYTHONDONTWRITEBYTECODE=1 python3 tools/test_suite_coverage.py >/dev/null 2>&1; echo $?)
++say "CASE 005-ci-reachability unaccounted_suites=${#unreached[@]} coverage_gate_rc=${cov_rc} (defect observed if unaccounted>0 or gate rc!=0)"
++
++# ---- 006: C8 against a committed two-revision version bump (CI-form comparison) ----
++P006="${W}/p006"; mkdir -p "${P006}/docs"
++git -C "${P006}" init -q
++git -C "${P006}" config user.email probe@local; git -C "${P006}" config user.name probe
++printf -- '---\nid: x\ntitle: "x"\ndescription: "x"\nversion: 0.1.0\nstatus: active\nchange_log:\n  - version: "0.1.0"\n    date: "2026-01-01"\n    summary: "init"\n---\n# X\n' > "${P006}/docs/x.md"
++git -C "${P006}" add -A && git -C "${P006}" commit -qm base
++sed -i 's/version: 0.1.0/version: 0.2.0/' "${P006}/docs/x.md"
++git -C "${P006}" commit -qam "committed bump without change record"
++c8_fn="${W}/c8fn.sh"
++s=$(grep -n '^check_c8_version_changelog() {' "${REPO}/tools/validate.sh" | cut -d: -f1)
++# The function ends at the first column-0 "}" after its final "  return 1".
++e=$(awk -v s="${s}" 'NR>s && /^  return 1$/ {r=NR} NR>s && /^}$/ && r && NR>r {print NR; exit}' "${REPO}/tools/validate.sh")
++sed -n "${s},${e}p" "${REPO}/tools/validate.sh" > "${c8_fn}"
++# CI form: the committed bump is compared with its prior revision (HEAD~1) via NIZAM_C8_BASE.
++c8_out=$(cd "${P006}" && NIZAM_C8_BASE=HEAD~1 bash -c "source '${c8_fn}'; check_c8_version_changelog docs/x.md" 2>&1); c8_rc=$?
++if [ "${c8_rc}" -eq 0 ]; then v006="ACCEPTED (defect observed: committed bump with no change record passes)"; else v006="REFUSED (committed bump with no change record is caught)"; fi
++say "CASE 006-committed-bump-no-changelog rc=${c8_rc} ${v006}"
++
++# ---- 007: second preflight run in a completed output namespace ----
++P007="${W}/p007"; mkdir -p "${P007}/repo"
++cp -r "${REPO}/schema" "${P007}/repo/"
++git -C "${P007}/repo" init -q; git -C "${P007}/repo" add -A
++git -C "${P007}/repo" -c user.email=p@l -c user.name=p commit -qm init
++OUT="${P007}/out"
++python3 "${REPO}/tools/ecosystem_preflight.py" --execution-id E1 --output-dir "${OUT}" \
++  --repo-root "${P007}/repo" --self-fixture >/dev/null 2>&1; r1=$?
++d1=$(sha256sum "${OUT}/baseline.json" 2>/dev/null | cut -c1-64)
++python3 "${REPO}/tools/ecosystem_preflight.py" --execution-id E2 --output-dir "${OUT}" \
++  --repo-root "${P007}/repo" --self-fixture >/dev/null 2>&1; r2=$?
++d2=$(sha256sum "${OUT}/baseline.json" 2>/dev/null | cut -c1-64)
++# Failing rerun: dirty the tree, rerun, check whether the baseline survives.
++echo dirty > "${P007}/repo/dirty.txt"
++python3 "${REPO}/tools/ecosystem_preflight.py" --execution-id E3 --output-dir "${OUT}" \
++  --repo-root "${P007}/repo" --self-fixture >/dev/null 2>&1; r3=$?
++d3=$(sha256sum "${OUT}/baseline.json" 2>/dev/null | cut -c1-64)
++say "CASE 007-baseline-reuse first_rc=${r1} first_sha=${d1:-absent} rerun_pass_rc=${r2} rerun_pass_sha=${d2:-absent} rerun_fail_rc=${r3} rerun_fail_sha=${d3:-absent} (defect observed if an existing baseline digest changes or disappears)"
++
++# ---- 008: usage totals for one operation with pre-dispatch and completion rows ----
++u008=$(cd "${REPO}/tools" && python3 - <<'PY'
++import usage_accounting as ua
++base = dict(schema_version=1, operation_id="op1", model={"requested": "m"}, dispatched=True,
++            outcome="success", usage={"input_tokens": 120, "output_tokens": 30})
++pre = dict(base, kind="pre_dispatch", outcome=None, usage=None, event_id="p")
++post = dict(base, kind="completion", event_id="c")
++t = ua.usage_totals([pre, post])
++ok = t["known"]["input_tokens"] == 120 and t["known"]["output_tokens"] == 30 and "input_tokens" not in t["unknown"]
++print(("CORRECT" if ok else "DEFECT"), t["known"]["input_tokens"], t["known"]["output_tokens"], t["unknown"], t["charged_requests"])
++PY
++); 
++say "CASE 008-usage-pre-post-pair ${u008} (defect observed if DEFECT: expect input=120 output=30 unknown=[] charged=1)"
++
++# ---- 009: preregistration missing claimed-mandatory fields ----
++p009=$(cd "${REPO}/tools" && python3 - <<'PY'
++import evaluation_harness as eh
++doc = eh.preregistration_template()
++doc.update({"corpus_version": "v1", "assignment": "matched", "sample_size_rationale": "power",
++            "quality_criteria": "critical-miss <= 1", "coverage_abstention_criteria": ">= 90%",
++            "stopping_rule": "stop at budget or 3 misses"})
++try:
++    eh.validate_preregistration(doc)
++    print("ACCEPTED")
++except eh.HarnessError as e:
++    print("REFUSED")
++PY
++)
++unset_fields=$(cd "${REPO}/tools" && python3 -c "
++import evaluation_harness as eh
++t=eh.preregistration_template()
++print(','.join(k for k,v in t.items() if k!='schema_version' and (v in ('',None))))")
++say "CASE 009-partial-prereg ${p009} unset_declared_fields=[${unset_fields}] (defect observed if ACCEPTED with unset fields)"
++
++# ---- 011: SELF_GOVERNANCE current-installation heading vs structured record ----
++heading=$(grep -m1 -E '^# Current installation' "${REPO}/docs/planning/SELF_GOVERNANCE.md")
++tag=$(grep -m1 -E '^  tag: ' "${REPO}/docs/planning/SELF_GOVERNANCE.md" | awk '{print $2}')
++if printf '%s' "${heading}" | grep -q -- "${tag}"; then v011="CONSISTENT"; else v011="DEFECT (heading does not name current tag ${tag})"; fi
++say "CASE 011-self-governance-heading heading='${heading}' structured_tag=${tag} ${v011}"
+diff --git a/tools/test_evaluation.py b/tools/test_evaluation.py
+index c0c61a96..9bcc43c1 100644
+--- a/tools/test_evaluation.py
++++ b/tools/test_evaluation.py
+@@ -76,17 +76,72 @@ def test_arm_d_applicability():
+     assert eh.is_arm_d_applicable({"deterministic": False}) is False
+ 
+ 
+-def test_preregistration_required_fields():
+-    # AC-17: thresholds are predeclared; no threshold set after holdout is accepted
++def _complete_preregistration() -> dict:
++    # Every field the template declares, fully specified (SQA-integrity-009).
+     doc = eh.preregistration_template()
++    doc.update({
++        "corpus_version": "v1", "assignment": "matched",
++        "task_clustering": "by source document", "carryover_controls": "fresh session per arm",
++        "blinding": "single-blind grader", "followup_rework_window": "7 days",
++        "sample_size_rationale": "power", "quality_criteria": "critical-miss <= 1",
++        "noninferiority_margin": 0.05, "critical_miss_tolerance": 0,
++        "coverage_abstention_criteria": ">= 90%", "latency_cost_limits": "p95 < 5s, budget cap",
++        "uncertainty_method": "bootstrap 95% CI", "stopping_rule": "stop at budget or 3 misses",
++    })
++    return doc
++
++
++def test_preregistration_required_fields():
++    # AC-17 / SQA-integrity-009: every declared design field is required before evaluation
++    assert _raises(eh.validate_preregistration, eh.preregistration_template())
++    doc = _complete_preregistration()
++    assert eh.validate_preregistration(doc)
++    doc["thresholds_set_after_holdout"] = True
+     assert _raises(eh.validate_preregistration, doc)
++
++
++def test_preregistration_six_field_partial_record_rejected():
++    # SQA-integrity-009: the six-field subset the validator used to check is no longer sufficient
++    doc = eh.preregistration_template()
+     doc.update({
+         "corpus_version": "v1", "assignment": "matched", "sample_size_rationale": "power",
+         "quality_criteria": "critical-miss <= 1", "coverage_abstention_criteria": ">= 90%",
+         "stopping_rule": "stop at budget or 3 misses",
+     })
++    assert _raises(eh.validate_preregistration, doc)
++
++
++# Fields the template declares as predeclared but the base validator never required.
++NEWLY_REQUIRED = (
++    "task_clustering", "carryover_controls", "blinding", "followup_rework_window",
++    "noninferiority_margin", "critical_miss_tolerance", "latency_cost_limits", "uncertainty_method",
++)
++
++
++def test_preregistration_unset_claimed_mandatory_field_rejected():
++    # SQA-integrity-009: each newly-required declared field, when unset, refuses the record
++    assert set(NEWLY_REQUIRED) <= set(eh.REQUIRED_PREREGISTRATION)
++    for field in NEWLY_REQUIRED:
++        doc = _complete_preregistration()
++        doc[field] = None
++        assert _raises(eh.validate_preregistration, doc), field
++
++
++def test_preregistration_zero_threshold_is_supplied():
++    # a numeric threshold of 0 is a real, supplied value, not unset
++    doc = _complete_preregistration()
++    doc["critical_miss_tolerance"] = 0
+     assert eh.validate_preregistration(doc)
+-    doc["thresholds_set_after_holdout"] = True
++
++
++def test_preregistration_explicit_not_applicable_is_declared():
++    # the only sanctioned way to skip a field is an explicit, reasoned declaration
++    doc = _complete_preregistration()
++    doc["blinding"] = ""
++    assert _raises(eh.validate_preregistration, doc)
++    doc["not_applicable"] = {"blinding": "no human graders; deterministic scoring"}
++    assert eh.validate_preregistration(doc)
++    doc["not_applicable"] = {"blinding": "  "}
+     assert _raises(eh.validate_preregistration, doc)
+ 
+ 
+@@ -97,6 +152,10 @@ def main() -> int:
+     test_arm_attribution_and_matched_inputs()
+     test_arm_d_applicability()
+     test_preregistration_required_fields()
++    test_preregistration_six_field_partial_record_rejected()
++    test_preregistration_unset_claimed_mandatory_field_rejected()
++    test_preregistration_zero_threshold_is_supplied()
++    test_preregistration_explicit_not_applicable_is_declared()
+     print("evaluation: leakage-free split, matched arms and preregistration pass")
+     return 0
+ 
+diff --git a/tools/test_framework_integrity_sqa005009.py b/tools/test_framework_integrity_sqa005009.py
+new file mode 100644
+index 00000000..6bf36c4d
+--- /dev/null
++++ b/tools/test_framework_integrity_sqa005009.py
+@@ -0,0 +1,325 @@
++#!/usr/bin/env python3
++"""Regression tests for framework-integrity findings SQA-integrity-005, -006, -007, -008,
++-009 and -011 (audit c905615d; findings sha256 82d4df0b34fc4235...). Standard library only;
++writes only mktemp fixtures. Run:
++
++  PYTHONDONTWRITEBYTECODE=1 python3 tools/test_framework_integrity_sqa005009.py
++
++Negative cases here fail against the pre-fix tree (0a0a4d24) and pass after this change.
++The accounting (008) and preregistration (009) cases import their module directly; the
++preflight (007) and C8 (006) cases run the real CLI or the real check function.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++import re
++import shutil
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++REPO = Path(__file__).resolve().parent.parent
++TOOLS = REPO / "tools"
++sys.path.insert(0, str(TOOLS))
++ENV = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
++
++import evaluation_harness as eh  # noqa: E402
++import test_evaluation as te  # noqa: E402
++import test_suite_coverage as cov  # noqa: E402
++import usage_accounting as ua  # noqa: E402
++
++
++def _git(cwd: Path, *args: str) -> str:
++    return subprocess.run(
++        ["git", "-C", str(cwd), "-c", "user.email=t@example.invalid", "-c", "user.name=tester", *args],
++        check=True, capture_output=True, text=True,
++    ).stdout
++
++
++def _sha256(path: Path) -> str:
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++class CiReachability(unittest.TestCase):
++    """SQA-integrity-005: every dedicated suite is run by CI or excluded with a reason."""
++
++    def test_checker_passes_on_the_checked_in_manifest(self) -> None:
++        self.assertEqual(cov.check(), [], "every tools/test_*.py must be listed or excluded")
++
++    def test_unlisted_suite_is_refused(self) -> None:
++        # A suite added with no CI invocation must be reported, not silently tolerated.
++        d = Path(tempfile.mkdtemp(prefix="s005-"))
++        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
++        shutil.copytree(TOOLS, d / "tools", ignore=shutil.ignore_patterns("__pycache__"))
++        (d / "tools" / "test_unwired_new_suite.py").write_text("import unittest\n")
++        saved = cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED
++        try:
++            cov.ROOT, cov.TOOLS = d, d / "tools"
++            cov.LISTED, cov.EXCLUDED = d / "tools/ci_suites.txt", d / "tools/ci_suite_exclusions.txt"
++            problems = cov.check()
++        finally:
++            cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED = saved
++        self.assertTrue(any("test_unwired_new_suite.py" in p for p in problems), problems)
++
++    def test_exclusion_without_reason_is_refused(self) -> None:
++        d = Path(tempfile.mkdtemp(prefix="s005-"))
++        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
++        f = d / "ex.txt"
++        f.write_text("tools/test_x.py|\n")
++        saved = cov.EXCLUDED
++        try:
++            cov.EXCLUDED = f
++            with self.assertRaises(ValueError):
++                cov.load_excluded()
++        finally:
++            cov.EXCLUDED = saved
++
++    def test_suite_both_run_and_excluded_is_refused(self) -> None:
++        d = Path(tempfile.mkdtemp(prefix="s005-"))
++        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
++        (d / "tools").mkdir()
++        (d / "tools" / "test_x.py").write_text("")
++        (d / "tools" / "ci_suites.txt").write_text("tools/test_x.py\n")
++        (d / "tools" / "ci_suite_exclusions.txt").write_text("tools/test_x.py|reason\n")
++        saved = cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED
++        try:
++            cov.ROOT, cov.TOOLS = d, d / "tools"
++            cov.LISTED, cov.EXCLUDED = d / "tools/ci_suites.txt", d / "tools/ci_suite_exclusions.txt"
++            problems = cov.check()
++        finally:
++            cov.ROOT, cov.TOOLS, cov.LISTED, cov.EXCLUDED = saved
++        self.assertTrue(any("both run by CI and excluded" in p for p in problems), problems)
++
++    def test_workflow_runs_the_manifest_loop(self) -> None:
++        wf = (REPO / ".github/workflows/compliance.yml").read_text(encoding="utf-8")
++        self.assertIn("tools/ci_suites.txt", wf)
++        self.assertIn("tools/test_suite_coverage.py", wf)
++
++
++class C8CommittedBump(unittest.TestCase):
++    """SQA-integrity-006: C8 with an explicit comparison base sees a committed bump."""
++
++    @classmethod
++    def setUpClass(cls) -> None:
++        text = (TOOLS / "validate.sh").read_text(encoding="utf-8")
++        start = text.index("check_c8_version_changelog() {")
++        # The function's closing brace is the first column-0 "}" after its final "  return 1".
++        final_return = text.index("\n  return 1\n}\n", start) + len("\n  return 1\n")
++        end = text.index("\n}\n", final_return) + len("\n}\n")
++        cls.fn_text = text[start:end]
++
++    def _c8(self, repo: Path, base: str | None, doc: str) -> subprocess.CompletedProcess:
++        fn = repo.parent / (repo.name + "-c8.sh")
++        fn.write_text(self.fn_text)
++        self.addCleanup(lambda: fn.unlink(missing_ok=True))
++        env = {**ENV}
++        if base is None:
++            env.pop("NIZAM_C8_BASE", None)
++        else:
++            env["NIZAM_C8_BASE"] = base
++        return subprocess.run(
++            ["bash", "-c", f"source '{fn}'; check_c8_version_changelog '{doc}'"],
++            cwd=repo, env=env, capture_output=True, text=True,
++        )
++
++    def _two_revision_repo(self, bump_to: str, with_change_record: bool) -> Path:
++        repo = Path(tempfile.mkdtemp(prefix="s006-"))
++        self.addCleanup(shutil.rmtree, repo, ignore_errors=True)
++        _git(repo, "init", "-q")
++        (repo / "docs").mkdir()
++        head = (
++            '---\nid: x\ntitle: "x"\ndescription: "x"\nversion: 0.1.0\nstatus: active\n'
++            'change_log:\n  - version: "0.1.0"\n    date: "2026-01-01"\n    summary: "init"\n---\n# X\n'
++        )
++        (repo / "docs" / "x.md").write_text(head)
++        _git(repo, "add", "-A")
++        _git(repo, "commit", "-qm", "base")
++        entry = ""
++        if with_change_record:
++            entry = (
++                f'  - version: "{bump_to}"\n    date: "2026-02-01"\n    summary: "bump"\n'
++            )
++        bumped = head.replace("version: 0.1.0", f"version: {bump_to}").replace(
++            "change_log:\n", "change_log:\n" + entry
++        )
++        (repo / "docs" / "x.md").write_text(bumped)
++        _git(repo, "commit", "-qam", "committed bump")
++        return repo
++
++    def test_committed_bump_without_change_record_is_refused_with_explicit_base(self) -> None:
++        repo = self._two_revision_repo("0.2.0", with_change_record=False)
++        result = self._c8(repo, "HEAD~1", "docs/x.md")
++        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
++        self.assertIn("version bumped 0.1.0 -> 0.2.0", result.stdout)
++
++    def test_committed_bump_with_change_record_is_accepted_with_explicit_base(self) -> None:
++        repo = self._two_revision_repo("0.2.0", with_change_record=True)
++        result = self._c8(repo, "HEAD~1", "docs/x.md")
++        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
++        self.assertIn("[C8] PASS", result.stdout)
++
++    def test_unresolvable_base_fails_closed(self) -> None:
++        repo = self._two_revision_repo("0.2.0", with_change_record=True)
++        result = self._c8(repo, "0000000000000000000000000000000000000000", "docs/x.md")
++        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
++        self.assertIn("is not a commit in this checkout", result.stdout)
++
++    def test_local_default_still_detects_uncommitted_bump(self) -> None:
++        repo = self._two_revision_repo("0.2.0", with_change_record=True)
++        (repo / "docs" / "x.md").write_text(
++            (repo / "docs" / "x.md").read_text().replace("version: 0.2.0", "version: 0.3.0")
++        )
++        result = self._c8(repo, None, "docs/x.md")
++        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
++        self.assertIn("0.2.0 -> 0.3.0", result.stdout)
++
++
++class PreflightBaselineImmutable(unittest.TestCase):
++    """SQA-integrity-007: a completed baseline is never deleted or replaced by a rerun."""
++
++    def setUp(self) -> None:
++        self.work = Path(tempfile.mkdtemp(prefix="s007-"))
++        self.addCleanup(shutil.rmtree, self.work, ignore_errors=True)
++        self.repo = self.work / "repo"
++        self.repo.mkdir()
++        shutil.copytree(REPO / "schema", self.repo / "schema")
++        _git(self.repo, "init", "-q")
++        _git(self.repo, "add", "-A")
++        _git(self.repo, "commit", "-qm", "init")
++        self.out = self.work / "out"
++
++    def _preflight(self, execution_id: str) -> subprocess.CompletedProcess:
++        return subprocess.run(
++            [sys.executable, str(TOOLS / "ecosystem_preflight.py"), "--execution-id", execution_id,
++             "--output-dir", str(self.out), "--repo-root", str(self.repo), "--self-fixture"],
++            capture_output=True, text=True, env=ENV,
++        )
++
++    def test_passing_rerun_does_not_replace_baseline(self) -> None:
++        first = self._preflight("E1")
++        self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
++        digest = _sha256(self.out / "baseline.json")
++        second = self._preflight("E2")
++        self.assertEqual(second.returncode, 64, "rerun into a completed baseline must be refused")
++        self.assertEqual(_sha256(self.out / "baseline.json"), digest)
++        self.assertIn('"execution_id": "E1"', (self.out / "baseline.json").read_text())
++
++    def test_failing_rerun_does_not_delete_baseline(self) -> None:
++        self.assertEqual(self._preflight("E1").returncode, 0)
++        digest = _sha256(self.out / "baseline.json")
++        (self.repo / "dirty.txt").write_text("x")
++        second = self._preflight("E3")
++        self.assertNotEqual(second.returncode, 0)
++        self.assertTrue((self.out / "baseline.json").is_file(), "failing rerun deleted the baseline")
++        self.assertEqual(_sha256(self.out / "baseline.json"), digest)
++
++    def test_fresh_namespace_still_produces_a_baseline(self) -> None:
++        self.assertEqual(self._preflight("E1").returncode, 0)
++        fresh = self.work / "fresh"
++        result = subprocess.run(
++            [sys.executable, str(TOOLS / "ecosystem_preflight.py"), "--execution-id", "E2",
++             "--output-dir", str(fresh), "--repo-root", str(self.repo), "--self-fixture"],
++            capture_output=True, text=True, env=ENV,
++        )
++        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
++        self.assertTrue((fresh / "baseline.json").is_file())
++
++
++class UsageUniqueProviderUsage(unittest.TestCase):
++    """SQA-integrity-008: usage totals count one operation's usage once."""
++
++    def _event(self, **overrides):
++        event = {
++            "schema_version": 1, "event_id": "e-1", "kind": "completion", "operation_id": "op-1",
++            "dispatched": True, "outcome": "success",
++            "model": {"requested": "jev-1", "resolved": "jev-1", "provider": "typesafe"},
++            "usage": {"input_tokens": 120, "output_tokens": 30, "cache_tokens": None},
++        }
++        event.update(overrides)
++        return event
++
++    def test_pre_post_pair_totals_are_not_doubled(self) -> None:
++        pre = self._event(kind="pre_dispatch", event_id="p", outcome=None)
++        total = ua.usage_totals([pre, self._event()])
++        self.assertEqual(total["known"]["input_tokens"], 120)
++        self.assertEqual(total["known"]["output_tokens"], 30)
++        self.assertEqual(total["charged_requests"], 1)
++
++    def test_completion_resolves_pre_dispatch_absent_fields(self) -> None:
++        pre = self._event(kind="pre_dispatch", event_id="p", outcome=None, usage=None)
++        total = ua.usage_totals([pre, self._event()])
++        self.assertNotIn("input_tokens", total["unknown"])
++        self.assertIn("cache_tokens", total["unknown"], "genuinely unreported usage stays unknown")
++
++    def test_distinct_operations_sum_and_unreported_stays_unknown(self) -> None:
++        a = self._event(operation_id="op-a")
++        b = self._event(operation_id="op-b", event_id="b", usage={"input_tokens": 5, "output_tokens": None})
++        total = ua.usage_totals([a, b])
++        self.assertEqual(total["known"]["input_tokens"], 125)
++        self.assertEqual(total["known"]["output_tokens"], 30)
++        self.assertIn("output_tokens", total["unknown"])
++        self.assertEqual(total["charged_requests"], 2)
++
++
++class PreregistrationCompleteness(unittest.TestCase):
++    """SQA-integrity-009: every declared design field is required, or explicitly not applicable."""
++
++    def test_each_newly_required_field_refuses_when_unset(self) -> None:
++        for field in te.NEWLY_REQUIRED:
++            doc = te._complete_preregistration()
++            doc[field] = None
++            with self.subTest(field=field), self.assertRaises(eh.HarnessError):
++                eh.validate_preregistration(doc)
++
++    def test_template_fields_are_all_required_or_declared(self) -> None:
++        template = eh.preregistration_template()
++        unrequired = [
++            k for k in template
++            if k not in eh.REQUIRED_PREREGISTRATION and k not in ("schema_version", "thresholds_set_after_holdout")
++        ]
++        self.assertEqual(unrequired, [], "a template field must be required or declared non-design")
++
++    def test_partial_six_field_record_refused(self) -> None:
++        doc = eh.preregistration_template()
++        doc.update({
++            "corpus_version": "v1", "assignment": "matched", "sample_size_rationale": "power",
++            "quality_criteria": "critical-miss <= 1", "coverage_abstention_criteria": ">= 90%",
++            "stopping_rule": "stop at budget or 3 misses",
++        })
++        with self.assertRaises(eh.HarnessError):
++            eh.validate_preregistration(doc)
++
++    def test_complete_record_accepted(self) -> None:
++        self.assertTrue(eh.validate_preregistration(te._complete_preregistration()))
++
++
++class SelfGovernanceCurrentInstallation(unittest.TestCase):
++    """SQA-integrity-011: the current-installation heading names the structured pin."""
++
++    def test_current_heading_names_the_structured_tag(self) -> None:
++        text = (REPO / "docs/planning/SELF_GOVERNANCE.md").read_text(encoding="utf-8")
++        tag = re.search(r"^  tag: (\S+)$", text, re.M).group(1)
++        resolved = re.search(r"^  resolved_sha: (\S+)$", text, re.M).group(1)
++        heading = re.search(r"^# Current installation .*$", text, re.M).group(0)
++        self.assertIn(f"`{tag}`", heading)
++        self.assertNotIn("v3.0.0", heading)
++        # The current section body must name the same commit as the structured record.
++        section = text.split(heading, 1)[1].split("\n# ", 1)[0]
++        self.assertIn(resolved, section)
++
++    def test_superseded_release_is_labeled_historical(self) -> None:
++        text = (REPO / "docs/planning/SELF_GOVERNANCE.md").read_text(encoding="utf-8")
++        heading = "# Historical installation \u2014 `v3.0.0`"
++        self.assertTrue(
++            any(line.startswith(heading) for line in text.splitlines()),
++            "the superseded v3.0.0 record must carry an explicit historical heading",
++        )
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=2)
+diff --git a/tools/test_suite_coverage.py b/tools/test_suite_coverage.py
+new file mode 100644
+index 00000000..014b3215
+--- /dev/null
++++ b/tools/test_suite_coverage.py
+@@ -0,0 +1,94 @@
++#!/usr/bin/env python3
++"""Require every top-level tools/test_*.py suite to be run by CI or explicitly excluded.
++
++SQA-integrity-005. CI reaches dedicated suites only through explicit invocations; a suite
++added without one is silently never executed. This checker closes that gap:
++
++- tools/ci_suites.txt lists the suites the fixtures_self_test CI job runs in one loop;
++- tools/ci_suite_exclusions.txt lists each other suite with a stated reason.
++
++It fails when a tools/test_*.py file is neither listed nor excluded, when a file is both,
++when a listed or excluded path does not exist, or when an exclusion has no reason.
++Suites already invoked by name in a workflow or harness are excluded with that reason.
++
++Run: python3 tools/test_suite_coverage.py   (standard library only; reads, never writes)
++"""
++
++from __future__ import annotations
++
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent.parent
++TOOLS = ROOT / "tools"
++LISTED = TOOLS / "ci_suites.txt"
++EXCLUDED = TOOLS / "ci_suite_exclusions.txt"
++
++
++def _rows(path: Path) -> list[str]:
++    out = []
++    for raw in path.read_text(encoding="utf-8").splitlines():
++        line = raw.strip()
++        if line and not line.startswith("#"):
++            out.append(line)
++    return out
++
++
++def load_listed() -> list[str]:
++    return _rows(LISTED)
++
++
++def load_excluded() -> dict[str, str]:
++    excluded: dict[str, str] = {}
++    for row in _rows(EXCLUDED):
++        if "|" not in row:
++            raise ValueError(f"exclusion has no reason: {row!r}")
++        path, reason = (part.strip() for part in row.split("|", 1))
++        if not reason:
++            raise ValueError(f"exclusion has an empty reason: {path}")
++        if path in excluded:
++            raise ValueError(f"exclusion listed twice: {path}")
++        excluded[path] = reason
++    return excluded
++
++
++def check() -> list[str]:
++    problems: list[str] = []
++    listed = load_listed()
++    excluded = load_excluded()
++    if len(set(listed)) != len(listed):
++        problems.append("ci_suites.txt names a suite twice")
++    for path in set(listed) & set(excluded):
++        problems.append(f"{path} is both run by CI and excluded")
++    for path in listed + sorted(excluded):
++        if not (ROOT / path).is_file():
++            problems.append(f"{path} is named but does not exist")
++    on_disk = sorted(
++        p.relative_to(ROOT).as_posix() for p in TOOLS.glob("test_*.py") if p.is_file()
++    )
++    for path in on_disk:
++        if path not in listed and path not in excluded:
++            problems.append(f"{path} is neither run by CI nor excluded with a reason")
++    return problems
++
++
++def main() -> int:
++    try:
++        problems = check()
++    except ValueError as error:
++        print(f"FAIL suite-coverage: {error}")
++        return 1
++    if problems:
++        print("FAIL suite-coverage:")
++        for problem in problems:
++            print(f"  {problem}")
++        return 1
++    print(
++        f"suite-coverage: {len(load_listed())} suites run by CI, "
++        f"{len(load_excluded())} excluded with reasons, none unaccounted for"
++    )
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/tools/test_usage_accounting.py b/tools/test_usage_accounting.py
+index 1142a64d..60846883 100644
+--- a/tools/test_usage_accounting.py
++++ b/tools/test_usage_accounting.py
+@@ -60,6 +60,45 @@ def test_replay_not_charged():
+     assert ua.charged_request_count([replay]) == 0
+ 
+ 
++def test_pre_post_pair_counts_usage_once():
++    # SQA-integrity-008: one operation with a pre_dispatch and a completion row that
++    # both carry the same usage contributes it once (not 240/60), and is charged once.
++    pre = _event(kind="pre_dispatch", event_id="p", outcome=None)
++    post = _event(event_id="c")
++    total = ua.usage_totals([pre, post])
++    assert total["known"]["input_tokens"] == 120
++    assert total["known"]["output_tokens"] == 30
++    assert total["charged_requests"] == 1
++
++
++def test_duplicate_completion_rows_not_double_counted():
++    # SQA-integrity-008: duplicate retained rows for one operation do not add usage
++    first = _event(event_id="c1")
++    second = _event(event_id="c2")
++    total = ua.usage_totals([first, second])
++    assert total["known"]["input_tokens"] == 120
++    assert total["known"]["output_tokens"] == 30
++
++
++def test_completion_resolves_pre_dispatch_unknown():
++    # SQA-integrity-008: a completion's reported usage resolves fields a pre-dispatch row left null
++    pre = _event(kind="pre_dispatch", event_id="p", outcome=None, usage=None)
++    post = _event(event_id="c")
++    assert "input_tokens" not in ua.usage_totals([pre, post])["unknown"]
++    assert ua.unknown_usage_fields([pre, post]) == {"op-1": {"cache_tokens"}}
++
++
++def test_distinct_operations_summed_and_missing_usage_stays_unknown():
++    # SQA-integrity-008: distinct operations sum; genuinely unreported usage stays unknown, not zero
++    a = _event(operation_id="op-a", event_id="a")
++    b = _event(operation_id="op-b", event_id="b", usage={"input_tokens": 5, "output_tokens": None, "cache_tokens": None})
++    total = ua.usage_totals([a, b])
++    assert total["known"]["input_tokens"] == 125
++    assert total["known"]["output_tokens"] == 30
++    assert "output_tokens" in total["unknown"]
++    assert total["charged_requests"] == 2
++
++
+ def test_validation_rejects_bad_events():
+     # AC-07-02: provider cannot be inferred from a role label; model mismatch rejected
+     assert _raises(ua.validate_event, _event(model={"requested": "jev-1", "resolved": "jev-2"}))
+@@ -94,6 +133,10 @@ def main() -> int:
+     test_validation_rejects_bad_events()
+     test_reconciliation_appends_without_mutation()
+     test_duplicate_numbers_not_reported()
++    test_pre_post_pair_counts_usage_once()
++    test_duplicate_completion_rows_not_double_counted()
++    test_completion_resolves_pre_dispatch_unknown()
++    test_distinct_operations_summed_and_missing_usage_stays_unknown()
+     print("usage-accounting: charged-once, unknown-not-zero, append-only reconciliation pass")
+     return 0
+ 
+diff --git a/tools/usage_accounting.py b/tools/usage_accounting.py
+index eca9a03f..295863ee 100644
+--- a/tools/usage_accounting.py
++++ b/tools/usage_accounting.py
+@@ -91,35 +91,53 @@ def charged_request_count(events: list[dict[str, Any]]) -> int:
+ 
+ 
+ def unknown_usage_fields(events: list[dict[str, Any]]) -> dict[str, set[str]]:
+-    """Map operation id -> usage fields that are unknown (absent or null)."""
++    """Map operation id -> usage fields no retained row reported (absent or null)."""
+     unknown: dict[str, set[str]] = {}
+-    for event in events:
+-        if event.get("kind") == "reconciliation":
+-            continue
+-        usage = event.get("usage") or {}
+-        missing = {field for field in USAGE_FIELDS if usage.get(field) is None}
++    for operation_id, usage in resolved_usage(events).items():
++        missing = {field for field in USAGE_FIELDS if field not in usage}
+         if missing:
+-            unknown.setdefault(event["operation_id"], set()).update(missing)
++            unknown[operation_id] = missing
+     return unknown
+ 
+ 
+-def usage_totals(events: list[dict[str, Any]]) -> dict[str, Any]:
+-    """Sum known usage and report which fields remain unknown.
++def resolved_usage(events: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
++    """Map operation id -> the usage fields it actually reported, once per operation.
+ 
+-    Unknown fields are reported explicitly and are never folded into zero.
++    Several retained rows may describe one operation (a pre-dispatch row, then a
++    completion). Each field takes its last non-null reported value, so a later
++    completion resolves a field a pre-dispatch row left absent, and a null never
++    overwrites a value. A field no row reported is absent from the mapping.
+     """
+-    totals = {field: 0 for field in USAGE_FIELDS}
+-    unknown: set[str] = set()
++    resolved: dict[str, dict[str, int]] = {}
+     for event in events:
+         if event.get("kind") == "reconciliation":
+             continue
+         usage = event.get("usage") or {}
++        slot = resolved.setdefault(event["operation_id"], {})
+         for field in USAGE_FIELDS:
+             value = usage.get(field)
+-            if value is None:
+-                unknown.add(field)
++            if value is not None:
++                slot[field] = value
++    return resolved
++
++
++def usage_totals(events: list[dict[str, Any]]) -> dict[str, Any]:
++    """Sum each operation's resolved usage once and report fields still unknown.
++
++    Unknown fields are reported explicitly and are never folded into zero. A field
++    is unknown only when no retained row for any operation reported it.
++    """
++    per_operation = resolved_usage(events)
++    totals = {field: 0 for field in USAGE_FIELDS}
++    unknown: set[str] = set()
++    for usage in per_operation.values():
++        for field in USAGE_FIELDS:
++            if field in usage:
++                totals[field] += usage[field]
+             else:
+-                totals[field] += value
++                unknown.add(field)
++    if not per_operation:
++        unknown.update(USAGE_FIELDS)
+     return {
+         "known": totals,
+         "unknown": sorted(unknown),
+diff --git a/tools/validate.sh b/tools/validate.sh
+index ee061ba9..ecdf78c5 100755
+--- a/tools/validate.sh
++++ b/tools/validate.sh
+@@ -1048,13 +1048,34 @@ check_c8_version_changelog() {
+   local files=("$@")
+   local errors=()
+   local f head_content head_tmp out
++  local base_rev="HEAD"
++
++  # SQA-integrity-006: a CI checkout's HEAD is the very document version under test, so
++  # comparing the worktree with HEAD cannot see a committed bump. When a comparison base
++  # is declared (NIZAM_C8_BASE: the PR base or the prior push SHA), the document is
++  # compared with that earlier revision instead. The local default (no base) is unchanged:
++  # it still detects an uncommitted version edit against HEAD.
++  if [ -n "${NIZAM_C8_BASE:-}" ]; then
++    if git rev-parse --verify --quiet "${NIZAM_C8_BASE}^{commit}" >/dev/null 2>&1; then
++      base_rev="${NIZAM_C8_BASE}"
++    else
++      # An unresolvable base must fail closed, never fall back to the HEAD comparison.
++      errors+=("NIZAM_C8_BASE '${NIZAM_C8_BASE}' is not a commit in this checkout; refusing to compare against HEAD")
++      base_rev=""
++    fi
++  fi
++  if [ -z "${base_rev}" ]; then
++    echo "[C8] FAIL version-bump-vs-changelog"
++    echo "  ${errors[0]}"
++    return 1
++  fi
+ 
+   # Compute the repo-root-relative prefix (empty when CWD is the repo root).
+   local git_prefix
+   git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo "")
+ 
+   for f in "${files[@]}"; do
+-    if ! head_content=$(git show "HEAD:${git_prefix}${f}" 2>/dev/null); then
++    if ! head_content=$(git show "${base_rev}:${git_prefix}${f}" 2>/dev/null); then
+       # File is new at HEAD (did not exist there) -- no prior version to
+       # compare against, no change record required.
+       continue

@@ -749,8 +749,8 @@ fi
 # nothing to the completeness manifest.
 echo "== preflight CLI behavior probes (F-056) =="
 _preflight_cli_probes() (
-  local sb out rc
-  scratch_dirs sb out || return 1
+  local sb out out2 out3 out4 rc
+  scratch_dirs sb out out2 out3 out4 || return 1
   git -C "${sb}" init -q
   git -C "${sb}" config user.email t@example.invalid
   git -C "${sb}" config user.name tester
@@ -765,14 +765,16 @@ _preflight_cli_probes() (
   python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 0 ] || { echo "  clean framework-root: expected exit 0, got ${rc}"; return 1; }
   printf x > "${sb}/dirty.txt"
+  # SQA-integrity-007: the PASS above retained a completed baseline in ${out}, which a
+  # rerun must not replace. Each dirty-tree probe therefore uses its own fresh namespace.
   # (a) an untracked-not-tolerated file -> FAIL (exit 1) [the NDEBT-021.5 probe]
-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out2}" --repo-root "${sb}" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 1 ] || { echo "  untracked-not-tolerated: expected exit 1, got ${rc}"; return 1; }
   # (b) exact --tolerate-untracked downgrades it to pending PASS_WITH_EXCEPTIONS (exit 2)
-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out3}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 2 ] || { echo "  exact tolerate: expected exit 2, got ${rc}"; return 1; }
   # (c) additive --tolerate-untracked-prefix also downgrades it (exit 2) [NDEBT-018.1]
-  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out4}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 2 ] || { echo "  prefix tolerate: expected exit 2, got ${rc}"; return 1; }
   return 0
 )

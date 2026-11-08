@@ -68,3 +68,94 @@ Route: small-change (start_path begin/done), intent .agent/evidence/NIZAMREL-110
 - Reporting-doctrine labels named in the brief were not found in repo or local skills; labels applied per the brief's own definitions.
 - Local: `release_closeout.py --mode pr` exit 0; `--mode tag --tag v3.1.3` exit 0.
 - No tag created or pushed. No merge. No changes outside this record and this receipt.
+
+## SQA-005..009,011 — framework integrity fix (2026-11-07)
+
+- Scope: exactly SQA-integrity-005, -006, -007, -008, -009, -011 from audit c905615d (findings sha256
+  prefix 82d4df0b34fc4235). Base origin/main `0a0a4d24`. Branch `fix/framework-integrity-sqa005-009-1107`.
+- Head: `505d4c04` (tree `1bf85152`); fix commits `75d65b4a`, `e4eddcf4`, `505d4c04`; evidence `5d106314`.
+- Reproduction: all six findings reproduced at the base before any change (probe-before.txt). None was
+  disproved, so none is closed by evidence alone. Per-finding record: .agent/evidence/sqa005009-011-1107/per-finding.md.
+- Fixes: 005 CI manifest + coverage gate (23 of 40 suites were unreached at base); 006 explicit C8 base
+  with fail-closed CI step; 007 refuse baseline reuse before any write (lexists); 008 per-operation usage
+  resolution, conflicts refused; 009 all 14 design fields required, design-defining fields non-waivable;
+  011 SELF_GOVERNANCE current section names v3.1.3, v3.0.0 labeled historical.
+- Battery at 505d4c04: validate.sh 14 passed / 2 failed (C11, C16 only — intended refusals, unchanged);
+  fixtures_self_test 176/176, 0 failed; test_start_path rc 0; test_framework_integrity_s003004 19 OK;
+  test_framework_integrity_sqa005009 27 OK; CI dedicated loop rc 0 (21 suites); coverage gate 0 unaccounted.
+  Captures: .agent/evidence/sqa005009-011-1107/battery-FINAL.txt and *-FINAL.txt.
+- Base negatives: 13 fail + 3 error on pristine 0a0a4d24 (negatives-on-base-table-FINAL.txt). Errors are
+  helper absence (2) and the absent CI loop (1); none is a spurious failure.
+- Independent evaluation: round 1 on 75d65b4a returned fail (72) on six points; each was verified and
+  fixed in e4eddcf4. Round 2 (fresh context) on e4eddcf4 returned pass (86): all eight points closed, with
+  warnings. The P6 label and the stale regression diffstat were then addressed in 505d4c04. Evaluator
+  rounds ran with read/grep tools only; their test results are artifact-verified, not re-executed.
+- Hard constraints verified at head (protected-paths-final.txt): .agent/qa/035/036/123.json unchanged;
+  .nizam/ and NIZAM.json unchanged; tools/verify_lib.sh and tools/ecosystem_audit.py unchanged; no tag;
+  no tracked .pyc. The fixtures_self_test.sh hunks (lines ~749-777) are disjoint from #170 (684, 855, 870).
+- Residuals (not closed here): the excluded suites test_nf_ac02_policy_reconciliation (runtime
+  finite-recovery exit-code gap) and test_nf_owner_dag_and_backlog (asserts superseded v3.0.0) fail at base
+  and are excluded with reasons in tools/ci_suite_exclusions.txt; fixing them is a separate item.
+  The CI workflow step exit-1 for an unresolvable C8 base is verified by reading and by a replayed run,
+  not by a test in the required CI job.
+- Untracked .agent/harness/ (runtime leases/node state written during this session) is not part of this
+  change and is not committed.
+- No release tag, no version bump, no NXOS/Mandate work, no H-CONSUMER-UPGRADE self-install.
+
+### SQA-005..009,011 — PR and exact-head CI (2026-11-07, continued)
+
+- PR: https://github.com/niq-cnr/nizam-framework/pull/171 (base main, head 0b0e23dd). Not merged. No tag.
+- Kanban claim: dispatch record comment 2989; correction comment 2990 (relaunched as lane-nzfw-sqa005009-1107b).
+- Exact-head CI at 0b0e23dd (run 42369711547): fixtures_self_test success, e2e_bootstrap success,
+  convergent_review success, self_governance success. validate FAILURE.
+- validate failure is INHERITED: identical [C11] FAIL dogfood and [C16] FAIL feature-list-lifecycle
+  (SUMMARY 14 passed, 2 failed) on origin/main @ 0a0a4d24 (run 42351831899). Intended refusals on
+  historical QA 035/036/123; not edited per brief. This PR cannot make validate green without violating it.
+- Fixed in this round: fixtures_self_test failed on a 1.39 MB derivative diff over the 1 MiB new-blob
+  growth limit (tools/evidence_archive.py). Removed; regenerable from the commits (candidate-final.txt).
+- Local replay: test_external_state_boundary errors (AF_UNIX path too long) occur only with the long
+  local scratch TMPDIR; it passes with a short TMPDIR and reports OK on the GitHub runner. Environmental.
+- Operator decision required before merge: whether the historical-QA refusals (C11/C16) red on main
+  should block this series. Merge, tag and release were NOT performed.
+
+### SQA005-FU — PR #171 exact-head validate diagnosis (2026-11-07)
+
+- Head reproduced: `e5daa4c7`. `bash tools/validate.sh` -> **14 passed, 2 failed, rc=1**: `[C11] FAIL dogfood`,
+  `[C16] FAIL feature-list-lifecycle`. Captures: `.agent/evidence/sqa005009-011-1107-fu/validate-e5daa4c-head.txt`,
+  `validate-summary.txt`, `refusal-lines.txt`, `qa-records.sha256`.
+- Diagnosis: **(b) pre-existing gap, not a PR defect.** The same two failures reproduce byte-identically at the
+  pristine base `0a0a4d24` (14 passed, 2 failed, same refusal lines). The PR's only `validate.sh` change is the
+  C8 base comparison (`NIZAM_C8_BASE`), which does not touch C11 or C16. The new SQA checks are green.
+- Root cause: historical QA records are self-contradictory and are refused by design:
+  - `.agent/qa/035.json`: `qa_pass=true` but `checks_passed=21 != checks_run=22` (C16).
+  - `.agent/qa/036.json`: `qa_pass=true` but non-empty `unsupported_claims` (C16), and a C11 schema violation
+    (`amendments[0].ratified_by_mode_b` persisted `false`; no Mode-B artifact).
+  - `.agent/qa/123.json`: `qa_pass=true` but `checks_passed=8 != checks_run=9` (C16).
+- Ruling basis: PR #170 "Intended refusals (governor ruling, no exception channel)". Records are not edited,
+  deleted or rebadged. Hashes at head equal base (`qa+contracts unchanged vs base`).
+- Fixes applied: **none.** No change to `tools/validate.sh`, no check weakened, no record edited.
+  The genuine fix for C11/C16 is outside this PR: fresh QA rounds that re-certify 035, 036 and 123.
+- Battery at head (unchanged code): fixtures_self_test 176/176 rc 0; test_start_path rc 0;
+  test_framework_integrity_sqa005009 27 OK.
+- **OPERATOR/GOVERNOR RULING REQUIRED** before this PR can be green on `validate`. Choose one:
+  1. Accept C11/C16 red as inherited from `main` and merge the SQA series on the base-equal refusal (PR #170 precedent), or
+  2. Commission fresh independent QA rounds for features 035, 036, 123 that write new, internally consistent
+     verdicts. Old records remain as history.
+  Option 2 is the only route to 16/16. It is not doable inside this PR without rebadging, which is forbidden.
+- No tag, no version bump, no release, no NXOS work, no branch overlap with `fix/framework-integrity-s003004-1107*`.
+
+### SQA005-FU2 — PR #171 merge-up refresh (2026-11-08)
+
+- Branch: `fix/framework-integrity-sqa005-009-1107c` (worktree `nzfw-sqa005-fu2-1108`), started from PR #171 head `b6000871fac72f773330b4f8a8f3d4ec2e300bde` (`fix/framework-integrity-sqa005-009-1107b`).
+- Merged `origin/main` `df66f876eabbe891d0e5cf1a8aeacd3f9aec25bc` (PR #172) with a clean `ort` merge, no conflicts; prior commits preserved, no history rewritten. Merge touched only `.agent/qa/035.json`, `.agent/qa/036.json`, `.agent/qa/123.json`, `.agent/evidence-archive/index.json` (from main).
+- Base-side fix: the prior C11/C16 refusals were repaired on main by PR #172. No check, record or `tools/validate.sh` content was edited, skipped or rebadged.
+- Validate: `TMPDIR=/tmp/v171 bash tools/validate.sh` → **SUMMARY: 16 passed, 0 failed**, rc=0 (`.agent/evidence/sqa005009-1107-fu2/validate.txt`, `validate.rc`).
+- Battery (run with `PYTHONDONTWRITEBYTECODE=1`):
+  - `tools/fixtures_self_test.sh` → rc=0, 176/176 fixtures accounted for.
+  - `tools/test_start_path.py` → rc=0 (all gates pass).
+  - `tools/test_framework_integrity_sqa005009.py` → rc=0, Ran 27 tests, OK.
+- Note on an intermediate run: the first `test_start_path.py` invocation returned rc=1 because my own run created untracked, gitignored `tools/__pycache__/*.pyc` files, which the start-path "undeclared changes" check then flagged. Clearing bytecode and running with `PYTHONDONTWRITEBYTECODE=1` gave rc=0. The failure was caused by the invocation, not the repository content; the rc=0 rerun is the recorded result.
+- Evidence: `.agent/evidence/sqa005009-1107-fu2/`.
+- Head SHA at this receipt: `1b8fd41684396e5f37807cb8cb5f6e7deb4d4470` (merge commit on top of `b6000871`).
+- Not done (governor act): PR open/refresh, exact-head CI verification, merge. No tag, version bump, release, or NXOS/other-repo work.
+- Correction (append-only): the "Head SHA at this receipt" line above records the pre-receipt merge commit `1b8fd41684396e5f37807cb8cb5f6e7deb4d4470`. The final pushed head that carries this receipt is `7b77d56f13b2942c432c1f83b8592a7b436e4f38` (`origin/fix/framework-integrity-sqa005-009-1107c`). The merge commit is an ancestor of it.
